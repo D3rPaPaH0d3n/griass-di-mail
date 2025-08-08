@@ -66,8 +66,8 @@ public class ConversationWebView : Components.WebView {
      *
      * A new WebKitGTK WebProcess will be constructed for this view.
      */
-    public ConversationWebView(Application.Configuration config) {
-        base(config);
+    public ConversationWebView(Application.Configuration config, GLib.File? cache_dir) {
+        base(config, cache_dir);
         init();
 
         // These only need to be added when creating a new WebProcess,
@@ -84,6 +84,7 @@ public class ConversationWebView : Components.WebView {
      */
     internal ConversationWebView.with_related_view(
         Application.Configuration config,
+        GLib.File? cache_dir,
         ConversationWebView related
     ) {
         base.with_related_view(config, related);
@@ -190,38 +191,46 @@ public class ConversationWebView : Components.WebView {
         get_find_controller().search_finish();
     }
 
-    public override bool key_press_event(Gdk.EventKey event) {
+    private bool on_key_pressed(Gtk.EventControllerKey controller,
+                                uint keyval,
+                                uint keycode,
+                                Gdk.ModifierType state) {
+        //XXX GTK4 not sure what to do here
         // WebView consumes a number of key presses for scrolling
         // itself internally, but we want them to navigate around in
         // ConversationListBox, so don't forward any on.
         bool ret = Gdk.EVENT_PROPAGATE;
-        if (!(((int) event.keyval) in BLACKLISTED_KEY_CODES)) {
-            ret = base.key_press_event(event);
-        }
+        // if (!(((int) keyval) in BLACKLISTED_KEY_CODES)) {
+        //     ret = base.key_press_event(event);
+        // }
         return ret;
     }
 
-    public override void get_preferred_height(out int minimum_height,
-                                              out int natural_height) {
-        // XXX clamp height to something not too outrageous so we
-        // don't get an XServer error trying to allocate a massive
-        // window.
-        const uint max_pixels = 8 * 1024 * 1024;
-        int width = get_allocated_width();
-        int height = this.preferred_height;
-        if (height * width > max_pixels) {
-            height = (int) Math.floor(max_pixels / (double) width);
+    public override void measure(Gtk.Orientation orientation,
+                                 int for_size,
+                                 out int minimum,
+                                 out int natural,
+                                 out int minimum_baseline,
+                                 out int natural_baseline) {
+        if (orientation == Gtk.Orientation.HORIZONTAL) {
+            // We always want the view to be sized according to the available
+            // space in the parent, not by the width of the web view.
+            minimum = natural = 0;
+        } else {
+            // XXX clamp height to something not too outrageous so we
+            // don't get an XServer error trying to allocate a massive
+            // window.
+            const uint max_pixels = 8 * 1024 * 1024;
+            int width = get_allocated_width();
+            int height = this.preferred_height;
+            if (height * width > max_pixels) {
+                height = (int) Math.floor(max_pixels / (double) width);
+            }
+
+            minimum = natural = height;
         }
 
-        minimum_height = natural_height = height;
-    }
-
-    // Overridden since we always what the view to be sized according
-    // to the available space in the parent, not by the width of the
-    // web view.
-    public override void get_preferred_width(out int minimum_height,
-                                             out int natural_height) {
-        minimum_height = natural_height = 0;
+        minimum_baseline = natural_baseline = -1;
     }
 
     private void init() {
@@ -230,7 +239,15 @@ public class ConversationWebView : Components.WebView {
         );
 
         this.notify["preferred-height"].connect(() => queue_resize());
-        this.scroll_event.connect(on_scroll_contained);
+
+        Gtk.EventControllerKey controller = new Gtk.EventControllerKey();
+        controller.key_pressed.connect(on_key_pressed);
+        add_controller(controller);
+
+        var scroll = new Gtk.EventControllerScroll(VERTICAL);
+        scroll.propagation_phase = CAPTURE;
+        scroll.scroll.connect(on_scroll_contained);
+        add_controller(scroll);
     }
 
     // The whole conversation is a single scroll area with each message
@@ -239,9 +256,10 @@ public class ConversationWebView : Components.WebView {
     // drive the enclosing ScrolledWindow ourselves and stop each
     // gesture at this message's top/bottom edge; a fresh gesture (after
     // a brief pause) is needed to cross into the next message.
-    private bool on_scroll_contained(Gdk.EventScroll event) {
+    private bool on_scroll_contained(Gtk.EventControllerScroll ctrl,
+                                     double dx, double dy) {
         // Ctrl+scroll is zoom, handled by the base class.
-        if ((event.state & Gdk.ModifierType.CONTROL_MASK) != 0) {
+        if ((ctrl.get_current_event_state() & Gdk.ModifierType.CONTROL_MASK) != 0) {
             return Gdk.EVENT_PROPAGATE;
         }
 
@@ -254,27 +272,17 @@ public class ConversationWebView : Components.WebView {
         // Match GtkScrolledWindow's smooth-scroll step so it feels like
         // the rest of the window.
         double unit = Math.pow(adj.page_size, 2.0 / 3.0);
-        double delta;
-        switch (event.direction) {
-        case Gdk.ScrollDirection.UP:
-            delta = -unit;
-            break;
-        case Gdk.ScrollDirection.DOWN:
-            delta = unit;
-            break;
-        case Gdk.ScrollDirection.SMOOTH:
-            delta = event.delta_y * unit;
-            break;
-        default:
-            return Gdk.EVENT_PROPAGATE;
-        }
+        double delta = (ctrl.get_unit() == Gdk.ScrollUnit.SURFACE)
+            ? dy : dy * unit;
         if (delta == 0) {
             return Gdk.EVENT_PROPAGATE;
         }
 
         // This message's extent in the adjustment's coordinate space.
-        int mx, my;
-        translate_coordinates(scroller, 0, 0, out mx, out my);
+        double mx, my;
+        if (!translate_coordinates(scroller, 0, 0, out mx, out my)) {
+            return Gdk.EVENT_PROPAGATE;
+        }
         double top = adj.value + my;
         double bottom = top + get_allocated_height();
         double page = adj.page_size;

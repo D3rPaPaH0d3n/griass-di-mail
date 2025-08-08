@@ -119,9 +119,9 @@ internal class Application.NotificationPluginContext :
         MainWindow? window = this.application.last_active_main_window;
         return (
             window == null ||
-            !window.has_toplevel_focus ||
+            !window.is_active ||
             window.selected_folder != folder ||
-            window.conversation_list_view.vadjustment.value > 0.0
+            window.conversation_list_view.scrolled_window.vadjustment.value > 0.0
         );
     }
 
