@@ -569,7 +569,7 @@ public abstract class Geary.Account : BaseObject, Logging.Source {
      * Backends that do not support direct sending should throw
      * {@link EngineError.UNSUPPORTED}.
      */
-    public virtual async void send_composed_email_async(
+    public virtual async void send_composed_email(
         Geary.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {

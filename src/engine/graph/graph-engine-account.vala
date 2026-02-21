@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Software Freedom Conservancy Inc.
+ * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
  * This software is licensed under the GNU Lesser General Public License
  * (version 2.1 or later). See the COPYING file in this distribution.
@@ -485,7 +485,7 @@ internal class Geary.Graph.Account : Geary.Account {
         throws GLib.Error {
     }
 
-    public override async void send_composed_email_async(
+    public override async void send_composed_email(
         Geary.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
@@ -721,25 +721,25 @@ internal class Geary.Graph.Account : Geary.Account {
         // to avoid unnecessary work. When account is open, refresh all loaded
         // folders for proper synchronization.
         bool background_mode = !this.is_account_open;
-        
+
         foreach (Geary.Folder folder in this.remote_folders.values) {
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph == null) {
                 continue;
             }
-            
+
             // In background mode, only refresh the Inbox for notifications
             if (background_mode && graph.used_as != Geary.Folder.SpecialUse.INBOX) {
                 continue;
             }
-            
+
             // Ensure Inbox is cached before refreshing
             if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
             } else if (!graph.is_cache_loaded) {
                 continue;
             }
-            
+
             yield graph.refresh_async(true, null);
         }
     }

@@ -2507,7 +2507,7 @@ private class Application.SendComposerCommand : ComposerCommand {
             yield this.smtp.send_email(email, cancellable);
             this.executed_label = _("Email sent");
         } else {
-            yield this.context.account.send_composed_email_async(
+            yield this.context.account.send_composed_email(
                 email, cancellable
             );
             this.executed_label = _("Email sent");
@@ -2540,20 +2540,23 @@ private class Application.SendComposerCommand : ComposerCommand {
         } else if (this.saved_graph != null) {
             Geary.ComposedEmail to_send = this.saved_graph;
             this.saved_graph = null;
-            this.context.account.send_composed_email_async.begin(
+            this.context.account.send_composed_email.begin(
                 to_send,
                 this.context.cancellable,
-                (obj, res) => {
-                    try {
-                        this.context.account.send_composed_email_async.end(res);
-                    } catch (GLib.Error err) {
-                        this.application.controller.report_problem(
-                            new Geary.ProblemReport(err)
-                        );
-                    }
-                }
+                on_send_composed_email_completed
             );
             close_composer();
+        }
+    }
+
+    private void on_send_composed_email_completed(GLib.Object? obj,
+                                                  GLib.AsyncResult res) {
+        try {
+            this.context.account.send_composed_email.end(res);
+        } catch (GLib.Error err) {
+            this.application.controller.report_problem(
+                new Geary.ProblemReport(err)
+            );
         }
     }
 
