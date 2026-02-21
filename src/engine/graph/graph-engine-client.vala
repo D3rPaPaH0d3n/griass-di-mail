@@ -123,6 +123,9 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         }
 
         Gee.ArrayList<Message> messages = new Gee.ArrayList<Message>();
+        int total_fetched = 0;
+
+        // Process the first page
         if (root.has_member("value")) {
             Json.Array values = root.get_array_member("value");
             for (uint i = 0; i < values.get_length(); i++) {
@@ -133,9 +136,67 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 Message parsed = parse_message(values.get_object_element(i), false);
                 if (!String.is_empty(parsed.id)) {
                     messages.add(parsed);
+                    total_fetched++;
                 }
             }
         }
+
+        // Follow pagination links to get all messages within the prefetch period
+        // When a date filter is active (prefetch_period_days > 0), we want ALL messages
+        // in that period, not just 'limit' messages. The limit only controls page size.
+        // Limit total pages to avoid excessive requests (max 100 pages when filtered by date)
+        int max_pages = (prefetch_period_days > 0) ? 100 : 20;
+        int page_count = 1;
+        bool has_date_filter = (prefetch_period_days > 0);
+
+        debug("Graph: Fetched page 1 with %d messages (total: %d, has_date_filter: %s, max_pages: %d)",
+              messages.size, total_fetched, has_date_filter.to_string(), max_pages);
+
+        while (root.has_member("@odata.nextLink") && page_count < max_pages) {
+            string next_link = root.get_string_member("@odata.nextLink");
+            if (String.is_empty(next_link)) {
+                break;
+            }
+
+            try {
+                root = yield request_json_url(next_link, cancellable);
+                debug("Graph: Fetching page %d...", page_count + 1);
+            } catch (GLib.Error err) {
+                // If pagination fails, return what we have so far
+                debug("Graph: Failed to fetch page %d of messages: %s", page_count + 1, err.message);
+                break;
+            }
+
+            if (root.has_member("value")) {
+                Json.Array values = root.get_array_member("value");
+                for (uint i = 0; i < values.get_length(); i++) {
+                    Json.Node value = values.get_element(i);
+                    if (value.get_node_type() != Json.NodeType.OBJECT) {
+                        continue;
+                    }
+                    Message parsed = parse_message(values.get_object_element(i), false);
+                    if (!String.is_empty(parsed.id)) {
+                        messages.add(parsed);
+                        total_fetched++;
+                        // Only enforce limit when there's no date filter
+                        if (!has_date_filter && total_fetched >= limit) {
+                            break;
+                        }
+                    }
+                }
+                // Only stop early if we hit the limit without a date filter
+                if (!has_date_filter && total_fetched >= limit) {
+                    break;
+                }
+            }
+            page_count++;
+            debug("Graph: Fetched page %d with %d new messages (total: %d/%d)",
+                  page_count, messages.size - (total_fetched - (messages.size - total_fetched)),
+                  total_fetched, has_date_filter ? -1 : limit);
+        }
+
+        debug("Graph: Pagination complete. Total messages: %d, pages: %d", total_fetched, page_count);
+
         return messages;
     }
 
@@ -341,6 +402,87 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         folder.id = get_string_member(root, "id") ?? "";
         folder.display_name = get_string_member(root, "displayName") ?? display_name;
         return folder;
+    }
+
+    private async Json.Object request_json_url(string url,
+                                               GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        yield this.account.load_incoming_credentials(cancellable);
+
+        Geary.Credentials? credentials = this.account.incoming.credentials;
+        if (credentials == null || String.is_empty(credentials.token)) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "No Graph OAuth token available"
+            );
+        }
+
+        for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
+            var request = new Soup.Message("GET", url);
+            request.set_force_http1(true);
+            request.request_headers.append(
+                "Authorization", "Bearer %s".printf(credentials.token)
+            );
+            request.request_headers.append("Accept", "application/json");
+            request.request_headers.append("Accept-Encoding", "identity");
+            request.request_headers.append("Connection", "close");
+
+            GLib.Bytes body;
+            try {
+                body = yield this.session.send_and_read_async(
+                    request,
+                    GLib.Priority.DEFAULT,
+                    cancellable
+                );
+            } catch (GLib.IOError.TIMED_OUT err) {
+                if (attempt < REQUEST_RETRIES) {
+                    debug("Graph request timed out, retrying: %s", url);
+                    continue;
+                }
+                throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                    "Graph request timed out (%s)",
+                    url
+                );
+            }
+
+            if (request.status_code < 200 || request.status_code >= 300) {
+                throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                    "Graph request failed (%u): %s (%s)",
+                    request.status_code,
+                    request.reason_phrase,
+                    url
+                );
+            }
+
+            var parser = new Json.Parser();
+            try {
+                parser.load_from_data(
+                    (string) body.get_data(),
+                    (ssize_t) body.get_size()
+                );
+            } catch (GLib.Error err) {
+                if (attempt < REQUEST_RETRIES) {
+                    debug("Graph response decode failed, retrying: %s", url);
+                    continue;
+                }
+                throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                    "Graph response decode failed (%s): %s",
+                    url,
+                    err.message
+                );
+            }
+            Json.Node root = parser.get_root();
+            if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
+                throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                    "Invalid Graph response payload"
+                );
+            }
+            return root.get_object();
+        }
+
+        throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            "Graph request failed (%s)",
+            url
+        );
     }
 
     private async Json.Object request_json(string method,
