@@ -302,22 +302,6 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 continue;
             }
 
-            yield this.client.update_message_state(
-                graph.graph_id,
-                is_read,
-                is_flagged,
-                cancellable
-            );
-            Geary.Graph.Client.Message? message = this.message_by_id.get(graph.graph_id);
-            if (message != null) {
-                if (is_read != null) {
-                    message.is_read = (is_read == true);
-                }
-                if (is_flagged != null) {
-                    message.is_flagged = (is_flagged == true);
-                }
-            }
-
             Geary.EmailFlags updated = email.email_flags ?? new Geary.EmailFlags();
             if (is_read != null) {
                 if (is_read == true) {
@@ -335,6 +319,33 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             }
             email.set_flags(updated);
             changed.set(email.id, updated);
+
+            Geary.Graph.Client.Message? message = this.message_by_id.get(graph.graph_id);
+            if (message != null) {
+                if (is_read != null) {
+                    message.is_read = (is_read == true);
+                }
+                if (is_flagged != null) {
+                    message.is_flagged = (is_flagged == true);
+                }
+            }
+            this.client.update_message_state.begin(
+                graph.graph_id,
+                is_read,
+                is_flagged,
+                cancellable,
+                (obj, res) => {
+                    try {
+                        this.client.update_message_state.end(res);
+                    } catch (GLib.Error err) {
+                        warning(
+                            "Graph update state failed for %s: %s",
+                            graph.graph_id,
+                            err.message
+                        );
+                    }
+                }
+            );
         }
 
         if (!changed.is_empty) {
@@ -358,25 +369,59 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         Gee.ArrayList<Geary.EmailIdentifier> moved = new Gee.ArrayList<Geary.EmailIdentifier>();
+        Gee.ArrayList<string> moved_ids = new Gee.ArrayList<string>();
         foreach (Geary.EmailIdentifier id in to_move) {
             Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
             if (graph == null || !this.email_by_id.has_key(graph.graph_id)) {
                 continue;
             }
-            yield this.client.move_message(
-                graph.graph_id,
-                destination_folder.graph_folder_id,
-                cancellable
-            );
             moved.add(id);
+            moved_ids.add(graph.graph_id);
         }
 
         Gee.ArrayList<Geary.EmailIdentifier> removed = remove_cached_emails(moved);
         if (!removed.is_empty) {
             notify_email_removed(removed);
         }
-        if (destination_folder.is_cache_loaded) {
-            yield destination_folder.refresh_async(true, cancellable);
+        if (!moved_ids.is_empty) {
+            bool refresh_destination = destination_folder.is_cache_loaded;
+            int pending = moved_ids.size;
+            foreach (string graph_id in moved_ids) {
+                this.client.move_message.begin(
+                    graph_id,
+                    destination_folder.graph_folder_id,
+                    cancellable,
+                    (obj, res) => {
+                        try {
+                            this.client.move_message.end(res);
+                        } catch (GLib.Error err) {
+                            warning(
+                                "Graph move failed for %s: %s",
+                                graph_id,
+                                err.message
+                            );
+                        }
+                        pending--;
+                        if (pending == 0 && refresh_destination) {
+                            destination_folder.refresh_async.begin(
+                                true,
+                                cancellable,
+                                (refresh_obj, refresh_res) => {
+                                    try {
+                                        destination_folder.refresh_async.end(refresh_res);
+                                    } catch (GLib.Error err) {
+                                        warning(
+                                            "Graph refresh failed for %s: %s",
+                                            destination_folder.path.to_string(),
+                                            err.message
+                                        );
+                                    }
+                                }
+                            );
+                        }
+                    }
+                );
+            }
         }
 
         return new Geary.Graph.NoopRevokable();
