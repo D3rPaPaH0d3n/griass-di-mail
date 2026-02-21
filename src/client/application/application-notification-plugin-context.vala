@@ -159,6 +159,7 @@ internal class Application.NotificationPluginContext :
             context != null &&
             !this.folder_information.has_key(folder)) {
             folder.email_locally_appended.connect(on_email_locally_appended);
+            folder.email_locally_inserted.connect(on_email_locally_inserted);
             folder.email_flags_changed.connect(on_email_flags_changed);
             folder.email_removed.connect(on_email_removed);
 
@@ -209,10 +210,14 @@ internal class Application.NotificationPluginContext :
 
     private void new_messages(MonitorInformation info,
                               Gee.Collection<Geary.Email> emails) {
+        bool assume_graph_unread = (
+            info.folder.account.information.account_backend ==
+            Geary.AccountBackend.MICROSOFT_GRAPH
+        );
         Gee.Collection<Geary.EmailIdentifier> added =
             new Gee.HashSet<Geary.EmailIdentifier>();
         foreach (Geary.Email email in emails) {
-            if (email.email_flags.is_unread() &&
+            if ((assume_graph_unread || email.email_flags.is_unread()) &&
                 info.recent_ids.add(email.id)) {
                 added.add(email.id);
             }
@@ -268,6 +273,7 @@ internal class Application.NotificationPluginContext :
         MonitorInformation? info = this.folder_information.get(target);
         if (info != null) {
             target.email_locally_appended.disconnect(on_email_locally_appended);
+            target.email_locally_inserted.disconnect(on_email_locally_inserted);
             target.email_flags_changed.disconnect(on_email_flags_changed);
             target.email_removed.disconnect(on_email_removed);
 
@@ -312,6 +318,11 @@ internal class Application.NotificationPluginContext :
     }
 
     private void on_email_locally_appended(Geary.Folder folder,
+        Gee.Collection<Geary.EmailIdentifier> email_ids) {
+        do_process_new_email.begin(folder, email_ids);
+    }
+
+    private void on_email_locally_inserted(Geary.Folder folder,
         Gee.Collection<Geary.EmailIdentifier> email_ids) {
         do_process_new_email.begin(folder, email_ids);
     }

@@ -600,6 +600,7 @@ public class Accounts.Manager : GLib.Object {
             }
         } else {
             account.service_label = goa_mediator.get_service_label();
+            account.account_backend = goa_mediator.get_account_backend();
             try {
                 yield goa_mediator.update(account, cancellable);
             } catch (GLib.Error err) {
@@ -780,20 +781,64 @@ public class Accounts.Manager : GLib.Object {
     }
 
     private bool is_valid_goa_account(Goa.Object handle) {
+        Goa.Account account = handle.get_account();
         Goa.Mail? mail = handle.get_mail();
+        bool is_microsoft = (
+            account.provider_type == "ms_graph" ||
+            account.provider_type == "windows_live"
+        );
+        bool has_auth = (
+            handle.get_oauth2_based() != null ||
+            handle.get_password_based() != null
+        );
+        bool has_identity = !Geary.String.is_empty_or_whitespace(
+            account.presentation_identity
+        );
+        if (mail != null) {
+            bool has_mail_endpoints = (
+                !Geary.String.is_empty(mail.imap_host) &&
+                !Geary.String.is_empty(mail.smtp_host)
+            );
+            if (has_mail_endpoints) {
+                return (
+                    !account.mail_disabled &&
+                    has_identity
+                );
+            }
+            return (
+                is_microsoft &&
+                !account.mail_disabled &&
+                has_auth &&
+                has_identity
+            );
+        }
         return (
-            mail != null &&
-            !handle.get_account().mail_disabled &&
-            !Geary.String.is_empty(mail.imap_host) &&
-            !Geary.String.is_empty(mail.smtp_host)
+            is_microsoft &&
+            !account.mail_disabled &&
+            has_auth &&
+            has_identity
         );
     }
 
     private async void create_goa_account(Goa.Object account,
                                           GLib.Cancellable? cancellable) {
         if (is_valid_goa_account(account)) {
+            Goa.Account goa_account = account.get_account();
             Goa.Mail? mail = account.get_mail();
-            string? name = mail.name;
+            string mailbox = (
+                mail != null
+                ? mail.email_address
+                : goa_account.presentation_identity
+            );
+            if (Geary.String.is_empty_or_whitespace(mailbox)) {
+                debug(
+                    "Ignoring GOA %s account %s, mailbox identity missing",
+                    goa_account.provider_type,
+                    goa_account.id
+                );
+                return;
+            }
+            string? name = (mail != null) ? mail.name : null;
             if (Geary.String.is_empty_or_whitespace(name)) {
                 name = get_account_name();
             }
@@ -803,12 +848,13 @@ public class Accounts.Manager : GLib.Object {
                 to_geary_id(account),
                 mediator.get_service_provider(),
                 mediator,
-                new Geary.RFC822.MailboxAddress(name, mail.email_address)
+                new Geary.RFC822.MailboxAddress(name, mailbox)
             );
 
+            info.account_backend = mediator.get_account_backend();
             info.ordinal = Geary.AccountInformation.next_ordinal++;
             info.service_label = mediator.get_service_label();
-            info.label = account.get_account().presentation_identity;
+            info.label = goa_account.presentation_identity;
 
             try {
                 yield create_account_dirs(info, cancellable);
@@ -821,7 +867,7 @@ public class Accounts.Manager : GLib.Object {
             set_enabled(info, true);
         } else {
             debug(
-                "Ignoring GOA %s account %s, mail service not enabled",
+                "Ignoring GOA %s account %s, mail service not usable",
                 account.get_account().provider_type,
                 account.get_account().id
             );
@@ -834,6 +880,7 @@ public class Accounts.Manager : GLib.Object {
         GoaMediator mediator = (GoaMediator) account.mediator;
         try {
             yield mediator.update(account, cancellable);
+            account.account_backend = mediator.get_account_backend();
 
             if (is_available) {
                 // Update will clear the creds, so make sure they get

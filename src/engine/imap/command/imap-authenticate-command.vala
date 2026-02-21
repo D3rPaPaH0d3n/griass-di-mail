@@ -15,33 +15,43 @@ public class Geary.Imap.AuthenticateCommand : Command {
 
     public const string NAME = "authenticate";
 
-    private const string OAUTH2_METHOD = "xoauth2";
+    private const string OAUTH2_METHOD = "XOAUTH2";
     private const string OAUTH2_RESP = "user=%s\001auth=Bearer %s\001\001";
 
 
     public string method { get; private set; }
 
     private LiteralParameter? response_literal = null;
+    private string? oauth2_token = null;
+    private bool sent_oauth2_token = false;
+    private bool sent_oauth2_empty = false;
     private bool serialised = false;
     private Geary.Nonblocking.Spinlock error_lock;
     private GLib.Cancellable error_cancellable = new GLib.Cancellable();
 
 
     private AuthenticateCommand(string method,
-                                string data,
+                                string[] args,
                                 GLib.Cancellable? should_send) {
-        base(NAME, { method, data }, should_send);
+        base(NAME, args, should_send);
         this.method = method;
         this.error_lock = new Geary.Nonblocking.Spinlock(this.error_cancellable);
     }
 
     public AuthenticateCommand.oauth2(string user,
                                       string token,
+                                      bool send_initial_response,
                                       GLib.Cancellable? should_send) {
         string encoded_token = Base64.encode(
             OAUTH2_RESP.printf(user, token).data
         );
-        this(OAUTH2_METHOD, encoded_token, should_send);
+        string[] args = { OAUTH2_METHOD };
+        if (send_initial_response) {
+            args = { OAUTH2_METHOD, encoded_token };
+        }
+        this(OAUTH2_METHOD, args, should_send);
+        this.oauth2_token = encoded_token;
+        this.sent_oauth2_token = send_initial_response;
     }
 
     internal override async void send(Serializer ser,
@@ -63,13 +73,18 @@ public class Geary.Imap.AuthenticateCommand : Command {
     }
 
     internal override async void send_wait(Serializer ser,
-                                         GLib.Cancellable cancellable)
+                                          GLib.Cancellable cancellable)
         throws GLib.Error {
-        // Wait to either get a response or a continuation request
-        yield this.error_lock.wait_async(cancellable);
-        if (this.response_literal != null) {
+        while (true) {
+            // Wait to either get a response or a continuation request
+            yield this.error_lock.wait_async(cancellable);
+            if (this.response_literal == null) {
+                break;
+            }
+            LiteralParameter literal = this.response_literal;
+            this.response_literal = null;
             yield ser.push_literal_data(
-                this.response_literal.value.get_uint8_array(), cancellable
+                literal.value.get_uint8_array(), cancellable
             );
             ser.push_eol(cancellable);
             yield ser.flush_stream(cancellable);
@@ -99,14 +114,34 @@ public class Geary.Imap.AuthenticateCommand : Command {
                 );
             }
 
-            // Continuation will be a Base64 encoded JSON blob and which
-            // indicates a login failure. We don't really care about that
-            // (do we?) though since once we acknowledge it with a
-            // zero-length response the server will respond with an IMAP
-            // error.
-            this.response_literal = new LiteralParameter(
-                Geary.Memory.EmptyBuffer.instance
-            );
+            if (!this.sent_oauth2_token) {
+                string? oauth2_token = this.oauth2_token;
+                if (Geary.String.is_empty(oauth2_token)) {
+                    stop_serialisation();
+                    throw new ImapError.INVALID(
+                        "Missing OAUTH2 response for AUTHENTICATE"
+                    );
+                }
+                this.sent_oauth2_token = true;
+                this.response_literal = new LiteralParameter(
+                    new Geary.Memory.StringBuffer((string) oauth2_token)
+                );
+            } else if (!this.sent_oauth2_empty) {
+                // Continuation will be a Base64 encoded JSON blob and which
+                // indicates a login failure. We don't really care about that
+                // (do we?) though since once we acknowledge it with a
+                // zero-length response the server will respond with an IMAP
+                // error.
+                this.sent_oauth2_empty = true;
+                this.response_literal = new LiteralParameter(
+                    Geary.Memory.EmptyBuffer.instance
+                );
+            } else {
+                stop_serialisation();
+                throw new ImapError.INVALID(
+                    "Unexpected repeated AUTHENTICATE continuation request"
+                );
+            }
             // Notify serialisation to continue
             this.error_lock.blind_notify();
         }

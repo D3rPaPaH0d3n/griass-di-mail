@@ -2460,14 +2460,17 @@ private class Application.SendComposerCommand : ComposerCommand {
 
 
     public override bool can_undo {
-        get { return this.application.config.undo_send_delay > 0; }
+        get {
+            return this.application.config.undo_send_delay > 0;
+        }
     }
 
     private Client application;
     private AccountContext context;
-    private Geary.Smtp.ClientService smtp;
+    private Geary.Smtp.ClientService? smtp;
     private Geary.TimeoutManager commit_timer;
     private Geary.EmailIdentifier? saved = null;
+    private Geary.ComposedEmail? saved_graph = null;
 
 
     public SendComposerCommand(Client application,
@@ -2476,7 +2479,7 @@ private class Application.SendComposerCommand : ComposerCommand {
         base(composer);
         this.application = application;
         this.context = context;
-        this.smtp = (Geary.Smtp.ClientService) context.account.outgoing;
+        this.smtp = context.account.outgoing as Geary.Smtp.ClientService;
 
         int send_delay = this.application.config.undo_send_delay;
         this.commit_timer = new Geary.TimeoutManager.seconds(
@@ -2494,22 +2497,35 @@ private class Application.SendComposerCommand : ComposerCommand {
             this.executed_label = _(
                 "Email to %s queued for delivery"
             ).printf(Util.Email.to_short_recipient_display(email));
-
-            this.saved = yield this.smtp.save_email(email, cancellable);
+            if (this.smtp != null) {
+                this.saved = yield this.smtp.save_email(email, cancellable);
+            } else {
+                this.saved_graph = email;
+            }
             this.commit_timer.start();
-        } else {
+        } else if (this.smtp != null) {
             yield this.smtp.send_email(email, cancellable);
+            this.executed_label = _("Email sent");
+        } else {
+            yield this.context.account.send_composed_email_async(
+                email, cancellable
+            );
+            this.executed_label = _("Email sent");
         }
     }
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.commit_timer.reset();
-        yield this.smtp.outbox.remove_email_async(
-            Geary.Collection.single(this.saved),
-            cancellable
-        );
-        this.saved = null;
+        if (this.smtp != null) {
+            yield this.smtp.outbox.remove_email_async(
+                Geary.Collection.single(this.saved),
+                cancellable
+            );
+            this.saved = null;
+        } else {
+            this.saved_graph = null;
+        }
 
         this.composer.set_enabled(true);
         this.application.controller.present_composer(this.composer);
@@ -2517,9 +2533,28 @@ private class Application.SendComposerCommand : ComposerCommand {
     }
 
     private void on_commit_timeout() {
-        this.smtp.queue_email(this.saved);
-        this.saved = null;
-        close_composer();
+        if (this.smtp != null) {
+            this.smtp.queue_email(this.saved);
+            this.saved = null;
+            close_composer();
+        } else if (this.saved_graph != null) {
+            Geary.ComposedEmail to_send = this.saved_graph;
+            this.saved_graph = null;
+            this.context.account.send_composed_email_async.begin(
+                to_send,
+                this.context.cancellable,
+                (obj, res) => {
+                    try {
+                        this.context.account.send_composed_email_async.end(res);
+                    } catch (GLib.Error err) {
+                        this.application.controller.report_problem(
+                            new Geary.ProblemReport(err)
+                        );
+                    }
+                }
+            );
+            close_composer();
+        }
     }
 
 }

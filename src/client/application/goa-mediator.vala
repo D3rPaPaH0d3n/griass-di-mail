@@ -10,6 +10,13 @@
 public class GoaMediator : Geary.CredentialsMediator, Object {
 
 
+    private const string PROVIDER_TYPE_WINDOWS_LIVE = "windows_live";
+    private const string PROVIDER_TYPE_MS_GRAPH = "ms_graph";
+    private const string MS365_IMAP_HOST = "outlook.office365.com";
+    private const string MS365_SMTP_HOST = "smtp.office365.com";
+    private const string OUTLOOK_IMAP_HOST = "imap-mail.outlook.com";
+    private const string OUTLOOK_SMTP_HOST = "smtp-mail.outlook.com";
+
     private Goa.Object handle;
 
 
@@ -24,11 +31,20 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
             provider = Geary.ServiceProvider.GMAIL;
             break;
 
-        case "windows_live":
+        case PROVIDER_TYPE_WINDOWS_LIVE:
+        case PROVIDER_TYPE_MS_GRAPH:
             provider = Geary.ServiceProvider.OUTLOOK;
             break;
         }
         return provider;
+    }
+
+    public Geary.AccountBackend get_account_backend() {
+        Geary.AccountBackend backend = Geary.AccountBackend.IMAP_SMTP;
+        if (this.handle.get_account().provider_type == PROVIDER_TYPE_MS_GRAPH) {
+            backend = Geary.AccountBackend.MICROSOFT_GRAPH;
+        }
+        return backend;
     }
 
     public string get_service_label() {
@@ -117,10 +133,69 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
         );
     }
 
-    private void update_imap_config(Geary.ServiceInformation service)
+    private bool is_microsoft_account() {
+        string provider_type = this.handle.get_account().provider_type;
+        return (
+            provider_type == PROVIDER_TYPE_MS_GRAPH ||
+            provider_type == PROVIDER_TYPE_WINDOWS_LIVE
+        );
+    }
+
+    private string get_default_imap_host() {
+        return this.handle.get_account().provider_type == PROVIDER_TYPE_MS_GRAPH
+            ? MS365_IMAP_HOST
+            : OUTLOOK_IMAP_HOST;
+    }
+
+    private string get_default_smtp_host() {
+        return this.handle.get_account().provider_type == PROVIDER_TYPE_MS_GRAPH
+            ? MS365_SMTP_HOST
+            : OUTLOOK_SMTP_HOST;
+    }
+
+    private bool has_mail_endpoints(Goa.Mail mail) {
+        return (
+            !Geary.String.is_empty(mail.imap_host) &&
+            !Geary.String.is_empty(mail.smtp_host)
+        );
+    }
+
+    private string get_service_user_name(Geary.Protocol protocol)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
         if (mail != null) {
+            string? user = null;
+            switch (protocol) {
+            case Geary.Protocol.IMAP:
+                user = mail.imap_user_name;
+                break;
+
+            case Geary.Protocol.SMTP:
+                user = mail.smtp_user_name;
+                break;
+            }
+            if (!Geary.String.is_empty_or_whitespace(user)) {
+                return (string) user;
+            }
+        }
+
+        string mailbox = this.handle.get_account().presentation_identity;
+        if (Geary.String.is_empty_or_whitespace(mailbox)) {
+            throw new Geary.EngineError.UNSUPPORTED(
+                "GOA account does not include a mailbox identity"
+            );
+        }
+        return mailbox;
+    }
+
+    private void update_imap_config(Geary.ServiceInformation service)
+        throws GLib.Error {
+        Goa.Mail? mail = this.handle.get_mail();
+        bool use_microsoft_fallback = (
+            is_microsoft_account() &&
+            (mail == null || !has_mail_endpoints(mail))
+        );
+        if (mail != null && !use_microsoft_fallback) {
             parse_host_name(service, mail.imap_host);
 
             if (mail.imap_use_ssl) {
@@ -130,21 +205,30 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
             } else {
                 service.transport_security = Geary.TlsNegotiationMethod.NONE;
             }
+        } else if (use_microsoft_fallback) {
+            parse_host_name(service, get_default_imap_host());
+            service.transport_security = Geary.TlsNegotiationMethod.TRANSPORT;
+        } else {
+            return;
+        }
 
-            service.credentials = new Geary.Credentials(
-                get_auth_method(), mail.imap_user_name
-            );
+        service.credentials = new Geary.Credentials(
+            get_auth_method(), get_service_user_name(Geary.Protocol.IMAP)
+        );
 
-            if (service.port == 0) {
-                service.port = service.get_default_port();
-            }
+        if (service.port == 0) {
+            service.port = service.get_default_port();
         }
     }
 
     private void update_smtp_config(Geary.ServiceInformation service)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
-        if (mail != null) {
+        bool use_microsoft_fallback = (
+            is_microsoft_account() &&
+            (mail == null || !has_mail_endpoints(mail))
+        );
+        if (mail != null && !use_microsoft_fallback) {
             parse_host_name(service, mail.smtp_host);
 
             if (mail.smtp_use_ssl) {
@@ -163,13 +247,22 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
 
             if (mail.smtp_use_auth) {
                 service.credentials = new Geary.Credentials(
-                    get_auth_method(), mail.smtp_user_name
+                    get_auth_method(), get_service_user_name(Geary.Protocol.SMTP)
                 );
             }
+        } else if (use_microsoft_fallback) {
+            parse_host_name(service, get_default_smtp_host());
+            service.transport_security = Geary.TlsNegotiationMethod.START_TLS;
+            service.credentials_requirement = Geary.Credentials.Requirement.CUSTOM;
+            service.credentials = new Geary.Credentials(
+                get_auth_method(), get_service_user_name(Geary.Protocol.SMTP)
+            );
+        } else {
+            return;
+        }
 
-            if (service.port == 0) {
-                service.port = service.get_default_port();
-            }
+        if (service.port == 0) {
+            service.port = service.get_default_port();
         }
     }
 

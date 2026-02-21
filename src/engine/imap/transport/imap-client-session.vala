@@ -933,9 +933,13 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
                     "OAuth2 authentication not supported for %s", to_string()
                 );
             }
+            bool use_initial_response = capabilities.has_capability(
+                Capabilities.SASL_IR
+            );
             cmd = new AuthenticateCommand.oauth2(
                 credentials.user,
                 credentials.token,
+                use_initial_response,
                 cancellable
             );
             break;
@@ -958,6 +962,26 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
         assert(params.proceed);
 
         StatusResponse response = yield submit_command(cmd);
+        if (credentials.supported_method == Geary.Credentials.Method.OAUTH2 &&
+            response.status == Status.BAD &&
+            capabilities.has_capability(Capabilities.SASL_IR)) {
+            // Some servers advertise SASL-IR but reject XOAUTH2 when
+            // an initial response is supplied.
+            cmd = new AuthenticateCommand.oauth2(
+                credentials.user,
+                credentials.token,
+                false,
+                cancellable
+            );
+            params = new MachineParams(cmd);
+            fsm.issue(Event.LOGIN, null, params);
+
+            if (params.err != null) {
+                throw params.err;
+            }
+            assert(params.proceed);
+            response = yield submit_command(cmd);
+        }
         if (response.status != Status.OK) {
             // Throw an error indicating auth failed here, unless
             // there is a status response and it indicates that the

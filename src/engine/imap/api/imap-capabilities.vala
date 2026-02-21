@@ -18,6 +18,7 @@ public class Geary.Imap.Capabilities : Geary.GenericCapabilities {
     public const string IMAP4REV1 = "IMAP4rev1";
     public const string NAMESPACE = "NAMESPACE";
     public const string SPECIAL_USE = "SPECIAL-USE";
+    public const string SASL_IR = "SASL-IR";
     public const string STARTTLS = "STARTTLS";
     public const string UIDPLUS = "UIDPLUS";
     public const string XLIST = "XLIST";
@@ -95,4 +96,3 @@ public class Geary.Imap.Capabilities : Geary.GenericCapabilities {
         return has_capability(SPECIAL_USE);
     }
 }
-
