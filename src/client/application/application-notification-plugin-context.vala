@@ -167,6 +167,13 @@ internal class Application.NotificationPluginContext :
         if (folder != null &&
             context != null &&
             !this.folder_information.has_key(folder)) {
+            bool monitor_inserted = (
+                folder.account.information.account_backend ==
+                Geary.AccountBackend.MICROSOFT_GRAPH
+            );
+            if (monitor_inserted) {
+                folder.email_inserted.connect(on_email_inserted);
+            }
             folder.email_locally_appended.connect(on_email_locally_appended);
             folder.email_locally_inserted.connect(on_email_locally_inserted);
             folder.email_flags_changed.connect(on_email_flags_changed);
@@ -277,6 +284,10 @@ internal class Application.NotificationPluginContext :
     private void remove_folder(Geary.Folder target) {
         MonitorInformation? info = this.folder_information.get(target);
         if (info != null) {
+            if (target.account.information.account_backend ==
+                Geary.AccountBackend.MICROSOFT_GRAPH) {
+                target.email_inserted.disconnect(on_email_inserted);
+            }
             target.email_locally_appended.disconnect(on_email_locally_appended);
             target.email_locally_inserted.disconnect(on_email_locally_inserted);
             target.email_flags_changed.disconnect(on_email_flags_changed);
@@ -298,6 +309,20 @@ internal class Application.NotificationPluginContext :
     ) {
         MonitorInformation info = this.folder_information.get(folder);
         if (info != null) {
+            if (folder.account.information.account_backend ==
+                Geary.AccountBackend.MICROSOFT_GRAPH) {
+                Gee.Collection<Geary.EmailIdentifier> added =
+                    new Gee.HashSet<Geary.EmailIdentifier>();
+                foreach (Geary.EmailIdentifier id in email_ids) {
+                    if (info.recent_ids.add(id)) {
+                        added.add(id);
+                    }
+                }
+                if (added.size > 0) {
+                    update_count(info, true, added);
+                }
+                return;
+            }
             Gee.List<Geary.Email>? list = null;
             try {
                 list = yield folder.list_email_by_sparse_id_async(
@@ -323,6 +348,11 @@ internal class Application.NotificationPluginContext :
     }
 
     private void on_email_locally_appended(Geary.Folder folder,
+        Gee.Collection<Geary.EmailIdentifier> email_ids) {
+        do_process_new_email.begin(folder, email_ids);
+    }
+
+    private void on_email_inserted(Geary.Folder folder,
         Gee.Collection<Geary.EmailIdentifier> email_ids) {
         do_process_new_email.begin(folder, email_ids);
     }

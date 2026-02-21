@@ -457,11 +457,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
         bool had_loaded = this.is_loaded;
         int previous_total = this._properties.email_total;
+        Gee.Set<string> refreshed_ids = new Gee.HashSet<string>();
         Gee.ArrayList<Geary.EmailIdentifier> inserted = new Gee.ArrayList<Geary.EmailIdentifier>();
+        Gee.ArrayList<Geary.EmailIdentifier> removed = new Gee.ArrayList<Geary.EmailIdentifier>();
         foreach (Geary.Graph.Client.Message message in messages) {
             if (String.is_empty(message.id)) {
                 continue;
             }
+            refreshed_ids.add(message.id);
             Geary.Email? existing = this.email_by_id.get(message.id);
             Geary.Email email = build_email(message, existing);
             if (existing == null) {
@@ -470,6 +473,24 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             }
             this.email_by_id.set(message.id, email);
             this.message_by_id.set(message.id, message);
+        }
+        if (had_loaded) {
+            Gee.ArrayList<string> stale_ids = new Gee.ArrayList<string>();
+            foreach (string cached_id in this.email_by_id.keys) {
+                if (refreshed_ids.contains(cached_id)) {
+                    continue;
+                }
+                stale_ids.add(cached_id);
+            }
+            foreach (string cached_id in stale_ids) {
+                Geary.Email? cached = this.email_by_id.get(cached_id);
+                if (cached != null) {
+                    this.email_cache.remove(cached);
+                    removed.add(cached.id);
+                }
+                this.email_by_id.unset(cached_id);
+                this.message_by_id.unset(cached_id);
+            }
         }
 
         sort_email_cache();
@@ -484,6 +505,9 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
         if (!inserted.is_empty) {
             notify_email_inserted(inserted);
+        }
+        if (!removed.is_empty) {
+            notify_email_removed(removed);
         }
         if (had_loaded && !inserted.is_empty) {
             notify_email_locally_inserted(inserted);
