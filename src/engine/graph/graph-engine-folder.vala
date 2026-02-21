@@ -504,13 +504,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             notify_email_count_changed(this._properties.email_total, reason);
         }
         if (!inserted.is_empty) {
-            notify_email_inserted(inserted);
+            if (!had_loaded) {
+                notify_email_inserted(inserted);
+            } else {
+                notify_email_locally_inserted(inserted);
+            }
         }
         if (!removed.is_empty) {
             notify_email_removed(removed);
-        }
-        if (had_loaded && !inserted.is_empty) {
-            notify_email_locally_inserted(inserted);
         }
         persist_cached_messages();
         this.is_loaded = true;

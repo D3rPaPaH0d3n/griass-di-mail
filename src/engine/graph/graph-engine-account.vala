@@ -50,6 +50,7 @@ internal class Geary.Graph.Account : Geary.Account {
             () => { queue_prefetch_refresh(); }
         );
         this.refresh_loaded_folders_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
+        this.refresh_loaded_folders_timer.start();
         this.information.notify["prefetch-period-days"].connect((obj, pspec) => {
             queue_prefetch_refresh();
         });
@@ -83,7 +84,6 @@ internal class Geary.Graph.Account : Geary.Account {
             inbox.load_persisted_cache();
         }
         queue_prefetch_refresh();
-        this.refresh_loaded_folders_timer.start();
     }
 
     public override async void close_async(GLib.Cancellable? cancellable = null)
@@ -91,7 +91,6 @@ internal class Geary.Graph.Account : Geary.Account {
         if (!this.is_account_open) {
             return;
         }
-        this.refresh_loaded_folders_timer.reset();
 
         foreach (Geary.Folder folder in list_folders()) {
             if (folder.get_open_state() != Geary.Folder.OpenState.CLOSED) {
@@ -698,9 +697,6 @@ internal class Geary.Graph.Account : Geary.Account {
     }
 
     private void queue_prefetch_refresh() {
-        if (!this.is_account_open) {
-            return;
-        }
         if (this.prefetch_refresh_running) {
             this.prefetch_refresh_pending = true;
             return;
@@ -721,22 +717,29 @@ internal class Geary.Graph.Account : Geary.Account {
     }
 
     private async void refresh_loaded_folders_for_prefetch() throws GLib.Error {
-        if (!this.is_account_open) {
-            return;
-        }
+        // When running in background (account closed), only refresh the Inbox
+        // to avoid unnecessary work. When account is open, refresh all loaded
+        // folders for proper synchronization.
+        bool background_mode = !this.is_account_open;
+        
         foreach (Geary.Folder folder in this.remote_folders.values) {
-            if (!this.is_account_open) {
-                return;
-            }
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph == null) {
                 continue;
             }
+            
+            // In background mode, only refresh the Inbox for notifications
+            if (background_mode && graph.used_as != Geary.Folder.SpecialUse.INBOX) {
+                continue;
+            }
+            
+            // Ensure Inbox is cached before refreshing
             if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
             } else if (!graph.is_cache_loaded) {
                 continue;
             }
+            
             yield graph.refresh_async(true, null);
         }
     }
