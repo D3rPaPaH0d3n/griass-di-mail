@@ -296,12 +296,16 @@ internal class Geary.Graph.Account : Geary.Account {
                 }
                 Geary.Email email = cached;
                 if (!partial_ok && !email.fields.fulfills(required)) {
-                    email = yield graph.fetch_email_async(
-                        cached.id,
-                        required,
-                        Geary.Folder.ListFlags.NONE,
-                        cancellable
-                    );
+                    if (graph.get_open_state() != Geary.Folder.OpenState.CLOSED) {
+                        email = yield graph.fetch_email_async(
+                            cached.id,
+                            required,
+                            Geary.Folder.ListFlags.NONE,
+                            cancellable
+                        );
+                    } else {
+                        continue;
+                    }
                 }
                 if (!partial_ok && !email.fields.fulfills(required)) {
                     continue;
@@ -365,7 +369,61 @@ internal class Geary.Graph.Account : Geary.Account {
         Gee.Collection<Geary.EmailIdentifier>? search_ids = null,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        return null;
+        Gee.Set<Geary.EmailIdentifier>? search_scope = null;
+        if (search_ids != null) {
+            search_scope = new Gee.HashSet<Geary.EmailIdentifier>();
+            search_scope.add_all(search_ids);
+        }
+
+        Gee.ArrayList<Geary.Email> matched = new Gee.ArrayList<Geary.Email>();
+        Gee.Set<Geary.EmailIdentifier> seen = new Gee.HashSet<Geary.EmailIdentifier>();
+        foreach (Geary.Folder folder in this.remote_folders.values) {
+            if (cancellable != null && cancellable.is_cancelled()) {
+                throw new GLib.IOError.CANCELLED("Graph search cancelled");
+            }
+            if (folder_blacklist != null && folder_blacklist.contains(folder.path)) {
+                continue;
+            }
+            Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
+            if (graph == null) {
+                continue;
+            }
+            if (!graph.is_cache_loaded) {
+                graph.load_persisted_cache();
+            }
+            if (!graph.is_cache_loaded) {
+                continue;
+            }
+            foreach (Geary.Email email in graph.list_cached_emails()) {
+                if (search_scope != null && !search_scope.contains(email.id)) {
+                    continue;
+                }
+                if (!email_matches_query(email, query)) {
+                    continue;
+                }
+                if (seen.add(email.id)) {
+                    matched.add(email);
+                }
+            }
+        }
+
+        if (matched.is_empty) {
+            return null;
+        }
+        matched.sort((a, b) => Geary.Email.compare_recv_date_descending(a, b));
+
+        int start = int.max(0, offset);
+        int max_results = (limit > 0) ? limit : matched.size;
+        if (start >= matched.size || max_results <= 0) {
+            return null;
+        }
+
+        Gee.ArrayList<Geary.EmailIdentifier> ids =
+            new Gee.ArrayList<Geary.EmailIdentifier>();
+        for (int i = start; i < matched.size && ids.size < max_results; i++) {
+            ids.add(matched[i].id);
+        }
+        return ids.is_empty ? null : ids;
     }
 
     public override async Gee.Set<string>? get_search_matches_async(
@@ -373,7 +431,35 @@ internal class Geary.Graph.Account : Geary.Account {
         Gee.Collection<Geary.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        return null;
+        Gee.Set<Geary.EmailIdentifier> id_set = new Gee.HashSet<Geary.EmailIdentifier>();
+        id_set.add_all(ids);
+
+        Gee.Set<string> matches = new Gee.HashSet<string>();
+        foreach (Geary.Folder folder in this.remote_folders.values) {
+            if (cancellable != null && cancellable.is_cancelled()) {
+                throw new GLib.IOError.CANCELLED("Graph search matches cancelled");
+            }
+            Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
+            if (graph == null) {
+                continue;
+            }
+            if (!graph.is_cache_loaded) {
+                graph.load_persisted_cache();
+            }
+            if (!graph.is_cache_loaded) {
+                continue;
+            }
+            foreach (Geary.Email email in graph.list_cached_emails()) {
+                if (!id_set.contains(email.id)) {
+                    continue;
+                }
+                Gee.Set<string>? email_matches = get_query_matches(email, query);
+                if (email_matches != null) {
+                    matches.add_all(email_matches);
+                }
+            }
+        }
+        return matches.is_empty ? null : matches;
     }
 
     public override async Gee.MultiMap<Geary.EmailIdentifier, Geary.FolderPath>? get_containing_folders_async(
@@ -483,6 +569,132 @@ internal class Geary.Graph.Account : Geary.Account {
             }
         }
         return false;
+    }
+
+    private static bool email_matches_query(Geary.Email email, Geary.SearchQuery query) {
+        if (query.expression.is_empty) {
+            return !String.is_empty(query.raw) &&
+                matches_text_term(
+                    email,
+                    Geary.SearchQuery.EmailTextTerm.Property.ALL,
+                    query.raw
+                );
+        }
+        foreach (Geary.SearchQuery.Term term in query.expression) {
+            if (!matches_query_term(email, term)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static Gee.Set<string>? get_query_matches(Geary.Email email, Geary.SearchQuery query) {
+        Gee.Set<string> matches = new Gee.HashSet<string>();
+        if (query.expression.is_empty) {
+            if (!String.is_empty(query.raw) &&
+                matches_text_term(
+                    email,
+                    Geary.SearchQuery.EmailTextTerm.Property.ALL,
+                    query.raw
+                )) {
+                matches.add(query.raw);
+            }
+            return matches.is_empty ? null : matches;
+        }
+        foreach (Geary.SearchQuery.Term term in query.expression) {
+            Geary.SearchQuery.EmailTextTerm? text =
+                term as Geary.SearchQuery.EmailTextTerm;
+            if (text == null || term.is_negated) {
+                continue;
+            }
+            foreach (string value in text.terms) {
+                if (matches_text_term(email, text.target, value)) {
+                    matches.add(value);
+                }
+            }
+        }
+        return matches.is_empty ? null : matches;
+    }
+
+    private static bool matches_query_term(Geary.Email email, Geary.SearchQuery.Term term) {
+        Geary.SearchQuery.EmailTextTerm? text =
+            term as Geary.SearchQuery.EmailTextTerm;
+        if (text != null) {
+            bool any = false;
+            foreach (string value in text.terms) {
+                if (matches_text_term(email, text.target, value)) {
+                    any = true;
+                    break;
+                }
+            }
+            return term.is_negated ? !any : any;
+        }
+
+        Geary.SearchQuery.EmailFlagTerm? flag =
+            term as Geary.SearchQuery.EmailFlagTerm;
+        if (flag != null) {
+            bool set = (email.email_flags != null &&
+                        email.email_flags.contains(flag.value));
+            return term.is_negated ? !set : set;
+        }
+        return true;
+    }
+
+    private static bool matches_text_term(Geary.Email email,
+                                          Geary.SearchQuery.EmailTextTerm.Property target,
+                                          string term) {
+        if (String.is_empty(term)) {
+            return false;
+        }
+        string needle = term.down();
+        switch (target) {
+        case Geary.SearchQuery.EmailTextTerm.Property.TO:
+            return matches_addresses_text(email.to, needle);
+        case Geary.SearchQuery.EmailTextTerm.Property.CC:
+            return matches_addresses_text(email.cc, needle);
+        case Geary.SearchQuery.EmailTextTerm.Property.BCC:
+            return matches_addresses_text(email.bcc, needle);
+        case Geary.SearchQuery.EmailTextTerm.Property.FROM:
+            return matches_addresses_text(email.from, needle);
+        case Geary.SearchQuery.EmailTextTerm.Property.SUBJECT:
+            return matches_subject_text(email.subject, needle);
+        case Geary.SearchQuery.EmailTextTerm.Property.BODY:
+            return matches_preview_text(email.preview, needle);
+        case Geary.SearchQuery.EmailTextTerm.Property.ATTACHMENT_NAME:
+            return matches_string_text(email.get_searchable_attachment_list(), needle);
+        case Geary.SearchQuery.EmailTextTerm.Property.ALL:
+            return (
+                matches_subject_text(email.subject, needle) ||
+                matches_addresses_text(email.from, needle) ||
+                matches_addresses_text(email.to, needle) ||
+                matches_addresses_text(email.cc, needle) ||
+                matches_addresses_text(email.bcc, needle) ||
+                matches_preview_text(email.preview, needle) ||
+                matches_string_text(email.get_searchable_attachment_list(), needle)
+            );
+        default:
+            return false;
+        }
+    }
+
+    private static bool matches_subject_text(Geary.RFC822.Subject? value, string needle) {
+        return value != null && value.to_searchable_string().down().contains(needle);
+    }
+
+    private static bool matches_preview_text(Geary.RFC822.Text? value, string needle) {
+        if (value == null) {
+            return false;
+        }
+        string haystack = ((string) value.buffer.get_bytes().get_data()).make_valid().down();
+        return haystack.contains(needle);
+    }
+
+    private static bool matches_addresses_text(Geary.RFC822.MailboxAddresses? value, string needle) {
+        return value != null && value.to_searchable_string().down().contains(needle);
+    }
+
+    private static bool matches_string_text(string? value, string needle) {
+        return !String.is_empty(value) && value.down().contains(needle);
     }
 
     private void queue_prefetch_refresh() {

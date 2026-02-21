@@ -48,13 +48,16 @@ internal class Application.NotificationPluginContext :
     private class MonitorInformation : Geary.BaseObject {
 
         public Geary.Folder folder;
+        public AccountContext context;
         public GLib.Cancellable? cancellable = null;
         public Gee.Set<Geary.EmailIdentifier> recent_ids =
             new Gee.HashSet<Geary.EmailIdentifier>();
 
         public MonitorInformation(Geary.Folder folder,
+                                  AccountContext context,
                                   GLib.Cancellable? cancellable) {
             this.folder = folder;
+            this.context = context;
             this.cancellable = cancellable;
         }
     }
@@ -110,15 +113,19 @@ internal class Application.NotificationPluginContext :
         // window, it's focused, the folder is selected, and the
         // conversation list is at the top.
         Geary.Folder? folder = this.globals.folders.to_engine_folder(target);
+        if (folder == null || !this.folder_information.has_key(folder)) {
+            return false;
+        }
+        if (folder.account.information.account_backend ==
+            Geary.AccountBackend.MICROSOFT_GRAPH) {
+            return true;
+        }
         MainWindow? window = this.application.last_active_main_window;
         return (
-            folder != null &&
-            this.folder_information.has_key(folder) && (
-                window == null ||
-                !window.has_toplevel_focus ||
-                window.selected_folder != folder ||
-                window.conversation_list_view.vadjustment.value > 0.0
-            )
+            window == null ||
+            !window.has_toplevel_focus ||
+            window.selected_folder != folder ||
+            window.conversation_list_view.vadjustment.value > 0.0
         );
     }
 
@@ -151,10 +158,12 @@ internal class Application.NotificationPluginContext :
      */
     public void start_monitoring_folder(Plugin.Folder target) {
         Geary.Folder? folder = this.globals.folders.to_engine_folder(target);
-        AccountContext? context =
-            this.application.controller.get_context_for_account(
+        AccountContext? context = null;
+        if (folder != null) {
+            context = this.application.controller.get_context_for_account(
                 folder.account.information
             );
+        }
         if (folder != null &&
             context != null &&
             !this.folder_information.has_key(folder)) {
@@ -164,7 +173,7 @@ internal class Application.NotificationPluginContext :
             folder.email_removed.connect(on_email_removed);
 
             this.folder_information.set(
-                folder, new MonitorInformation(folder, context.cancellable)
+                folder, new MonitorInformation(folder, context, context.cancellable)
             );
         }
     }
@@ -249,16 +258,12 @@ internal class Application.NotificationPluginContext :
                               Gee.Collection<Geary.EmailIdentifier> delta) {
         Plugin.Folder folder =
             this.globals.folders.to_plugin_folder(info.folder);
-        AccountContext? context =
-            this.application.controller.get_context_for_account(
-                info.folder.account.information
-            );
-        if (arrived && context != null) {
+        if (arrived) {
             this._total_new_messages += delta.size;
             new_messages_arrived(
                 folder,
                 info.recent_ids.size,
-                this.globals.email.to_plugin_ids(delta, context)
+                this.globals.email.to_plugin_ids(delta, info.context)
             );
         } else {
             this._total_new_messages -= delta.size;

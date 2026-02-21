@@ -820,8 +820,19 @@ public class ConversationListBox : Gtk.ListBox, Geary.BaseInterface {
         }
 
         if (first_interesting == null) {
-            // No interesting messages found so use the last one.
-            first_interesting = uninteresting.remove_at(0);
+            // No interesting messages found so prefer the latest
+            // non-sent message, falling back to the latest one.
+            int target_index = -1;
+            for (int i = 0; i < uninteresting.size; i++) {
+                if (!is_sent_by_account(uninteresting.get(i))) {
+                    target_index = i;
+                    break;
+                }
+            }
+            if (target_index < 0) {
+                target_index = 0;
+            }
+            first_interesting = uninteresting.remove_at(target_index);
         }
         EmailRow interesting_row = add_email(first_interesting);
 
@@ -1154,16 +1165,7 @@ public class ConversationListBox : Gtk.ListBox, Geary.BaseInterface {
 
     // Constructs a row and view for an email, adds it to the listbox
     private EmailRow add_email(Geary.Email email, bool append_row = true) {
-        bool is_sent = false;
-        Geary.Account account = this.conversation.base_folder.account;
-        if (email.from != null) {
-            foreach (Geary.RFC822.MailboxAddress from in email.from) {
-                if (account.information.has_sender_mailbox(from)) {
-                    is_sent = true;
-                    break;
-                }
-            }
-        }
+        bool is_sent = is_sent_by_account(email);
 
         ConversationEmail view = new ConversationEmail(
             conversation,
@@ -1318,6 +1320,19 @@ public class ConversationListBox : Gtk.ListBox, Geary.BaseInterface {
             email.is_flagged().is_certain() ||
             is_draft(email)
         );
+    }
+
+    /** Determines if an email was sent by this account. */
+    private bool is_sent_by_account(Geary.Email email) {
+        Geary.Account account = this.conversation.base_folder.account;
+        if (email.from != null) {
+            foreach (Geary.RFC822.MailboxAddress from in email.from) {
+                if (account.information.has_sender_mailbox(from)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /** Determines if an email should be considered to be a draft. */

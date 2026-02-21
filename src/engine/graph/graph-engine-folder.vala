@@ -198,8 +198,12 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         Geary.Folder.ListFlags flags,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        check_open();
-        yield ensure_loaded(cancellable);
+        bool is_open_now = is_open();
+        if (is_open_now) {
+            yield ensure_loaded(cancellable);
+        } else if (!this.is_loaded) {
+            throw new Geary.EngineError.OPEN_REQUIRED("%s not open", to_string());
+        }
 
         Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
         if (graph == null) {
@@ -216,7 +220,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         if (!email.fields.fulfills(required_fields) &&
-            required_fields.requires_any(Geary.Email.Field.BODY | Geary.Email.Field.HEADER)) {
+            required_fields.requires_any(Geary.Email.Field.BODY | Geary.Email.Field.HEADER) &&
+            is_open_now) {
             Geary.Graph.Client.Message full = yield this.client.fetch_message(
                 graph.graph_id, cancellable
             );
