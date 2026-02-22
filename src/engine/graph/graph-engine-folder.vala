@@ -503,8 +503,21 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         bool had_loaded = this.is_loaded;
         int previous_total = this._properties.email_total;
         Gee.Set<string> refreshed_ids = new Gee.HashSet<string>();
+        Gee.ArrayList<Geary.EmailIdentifier> appended = new Gee.ArrayList<Geary.EmailIdentifier>();
         Gee.ArrayList<Geary.EmailIdentifier> inserted = new Gee.ArrayList<Geary.EmailIdentifier>();
         Gee.ArrayList<Geary.EmailIdentifier> removed = new Gee.ArrayList<Geary.EmailIdentifier>();
+
+        // Find the newest email timestamp in the existing cache
+        int64 newest_cached_timestamp = 0;
+        if (had_loaded && this.email_cache.size > 0) {
+            foreach (Geary.Email cached_email in this.email_cache) {
+                Geary.Graph.EmailIdentifier? graph_id = cached_email.id as Geary.Graph.EmailIdentifier;
+                if (graph_id != null && graph_id.sort_order > newest_cached_timestamp) {
+                    newest_cached_timestamp = graph_id.sort_order;
+                }
+            }
+        }
+
         foreach (Geary.Graph.Client.Message message in messages) {
             if (String.is_empty(message.id)) {
                 continue;
@@ -514,7 +527,23 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             Geary.Email email = build_email(message, existing);
             if (existing == null) {
                 this.email_cache.add(email);
-                inserted.add(email.id);
+
+                // Determine if this is a new email (appended) or old email (inserted)
+                if (had_loaded) {
+                    int64 email_timestamp = message.received_at != null
+                        ? message.received_at.to_unix()
+                        : 0;
+                    if (email_timestamp > newest_cached_timestamp) {
+                        // New email - should trigger notifications
+                        appended.add(email.id);
+                    } else {
+                        // Old email being backfilled - no notifications
+                        inserted.add(email.id);
+                    }
+                } else {
+                    // First load - all emails are inserted (old), no notifications
+                    inserted.add(email.id);
+                }
             }
             this.email_by_id.set(message.id, email);
             this.message_by_id.set(message.id, message);
@@ -548,13 +577,18 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 : Geary.Folder.CountChangeReason.REMOVED;
             notify_email_count_changed(this._properties.email_total, reason);
         }
-        if (!inserted.is_empty) {
-            if (!had_loaded) {
-                notify_email_inserted(inserted);
-            } else {
-                notify_email_locally_inserted(inserted);
-            }
+
+        // Notify appended first (new emails that trigger notifications)
+        if (!appended.is_empty) {
+            notify_email_appended(appended);
+            notify_email_locally_appended(appended);
         }
+
+        // Then notify inserted (old backfilled emails, no notifications)
+        if (!inserted.is_empty) {
+            notify_email_inserted(inserted);
+        }
+
         if (!removed.is_empty) {
             notify_email_removed(removed);
         }
