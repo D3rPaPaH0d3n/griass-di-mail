@@ -533,11 +533,12 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     int64 email_timestamp = message.received_at != null
                         ? message.received_at.to_unix()
                         : 0;
-                    if (email_timestamp > newest_cached_timestamp) {
-                        // New email - should trigger notifications
+                    bool is_unread = !message.is_read;
+                    if (email_timestamp > newest_cached_timestamp && is_unread) {
+                        // New unread email - should trigger notifications
                         appended.add(email.id);
                     } else {
-                        // Old email being backfilled - no notifications
+                        // Old email being backfilled or read email - no notifications
                         inserted.add(email.id);
                     }
                 } else {
