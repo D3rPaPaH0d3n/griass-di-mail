@@ -10,7 +10,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
     Geary.FolderSupport.Move,
     Geary.FolderSupport.Archive,
     Geary.FolderSupport.Remove,
-    Geary.FolderSupport.Copy {
+    Geary.FolderSupport.Copy,
+    Geary.FolderSupport.Empty {
 
     private const int MIN_REFRESH_BATCH = 25;
     private const int MAX_REFRESH_BATCH = 500;
@@ -458,6 +459,21 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         removed = remove_cached_emails(removed);
         if (!removed.is_empty) {
             notify_email_removed(removed);
+        }
+    }
+
+    public async void empty_folder_async(GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        check_open();
+        yield ensure_loaded(cancellable);
+
+        Gee.ArrayList<Geary.EmailIdentifier> ids = new Gee.ArrayList<Geary.EmailIdentifier>();
+        foreach (Geary.Email email in this.email_cache) {
+            ids.add(email.id);
+        }
+
+        if (!ids.is_empty) {
+            yield remove_email_async(ids, cancellable);
         }
     }
 
