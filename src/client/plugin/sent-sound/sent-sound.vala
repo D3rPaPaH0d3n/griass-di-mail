@@ -33,6 +33,7 @@ public class Plugin.SentSound : PluginBase, EmailExtension {
 
         this.store = yield this.email.get_email_store();
         this.store.email_sent.connect(on_sent);
+        this.store.email_sent_simple.connect(on_sent);
 
         if (!is_startup) {
             play_sound();
@@ -41,6 +42,7 @@ public class Plugin.SentSound : PluginBase, EmailExtension {
 
     public override async void deactivate(bool is_shutdown) throws GLib.Error {
         this.store.email_sent.disconnect(on_sent);
+        this.store.email_sent_simple.disconnect(on_sent);
         this.store = null;
 
         this.context = null;

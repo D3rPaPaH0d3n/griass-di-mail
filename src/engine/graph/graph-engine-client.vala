@@ -33,6 +33,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     internal class MailFolder : Geary.BaseObject {
         public string id = "";
         public string display_name = "";
+        public string well_known_name = "";
+        public bool is_hidden = false;
     }
 
 
@@ -244,6 +246,83 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         );
     }
 
+    /**
+     * Creates a message in the Outlook Outbox folder without sending it.
+     *
+     * Returns the Graph message ID of the staged message, which can
+     * later be passed to {@link send_message} to deliver it, or to
+     * {@link delete_message} to discard it (undo).
+     */
+    public async string create_message_in_outbox(
+        Geary.ComposedEmail composed,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        Json.Builder builder = new Json.Builder();
+        builder.begin_object();
+        if (composed.subject != null) {
+            builder.set_member_name("subject");
+            builder.add_string_value(composed.subject.to_string());
+        }
+        builder.set_member_name("body");
+        builder.begin_object();
+        if (!String.is_empty(composed.body_html)) {
+            builder.set_member_name("contentType");
+            builder.add_string_value("HTML");
+            builder.set_member_name("content");
+            builder.add_string_value(composed.body_html);
+        } else {
+            builder.set_member_name("contentType");
+            builder.add_string_value("Text");
+            builder.set_member_name("content");
+            builder.add_string_value(composed.body_text ?? "");
+        }
+        builder.end_object();
+
+        append_mailbox_addresses_to_builder(
+            builder, "toRecipients", composed.to
+        );
+        append_mailbox_addresses_to_builder(
+            builder, "ccRecipients", composed.cc
+        );
+        append_mailbox_addresses_to_builder(
+            builder, "bccRecipients", composed.bcc
+        );
+        append_mailbox_addresses_to_builder(
+            builder, "replyTo", composed.reply_to
+        );
+        builder.end_object();
+
+        Json.Object result = yield request_json(
+            "POST",
+            "/me/mailFolders/outbox/messages",
+            null,
+            cancellable,
+            to_json(builder)
+        );
+        string? id = get_string_member(result, "id");
+        if (String.is_empty(id)) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "Graph: create_message_in_outbox returned no message id"
+            );
+        }
+        return id;
+    }
+
+    /**
+     * Sends a message that was previously staged in the Outbox.
+     *
+     * The message is delivered and automatically moved to Sent Items
+     * by the server.
+     */
+    public async void send_message(string message_id,
+                                   GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        string path = "/me/messages/%s/send".printf(
+            GLib.Uri.escape_string(message_id, null, false)
+        );
+        yield request_no_content("POST", path, null, cancellable);
+    }
+
     public async void send_composed_email(Geary.ComposedEmail composed,
                                           bool save_to_sent_items,
                                           GLib.Cancellable? cancellable = null)
@@ -402,6 +481,85 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         folder.id = get_string_member(root, "id") ?? "";
         folder.display_name = get_string_member(root, "displayName") ?? display_name;
         return folder;
+    }
+
+    public async Gee.List<MailFolder> list_mail_folders(
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        // Try progressively simpler queries, as not all tenants/API versions
+        // support $select with wellKnownName/isHidden.
+        string[] queries = {
+            "$top=100&$select=id,displayName,wellKnownName,isHidden",
+            "$top=100&$select=id,displayName,wellKnownName",
+            "$top=100&$select=id,displayName",
+            "$top=100",
+        };
+
+        Json.Object? root = null;
+        foreach (string query in queries) {
+            try {
+                root = yield request_json(
+                    "GET",
+                    "/me/mailFolders",
+                    query,
+                    cancellable
+                );
+                break;
+            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
+                if (!err.message.contains("(400)")) {
+                    throw err;
+                }
+                debug("Graph: list_mail_folders query failed (400), trying simpler query: %s", query);
+            }
+        }
+
+        if (root == null) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "Graph: all list_mail_folders queries failed"
+            );
+        }
+
+        Gee.ArrayList<MailFolder> folders = new Gee.ArrayList<MailFolder>();
+
+        do {
+            if (root.has_member("value")) {
+                Json.Array values = root.get_array_member("value");
+                for (uint i = 0; i < values.get_length(); i++) {
+                    Json.Node node = values.get_element(i);
+                    if (node.get_node_type() != Json.NodeType.OBJECT) {
+                        continue;
+                    }
+                    Json.Object obj = values.get_object_element(i);
+                    string? id = get_string_member(obj, "id");
+                    if (String.is_empty(id)) {
+                        continue;
+                    }
+                    MailFolder folder = new MailFolder();
+                    folder.id = id;
+                    folder.display_name = get_string_member(obj, "displayName") ?? "";
+                    folder.well_known_name = get_string_member(obj, "wellKnownName") ?? "";
+                    folder.is_hidden = get_bool_member(obj, "isHidden", false);
+                    folders.add(folder);
+                }
+            }
+
+            string? next_link = null;
+            if (root.has_member("@odata.nextLink")) {
+                next_link = get_string_member(root, "@odata.nextLink");
+            }
+            if (!String.is_empty(next_link)) {
+                try {
+                    root = yield request_json_url(next_link, cancellable);
+                } catch (GLib.Error err) {
+                    debug("Graph: Failed to fetch next page of mail folders: %s", err.message);
+                    break;
+                }
+            } else {
+                root = null;
+            }
+        } while (root != null);
+
+        return folders;
     }
 
     private async Json.Object request_json_url(string url,

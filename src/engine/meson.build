@@ -25,6 +25,7 @@ engine_vala_sources = files(
   'api/geary-folder.vala',
   'api/geary-folder-path.vala',
   'api/geary-folder-properties.vala',
+  'api/geary-account-support-queue-send.vala',
   'api/geary-folder-supports-archive.vala',
   'api/geary-folder-supports-copy.vala',
   'api/geary-folder-supports-create.vala',

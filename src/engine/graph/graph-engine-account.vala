@@ -5,10 +5,40 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.Account : Geary.Account {
+internal class Geary.Graph.Account : Geary.Account,
+    Geary.AccountSupport.QueueSend {
 
     private const string REMOTE_ROOT_LABEL = "$geary-graph";
     private const uint REFRESH_LOADED_FOLDERS_SEC = 15;
+
+    // Well-known names used by Microsoft Graph for the built-in special folders.
+    // These are already registered as hardcoded folders, so we skip them when
+    // syncing custom (user-created) folders from the API.
+    private const string[] BUILTIN_WELL_KNOWN_NAMES = {
+        "inbox",
+        "sentitems",
+        "drafts",
+        "deleteditems",
+        "junkemail",
+        "archive",
+        "outbox",
+    };
+
+    // Display names that Microsoft Graph uses for built-in folders in English
+    // and a selection of other locales. Used as a secondary filter when the
+    // wellKnownName field is absent from the API response.
+    private const string[] BUILTIN_DISPLAY_NAMES = {
+        // English
+        "inbox",
+        "sent items",
+        "sent",
+        "drafts",
+        "deleted items",
+        "junk email",
+        "junk",
+        "archive",
+        "outbox",
+    };
 
     private Geary.FolderRoot remote_folder_root =
         new Geary.FolderRoot(REMOTE_ROOT_LABEL, false);
@@ -61,6 +91,7 @@ internal class Geary.Graph.Account : Geary.Account {
         add_folder("Trash", "deleteditems", Geary.Folder.SpecialUse.TRASH);
         add_folder("Junk", "junkemail", Geary.Folder.SpecialUse.JUNK);
         add_folder("Archive", "archive", Geary.Folder.SpecialUse.ARCHIVE);
+        add_folder("Outbox", "outbox", Geary.Folder.SpecialUse.OUTBOX);
     }
 
     public override async void open_async(GLib.Cancellable? cancellable = null)
@@ -73,6 +104,15 @@ internal class Geary.Graph.Account : Geary.Account {
         yield this.outgoing.start(cancellable);
 
         this.is_account_open = true;
+
+        // Sync custom folders from the server before notifying availability,
+        // so the full folder list is presented to the UI in one shot.
+        try {
+            yield sync_custom_folders_async(cancellable);
+        } catch (GLib.Error err) {
+            debug("Graph: Failed to sync custom folders on open: %s", err.message);
+        }
+
         notify_folders_available_unavailable(
             sort_by_path(this.remote_folders.values),
             null
@@ -489,15 +529,69 @@ internal class Geary.Graph.Account : Geary.Account {
         Geary.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        yield this.client.send_composed_email(
-            composed,
-            true,
-            cancellable
-        );
+        string message_id = yield save_email(composed, cancellable);
+        yield queue_email(message_id, cancellable);
+    }
+
+    /**
+     * Stages a composed email into Outlook's Outbox folder without sending it.
+     *
+     * Returns the Graph message ID of the staged message. Pass it to
+     * {@link queue_email} to deliver it, or to {@link discard_staged_email}
+     * to remove it (undo).
+     */
+    public async string save_email(
+        Geary.ComposedEmail composed,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        string message_id =
+            yield this.client.create_message_in_outbox(composed, cancellable);
+        // Refresh Outbox so the staged message appears in the folder view
+        Geary.Graph.Folder? outbox =
+            this.get_graph_special_folder(Geary.Folder.SpecialUse.OUTBOX);
+        if (outbox != null && outbox.is_cache_loaded) {
+            yield outbox.refresh_async(true, cancellable);
+        }
+        return message_id;
+    }
+
+    /**
+     * Sends a message previously staged by {@link save_email}.
+     *
+     * The server delivers the message and moves it to Sent Items automatically.
+     */
+    public async void queue_email(
+        string message_id,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        yield this.client.send_message(message_id, cancellable);
+        email_sent();
+        // Refresh Sent so the newly-delivered message shows up
         Geary.Graph.Folder? sent =
             this.get_graph_special_folder(Geary.Folder.SpecialUse.SENT);
         if (sent != null && sent.is_cache_loaded) {
             yield sent.refresh_async(true, cancellable);
+        }
+        // Refresh Outbox so the now-sent message disappears
+        Geary.Graph.Folder? outbox =
+            this.get_graph_special_folder(Geary.Folder.SpecialUse.OUTBOX);
+        if (outbox != null && outbox.is_cache_loaded) {
+            yield outbox.refresh_async(true, cancellable);
+        }
+    }
+
+    /**
+     * Discards a message previously staged by {@link save_email} (undo send).
+     */
+    public async void discard_staged_email(
+        string message_id,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        yield this.client.delete_message(message_id, cancellable);
+        Geary.Graph.Folder? outbox =
+            this.get_graph_special_folder(Geary.Folder.SpecialUse.OUTBOX);
+        if (outbox != null && outbox.is_cache_loaded) {
+            yield outbox.refresh_async(true, cancellable);
         }
     }
 
@@ -551,6 +645,119 @@ internal class Geary.Graph.Account : Geary.Account {
             this.special_folders.set(use, folder);
         }
         return folder;
+    }
+
+    private void remove_folder(Geary.FolderPath path) {
+        Geary.Folder? folder = this.remote_folders.get(path);
+        if (folder == null) {
+            return;
+        }
+        this.remote_folders.unset(path);
+        notify_folders_available_unavailable(
+            null,
+            sort_by_path(Collection.single(folder))
+        );
+        notify_folders_deleted(sort_by_path(Collection.single(folder)));
+    }
+
+    private async void sync_custom_folders_async(
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        Gee.List<Geary.Graph.Client.MailFolder> server_folders =
+            yield this.client.list_mail_folders(cancellable);
+
+        // Build a set of well-known names to skip
+        Gee.HashSet<string> builtin_names = new Gee.HashSet<string>();
+        foreach (string name in BUILTIN_WELL_KNOWN_NAMES) {
+            builtin_names.add(name);
+        }
+
+        // Build a set of built-in display names for secondary filtering
+        Gee.HashSet<string> builtin_display_names = new Gee.HashSet<string>();
+        foreach (string name in BUILTIN_DISPLAY_NAMES) {
+            builtin_display_names.add(name);
+        }
+
+        // Build a map of graph_id -> server folder for the custom folders
+        // (those whose wellKnownName is empty or not in our builtins list)
+        Gee.HashMap<string,Geary.Graph.Client.MailFolder> server_custom =
+            new Gee.HashMap<string,Geary.Graph.Client.MailFolder>();
+        foreach (Geary.Graph.Client.MailFolder mf in server_folders) {
+            if (mf.is_hidden) {
+                continue;
+            }
+            // Primary filter: skip by wellKnownName when the API returned it
+            if (!String.is_empty(mf.well_known_name) &&
+                builtin_names.contains(mf.well_known_name.down())) {
+                continue;
+            }
+            // Secondary filter: when wellKnownName is absent, skip by displayName
+            // so that built-in folders whose API response omitted the field are
+            // still excluded (e.g. "Sent Items", "Deleted Items", "Outbox", …).
+            if (String.is_empty(mf.well_known_name) &&
+                builtin_display_names.contains(mf.display_name.down())) {
+                continue;
+            }
+            if (String.is_empty(mf.display_name)) {
+                continue;
+            }
+            server_custom.set(mf.id, mf);
+        }
+
+        // Build a map of graph_id -> path for currently tracked custom folders
+        // (those not bound to a special use, i.e. not one of the hardcoded builtins)
+        Gee.HashMap<string,Geary.FolderPath> local_custom =
+            new Gee.HashMap<string,Geary.FolderPath>();
+        foreach (Geary.Folder folder in this.remote_folders.values) {
+            Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
+            if (graph != null && graph.used_as == Geary.Folder.SpecialUse.NONE) {
+                local_custom.set(graph.graph_folder_id, folder.path);
+            }
+        }
+
+        // Add folders present on the server but not yet tracked locally
+        Gee.ArrayList<Geary.Folder> added = new Gee.ArrayList<Geary.Folder>();
+        foreach (Geary.Graph.Client.MailFolder mf in server_custom.values) {
+            if (!local_custom.has_key(mf.id)) {
+                // Guard against a display_name that collides with an already-registered
+                // folder path (e.g. a user folder literally named "Inbox").
+                Geary.FolderPath candidate =
+                    this.remote_folder_root.get_child(mf.display_name);
+                if (this.remote_folders.has_key(candidate)) {
+                    debug(
+                        "Graph: Skipping custom folder '%s' (%s): path already registered",
+                        mf.display_name, mf.id
+                    );
+                    continue;
+                }
+                Geary.Graph.Folder folder = add_folder(
+                    mf.display_name,
+                    mf.id,
+                    Geary.Folder.SpecialUse.NONE
+                );
+                added.add(folder);
+                debug("Graph: Added custom folder '%s' (%s)", mf.display_name, mf.id);
+            }
+        }
+
+        // Remove folders that no longer exist on the server
+        foreach (var entry in local_custom.entries) {
+            if (!server_custom.has_key(entry.key)) {
+                Geary.FolderPath path = entry.value;
+                debug("Graph: Removing custom folder '%s' (no longer on server)", path.to_string());
+                remove_folder(path);
+            }
+        }
+
+        // Notify the UI about newly discovered folders (only after account is open,
+        // otherwise open_async itself will fire the initial availability notification)
+        if (this.is_account_open && !added.is_empty) {
+            notify_folders_available_unavailable(
+                sort_by_path(added),
+                null
+            );
+            notify_folders_created(sort_by_path(added));
+        }
     }
 
     private static bool matches_message_id(Geary.Email email, string needle) {
@@ -717,6 +924,16 @@ internal class Geary.Graph.Account : Geary.Account {
     }
 
     private async void refresh_loaded_folders_for_prefetch() throws GLib.Error {
+        // Re-sync custom folders on every refresh cycle so that folders created
+        // or deleted by another client (e.g. OWA, Outlook) are reflected here.
+        if (this.is_account_open) {
+            try {
+                yield sync_custom_folders_async(null);
+            } catch (GLib.Error err) {
+                debug("Graph: Failed to sync custom folders during refresh: %s", err.message);
+            }
+        }
+
         // When running in background (account closed), only refresh the Inbox
         // to avoid unnecessary work. When account is open, refresh all loaded
         // folders for proper synchronization.

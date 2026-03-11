@@ -30,6 +30,14 @@ public interface Plugin.EmailStore : Geary.BaseObject {
     /** Emitted when an email has been sent. */
     public signal void email_sent(Email sent);
 
+    /**
+     * Emitted when an email has been sent, without an email object.
+     *
+     * This is used by account backends that do not have a
+     * {@link Email} object available at send time (e.g. Graph/Outlook).
+     */
+    public signal void email_sent_simple();
+
     /** Returns the email with the given identifiers. */
     public async abstract Gee.Collection<Email> get_email(
         Gee.Collection<EmailIdentifier> ids,

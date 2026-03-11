@@ -90,6 +90,10 @@ internal class Application.EmailPluginContext :
         }
     }
 
+    internal void notify_email_sent() {
+        this.email.email_sent_simple();
+    }
+
     internal void destroy() {
         this.globals.email.destroy_email_store(this.email);
     }
