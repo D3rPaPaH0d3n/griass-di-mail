@@ -37,6 +37,15 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         public bool is_hidden = false;
     }
 
+    internal class DeltaResult : Geary.BaseObject {
+        // Messages that were added or updated
+        public Gee.List<Message> changed = new Gee.ArrayList<Message>();
+        // Graph message IDs that were deleted/moved out of the folder
+        public Gee.Set<string> removed = new Gee.HashSet<string>();
+        // The deltaLink to use on the next poll call
+        public string delta_link = "";
+    }
+
 
     private Geary.AccountInformation account;
     private Soup.Session session;
@@ -244,6 +253,104 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             body.get_data(),
             (size_t) body.get_size()
         );
+    }
+
+    /**
+     * Polls the inbox for changes since the last delta call.
+     *
+     * On the first call pass null for delta_link; the method will issue a
+     * full delta sync to establish a baseline and return a delta_link for
+     * future calls.  On subsequent calls pass the delta_link from the
+     * previous result; only changes since that point are returned.
+     *
+     * The returned DeltaResult.delta_link must be saved and passed back
+     * on the next call.
+     */
+    public async DeltaResult delta_messages(
+        string folder_id,
+        string? delta_link,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        // Build the initial URL: either the saved deltaLink or a fresh
+        // delta request that selects only the fields we need.
+        string url;
+        if (!String.is_empty(delta_link)) {
+            url = delta_link;
+        } else {
+            url = BASE_URI
+                + "/me/mailFolders/%s/messages/delta".printf(
+                    GLib.Uri.escape_string(folder_id, null, false))
+                + "?$select=id,conversationId,subject,internetMessageId,"
+                + "receivedDateTime,from,toRecipients,ccRecipients,"
+                + "bccRecipients,bodyPreview,isRead,flag,size"
+                + "&$orderby=receivedDateTime%%20desc"
+                + "&changeType=created";
+        }
+
+        DeltaResult result = new DeltaResult();
+
+        // Follow nextLink pages until we get a deltaLink.
+        // The deltaLink signals that we have consumed all pending changes.
+        int page = 0;
+        int max_pages = 50;
+        while (!String.is_empty(url) && page < max_pages) {
+            page++;
+            Json.Object root;
+            try {
+                root = yield request_json_url(url, cancellable);
+            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
+                // A 410 Gone means our deltaLink has expired; clear it so
+                // the caller can restart from scratch on the next poll.
+                if (err.message.contains("(410)")) {
+                    debug("Graph: delta link expired for folder %s, resetting", folder_id);
+                    result.delta_link = "";
+                    return result;
+                }
+                throw err;
+            }
+
+            if (root.has_member("value")) {
+                Json.Array values = root.get_array_member("value");
+                for (uint i = 0; i < values.get_length(); i++) {
+                    Json.Node node = values.get_element(i);
+                    if (node.get_node_type() != Json.NodeType.OBJECT) {
+                        continue;
+                    }
+                    Json.Object obj = values.get_object_element(i);
+
+                    // Deleted / moved-out items carry @removed instead of
+                    // normal message fields.
+                    if (obj.has_member("@removed")) {
+                        string? removed_id = get_string_member(obj, "id");
+                        if (!String.is_empty(removed_id)) {
+                            result.removed.add(removed_id);
+                        }
+                        continue;
+                    }
+
+                    Message parsed = parse_message(obj, false);
+                    if (!String.is_empty(parsed.id)) {
+                        result.changed.add(parsed);
+                    }
+                }
+            }
+
+            // Prefer deltaLink (end of changes) over nextLink (more pages).
+            string? next = null;
+            if (root.has_member("@odata.deltaLink")) {
+                next = get_string_member(root, "@odata.deltaLink");
+                if (!String.is_empty(next)) {
+                    result.delta_link = next;
+                    break;
+                }
+            }
+            if (root.has_member("@odata.nextLink")) {
+                next = get_string_member(root, "@odata.nextLink");
+            }
+            url = String.is_empty(next) ? "" : next;
+        }
+
+        return result;
     }
 
     /**

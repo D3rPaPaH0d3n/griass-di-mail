@@ -10,6 +10,7 @@ internal class Geary.Graph.Account : Geary.Account,
 
     private const string REMOTE_ROOT_LABEL = "$geary-graph";
     private const uint REFRESH_LOADED_FOLDERS_SEC = 15;
+    private const uint INBOX_POLL_SEC = 30;
 
     // Well-known names used by Microsoft Graph for the built-in special folders.
     // These are already registered as hardcoded folders, so we skip them when
@@ -51,6 +52,8 @@ internal class Geary.Graph.Account : Geary.Account,
 
     private Geary.Graph.Client client;
     private Geary.TimeoutManager refresh_loaded_folders_timer;
+    private Geary.TimeoutManager inbox_poll_timer;
+    private bool inbox_poll_running = false;
     private bool is_account_open = false;
     private bool prefetch_refresh_running = false;
     private bool prefetch_refresh_pending = false;
@@ -81,6 +84,12 @@ internal class Geary.Graph.Account : Geary.Account,
         );
         this.refresh_loaded_folders_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
         this.refresh_loaded_folders_timer.start();
+        this.inbox_poll_timer = new Geary.TimeoutManager.seconds(
+            INBOX_POLL_SEC,
+            () => { queue_inbox_poll(); }
+        );
+        this.inbox_poll_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
+        this.inbox_poll_timer.start();
         this.information.notify["prefetch-period-days"].connect((obj, pspec) => {
             queue_prefetch_refresh();
         });
@@ -901,6 +910,33 @@ internal class Geary.Graph.Account : Geary.Account,
 
     private static bool matches_string_text(string? value, string needle) {
         return !String.is_empty(value) && value.down().contains(needle);
+    }
+
+    private void queue_inbox_poll() {
+        if (this.inbox_poll_running) {
+            return;
+        }
+        this.inbox_poll_running = true;
+        poll_inbox_delta.begin((obj, res) => {
+            try {
+                poll_inbox_delta.end(res);
+            } catch (GLib.Error err) {
+                debug("Graph: inbox delta poll error: %s", err.message);
+            }
+            this.inbox_poll_running = false;
+        });
+    }
+
+    private async void poll_inbox_delta() throws GLib.Error {
+        Geary.Graph.Folder? inbox =
+            this.get_graph_special_folder(Geary.Folder.SpecialUse.INBOX);
+        if (inbox == null) {
+            return;
+        }
+        // Ensure the inbox cache is loaded before delta-polling so we
+        // can distinguish genuinely new messages from baseline ones.
+        inbox.load_persisted_cache();
+        yield inbox.poll_delta_async(null);
     }
 
     private void queue_prefetch_refresh() {

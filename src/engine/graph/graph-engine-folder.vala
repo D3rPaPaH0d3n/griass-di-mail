@@ -32,6 +32,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         new Gee.HashMap<string,Geary.Graph.Client.Message>();
     private bool is_loaded = false;
     private string? cache_path = null;
+    private string? delta_link = null;
+    private bool delta_polling = false;
 
 
     public override Geary.Account account { get { return this.owner; } }
@@ -501,6 +503,144 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         if (destination_folder.is_cache_loaded) {
             yield destination_folder.refresh_async(true, cancellable);
         }
+    }
+
+    /**
+     * Polls for new messages using the Graph delta API.
+     *
+     * Much cheaper than refresh_async because it only transfers messages
+     * that changed since the last poll.  On the first call (no delta_link
+     * yet) it does a full delta sync to establish a baseline; subsequent
+     * calls only fetch incremental changes.
+     *
+     * Returns true if any new messages were appended (i.e. the caller may
+     * want to notify the user).
+     */
+    internal async bool poll_delta_async(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        if (this.delta_polling) {
+            return false;
+        }
+        this.delta_polling = true;
+        bool had_new = false;
+        try {
+            Geary.Graph.Client.DeltaResult delta =
+                yield this.client.delta_messages(
+                    this.folder_id, this.delta_link, cancellable
+                );
+
+            // If the delta link expired the server returned an empty result
+            // with a blank delta_link; save it (null resets for next call)
+            // and return early — a full refresh will happen on next cycle.
+            if (String.is_empty(delta.delta_link)) {
+                this.delta_link = null;
+                persist_cached_messages();
+                return false;
+            }
+
+            bool had_loaded = this.is_loaded;
+            int previous_total = this._properties.email_total;
+
+            // Find the newest timestamp in the current cache so we can
+            // distinguish genuinely new messages from backfilled ones.
+            int64 newest_cached_timestamp = 0;
+            if (had_loaded && !this.email_cache.is_empty) {
+                foreach (Geary.Email e in this.email_cache) {
+                    Geary.Graph.EmailIdentifier? gid = e.id as Geary.Graph.EmailIdentifier;
+                    if (gid != null && gid.sort_order > newest_cached_timestamp) {
+                        newest_cached_timestamp = gid.sort_order;
+                    }
+                }
+            }
+
+            Gee.ArrayList<Geary.EmailIdentifier> appended =
+                new Gee.ArrayList<Geary.EmailIdentifier>();
+            Gee.ArrayList<Geary.EmailIdentifier> inserted =
+                new Gee.ArrayList<Geary.EmailIdentifier>();
+            Gee.HashMap<Geary.EmailIdentifier, Geary.EmailFlags> flags_changed =
+                new Gee.HashMap<Geary.EmailIdentifier, Geary.EmailFlags>();
+
+            foreach (Geary.Graph.Client.Message message in delta.changed) {
+                if (String.is_empty(message.id)) {
+                    continue;
+                }
+                Geary.Email? existing = this.email_by_id.get(message.id);
+                Geary.EmailFlags? old_flags = null;
+                if (existing != null && existing.email_flags != null) {
+                    old_flags = new Geary.EmailFlags();
+                    old_flags.add_all(existing.email_flags);
+                }
+
+                Geary.Email email = build_email(message, existing);
+                if (existing == null) {
+                    this.email_cache.add(email);
+                    if (had_loaded) {
+                        int64 ts = message.received_at != null
+                            ? message.received_at.to_unix() : 0;
+                        if (ts > newest_cached_timestamp) {
+                            appended.add(email.id);
+                        } else {
+                            inserted.add(email.id);
+                        }
+                    } else {
+                        inserted.add(email.id);
+                    }
+                } else if (old_flags != null && email.email_flags != null) {
+                    if (!old_flags.equal_to(email.email_flags)) {
+                        flags_changed.set(email.id, email.email_flags);
+                    }
+                }
+                this.email_by_id.set(message.id, email);
+                this.message_by_id.set(message.id, message);
+            }
+
+            // Remove messages deleted or moved out of the folder
+            Gee.ArrayList<Geary.EmailIdentifier> removed =
+                new Gee.ArrayList<Geary.EmailIdentifier>();
+            foreach (string removed_id in delta.removed) {
+                Geary.Email? cached = this.email_by_id.get(removed_id);
+                if (cached != null) {
+                    this.email_cache.remove(cached);
+                    removed.add(cached.id);
+                }
+                this.email_by_id.unset(removed_id);
+                this.message_by_id.unset(removed_id);
+            }
+
+            sort_email_cache();
+            this._properties.set_total(this.email_cache.size);
+            this._properties.set_unread(count_unread());
+            this.is_loaded = true;
+            this.delta_link = delta.delta_link;
+
+            if (this._properties.email_total != previous_total) {
+                Geary.Folder.CountChangeReason reason =
+                    this._properties.email_total > previous_total
+                    ? Geary.Folder.CountChangeReason.INSERTED
+                    : Geary.Folder.CountChangeReason.REMOVED;
+                notify_email_count_changed(this._properties.email_total, reason);
+            }
+
+            if (!appended.is_empty) {
+                notify_email_appended(appended);
+                notify_email_locally_appended(appended);
+                had_new = true;
+            }
+            if (!inserted.is_empty) {
+                notify_email_inserted(inserted);
+            }
+            if (!flags_changed.is_empty) {
+                notify_email_flags_changed(flags_changed);
+            }
+            if (!removed.is_empty) {
+                notify_email_removed(removed);
+            }
+
+            persist_cached_messages();
+        } finally {
+            this.delta_polling = false;
+        }
+        return had_new;
     }
 
     internal async void refresh_async(bool force, GLib.Cancellable? cancellable)
@@ -992,6 +1132,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 root.get_member("messages").get_node_type() != Json.NodeType.ARRAY) {
                 return;
             }
+            // Restore the delta link if it was persisted
+            if (root.has_member("deltaLink") &&
+                root.get_member("deltaLink").get_node_type() == Json.NodeType.VALUE) {
+                string? saved_link = root.get_string_member("deltaLink");
+                if (!String.is_empty(saved_link)) {
+                    this.delta_link = saved_link;
+                }
+            }
             Json.Array messages = root.get_array_member("messages");
             this.email_cache.clear();
             this.email_by_id.clear();
@@ -1031,6 +1179,12 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
             Json.Builder builder = new Json.Builder();
             builder.begin_object();
+            // Persist the delta link so we can resume incremental polling
+            // after a restart without re-fetching all messages.
+            if (!String.is_empty(this.delta_link)) {
+                builder.set_member_name("deltaLink");
+                builder.add_string_value(this.delta_link);
+            }
             builder.set_member_name("messages");
             builder.begin_array();
             foreach (Geary.Email email in this.email_cache) {
