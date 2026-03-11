@@ -386,48 +386,56 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         if (!removed.is_empty) {
             notify_email_removed(removed);
         }
-        if (!moved_ids.is_empty) {
-            bool refresh_destination = destination_folder.is_cache_loaded;
-            int pending = moved_ids.size;
-            foreach (string graph_id in moved_ids) {
-                this.client.move_message.begin(
+
+        // Await each API call so we can capture the new message IDs assigned
+        // by the server after the move.  These are needed to move the messages
+        // back if the user hits Undo.
+        Gee.ArrayList<string> new_ids = new Gee.ArrayList<string>();
+        foreach (string graph_id in moved_ids) {
+            try {
+                string new_id = yield this.client.move_message(
                     graph_id,
                     destination_folder.graph_folder_id,
-                    cancellable,
-                    (obj, res) => {
-                        try {
-                            this.client.move_message.end(res);
-                        } catch (GLib.Error err) {
-                            warning(
-                                "Graph move failed for %s: %s",
-                                graph_id,
-                                err.message
-                            );
-                        }
-                        pending--;
-                        if (pending == 0 && refresh_destination) {
-                            destination_folder.refresh_async.begin(
-                                true,
-                                cancellable,
-                                (refresh_obj, refresh_res) => {
-                                    try {
-                                        destination_folder.refresh_async.end(refresh_res);
-                                    } catch (GLib.Error err) {
-                                        warning(
-                                            "Graph refresh failed for %s: %s",
-                                            destination_folder.path.to_string(),
-                                            err.message
-                                        );
-                                    }
-                                }
-                            );
-                        }
-                    }
+                    cancellable
+                );
+                if (!String.is_empty(new_id)) {
+                    new_ids.add(new_id);
+                }
+            } catch (GLib.Error err) {
+                warning(
+                    "Graph move failed for %s: %s",
+                    graph_id,
+                    err.message
                 );
             }
         }
 
-        return new Geary.Graph.NoopRevokable();
+        if (destination_folder.is_cache_loaded) {
+            destination_folder.refresh_async.begin(
+                true,
+                cancellable,
+                (obj, res) => {
+                    try {
+                        destination_folder.refresh_async.end(res);
+                    } catch (GLib.Error err) {
+                        warning(
+                            "Graph refresh failed for %s: %s",
+                            destination_folder.path.to_string(),
+                            err.message
+                        );
+                    }
+                }
+            );
+        }
+
+        // Return a revokable that can move the messages back to this folder.
+        return new Geary.Graph.RevokableMove(
+            this.client,
+            this.owner,
+            new_ids,
+            destination_folder,
+            this
+        );
     }
 
     public async Geary.Revokable?
@@ -1364,6 +1372,125 @@ internal class Geary.Graph.NoopRevokable : Geary.Revokable {
         throws GLib.Error {
         set_invalid();
         notify_committed(null);
+    }
+
+}
+
+/**
+ * A {@link Geary.Revokable} for Graph API move operations.
+ *
+ * Because the Graph API move is executed immediately (unlike IMAP which can
+ * delay the move), this revokable is already in the "committed" state from
+ * the moment it is created.  Calling commit_async() signals that the operation
+ * is finalised and returns a new RevokableMove pointing back in the other
+ * direction so the caller can still undo.  Calling revoke_async() moves the
+ * messages back to the original source folder straight away.
+ */
+internal class Geary.Graph.RevokableMove : Geary.Revokable {
+
+    // The Graph API client used to issue move calls.
+    private Geary.Graph.Client client;
+
+    // The account, used to look up folders by path after a move.
+    private Geary.Graph.Account account;
+
+    // The Graph message IDs that now live in `current_folder` and should be
+    // moved back to `return_folder` when the user hits Undo.
+    private Gee.ArrayList<string> message_ids;
+
+    // The folder that currently holds the messages (i.e. the destination of
+    // the original move, or the source of the next reverse move).
+    private Geary.Graph.Folder current_folder;
+
+    // The folder the messages should be moved back to on revoke.
+    private Geary.Graph.Folder return_folder;
+
+
+    internal RevokableMove(Geary.Graph.Client client,
+                           Geary.Graph.Account account,
+                           Gee.ArrayList<string> message_ids,
+                           Geary.Graph.Folder current_folder,
+                           Geary.Graph.Folder return_folder) {
+        this.client = client;
+        this.account = account;
+        this.message_ids = message_ids;
+        this.current_folder = current_folder;
+        this.return_folder = return_folder;
+    }
+
+    protected override async void internal_revoke_async(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        // Move every message back to where it came from.
+        Gee.ArrayList<string> reverted_ids = new Gee.ArrayList<string>();
+        foreach (string id in this.message_ids) {
+            try {
+                string new_id = yield this.client.move_message(
+                    id,
+                    this.return_folder.graph_folder_id,
+                    cancellable
+                );
+                if (!String.is_empty(new_id)) {
+                    reverted_ids.add(new_id);
+                }
+            } catch (GLib.Error err) {
+                warning(
+                    "Graph revoke-move failed for %s: %s",
+                    id,
+                    err.message
+                );
+            }
+        }
+
+        // Refresh both folders so the UI reflects the new state.
+        if (this.current_folder.is_cache_loaded) {
+            this.current_folder.refresh_async.begin(
+                true, cancellable, (obj, res) => {
+                    try {
+                        this.current_folder.refresh_async.end(res);
+                    } catch (GLib.Error err) {
+                        warning(
+                            "Graph refresh failed for %s: %s",
+                            this.current_folder.path.to_string(),
+                            err.message
+                        );
+                    }
+                }
+            );
+        }
+        if (this.return_folder.is_cache_loaded) {
+            this.return_folder.refresh_async.begin(
+                true, cancellable, (obj, res) => {
+                    try {
+                        this.return_folder.refresh_async.end(res);
+                    } catch (GLib.Error err) {
+                        warning(
+                            "Graph refresh failed for %s: %s",
+                            this.return_folder.path.to_string(),
+                            err.message
+                        );
+                    }
+                }
+            );
+        }
+
+        notify_revoked();
+        set_invalid();
+    }
+
+    protected override async void internal_commit_async(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        // The actual API move already happened; committing just means we hand
+        // back a new revokable that points in the reverse direction so the
+        // caller can still undo after the commit.
+        Geary.Graph.RevokableMove reverse = new Geary.Graph.RevokableMove(
+            this.client,
+            this.account,
+            this.message_ids,
+            this.current_folder,
+            this.return_folder
+        );
+        notify_committed(reverse);
+        set_invalid();
     }
 
 }
