@@ -225,26 +225,47 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         if (!email.fields.fulfills(required_fields) &&
             required_fields.requires_any(Geary.Email.Field.BODY | Geary.Email.Field.HEADER) &&
             is_open_now) {
-            Geary.Graph.Client.Message full = yield this.client.fetch_message(
-                graph.graph_id, cancellable
-            );
-            this.message_by_id.set(full.id, full);
-            build_email(full, email);
             try {
-                Geary.Memory.Buffer full_rfc822 =
-                    yield this.client.fetch_message_rfc822(
-                        graph.graph_id,
-                        cancellable
-                    );
-                populate_full_message(email, full_rfc822, graph.graph_id);
-            } catch (GLib.Error err) {
-                debug(
-                    "Error fetching Graph RFC822 payload for %s: %s",
-                    graph.graph_id,
-                    err.message
+                Geary.Graph.Client.Message full = yield this.client.fetch_message(
+                    graph.graph_id, cancellable
                 );
+                this.message_by_id.set(full.id, full);
+                build_email(full, email);
+                try {
+                    Geary.Memory.Buffer full_rfc822 =
+                        yield this.client.fetch_message_rfc822(
+                            graph.graph_id,
+                            cancellable
+                        );
+                    populate_full_message(email, full_rfc822, graph.graph_id);
+                } catch (GLib.Error err) {
+                    debug(
+                        "Error fetching Graph RFC822 payload for %s: %s",
+                        graph.graph_id,
+                        err.message
+                    );
+                }
+                persist_cached_messages();
+            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
+                if (err.message.contains("(404)")) {
+                    debug(
+                        "Graph message %s not found, removing from cache",
+                        graph.graph_id
+                    );
+                    Gee.ArrayList<Geary.EmailIdentifier> to_remove =
+                        new Gee.ArrayList<Geary.EmailIdentifier>();
+                    to_remove.add(id);
+                    Gee.ArrayList<Geary.EmailIdentifier> removed =
+                        remove_cached_emails(to_remove);
+                    if (!removed.is_empty) {
+                        notify_email_removed(removed);
+                    }
+                    throw new Geary.EngineError.NOT_FOUND(
+                        "Graph message not found on server: %s", graph.graph_id
+                    );
+                }
+                throw err;
             }
-            persist_cached_messages();
         }
 
         if (!email.fields.fulfills(required_fields)) {
