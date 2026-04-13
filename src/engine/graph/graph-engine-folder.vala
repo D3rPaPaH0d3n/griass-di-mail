@@ -1161,7 +1161,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 root.get_member("messages").get_node_type() != Json.NodeType.ARRAY) {
                 return;
             }
-            // Restore the delta link if it was persisted
+
+            this.delta_link = null;
             if (root.has_member("deltaLink") &&
                 root.get_member("deltaLink").get_node_type() == Json.NodeType.VALUE) {
                 string? saved_link = root.get_string_member("deltaLink");
@@ -1169,6 +1170,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     this.delta_link = saved_link;
                 }
             }
+
             Json.Array messages = root.get_array_member("messages");
             this.email_cache.clear();
             this.email_by_id.clear();

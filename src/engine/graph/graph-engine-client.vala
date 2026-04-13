@@ -135,6 +135,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
 
         Gee.ArrayList<Message> messages = new Gee.ArrayList<Message>();
         int total_fetched = 0;
+        int page_total = 0;
 
         // Process the first page
         if (root.has_member("value")) {
@@ -160,9 +161,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         int page_count = 1;
         bool has_date_filter = (prefetch_period_days > 0);
 
-        debug("Graph: Fetched page 1 with %d messages (total: %d, has_date_filter: %s, max_pages: %d)",
-              messages.size, total_fetched, has_date_filter.to_string(), max_pages);
-
         while (root.has_member("@odata.nextLink") && page_count < max_pages) {
             string next_link = root.get_string_member("@odata.nextLink");
             if (String.is_empty(next_link)) {
@@ -171,10 +169,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
 
             try {
                 root = yield request_json_url(next_link, cancellable);
-                debug("Graph: Fetching page %d...", page_count + 1);
             } catch (GLib.Error err) {
-                // If pagination fails, return what we have so far
-                debug("Graph: Failed to fetch page %d of messages: %s", page_count + 1, err.message);
                 break;
             }
 
@@ -189,24 +184,17 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     if (!String.is_empty(parsed.id)) {
                         messages.add(parsed);
                         total_fetched++;
-                        // Only enforce limit when there's no date filter
                         if (!has_date_filter && total_fetched >= limit) {
                             break;
                         }
                     }
                 }
-                // Only stop early if we hit the limit without a date filter
                 if (!has_date_filter && total_fetched >= limit) {
                     break;
                 }
             }
             page_count++;
-            debug("Graph: Fetched page %d with %d new messages (total: %d/%d)",
-                  page_count, messages.size - (total_fetched - (messages.size - total_fetched)),
-                  total_fetched, has_date_filter ? -1 : limit);
         }
-
-        debug("Graph: Pagination complete. Total messages: %d, pages: %d", total_fetched, page_count);
 
         return messages;
     }
@@ -299,10 +287,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             try {
                 root = yield request_json_url(url, cancellable);
             } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-                // A 410 Gone means our deltaLink has expired; clear it so
-                // the caller can restart from scratch on the next poll.
                 if (err.message.contains("(410)")) {
-                    debug("Graph: delta link expired for folder %s, resetting", folder_id);
                     result.delta_link = "";
                     return result;
                 }
@@ -585,7 +570,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 if (!err.message.contains("(400)")) {
                     throw err;
                 }
-                debug("Graph: list_mail_folders query failed (400), trying simpler query: %s", query);
+                continue;
             }
         }
 
@@ -627,7 +612,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 try {
                     root = yield request_json_url(next_link, cancellable);
                 } catch (GLib.Error err) {
-                    debug("Graph: Failed to fetch next page of mail folders: %s", err.message);
                     break;
                 }
             } else {
@@ -669,7 +653,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
                 if (attempt < REQUEST_RETRIES) {
-                    debug("Graph request timed out, retrying: %s", url);
                     continue;
                 }
                 throw new Geary.EngineError.SERVER_UNAVAILABLE(
@@ -695,7 +678,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 );
             } catch (GLib.Error err) {
                 if (attempt < REQUEST_RETRIES) {
-                    debug("Graph response decode failed, retrying: %s", url);
                     continue;
                 }
                 throw new Geary.EngineError.SERVER_UNAVAILABLE(
@@ -765,7 +747,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
                 if (attempt < REQUEST_RETRIES) {
-                    debug("Graph request timed out, retrying: %s", uri);
                     continue;
                 }
                 throw new Geary.EngineError.SERVER_UNAVAILABLE(
@@ -791,7 +772,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 );
             } catch (GLib.Error err) {
                 if (attempt < REQUEST_RETRIES) {
-                    debug("Graph response decode failed, retrying: %s", uri);
                     continue;
                 }
                 throw new Geary.EngineError.SERVER_UNAVAILABLE(
@@ -854,7 +834,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
                 if (attempt < REQUEST_RETRIES) {
-                    debug("Graph request timed out, retrying: %s", uri);
                     continue;
                 }
                 throw new Geary.EngineError.SERVER_UNAVAILABLE(
@@ -958,7 +937,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
                 if (attempt < REQUEST_RETRIES) {
-                    debug("Graph request timed out, retrying: %s", uri);
                     continue;
                 }
                 throw new Geary.EngineError.SERVER_UNAVAILABLE(
