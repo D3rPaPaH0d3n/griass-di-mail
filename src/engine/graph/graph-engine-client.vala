@@ -397,6 +397,17 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         append_mailbox_addresses_to_builder(
             builder, "replyTo", composed.reply_to
         );
+        if (!composed.attached_files.is_empty) {
+            builder.set_member_name("attachments");
+            builder.begin_array();
+            foreach (File file in composed.attached_files) {
+                Json.Node? attachment = yield build_file_attachment(file, cancellable);
+                if (attachment != null) {
+                    builder.add_value(attachment);
+                }
+            }
+            builder.end_array();
+        }
         builder.end_object();
 
         Json.Object result = yield request_json(
@@ -469,6 +480,17 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         append_mailbox_addresses_to_builder(
             builder, "replyTo", composed.reply_to
         );
+        if (!composed.attached_files.is_empty) {
+            builder.set_member_name("attachments");
+            builder.begin_array();
+            foreach (File file in composed.attached_files) {
+                Json.Node? attachment = yield build_file_attachment(file, cancellable);
+                if (attachment != null) {
+                    builder.add_value(attachment);
+                }
+            }
+            builder.end_array();
+        }
         builder.end_object();
         builder.set_member_name("saveToSentItems");
         builder.add_boolean_value(save_to_sent_items);
@@ -909,6 +931,39 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             "Graph request failed (%s)",
             uri
         );
+    }
+
+    private async Json.Node? build_file_attachment(File file,
+                                                   GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        string? path = file.get_path();
+        if (String.is_empty(path)) {
+            warning("Skipping attachment without local path");
+            return null;
+        }
+
+        GLib.FileInputStream input = file.read(cancellable);
+        GLib.Bytes bytes = yield input.read_bytes_async(
+            1024 * 1024 * 1024,
+            GLib.Priority.DEFAULT,
+            cancellable
+        );
+        input.close(null);
+
+        string encoded = GLib.Base64.encode(bytes.get_data());
+
+        Json.Builder builder = new Json.Builder();
+        builder.begin_object();
+        builder.set_member_name("@odata.type");
+        builder.add_string_value("#microsoft.graph.fileAttachment");
+        builder.set_member_name("name");
+        builder.add_string_value(file.get_basename());
+        builder.set_member_name("contentType");
+        builder.add_string_value("application/octet-stream");
+        builder.set_member_name("contentBytes");
+        builder.add_string_value(encoded);
+        builder.end_object();
+        return builder.get_root();
     }
 
     private async void request_no_content(string method,
