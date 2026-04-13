@@ -412,7 +412,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
 
         Json.Object result = yield request_json(
             "POST",
-            "/me/mailFolders/outbox/messages",
+            "/me/messages",
             null,
             cancellable,
             to_json(builder)
@@ -445,64 +445,11 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                                           bool save_to_sent_items,
                                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        Json.Builder builder = new Json.Builder();
-        builder.begin_object();
-        builder.set_member_name("message");
-        builder.begin_object();
-        if (composed.subject != null) {
-            builder.set_member_name("subject");
-            builder.add_string_value(composed.subject.to_string());
-        }
-        builder.set_member_name("body");
-        builder.begin_object();
-        if (!String.is_empty(composed.body_html)) {
-            builder.set_member_name("contentType");
-            builder.add_string_value("HTML");
-            builder.set_member_name("content");
-            builder.add_string_value(composed.body_html);
-        } else {
-            builder.set_member_name("contentType");
-            builder.add_string_value("Text");
-            builder.set_member_name("content");
-            builder.add_string_value(composed.body_text ?? "");
-        }
-        builder.end_object();
-
-        append_mailbox_addresses_to_builder(
-            builder, "toRecipients", composed.to
+        string message_id = yield create_message_in_outbox(composed, cancellable);
+        string path = "/me/messages/%s/send".printf(
+            GLib.Uri.escape_string(message_id, null, false)
         );
-        append_mailbox_addresses_to_builder(
-            builder, "ccRecipients", composed.cc
-        );
-        append_mailbox_addresses_to_builder(
-            builder, "bccRecipients", composed.bcc
-        );
-        append_mailbox_addresses_to_builder(
-            builder, "replyTo", composed.reply_to
-        );
-        if (!composed.attached_files.is_empty) {
-            builder.set_member_name("attachments");
-            builder.begin_array();
-            foreach (File file in composed.attached_files) {
-                Json.Node? attachment = yield build_file_attachment(file, cancellable);
-                if (attachment != null) {
-                    builder.add_value(attachment);
-                }
-            }
-            builder.end_array();
-        }
-        builder.end_object();
-        builder.set_member_name("saveToSentItems");
-        builder.add_boolean_value(save_to_sent_items);
-        builder.end_object();
-
-        yield request_no_content(
-            "POST",
-            "/me/sendMail",
-            null,
-            cancellable,
-            to_json(builder)
-        );
+        yield request_no_content("POST", path, null, cancellable);
     }
 
     public async void update_message_state(string message_id,
