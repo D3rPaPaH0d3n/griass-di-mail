@@ -935,7 +935,9 @@ internal class Geary.Graph.Account : Geary.Account,
         }
         // Ensure the inbox cache is loaded before delta-polling so we
         // can distinguish genuinely new messages from baseline ones.
-        inbox.load_persisted_cache();
+        if (!inbox.is_cache_loaded) {
+            inbox.load_persisted_cache();
+        }
         yield inbox.poll_delta_async(null);
     }
 
