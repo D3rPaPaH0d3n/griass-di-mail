@@ -24,10 +24,13 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         public string body_preview = "";
         public string? body = null;
         public string body_content_type = "text";
+        public bool has_attachments = false;
         public bool is_read = true;
         public bool is_flagged = false;
         public GLib.DateTime? received_at = null;
         public int64 size = 0;
+        public Gee.HashMap<string,string> internet_message_headers =
+            new Gee.HashMap<string,string>();
     }
 
     internal class MailFolder : Geary.BaseObject {
@@ -76,69 +79,61 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         if (limit < 1) {
             limit = 1;
         }
-        string filter = "";
+        GLib.DateTime? since = null;
+        int64 since_unix = 0;
         if (prefetch_period_days > 0) {
-            GLib.DateTime utc_now = new GLib.DateTime.now_utc();
-            GLib.DateTime since = utc_now.add_days(0 - prefetch_period_days);
-            filter = "&$filter=receivedDateTime%%20ge%%20%s".printf(
-                GLib.Uri.escape_string(
-                    since.format("%Y-%m-%dT%H:%M:%SZ"),
-                    null,
-                    false
-                )
-            );
+            since = new GLib.DateTime.now_utc().add_days(0 - prefetch_period_days);
+            since_unix = since.to_unix();
         }
         string path = "/me/mailFolders/%s/messages".printf(
             GLib.Uri.escape_string(folder_id, null, false)
         );
         Json.Object root;
-        try {
-            root = yield request_json(
-                "GET",
-                path,
-                (
-                    "$top=%d"
-                + "&$orderby=receivedDateTime%%20desc"
-                + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,size"
-                + "%s"
-                ).printf(limit, filter),
-                cancellable
-            );
-        } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-            if (!err.message.contains("(400)")) {
-                throw err;
-            }
+        bool can_stop_on_cutoff = false;
+        string[] queries = {
+            (
+                "$top=%d"
+              + "&$orderby=receivedDateTime%%20desc"
+              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,size"
+            ).printf(limit),
+            (
+                "$top=%d"
+              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,size"
+            ).printf(limit),
+            "$top=%d".printf(limit),
+        };
+
+        root = null;
+        foreach (string query in queries) {
             try {
-                root = yield request_json(
-                    "GET",
-                    path,
-                    (
-                        "$top=%d"
-                        + "&$orderby=receivedDateTime%%20desc"
-                        + "&$select=id,conversationId,subject,receivedDateTime,from,bodyPreview,isRead,flag,size"
-                        + "%s"
-                    ).printf(limit, filter),
-                    cancellable
-                );
-            } catch (Geary.EngineError.SERVER_UNAVAILABLE retry_err) {
-                if (!retry_err.message.contains("(400)")) {
-                    throw retry_err;
+                root = yield request_json("GET", path, query, cancellable);
+                can_stop_on_cutoff = query.index_of("$orderby=") >= 0;
+                break;
+            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
+                if (!err.message.contains("(400)")) {
+                    throw err;
                 }
-                root = yield request_json(
-                    "GET",
-                    path,
-                    "$top=%d%s".printf(limit, filter),
-                    cancellable
-                );
             }
+        }
+        if (root == null) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "Graph request failed (%s)",
+                path
+            );
         }
 
         Gee.ArrayList<Message> messages = new Gee.ArrayList<Message>();
         int total_fetched = 0;
-        int page_total = 0;
+        bool reached_prefetch_cutoff = false;
 
-        // Process the first page
-        if (root.has_member("value")) {
+        // Follow pagination links to get all messages within the prefetch period.
+        // If the server returned messages in receivedDateTime order, we can stop
+        // once we reach a message older than the cutoff.
+        int max_pages = (prefetch_period_days > 0) ? 100 : 20;
+        int page_count = 1;
+        while (!reached_prefetch_cutoff &&
+               page_count <= max_pages &&
+               root.has_member("value")) {
             Json.Array values = root.get_array_member("value");
             for (uint i = 0; i < values.get_length(); i++) {
                 Json.Node value = values.get_element(i);
@@ -146,22 +141,30 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     continue;
                 }
                 Message parsed = parse_message(values.get_object_element(i), false);
-                if (!String.is_empty(parsed.id)) {
-                    messages.add(parsed);
-                    total_fetched++;
+                if (String.is_empty(parsed.id)) {
+                    continue;
+                }
+                if (since != null && parsed.received_at != null) {
+                    if (parsed.received_at.to_unix() < since_unix) {
+                        if (can_stop_on_cutoff) {
+                            reached_prefetch_cutoff = true;
+                            break;
+                        }
+                        continue;
+                    }
+                }
+                messages.add(parsed);
+                total_fetched++;
+                if (since == null && total_fetched >= limit) {
+                    reached_prefetch_cutoff = true;
+                    break;
                 }
             }
-        }
 
-        // Follow pagination links to get all messages within the prefetch period
-        // When a date filter is active (prefetch_period_days > 0), we want ALL messages
-        // in that period, not just 'limit' messages. The limit only controls page size.
-        // Limit total pages to avoid excessive requests (max 100 pages when filtered by date)
-        int max_pages = (prefetch_period_days > 0) ? 100 : 20;
-        int page_count = 1;
-        bool has_date_filter = (prefetch_period_days > 0);
+            if (reached_prefetch_cutoff || !root.has_member("@odata.nextLink")) {
+                break;
+            }
 
-        while (root.has_member("@odata.nextLink") && page_count < max_pages) {
             string next_link = root.get_string_member("@odata.nextLink");
             if (String.is_empty(next_link)) {
                 break;
@@ -171,27 +174,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 root = yield request_json_url(next_link, cancellable);
             } catch (GLib.Error err) {
                 break;
-            }
-
-            if (root.has_member("value")) {
-                Json.Array values = root.get_array_member("value");
-                for (uint i = 0; i < values.get_length(); i++) {
-                    Json.Node value = values.get_element(i);
-                    if (value.get_node_type() != Json.NodeType.OBJECT) {
-                        continue;
-                    }
-                    Message parsed = parse_message(values.get_object_element(i), false);
-                    if (!String.is_empty(parsed.id)) {
-                        messages.add(parsed);
-                        total_fetched++;
-                        if (!has_date_filter && total_fetched >= limit) {
-                            break;
-                        }
-                    }
-                }
-                if (!has_date_filter && total_fetched >= limit) {
-                    break;
-                }
             }
             page_count++;
         }
@@ -211,7 +193,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 "GET",
                 path,
                 "$select=id,conversationId,subject,internetMessageId,receivedDateTime,"
-                + "from,toRecipients,ccRecipients,bccRecipients,bodyPreview,isRead,flag,size,body",
+                + "from,toRecipients,ccRecipients,bccRecipients,bodyPreview,hasAttachments,isRead,flag,size,body",
                 cancellable
             );
         } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
@@ -339,7 +321,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
     /**
-     * Creates a message in the Outlook Outbox folder without sending it.
+     * Creates a draft message in Outlook without sending it.
      *
      * Returns the Graph message ID of the staged message, which can
      * later be passed to {@link send_message} to deliver it, or to
@@ -349,58 +331,28 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         Geary.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Json.Builder builder = new Json.Builder();
-        builder.begin_object();
-        if (composed.subject != null) {
-            builder.set_member_name("subject");
-            builder.add_string_value(composed.subject.to_string());
+        string domain = this.account.primary_mailbox.domain;
+        if (!composed.from.is_empty) {
+            domain = composed.from[0].domain;
         }
-        builder.set_member_name("body");
-        builder.begin_object();
-        if (!String.is_empty(composed.body_html)) {
-            builder.set_member_name("contentType");
-            builder.add_string_value("HTML");
-            builder.set_member_name("content");
-            builder.add_string_value(composed.body_html);
-        } else {
-            builder.set_member_name("contentType");
-            builder.add_string_value("Text");
-            builder.set_member_name("content");
-            builder.add_string_value(composed.body_text ?? "");
-        }
-        builder.end_object();
-
-        append_mailbox_addresses_to_builder(
-            builder, "toRecipients", composed.to
+        Geary.RFC822.Message rfc822 =
+            yield new Geary.RFC822.Message.from_composed_email(
+                composed,
+                GMime.utils_generate_message_id(domain),
+                GMime.EncodingConstraint.8BIT,
+                cancellable
+            );
+        string encoded = GLib.Base64.encode(
+            rfc822.get_rfc822_buffer().get_bytes().get_data()
         );
-        append_mailbox_addresses_to_builder(
-            builder, "ccRecipients", composed.cc
-        );
-        append_mailbox_addresses_to_builder(
-            builder, "bccRecipients", composed.bcc
-        );
-        append_mailbox_addresses_to_builder(
-            builder, "replyTo", composed.reply_to
-        );
-        if (!composed.attached_files.is_empty) {
-            builder.set_member_name("attachments");
-            builder.begin_array();
-            foreach (File file in composed.attached_files) {
-                Json.Node? attachment = yield build_file_attachment(file, cancellable);
-                if (attachment != null) {
-                    builder.add_value(attachment);
-                }
-            }
-            builder.end_array();
-        }
-        builder.end_object();
 
         Json.Object result = yield request_json(
             "POST",
             "/me/messages",
             null,
             cancellable,
-            to_json(builder)
+            encoded,
+            "text/plain"
         );
         string? id = get_string_member(result, "id");
         if (String.is_empty(id)) {
@@ -635,7 +587,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         }
 
         for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
-            var request = new Soup.Message("GET", url);
+            var request = create_request_message("GET", url);
             request.set_force_http1(true);
             request.request_headers.append(
                 "Authorization", "Bearer %s".printf(credentials.token)
@@ -705,7 +657,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                                            string path,
                                            string? query,
                                            GLib.Cancellable? cancellable,
-                                           string? request_body = null)
+                                           string? request_body = null,
+                                           string content_type = "application/json")
         throws GLib.Error {
         yield this.account.load_incoming_credentials(cancellable);
 
@@ -722,7 +675,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         }
 
         for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
-            var request = new Soup.Message(method, uri);
+            var request = create_request_message(method, uri);
             request.set_force_http1(true);
             request.request_headers.append(
                 "Authorization", "Bearer %s".printf(credentials.token)
@@ -733,7 +686,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             if (!String.is_empty(request_body)) {
                 uint8[] bytes = request_body.data;
                 request.set_request_body_from_bytes(
-                    "application/json",
+                    content_type,
                     new GLib.Bytes(bytes)
                 );
             }
@@ -816,7 +769,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         }
 
         for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
-            var request = new Soup.Message(method, uri);
+            var request = create_request_message(method, uri);
             request.set_force_http1(true);
             request.request_headers.append(
                 "Authorization", "Bearer %s".printf(credentials.token)
@@ -859,37 +812,22 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         );
     }
 
-    private async Json.Node? build_file_attachment(File file,
-                                                   GLib.Cancellable? cancellable)
+    private static Soup.Message create_request_message(string method,
+                                                       string uri_string)
         throws GLib.Error {
-        string? path = file.get_path();
-        if (String.is_empty(path)) {
-            warning("Skipping attachment without local path");
-            return null;
+        try {
+            GLib.Uri uri = GLib.Uri.parse(
+                uri_string,
+                GLib.UriFlags.PARSE_RELAXED
+            );
+            return new Soup.Message.from_uri(method, uri);
+        } catch (GLib.UriError err) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "Invalid Graph request URI (%s): %s",
+                uri_string,
+                err.message
+            );
         }
-
-        GLib.FileInputStream input = file.read(cancellable);
-        GLib.Bytes bytes = yield input.read_bytes_async(
-            1024 * 1024 * 1024,
-            GLib.Priority.DEFAULT,
-            cancellable
-        );
-        input.close(null);
-
-        string encoded = GLib.Base64.encode(bytes.get_data());
-
-        Json.Builder builder = new Json.Builder();
-        builder.begin_object();
-        builder.set_member_name("@odata.type");
-        builder.add_string_value("#microsoft.graph.fileAttachment");
-        builder.set_member_name("name");
-        builder.add_string_value(file.get_basename());
-        builder.set_member_name("contentType");
-        builder.add_string_value("application/octet-stream");
-        builder.set_member_name("contentBytes");
-        builder.add_string_value(encoded);
-        builder.end_object();
-        return builder.get_root();
     }
 
     private async void request_no_content(string method,
@@ -913,7 +851,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         }
 
         for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
-            var request = new Soup.Message(method, uri);
+            var request = create_request_message(method, uri);
             request.set_force_http1(true);
             request.request_headers.append(
                 "Authorization", "Bearer %s".printf(credentials.token)
@@ -970,10 +908,15 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         parsed.subject = get_string_member(object, "subject") ?? "";
         parsed.internet_message_id = get_string_member(object, "internetMessageId") ?? "";
         parsed.body_preview = get_string_member(object, "bodyPreview") ?? "";
+        parsed.has_attachments = get_bool_member(object, "hasAttachments", false);
         parsed.is_read = get_bool_member(object, "isRead", true);
         parsed.is_flagged = get_flagged_member(object, "flag");
         parsed.received_at = parse_datetime(get_string_member(object, "receivedDateTime"));
         parsed.size = get_int_member(object, "size", 0);
+        parsed.internet_message_headers = parse_internet_message_headers(
+            object,
+            "internetMessageHeaders"
+        );
         parsed.from = parse_address_member(object, "from");
         parsed.to = parse_addresses_member(object, "toRecipients");
         parsed.cc = parse_addresses_member(object, "ccRecipients");
@@ -1035,6 +978,33 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             return null;
         }
         return new Geary.RFC822.MailboxAddress(get_string_member(email, "name"), address);
+    }
+
+    private static Gee.HashMap<string,string> parse_internet_message_headers(
+        Json.Object object,
+        string key
+    ) {
+        Gee.HashMap<string,string> headers = new Gee.HashMap<string,string>();
+        if (!object.has_member(key) ||
+            object.get_member(key).get_node_type() != Json.NodeType.ARRAY) {
+            return headers;
+        }
+
+        Json.Array values = object.get_array_member(key);
+        for (uint i = 0; i < values.get_length(); i++) {
+            Json.Node value = values.get_element(i);
+            if (value.get_node_type() != Json.NodeType.OBJECT) {
+                continue;
+            }
+            Json.Object header = values.get_object_element(i);
+            string? name = get_string_member(header, "name");
+            string? header_value = get_string_member(header, "value");
+            if (String.is_empty(name) || String.is_empty(header_value)) {
+                continue;
+            }
+            headers.set(name.down(), header_value);
+        }
+        return headers;
     }
 
     private static string? get_string_member(Json.Object object, string key) {
@@ -1103,35 +1073,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         Json.Generator generator = new Json.Generator();
         generator.set_root(node);
         return generator.to_data(null);
-    }
-
-    private static void append_mailbox_addresses_to_builder(
-        Json.Builder builder,
-        string name,
-        Geary.RFC822.MailboxAddresses? addresses
-    ) {
-        if (addresses == null || addresses.size == 0) {
-            return;
-        }
-        builder.set_member_name(name);
-        builder.begin_array();
-        foreach (Geary.RFC822.MailboxAddress address in addresses) {
-            if (String.is_empty(address.address)) {
-                continue;
-            }
-            builder.begin_object();
-            builder.set_member_name("emailAddress");
-            builder.begin_object();
-            if (!String.is_empty(address.name)) {
-                builder.set_member_name("name");
-                builder.add_string_value(address.name);
-            }
-            builder.set_member_name("address");
-            builder.add_string_value(address.address);
-            builder.end_object();
-            builder.end_object();
-        }
-        builder.end_array();
     }
 
 }

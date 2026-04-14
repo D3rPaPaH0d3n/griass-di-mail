@@ -231,19 +231,21 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 );
                 this.message_by_id.set(full.id, full);
                 build_email(full, email);
-                try {
-                    Geary.Memory.Buffer full_rfc822 =
-                        yield this.client.fetch_message_rfc822(
+                if (full.has_attachments) {
+                    try {
+                        Geary.Memory.Buffer full_rfc822 =
+                            yield this.client.fetch_message_rfc822(
+                                graph.graph_id,
+                                cancellable
+                            );
+                        populate_full_message(email, full_rfc822, graph.graph_id);
+                    } catch (GLib.Error err) {
+                        debug(
+                            "Error fetching Graph RFC822 payload for %s: %s",
                             graph.graph_id,
-                            cancellable
+                            err.message
                         );
-                    populate_full_message(email, full_rfc822, graph.graph_id);
-                } catch (GLib.Error err) {
-                    debug(
-                        "Error fetching Graph RFC822 payload for %s: %s",
-                        graph.graph_id,
-                        err.message
-                    );
+                    }
                 }
                 persist_cached_messages();
             } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
@@ -961,9 +963,21 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         if (message_id != null) {
             header += "Message-Id: %s\r\n".printf(message_id.to_rfc822_string());
         }
-        Geary.RFC822.MessageIDList? references = build_conversation_references(message);
-        if (references != null) {
-            header += "References: %s\r\n".printf(references.to_rfc822_string());
+        string? in_reply_to = get_message_header(message, "in-reply-to");
+        if (!String.is_empty(in_reply_to)) {
+            header += "In-Reply-To: %s\r\n".printf(in_reply_to);
+        }
+        string? references = get_message_header(message, "references");
+        if (!String.is_empty(references)) {
+            header += "References: %s\r\n".printf(references);
+        } else {
+            Geary.RFC822.MessageIDList? synthetic_references =
+                build_conversation_references(message);
+            if (synthetic_references != null) {
+                header += "References: %s\r\n".printf(
+                    synthetic_references.to_rfc822_string()
+                );
+            }
         }
         header += "MIME-Version: 1.0\r\n";
         if (message.body_content_type.down() == "html") {
@@ -1089,6 +1103,11 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             "graph-conversation-%s@geary.local".printf(conversation_hash)
         );
         return new Geary.RFC822.MessageIDList.single(conversation_id);
+    }
+
+    private static string? get_message_header(Geary.Graph.Client.Message message,
+                                               string name) {
+        return message.internet_message_headers.get(name.down());
     }
 
     private Geary.RFC822.MessageID? build_message_id(Geary.Graph.Client.Message message) {
