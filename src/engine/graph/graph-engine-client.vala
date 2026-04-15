@@ -277,7 +277,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
     /**
-     * Creates a draft message in Outlook without sending it.
+     * Creates a message and stages it in Outlook's Outbox without sending it.
      *
      * Returns the Graph message ID of the staged message, which can
      * later be passed to {@link send_message} to deliver it, or to
@@ -319,7 +319,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         // Graph preserves the MIME body, but the saved draft can lose the
         // explicit recipient envelope unless it is patched separately.
         yield patch_message_recipients(id, composed, cancellable);
-        return id;
+        return yield move_message(id, "outbox", cancellable);
     }
 
     /**

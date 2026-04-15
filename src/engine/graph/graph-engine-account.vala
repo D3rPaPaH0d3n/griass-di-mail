@@ -555,7 +555,13 @@ internal class Geary.Graph.Account : Geary.Account,
     ) throws GLib.Error {
         string message_id =
             yield this.client.create_message_in_outbox(composed, cancellable);
-        // Refresh Outbox so the staged message appears in the folder view
+        // Refresh Drafts and Outbox so the staged message moves cleanly in
+        // the folder views once the draft is relocated.
+        Geary.Graph.Folder? drafts =
+            this.get_graph_special_folder(Geary.Folder.SpecialUse.DRAFTS);
+        if (drafts != null && drafts.is_cache_loaded) {
+            yield drafts.refresh_async(true, cancellable);
+        }
         Geary.Graph.Folder? outbox =
             this.get_graph_special_folder(Geary.Folder.SpecialUse.OUTBOX);
         if (outbox != null && outbox.is_cache_loaded) {
