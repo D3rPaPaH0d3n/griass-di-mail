@@ -79,17 +79,10 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         if (limit < 1) {
             limit = 1;
         }
-        GLib.DateTime? since = null;
-        int64 since_unix = 0;
-        if (prefetch_period_days > 0) {
-            since = new GLib.DateTime.now_utc().add_days(0 - prefetch_period_days);
-            since_unix = since.to_unix();
-        }
         string path = "/me/mailFolders/%s/messages".printf(
             GLib.Uri.escape_string(folder_id, null, false)
         );
         Json.Object root;
-        bool can_stop_on_cutoff = false;
         string[] queries = {
             (
                 "$top=%d"
@@ -107,7 +100,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         foreach (string query in queries) {
             try {
                 root = yield request_json("GET", path, query, cancellable);
-                can_stop_on_cutoff = query.index_of("$orderby=") >= 0;
                 break;
             } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
                 if (!err.message.contains("(400)")) {
@@ -124,16 +116,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
 
         Gee.ArrayList<Message> messages = new Gee.ArrayList<Message>();
         int total_fetched = 0;
-        bool reached_prefetch_cutoff = false;
-
-        // Follow pagination links to get all messages within the prefetch period.
-        // If the server returned messages in receivedDateTime order, we can stop
-        // once we reach a message older than the cutoff.
-        int max_pages = (prefetch_period_days > 0) ? 100 : 20;
-        int page_count = 1;
-        while (!reached_prefetch_cutoff &&
-               page_count <= max_pages &&
-               root.has_member("value")) {
+        if (root.has_member("value")) {
             Json.Array values = root.get_array_member("value");
             for (uint i = 0; i < values.get_length(); i++) {
                 Json.Node value = values.get_element(i);
@@ -141,41 +124,14 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     continue;
                 }
                 Message parsed = parse_message(values.get_object_element(i), false);
-                if (String.is_empty(parsed.id)) {
-                    continue;
-                }
-                if (since != null && parsed.received_at != null) {
-                    if (parsed.received_at.to_unix() < since_unix) {
-                        if (can_stop_on_cutoff) {
-                            reached_prefetch_cutoff = true;
-                            break;
-                        }
-                        continue;
+                if (!String.is_empty(parsed.id)) {
+                    messages.add(parsed);
+                    total_fetched++;
+                    if (total_fetched >= limit) {
+                        break;
                     }
                 }
-                messages.add(parsed);
-                total_fetched++;
-                if (since == null && total_fetched >= limit) {
-                    reached_prefetch_cutoff = true;
-                    break;
-                }
             }
-
-            if (reached_prefetch_cutoff || !root.has_member("@odata.nextLink")) {
-                break;
-            }
-
-            string next_link = root.get_string_member("@odata.nextLink");
-            if (String.is_empty(next_link)) {
-                break;
-            }
-
-            try {
-                root = yield request_json_url(next_link, cancellable);
-            } catch (GLib.Error err) {
-                break;
-            }
-            page_count++;
         }
 
         return messages;
