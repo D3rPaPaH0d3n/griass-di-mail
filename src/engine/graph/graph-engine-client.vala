@@ -316,6 +316,9 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 "Graph: create_message_in_outbox returned no message id"
             );
         }
+        // Graph preserves the MIME body, but the saved draft can lose the
+        // explicit recipient envelope unless it is patched separately.
+        yield patch_message_recipients(id, composed, cancellable);
         return id;
     }
 
@@ -1029,6 +1032,86 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         Json.Generator generator = new Json.Generator();
         generator.set_root(node);
         return generator.to_data(null);
+    }
+
+    private async void patch_message_recipients(string message_id,
+                                                Geary.ComposedEmail composed,
+                                                GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        Json.Builder builder = new Json.Builder();
+        builder.begin_object();
+        bool has_recipient_fields = false;
+        has_recipient_fields |= append_mailbox_addresses_to_builder(
+            builder,
+            "toRecipients",
+            composed.to
+        );
+        has_recipient_fields |= append_mailbox_addresses_to_builder(
+            builder,
+            "ccRecipients",
+            composed.cc
+        );
+        has_recipient_fields |= append_mailbox_addresses_to_builder(
+            builder,
+            "bccRecipients",
+            composed.bcc
+        );
+        has_recipient_fields |= append_mailbox_addresses_to_builder(
+            builder,
+            "replyTo",
+            composed.reply_to
+        );
+        builder.end_object();
+
+        if (has_recipient_fields) {
+            string path = "/me/messages/%s".printf(
+                GLib.Uri.escape_string(message_id, null, false)
+            );
+            yield request_json(
+                "PATCH",
+                path,
+                null,
+                cancellable,
+                to_json(builder)
+            );
+        }
+    }
+
+    private static bool append_mailbox_addresses_to_builder(
+        Json.Builder builder,
+        string name,
+        Geary.RFC822.MailboxAddresses? addresses
+    ) {
+        if (addresses == null || addresses.size == 0) {
+            return false;
+        }
+        Gee.ArrayList<Geary.RFC822.MailboxAddress> valid_addresses =
+            new Gee.ArrayList<Geary.RFC822.MailboxAddress>();
+        foreach (Geary.RFC822.MailboxAddress address in addresses) {
+            if (!String.is_empty(address.address)) {
+                valid_addresses.add(address);
+            }
+        }
+        if (valid_addresses.is_empty) {
+            return false;
+        }
+        builder.set_member_name(name);
+        builder.begin_array();
+        foreach (Geary.RFC822.MailboxAddress address in valid_addresses) {
+            builder.begin_object();
+            builder.set_member_name("emailAddress");
+            builder.begin_object();
+            if (!String.is_empty(address.name)) {
+                builder.set_member_name("name");
+                builder.add_string_value(address.name);
+            }
+            builder.set_member_name("address");
+            builder.add_string_value(address.address);
+            builder.end_object();
+            builder.end_object();
+        }
+        builder.end_array();
+        return true;
     }
 
 }
