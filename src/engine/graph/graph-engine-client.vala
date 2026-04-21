@@ -283,6 +283,39 @@ internal class Geary.Graph.Client : Geary.BaseObject {
      * later be passed to {@link send_message} to deliver it, or to
      * {@link delete_message} to discard it (undo).
      */
+    public async string create_message_in_folder(
+        string folder_id,
+        Geary.RFC822.Message rfc822,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        string encoded = GLib.Base64.encode(
+            rfc822.get_rfc822_buffer().get_bytes().get_data()
+        );
+
+        Json.Object result = yield request_json(
+            "POST",
+            "/me/messages",
+            null,
+            cancellable,
+            encoded,
+            "text/plain"
+        );
+        string? id = get_string_member(result, "id");
+        if (String.is_empty(id)) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "Graph: create_message_in_folder returned no message id"
+            );
+        }
+
+        id = yield move_message(id, folder_id, cancellable);
+        yield patch_message_recipients(
+            id,
+            message_to_composed_email(rfc822),
+            cancellable
+        );
+        return id;
+    }
+
     public async string create_message_in_outbox(
         Geary.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
@@ -1032,6 +1065,43 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         Json.Generator generator = new Json.Generator();
         generator.set_root(node);
         return generator.to_data(null);
+    }
+
+    private Geary.ComposedEmail message_to_composed_email(Geary.RFC822.Message message) {
+        GLib.DateTime date = message.date != null
+            ? message.date.value
+            : new GLib.DateTime.now_local();
+        Geary.RFC822.MailboxAddresses from = (
+            message.from != null && !message.from.is_empty
+            ? message.from
+            : new Geary.RFC822.MailboxAddresses.single(
+                this.account.primary_mailbox
+            )
+        );
+
+        Geary.ComposedEmail composed = new Geary.ComposedEmail(date, from);
+        if (message.to != null) {
+            composed.set_to(message.to);
+        }
+        if (message.cc != null) {
+            composed.set_cc(message.cc);
+        }
+        if (message.bcc != null) {
+            composed.set_bcc(message.bcc);
+        }
+        if (message.reply_to != null) {
+            composed.set_reply_to(message.reply_to);
+        }
+        if (message.subject != null) {
+            composed.set_subject(message.subject.value);
+        }
+        if (message.in_reply_to != null) {
+            composed.set_in_reply_to(message.in_reply_to);
+        }
+        if (message.references != null) {
+            composed.set_references(message.references);
+        }
+        return composed;
     }
 
     private async void patch_message_recipients(string message_id,

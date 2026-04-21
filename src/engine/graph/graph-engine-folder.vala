@@ -10,6 +10,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
     Geary.FolderSupport.Move,
     Geary.FolderSupport.Archive,
     Geary.FolderSupport.Remove,
+    Geary.FolderSupport.Create,
     Geary.FolderSupport.Copy,
     Geary.FolderSupport.Empty {
 
@@ -471,6 +472,27 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             );
         }
         return yield move_email_async(email_ids, archive.path, cancellable);
+    }
+
+    public async Geary.EmailIdentifier? create_email_async(
+        Geary.RFC822.Message rfc822,
+        Geary.EmailFlags? flags,
+        GLib.DateTime? date_received,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        check_open();
+        string message_id = yield this.client.create_message_in_folder(
+            this.folder_id,
+            rfc822,
+            cancellable
+        );
+        if (this.is_loaded) {
+            yield refresh_async(true, cancellable);
+        }
+        int64 sort_order = date_received != null
+            ? date_received.to_unix()
+            : new GLib.DateTime.now_local().to_unix();
+        return new Geary.Graph.EmailIdentifier(message_id, sort_order);
     }
 
     public async void remove_email_async(Gee.Collection<Geary.EmailIdentifier> email_ids,
