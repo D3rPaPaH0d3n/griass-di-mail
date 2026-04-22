@@ -52,8 +52,8 @@ internal class Geary.Graph.Account : Geary.Account,
 
     private Geary.Graph.Client client;
     private Geary.TimeoutManager refresh_loaded_folders_timer;
-    private Geary.TimeoutManager inbox_poll_timer;
-    private bool inbox_poll_running = false;
+    private Geary.TimeoutManager folder_poll_timer;
+    private bool folder_poll_running = false;
     private bool is_account_open = false;
     private bool prefetch_refresh_running = false;
     private bool prefetch_refresh_pending = false;
@@ -84,12 +84,12 @@ internal class Geary.Graph.Account : Geary.Account,
         );
         this.refresh_loaded_folders_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
         this.refresh_loaded_folders_timer.start();
-        this.inbox_poll_timer = new Geary.TimeoutManager.seconds(
+        this.folder_poll_timer = new Geary.TimeoutManager.seconds(
             INBOX_POLL_SEC,
-            () => { queue_inbox_poll(); }
+            () => { queue_folder_poll(); }
         );
-        this.inbox_poll_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
-        this.inbox_poll_timer.start();
+        this.folder_poll_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
+        this.folder_poll_timer.start();
         this.information.notify["prefetch-period-days"].connect((obj, pspec) => {
             queue_prefetch_refresh();
         });
@@ -131,6 +131,13 @@ internal class Geary.Graph.Account : Geary.Account,
             this.get_graph_special_folder(Geary.Folder.SpecialUse.INBOX);
         if (inbox != null) {
             inbox.load_persisted_cache();
+        }
+        // Load Junk as well so its unread counter is available without
+        // manually opening the folder.
+        Geary.Graph.Folder? junk =
+            this.get_graph_special_folder(Geary.Folder.SpecialUse.JUNK);
+        if (junk != null) {
+            junk.load_persisted_cache();
         }
         queue_prefetch_refresh();
     }
@@ -918,33 +925,43 @@ internal class Geary.Graph.Account : Geary.Account,
         return !String.is_empty(value) && value.down().contains(needle);
     }
 
-    private void queue_inbox_poll() {
-        if (this.inbox_poll_running) {
+    private void queue_folder_poll() {
+        if (this.folder_poll_running) {
             return;
         }
-        this.inbox_poll_running = true;
-        poll_inbox_delta.begin((obj, res) => {
+        this.folder_poll_running = true;
+        poll_folders_delta.begin((obj, res) => {
             try {
-                poll_inbox_delta.end(res);
+                poll_folders_delta.end(res);
             } catch (GLib.Error err) {
-                debug("Graph: inbox delta poll error: %s", err.message);
+                debug("Graph: folder delta poll error: %s", err.message);
             }
-            this.inbox_poll_running = false;
+            this.folder_poll_running = false;
         });
     }
 
-    private async void poll_inbox_delta() throws GLib.Error {
-        Geary.Graph.Folder? inbox =
-            this.get_graph_special_folder(Geary.Folder.SpecialUse.INBOX);
-        if (inbox == null) {
-            return;
+    private async void poll_folders_delta() throws GLib.Error {
+        foreach (Geary.Folder folder in this.remote_folders.values) {
+            Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
+            if (graph == null) {
+                continue;
+            }
+
+            // Ensure the Inbox cache is loaded before delta-polling so we
+            // can distinguish genuinely new messages from baseline ones.
+            if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
+                graph.load_persisted_cache();
+            } else if (!graph.is_cache_loaded) {
+                continue;
+            }
+
+            try {
+                yield graph.poll_delta_async(null);
+            } catch (GLib.Error err) {
+                debug("Graph: folder delta poll error for %s: %s",
+                    graph.path.to_string(), err.message);
+            }
         }
-        // Ensure the inbox cache is loaded before delta-polling so we
-        // can distinguish genuinely new messages from baseline ones.
-        if (!inbox.is_cache_loaded) {
-            inbox.load_persisted_cache();
-        }
-        yield inbox.poll_delta_async(null);
     }
 
     private void queue_prefetch_refresh() {
