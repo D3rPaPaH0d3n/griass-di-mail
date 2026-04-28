@@ -1006,19 +1006,20 @@ internal class Geary.Graph.Account : Geary.Account,
                 continue;
             }
 
-            // In background mode, only refresh the Inbox for notifications
             if (background_mode && graph.used_as != Geary.Folder.SpecialUse.INBOX) {
                 continue;
             }
 
-            // Ensure Inbox is cached before refreshing
             if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
-            } else if (!graph.is_cache_loaded) {
-                continue;
             }
 
-            yield graph.refresh_async(true, null);
+            try {
+                yield graph.refresh_async(true, null);
+            } catch (GLib.Error err) {
+                debug("Graph: folder refresh error for %s: %s",
+                    graph.path.to_string(), err.message);
+            }
         }
     }
 
