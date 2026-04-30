@@ -150,13 +150,15 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 path,
                 "$select=id,conversationId,subject,internetMessageId,receivedDateTime,"
                 + "from,toRecipients,ccRecipients,bccRecipients,bodyPreview,hasAttachments,isRead,flag,size,body",
-                cancellable
+                cancellable,
+                null,
+                GLib.Priority.HIGH
             );
         } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
             if (!err.message.contains("(400)")) {
                 throw err;
             }
-            root = yield request_json("GET", path, null, cancellable);
+            root = yield request_json("GET", path, null, cancellable, null, GLib.Priority.HIGH);
         }
         return parse_message(root, true);
     }
@@ -173,7 +175,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             path,
             null,
             cancellable,
-            "message/rfc822"
+            "message/rfc822",
+            GLib.Priority.HIGH
         );
         return new Geary.Memory.ByteBuffer(
             body.get_data(),
@@ -298,6 +301,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             null,
             cancellable,
             encoded,
+            GLib.Priority.DEFAULT,
             "text/plain"
         );
         string? id = get_string_member(result, "id");
@@ -341,6 +345,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             null,
             cancellable,
             encoded,
+            GLib.Priority.DEFAULT,
             "text/plain"
         );
         string? id = get_string_member(result, "id");
@@ -567,7 +572,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
     private async Json.Object request_json_url(string url,
-                                               GLib.Cancellable? cancellable)
+                                               GLib.Cancellable? cancellable,
+                                               int io_priority = GLib.Priority.DEFAULT)
         throws GLib.Error {
         yield this.account.load_incoming_credentials(cancellable);
 
@@ -592,7 +598,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             try {
                 body = yield this.session.send_and_read_async(
                     request,
-                    GLib.Priority.DEFAULT,
+                    io_priority,
                     cancellable
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
@@ -650,6 +656,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                                            string? query,
                                            GLib.Cancellable? cancellable,
                                            string? request_body = null,
+                                           int io_priority = GLib.Priority.DEFAULT,
                                            string content_type = "application/json")
         throws GLib.Error {
         yield this.account.load_incoming_credentials(cancellable);
@@ -687,7 +694,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             try {
                 body = yield this.session.send_and_read_async(
                     request,
-                    GLib.Priority.DEFAULT,
+                    io_priority,
                     cancellable
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
@@ -744,7 +751,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                                            string path,
                                            string? query,
                                            GLib.Cancellable? cancellable,
-                                           string accept = "application/octet-stream")
+                                           string accept = "application/octet-stream",
+                                           int io_priority = GLib.Priority.DEFAULT)
         throws GLib.Error {
         yield this.account.load_incoming_credentials(cancellable);
 
@@ -774,7 +782,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             try {
                 body = yield this.session.send_and_read_async(
                     request,
-                    GLib.Priority.DEFAULT,
+                    io_priority,
                     cancellable
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
@@ -826,7 +834,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                                           string path,
                                           string? query,
                                           GLib.Cancellable? cancellable,
-                                          string? request_body = null)
+                                          string? request_body = null,
+                                          int io_priority = GLib.Priority.DEFAULT)
         throws GLib.Error {
         yield this.account.load_incoming_credentials(cancellable);
 
@@ -862,7 +871,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             try {
                 yield this.session.send_and_read_async(
                     request,
-                    GLib.Priority.DEFAULT,
+                    io_priority,
                     cancellable
                 );
             } catch (GLib.IOError.TIMED_OUT err) {

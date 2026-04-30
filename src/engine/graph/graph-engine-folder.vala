@@ -203,11 +203,6 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         bool is_open_now = is_open();
-        if (is_open_now) {
-            yield ensure_loaded(cancellable);
-        } else if (!this.is_loaded) {
-            throw new Geary.EngineError.OPEN_REQUIRED("%s not open", to_string());
-        }
 
         Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
         if (graph == null) {
@@ -217,21 +212,21 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         Geary.Email? email = this.email_by_id.get(graph.graph_id);
-        if (email == null) {
-            throw new Geary.EngineError.NOT_FOUND(
-                "Unknown Graph email identifier: %s", graph.graph_id
-            );
-        }
+        bool needs_full_message =
+            required_fields.requires_any(Geary.Email.Field.BODY | Geary.Email.Field.HEADER);
 
-        if (!email.fields.fulfills(required_fields) &&
-            required_fields.requires_any(Geary.Email.Field.BODY | Geary.Email.Field.HEADER) &&
-            is_open_now) {
+        if (is_open_now && needs_full_message &&
+            (email == null || !email.fields.fulfills(required_fields))) {
             try {
                 Geary.Graph.Client.Message full = yield this.client.fetch_message(
                     graph.graph_id, cancellable
                 );
                 this.message_by_id.set(full.id, full);
-                build_email(full, email);
+                if (email == null) {
+                    email = build_email(full);
+                } else {
+                    build_email(full, email);
+                }
                 try {
                     Geary.Memory.Buffer full_rfc822 =
                         yield this.client.fetch_message_rfc822(
@@ -267,6 +262,29 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 }
                 throw err;
             }
+        } else {
+            if (is_open_now) {
+                if (!this.is_loaded) {
+                    yield ensure_loaded(cancellable);
+                }
+            } else if (!this.is_loaded) {
+                throw new Geary.EngineError.OPEN_REQUIRED("%s not open", to_string());
+            }
+
+            if (email == null) {
+                email = this.email_by_id.get(graph.graph_id);
+                if (email == null) {
+                    throw new Geary.EngineError.NOT_FOUND(
+                        "Unknown Graph email identifier: %s", graph.graph_id
+                    );
+                }
+            }
+        }
+
+        if (email == null) {
+            throw new Geary.EngineError.NOT_FOUND(
+                "Unknown Graph email identifier: %s", graph.graph_id
+            );
         }
 
         if (!email.fields.fulfills(required_fields)) {
