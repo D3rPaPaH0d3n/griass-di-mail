@@ -82,7 +82,18 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         string path = "/me/mailFolders/%s/messages".printf(
             GLib.Uri.escape_string(folder_id, null, false)
         );
-        Json.Object root;
+
+        // Fetch pages until we either exhaust the folder or reach the
+        // configured prefetch boundary. This ensures the entire vector within
+        // the selected download range is loaded, not just the first page.
+        int64 cutoff_unix = 0;
+        bool has_cutoff = prefetch_period_days >= 0;
+        if (has_cutoff) {
+            cutoff_unix = new GLib.DateTime.now_utc()
+                .add_days(0 - prefetch_period_days)
+                .to_unix();
+        }
+
         string[] queries = {
             (
                 "$top=%d"
@@ -96,41 +107,66 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             "$top=%d".printf(limit),
         };
 
-        root = null;
-        foreach (string query in queries) {
-            try {
-                root = yield request_json("GET", path, query, cancellable);
-                break;
-            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-                if (!err.message.contains("(400)")) {
-                    throw err;
-                }
-            }
-        }
-        if (root == null) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                "Graph request failed (%s)",
-                path
-            );
-        }
-
         Gee.ArrayList<Message> messages = new Gee.ArrayList<Message>();
-        int total_fetched = 0;
-        if (root.has_member("value")) {
-            Json.Array values = root.get_array_member("value");
-            for (uint i = 0; i < values.get_length(); i++) {
-                Json.Node value = values.get_element(i);
-                if (value.get_node_type() != Json.NodeType.OBJECT) {
-                    continue;
-                }
-                Message parsed = parse_message(values.get_object_element(i), false);
-                if (!String.is_empty(parsed.id)) {
-                    messages.add(parsed);
-                    total_fetched++;
-                    if (total_fetched >= limit) {
+        string? next_url = null;
+        bool done = false;
+        int pages = 0;
+        int max_pages = 1000;
+
+        while (!done && pages < max_pages) {
+            pages++;
+            Json.Object root;
+            if (pages == 1) {
+                root = null;
+                foreach (string query in queries) {
+                    try {
+                        root = yield request_json("GET", path, query, cancellable);
                         break;
+                    } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
+                        if (!err.message.contains("(400)")) {
+                            throw err;
+                        }
                     }
                 }
+                if (root == null) {
+                    throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                        "Graph request failed (%s)",
+                        path
+                    );
+                }
+            } else {
+                root = yield request_json_url(next_url, cancellable);
+            }
+
+            if (root.has_member("value")) {
+                Json.Array values = root.get_array_member("value");
+                for (uint i = 0; i < values.get_length(); i++) {
+                    Json.Node value = values.get_element(i);
+                    if (value.get_node_type() != Json.NodeType.OBJECT) {
+                        continue;
+                    }
+                    Message parsed = parse_message(values.get_object_element(i), false);
+                    if (String.is_empty(parsed.id)) {
+                        continue;
+                    }
+
+                    if (has_cutoff && parsed.received_at != null &&
+                        parsed.received_at.to_unix() < cutoff_unix) {
+                        done = true;
+                        break;
+                    }
+
+                    messages.add(parsed);
+                }
+            }
+
+            string? next_link = null;
+            if (root.has_member("@odata.nextLink")) {
+                next_link = get_string_member(root, "@odata.nextLink");
+            }
+            next_url = String.is_empty(next_link) ? null : next_link;
+            if (String.is_empty(next_url)) {
+                done = true;
             }
         }
 
