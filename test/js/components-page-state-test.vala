@@ -34,6 +34,7 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
         add_test("call_void_throws", call_void_throws);
         add_test("call_returning", call_returning);
         add_test("call_returning_throws", call_returning_throws);
+        add_test("unset_html_colors", unset_html_colors);
 
         try {
             WebView.load_resources(GLib.File.new_for_path("/tmp"));
@@ -141,9 +142,44 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
         }
     }
 
+    public void unset_html_colors() throws GLib.Error {
+        load_body_fixture("OHHAI");
+
+        run_javascript(
+            "window.darkReaderAutoCalled = false; window.darkReaderDisabledCalled = false;"
+        );
+        run_javascript("geary.setUnsetHtmlColors(true);");
+        assert(Util.JS.to_bool(run_javascript("window.darkReaderAutoCalled")));
+        assert(!Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
+        assert(Util.JS.to_bool(run_javascript(
+            "document.body.getAttribute('data-geary-theme') == 'dark'"
+        )));
+
+        run_javascript(
+            "window.darkReaderAutoCalled = false; window.darkReaderDisabledCalled = false;"
+        );
+        run_javascript("geary.setUnsetHtmlColors(false);");
+        assert(!Util.JS.to_bool(run_javascript("window.darkReaderAutoCalled")));
+        assert(Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
+        assert(!Util.JS.to_bool(run_javascript(
+            "document.body.hasAttribute('data-geary-theme')"
+        )));
+    }
+
     protected override WebView set_up_test_view() {
         WebKit.UserScript test_script;
         test_script = new WebKit.UserScript(
+            "window.darkReaderAutoCalled = false;\n" +
+            "window.darkReaderDisabledCalled = false;\n" +
+            "window.DarkReader = {\n" +
+            "    auto: function(options) {\n" +
+            "        window.darkReaderAutoCalled = true;\n" +
+            "        window.darkReaderAutoOptions = options;\n" +
+            "    },\n" +
+            "    disable: function() {\n" +
+            "        window.darkReaderDisabledCalled = true;\n" +
+            "    }\n" +
+            "};\n" +
             "var geary = new PageState()",
             WebKit.UserContentInjectedFrames.TOP_FRAME,
             WebKit.UserScriptInjectionTime.START,
