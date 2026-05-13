@@ -325,12 +325,16 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
             bool? is_read = null;
             bool? is_flagged = null;
+            bool? load_remote_images = null;
             if (flags_to_add != null) {
                 if (flags_to_add.contains(Geary.EmailFlags.UNREAD)) {
                     is_read = false;
                 }
                 if (flags_to_add.contains(Geary.EmailFlags.FLAGGED)) {
                     is_flagged = true;
+                }
+                if (flags_to_add.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
+                    load_remote_images = true;
                 }
             }
             if (flags_to_remove != null) {
@@ -340,8 +344,11 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 if (flags_to_remove.contains(Geary.EmailFlags.FLAGGED)) {
                     is_flagged = false;
                 }
+                if (flags_to_remove.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
+                    load_remote_images = false;
+                }
             }
-            if (is_read == null && is_flagged == null) {
+            if (is_read == null && is_flagged == null && load_remote_images == null) {
                 continue;
             }
 
@@ -360,6 +367,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     updated.remove(Geary.EmailFlags.FLAGGED);
                 }
             }
+            if (load_remote_images != null) {
+                if (load_remote_images == true) {
+                    updated.add(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
+                } else {
+                    updated.remove(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
+                }
+            }
             email.set_flags(updated);
             changed.set(email.id, updated);
 
@@ -370,6 +384,9 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 }
                 if (is_flagged != null) {
                     message.is_flagged = (is_flagged == true);
+                }
+                if (load_remote_images != null) {
+                    message.load_remote_images = (load_remote_images == true);
                 }
             }
             this.client.update_message_state.begin(
@@ -923,6 +940,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             )
         );
 
+        // Ensure the Graph client Message preserves any local LOAD_REMOTE_IMAGES
+        // preference so it is written back into the cache. The API does not
+        // support this flag, so retain it from the cached existing email.
+        if (!message.load_remote_images && existing != null && existing.email_flags != null &&
+            existing.email_flags.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
+            message.load_remote_images = true;
+        }
+
         if (message.received_at != null) {
             email.set_send_date(new Geary.RFC822.Date(message.received_at));
         }
@@ -962,6 +987,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
         if (message.is_flagged) {
             flags.add(Geary.EmailFlags.FLAGGED);
+        }
+        // Preserve the LOAD_REMOTE_IMAGES flag from the Graph message if set,
+        // otherwise preserve the existing cached flag if present.
+        if (message.load_remote_images) {
+            flags.add(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
+        } else if (existing != null && existing.email_flags != null &&
+                   existing.email_flags.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
+            flags.add(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
         }
         email.set_flags(flags);
 
@@ -1149,8 +1182,11 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
     private string? compute_cache_path() {
         GLib.File? data_dir = this.owner.information.data_dir;
+        // Fallback to the user's data dir if account data_dir isn't set yet.
         if (data_dir == null) {
-            return null;
+            // Fallback to ~/.local/share/geary if account data_dir isn't set.
+            string fallback = GLib.Path.build_filename(Environment.get_home_dir(), ".local", "share", "geary");
+            data_dir = GLib.File.new_for_path(fallback);
         }
         string folder_hash = GLib.Checksum.compute_for_string(
             GLib.ChecksumType.SHA1,
@@ -1293,6 +1329,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         parsed.body_content_type = get_string_member(object, "bodyContentType") ?? "text";
         parsed.is_read = get_bool_member(object, "isRead", true);
         parsed.is_flagged = get_bool_member(object, "isFlagged", false);
+        parsed.load_remote_images = get_bool_member(object, "loadRemoteImages", false);
         parsed.received_at = parse_datetime(get_string_member(object, "receivedDateTime"));
         parsed.size = get_int_member(object, "size", 0);
         parsed.from = parse_addresses_member(object, "from");
@@ -1322,6 +1359,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         builder.add_boolean_value(message.is_read);
         builder.set_member_name("isFlagged");
         builder.add_boolean_value(message.is_flagged);
+        builder.set_member_name("loadRemoteImages");
+        builder.add_boolean_value(message.load_remote_images);
         if (message.received_at != null) {
             set_string_member(
                 builder,

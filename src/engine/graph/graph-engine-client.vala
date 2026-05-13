@@ -27,6 +27,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         public bool has_attachments = false;
         public bool is_read = true;
         public bool is_flagged = false;
+        public bool load_remote_images = false;
         public GLib.DateTime? received_at = null;
         public int64 size = 0;
         public Gee.HashMap<string,string> internet_message_headers =
