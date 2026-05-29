@@ -39,6 +39,9 @@ internal class Geary.Graph.Account : Geary.Account,
         "junk",
         "archive",
         "outbox",
+        "conversation history",
+        "rss feeds",
+        "sync issues",
     };
 
     private Geary.FolderRoot remote_folder_root =
