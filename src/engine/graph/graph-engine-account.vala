@@ -10,7 +10,7 @@ internal class Geary.Graph.Account : Geary.Account,
 
     private const string REMOTE_ROOT_LABEL = "$geary-graph";
     private const uint REFRESH_LOADED_FOLDERS_SEC = 15;
-    private const uint INBOX_POLL_SEC = 30;
+    private const uint INBOX_POLL_SEC = 5;
 
     // Well-known names used by Microsoft Graph for the built-in special folders.
     // These are already registered as hardcoded folders, so we skip them when
