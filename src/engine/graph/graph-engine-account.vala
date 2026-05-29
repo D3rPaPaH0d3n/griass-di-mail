@@ -50,6 +50,12 @@ internal class Geary.Graph.Account : Geary.Account,
     private Gee.HashMap<Geary.Folder.SpecialUse,Geary.Graph.Folder> special_folders =
         new Gee.HashMap<Geary.Folder.SpecialUse,Geary.Graph.Folder>();
 
+    private Gee.ArrayList<Geary.Folder> get_remote_folder_snapshot() {
+        Gee.ArrayList<Geary.Folder> folders = new Gee.ArrayList<Geary.Folder>();
+        folders.add_all(this.remote_folders.values);
+        return folders;
+    }
+
     private Geary.Graph.Client client;
     private Geary.TimeoutManager refresh_loaded_folders_timer;
     private Geary.TimeoutManager folder_poll_timer;
@@ -123,7 +129,7 @@ internal class Geary.Graph.Account : Geary.Account,
         }
 
         notify_folders_available_unavailable(
-            sort_by_path(this.remote_folders.values),
+            sort_by_path(get_remote_folder_snapshot()),
             null
         );
         notify_opened();
@@ -213,8 +219,7 @@ internal class Geary.Graph.Account : Geary.Account,
     }
 
     public override Gee.Collection<Geary.Folder> list_folders() {
-        Gee.ArrayList<Geary.Folder> folders = new Gee.ArrayList<Geary.Folder>();
-        folders.add_all(this.remote_folders.values);
+        Gee.ArrayList<Geary.Folder> folders = get_remote_folder_snapshot();
         folders.add_all(this.local_folders.values);
         return folders.read_only_view;
     }
@@ -330,7 +335,7 @@ internal class Geary.Graph.Account : Geary.Account,
         Gee.HashMultiMap<Geary.Email, Geary.FolderPath?> matches =
             new Gee.HashMultiMap<Geary.Email, Geary.FolderPath?>();
         string needle = message_id.to_rfc822_string();
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             if (folder_blacklist != null && folder_blacklist.contains(folder.path)) {
                 continue;
             }
@@ -381,7 +386,7 @@ internal class Geary.Graph.Account : Geary.Account,
         Geary.Email.Field required_fields,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph != null && graph.has_cached_identifier(email_id)) {
                 return yield graph.fetch_email_async(
@@ -432,7 +437,7 @@ internal class Geary.Graph.Account : Geary.Account,
 
         Gee.ArrayList<Geary.Email> matched = new Gee.ArrayList<Geary.Email>();
         Gee.Set<Geary.EmailIdentifier> seen = new Gee.HashSet<Geary.EmailIdentifier>();
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             if (cancellable != null && cancellable.is_cancelled()) {
                 throw new GLib.IOError.CANCELLED("Graph search cancelled");
             }
@@ -490,7 +495,7 @@ internal class Geary.Graph.Account : Geary.Account,
         id_set.add_all(ids);
 
         Gee.Set<string> matches = new Gee.HashSet<string>();
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             if (cancellable != null && cancellable.is_cancelled()) {
                 throw new GLib.IOError.CANCELLED("Graph search matches cancelled");
             }
@@ -523,7 +528,7 @@ internal class Geary.Graph.Account : Geary.Account,
     ) throws GLib.Error {
         Gee.HashMultiMap<Geary.EmailIdentifier, Geary.FolderPath> containing =
             new Gee.HashMultiMap<Geary.EmailIdentifier, Geary.FolderPath>();
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph == null || !graph.is_cache_loaded) {
                 continue;
@@ -730,7 +735,7 @@ internal class Geary.Graph.Account : Geary.Account,
         // (those not bound to a special use, i.e. not one of the hardcoded builtins)
         Gee.HashMap<string,Geary.FolderPath> local_custom =
             new Gee.HashMap<string,Geary.FolderPath>();
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph != null && graph.used_as == Geary.Folder.SpecialUse.NONE) {
                 local_custom.set(graph.graph_folder_id, folder.path);
@@ -941,7 +946,7 @@ internal class Geary.Graph.Account : Geary.Account,
     }
 
     private async void poll_folders_delta() throws GLib.Error {
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph == null) {
                 continue;
@@ -1000,7 +1005,7 @@ internal class Geary.Graph.Account : Geary.Account,
         // folders for proper synchronization.
         bool background_mode = !this.is_account_open;
 
-        foreach (Geary.Folder folder in this.remote_folders.values) {
+        foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph == null) {
                 continue;
