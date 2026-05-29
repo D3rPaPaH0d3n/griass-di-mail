@@ -99,11 +99,11 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             (
                 "$top=%d"
               + "&$orderby=receivedDateTime%%20desc"
-              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,size"
+              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag"
             ).printf(limit),
             (
                 "$top=%d"
-              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,size"
+              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag"
             ).printf(limit),
             "$top=%d".printf(limit),
         };
@@ -186,7 +186,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 "GET",
                 path,
                 "$select=id,conversationId,subject,internetMessageId,receivedDateTime,"
-                + "from,toRecipients,ccRecipients,bccRecipients,bodyPreview,hasAttachments,isRead,flag,size,body",
+                + "from,toRecipients,ccRecipients,bccRecipients,bodyPreview,hasAttachments,isRead,flag,body",
                 cancellable,
                 null,
                 GLib.Priority.HIGH
@@ -248,7 +248,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     GLib.Uri.escape_string(folder_id, null, false))
                 + "?$select=id,conversationId,subject,internetMessageId,"
                 + "receivedDateTime,from,toRecipients,ccRecipients,"
-                + "bccRecipients,bodyPreview,isRead,flag,size"
+                + "bccRecipients,bodyPreview,isRead,flag"
                 + "&$orderby=receivedDateTime%%20desc"
                 + "&changeType=created";
         }
