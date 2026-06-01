@@ -36,6 +36,11 @@ int main(string[] args) {
     engine.add_suite(new Geary.IdleManagerTest().steal_suite());
     engine.add_suite(new Geary.TimeoutManagerTest().steal_suite());
     engine.add_suite(new Geary.TlsNegotiationMethodTest().steal_suite());
+
+    // Graph engine tests share a Soup.Server fixture
+    engine.add_suite(new Geary.Graph.ClientTest().steal_suite());
+    engine.add_suite(new Geary.Graph.AccountTest().steal_suite());
+    engine.add_suite(new Geary.Graph.FolderTest().steal_suite());
     engine.add_suite(new Geary.App.ConversationTest().steal_suite());
     engine.add_suite(new Geary.App.ConversationSetTest().steal_suite());
     // Depends on ConversationTest and ConversationSetTest passing

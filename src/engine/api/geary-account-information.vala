@@ -512,6 +512,7 @@ public class Geary.AccountInformation : BaseObject {
                 this.ordinal == other.ordinal &&
                 this.mediator == other.mediator &&
                 this.service_provider == other.service_provider &&
+                this.account_backend == other.account_backend &&
                 this.service_label == other.service_label &&
                 this.label == other.label &&
                 this.primary_mailbox.equal_to(other.primary_mailbox) &&

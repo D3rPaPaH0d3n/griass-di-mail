@@ -7,7 +7,7 @@
 
 internal class Geary.Graph.Client : Geary.BaseObject {
 
-    private const string BASE_URI = "https://graph.microsoft.com/v1.0";
+    public const string DEFAULT_BASE_URI = "https://graph.microsoft.com/v1.0";
     private const uint REQUEST_TIMEOUT_SEC = 30;
     private const int REQUEST_RETRIES = 1;
 
@@ -53,13 +53,18 @@ internal class Geary.Graph.Client : Geary.BaseObject {
 
     private Geary.AccountInformation account;
     private Soup.Session session;
+    internal string base_uri { get; set; default = DEFAULT_BASE_URI; }
 
 
-    public Client(Geary.AccountInformation account) {
+    public Client(Geary.AccountInformation account,
+                  string? base_uri = null) {
         this.account = account;
         this.session = new Soup.Session();
         this.session.timeout = REQUEST_TIMEOUT_SEC;
         this.session.idle_timeout = REQUEST_TIMEOUT_SEC;
+        if (base_uri != null) {
+            this.base_uri = base_uri;
+        }
     }
 
     public async void ping(GLib.Cancellable? cancellable = null)
@@ -243,13 +248,13 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         if (!String.is_empty(delta_link)) {
             url = delta_link;
         } else {
-            url = BASE_URI
+            url = this.base_uri
                 + "/me/mailFolders/%s/messages/delta".printf(
                     GLib.Uri.escape_string(folder_id, null, false))
                 + "?$select=id,conversationId,subject,internetMessageId,"
                 + "receivedDateTime,from,toRecipients,ccRecipients,"
                 + "bccRecipients,bodyPreview,isRead,flag"
-                + "&$orderby=receivedDateTime%%20desc"
+                + "&$orderby=receivedDateTime%20desc"
                 + "&changeType=created";
         }
 
@@ -705,7 +710,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             );
         }
 
-        string uri = BASE_URI + path;
+        string uri = this.base_uri + path;
         if (!String.is_empty(query)) {
             uri += "?" + query;
         }
@@ -800,7 +805,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             );
         }
 
-        string uri = BASE_URI + path;
+        string uri = this.base_uri + path;
         if (!String.is_empty(query)) {
             uri += "?" + query;
         }
@@ -883,7 +888,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             );
         }
 
-        string uri = BASE_URI + path;
+        string uri = this.base_uri + path;
         if (!String.is_empty(query)) {
             uri += "?" + query;
         }
