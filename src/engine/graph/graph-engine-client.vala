@@ -186,22 +186,14 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             GLib.Uri.escape_string(message_id, null, false)
         );
         Json.Object root;
-        try {
-            root = yield request_json(
-                "GET",
-                path,
-                "$select=id,conversationId,subject,internetMessageId,receivedDateTime,"
-                + "from,toRecipients,ccRecipients,bccRecipients,bodyPreview,hasAttachments,isRead,flag,body",
-                cancellable,
-                null,
-                GLib.Priority.HIGH
-            );
-        } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-            if (!err.message.contains("(400)")) {
-                throw err;
-            }
-            root = yield request_json("GET", path, null, cancellable, null, GLib.Priority.HIGH);
-        }
+        root = yield request_json(
+            "GET",
+            path,
+            null,
+            cancellable,
+            null,
+            GLib.Priority.HIGH
+        );
         return parse_message(root, true);
     }
 
