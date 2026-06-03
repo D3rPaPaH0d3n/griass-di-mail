@@ -104,11 +104,11 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             (
                 "$top=%d"
               + "&$orderby=receivedDateTime%%20desc"
-              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag"
+              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,sender,from,toRecipients,ccRecipients,bccRecipients,hasAttachments,replyTo"
             ).printf(limit),
             (
                 "$top=%d"
-              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag"
+              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,sender,from,toRecipients,ccRecipients,bccRecipients,hasAttachments,replyTo"
             ).printf(limit),
             "$top=%d".printf(limit),
         };
