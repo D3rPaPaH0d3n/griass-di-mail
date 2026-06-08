@@ -713,8 +713,20 @@ public class Composer.Widget : Gtk.EventBox, Geary.BaseInterface {
         if (type == EDIT ||
             type == FORWARD) {
             this.pending_include = AttachPending.ALL;
+            this.pending_attachments = full_context.attachments;
+        } else if (type == REPLY_SENDER || type == REPLY_ALL) {
+            var attachments = new Gee.ArrayList<Geary.Attachment>();
+            foreach (var attachment in full_context.attachments) {
+                if (attachment.content_id == null &&
+                    attachment.content_disposition.disposition_type != Geary.Mime.DispositionType.INLINE) {
+                    attachments.add(attachment);
+                }
+            }
+            this.pending_attachments = attachments;
+            this.pending_include = AttachPending.INLINE_ONLY;
+        } else {
+            this.pending_attachments = full_context.attachments;
         }
-        this.pending_attachments = full_context.attachments;
 
         var body = "";
         var complete_quote = "";
