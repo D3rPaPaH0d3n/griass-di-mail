@@ -981,15 +981,31 @@ public class Application.MainWindow :
             // paned.
             Geary.Email? latest_referred = null;
             if (this.conversation_viewer.current_list != null) {
-                Gee.Collection<Geary.EmailIdentifier>? referrants =
-                    composer.get_referred_ids();
                 Geary.App.Conversation selected =
                     this.conversation_viewer.current_list.conversation;
-                latest_referred = selected.get_emails(
-                    RECV_DATE_DESCENDING
-                ).first_match(
-                    (email) => email.id in referrants
-                );
+                // When editing an existing draft, use the draft email
+                // itself as the anchor so the composer appears at the
+                // draft's position rather than the parent message's
+                // position (restore_reply_to_state adds the parent's
+                // ID to referred_ids, which would place the composer
+                // one row too high).
+                if (composer.saved_id != null) {
+                    var draft_id = composer.saved_id;
+                    latest_referred = selected.get_emails(
+                        RECV_DATE_DESCENDING
+                    ).first_match(
+                        (email) => email.id.equal_to(draft_id)
+                    );
+                }
+                if (latest_referred == null) {
+                    Gee.Collection<Geary.EmailIdentifier>? referrants =
+                        composer.get_referred_ids();
+                    latest_referred = selected.get_emails(
+                        RECV_DATE_DESCENDING
+                    ).first_match(
+                        (email) => email.id in referrants
+                    );
+                }
             }
 
             if (latest_referred != null) {
