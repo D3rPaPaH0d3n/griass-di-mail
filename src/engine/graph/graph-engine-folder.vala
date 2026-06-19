@@ -485,6 +485,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             );
         }
 
+        this.owner.trigger_immediate_poll();
+
         // Return a revokable that can move the messages back to this folder.
         return new Geary.Graph.RevokableMove(
             this.client,
@@ -547,6 +549,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         removed = remove_cached_emails(removed);
         if (!removed.is_empty) {
             notify_email_removed(removed);
+            this.owner.trigger_immediate_poll();
         }
     }
 
@@ -1575,6 +1578,7 @@ internal class Geary.Graph.RevokableMove : Geary.Revokable {
             );
         }
 
+        this.account.trigger_immediate_poll();
         notify_revoked();
         set_invalid();
     }

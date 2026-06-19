@@ -10,7 +10,7 @@ internal class Geary.Graph.Account : Geary.Account,
 
     private const string REMOTE_ROOT_LABEL = "$geary-graph";
     private const uint REFRESH_LOADED_FOLDERS_SEC = 15;
-    private const uint INBOX_POLL_SEC = 5;
+    private const uint INBOX_POLL_SEC = 10;
 
     // Well-known names used by Microsoft Graph for the built-in special folders.
     // These are already registered as hardcoded folders, so we skip them when
@@ -931,6 +931,11 @@ internal class Geary.Graph.Account : Geary.Account,
 
     private static bool matches_string_text(string? value, string needle) {
         return !String.is_empty(value) && value.down().contains(needle);
+    }
+
+    internal void trigger_immediate_poll() {
+        queue_folder_poll();
+        this.folder_poll_timer.start();
     }
 
     private void queue_folder_poll() {
