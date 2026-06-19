@@ -428,27 +428,24 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             return new Geary.Graph.NoopRevokable();
         }
 
-        Gee.ArrayList<Geary.EmailIdentifier> moved = new Gee.ArrayList<Geary.EmailIdentifier>();
-        Gee.ArrayList<string> moved_ids = new Gee.ArrayList<string>();
+        Gee.ArrayList<Geary.EmailIdentifier> candidates = new Gee.ArrayList<Geary.EmailIdentifier>();
+        Gee.ArrayList<string> candidate_graph_ids = new Gee.ArrayList<string>();
         foreach (Geary.EmailIdentifier id in to_move) {
             Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
             if (graph == null || !this.email_by_id.has_key(graph.graph_id)) {
                 continue;
             }
-            moved.add(id);
-            moved_ids.add(graph.graph_id);
+            candidates.add(id);
+            candidate_graph_ids.add(graph.graph_id);
         }
 
-        Gee.ArrayList<Geary.EmailIdentifier> removed = remove_cached_emails(moved);
-        if (!removed.is_empty) {
-            notify_email_removed(removed);
-        }
-
-        // Await each API call so we can capture the new message IDs assigned
-        // by the server after the move.  These are needed to move the messages
-        // back if the user hits Undo.
+        // Await each API call before touching the local cache, so the UI only
+        // reflects the move once the server has confirmed it (returned 200).
+        // Track which emails moved successfully so only those are removed.
         Gee.ArrayList<string> new_ids = new Gee.ArrayList<string>();
-        foreach (string graph_id in moved_ids) {
+        Gee.ArrayList<Geary.EmailIdentifier> moved = new Gee.ArrayList<Geary.EmailIdentifier>();
+        for (int i = 0; i < candidate_graph_ids.size; i++) {
+            string graph_id = candidate_graph_ids[i];
             try {
                 string new_id = yield this.client.move_message(
                     graph_id,
@@ -458,6 +455,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 if (!String.is_empty(new_id)) {
                     new_ids.add(new_id);
                 }
+                moved.add(candidates[i]);
             } catch (GLib.Error err) {
                 warning(
                     "Graph move failed for %s: %s",
@@ -465,6 +463,11 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     err.message
                 );
             }
+        }
+
+        Gee.ArrayList<Geary.EmailIdentifier> removed = remove_cached_emails(moved);
+        if (!removed.is_empty) {
+            notify_email_removed(removed);
         }
 
         if (destination_folder.is_cache_loaded) {
