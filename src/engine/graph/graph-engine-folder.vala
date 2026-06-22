@@ -431,14 +431,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         Gee.ArrayList<Geary.EmailIdentifier> candidates = new Gee.ArrayList<Geary.EmailIdentifier>();
-        Gee.ArrayList<string> candidate_graph_ids = new Gee.ArrayList<string>();
+        Gee.ArrayList<string> candidate_ids = new Gee.ArrayList<string>();
         foreach (Geary.EmailIdentifier id in to_move) {
             Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
             if (graph == null || !this.email_by_id.has_key(graph.graph_id)) {
                 continue;
             }
             candidates.add(id);
-            candidate_graph_ids.add(graph.graph_id);
+            candidate_ids.add(graph.graph_id);
         }
 
         // Show change immediately before the API call completes
@@ -449,16 +449,11 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
         // Stamp removed IDs so refresh ignores stale server echoes for a few seconds
         int64 now = GLib.get_monotonic_time();
-        foreach (string id in candidate_graph_ids) {
-            this.recently_removed.set(id, now);
-        }
-
-        // Cancel any in-flight refresh so it doesn't race with our changes
         this.owner.cancel_active_poll();
 
         Gee.ArrayList<string> new_ids = new Gee.ArrayList<string>();
-        for (int i = 0; i < candidate_graph_ids.size; i++) {
-            string graph_id = candidate_graph_ids[i];
+        foreach (string graph_id in candidate_ids) {
+            this.recently_removed.set(graph_id, now);
             try {
                 string new_id = yield this.client.move_message(
                     graph_id,
@@ -474,16 +469,20 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         // Refresh destination async, then trigger full poll when done
-        destination_folder.refresh_async.begin(true, null, (obj, res) => {
-            try {
-                destination_folder.refresh_async.end(res);
-            } catch (GLib.IOError.CANCELLED err) {
-            } catch (GLib.Error err) {
-                warning("Graph refresh failed for %s: %s",
-                    destination_folder.path.to_string(), err.message);
-            }
+        if (destination_folder.is_cache_loaded) {
+            destination_folder.refresh_async.begin(true, null, (obj, res) => {
+                try {
+                    destination_folder.refresh_async.end(res);
+                } catch (GLib.IOError.CANCELLED err) {
+                } catch (GLib.Error err) {
+                    warning("Graph refresh failed for %s: %s",
+                        destination_folder.path.to_string(), err.message);
+                }
+                this.owner.trigger_immediate_poll();
+            });
+        } else {
             this.owner.trigger_immediate_poll();
-        });
+        }
 
         // Return a revokable that can move the messages back to this folder.
         return new Geary.Graph.RevokableMove(
@@ -537,12 +536,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         yield ensure_loaded(cancellable);
 
         Gee.ArrayList<Geary.EmailIdentifier> to_delete = new Gee.ArrayList<Geary.EmailIdentifier>();
+        Gee.ArrayList<string> graph_ids = new Gee.ArrayList<string>();
         foreach (Geary.EmailIdentifier id in email_ids) {
             Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
             if (graph == null || !this.email_by_id.has_key(graph.graph_id)) {
                 continue;
             }
             to_delete.add(id);
+            graph_ids.add(graph.graph_id);
         }
 
         // Show change immediately before API calls complete
@@ -553,24 +554,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         notify_email_removed(removed);
 
         int64 now = GLib.get_monotonic_time();
-        foreach (Geary.EmailIdentifier id in to_delete) {
-            Geary.Graph.EmailIdentifier? gid = id as Geary.Graph.EmailIdentifier;
-            if (gid != null) {
-                this.recently_removed.set(gid.graph_id, now);
-            }
-        }
-
         this.owner.cancel_active_poll();
 
-        foreach (Geary.EmailIdentifier id in to_delete) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
-            if (graph == null) {
-                continue;
-            }
+        foreach (string graph_id in graph_ids) {
+            this.recently_removed.set(graph_id, now);
             try {
-                yield this.client.delete_message(graph.graph_id, cancellable);
+                yield this.client.delete_message(graph_id, cancellable);
             } catch (GLib.Error err) {
-                warning("Graph delete failed for %s: %s", graph.graph_id, err.message);
+                warning("Graph delete failed for %s: %s", graph_id, err.message);
             }
         }
 
@@ -652,15 +643,17 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         // Expire stale tombstones before processing the response
-        int64 refresh_now = GLib.get_monotonic_time();
-        Gee.ArrayList<string> expired_removals = new Gee.ArrayList<string>();
-        foreach (var entry in this.recently_removed.entries) {
-            if (refresh_now - entry.value >= REMOVED_GRACE_USEC) {
-                expired_removals.add(entry.key);
+        if (!this.recently_removed.is_empty) {
+            int64 refresh_now = GLib.get_monotonic_time();
+            Gee.ArrayList<string> expired = new Gee.ArrayList<string>();
+            foreach (var entry in this.recently_removed.entries) {
+                if (refresh_now - entry.value >= REMOVED_GRACE_USEC) {
+                    expired.add(entry.key);
+                }
             }
-        }
-        foreach (string expired_id in expired_removals) {
-            this.recently_removed.unset(expired_id);
+            foreach (string id in expired) {
+                this.recently_removed.unset(id);
+            }
         }
 
         foreach (Geary.Graph.Client.Message message in messages) {

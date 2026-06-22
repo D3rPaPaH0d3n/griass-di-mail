@@ -941,10 +941,7 @@ internal class Geary.Graph.Account : Geary.Account,
     }
 
     internal void trigger_immediate_poll() {
-        // Cancel any in-flight poll so the new one runs immediately.
-        if (this.poll_cancellable != null) {
-            this.poll_cancellable.cancel();
-        }
+        cancel_active_poll();
         queue_folder_poll();
         this.folder_poll_timer.start();
     }
