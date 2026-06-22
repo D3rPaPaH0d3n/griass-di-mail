@@ -62,7 +62,7 @@ internal class Geary.Graph.Account : Geary.Account,
     private Geary.Graph.Client client;
     private Geary.TimeoutManager refresh_loaded_folders_timer;
     private Geary.TimeoutManager folder_poll_timer;
-    private bool folder_poll_running = false;
+    private GLib.Cancellable? poll_cancellable = null;
     private bool is_account_open = false;
     private bool prefetch_refresh_running = false;
     private bool prefetch_refresh_pending = false;
@@ -933,45 +933,60 @@ internal class Geary.Graph.Account : Geary.Account,
         return !String.is_empty(value) && value.down().contains(needle);
     }
 
+    internal void cancel_active_poll() {
+        if (this.poll_cancellable != null) {
+            this.poll_cancellable.cancel();
+            this.poll_cancellable = null;
+        }
+    }
+
     internal void trigger_immediate_poll() {
+        // Cancel any in-flight poll so the new one runs immediately.
+        if (this.poll_cancellable != null) {
+            this.poll_cancellable.cancel();
+        }
         queue_folder_poll();
         this.folder_poll_timer.start();
     }
 
     private void queue_folder_poll() {
-        if (this.folder_poll_running) {
-            return;
-        }
-        this.folder_poll_running = true;
-        poll_folders_delta.begin((obj, res) => {
+        var cancellable = new GLib.Cancellable();
+        this.poll_cancellable = cancellable;
+        poll_folders_refresh.begin(cancellable, (obj, res) => {
             try {
-                poll_folders_delta.end(res);
+                poll_folders_refresh.end(res);
             } catch (GLib.Error err) {
-                debug("Graph: folder delta poll error: %s", err.message);
+                if (!(err is GLib.IOError.CANCELLED)) {
+                    debug("Graph: folder refresh poll error: %s", err.message);
+                }
             }
-            this.folder_poll_running = false;
+            if (this.poll_cancellable == cancellable) {
+                this.poll_cancellable = null;
+            }
         });
     }
 
-    private async void poll_folders_delta() throws GLib.Error {
+    private async void poll_folders_refresh(GLib.Cancellable? cancellable) throws GLib.Error {
         foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
+            if (cancellable != null && cancellable.is_cancelled()) {
+                return;
+            }
             Geary.Graph.Folder? graph = folder as Geary.Graph.Folder;
             if (graph == null) {
                 continue;
             }
-
-            // Ensure the Inbox cache is loaded before delta-polling so we
-            // can distinguish genuinely new messages from baseline ones.
             if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
             } else if (!graph.is_cache_loaded) {
                 continue;
             }
-
             try {
-                yield graph.poll_delta_async(null);
+                yield graph.refresh_async(true, cancellable);
             } catch (GLib.Error err) {
-                debug("Graph: folder delta poll error for %s: %s",
+                if (err is GLib.IOError.CANCELLED) {
+                    return;
+                }
+                debug("Graph: folder refresh poll error for %s: %s",
                     graph.path.to_string(), err.message);
             }
         }
