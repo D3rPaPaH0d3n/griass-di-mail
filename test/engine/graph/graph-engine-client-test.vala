@@ -19,7 +19,9 @@ class Geary.Graph.ClientTest : GraphTestCase {
         add_test("delta_messages_parses_changed_and_removed", delta_messages_parses_changed_and_removed);
         add_test("create_message_in_outbox_returns_id", create_message_in_outbox_returns_id);
         add_test("send_message_posts_to_send_endpoint", send_message_posts_to_send_endpoint);
-        add_test("request_failure_throws_server_unavailable", request_failure_throws_server_unavailable);
+        add_test("request_failure_throws_http_error", request_failure_throws_http_error);
+        add_test("throttled_request_retries_after_wait", throttled_request_retries_after_wait);
+        add_test("unauthorized_request_refreshes_credentials_and_retries", unauthorized_request_refreshes_credentials_and_retries);
     }
 
     public void ping_sends_get_me() throws GLib.Error {
@@ -338,7 +340,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
         assert_equal(capture.method, "POST");
     }
 
-    public void request_failure_throws_server_unavailable() throws GLib.Error {
+    public void request_failure_throws_http_error() throws GLib.Error {
         respond_json(
             "GET", "/me", 503,
             """{"error": {"code": "serviceUnavailable"}}"""
@@ -349,16 +351,72 @@ class Geary.Graph.ClientTest : GraphTestCase {
         client.ping.begin(null, (obj, res) => {
             try {
                 client.ping.end(res);
-            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
+            } catch (Geary.Graph.HttpError.SERVER err) {
                 failed = true;
             } catch (GLib.Error err) {
-                fail("Expected SERVER_UNAVAILABLE, got: %s".printf(err.message));
+                fail("Expected HttpError.SERVER, got: %s".printf(err.message));
             }
         });
         while (!failed) {
             MainContext.default().iteration(true);
         }
         assert_true(failed);
+    }
+
+    public void throttled_request_retries_after_wait() throws GLib.Error {
+        int hit_count = 0;
+        this.server.add_handler("/me", (srv, msg, p, query) => {
+            hit_count++;
+            if (hit_count == 1) {
+                msg.get_response_headers().append("Retry-After", "0");
+                msg.set_status(429, null);
+                return;
+            }
+            string body = """{"id": "user-123"}""";
+            uint8[] bytes = (uint8[]) body.data;
+            msg.set_response("application/json", Soup.MemoryUse.COPY, bytes);
+            msg.set_status(200, null);
+        });
+
+        Geary.Graph.Client client = new_client();
+        client.ping.begin(null, this.async_completion);
+        client.ping.end(async_result());
+
+        assert_true(
+            hit_count == 2,
+            "Expected the client to retry after a 429, got %d requests".printf(hit_count)
+        );
+    }
+
+    public void unauthorized_request_refreshes_credentials_and_retries() throws GLib.Error {
+        var mediator = (Geary.GraphStubCredentialsMediator) this.mediator;
+        int load_count_before = mediator.load_count;
+
+        int hit_count = 0;
+        this.server.add_handler("/me", (srv, msg, p, query) => {
+            hit_count++;
+            if (hit_count == 1) {
+                msg.set_status(401, null);
+                return;
+            }
+            string body = """{"id": "user-123"}""";
+            uint8[] bytes = (uint8[]) body.data;
+            msg.set_response("application/json", Soup.MemoryUse.COPY, bytes);
+            msg.set_status(200, null);
+        });
+
+        Geary.Graph.Client client = new_client();
+        client.ping.begin(null, this.async_completion);
+        client.ping.end(async_result());
+
+        assert_true(
+            hit_count == 2,
+            "Expected the client to retry once after a 401, got %d requests".printf(hit_count)
+        );
+        assert_true(
+            mediator.load_count > load_count_before + 1,
+            "Expected credentials to be reloaded again after the 401"
+        );
     }
 
 }

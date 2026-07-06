@@ -92,6 +92,7 @@ engine_vala_sources = files(
   'graph/graph-engine-client.vala',
   'graph/graph-engine-email-identifier.vala',
   'graph/graph-engine-email-properties.vala',
+  'graph/graph-engine-error.vala',
   'graph/graph-engine-folder.vala',
   'graph/graph-engine-folder-properties.vala',
   'graph/graph-engine-search-query.vala',

@@ -244,25 +244,22 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     );
                 }
                 persist_cached_messages();
-            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-                if (err.message.contains("(404)")) {
-                    debug(
-                        "Graph message %s not found, removing from cache",
-                        graph.graph_id
-                    );
-                    Gee.ArrayList<Geary.EmailIdentifier> to_remove =
-                        new Gee.ArrayList<Geary.EmailIdentifier>();
-                    to_remove.add(id);
-                    Gee.ArrayList<Geary.EmailIdentifier> removed =
-                        remove_cached_emails(to_remove);
-                    if (!removed.is_empty) {
-                        notify_email_removed(removed);
-                    }
-                    throw new Geary.EngineError.NOT_FOUND(
-                        "Graph message not found on server: %s", graph.graph_id
-                    );
+            } catch (Geary.Graph.HttpError.NOT_FOUND err) {
+                debug(
+                    "Graph message %s not found, removing from cache",
+                    graph.graph_id
+                );
+                Gee.ArrayList<Geary.EmailIdentifier> to_remove =
+                    new Gee.ArrayList<Geary.EmailIdentifier>();
+                to_remove.add(id);
+                Gee.ArrayList<Geary.EmailIdentifier> removed =
+                    remove_cached_emails(to_remove);
+                if (!removed.is_empty) {
+                    notify_email_removed(removed);
                 }
-                throw err;
+                throw new Geary.EngineError.NOT_FOUND(
+                    "Graph message not found on server: %s", graph.graph_id
+                );
             }
         } else {
             if (is_open_now) {

@@ -10,6 +10,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     public const string DEFAULT_BASE_URI = "https://graph.microsoft.com/v1.0";
     private const uint REQUEST_TIMEOUT_SEC = 30;
     private const int REQUEST_RETRIES = 1;
+    private const uint MAX_THROTTLE_RETRIES = 5;
+    private const uint MAX_RETRY_AFTER_SEC = 60;
 
 
     internal class Message : Geary.BaseObject {
@@ -128,10 +130,9 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     try {
                         root = yield request_json("GET", path, query, cancellable);
                         break;
-                    } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-                        if (!err.message.contains("(400)")) {
-                            throw err;
-                        }
+                    } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
+                        // Not all tenants/API versions support every field
+                        // in this query; try the next, simpler one.
                     }
                 }
                 if (root == null) {
@@ -174,6 +175,14 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             if (String.is_empty(next_url)) {
                 done = true;
             }
+        }
+
+        if (!done) {
+            warning(
+                "Graph list_messages for folder %s hit the %d page cap; " +
+                "more messages may remain unfetched",
+                folder_id, max_pages
+            );
         }
 
         return messages;
@@ -261,12 +270,11 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             Json.Object root;
             try {
                 root = yield request_json_url(url, cancellable);
-            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-                if (err.message.contains("(410)")) {
-                    result.delta_link = "";
-                    return result;
-                }
-                throw err;
+            } catch (Geary.Graph.HttpError.GONE err) {
+                // The deltaLink expired; caller must restart with a fresh
+                // baseline sync.
+                result.delta_link = "";
+                return result;
             }
 
             if (root.has_member("value")) {
@@ -308,6 +316,14 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 next = get_string_member(root, "@odata.nextLink");
             }
             url = String.is_empty(next) ? "" : next;
+        }
+
+        if (!String.is_empty(url) && String.is_empty(result.delta_link)) {
+            warning(
+                "Graph delta_messages for folder %s hit the %d page cap " +
+                "without reaching a deltaLink; sync is incomplete",
+                folder_id, max_pages
+            );
         }
 
         return result;
@@ -549,10 +565,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     cancellable
                 );
                 break;
-            } catch (Geary.EngineError.SERVER_UNAVAILABLE err) {
-                if (!err.message.contains("(400)")) {
-                    throw err;
-                }
+            } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
                 continue;
             }
         }
@@ -609,80 +622,11 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                                                GLib.Cancellable? cancellable,
                                                int io_priority = GLib.Priority.DEFAULT)
         throws GLib.Error {
-        yield this.account.load_incoming_credentials(cancellable);
-
-        Geary.Credentials? credentials = this.account.incoming.credentials;
-        if (credentials == null || String.is_empty(credentials.token)) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                "No Graph OAuth token available"
-            );
-        }
-
-        for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
-            var request = create_request_message("GET", url);
-            request.set_force_http1(true);
-            request.request_headers.append(
-                "Authorization", "Bearer %s".printf(credentials.token)
-            );
-            request.request_headers.append("Accept", "application/json");
-            request.request_headers.append("Accept-Encoding", "identity");
-            request.request_headers.append("Connection", "close");
-
-            GLib.Bytes body;
-            try {
-                body = yield this.session.send_and_read_async(
-                    request,
-                    io_priority,
-                    cancellable
-                );
-            } catch (GLib.IOError.TIMED_OUT err) {
-                if (attempt < REQUEST_RETRIES) {
-                    continue;
-                }
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph request timed out (%s)",
-                    url
-                );
-            }
-
-            if (request.status_code < 200 || request.status_code >= 300) {
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph request failed (%u): %s (%s)",
-                    request.status_code,
-                    request.reason_phrase,
-                    url
-                );
-            }
-
-            var parser = new Json.Parser();
-            try {
-                parser.load_from_data(
-                    (string) body.get_data(),
-                    (ssize_t) body.get_size()
-                );
-            } catch (GLib.Error err) {
-                if (attempt < REQUEST_RETRIES) {
-                    continue;
-                }
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph response decode failed (%s): %s",
-                    url,
-                    err.message
-                );
-            }
-            Json.Node root = parser.get_root();
-            if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Invalid Graph response payload"
-                );
-            }
-            return root.get_object();
-        }
-
-        throw new Geary.EngineError.SERVER_UNAVAILABLE(
-            "Graph request failed (%s)",
-            url
+        GLib.Bytes body = yield send_request(
+            "GET", url, null, "application/json", "application/json",
+            cancellable, io_priority
         );
+        return parse_json_object(body, url);
     }
 
     private async Json.Object request_json(string method,
@@ -693,27 +637,82 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                                            int io_priority = GLib.Priority.DEFAULT,
                                            string content_type = "application/json")
         throws GLib.Error {
-        yield this.account.load_incoming_credentials(cancellable);
+        string uri = build_uri(path, query);
+        GLib.Bytes body = yield send_request(
+            method, uri, request_body, content_type, "application/json",
+            cancellable, io_priority
+        );
+        return parse_json_object(body, uri);
+    }
 
-        Geary.Credentials? credentials = this.account.incoming.credentials;
-        if (credentials == null || String.is_empty(credentials.token)) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                "No Graph OAuth token available"
-            );
-        }
+    private async GLib.Bytes request_bytes(string method,
+                                           string path,
+                                           string? query,
+                                           GLib.Cancellable? cancellable,
+                                           string accept = "application/octet-stream",
+                                           int io_priority = GLib.Priority.DEFAULT)
+        throws GLib.Error {
+        string uri = build_uri(path, query);
+        return yield send_request(
+            method, uri, null, "application/json", accept,
+            cancellable, io_priority
+        );
+    }
 
+    private async void request_no_content(string method,
+                                          string path,
+                                          string? query,
+                                          GLib.Cancellable? cancellable,
+                                          string? request_body = null,
+                                          int io_priority = GLib.Priority.DEFAULT)
+        throws GLib.Error {
+        string uri = build_uri(path, query);
+        yield send_request(
+            method, uri, request_body, "application/json", "application/json",
+            cancellable, io_priority
+        );
+    }
+
+    private string build_uri(string path, string? query) {
         string uri = this.base_uri + path;
         if (!String.is_empty(query)) {
             uri += "?" + query;
         }
+        return uri;
+    }
 
-        for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
+    /**
+     * Sends a single Graph request, transparently handling throttling
+     * (429 + Retry-After) and a one-time credential refresh on 401.
+     */
+    private async GLib.Bytes send_request(string method,
+                                          string uri,
+                                          string? request_body,
+                                          string content_type,
+                                          string accept,
+                                          GLib.Cancellable? cancellable,
+                                          int io_priority)
+        throws GLib.Error {
+        bool refreshed_credentials = false;
+        uint throttle_retries = 0;
+        int timeout_retries = 0;
+
+        while (true) {
+            yield this.account.load_incoming_credentials(cancellable);
+
+            Geary.Credentials? credentials = this.account.incoming.credentials;
+            if (credentials == null || String.is_empty(credentials.token)) {
+                throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                    "No Graph OAuth token available"
+                );
+            }
+
             var request = create_request_message(method, uri);
             request.set_force_http1(true);
             request.request_headers.append(
                 "Authorization", "Bearer %s".printf(credentials.token)
             );
-            request.request_headers.append("Accept", "application/json");
+            request.request_headers.append("Accept", accept);
             request.request_headers.append("Accept-Encoding", "identity");
             request.request_headers.append("Connection", "close");
             if (!String.is_empty(request_body)) {
@@ -732,7 +731,8 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     cancellable
                 );
             } catch (GLib.IOError.TIMED_OUT err) {
-                if (attempt < REQUEST_RETRIES) {
+                if (timeout_retries < REQUEST_RETRIES) {
+                    timeout_retries++;
                     continue;
                 }
                 throw new Geary.EngineError.SERVER_UNAVAILABLE(
@@ -741,109 +741,81 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 );
             }
 
-            if (request.status_code < 200 || request.status_code >= 300) {
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph request failed (%u): %s (%s)",
-                    request.status_code,
-                    request.reason_phrase,
-                    uri
-                );
+            uint status = request.status_code;
+            if (status >= 200 && status < 300) {
+                return body;
             }
 
-            var parser = new Json.Parser();
-            try {
-                parser.load_from_data(
-                    (string) body.get_data(),
-                    (ssize_t) body.get_size()
+            if (status == 429 && throttle_retries < MAX_THROTTLE_RETRIES) {
+                throttle_retries++;
+                uint wait_sec = uint.min(
+                    parse_retry_after_seconds(
+                        request.response_headers.get_one("Retry-After")
+                    ),
+                    MAX_RETRY_AFTER_SEC
                 );
-            } catch (GLib.Error err) {
-                if (attempt < REQUEST_RETRIES) {
-                    continue;
-                }
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph response decode failed (%s): %s",
-                    uri,
-                    err.message
-                );
+                yield Geary.Scheduler.sleep_async(wait_sec);
+                continue;
             }
-            Json.Node root = parser.get_root();
-            if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Invalid Graph response payload"
-                );
+
+            if (status == 401 && !refreshed_credentials) {
+                refreshed_credentials = true;
+                continue;
             }
-            return root.get_object();
+
+            throw http_error_for_status(status, request.reason_phrase, uri);
         }
-
-        throw new Geary.EngineError.SERVER_UNAVAILABLE(
-            "Graph request failed (%s)",
-            uri
-        );
     }
 
-    private async GLib.Bytes request_bytes(string method,
-                                           string path,
-                                           string? query,
-                                           GLib.Cancellable? cancellable,
-                                           string accept = "application/octet-stream",
-                                           int io_priority = GLib.Priority.DEFAULT)
-        throws GLib.Error {
-        yield this.account.load_incoming_credentials(cancellable);
+    private static uint parse_retry_after_seconds(string? header) {
+        int seconds = String.is_empty(header) ? 0 : int.parse(header);
+        return seconds > 0 ? (uint) seconds : 1;
+    }
 
-        Geary.Credentials? credentials = this.account.incoming.credentials;
-        if (credentials == null || String.is_empty(credentials.token)) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                "No Graph OAuth token available"
-            );
-        }
-
-        string uri = this.base_uri + path;
-        if (!String.is_empty(query)) {
-            uri += "?" + query;
-        }
-
-        for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
-            var request = create_request_message(method, uri);
-            request.set_force_http1(true);
-            request.request_headers.append(
-                "Authorization", "Bearer %s".printf(credentials.token)
-            );
-            request.request_headers.append("Accept", accept);
-            request.request_headers.append("Accept-Encoding", "identity");
-            request.request_headers.append("Connection", "close");
-
-            GLib.Bytes body;
-            try {
-                body = yield this.session.send_and_read_async(
-                    request,
-                    io_priority,
-                    cancellable
-                );
-            } catch (GLib.IOError.TIMED_OUT err) {
-                if (attempt < REQUEST_RETRIES) {
-                    continue;
-                }
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph request timed out (%s)",
-                    uri
-                );
-            }
-
-            if (request.status_code < 200 || request.status_code >= 300) {
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph request failed (%u): %s (%s)",
-                    request.status_code,
-                    request.reason_phrase,
-                    uri
-                );
-            }
-            return body;
-        }
-
-        throw new Geary.EngineError.SERVER_UNAVAILABLE(
-            "Graph request failed (%s)",
-            uri
+    private static GLib.Error http_error_for_status(uint status,
+                                                     string reason,
+                                                     string uri) {
+        string message = "Graph request failed (%u): %s (%s)".printf(
+            status, reason, uri
         );
+        switch (status) {
+        case 400:
+            return new Geary.Graph.HttpError.BAD_REQUEST(message);
+        case 401:
+            return new Geary.Graph.HttpError.UNAUTHORIZED(message);
+        case 404:
+            return new Geary.Graph.HttpError.NOT_FOUND(message);
+        case 410:
+            return new Geary.Graph.HttpError.GONE(message);
+        case 429:
+            return new Geary.Graph.HttpError.TOO_MANY_REQUESTS(message);
+        default:
+            return new Geary.Graph.HttpError.SERVER(message);
+        }
+    }
+
+    private static Json.Object parse_json_object(GLib.Bytes body, string uri)
+        throws GLib.Error {
+        var parser = new Json.Parser();
+        try {
+            parser.load_from_data(
+                (string) body.get_data(),
+                (ssize_t) body.get_size()
+            );
+        } catch (GLib.Error err) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "Graph response decode failed (%s): %s",
+                uri,
+                err.message
+            );
+        }
+        Json.Node root = parser.get_root();
+        if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
+            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                "Invalid Graph response payload"
+            );
+        }
+        return root.get_object();
     }
 
     private static Soup.Message create_request_message(string method,
@@ -862,77 +834,6 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 err.message
             );
         }
-    }
-
-    private async void request_no_content(string method,
-                                          string path,
-                                          string? query,
-                                          GLib.Cancellable? cancellable,
-                                          string? request_body = null,
-                                          int io_priority = GLib.Priority.DEFAULT)
-        throws GLib.Error {
-        yield this.account.load_incoming_credentials(cancellable);
-
-        Geary.Credentials? credentials = this.account.incoming.credentials;
-        if (credentials == null || String.is_empty(credentials.token)) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                "No Graph OAuth token available"
-            );
-        }
-
-        string uri = this.base_uri + path;
-        if (!String.is_empty(query)) {
-            uri += "?" + query;
-        }
-
-        for (int attempt = 0; attempt <= REQUEST_RETRIES; attempt++) {
-            var request = create_request_message(method, uri);
-            request.set_force_http1(true);
-            request.request_headers.append(
-                "Authorization", "Bearer %s".printf(credentials.token)
-            );
-            request.request_headers.append("Accept", "application/json");
-            request.request_headers.append("Accept-Encoding", "identity");
-            request.request_headers.append("Connection", "close");
-            if (!String.is_empty(request_body)) {
-                uint8[] bytes = request_body.data;
-                request.set_request_body_from_bytes(
-                    "application/json",
-                    new GLib.Bytes(bytes)
-                );
-            }
-
-            try {
-                yield this.session.send_and_read_async(
-                    request,
-                    io_priority,
-                    cancellable
-                );
-            } catch (GLib.IOError.TIMED_OUT err) {
-                if (attempt < REQUEST_RETRIES) {
-                    continue;
-                }
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph request timed out (%s)",
-                    uri
-                );
-            }
-
-            if (request.status_code < 200 || request.status_code >= 300) {
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
-                    "Graph request failed (%u): %s (%s)",
-                    request.status_code,
-                    request.reason_phrase,
-                    uri
-                );
-            }
-            return;
-        }
-
-        throw new Geary.EngineError.SERVER_UNAVAILABLE(
-            "Graph request failed (%s)",
-            uri
-        );
     }
 
     private Message parse_message(Json.Object object, bool include_body)
