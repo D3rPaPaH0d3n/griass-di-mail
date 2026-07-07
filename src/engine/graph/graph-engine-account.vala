@@ -9,8 +9,11 @@ internal class Geary.Graph.Account : Geary.Account,
     Geary.AccountSupport.QueueSend {
 
     private const string REMOTE_ROOT_LABEL = "$geary-graph";
-    private const uint REFRESH_LOADED_FOLDERS_SEC = 15;
-    private const uint INBOX_POLL_SEC = 10;
+    private const uint POLL_INTERVAL_SEC = 60;
+    // Every Nth poll tick runs a full sync instead of the fast poll: the
+    // folder list is re-synced and all cache-loaded folders are refreshed,
+    // not just the inbox and open folders.
+    private const uint FULL_SYNC_EVERY_N_TICKS = 5;
 
     // Well-known names used by Microsoft Graph for the built-in special folders.
     // These are already registered as hardcoded folders, so we skip them when
@@ -60,8 +63,8 @@ internal class Geary.Graph.Account : Geary.Account,
     }
 
     private Geary.Graph.Client client;
-    private Geary.TimeoutManager refresh_loaded_folders_timer;
-    private Geary.TimeoutManager folder_poll_timer;
+    private Geary.TimeoutManager poll_timer;
+    private uint poll_tick = 0;
     private GLib.Cancellable? poll_cancellable = null;
     private bool is_account_open = false;
     private bool prefetch_refresh_running = false;
@@ -87,18 +90,12 @@ internal class Geary.Graph.Account : Geary.Account,
             Geary.ProgressType.ACTIVITY
         );
         this.client = new Geary.Graph.Client(information);
-        this.refresh_loaded_folders_timer = new Geary.TimeoutManager.seconds(
-            REFRESH_LOADED_FOLDERS_SEC,
-            () => { queue_prefetch_refresh(); }
+        this.poll_timer = new Geary.TimeoutManager.seconds(
+            POLL_INTERVAL_SEC,
+            on_poll_tick
         );
-        this.refresh_loaded_folders_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
-        this.refresh_loaded_folders_timer.start();
-        this.folder_poll_timer = new Geary.TimeoutManager.seconds(
-            INBOX_POLL_SEC,
-            () => { queue_folder_poll(); }
-        );
-        this.folder_poll_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
-        this.folder_poll_timer.start();
+        this.poll_timer.repetition = Geary.TimeoutManager.Repeat.FOREVER;
+        this.poll_timer.start();
         this.information.notify["prefetch-period-days"].connect((obj, pspec) => {
             queue_prefetch_refresh();
         });
@@ -942,14 +939,29 @@ internal class Geary.Graph.Account : Geary.Account,
 
     internal void trigger_immediate_poll() {
         cancel_active_poll();
-        queue_folder_poll();
-        this.folder_poll_timer.start();
+        // User actions can affect closed folders (e.g. delete moves mail to
+        // an unopened Trash), so immediate polls cover cache-loaded folders
+        // too, not just open ones.
+        queue_folder_poll(true);
+        this.poll_timer.start();
     }
 
-    private void queue_folder_poll() {
+    private void on_poll_tick() {
+        if (!GLib.NetworkMonitor.get_default().network_available) {
+            return;
+        }
+        this.poll_tick++;
+        if (this.poll_tick % FULL_SYNC_EVERY_N_TICKS == 0) {
+            queue_prefetch_refresh();
+        } else {
+            queue_folder_poll(false);
+        }
+    }
+
+    private void queue_folder_poll(bool include_cached) {
         var cancellable = new GLib.Cancellable();
         this.poll_cancellable = cancellable;
-        poll_folders_refresh.begin(cancellable, (obj, res) => {
+        poll_folders_refresh.begin(include_cached, cancellable, (obj, res) => {
             try {
                 poll_folders_refresh.end(res);
             } catch (GLib.Error err) {
@@ -963,7 +975,9 @@ internal class Geary.Graph.Account : Geary.Account,
         });
     }
 
-    private async void poll_folders_refresh(GLib.Cancellable? cancellable) throws GLib.Error {
+    private async void poll_folders_refresh(bool include_cached,
+                                            GLib.Cancellable? cancellable)
+        throws GLib.Error {
         foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             if (cancellable != null && cancellable.is_cancelled()) {
                 return;
@@ -972,9 +986,14 @@ internal class Geary.Graph.Account : Geary.Account,
             if (graph == null) {
                 continue;
             }
+            bool is_open =
+                graph.get_open_state() != Geary.Folder.OpenState.CLOSED;
             if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
-            } else if (!graph.is_cache_loaded) {
+            } else if (!is_open && !(include_cached && graph.is_cache_loaded)) {
+                // The regular poll only covers the inbox and open folders;
+                // cache-loaded closed folders sync on the full-sync tick or
+                // on immediate (user-action) polls.
                 continue;
             }
             try {
@@ -1037,6 +1056,10 @@ internal class Geary.Graph.Account : Geary.Account,
 
             if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
+            } else if (!graph.is_cache_loaded) {
+                // Never-opened folders have nothing to keep fresh; they load
+                // on first open instead of costing a request every cycle.
+                continue;
             }
 
             try {
