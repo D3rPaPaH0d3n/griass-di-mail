@@ -1397,7 +1397,8 @@ public class Application.MainWindow :
             }
         );
 
-        this.application_headerbar.spinner.set_progress_monitor(progress_monitor);
+        this.application_headerbar.set_progress_monitor(progress_monitor);
+        this.application_headerbar.refresh_clicked.connect(on_refresh_folder);
 
         this.conversation_list_actions.set_mark_inverted();
 
@@ -1731,6 +1732,23 @@ public class Application.MainWindow :
             string? quote = yield email_view.get_selection_for_quoting();
             yield create_composer(account, type, email_view.email, quote);
         }
+    }
+
+    private void on_refresh_folder() {
+        Geary.Folder? folder = this.selected_folder;
+        if (folder == null) {
+            return;
+        }
+        this.application_headerbar.push_busy();
+        folder.synchronise_remote.begin(null, (obj, res) => {
+            try {
+                folder.synchronise_remote.end(res);
+            } catch (GLib.Error err) {
+                debug("Error refreshing %s: %s",
+                    folder.path.to_string(), err.message);
+            }
+            this.application_headerbar.pop_busy();
+        });
     }
 
     private void on_conversations_selected(Gee.Set<Geary.App.Conversation> selected) {

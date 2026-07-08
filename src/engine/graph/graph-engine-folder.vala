@@ -101,6 +101,11 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
     }
 
+    public override async void synchronise_remote(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        yield refresh_async(true, cancellable);
+    }
+
     public override async Gee.Collection<Geary.EmailIdentifier> contains_identifiers(
         Gee.Collection<Geary.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null
