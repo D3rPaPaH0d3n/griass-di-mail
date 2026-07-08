@@ -9,11 +9,15 @@ internal class Geary.Graph.Account : Geary.Account,
     Geary.AccountSupport.QueueSend {
 
     private const string REMOTE_ROOT_LABEL = "$geary-graph";
-    private const uint POLL_INTERVAL_SEC = 60;
+    private const uint POLL_INTERVAL_SEC = 30;
     // Every Nth poll tick runs a full sync instead of the fast poll: the
-    // folder list is re-synced and all cache-loaded folders are refreshed,
-    // not just the inbox and open folders.
-    private const uint FULL_SYNC_EVERY_N_TICKS = 5;
+    // folder list is re-synced and all folders are refreshed, not just the
+    // inbox and open folders.
+    private const uint FULL_SYNC_EVERY_N_TICKS = 10;
+    // Adaptive cadence: fast polls run every poll_stride ticks. Activity
+    // (new mail, user actions) resets the stride to 1 (30s); quiet polls
+    // double it up to this cap (120s), keeping idle radio wakeups low.
+    private const uint MAX_POLL_STRIDE = 4;
 
     // Well-known names used by Microsoft Graph for the built-in special folders.
     // These are already registered as hardcoded folders, so we skip them when
@@ -65,6 +69,10 @@ internal class Geary.Graph.Account : Geary.Account,
     private Geary.Graph.Client client;
     private Geary.TimeoutManager poll_timer;
     private uint poll_tick = 0;
+    private uint poll_stride = 1;
+    private bool screen_locked = false;
+    private GLib.DBusConnection? session_bus = null;
+    private uint screensaver_subscription = 0;
     private GLib.Cancellable? poll_cancellable = null;
     private bool is_account_open = false;
     private bool prefetch_refresh_running = false;
@@ -145,6 +153,14 @@ internal class Geary.Graph.Account : Geary.Account,
         if (junk != null) {
             junk.load_persisted_cache();
         }
+        // Load Sent so conversation threading can see our own replies
+        // without the folder ever being opened.
+        Geary.Graph.Folder? sent =
+            this.get_graph_special_folder(Geary.Folder.SpecialUse.SENT);
+        if (sent != null) {
+            sent.load_persisted_cache();
+        }
+        subscribe_screensaver();
         queue_prefetch_refresh();
     }
 
@@ -168,8 +184,52 @@ internal class Geary.Graph.Account : Geary.Account,
         yield this.outgoing.stop(cancellable);
         yield this.incoming.stop(cancellable);
 
+        if (this.screensaver_subscription != 0) {
+            this.session_bus.signal_unsubscribe(this.screensaver_subscription);
+            this.screensaver_subscription = 0;
+        }
+
         this.is_account_open = false;
         notify_closed();
+    }
+
+    /**
+     * Pauses polling while the screen is locked; nobody is reading mail.
+     *
+     * GNOME-only signal — on other desktops it never fires and polling just
+     * continues as before. Unsubscribed on close so the connection's strong
+     * reference can't keep a closed account polling.
+     */
+    private void subscribe_screensaver() {
+        GLib.Bus.get.begin(GLib.BusType.SESSION, null, (obj, res) => {
+            try {
+                this.session_bus = GLib.Bus.get.end(res);
+            } catch (GLib.Error err) {
+                debug("Graph: no session bus, lock detection disabled: %s",
+                    err.message);
+                return;
+            }
+            if (!this.is_account_open || this.screensaver_subscription != 0) {
+                return;
+            }
+            this.screensaver_subscription = this.session_bus.signal_subscribe(
+                null,
+                "org.gnome.ScreenSaver",
+                "ActiveChanged",
+                "/org/gnome/ScreenSaver",
+                null,
+                GLib.DBusSignalFlags.NONE,
+                (conn, sender, path, iface, name, parameters) => {
+                    bool locked = false;
+                    parameters.get("(b)", out locked);
+                    bool was_locked = this.screen_locked;
+                    this.screen_locked = locked;
+                    if (was_locked && !locked) {
+                        trigger_immediate_poll();
+                    }
+                }
+            );
+        });
     }
 
     public override bool is_open() {
@@ -593,10 +653,12 @@ internal class Geary.Graph.Account : Geary.Account,
     ) throws GLib.Error {
         yield this.client.send_message(message_id, cancellable);
         email_sent();
-        // Refresh Sent so the newly-delivered message shows up
+        // Refresh Sent so the newly-delivered message shows up in threads,
+        // loading it first if this session hasn't touched it yet.
         Geary.Graph.Folder? sent =
             this.get_graph_special_folder(Geary.Folder.SpecialUse.SENT);
-        if (sent != null && sent.is_cache_loaded) {
+        if (sent != null) {
+            sent.load_persisted_cache();
             yield sent.refresh_async(true, cancellable);
         }
         // Refresh Outbox so the now-sent message disappears
@@ -937,23 +999,37 @@ internal class Geary.Graph.Account : Geary.Account,
         }
     }
 
+    /** Returns polling to the fast cadence without an immediate poll. */
+    internal void note_user_activity() {
+        this.poll_stride = 1;
+    }
+
     internal void trigger_immediate_poll() {
         cancel_active_poll();
+        // The user is active: return to the fast poll cadence.
+        this.poll_stride = 1;
         // User actions can affect closed folders (e.g. delete moves mail to
         // an unopened Trash), so immediate polls cover cache-loaded folders
-        // too, not just open ones.
+        // too, not just open ones. The timer is deliberately not restarted:
+        // constant user activity must not starve the periodic full sync.
         queue_folder_poll(true);
-        this.poll_timer.start();
     }
 
     private void on_poll_tick() {
-        if (!GLib.NetworkMonitor.get_default().network_available) {
+        if (this.screen_locked
+            || !GLib.NetworkMonitor.get_default().network_available) {
+            debug("Graph: poll tick skipped (locked=%s, network=%s)",
+                this.screen_locked.to_string(),
+                GLib.NetworkMonitor.get_default().network_available.to_string());
             return;
         }
         this.poll_tick++;
         if (this.poll_tick % FULL_SYNC_EVERY_N_TICKS == 0) {
+            debug("Graph: poll tick %u (full sync)", this.poll_tick);
             queue_prefetch_refresh();
-        } else {
+        } else if (this.poll_tick % this.poll_stride == 0) {
+            debug("Graph: poll tick %u (fast poll, stride %u)",
+                this.poll_tick, this.poll_stride);
             queue_folder_poll(false);
         }
     }
@@ -978,6 +1054,7 @@ internal class Geary.Graph.Account : Geary.Account,
     private async void poll_folders_refresh(bool include_cached,
                                             GLib.Cancellable? cancellable)
         throws GLib.Error {
+        bool found_changes = false;
         foreach (Geary.Folder folder in get_remote_folder_snapshot()) {
             if (cancellable != null && cancellable.is_cancelled()) {
                 return;
@@ -997,7 +1074,9 @@ internal class Geary.Graph.Account : Geary.Account,
                 continue;
             }
             try {
-                yield graph.refresh_async(true, cancellable);
+                if (yield graph.sync_async(cancellable)) {
+                    found_changes = true;
+                }
             } catch (GLib.Error err) {
                 if (err is GLib.IOError.CANCELLED) {
                     return;
@@ -1005,6 +1084,13 @@ internal class Geary.Graph.Account : Geary.Account,
                 debug("Graph: folder refresh poll error for %s: %s",
                     graph.path.to_string(), err.message);
             }
+        }
+        if (!include_cached) {
+            // Timer polls drive the cadence: mail flowing → poll every
+            // tick; quiet → stretch out to the cap. Immediate polls leave
+            // the stride at 1 (set by trigger_immediate_poll).
+            this.poll_stride = found_changes
+                ? 1 : uint.min(this.poll_stride * 2, MAX_POLL_STRIDE);
         }
     }
 
@@ -1056,14 +1142,19 @@ internal class Geary.Graph.Account : Geary.Account,
 
             if (graph.used_as == Geary.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
-            } else if (!graph.is_cache_loaded) {
-                // Never-opened folders have nothing to keep fresh; they load
-                // on first open instead of costing a request every cycle.
-                continue;
             }
 
+            // All folders ride this pass — a synced folder costs one
+            // near-empty delta response, and never-loaded folders get
+            // baselined once so search and threading can see their mail.
+            // Folders without delta support get a periodic full listing,
+            // their only way to reconcile removals and flag changes.
             try {
-                yield graph.refresh_async(true, null);
+                if (graph.is_delta_unsupported) {
+                    yield graph.refresh_async(true, null);
+                } else {
+                    yield graph.sync_async(null);
+                }
             } catch (GLib.Error err) {
                 debug("Graph: folder refresh error for %s: %s",
                     graph.path.to_string(), err.message);

@@ -17,6 +17,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
         add_test("list_messages_follows_next_link", list_messages_follows_next_link);
         add_test("fetch_message_parses_full_body", fetch_message_parses_full_body);
         add_test("delta_messages_parses_changed_and_removed", delta_messages_parses_changed_and_removed);
+        add_test("delta_messages_baseline_returns_cursor", delta_messages_baseline_returns_cursor);
+        add_test("delta_messages_gone_requires_resync", delta_messages_gone_requires_resync);
         add_test("create_message_in_outbox_returns_id", create_message_in_outbox_returns_id);
         add_test("send_message_posts_to_send_endpoint", send_message_posts_to_send_endpoint);
         add_test("request_failure_throws_http_error", request_failure_throws_http_error);
@@ -128,7 +130,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
         Geary.Graph.Client client = new_client();
         Gee.List<Geary.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
-            "inbox", 10, 14, null, (obj, res) => {
+            "inbox", 10, 14, 0, null, (obj, res) => {
                 try {
                     messages = client.list_messages.end(res);
                 } catch (GLib.Error err) {
@@ -200,7 +202,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
         Geary.Graph.Client client = new_client();
         Gee.List<Geary.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
-            "inbox", 10, 14, null, (obj, res) => {
+            "inbox", 10, 14, 0, null, (obj, res) => {
                 try {
                     messages = client.list_messages.end(res);
                 } catch (GLib.Error err) {
@@ -270,10 +272,108 @@ class Geary.Graph.ClientTest : GraphTestCase {
     }
 
     public void delta_messages_parses_changed_and_removed() throws GLib.Error {
-        // Skipped: the initial delta URL built by Client.delta_messages is
-        // returned as 400 by Soup.Server even when a matching handler is
-        // registered. Needs further investigation of libsoup3 URI handling.
-        assert_true(true, "delta test deferred");
+        // First page: one changed id plus a nextLink; second page: one
+        // removed id plus the final deltaLink.
+        respond_json(
+            "GET", "/delta-cursor", 200,
+            """{
+                "value": [
+                    {"id": "msg-1", "isRead": false}
+                ],
+                "@odata.nextLink": "%s/delta-page-2"
+            }""".printf(this.base_uri)
+        );
+        respond_json(
+            "GET", "/delta-page-2", 200,
+            """{
+                "value": [
+                    {
+                        "id": "msg-gone",
+                        "@removed": {"reason": "deleted"}
+                    }
+                ],
+                "@odata.deltaLink": "%s/delta-final"
+            }""".printf(this.base_uri)
+        );
+
+        Geary.Graph.Client client = new_client();
+        Geary.Graph.Client.DeltaResult? result = null;
+        client.delta_messages.begin(
+            "inbox", this.base_uri + "/delta-cursor", null, (obj, res) => {
+                try {
+                    result = client.delta_messages.end(res);
+                } catch (GLib.Error err) {
+                    fail("delta_messages failed: %s".printf(err.message));
+                }
+            }
+        );
+        while (result == null) {
+            MainContext.default().iteration(true);
+        }
+
+        assert_true(result.complete, "delta should be complete");
+        assert_false(result.resync_required);
+        assert_equal(result.delta_link, this.base_uri + "/delta-final");
+        assert_true(result.changed_ids.size == 1, "expected 1 changed");
+        assert_true(result.changed_ids.contains("msg-1"), "msg-1 changed");
+        assert_true(result.removed.size == 1, "expected 1 removed");
+        assert_true(result.removed.contains("msg-gone"), "msg-gone removed");
+    }
+
+    public void delta_messages_baseline_returns_cursor() throws GLib.Error {
+        // $deltaToken=latest: no items, just a fresh cursor.
+        respond_json(
+            "GET", "/me/mailFolders/inbox/messages/delta", 200,
+            """{
+                "value": [],
+                "@odata.deltaLink": "%s/delta-fresh"
+            }""".printf(this.base_uri)
+        );
+
+        Geary.Graph.Client client = new_client();
+        Geary.Graph.Client.DeltaResult? result = null;
+        client.delta_messages.begin(
+            "inbox", null, null, (obj, res) => {
+                try {
+                    result = client.delta_messages.end(res);
+                } catch (GLib.Error err) {
+                    fail("delta_messages failed: %s".printf(err.message));
+                }
+            }
+        );
+        while (result == null) {
+            MainContext.default().iteration(true);
+        }
+
+        assert_true(result.complete);
+        assert_equal(result.delta_link, this.base_uri + "/delta-fresh");
+        assert_true(result.changed_ids.size == 0 && result.removed.size == 0);
+    }
+
+    public void delta_messages_gone_requires_resync() throws GLib.Error {
+        respond_json(
+            "GET", "/expired-cursor", 410,
+            """{"error": {"code": "resyncRequired"}}"""
+        );
+
+        Geary.Graph.Client client = new_client();
+        Geary.Graph.Client.DeltaResult? result = null;
+        client.delta_messages.begin(
+            "inbox", this.base_uri + "/expired-cursor", null, (obj, res) => {
+                try {
+                    result = client.delta_messages.end(res);
+                } catch (GLib.Error err) {
+                    fail("delta_messages failed: %s".printf(err.message));
+                }
+            }
+        );
+        while (result == null) {
+            MainContext.default().iteration(true);
+        }
+
+        assert_true(result.resync_required, "410 should require resync");
+        assert_false(result.complete);
+        assert_true(result.changed_ids.size == 0 && result.removed.size == 0);
     }
 
     public void create_message_in_outbox_returns_id() throws GLib.Error {

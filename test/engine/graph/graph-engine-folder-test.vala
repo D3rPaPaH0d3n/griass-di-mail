@@ -353,7 +353,7 @@ class Geary.Graph.FolderTest : GraphTestCase {
         Geary.Graph.Client client = new_client();
         Gee.List<Geary.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
-            "inbox-folder-id", 10, 14, null, (obj, res) => {
+            "inbox-folder-id", 10, 14, 0, null, (obj, res) => {
                 try {
                     messages = client.list_messages.end(res);
                 } catch (GLib.Error err) {

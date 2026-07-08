@@ -44,12 +44,19 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
     internal class DeltaResult : Geary.BaseObject {
-        // Messages that were added or updated
-        public Gee.List<Message> changed = new Gee.ArrayList<Message>();
+        // Graph message IDs that were created or updated; fetch full
+        // messages for these, delta entries don't carry reliable properties
+        public Gee.Set<string> changed_ids = new Gee.HashSet<string>();
         // Graph message IDs that were deleted/moved out of the folder
         public Gee.Set<string> removed = new Gee.HashSet<string>();
-        // The deltaLink to use on the next poll call
+        // The cursor for the next call: a deltaLink when complete, else a
+        // nextLink to resume the current enumeration from
         public string delta_link = "";
+        // Whether all pending changes were consumed (deltaLink reached)
+        public bool complete = false;
+        // The server invalidated the cursor (HTTP 410); the caller must
+        // discard its saved cursor and re-baseline
+        public bool resync_required = false;
     }
 
 
@@ -82,6 +89,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     public async Gee.List<Message> list_messages(string folder_id,
                                                  int limit,
                                                  int prefetch_period_days,
+                                                 int64 stop_at_unix = 0,
                                                  GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         if (limit < 1) {
@@ -126,9 +134,15 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             Json.Object root;
             if (pages == 1) {
                 root = null;
-                foreach (string query in queries) {
+                for (int q = 0; q < queries.length; q++) {
                     try {
-                        root = yield request_json("GET", path, query, cancellable);
+                        root = yield request_json("GET", path, queries[q], cancellable);
+                        if (q > 0) {
+                            // Fallback queries carry no $orderby, so results
+                            // aren't guaranteed newest-first and the early
+                            // stop below could skip genuinely new mail.
+                            stop_at_unix = 0;
+                        }
                         break;
                     } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
                         // Not all tenants/API versions support every field
@@ -159,6 +173,14 @@ internal class Geary.Graph.Client : Geary.BaseObject {
 
                     if (has_cutoff && parsed.received_at != null &&
                         parsed.received_at.to_unix() < cutoff_unix) {
+                        done = true;
+                        break;
+                    }
+
+                    // Caller already has everything strictly older than
+                    // stop_at_unix; no need to fetch further pages.
+                    if (stop_at_unix > 0 && parsed.received_at != null &&
+                        parsed.received_at.to_unix() < stop_at_unix) {
                         done = true;
                         break;
                     }
@@ -228,23 +250,31 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
     /**
-     * Polls the inbox for changes since the last delta call.
+     * Reports which messages changed in a folder since the last delta call.
      *
-     * On the first call pass null for delta_link; the method will issue a
-     * full delta sync to establish a baseline and return a delta_link for
-     * future calls.  On subsequent calls pass the delta_link from the
-     * previous result; only changes since that point are returned.
+     * Delta responses are used purely as a change signal — like
+     * evolution-ews' IdOnly SyncFolderItems — because Graph does not
+     * reliably return full message properties in delta entries (updates
+     * carry only the changed fields). Callers must fetch full messages for
+     * the changed ids themselves.
      *
-     * The returned DeltaResult.delta_link must be saved and passed back
-     * on the next call.
+     * On the first call pass null for delta_link; $deltaToken=latest asks
+     * the server for a cursor at the current state without enumerating the
+     * folder, so the caller must pair it with a full listing. On subsequent
+     * calls pass the cursor from the previous result.
+     *
+     * The returned cursor is a deltaLink when complete is true, or a
+     * nextLink to resume from when the page cap was hit; either way it is
+     * what the next call's delta_link should be. resync_required means the
+     * server invalidated the cursor and the caller must re-baseline.
      */
     public async DeltaResult delta_messages(
         string folder_id,
         string? delta_link,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        // Build the initial URL: either the saved deltaLink or a fresh
-        // delta request that selects only the fields we need.
+        DeltaResult result = new DeltaResult();
+
         string url;
         if (!String.is_empty(delta_link)) {
             url = delta_link;
@@ -252,28 +282,23 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             url = this.base_uri
                 + "/me/mailFolders/%s/messages/delta".printf(
                     GLib.Uri.escape_string(folder_id, null, false))
-                + "?$select=id,conversationId,subject,internetMessageId,"
-                + "receivedDateTime,from,toRecipients,ccRecipients,"
-                + "bccRecipients,bodyPreview,isRead,flag"
-                + "&$orderby=receivedDateTime%20desc"
-                + "&changeType=created";
+                // Some tenants ignore "latest" and enumerate the folder
+                // instead; $top keeps that fallback from crawling at the
+                // default page size of 10.
+                + "?$deltaToken=latest&$select=id&$top=100";
         }
 
-        DeltaResult result = new DeltaResult();
-
-        // Follow nextLink pages until we get a deltaLink.
-        // The deltaLink signals that we have consumed all pending changes.
         int page = 0;
         int max_pages = 50;
-        while (!String.is_empty(url) && page < max_pages) {
+        while (page < max_pages) {
             page++;
             Json.Object root;
             try {
                 root = yield request_json_url(url, cancellable);
             } catch (Geary.Graph.HttpError.GONE err) {
-                // The deltaLink expired; caller must restart with a fresh
+                // The cursor expired; caller must restart with a fresh
                 // baseline sync.
-                result.delta_link = "";
+                result.resync_required = true;
                 return result;
             }
 
@@ -285,47 +310,50 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                         continue;
                     }
                     Json.Object obj = values.get_object_element(i);
+                    string? id = get_string_member(obj, "id");
+                    if (String.is_empty(id)) {
+                        continue;
+                    }
 
                     // Deleted / moved-out items carry @removed instead of
                     // normal message fields.
                     if (obj.has_member("@removed")) {
-                        string? removed_id = get_string_member(obj, "id");
-                        if (!String.is_empty(removed_id)) {
-                            result.removed.add(removed_id);
-                        }
-                        continue;
-                    }
-
-                    Message parsed = parse_message(obj, false);
-                    if (!String.is_empty(parsed.id)) {
-                        result.changed.add(parsed);
+                        result.removed.add(id);
+                        result.changed_ids.remove(id);
+                    } else {
+                        result.changed_ids.add(id);
+                        result.removed.remove(id);
                     }
                 }
             }
 
-            // Prefer deltaLink (end of changes) over nextLink (more pages).
-            string? next = null;
+            // deltaLink means all pending changes are consumed; nextLink
+            // means more pages. A response with neither is treated as
+            // complete so a misbehaving server can't cause an infinite
+            // resume loop.
             if (root.has_member("@odata.deltaLink")) {
-                next = get_string_member(root, "@odata.deltaLink");
+                string? next = get_string_member(root, "@odata.deltaLink");
                 if (!String.is_empty(next)) {
                     result.delta_link = next;
-                    break;
+                    result.complete = true;
+                    return result;
                 }
             }
+            string? next_link = null;
             if (root.has_member("@odata.nextLink")) {
-                next = get_string_member(root, "@odata.nextLink");
+                next_link = get_string_member(root, "@odata.nextLink");
             }
-            url = String.is_empty(next) ? "" : next;
+            if (String.is_empty(next_link)) {
+                result.complete = true;
+                return result;
+            }
+            url = next_link;
         }
 
-        if (!String.is_empty(url) && String.is_empty(result.delta_link)) {
-            warning(
-                "Graph delta_messages for folder %s hit the %d page cap " +
-                "without reaching a deltaLink; sync is incomplete",
-                folder_id, max_pages
-            );
-        }
-
+        // Page cap hit: return the nextLink as a resumable cursor so the
+        // caller can pick up where this batch ended.
+        result.delta_link = url;
+        result.complete = false;
         return result;
     }
 

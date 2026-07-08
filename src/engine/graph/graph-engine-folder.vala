@@ -16,6 +16,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
     private const int MIN_REFRESH_BATCH = 25;
     private const int MAX_REFRESH_BATCH = 500;
+    // Page size for the periodic new-mail poll; usually one page suffices.
+    private const int POLL_BATCH = 20;
     private const int64 REMOVED_GRACE_USEC = 5 * 1000 * 1000;
 
     private Geary.Graph.Account owner;
@@ -33,6 +35,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
     private Gee.HashMap<string,Geary.Graph.Client.Message> message_by_id =
         new Gee.HashMap<string,Geary.Graph.Client.Message>();
     private bool is_loaded = false;
+    // Graph delta cursor, persisted with the cache after every applied
+    // batch; empty means the next sync establishes a fresh baseline.
+    private string delta_link = "";
+    // Set when the server rejects delta queries; sync falls back to
+    // newest-first polling for the rest of the session.
+    private bool delta_unsupported = false;
+    private bool sync_running = false;
     private string? cache_path = null;
     // graph_id → monotonic removal time; suppresses stale server echoes
     private Gee.HashMap<string, int64?> recently_removed =
@@ -44,6 +53,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
     public override Geary.FolderPath path { get { return this._path; } }
     public override Geary.Folder.SpecialUse used_as { get { return this._used_as; } }
     internal bool is_cache_loaded { get { return this.is_loaded; } }
+    internal bool is_delta_unsupported { get { return this.delta_unsupported; } }
     internal string graph_folder_id { get { return this.folder_id; } }
 
 
@@ -65,6 +75,9 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         throws GLib.Error {
         bool opened = yield base.open_async(open_flags, cancellable);
         if (opened) {
+            // Browsing folders means the user is watching for mail; return
+            // to the fast poll cadence.
+            this.owner.note_user_activity();
             load_persisted_cache();
             if (this.is_loaded) {
                 refresh_async.begin(true, null, (obj, res) => {
@@ -616,9 +629,270 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             this.folder_id,
             get_refresh_limit(),
             this.owner.information.prefetch_period_days,
+            0,
             cancellable
         );
+        // Full listing: sweep everything the server no longer reports.
+        apply_refresh(messages, new Gee.HashSet<string>(), null);
+    }
 
+    /**
+     * Incrementally syncs the folder with the server.
+     *
+     * Modelled on evolution-ews' SyncFolderItems handling, two-phase like
+     * its IdOnly + GetItem flow: delta queries are only a change signal
+     * (ids), and full messages are fetched separately, because Graph delta
+     * entries don't reliably carry message properties. The cursor is
+     * persisted with the cache, and server-side cursor invalidation
+     * (HTTP 410) re-baselines. Baselines are cheap: $deltaToken=latest
+     * grabs a cursor at the current state, then a full listing reconciles
+     * the cache — no delta enumeration of the whole folder.
+     *
+     * When the server rejects delta queries outright, falls back to the
+     * newest-first page poll for the rest of the session.
+     */
+    internal async bool sync_async(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        if (this.delta_unsupported) {
+            return yield poll_refresh_async(cancellable);
+        }
+        if (this.sync_running) {
+            // Another sync is mid-flight (e.g. the full-sync pass overlapping
+            // an immediate poll); running two would race on the cursor.
+            debug("Graph: sync already running for %s, skipping",
+                this.path.to_string());
+            return false;
+        }
+        this.sync_running = true;
+        try {
+            return yield delta_sync(cancellable);
+        } finally {
+            this.sync_running = false;
+        }
+    }
+
+    private async bool delta_sync(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        load_persisted_cache();
+
+        if (String.is_empty(this.delta_link)) {
+            yield delta_baseline(cancellable);
+            return false;
+        }
+
+        Gee.Set<string> changed_ids = new Gee.HashSet<string>();
+        Gee.Set<string> removed = new Gee.HashSet<string>();
+        string cursor = this.delta_link;
+        bool complete = false;
+        // Cap the resume loop: a server that never yields a deltaLink must
+        // not pin this folder's sync forever (each batch is up to 50 pages).
+        // On cap, apply what we have and continue from the last nextLink
+        // cursor next tick.
+        int batches = 0;
+        while (!complete && batches < 5) {
+            batches++;
+            Geary.Graph.Client.DeltaResult result;
+            try {
+                result = yield this.client.delta_messages(
+                    this.folder_id, cursor, cancellable
+                );
+            } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
+                mark_delta_unsupported(err);
+                return yield poll_refresh_async(cancellable);
+            } catch (GLib.IOError.CANCELLED err) {
+                throw err;
+            } catch (GLib.Error err) {
+                // Delta failed for a transient reason; keep mail flowing
+                // with a full listing and retry the cursor next tick (delta
+                // replays are idempotent).
+                debug("Graph: delta sync failed for %s, using full " +
+                    "listing: %s", this.path.to_string(), err.message);
+                yield refresh_async(true, cancellable);
+                return false;
+            }
+            if (result.resync_required) {
+                // Cursor invalidated: discard it and re-baseline. The
+                // full listing diff-reconciles against the existing
+                // cache rather than wiping it.
+                this.delta_link = "";
+                yield delta_baseline(cancellable);
+                return false;
+            }
+            // A message can be removed in one batch and re-created in a
+            // later one (or vice versa); the newest report wins.
+            foreach (string id in result.changed_ids) {
+                changed_ids.add(id);
+                removed.remove(id);
+            }
+            foreach (string id in result.removed) {
+                removed.add(id);
+                changed_ids.remove(id);
+            }
+            cursor = result.delta_link;
+            complete = result.complete;
+            debug("Graph: delta batch %d for %s: %d changed, %d removed, " +
+                "complete=%s", batches, this.path.to_string(),
+                result.changed_ids.size, result.removed.size,
+                complete.to_string());
+        }
+
+        if (changed_ids.size > POLL_BATCH) {
+            // Too many changes to fetch one by one; a full listing is
+            // cheaper and reconciles removals too. Only consume the cursor
+            // once the listing has succeeded, so an interrupted listing
+            // replays these changes instead of losing them.
+            yield refresh_async(true, cancellable);
+            this.delta_link = cursor;
+            persist_cached_messages();
+            return true;
+        }
+
+        // Ignore changes to messages outside the prefetch window (unless
+        // already cached): fetching them would add mail the next full
+        // listing sweeps away again.
+        int64 cutoff_unix = 0;
+        int prefetch_days = this.owner.information.prefetch_period_days;
+        if (prefetch_days >= 0) {
+            cutoff_unix = new GLib.DateTime.now_utc()
+                .add_days(0 - prefetch_days)
+                .to_unix();
+        }
+
+        Gee.ArrayList<Geary.Graph.Client.Message> fetched =
+            new Gee.ArrayList<Geary.Graph.Client.Message>();
+        foreach (string id in changed_ids) {
+            try {
+                Geary.Graph.Client.Message message =
+                    yield this.client.fetch_message(id, cancellable);
+                if (cutoff_unix > 0 &&
+                    message.received_at != null &&
+                    message.received_at.to_unix() < cutoff_unix &&
+                    !this.email_by_id.has_key(id)) {
+                    continue;
+                }
+                fetched.add(message);
+            } catch (Geary.Graph.HttpError.NOT_FOUND err) {
+                // Deleted between the delta response and now.
+                removed.add(id);
+            } catch (Geary.Graph.HttpError.GONE err) {
+                removed.add(id);
+            }
+        }
+        debug("Graph: delta sync for %s: %d changed, %d removed, %d fetched",
+            this.path.to_string(), changed_ids.size, removed.size,
+            fetched.size);
+        // Set the cursor before applying so the persisted cache and
+        // cursor are written as one consistent snapshot; when nothing
+        // changed, skip the disk write — the old cursor stays valid.
+        this.delta_link = cursor;
+        if (!fetched.is_empty || !removed.is_empty) {
+            apply_refresh(fetched, null, removed);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Establishes a delta cursor and reconciles the cache.
+     *
+     * The cursor is requested first ($deltatoken=latest, no enumeration),
+     * then the full listing runs; anything changing in between is covered
+     * by the next delta call, so there is no race window. If the server
+     * won't hand out a usable cursor, delta is marked unsupported rather
+     * than re-running a full listing every tick.
+     */
+    private async void delta_baseline(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        Geary.Graph.Client.DeltaResult token;
+        try {
+            token = yield this.client.delta_messages(
+                this.folder_id, null, cancellable
+            );
+        } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
+            mark_delta_unsupported(err);
+            yield refresh_async(true, cancellable);
+            return;
+        } catch (GLib.IOError.CANCELLED err) {
+            throw err;
+        } catch (GLib.Error err) {
+            // Whatever went wrong with the token request, mail must keep
+            // flowing: full listing now, retry the baseline next tick.
+            debug("Graph: delta baseline failed for %s, using full " +
+                "listing: %s", this.path.to_string(), err.message);
+            yield refresh_async(true, cancellable);
+            return;
+        }
+        if (token.resync_required || String.is_empty(token.delta_link)) {
+            mark_delta_unsupported(null);
+            yield refresh_async(true, cancellable);
+            return;
+        }
+        yield refresh_async(true, cancellable);
+        this.delta_link = token.delta_link;
+        persist_cached_messages();
+        debug("Graph: delta baseline established for %s",
+            this.path.to_string());
+    }
+
+    private void mark_delta_unsupported(GLib.Error? err) {
+        debug("Graph: delta sync unsupported for %s, falling back to " +
+            "page polling: %s", this.path.to_string(),
+            err != null ? err.message : "no usable cursor");
+        this.delta_unsupported = true;
+    }
+
+    /**
+     * Cheap new-mail check; fallback when delta queries are unsupported.
+     *
+     * Fetches messages newest-first in small pages, stopping as soon as a
+     * page reaches messages older than the newest cached one, and applies
+     * them without removing anything from the cache. Flag changes on older
+     * mail and removals are reconciled by full listings: folder opens and
+     * the account's periodic full-sync pass, which uses refresh_async for
+     * delta-unsupported folders.
+     */
+    internal async bool poll_refresh_async(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        int64 newest = newest_cached_unix();
+        if (!this.is_loaded || newest == 0) {
+            yield refresh_async(true, cancellable);
+            return false;
+        }
+        Gee.List<Geary.Graph.Client.Message> messages = yield this.client.list_messages(
+            this.folder_id,
+            POLL_BATCH,
+            this.owner.information.prefetch_period_days,
+            newest,
+            cancellable
+        );
+        if (messages.is_empty) {
+            return false;
+        }
+        apply_refresh(messages, null, null);
+        return true;
+    }
+
+    private int64 newest_cached_unix() {
+        int64 newest = 0;
+        foreach (Geary.Email cached_email in this.email_cache) {
+            Geary.Graph.EmailIdentifier? graph_id = cached_email.id as Geary.Graph.EmailIdentifier;
+            if (graph_id != null && graph_id.sort_order > newest) {
+                newest = graph_id.sort_order;
+            }
+        }
+        return newest;
+    }
+
+    /**
+     * Reconciles server messages into the local cache.
+     *
+     * When sweep_keep is non-null, any cached message in neither messages
+     * nor sweep_keep is removed (full reconcile). Otherwise only the ids in
+     * deleted_ids, if any, are removed.
+     */
+    private void apply_refresh(Gee.List<Geary.Graph.Client.Message> messages,
+                               Gee.Set<string>? sweep_keep,
+                               Gee.Set<string>? deleted_ids) {
         bool had_loaded = this.is_loaded;
         int previous_total = this._properties.email_total;
         Gee.Set<string> refreshed_ids = new Gee.HashSet<string>();
@@ -628,16 +902,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         Gee.HashMap<Geary.EmailIdentifier, Geary.EmailFlags> flags_changed =
             new Gee.HashMap<Geary.EmailIdentifier, Geary.EmailFlags>();
 
-        // Find the newest email timestamp in the existing cache
-        int64 newest_cached_timestamp = 0;
-        if (had_loaded && this.email_cache.size > 0) {
-            foreach (Geary.Email cached_email in this.email_cache) {
-                Geary.Graph.EmailIdentifier? graph_id = cached_email.id as Geary.Graph.EmailIdentifier;
-                if (graph_id != null && graph_id.sort_order > newest_cached_timestamp) {
-                    newest_cached_timestamp = graph_id.sort_order;
-                }
-            }
-        }
+        int64 newest_cached_timestamp = had_loaded ? newest_cached_unix() : 0;
 
         // Expire stale tombstones before processing the response
         if (!this.recently_removed.is_empty) {
@@ -697,13 +962,22 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             this.email_by_id.set(message.id, email);
             this.message_by_id.set(message.id, message);
         }
-        if (had_loaded) {
+        if (had_loaded && (sweep_keep != null || deleted_ids != null)) {
             Gee.ArrayList<string> stale_ids = new Gee.ArrayList<string>();
-            foreach (string cached_id in this.email_by_id.keys) {
-                if (refreshed_ids.contains(cached_id)) {
-                    continue;
+            if (sweep_keep != null) {
+                foreach (string cached_id in this.email_by_id.keys) {
+                    if (refreshed_ids.contains(cached_id) ||
+                        sweep_keep.contains(cached_id)) {
+                        continue;
+                    }
+                    stale_ids.add(cached_id);
                 }
-                stale_ids.add(cached_id);
+            } else {
+                foreach (string deleted_id in deleted_ids) {
+                    if (this.email_by_id.has_key(deleted_id)) {
+                        stale_ids.add(deleted_id);
+                    }
+                }
             }
             foreach (string cached_id in stale_ids) {
                 Geary.Email? cached = this.email_by_id.get(cached_id);
@@ -1137,6 +1411,9 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             this.email_cache.clear();
             this.email_by_id.clear();
             this.message_by_id.clear();
+            // The delta cursor is stored with the messages so the pair is
+            // always a consistent snapshot.
+            this.delta_link = get_string_member(root, "deltaLink") ?? "";
             for (uint i = 0; i < messages.get_length(); i++) {
                 Json.Node item = messages.get_element(i);
                 if (item.get_node_type() != Json.NodeType.OBJECT) {
@@ -1172,6 +1449,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
             Json.Builder builder = new Json.Builder();
             builder.begin_object();
+            builder.set_member_name("deltaLink");
+            builder.add_string_value(this.delta_link);
             builder.set_member_name("messages");
             builder.begin_array();
             foreach (Geary.Email email in this.email_cache) {
