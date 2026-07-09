@@ -37,6 +37,11 @@ ComposerPageState.prototype = {
 
         this._cursorContextChanged = MessageSender("cursor_context_changed");
         this._dragDropReceived = MessageSender("drag_drop_received");
+        this._scrolled = MessageSender("scrolled");
+
+        let state = this;
+        window.addEventListener("scroll", function() { state.sendScrollPosition(); });
+        window.addEventListener("resize", function() { state.sendScrollPosition(); });
 
         document.addEventListener("click", function(e) {
             if (e.target.tagName == "A") {
@@ -142,6 +147,23 @@ ComposerPageState.prototype = {
         this.setEditable(true);
 
         PageState.prototype.loaded.apply(this, []);
+        this.sendScrollPosition();
+    },
+    // Reports whether the body is scrolled to its top and/or bottom, so
+    // the client can decide whether a scroll gesture should be handed to
+    // the scrollable outside the composer.
+    sendScrollPosition: function() {
+        let el = document.scrollingElement || document.documentElement;
+        let atTop = el.scrollTop <= 0;
+        let atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+        this._scrolled(atTop, atBottom);
+    },
+    // Re-report scroll position when the content height changes, so
+    // atBottom is correct once layout settles (otherwise it can be stuck
+    // reporting "at bottom" from before the body was laid out).
+    updatePreferredHeight: function(height) {
+        PageState.prototype.updatePreferredHeight.apply(this, [height]);
+        this.sendScrollPosition();
     },
     setEditable: function(enabled) {
         if (!enabled) {

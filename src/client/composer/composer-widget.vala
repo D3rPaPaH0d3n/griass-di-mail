@@ -483,6 +483,19 @@ public class Composer.Widget : Gtk.EventBox, Geary.BaseInterface {
             _("_From"), new Gtk.ComboBoxText()
         );
         this.from_row.value.changed.connect(on_envelope_changed);
+        // Don't change the From address on scroll; when embedded, scroll
+        // the conversation behind instead of swallowing the event.
+        this.from_row.value.scroll_event.connect((event) => {
+            var scroller = (
+                this.from_row.value.get_ancestor(typeof(Gtk.ScrolledWindow))
+                as Gtk.ScrolledWindow
+            );
+            if (scroller != null) {
+                scroller.scroll_event(event);
+                return Gdk.EVENT_STOP;
+            }
+            return Gdk.EVENT_PROPAGATE;
+        });
         var cells = this.from_row.value.get_cells();
         ((Gtk.CellRendererText) cells.data).ellipsize = END;
         this.header_labels_group.add_widget(this.from_row.label);
