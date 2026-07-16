@@ -308,9 +308,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
     [GtkChild] private unowned Gtk.Box email_headers;
     [GtkChild] private unowned Gtk.ListBox filled_headers;
-    [GtkChild] private unowned Gtk.Revealer extended_headers_revealer;
-    [GtkChild] private unowned Gtk.ListBox extended_headers;
     [GtkChild] private unowned Gtk.ToggleButton show_extended_headers;
+
+    private bool extended_headers_shown = false;
 
     [GtkChild] private unowned Adw.ComboRow from_row;
     [GtkChild] private unowned GLib.ListStore from_model;
@@ -2005,34 +2005,15 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         action.change_state(!action.state.get_boolean());
     }
 
-    private void reparent_box_child(Gtk.Widget child, Gtk.ListBox new_parent) {
-        // Explicitly take a ref here so it doesn't get accidentally destroyed
-        Gtk.Widget child_copy = child;
-        ((Gtk.ListBox) child.parent).remove(child);
-        new_parent.append(child);
-    }
-
     private void update_extended_headers(bool reorder=true) {
         bool cc = !this.cc_row.is_empty;
         bool bcc = !this.bcc_row.is_empty;
         bool reply_to = !this.reply_to_row.is_empty;
 
         if (reorder) {
-            if (cc) {
-                reparent_box_child(this.cc_row, this.filled_headers);
-            } else {
-                reparent_box_child(this.cc_row, this.extended_headers);
-            }
-            if (bcc) {
-                reparent_box_child(this.bcc_row, this.filled_headers);
-            } else {
-                reparent_box_child(this.bcc_row, this.extended_headers);
-            }
-            if (reply_to) {
-                reparent_box_child(this.reply_to_row, this.filled_headers);
-            } else {
-                reparent_box_child(this.reply_to_row, this.extended_headers);
-            }
+            this.cc_row.visible = cc || this.extended_headers_shown;
+            this.bcc_row.visible = bcc || this.extended_headers_shown;
+            this.reply_to_row.visible = reply_to || this.extended_headers_shown;
         }
 
         this.show_extended_headers.visible = !(cc && bcc && reply_to);
@@ -2042,10 +2023,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                                                   GLib.Variant? new_state) {
         bool show_extended = new_state.get_boolean();
         action.set_state(show_extended);
+        this.extended_headers_shown = show_extended;
 
         update_extended_headers();
-
-        this.extended_headers_revealer.reveal_child = show_extended;
 
         if (show_extended && this.current_mode == INLINE_COMPACT) {
             set_mode(INLINE);

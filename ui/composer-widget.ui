@@ -81,19 +81,9 @@
                                 </child>
                               </object>
                             </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkRevealer" id="extended_headers_revealer">
-                        <child>
-                          <object class="GtkListBox" id="extended_headers">
-                            <style>
-                              <class name="boxed-list"/>
-                            </style>
                             <child>
                               <object class="ComposerAddressesRow" id="cc_row">
+                                <property name="visible">False</property>
                                 <!-- Translators: Label for composer CC address entry -->
                                 <property name="title" translatable="yes">_Cc</property>
                                 <property name="use-underline">True</property>
@@ -101,6 +91,7 @@
                             </child>
                             <child>
                               <object class="ComposerAddressesRow" id="bcc_row">
+                                <property name="visible">False</property>
                                 <!-- Translators: Label for composer BCC address entry -->
                                 <property name="title" translatable="yes">_Bcc</property>
                                 <property name="use-underline">True</property>
@@ -108,26 +99,20 @@
                             </child>
                             <child>
                               <object class="ComposerAddressesRow" id="reply_to_row">
+                                <property name="visible">False</property>
                                 <!-- Translators: Label for composer Reply-To address entry -->
                                 <property name="title" translatable="yes">_Reply To</property>
                                 <property name="use-underline">True</property>
                               </object>
                             </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkListBox">
-                        <style>
-                          <class name="boxed-list"/>
-                        </style>
-                        <child>
-                          <object class="AdwEntryRow" id="subject_row">
-                            <!-- Translators: Label for composer Subject line entry -->
-                            <property name="title" translatable="yes">_Subject</property>
-                            <property name="use-underline">True</property>
-                            <signal name="changed" handler="on_subject_changed"/>
+                            <child>
+                              <object class="AdwEntryRow" id="subject_row">
+                                <!-- Translators: Label for composer Subject line entry -->
+                                <property name="title" translatable="yes">_Subject</property>
+                                <property name="use-underline">True</property>
+                                <signal name="changed" handler="on_subject_changed"/>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
