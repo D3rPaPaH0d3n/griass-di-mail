@@ -111,7 +111,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
             // both cases, but we can't yet include CSS classes in
             // Pango markup. See Bug 766763.
 
-            var address_parts = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            var address_parts = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 6);
 
             bool is_spoofed = this.source.is_spoofed();
             if (is_spoofed) {

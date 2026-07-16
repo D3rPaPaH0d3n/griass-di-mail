@@ -162,14 +162,17 @@
             <child>
               <object class="AdwNavigationSplitView" id="outer_view">
                 <property name="vexpand">True</property>
-                <property name="sidebar-width-fraction">0.4</property>
-                <property name="max-sidebar-width">700</property>
+                <property name="sidebar-width-fraction">0.3</property>
+                <property name="min-sidebar-width">400</property>
+                <property name="max-sidebar-width">560</property>
 
                 <property name="sidebar">
                   <object class="AdwNavigationPage">
                     <property name="child">
                       <object class="AdwNavigationSplitView" id="inner_view">
-                        <property name="sidebar-width-fraction">0.5</property>
+                        <property name="sidebar-width-fraction">0.35</property>
+                        <property name="min-sidebar-width">160</property>
+                        <property name="max-sidebar-width">220</property>
                         <signal name="notify::collapsed" handler="on_inner_view_changed"/>
                         <signal name="notify::show-content" handler="on_inner_view_changed"/>
 
