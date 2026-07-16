@@ -2491,9 +2491,7 @@ private class Application.SendComposerCommand : ComposerCommand {
 
 
     public override bool can_undo {
-        get {
-            return this.application.config.undo_send_delay > 0;
-        }
+        get { return this.application.config.undo_send_delay > 0; }
     }
 
     private Client application;

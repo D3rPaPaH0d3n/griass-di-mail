@@ -971,7 +971,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         return headers;
     }
 
-    private static string? get_string_member(Json.Object object, string key) {
+    internal static string? get_string_member(Json.Object object, string key) {
         if (!object.has_member(key)) {
             return null;
         }
@@ -985,7 +985,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         return member.get_string().make_valid();
     }
 
-    private static bool get_bool_member(Json.Object object,
+    internal static bool get_bool_member(Json.Object object,
                                         string key,
                                         bool default_value) {
         bool value = default_value;
@@ -1009,7 +1009,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         return (get_string_member(flag, "flagStatus") ?? "") == "flagged";
     }
 
-    private static int64 get_int_member(Json.Object object,
+    internal static int64 get_int_member(Json.Object object,
                                         string key,
                                         int64 default_value) {
         int64 value = default_value;
@@ -1025,7 +1025,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         return value;
     }
 
-    private static GLib.DateTime? parse_datetime(string? value) {
+    internal static GLib.DateTime? parse_datetime(string? value) {
         if (String.is_empty(value)) {
             return null;
         }

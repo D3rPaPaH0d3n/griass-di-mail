@@ -71,7 +71,6 @@ client_vala_sources = files(
   'components/folder-popover-row.vala',
   'components/icon-factory.vala',
   'components/monitored-progress-bar.vala',
-  'components/monitored-spinner.vala',
   'components/stock.vala',
 
   'composer/composer-application-interface.vala',

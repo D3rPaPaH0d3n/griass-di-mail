@@ -1418,7 +1418,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             this.message_by_id.clear();
             // The delta cursor is stored with the messages so the pair is
             // always a consistent snapshot.
-            this.delta_link = get_string_member(root, "deltaLink") ?? "";
+            this.delta_link = Client.get_string_member(root, "deltaLink") ?? "";
             for (uint i = 0; i < messages.get_length(); i++) {
                 Json.Node item = messages.get_element(i);
                 if (item.get_node_type() != Json.NodeType.OBJECT) {
@@ -1484,18 +1484,18 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
     private static Geary.Graph.Client.Message parse_cached_message(Json.Object object) {
         Geary.Graph.Client.Message parsed = new Geary.Graph.Client.Message();
-        parsed.id = get_string_member(object, "id") ?? "";
-        parsed.conversation_id = get_string_member(object, "conversationId") ?? "";
-        parsed.subject = get_string_member(object, "subject") ?? "";
-        parsed.internet_message_id = get_string_member(object, "internetMessageId") ?? "";
-        parsed.body_preview = get_string_member(object, "bodyPreview") ?? "";
-        parsed.body = get_string_member(object, "body");
-        parsed.body_content_type = get_string_member(object, "bodyContentType") ?? "text";
-        parsed.is_read = get_bool_member(object, "isRead", true);
-        parsed.is_flagged = get_bool_member(object, "isFlagged", false);
-        parsed.load_remote_images = get_bool_member(object, "loadRemoteImages", false);
-        parsed.received_at = parse_datetime(get_string_member(object, "receivedDateTime"));
-        parsed.size = get_int_member(object, "size", 0);
+        parsed.id = Client.get_string_member(object, "id") ?? "";
+        parsed.conversation_id = Client.get_string_member(object, "conversationId") ?? "";
+        parsed.subject = Client.get_string_member(object, "subject") ?? "";
+        parsed.internet_message_id = Client.get_string_member(object, "internetMessageId") ?? "";
+        parsed.body_preview = Client.get_string_member(object, "bodyPreview") ?? "";
+        parsed.body = Client.get_string_member(object, "body");
+        parsed.body_content_type = Client.get_string_member(object, "bodyContentType") ?? "text";
+        parsed.is_read = Client.get_bool_member(object, "isRead", true);
+        parsed.is_flagged = Client.get_bool_member(object, "isFlagged", false);
+        parsed.load_remote_images = Client.get_bool_member(object, "loadRemoteImages", false);
+        parsed.received_at = Client.parse_datetime(Client.get_string_member(object, "receivedDateTime"));
+        parsed.size = Client.get_int_member(object, "size", 0);
         parsed.from = parse_addresses_member(object, "from");
         parsed.to = parse_addresses_member(object, "to");
         parsed.cc = parse_addresses_member(object, "cc");
@@ -1545,7 +1545,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
     private static Geary.RFC822.MailboxAddresses? parse_addresses_member(Json.Object object,
                                                                           string key) {
-        string? value = get_string_member(object, key);
+        string? value = Client.get_string_member(object, key);
         if (String.is_empty(value)) {
             return null;
         }
@@ -1556,63 +1556,12 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         return null;
     }
 
-    private static string? get_string_member(Json.Object object, string key) {
-        if (!object.has_member(key)) {
-            return null;
-        }
-        Json.Node member = object.get_member(key);
-        if (member == null ||
-            member.get_node_type() != Json.NodeType.VALUE ||
-            member.get_value_type() != typeof(string)) {
-            return null;
-        }
-        return member.get_string();
-    }
-
     private static void set_string_member(Json.Builder builder, string key, string? value) {
         if (String.is_empty(value)) {
             return;
         }
         builder.set_member_name(key);
         builder.add_string_value(value);
-    }
-
-    private static bool get_bool_member(Json.Object object,
-                                        string key,
-                                        bool default_value) {
-        if (!object.has_member(key)) {
-            return default_value;
-        }
-        Json.Node member = object.get_member(key);
-        if (member != null &&
-            member.get_node_type() == Json.NodeType.VALUE &&
-            member.get_value_type() == typeof(bool)) {
-            return member.get_boolean();
-        }
-        return default_value;
-    }
-
-    private static int64 get_int_member(Json.Object object,
-                                        string key,
-                                        int64 default_value) {
-        if (!object.has_member(key)) {
-            return default_value;
-        }
-        Json.Node member = object.get_member(key);
-        if (member != null &&
-            member.get_node_type() == Json.NodeType.VALUE &&
-            (member.get_value_type() == typeof(int64) ||
-             member.get_value_type() == typeof(int))) {
-            return member.get_int();
-        }
-        return default_value;
-    }
-
-    private static GLib.DateTime? parse_datetime(string? value) {
-        if (String.is_empty(value)) {
-            return null;
-        }
-        return new GLib.DateTime.from_iso8601(value, null);
     }
 
     private static int find_index(Gee.List<Geary.Email> emails, Geary.EmailIdentifier id) {
