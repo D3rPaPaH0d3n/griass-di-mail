@@ -38,6 +38,7 @@ public class Mock.Account : Geary.Account,
                  )
              )
         );
+        this.contact_store = new ContactStore();
     }
 
     public override async void open_async(GLib.Cancellable? cancellable = null)

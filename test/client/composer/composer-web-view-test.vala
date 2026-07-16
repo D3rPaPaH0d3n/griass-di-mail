@@ -120,8 +120,8 @@ at least. Really long, long, long, long, long long, long long, long long, long.<
         this.test_view.get_text.begin(this.async_completion);
         try {
             assert(this.test_view.get_text.end(async_result()) ==
-"""A long, long, long, long, long, long para. Well, longer than
-MAX_BREAKABLE_LEN at least. Really long, long, long, long, long long,
+"""A long, long, long, long, long, long para. Well, longer than 
+MAX_BREAKABLE_LEN at least. Really long, long, long, long, long long, 
 long long, long long, long.
 
 
@@ -143,11 +143,11 @@ at least. Really long, long, long, long, long long, long long, long long, long.<
         this.test_view.get_text.begin(this.async_completion);
         try {
             assert(this.test_view.get_text.end(async_result()) ==
-"""> A long, long, long, long, long, long line. Well, longer than
+"""> A long, long, long, long, long, long line. Well, longer than 
 > MAX_BREAKABLE_LEN at least.
->
-A long, long, long, long, long, long para. Well, longer than
-MAX_BREAKABLE_LEN at least. Really long, long, long, long, long long,
+> 
+A long, long, long, long, long, long para. Well, longer than 
+MAX_BREAKABLE_LEN at least. Really long, long, long, long, long long, 
 long long, long long, long.
 
 
@@ -171,16 +171,16 @@ long long, long long, long.
         try {
             assert(this.test_view.get_text.end(async_result()) ==
 """On Sun, Jan 1, 2017 at 9:55 PM, Michael Gratton <mike@vee.net> wrote:
-> long, long, long, long, long, long, long, long, long, long, long,
-> long, long, long, long, long, long, long, long, long, long, long,
-> long, long, long, long, long, long, long, long, long, long, long,
-> long, long, long, long, long, long, long, long, long, long, long,
+> long, long, long, long, long, long, long, long, long, long, long, 
+> long, long, long, long, long, long, long, long, long, long, long, 
+> long, long, long, long, long, long, long, long, long, long, long, 
+> long, long, long, long, long, long, long, long, long, long, long, 
 > long, long, long, long, long,
 
-long, long, long, long, long, long, long, long, long, long, long, long,
-long, long, long, long, long, long, long, long, long, long, long, long,
-long, long, long, long, long, long, long, long, long, long, long, long,
-long, long, long, long, long, long, long, long, long, long, long, long,
+long, long, long, long, long, long, long, long, long, long, long, long, 
+long, long, long, long, long, long, long, long, long, long, long, long, 
+long, long, long, long, long, long, long, long, long, long, long, long, 
+long, long, long, long, long, long, long, long, long, long, long, long, 
 long, long, long, long, long, long, long, long, long, long,
 
 

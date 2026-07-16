@@ -368,6 +368,9 @@ public class AddressSuggestionPopover : Gtk.Popover {
 
         if (!cancellable.is_cancelled()) {
             model.remove_all();
+            if (results == null) {
+                return;
+            }
             foreach (Application.Contact contact in results) {
                 for (uint i = 0; i < contact.email_addresses.get_n_items(); i++) {
                     var addr = (Geary.RFC822.MailboxAddress) contact.email_addresses.get_item(i);
