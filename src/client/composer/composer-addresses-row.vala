@@ -65,10 +65,6 @@ public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
 
     private unowned AddressSuggestionPopover popover;
 
-    static construct {
-        set_css_name("geary-composer-widget-header-row");
-    }
-
     construct {
         this.changed.connect(on_changed);
 
