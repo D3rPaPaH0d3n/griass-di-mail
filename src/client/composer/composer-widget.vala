@@ -1298,7 +1298,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
         case PresentationMode.INLINE:
             this.email_headers.set_visible(true);
-            this.subject_row.visible = false;
+            this.subject_row.visible = true;
             break;
 
         case PresentationMode.INLINE_COMPACT:
