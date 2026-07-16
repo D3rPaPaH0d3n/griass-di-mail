@@ -52,14 +52,9 @@
             </child>
           </object>
         </child>
-        <child>
+        <child type="end">
           <object class="GtkBox" id="detach_end">
             <property name="orientation">horizontal</property>
-            <child>
-              <object class="GtkSeparator" id="detach_end_separator">
-                <property name="orientation">vertical</property>
-              </object>
-            </child>
             <child>
               <object class="GtkButton" id="detach_end_button">
                 <property name="focus_on_click">False</property>
@@ -75,11 +70,12 @@
             </child>
           </object>
         </child>
-        <child>
+        <child type="end">
           <object class="GtkButton" id="send_button">
             <property name="label" translatable="yes">_Send</property>
             <property name="focus_on_click">False</property>
             <property name="receives_default">False</property>
+            <property name="margin_start">6</property>
             <property name="action_name">cmh.send</property>
             <property name="use_underline">True</property>
             <style>
@@ -87,7 +83,7 @@
             </style>
           </object>
         </child>
-        <child>
+        <child type="end">
           <object class="GtkBox" id="close_buttons">
             <property name="orientation">horizontal</property>
             <child>
