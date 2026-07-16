@@ -55,7 +55,10 @@ row.conversation-list.drag-n-drop {
   box-shadow: none;
 }
 
-row.conversation-list label {
+/* Scope to the row's own content box: context menu popovers are
+ * widget children of the row, so a bare `label` rule would leak
+ * into the menu items. */
+row.conversation-list > box label {
   margin-bottom: 0.4em;
 }
 
@@ -131,10 +134,15 @@ row.geary-folder-popover-list-row > label {
 
 .conversation-listbox {
   margin: 12px;
+  /* Sit on the window background rather than the darker view
+   * background so the cards don't float on a black well. */
+  background-color: transparent;
 }
 
+/* Each message is its own card, separated from its neighbours. */
 .conversation-listbox > row {
   padding: 0;
+  margin-bottom: 6px;
 }
 
 .conversation-listbox *.geary-matched *.geary-match {
@@ -143,57 +151,26 @@ row.geary-folder-popover-list-row > label {
 }
 
 .conversation-listbox > row.geary-loading {
-  border-top-width: 0px;
   padding: 6px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
 }
 
-.conversation-listbox.content > row:first-child:not(.geary-loading) {
-  margin-top: 0;
-  transition: 0;
-}
-
-.conversation-listbox.content > row:last-child {
-  margin-bottom: 0;
-}
-
-.conversation-listbox.content > row:last-child,
-.conversation-listbox.content > row.geary-expanded-previous-sibling,
-.conversation-listbox.content > row.geary-expanded {
-  border-width: 1px;
-}
-
-.geary-expanded:not(:first-child),
-.geary-expanded + row {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  margin-top: 6px;
-}
-
-.geary-expanded,
-.geary-expanded-previous-sibling {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  margin-bottom: 6px;
-}
-
-/* Update this to match any change in above radius value */
+/* Update this to match the card radius */
 .geary-message-body {
   margin: 2px;
 }
 
 /* ConversationEmail */
 
-.geary-unread grid.geary-message-summary {
+.geary-unread .geary-message-summary {
   border-color: @theme_selected_bg_color;
   transition: border 0.25s;
 }
 
-.geary-expanded > .geary_email grid.geary-message-summary,
-.geary-expanded + row > .geary_email grid.geary-message-summary {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+/* Round the summary's top corners so it doesn't poke out of the
+ * row's card rounding */
+.conversation-listbox > row .geary-message-summary {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 /* ConversationMessage */
@@ -322,8 +299,8 @@ geary-composer-editor > frame > border {
 }
 
 geary-composer-embed headerbar {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 geary-composer-widget .geary-attachments-box > box > box {
@@ -458,6 +435,10 @@ dialog.geary-remove-confirm .dialog-action-box {
 treeview.navigation-sidebar {
   border: none;
   background: transparent;
+}
+
+treeview.navigation-sidebar > *:hover {
+  background-color: color-mix(in srgb, currentColor 7%, transparent);
 }
 
 treeview.navigation-sidebar:selected {

@@ -303,6 +303,7 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
         protected ConversationRow(Geary.Email? email) {
             base_ref();
             this.email = email;
+            add_css_class("card");
             notify["is-expanded"].connect(update_css_class);
             show();
         }
@@ -686,7 +687,6 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
         this.listbox.selection_mode = NONE;
         this.listbox.valign = Gtk.Align.START;
 
-        this.listbox.add_css_class("content");
         this.listbox.add_css_class("conversation-listbox");
 
         this.listbox.set_adjustment(adjustment);
