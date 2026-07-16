@@ -1498,12 +1498,10 @@ internal class Application.Controller :
     private void on_graph_sent(Geary.AccountSupport.QueueSend account) {
         /// Translators: The label for an in-app notification.
         string message = _("Email sent");
-        Components.InAppNotification notification =
-            new Components.InAppNotification(
-                message, application.config.brief_notification_duration
-            );
         foreach (MainWindow window in this.application.get_main_windows()) {
-            window.add_notification(notification);
+            var toast = new Adw.Toast(message);
+            toast.timeout = application.config.brief_notification_duration;
+            window.add_toast(toast);
         }
 
         foreach (EmailPluginContext plugin in
