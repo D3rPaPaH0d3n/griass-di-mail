@@ -36,11 +36,6 @@ geary-conversation-list revealer {
   border-right-width: 0;
 }
 
-infobar flowboxchild {
-  padding: 0px;
-}
-
-
 /* Conversation List */
 row.conversation-list {
   padding-top: 0.5em;
