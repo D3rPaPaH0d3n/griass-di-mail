@@ -1320,6 +1320,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         if (this.header.headerbar.parent == null) {
             this.header_container.append(this.header.headerbar);
             this.header.headerbar.hexpand = true;
+            // Not a window titlebar, so no window controls
+            this.header.headerbar.show_start_title_buttons = false;
+            this.header.headerbar.show_end_title_buttons = false;
         }
     }
 

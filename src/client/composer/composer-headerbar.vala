@@ -40,6 +40,9 @@ public class Composer.Header : Adw.Bin {
     public Header(Application.Configuration config) {
         this.config = config;
         this.headerbar = (Adw.HeaderBar) this.child;
+        // Consumers (window titlebar, inline embed, paned box) all
+        // reparent the headerbar, so it must not stay our child.
+        this.child = null;
         Gtk.Settings.get_default().notify["gtk-decoration-layout"].connect(
             on_gtk_decoration_layout_changed
         );
