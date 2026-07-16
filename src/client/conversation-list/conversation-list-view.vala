@@ -79,8 +79,9 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
         });
         this.list.add_controller(this.long_press_gesture);
 
-        //XXX GTK4 - check if started on click
         var drag_source = new Gtk.DragSource();
+        drag_source.actions = Gdk.DragAction.COPY | Gdk.DragAction.MOVE;
+        drag_source.prepare.connect(on_drag_prepare);
         drag_source.drag_begin.connect(on_drag_begin);
         drag_source.drag_end.connect(on_drag_end);
         this.list.add_controller(drag_source);
@@ -654,35 +655,35 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
      */
     private Row? drag_widget = null;
 
-    private void on_drag_begin(Gtk.DragSource drag_source, Gdk.Drag drag) {
-        int screen_x, screen_y;
-        Gdk.ModifierType _modifier;
+    private Gdk.ContentProvider? on_drag_prepare(Gtk.DragSource drag_source,
+                                                 double x, double y) {
+        this.drag_widget = this.list.get_row_at_y((int) y) as Row;
+        if (this.drag_widget == null) {
+            return null;
+        }
+        // The dragged conversations are the list's selection; the
+        // content is just a marker the folder list recognises.
+        var marker = GLib.Value(typeof(string));
+        marker.set_string("application/x-geary-mail");
+        return new Gdk.ContentProvider.for_value(marker);
+    }
 
-        Row? row = this.list.get_row_at_y((int) this.scrolled_window.vadjustment.value) as Row?;
+    private void on_drag_begin(Gtk.DragSource drag_source, Gdk.Drag drag) {
+        Row? row = this.drag_widget;
         if (row != null) {
-            // If the user has a selection but drags starting from an unselected
-            // row, we need to set the selection to that row
+            // If the user has a selection but drags starting from an
+            // unselected row, we need to set the selection to that row
             if (!row.is_selected()) {
                 this.list.unselect_all();
                 this.list.select_row(row);
             }
 
-            this.drag_widget = new Row(this.config, row.conversation, false);
-            this.drag_widget.width_request = row.get_allocated_width();
-            this.drag_widget.add_css_class("drag-n-drop");
-            this.drag_widget.visible = true;
-
-            double hot_x, hot_y;
-            // XXX GTK4 - this might be a bit more work to do properly wiht Paintable
-            translate_coordinates(row, 0, 0, out hot_x, out hot_y);
-            // drag_source.set_icon(this.drag_widget, hot_x, hot_y);
+            drag_source.set_icon(new Gtk.WidgetPaintable(row), 16, 16);
         }
     }
 
     private void on_drag_end(Gtk.DragSource drag_source, Gdk.Drag drag, bool delete_data) {
-        if (this.drag_widget != null) {
-            this.drag_widget = null;
-        }
+        this.drag_widget = null;
     }
 
     private void on_selected_rows_changed() {

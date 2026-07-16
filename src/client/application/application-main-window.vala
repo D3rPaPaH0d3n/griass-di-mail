@@ -1026,18 +1026,12 @@ public class Application.MainWindow :
     }
 
     private void restore_saved_window_state() {
-        Gdk.Display? display = Gdk.Display.get_default();
-        if (display != null) {
-            Gdk.Monitor? monitor = null;
-            if (get_surface() != null)
-                monitor = display.get_monitor_at_surface(get_surface());
-            if (monitor != null &&
-                this.window_width <= monitor.geometry.width &&
-                this.window_height <= monitor.geometry.height) {
-                set_default_size(this.window_width, this.window_height);
-            }
+        // The window isn't realized yet, so there's no monitor to
+        // sanity-check the size against; the compositor will clamp
+        // over-size windows anyway.
+        if (this.window_width > 0 && this.window_height > 0) {
+            set_default_size(this.window_width, this.window_height);
         }
-        // XXX GTK4 - not sure if this is neede still
         if (this.maximized) {
             maximize();
         }
@@ -1830,6 +1824,10 @@ public class Application.MainWindow :
 
     [GtkCallback]
     private void on_unmap() {
+        // Save window size here as well as in close_request, since
+        // application quit tears windows down without a close request
+        this.window_width = this.default_width;
+        this.window_height = this.default_height;
         this.update_ui_timeout.reset();
     }
 

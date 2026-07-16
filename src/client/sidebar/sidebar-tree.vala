@@ -147,9 +147,16 @@ public class Sidebar.Tree : Gtk.TreeView {
         drag_source.prepare.connect(on_drag_source_prepare);
         add_controller(drag_source);
 
-        //XXX GTK4 - need to figure out the params still
-        Gtk.DropTarget drop_target = new Gtk.DropTarget(Type.INVALID, Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
-        drop_target.enter.connect(on_drop_target_enter);
+        // Accepts conversation drags from the conversation list, which
+        // provide a string marker; the actual conversations moved are
+        // the main window's current selection.
+        Gtk.DropTarget drop_target = new Gtk.DropTarget(
+            typeof(string), Gdk.DragAction.COPY | Gdk.DragAction.MOVE
+        );
+        drop_target.enter.connect(on_drop_target_motion);
+        drop_target.motion.connect(on_drop_target_motion);
+        drop_target.leave.connect(on_drop_target_leave);
+        drop_target.drop.connect(on_drop_target_drop);
         add_controller(drop_target);
 
         var key_controller = new Gtk.EventControllerKey();
@@ -191,22 +198,65 @@ public class Sidebar.Tree : Gtk.TreeView {
         this.internal_drag_source_entry = null;
     }
 
-    private Gdk.DragAction on_drop_target_enter(Gtk.DropTarget drop_target, double x, double y) {
-        if (this.is_internal_drag_in_progress && this.internal_drag_source_entry == null) {
-            Gtk.TreePath? path;
-            Gtk.TreeViewDropPosition position;
-            get_dest_row_at_pos((int) x, (int) y, out path, out position);
+    private Sidebar.InternalDropTargetEntry? get_drop_entry_at_pos(double x, double y,
+                                                                   out Gtk.TreePath? path) {
+        Gtk.TreeViewDropPosition position;
+        get_dest_row_at_pos((int) x, (int) y, out path, out position);
+        if (path == null) {
+            return null;
+        }
+        EntryWrapper? wrapper = get_wrapper_at_path(path);
+        return (wrapper != null)
+            ? wrapper.entry as Sidebar.InternalDropTargetEntry : null;
+    }
 
-            if (path != null) {
-                EntryWrapper wrapper = get_wrapper_at_path(path);
-                if (wrapper != null) {
-                    this.internal_drag_source_entry = wrapper.entry;
-                    return Gdk.DragAction.COPY | Gdk.DragAction.MOVE;
-                }
-            }
+    private Gdk.DragAction on_drop_target_motion(Gtk.DropTarget drop_target,
+                                                 double x, double y) {
+        Gtk.TreePath? path;
+        var entry = get_drop_entry_at_pos(x, y, out path);
+        if (entry == null) {
+            set_drag_dest_row(null, Gtk.TreeViewDropPosition.INTO_OR_AFTER);
+            return 0;
+        }
+        set_drag_dest_row(path, Gtk.TreeViewDropPosition.INTO_OR_AFTER);
+
+        Gdk.Drop? drop = drop_target.get_current_drop();
+        Gdk.DragAction possible = (drop != null)
+            ? drop.actions : Gdk.DragAction.COPY | Gdk.DragAction.MOVE;
+        if ((possible & Gdk.DragAction.MOVE) != 0) {
+            return Gdk.DragAction.MOVE;
+        }
+        if ((possible & Gdk.DragAction.COPY) != 0) {
+            return Gdk.DragAction.COPY;
+        }
+        return 0;
+    }
+
+    private void on_drop_target_leave(Gtk.DropTarget drop_target) {
+        set_drag_dest_row(null, Gtk.TreeViewDropPosition.INTO_OR_AFTER);
+    }
+
+    private bool on_drop_target_drop(Gtk.DropTarget drop_target,
+                                     GLib.Value value,
+                                     double x, double y) {
+        set_drag_dest_row(null, Gtk.TreeViewDropPosition.INTO_OR_AFTER);
+        if (!value.holds(typeof(string)) ||
+            value.get_string() != "application/x-geary-mail") {
+            return false;
         }
 
-        return 0;
+        Gtk.TreePath? path;
+        var entry = get_drop_entry_at_pos(x, y, out path);
+        if (entry == null) {
+            return false;
+        }
+
+        Gdk.Drop? drop = drop_target.get_current_drop();
+        Gdk.DragAction possible = (drop != null)
+            ? drop.actions : Gdk.DragAction.MOVE;
+        Gdk.DragAction action = ((possible & Gdk.DragAction.MOVE) != 0)
+            ? Gdk.DragAction.MOVE : Gdk.DragAction.COPY;
+        return entry.internal_drop_received(this, action);
     }
 
     private bool has_wrapper(Sidebar.Entry entry) {

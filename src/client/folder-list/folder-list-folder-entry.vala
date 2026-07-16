@@ -80,33 +80,21 @@ public class FolderList.FolderEntry :
         entry_changed();
     }
 
-    //XXX GTK4 I have no idea yet
-#if 0
     public bool internal_drop_received(Sidebar.Tree parent,
-                                       Gdk.DragContext context,
-                                       Gtk.SelectionData data) {
+                                       Gdk.DragAction action) {
         var handled = false;
         var folders = parent as FolderList.Tree;
         if (folders != null) {
-            switch (context.get_selected_action()) {
-            case MOVE:
+            if ((action & Gdk.DragAction.MOVE) != 0) {
                 folders.move_conversation(folder);
                 handled = true;
-                break;
-
-            case COPY:
+            } else if ((action & Gdk.DragAction.COPY) != 0) {
                 folders.copy_conversation(folder);
                 handled = true;
-                break;
-
-            default:
-                // noop
-                break;
             }
         }
         return handled;
     }
-#endif
 
     public override int get_count() {
         switch (this.context.displayed_count) {

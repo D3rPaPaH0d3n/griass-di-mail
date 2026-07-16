@@ -24,7 +24,8 @@
       </object>
     </child>
 
-    <!-- Shortcuts -->
+    <!-- Shortcuts: these all fire the window's keybinding signals,
+         same as the GTK3 Gtk.BindingEntry set did -->
     <child>
       <object class="GtkShortcutController">
         <property name="scope">global</property>
@@ -32,122 +33,137 @@
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;r</property>
-            <property name="action">action(reply-conversation-sender)</property>
+            <property name="action">signal(reply-conversation-sender)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;&lt;Shift&gt;r</property>
-            <property name="action">action(reply-conversation-all)</property>
+            <property name="action">signal(reply-conversation-all)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;l</property>
-            <property name="action">action(forward-conversation)</property>
+            <property name="action">signal(forward-conversation)</property>
           </object>
         </child>
         <!--  Marking actions-->
         <!--  Unread is the primary action, so it doesn't get the <Shift> modifier -->
         <child>
           <object class="GtkShortcut">
+            <property name="trigger">&lt;Control&gt;u</property>
+            <property name="action">signal(mark-conversations-read)</property>
+            <property name="arguments">(true,)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcut">
+            <property name="trigger">&lt;Control&gt;&lt;Shift&gt;u</property>
+            <property name="action">signal(mark-conversations-read)</property>
+            <property name="arguments">(false,)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;d</property>
-            <!-- XXX GTK4 this used to be an action with boolean parameter, need to decouple with unstarred -->
-            <property name="action">action(mark-conversations-starred)</property>
+            <property name="action">signal(mark-conversations-starred)</property>
+            <property name="arguments">(true,)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;&lt;Shift&gt;d</property>
-            <property name="action">action(mark-conversations-unstarred)</property>
+            <property name="action">signal(mark-conversations-starred)</property>
+            <property name="arguments">(false,)</property>
           </object>
         </child>
         <!--  Moving & labelling-->
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;b</property>
-            <property name="action">action(show-copy-menu)</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkShortcut">
-            <property name="trigger">&lt;Control&gt;m</property>
-            <property name="action">action(show-move-menu)</property>
+            <property name="action">signal(show-copy-menu)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;k</property>
-            <property name="action">action(archive-conversations)</property>
+            <property name="action">signal(archive-conversations)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;j</property>
-            <property name="action">action(junk-conversations)</property>
+            <property name="action">signal(junk-conversations)</property>
           </object>
         </child>
         <!--  Trash / delete -->
         <child>
           <object class="GtkShortcut">
             <property name="trigger">BackSpace</property>
-            <property name="action">action(trash-conversations)</property>
+            <property name="action">signal(trash-conversations)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">Delete</property>
-            <property name="action">action(trash-conversations)</property>
+            <property name="action">signal(trash-conversations)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcut">
+            <property name="trigger">KP_Delete</property>
+            <property name="action">signal(trash-conversations)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Shift&gt;BackSpace</property>
-            <property name="action">action(delete-conversations)</property>
+            <property name="action">signal(delete-conversations)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Shift&gt;Delete</property>
-            <property name="action">action(delete-conversations)</property>
+            <property name="action">signal(delete-conversations)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkShortcut">
+            <property name="trigger">&lt;Shift&gt;KP_Delete</property>
+            <property name="action">signal(delete-conversations)</property>
           </object>
         </child>
         <!-- Find & Search -->
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;f</property>
-            <property name="action">action(find)</property>
+            <property name="action">signal(find)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;s</property>
-            <property name="action">action(search)</property>
+            <property name="action">signal(search)</property>
           </object>
         </child>
         <!-- Navigation -->
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;comma</property>
-            <property name="action">action(up-conversation)</property>
+            <property name="action">action(win.up-conversation)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;period</property>
-            <property name="action">action(down-conversation)</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkShortcut">
-            <property name="trigger">Escape</property>
-            <property name="action">action(escape)</property>
+            <property name="action">action(win.down-conversation)</property>
           </object>
         </child>
         <child>
           <object class="GtkShortcut">
             <property name="trigger">&lt;Control&gt;a</property>
-            <property name="action">action(select_all)</property>
+            <property name="action">signal(select-all)</property>
           </object>
         </child>
       </object>
