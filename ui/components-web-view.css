@@ -31,9 +31,8 @@ body {
   /* Gitlab message main color is too dark, override with brighter color */
   --darkreader-text-3a383f: #eae8ef;
 
-  /* Adjust default controls and system colors for light and dark mode.
-  See https://www.w3.org/TR/css-color-adjust-1/#color-scheme-effect */
-  color-scheme: light dark;
+  /* Keep email content in the light scheme unless we explicitly enable dark overrides. */
+  color-scheme: light;
 
   color: var(--fg-color);
   background-color: var(--bg-color);
@@ -41,6 +40,7 @@ body {
 
 @media (prefers-color-scheme: dark) {
   body[data-geary-theme=dark] {
+    color-scheme: dark;
     --bg-color: #2a2d30;
     --fg-color: #eaeaea;
     --quote-container-bg: #36383b;
