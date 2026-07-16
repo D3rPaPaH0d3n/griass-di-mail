@@ -1129,7 +1129,7 @@ public class Application.MainWindow :
         );
         this.conversation_viewer.headerbar.bind_property(
             "find-open",
-            this.search_bar, "search-mode-enabled",
+            this.conversation_viewer.conversation_find_bar, "search-mode-enabled",
             SYNC_CREATE | BIDIRECTIONAL
         );
         this.conversation_list_selection_button.notify["active"].connect(
