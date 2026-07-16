@@ -11,6 +11,7 @@
               <object class="GtkFlowBox">
                 <property name="hexpand">True</property>
                 <property name="selection-mode">none</property>
+                <property name="activate-on-single-click">False</property>
                 <property name="max_children_per_line">2</property>
                 <child>
                   <object class="GtkFlowBoxChild">

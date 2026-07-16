@@ -188,8 +188,11 @@
                                       <object class="GtkButton" id="refresh_button">
                                         <property name="focus_on_click">False</property>
                                         <property name="receives_default">False</property>
-                                        <property name="margin-start">5</property>
                                         <property name="tooltip_text" translatable="yes">Check for new mail</property>
+                                        <style>
+                                          <class name="flat"/>
+                                          <class name="image-button"/>
+                                        </style>
                                         <child>
                                           <object class="GtkStack" id="refresh_stack">
                                             <child>
