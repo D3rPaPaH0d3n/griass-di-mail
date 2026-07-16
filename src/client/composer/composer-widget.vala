@@ -312,7 +312,8 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
     private bool extended_headers_shown = false;
 
-    [GtkChild] private unowned Adw.ComboRow from_row;
+    [GtkChild] private unowned Gtk.ListBoxRow from_row_container;
+    [GtkChild] private unowned Gtk.DropDown from_row;
     [GtkChild] private unowned GLib.ListStore from_model;
 
     [GtkChild] private unowned AddressesRow to_row;
@@ -2123,7 +2124,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     // Updates from combobox contents and visibility, returns true if
     // the from address had to be set
     private bool update_from_field() {
-        this.from_row.visible = false;
+        this.from_row_container.visible = false;
 
         // Don't show in inline unless the current account has
         // multiple email accounts or aliases, since these will be replies to a
@@ -2146,7 +2147,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             return false;
         }
 
-        this.from_row.visible = true;
+        this.from_row_container.visible = true;
 
         // Always add at least the current account. The var set_active
         // is set to true if the current message's from address has

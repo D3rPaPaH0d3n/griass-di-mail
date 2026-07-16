@@ -30,13 +30,19 @@ geary-conversation-list revealer {
   padding-left: 18px;
 }
 
-.geary-info-bar-stack > border {
-  border-width: 0;
-  border-left-width: 0;
-  border-right-width: 0;
+.geary-info-bar-stack {
+  border: none;
+  border-radius: 0;
 }
 
 /* Conversation List */
+
+/* Blend with the window background instead of Adwaita's darker
+ * view background, which is too contrasty between the panes. */
+conversation-list list {
+  background-color: transparent;
+}
+
 row.conversation-list {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
@@ -50,7 +56,7 @@ row.conversation-list.drag-n-drop {
 }
 
 row.conversation-list label {
-  margin-bottom: .4em;
+  margin-bottom: 0.4em;
 }
 
 row.conversation-list .details {
@@ -90,11 +96,11 @@ row.conversation-list .count-badge {
   margin-top: 4px;
   min-width: 1.5em;
   border-radius: 1em;
-  font-size: .8em;
+  font-size: 0.8em;
   font-weight: bold;
 }
 
-row.conversation-list check  {
+row.conversation-list check {
   border-radius: 50%;
   padding: 2px;
   margin: 6px;
@@ -103,9 +109,9 @@ row.conversation-list check  {
 /* FolderPopover */
 
 .geary-folder-popover-list {
-    border: 1px solid @borders;
-    border-radius: 3px;
-    padding: 0px;
+  border: 1px solid @borders;
+  border-radius: 3px;
+  padding: 0px;
 }
 
 row.geary-folder-popover-list-row {
@@ -158,7 +164,8 @@ row.geary-folder-popover-list-row > label {
   border-width: 1px;
 }
 
-.geary-expanded:not(:first-child), .geary-expanded + row {
+.geary-expanded:not(:first-child),
+.geary-expanded + row {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   margin-top: 6px;
@@ -261,7 +268,7 @@ row.geary-folder-popover-list-row > label {
 }
 
 .geary-submessages .geary-message {
-  background-image: linear-gradient(rgba(0,0,0,0.2), @bg_color 6px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), @bg_color 6px);
 }
 
 .geary-message .geary-placeholder-pane {
@@ -426,7 +433,7 @@ row.geary-settings > grid > grid.geary-drag-handle image:dir(rtl) {
   padding: 0.2em;
 }
 
-buttonbox.geary-settings  {
+buttonbox.geary-settings {
   margin-top: 36px;
 }
 
@@ -439,11 +446,11 @@ popover.geary-editor > grid > button.geary-setting-remove {
 }
 
 dialog.geary-remove-confirm .dialog-vbox {
-    margin: 12px;
+  margin: 12px;
 }
 
 dialog.geary-remove-confirm .dialog-action-box {
-    margin: 6px;
+  margin: 6px;
 }
 
 /* FolderList.Tree */
@@ -454,8 +461,11 @@ treeview.navigation-sidebar {
 }
 
 treeview.navigation-sidebar:selected {
-  background-color: @accent_bg_color;
-  color: @accent_fg_color;
+  background-color: color-mix(in srgb, @accent_bg_color 25%, transparent);
+}
+
+treeview.navigation-sidebar:selected:hover {
+  background-color: color-mix(in srgb, @accent_bg_color 32%, transparent);
 }
 
 treeview.navigation-sidebar .cell {
