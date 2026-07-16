@@ -471,6 +471,11 @@ treeview.navigation-sidebar {
   background: transparent;
 }
 
+treeview.navigation-sidebar:selected {
+  background-color: @accent_bg_color;
+  color: @accent_fg_color;
+}
+
 treeview.navigation-sidebar .cell {
   padding: 9px 6px;
 }
