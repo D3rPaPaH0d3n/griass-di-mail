@@ -301,6 +301,12 @@ geary-composer-editor > frame > border {
 geary-composer-embed headerbar {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+  /* Adwaita headerbars carry 1px inset side-border lines and -1px
+   * side margins for split view separators; inside the composer card
+   * they show up as stray light edges. Keep only the bottom shade. */
+  box-shadow: inset 0 -1px var(--headerbar-shade-color);
+  margin-left: 0;
+  margin-right: 0;
 }
 
 geary-composer-widget .geary-attachments-box > box > box {
