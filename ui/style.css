@@ -298,6 +298,16 @@ geary-composer-editor > frame > border {
   border-bottom-width: 0;
 }
 
+/* From row: strip the dropdown's button chrome so it reads like the
+ * neighbouring entry rows, value on the left, arrow at the far end. */
+dropdown.geary-composer-from > button {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  min-height: 0;
+}
+
 geary-composer-embed headerbar {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;

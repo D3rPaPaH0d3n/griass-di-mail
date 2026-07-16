@@ -72,7 +72,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkDropDown" id="from_row">
-                                        <property name="halign">start</property>
+                                        <property name="hexpand">True</property>
                                         <property name="focus_on_click">False</property>
                                         <property name="factory">
                                           <object class="GtkSignalListItemFactory">
@@ -87,6 +87,7 @@
                                         </property>
                                         <style>
                                           <class name="flat"/>
+                                          <class name="geary-composer-from"/>
                                         </style>
                                       </object>
                                     </child>

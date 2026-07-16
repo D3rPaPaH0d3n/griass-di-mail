@@ -2087,6 +2087,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                                        GLib.Object object) {
         unowned var item = (Gtk.ListItem) object;
         var label = new Gtk.Label(null);
+        label.hexpand = true;
+        label.xalign = 0;
+        label.ellipsize = END;
         item.child = label;
     }
 
