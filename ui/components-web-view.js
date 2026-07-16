@@ -19,6 +19,7 @@ PageState.prototype = {
         this.redoEnabled = false;
         this.hasSelection = false;
         this.lastPreferredHeight = 0;
+        this.unsetHtmlColorsApplied = false;
 
         this._selectionChanged = MessageSender("selection_changed");
         this._contentLoaded = MessageSender("content_loaded");
@@ -71,13 +72,28 @@ PageState.prototype = {
         // completing.
         this.updatePreferredHeight();
         this._contentLoaded();
-        if (window.UNSET_HTML_COLORS) {
-          document.body.setAttribute("data-geary-theme", "dark");
-          DarkReader.auto({
-            // Defaults is too dark. These colors are better fitting into Adwaita style.
-            darkSchemeBackgroundColor: "#2a2d30",
-            darkSchemeTextColor: "#eaeaea",
-          });
+    },
+    setUnsetHtmlColors: function(enabled) {
+        if (enabled === this.unsetHtmlColorsApplied) {
+            return;
+        }
+        this.unsetHtmlColorsApplied = enabled;
+        if (!document.body) {
+            return;
+        }
+        if (typeof DarkReader === "undefined") {
+            return;
+        }
+        if (enabled) {
+            document.body.setAttribute("data-geary-theme", "dark");
+            DarkReader.auto({
+                // Defaults is too dark. These colors are better fitting into Adwaita style.
+                darkSchemeBackgroundColor: "#2a2d30",
+                darkSchemeTextColor: "#eaeaea",
+            });
+        } else {
+            document.body.removeAttribute("data-geary-theme");
+            DarkReader.disable();
         }
     },
     loadRemoteResources: function() {

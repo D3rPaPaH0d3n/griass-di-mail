@@ -181,7 +181,7 @@ public class Components.PreferencesWindow : Hdy.PreferencesWindow {
         var unset_html_colors_row = new Hdy.ActionRow();
         /// Translators: Preferences label
         unset_html_colors_row.title = _("_Override the original colors in HTML emails");
-        unset_html_colors_row.subtitle = _("Overrides the original colors in HTML messages to integrate better with the app theme. Requires restart.");
+        unset_html_colors_row.subtitle = _("Overrides the original colors in HTML messages to integrate better with the app theme.");
         unset_html_colors_row.use_underline = true;
         unset_html_colors_row.activatable_widget = unset_html_colors;
         unset_html_colors_row.add(unset_html_colors);

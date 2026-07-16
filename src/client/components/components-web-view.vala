@@ -297,6 +297,8 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
 
     private weak string? body = null;
 
+    private Application.Configuration config;
+
     private Gee.Map<string,Geary.Memory.Buffer> internal_resources =
         new Gee.HashMap<string,Geary.Memory.Buffer>();
 
@@ -354,20 +356,6 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
 
         WebKit.UserContentManager content_manager =
              custom_manager ?? new WebKit.UserContentManager();
-
-        if (config.unset_html_colors) {
-            if (WebView.scripts == null)
-                WebView.scripts = new GenericArray<WebKit.UserScript>();
-            WebView.scripts.add(
-                new WebKit.UserScript(
-                    "window.UNSET_HTML_COLORS = true;",
-                    WebKit.UserContentInjectedFrames.TOP_FRAME,
-                    WebKit.UserScriptInjectionTime.START,
-                    null,
-                    null
-                )
-            );
-        }
 
         if (WebView.scripts != null) {
             WebView.scripts.foreach(script => content_manager.add_script(script));
@@ -635,6 +623,7 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
     private void init(Application.Configuration config) {
         // XXX get the allow prefix from the extension somehow
 
+        this.config = config;
         this.decide_policy.connect(on_decide_policy);
         this.web_process_terminated.connect((reason) => {
                 warning("Web process crashed: %s", reason.to_string());
@@ -660,6 +649,11 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
         );
 
         this.user_message_received.connect(this.on_message_received);
+        config.settings.changed[
+            Application.Configuration.UNSET_HTML_COLORS
+        ].connect(() => {
+                update_unset_html_colors.begin();
+            });
 
         // Manage zoom level, ensure it's sane
         config.bind(Application.Configuration.CONVERSATION_VIEWER_ZOOM_KEY, this, "zoom_level");
@@ -676,6 +670,23 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
                              "document-font", SettingsBindFlags.DEFAULT);
         system_settings.bind("monospace-font-name", this,
                              "monospace-font", SettingsBindFlags.DEFAULT);
+    }
+
+    private async void update_unset_html_colors() {
+        if (!this.is_content_loaded) {
+            return;
+        }
+
+        try {
+            yield call_void(
+                Util.JS.callable("setUnsetHtmlColors").bool(
+                    this.config.unset_html_colors
+                ),
+                null
+            );
+        } catch (GLib.Error err) {
+            warning("Could not update HTML email colors: %s", err.message);
+        }
     }
 
     private async WebKit.UserMessage? call_impl(Util.JS.Callable target,
@@ -860,6 +871,7 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
 
     private void on_content_loaded(GLib.Variant? parameters) {
         this.is_content_loaded = true;
+        update_unset_html_colors.begin();
         content_loaded();
     }
 
