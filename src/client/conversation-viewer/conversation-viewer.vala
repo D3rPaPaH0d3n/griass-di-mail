@@ -183,8 +183,7 @@ public class ConversationViewer : Gtk.Stack, Geary.BaseInterface {
         this.current_composer = composer;
         Composer.Embed embed = new Composer.Embed(
             referred,
-            composer,
-            this.conversation_scroller
+            composer
         );
         embed.vanished.connect(on_composer_closed);
 

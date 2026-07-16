@@ -64,9 +64,15 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         if (last_email != null) {
             var text = Util.Email.strip_subject_prefixes(last_email);
             this.subject.set_text(text);
-            this.preview.set_text(last_email.get_preview_as_string());
-            this.recv_time = last_email.properties.date_received.to_local();
-            refresh_time();
+            this.preview.set_text(
+                Geary.String.reduce_whitespace(
+                    last_email.get_preview_as_string()
+                )
+            );
+            if (last_email.properties != null) {
+                this.recv_time = last_email.properties.date_received.to_local();
+                refresh_time();
+            }
         }
 
         this.participants.set_markup(get_participants());
@@ -157,7 +163,9 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                 is_outgoing
                 ? message.to
                 : message.from;
-            addresses = addresses.merge_list(addrs);
+            if (addrs != null) {
+                addresses = addresses.merge_list(addrs);
+            }
         }
 
         Gee.List<Geary.RFC822.MailboxAddress> list = Geary.traverse(

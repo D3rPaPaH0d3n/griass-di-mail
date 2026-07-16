@@ -483,6 +483,19 @@ public class Composer.Widget : Gtk.EventBox, Geary.BaseInterface {
             _("_From"), new Gtk.ComboBoxText()
         );
         this.from_row.value.changed.connect(on_envelope_changed);
+        // Don't change the From address on scroll; when embedded, scroll
+        // the conversation behind instead of swallowing the event.
+        this.from_row.value.scroll_event.connect((event) => {
+            var scroller = (
+                this.from_row.value.get_ancestor(typeof(Gtk.ScrolledWindow))
+                as Gtk.ScrolledWindow
+            );
+            if (scroller != null) {
+                scroller.scroll_event(event);
+                return Gdk.EVENT_STOP;
+            }
+            return Gdk.EVENT_PROPAGATE;
+        });
         var cells = this.from_row.value.get_cells();
         ((Gtk.CellRendererText) cells.data).ellipsize = END;
         this.header_labels_group.add_widget(this.from_row.label);
@@ -713,8 +726,20 @@ public class Composer.Widget : Gtk.EventBox, Geary.BaseInterface {
         if (type == EDIT ||
             type == FORWARD) {
             this.pending_include = AttachPending.ALL;
+            this.pending_attachments = full_context.attachments;
+        } else if (type == REPLY_SENDER || type == REPLY_ALL) {
+            var attachments = new Gee.ArrayList<Geary.Attachment>();
+            foreach (var attachment in full_context.attachments) {
+                if (attachment.content_id == null &&
+                    attachment.content_disposition.disposition_type != Geary.Mime.DispositionType.INLINE) {
+                    attachments.add(attachment);
+                }
+            }
+            this.pending_attachments = attachments;
+            this.pending_include = AttachPending.INLINE_ONLY;
+        } else {
+            this.pending_attachments = full_context.attachments;
         }
-        this.pending_attachments = full_context.attachments;
 
         var body = "";
         var complete_quote = "";

@@ -37,6 +37,11 @@ public class Geary.AccountInformation : BaseObject {
     /** Specifies the email provider for this account. */
     public Geary.ServiceProvider service_provider { get; private set; }
 
+    /** Specifies the account transport backend. */
+    public Geary.AccountBackend account_backend {
+        get; set; default = Geary.AccountBackend.IMAP_SMTP;
+    }
+
     /**
      * A human-readable label describing the email service provider.
      *
@@ -255,6 +260,7 @@ public class Geary.AccountInformation : BaseObject {
             other.primary_mailbox
         );
         this.service_label = other.service_label;
+        this.account_backend = other.account_backend;
         this.label = other.label;
         if (other.mailboxes.size > 1) {
             this.mailboxes.add_all(
@@ -506,6 +512,7 @@ public class Geary.AccountInformation : BaseObject {
                 this.ordinal == other.ordinal &&
                 this.mediator == other.mediator &&
                 this.service_provider == other.service_provider &&
+                this.account_backend == other.account_backend &&
                 this.service_label == other.service_label &&
                 this.label == other.label &&
                 this.primary_mailbox.equal_to(other.primary_mailbox) &&

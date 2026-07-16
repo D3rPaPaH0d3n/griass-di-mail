@@ -981,15 +981,31 @@ public class Application.MainWindow :
             // paned.
             Geary.Email? latest_referred = null;
             if (this.conversation_viewer.current_list != null) {
-                Gee.Collection<Geary.EmailIdentifier>? referrants =
-                    composer.get_referred_ids();
                 Geary.App.Conversation selected =
                     this.conversation_viewer.current_list.conversation;
-                latest_referred = selected.get_emails(
-                    RECV_DATE_DESCENDING
-                ).first_match(
-                    (email) => email.id in referrants
-                );
+                // When editing an existing draft, use the draft email
+                // itself as the anchor so the composer appears at the
+                // draft's position rather than the parent message's
+                // position (restore_reply_to_state adds the parent's
+                // ID to referred_ids, which would place the composer
+                // one row too high).
+                if (composer.saved_id != null) {
+                    var draft_id = composer.saved_id;
+                    latest_referred = selected.get_emails(
+                        RECV_DATE_DESCENDING
+                    ).first_match(
+                        (email) => email.id.equal_to(draft_id)
+                    );
+                }
+                if (latest_referred == null) {
+                    Gee.Collection<Geary.EmailIdentifier>? referrants =
+                        composer.get_referred_ids();
+                    latest_referred = selected.get_emails(
+                        RECV_DATE_DESCENDING
+                    ).first_match(
+                        (email) => email.id in referrants
+                    );
+                }
             }
 
             if (latest_referred != null) {
@@ -1381,7 +1397,8 @@ public class Application.MainWindow :
             }
         );
 
-        this.application_headerbar.spinner.set_progress_monitor(progress_monitor);
+        this.application_headerbar.set_progress_monitor(progress_monitor);
+        this.application_headerbar.refresh_clicked.connect(on_refresh_folder);
 
         this.conversation_list_actions.set_mark_inverted();
 
@@ -1715,6 +1732,23 @@ public class Application.MainWindow :
             string? quote = yield email_view.get_selection_for_quoting();
             yield create_composer(account, type, email_view.email, quote);
         }
+    }
+
+    private void on_refresh_folder() {
+        Geary.Folder? folder = this.selected_folder;
+        if (folder == null) {
+            return;
+        }
+        this.application_headerbar.push_busy();
+        folder.synchronise_remote.begin(null, (obj, res) => {
+            try {
+                folder.synchronise_remote.end(res);
+            } catch (GLib.Error err) {
+                debug("Error refreshing %s: %s",
+                    folder.path.to_string(), err.message);
+            }
+            this.application_headerbar.pop_busy();
+        });
     }
 
     private void on_conversations_selected(Gee.Set<Geary.App.Conversation> selected) {

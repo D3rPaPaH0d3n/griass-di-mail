@@ -1004,6 +1004,13 @@ internal class Application.Controller :
             smtp.email_sent.connect(on_sent);
         }
 
+        Geary.AccountSupport.QueueSend? queue_send = (
+            account as Geary.AccountSupport.QueueSend
+        );
+        if (queue_send != null) {
+            queue_send.email_sent.connect(on_graph_sent);
+        }
+
         // Notify before opening so that listeners have a chance to
         // hook into it before signals start getting fired by folders
         // becoming available, etc.
@@ -1083,6 +1090,13 @@ internal class Application.Controller :
             );
             if (smtp != null) {
                 smtp.email_sent.disconnect(on_sent);
+            }
+
+            Geary.AccountSupport.QueueSend? queue_send = (
+                account as Geary.AccountSupport.QueueSend
+            );
+            if (queue_send != null) {
+                queue_send.email_sent.disconnect(on_graph_sent);
             }
 
             // Now the account is not in the accounts map, reset any
@@ -1481,6 +1495,23 @@ internal class Application.Controller :
             debug(@"Composer type $(composer.context_type) destroyed; " +
                   @"$(this.composer_widgets.size) composers remaining");
             composer_deregistered(composer);
+        }
+    }
+
+    private void on_graph_sent(Geary.AccountSupport.QueueSend account) {
+        /// Translators: The label for an in-app notification.
+        string message = _("Email sent");
+        Components.InAppNotification notification =
+            new Components.InAppNotification(
+                message, application.config.brief_notification_duration
+            );
+        foreach (MainWindow window in this.application.get_main_windows()) {
+            window.add_notification(notification);
+        }
+
+        foreach (EmailPluginContext plugin in
+                 this.plugins.get_email_contexts()) {
+            plugin.notify_email_sent();
         }
     }
 
@@ -2465,9 +2496,11 @@ private class Application.SendComposerCommand : ComposerCommand {
 
     private Client application;
     private AccountContext context;
-    private Geary.Smtp.ClientService smtp;
+    private Geary.Smtp.ClientService? smtp;
+    private Geary.AccountSupport.QueueSend? queue_send;
     private Geary.TimeoutManager commit_timer;
     private Geary.EmailIdentifier? saved = null;
+    private string? saved_graph_message_id = null;
 
 
     public SendComposerCommand(Client application,
@@ -2476,7 +2509,8 @@ private class Application.SendComposerCommand : ComposerCommand {
         base(composer);
         this.application = application;
         this.context = context;
-        this.smtp = (Geary.Smtp.ClientService) context.account.outgoing;
+        this.smtp = context.account.outgoing as Geary.Smtp.ClientService;
+        this.queue_send = context.account as Geary.AccountSupport.QueueSend;
 
         int send_delay = this.application.config.undo_send_delay;
         this.commit_timer = new Geary.TimeoutManager.seconds(
@@ -2494,22 +2528,39 @@ private class Application.SendComposerCommand : ComposerCommand {
             this.executed_label = _(
                 "Email to %s queued for delivery"
             ).printf(Util.Email.to_short_recipient_display(email));
-
-            this.saved = yield this.smtp.save_email(email, cancellable);
+            if (this.smtp != null) {
+                this.saved = yield this.smtp.save_email(email, cancellable);
+            } else if (this.queue_send != null) {
+                this.saved_graph_message_id =
+                    yield this.queue_send.save_email(email, cancellable);
+            }
             this.commit_timer.start();
-        } else {
+        } else if (this.smtp != null) {
             yield this.smtp.send_email(email, cancellable);
+            this.executed_label = _("Email sent");
+        } else {
+            yield this.context.account.send_composed_email(
+                email, cancellable
+            );
+            this.executed_label = _("Email sent");
         }
     }
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.commit_timer.reset();
-        yield this.smtp.outbox.remove_email_async(
-            Geary.Collection.single(this.saved),
-            cancellable
-        );
-        this.saved = null;
+        if (this.smtp != null) {
+            yield this.smtp.outbox.remove_email_async(
+                Geary.Collection.single(this.saved),
+                cancellable
+            );
+            this.saved = null;
+        } else if (this.queue_send != null && this.saved_graph_message_id != null) {
+            yield this.queue_send.discard_staged_email(
+                this.saved_graph_message_id, cancellable
+            );
+            this.saved_graph_message_id = null;
+        }
 
         this.composer.set_enabled(true);
         this.application.controller.present_composer(this.composer);
@@ -2517,9 +2568,31 @@ private class Application.SendComposerCommand : ComposerCommand {
     }
 
     private void on_commit_timeout() {
-        this.smtp.queue_email(this.saved);
-        this.saved = null;
-        close_composer();
+        if (this.smtp != null) {
+            this.smtp.queue_email(this.saved);
+            this.saved = null;
+            close_composer();
+        } else if (this.queue_send != null && this.saved_graph_message_id != null) {
+            string message_id = this.saved_graph_message_id;
+            this.saved_graph_message_id = null;
+            this.queue_send.queue_email.begin(
+                message_id,
+                this.context.cancellable,
+                on_queue_graph_email_completed
+            );
+            close_composer();
+        }
+    }
+
+    private void on_queue_graph_email_completed(GLib.Object? obj,
+                                                GLib.AsyncResult res) {
+        try {
+            this.queue_send.queue_email.end(res);
+        } catch (GLib.Error err) {
+            this.application.controller.report_problem(
+                new Geary.ProblemReport(err)
+            );
+        }
     }
 
 }

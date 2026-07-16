@@ -35,6 +35,13 @@ public class Composer.WebView : Components.WebView {
     // WebKit message handler names
     private const string CURSOR_CONTEXT_CHANGED = "cursor_context_changed";
     private const string DRAG_DROP_RECEIVED = "drag_drop_received";
+    private const string SCROLLED = "scrolled";
+
+    /** Whether the body is scrolled to its top edge. */
+    public bool body_at_top { get; private set; default = true; }
+
+    /** Whether the body is scrolled to its bottom edge. */
+    public bool body_at_bottom { get; private set; default = true; }
 
     /**
      * Encapsulates editing-related state for a specific DOM node.
@@ -151,6 +158,7 @@ public class Composer.WebView : Components.WebView {
 
         register_message_callback(CURSOR_CONTEXT_CHANGED, on_cursor_context_changed);
         register_message_callback(DRAG_DROP_RECEIVED, on_drag_drop_received);
+        register_message_callback(SCROLLED, on_scrolled);
 
         // XXX this is a bit of a hack given the docs for is_empty,
         // above
@@ -537,6 +545,21 @@ public class Composer.WebView : Components.WebView {
         }
         html.append(HTML_POST);
         return (string) html.data;
+    }
+
+    private void on_scrolled(GLib.Variant? parameters) {
+        if (parameters != null &&
+            parameters.is_container() &&
+            parameters.n_children() == 2) {
+            GLib.Variant at_top = parameters.get_child_value(0);
+            GLib.Variant at_bottom = parameters.get_child_value(1);
+            if (at_top.classify() == BOOLEAN) {
+                this.body_at_top = at_top.get_boolean();
+            }
+            if (at_bottom.classify() == BOOLEAN) {
+                this.body_at_bottom = at_bottom.get_boolean();
+            }
+        }
     }
 
     private void on_cursor_context_changed(GLib.Variant? parameters) {

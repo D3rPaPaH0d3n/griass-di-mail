@@ -198,11 +198,6 @@ public class Geary.Engine : BaseObject {
             throw new EngineError.ALREADY_EXISTS("Account already exists");
         }
 
-        ImapDB.Account local = new ImapDB.Account(
-            config,
-            config.data_dir,
-            this.resource_dir.get_child("sql")
-        );
         Endpoint incoming_remote = get_shared_endpoint(
             config.service_provider, config.incoming
         );
@@ -211,23 +206,38 @@ public class Geary.Engine : BaseObject {
         );
 
         Geary.Account account;
-        switch (config.service_provider) {
-            case ServiceProvider.GMAIL:
-                account = new ImapEngine.GmailAccount(
-                    config, local, incoming_remote, outgoing_remote
-                );
-            break;
-
-            case ServiceProvider.OUTLOOK:
-                account = new ImapEngine.OutlookAccount(
-                    config, local, incoming_remote, outgoing_remote
+        switch (config.account_backend) {
+            case AccountBackend.MICROSOFT_GRAPH:
+                account = new Graph.Account(
+                    config, incoming_remote, outgoing_remote
                 );
             break;
 
             default:
-                account = new ImapEngine.OtherAccount(
-                    config, local, incoming_remote, outgoing_remote
+                ImapDB.Account local = new ImapDB.Account(
+                    config,
+                    config.data_dir,
+                    this.resource_dir.get_child("sql")
                 );
+                switch (config.service_provider) {
+                case ServiceProvider.GMAIL:
+                    account = new ImapEngine.GmailAccount(
+                        config, local, incoming_remote, outgoing_remote
+                    );
+                break;
+
+                case ServiceProvider.OUTLOOK:
+                    account = new ImapEngine.OutlookAccount(
+                        config, local, incoming_remote, outgoing_remote
+                    );
+                break;
+
+                default:
+                    account = new ImapEngine.OtherAccount(
+                        config, local, incoming_remote, outgoing_remote
+                    );
+                break;
+                }
             break;
         }
 

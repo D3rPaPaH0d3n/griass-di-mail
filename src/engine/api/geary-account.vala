@@ -563,6 +563,21 @@ public abstract class Geary.Account : BaseObject, Logging.Source {
     public abstract async void cleanup_storage(GLib.Cancellable? cancellable)
         throws GLib.Error;
 
+    /**
+     * Sends a composed email using this account's outgoing transport.
+     *
+     * Backends that do not support direct sending should throw
+     * {@link EngineError.UNSUPPORTED}.
+     */
+    public virtual async void send_composed_email(
+        Geary.ComposedEmail composed,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        throw new Geary.EngineError.UNSUPPORTED(
+            "Sending not supported for account backend"
+        );
+    }
+
     /** Fires a {@link opened} signal. */
     protected virtual void notify_opened() {
         opened();

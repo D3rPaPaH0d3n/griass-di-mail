@@ -551,7 +551,9 @@ public class ConversationMessage : Gtk.Grid, Geary.BaseInterface {
 
         this.compact_from.get_style_context().add_class(FROM_CLASS);
 
-        if (preview != null) {
+        if (headers.subject != null && !Geary.String.is_empty(headers.subject.value)) {
+            this.compact_body.set_text(headers.subject.value);
+        } else if (preview != null) {
             string clean_preview = preview;
             if (preview.length > MAX_PREVIEW_BYTES) {
                 clean_preview = Geary.String.safe_byte_substring(
@@ -854,6 +856,10 @@ public class ConversationMessage : Gtk.Grid, Geary.BaseInterface {
             this.compact_from.set_text(
                 yield format_originator_compact(cancellable)
             );
+            if (this.headers.subject != null &&
+                !Geary.String.is_empty(this.headers.subject.value)) {
+                this.compact_body.set_text(this.headers.subject.value);
+            }
 
             // Full headers
             Geary.EmailHeaderSet headers = this.headers;

@@ -19,6 +19,8 @@ class Geary.EngineTest : TestCase {
         add_test("add_account", add_account);
         add_test("remove_account", remove_account);
         add_test("re_add_account", re_add_account);
+        add_test("add_graph_account_creates_graph_account", add_graph_account_creates_graph_account);
+        add_test("add_imap_account_creates_imap_account", add_imap_account_creates_imap_account);
     }
 
     ~EngineTest() {
@@ -99,6 +101,57 @@ class Geary.EngineTest : TestCase {
         this.engine.add_account(this.account);
 
         assert_true(this.engine.has_account(this.account));
+    }
+
+    public void add_graph_account_creates_graph_account() throws GLib.Error {
+        // An account configured with the MICROSOFT_GRAPH backend must
+        // be wired up to a Graph.Account by the engine, not an
+        // ImapEngine.OutlookAccount.
+        AccountInformation graph_account = new AccountInformation(
+            "graph-test",
+            ServiceProvider.OUTLOOK,
+            new Mock.CredentialsMediator(),
+            new RFC822.MailboxAddress(null, "test1@example.com")
+        );
+        graph_account.account_backend = AccountBackend.MICROSOFT_GRAPH;
+        graph_account.set_account_directories(this.tmp, this.tmp);
+
+        assert_false(this.engine.has_account(graph_account));
+
+        this.engine.add_account(graph_account);
+        assert_true(
+            this.engine.has_account(graph_account),
+            "Graph account not added to engine"
+        );
+
+        Account account = this.engine.get_account(graph_account);
+        assert_true(
+            account is Geary.Graph.Account,
+            "Engine should produce a Graph.Account for MICROSOFT_GRAPH backend"
+        );
+        this.engine.remove_account(graph_account);
+    }
+
+    public void add_imap_account_creates_imap_account() throws GLib.Error {
+        // The default IMAP_SMTP backend should still produce an
+        // ImapEngine-backed account. This guards against regressions
+        // where the Graph switch accidentally becomes the default.
+        AccountInformation imap_account = new AccountInformation(
+            "imap-test",
+            ServiceProvider.OUTLOOK,
+            new Mock.CredentialsMediator(),
+            new RFC822.MailboxAddress(null, "test1@example.com")
+        );
+        imap_account.account_backend = AccountBackend.IMAP_SMTP;
+        imap_account.set_account_directories(this.tmp, this.tmp);
+
+        this.engine.add_account(imap_account);
+        Account account = this.engine.get_account(imap_account);
+        assert_true(
+            account is Geary.ImapEngine.OutlookAccount,
+            "Engine should produce an ImapEngine.OutlookAccount for IMAP_SMTP/OUTLOOK"
+        );
+        this.engine.remove_account(imap_account);
     }
 
    private void delete(File parent) throws Error {
