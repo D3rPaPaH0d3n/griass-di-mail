@@ -797,14 +797,20 @@ public class Application.MainWindow :
      * them.
      */
     internal bool close_composer(bool should_prompt, bool is_shutdown = false) {
-        bool closed = true;
         Composer.Widget? composer = this.conversation_viewer.current_composer;
-        //XXX GTK4
-        // if (composer != null &&
-        //     composer.conditional_close(should_prompt, is_shutdown) == CANCELLED) {
-        //     closed = false;
-        // }
-        return closed;
+        if (composer == null) {
+            return true;
+        }
+        if (!should_prompt) {
+            // Without a prompt this saves or discards as appropriate
+            // and always closes, so it can run in the background
+            composer.conditional_close.begin(false, is_shutdown);
+            return true;
+        }
+        // Prompting requires an async dialog; kick it off and report
+        // not-closed so the caller doesn't proceed prematurely
+        composer.conditional_close.begin(true, is_shutdown);
+        return false;
     }
 
     internal void start_search(string query_text, bool is_interactive) {
@@ -1038,18 +1044,18 @@ public class Application.MainWindow :
     }
 
     public override bool close_request() {
-        // XXX GTK4 check if this doesn't close too early
-        if (close_composer(true, false)) {
-            this.sensitive = false;
-            this.select_folder.begin(
-                null,
-                false,
-                true,
-                (obj, res) => {
-                    this.select_folder.end(res);
-                    destroy();
-                }
-            );
+        // Any composer prompt and the final teardown are async, so
+        // always inhibit the close here and destroy the window
+        // ourselves when ready
+        this.do_close_request.begin();
+        return true;
+    }
+
+    private async void do_close_request() {
+        Composer.Widget? composer = this.conversation_viewer.current_composer;
+        if (composer != null &&
+            (yield composer.conditional_close(true, false)) == CANCELLED) {
+            return;
         }
 
         this.window_width = this.default_width;
@@ -1065,7 +1071,16 @@ public class Application.MainWindow :
         }
         this.update_ui_timeout.reset();
 
-        return base.close_request();
+        this.sensitive = false;
+        this.select_folder.begin(
+            null,
+            false,
+            true,
+            (obj, res) => {
+                this.select_folder.end(res);
+                destroy();
+            }
+        );
     }
 
     public void add_toast(Adw.Toast toast) {
