@@ -304,6 +304,9 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
             base_ref();
             this.email = email;
             add_css_class("card");
+            // Clip children (webview, action bars) to the card's
+            // rounded corners
+            this.overflow = HIDDEN;
             notify["is-expanded"].connect(update_css_class);
             show();
         }
@@ -326,8 +329,37 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
         // Enables firing the should_scroll signal when this row is
         // allocated a size
         public void enable_should_scroll() {
-            //XXX GTK4 - once we work with models, we won't need this
-            // this.size_allocate.connect(on_size_allocate);
+            // GTK4 has no size-allocate signal; poll from the frame
+            // clock until the row has a height, then fire once so we
+            // don't keep scrolling later (e.g. on window resizes).
+            // GTK4 has no size-allocate signal; poll from the frame
+            // clock until the row's allocated size and position have
+            // settled (the first frame only yields a provisional
+            // margins-only allocation at y=0), then fire once so we
+            // don't keep scrolling later (e.g. on window resizes).
+            int last_height = -1;
+            double last_y = -1;
+            add_tick_callback(() => {
+                var parent = get_parent();
+                if (parent == null) {
+                    return GLib.Source.CONTINUE;
+                }
+                double x, y;
+                if (!translate_coordinates(parent, 0, 0, out x, out y)) {
+                    return GLib.Source.CONTINUE;
+                }
+                int height = get_allocated_height();
+                bool stable = (height > 16 &&
+                               height == last_height &&
+                               y == last_y);
+                last_height = height;
+                last_y = y;
+                if (!stable) {
+                    return GLib.Source.CONTINUE;
+                }
+                should_scroll();
+                return GLib.Source.REMOVE;
+            });
         }
 
         private void update_css_class() {
@@ -356,16 +388,6 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
                 remove_css_class(class_name);
             }
         }
-
-        //XXX GTK4 - once we work with models, we won't need this
-#if 0
-        protected void on_size_allocate() {
-            // Disable should_scroll so we don't keep on scrolling
-            // later, like when the window has been resized.
-            this.size_allocate.disconnect(on_size_allocate);
-            should_scroll();
-        }
-#endif
     }
 
 
@@ -1203,11 +1225,16 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
     }
 
     private void scroll_to_row(ConversationRow row) {
-        Gtk.Allocation? alloc = null;
-        row.get_allocation(out alloc);
-        int y = 0;
-        if (alloc.y > EMAIL_TOP_OFFSET) {
-            y = alloc.y - EMAIL_TOP_OFFSET;
+        // GTK4 positions rows via transforms, so allocation
+        // coordinates are not parent-relative; translate into the
+        // listbox's (unscrolled, full-content) coordinate space.
+        double rx, ry;
+        if (!row.translate_coordinates(this.listbox, 0, 0, out rx, out ry)) {
+            return;
+        }
+        double y = 0;
+        if (ry > EMAIL_TOP_OFFSET) {
+            y = ry - EMAIL_TOP_OFFSET;
         }
 
         // Use set_value rather than clamp_value since we want to
@@ -1216,16 +1243,11 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
     }
 
     private void scroll_to_anchor(EmailRow row, int anchor_y) {
-        Gtk.Allocation? alloc = null;
-        row.get_allocation(out alloc);
-
         double x = 0, y = 0;
-        row.view.primary_message.web_view_translate_coordinates(row, 0, anchor_y, out x, out y);
-
-        Gtk.Adjustment adj = this.listbox.get_adjustment();
-        y = alloc.y + y;
-        adj.set_value(y);
-
+        row.view.primary_message.web_view_translate_coordinates(
+            this.listbox, 0, anchor_y, out x, out y
+        );
+        this.listbox.get_adjustment().set_value(y);
     }
 
     /**

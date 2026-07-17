@@ -39,11 +39,6 @@ public class ConversationWebView : Components.WebView {
     private static WebKit.UserStyleSheet? app_stylesheet = null;
     private static WebKit.UserScript? app_script = null;
 
-    // State for keeping a scroll gesture contained to this message.
-    private int64 gesture_time = 0;
-    private double gesture_lo = 0;
-    private double gesture_hi = 0;
-
     public static new void load_resources()
         throws Error {
         ConversationWebView.app_script = Components.WebView.load_app_script(
@@ -244,66 +239,24 @@ public class ConversationWebView : Components.WebView {
         controller.key_pressed.connect(on_key_pressed);
         add_controller(controller);
 
-        var scroll = new Gtk.EventControllerScroll(VERTICAL);
-        scroll.propagation_phase = CAPTURE;
-        scroll.scroll.connect(on_scroll_contained);
-        add_controller(scroll);
-    }
-
-    // The whole conversation is a single scroll area with each message
-    // laid out at full height, so by default a scroll started on one
-    // message runs straight on into the rest of the chain. Instead,
-    // drive the enclosing ScrolledWindow ourselves and stop each
-    // gesture at this message's top/bottom edge; a fresh gesture (after
-    // a brief pause) is needed to cross into the next message.
-    private bool on_scroll_contained(Gtk.EventControllerScroll ctrl,
-                                     double dx, double dy) {
-        // Ctrl+scroll is zoom, handled by the base class.
-        if ((ctrl.get_current_event_state() & Gdk.ModifierType.CONTROL_MASK) != 0) {
-            return Gdk.EVENT_PROPAGATE;
+        // The view is allocated its full content height so it never
+        // scrolls internally. Drop WebKit's own scroll controller so
+        // scroll gestures bubble to the surrounding ScrolledWindow
+        // whole and get stock GTK mechanics (kinetic deceleration,
+        // etc). The base class's Ctrl+scroll zoom controller is
+        // vertical-only, so leave that one in place.
+        var to_remove = new Gee.ArrayList<Gtk.EventController>();
+        var controllers = observe_controllers();
+        for (uint i = 0; i < controllers.get_n_items(); i++) {
+            var scroll = controllers.get_item(i) as Gtk.EventControllerScroll;
+            if (scroll != null &&
+                scroll.flags != Gtk.EventControllerScrollFlags.VERTICAL) {
+                to_remove.add(scroll);
+            }
         }
-
-        var scroller = get_ancestor(typeof(Gtk.ScrolledWindow)) as Gtk.ScrolledWindow;
-        if (scroller == null) {
-            return Gdk.EVENT_PROPAGATE;
+        foreach (var scroll in to_remove) {
+            remove_controller(scroll);
         }
-        Gtk.Adjustment adj = scroller.get_vadjustment();
-
-        // Match GtkScrolledWindow's smooth-scroll step so it feels like
-        // the rest of the window.
-        double unit = Math.pow(adj.page_size, 2.0 / 3.0);
-        double delta = (ctrl.get_unit() == Gdk.ScrollUnit.SURFACE)
-            ? dy : dy * unit;
-        if (delta == 0) {
-            return Gdk.EVENT_PROPAGATE;
-        }
-
-        // This message's extent in the adjustment's coordinate space.
-        double mx, my;
-        if (!translate_coordinates(scroller, 0, 0, out mx, out my)) {
-            return Gdk.EVENT_PROPAGATE;
-        }
-        double top = adj.value + my;
-        double bottom = top + get_allocated_height();
-        double page = adj.page_size;
-        double v = adj.value;
-
-        // A gap since the last event starts a new gesture: bound it to
-        // this message unless we're already sitting on the edge we'd hit
-        // (in which case let it cross into the neighbouring message).
-        int64 now = GLib.get_monotonic_time();
-        if (now - this.gesture_time > 200000) {
-            this.gesture_lo = (v <= top + 1) ? adj.lower : top;
-            this.gesture_hi = (v >= bottom - page - 1) ? (adj.upper - page)
-                                                       : (bottom - page);
-        }
-        this.gesture_time = now;
-
-        double target = v + delta;
-        if (target < this.gesture_lo) target = this.gesture_lo;
-        if (target > this.gesture_hi) target = this.gesture_hi;
-        adj.value = target;
-        return Gdk.EVENT_STOP;
     }
 
     private void on_deceptive_link_clicked(GLib.Variant? parameters) {

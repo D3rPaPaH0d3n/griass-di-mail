@@ -53,44 +53,30 @@
                                 <property name="activatable">False</property>
                                 <property name="focusable">False</property>
                                 <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">vertical</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="margin-end">12</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <!-- Translators: Label for composer From address entry -->
-                                        <property name="label" translatable="yes">From</property>
-                                        <property name="xalign">0</property>
-                                        <style>
-                                          <class name="caption"/>
-                                          <class name="dim-label"/>
-                                        </style>
+                                  <object class="GtkDropDown" id="from_row">
+                                    <property name="hexpand">True</property>
+                                    <property name="focus_on_click">False</property>
+                                    <property name="factory">
+                                      <object class="GtkSignalListItemFactory">
+                                        <signal name="setup" handler="on_from_button_factory_setup"/>
+                                        <signal name="bind" handler="on_from_factory_bind"/>
                                       </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkDropDown" id="from_row">
-                                        <property name="hexpand">True</property>
-                                        <property name="focus_on_click">False</property>
-                                        <property name="factory">
-                                          <object class="GtkSignalListItemFactory">
-                                            <signal name="setup" handler="on_from_factory_setup"/>
-                                            <signal name="bind" handler="on_from_factory_bind"/>
-                                          </object>
-                                        </property>
-                                        <property name="model">
-                                          <object class="GListStore" id="from_model">
-                                            <property name="item-type">ComposerWidgetFromAddressMap</property>
-                                          </object>
-                                        </property>
-                                        <style>
-                                          <class name="flat"/>
-                                          <class name="geary-composer-from"/>
-                                        </style>
+                                    </property>
+                                    <property name="list-factory">
+                                      <object class="GtkSignalListItemFactory">
+                                        <signal name="setup" handler="on_from_factory_setup"/>
+                                        <signal name="bind" handler="on_from_factory_bind"/>
                                       </object>
-                                    </child>
+                                    </property>
+                                    <property name="model">
+                                      <object class="GListStore" id="from_model">
+                                        <property name="item-type">ComposerWidgetFromAddressMap</property>
+                                      </object>
+                                    </property>
+                                    <style>
+                                      <class name="flat"/>
+                                      <class name="geary-composer-from"/>
+                                    </style>
                                   </object>
                                 </child>
                               </object>

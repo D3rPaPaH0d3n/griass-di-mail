@@ -298,14 +298,28 @@ geary-composer-editor > frame > border {
   border-bottom-width: 0;
 }
 
+geary-composer-editor frame {
+  border-radius: 0;
+}
+
 /* From row: strip the dropdown's button chrome so it reads like the
  * neighbouring entry rows, value on the left, arrow at the far end. */
 dropdown.geary-composer-from > button {
   background: none;
   border: none;
   box-shadow: none;
-  padding: 0;
+  padding: 6px 12px;
   min-height: 0;
+  border-radius: 0;
+}
+
+/* Match the size and centering of AdwEntryRow's edit icon */
+dropdown.geary-composer-from > button arrow {
+  -gtk-icon-size: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  margin: 0;
+  padding-right: 9px
 }
 
 geary-composer-embed headerbar {

@@ -2094,12 +2094,36 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     [GtkCallback]
+    private void on_from_button_factory_setup(Gtk.SignalListItemFactory factory,
+                                              GLib.Object object) {
+        unowned var item = (Gtk.ListItem) object;
+        var box = new Gtk.Box(VERTICAL, 0);
+        box.hexpand = true;
+        var caption = new Gtk.Label(_("From"));
+        caption.xalign = 0;
+        caption.add_css_class("caption");
+        caption.add_css_class("dim-label");
+        box.append(caption);
+        var label = new Gtk.Label(null);
+        label.hexpand = true;
+        label.xalign = 0;
+        label.ellipsize = END;
+        box.append(label);
+        item.child = box;
+    }
+
+    [GtkCallback]
     private void on_from_factory_bind(Gtk.SignalListItemFactory factory,
                                       GLib.Object object) {
         unowned var item = (Gtk.ListItem) object;
         unowned var addr_map = (FromAddressMap) item.item;
 
-        unowned var label = (Gtk.Label) item.child;
+        // The popup child is a bare label; the button child is a
+        // caption + value box where the value label comes last.
+        unowned var label = item.child as Gtk.Label;
+        if (label == null) {
+            label = (Gtk.Label) ((Gtk.Box) item.child).get_last_child();
+        }
 
         string display = addr_map.from.to_full_display();
         if (!addr_map.is_primary()) {

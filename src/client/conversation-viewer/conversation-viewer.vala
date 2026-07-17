@@ -260,6 +260,10 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
         // are not set on the list - it makes changing focus jumpy
         // when a row or its web_view are larger than the viewport.
         Gtk.Viewport viewport = new Gtk.Viewport(null, null);
+        // Keep clicks that focus a message taller than the viewport
+        // from scrolling the view (GTK4 equivalent of the focus
+        // adjustment problem described above)
+        viewport.scroll_to_focus = false;
         viewport.child = list;
 
         this.conversation_scroller.child = viewport;
