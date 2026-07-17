@@ -56,8 +56,10 @@ public class SearchBar : Adw.Bin {
         search_bar.child = column;
     }
 
+    // No side effects here: when the bar closes, GTK moves focus out
+    // of the hidden entry by walking ancestors' grab_focus, so
+    // enabling search mode here would immediately reopen the bar
     public override bool grab_focus() {
-        this.search_mode_enabled = true;
         return this.entry.grab_focus();
     }
 

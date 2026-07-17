@@ -725,6 +725,7 @@ public class Application.MainWindow :
         this.outer_view.show_content = false;
         this.inner_view.show_content = true;
 
+        this.search_bar.search_mode_enabled = true;
         this.search_bar.grab_focus();
         if (text != null) {
             this.search_bar.entry.text = text;

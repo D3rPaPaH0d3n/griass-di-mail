@@ -733,12 +733,18 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     /** Detaches the composer and opens it in a new window. */
     public void detach(Application.Client application) {
         Gtk.Widget? focused_widget = null;
+        var old_main = this.container?.top_window as Application.MainWindow;
         if (this.container != null) {
             focused_widget = this.container.top_window.get_focus();
             this.container.close();
         }
 
         var new_window = new Window(this, application);
+
+        // The composer had taken over the old window's title
+        if (old_main != null) {
+            old_main.update_title();
+        }
 
         // Workaround a GTK+ crasher, Bug 771812. When the
         // composer is re-parented, its menu_button's popover
@@ -755,6 +761,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         );
 
         set_mode(DETACHED);
+        new_window.present();
 
         // If the previously focused widget is in the new composer
         // window then focus that, else focus something useful.

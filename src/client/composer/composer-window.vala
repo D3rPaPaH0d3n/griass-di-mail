@@ -14,10 +14,6 @@
  */
 public class Composer.Window : Gtk.ApplicationWindow, Container {
 
-    static construct {
-        set_css_name("geary-composer-box");
-    }
-
 
     /** {@inheritDoc} */
     public Gtk.ApplicationWindow? top_window {
@@ -53,7 +49,17 @@ public class Composer.Window : Gtk.ApplicationWindow, Container {
         if (application.config.desktop_environment == UNITY) {
             composer.embed_header();
         } else {
-            set_titlebar(this.composer.header.headerbar);
+            // The headerbar may still be embedded in the composer
+            // from INLINE mode; reclaim it and restore its window
+            // controls before using it as the titlebar
+            var headerbar = this.composer.header.headerbar;
+            var old_parent = headerbar.parent as Gtk.Box;
+            if (old_parent != null) {
+                old_parent.remove(headerbar);
+            }
+            headerbar.show_start_title_buttons = true;
+            headerbar.show_end_title_buttons = true;
+            set_titlebar(headerbar);
         }
 
         Gtk.EventControllerFocus focus_controller = new Gtk.EventControllerFocus();
@@ -68,7 +74,9 @@ public class Composer.Window : Gtk.ApplicationWindow, Container {
 
     /** {@inheritDoc} */
     public new void close() {
+        save_window_geometry();
         this.child = null;
+        destroy();
     }
 
     public override void show() {
