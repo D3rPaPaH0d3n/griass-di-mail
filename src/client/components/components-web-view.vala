@@ -287,6 +287,9 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
 
     private double webkit_reported_height = 0;
 
+    // Accumulated smooth-scroll delta for Ctrl+scroll zoom stepping
+    private double zoom_scroll_delta = 0;
+
 
     /**
      * Emitted when the view's content has finished loaded.
@@ -328,8 +331,13 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
         setts.enable_media_stream = false;
         setts.enable_offline_web_application_cache = false;
         setts.enable_page_cache = false;
+        // Let WebKit use the GPU. Software rendering scrolls poorly,
+        // especially under fractional scaling where each message's
+        // surface is rescaled on the CPU every frame. If many-message
+        // threads exhaust VRAM on low-end GPUs, gate this behind a
+        // setting instead of forcing NEVER.
         setts.hardware_acceleration_policy =
-            WebKit.HardwareAccelerationPolicy.NEVER;
+            WebKit.HardwareAccelerationPolicy.ALWAYS;
         setts.javascript_can_access_clipboard = true;
 
         WebKit.UserContentManager content_manager =
@@ -491,18 +499,22 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
     }
 
     public void zoom_in() {
-        double new_zoom = this.zoom_level += (this.zoom_level * ZOOM_FACTOR);
-        if (new_zoom > ZOOM_MAX) {
-            new_zoom = ZOOM_MAX;
+        double new_zoom = double.min(
+            this.zoom_level + this.zoom_level * ZOOM_FACTOR, ZOOM_MAX
+        );
+        if (new_zoom == this.zoom_level) {
+            return;
         }
         this.zoom_level = new_zoom;
         notify_property("preferred-height");
     }
 
     public void zoom_out() {
-        double new_zoom = this.zoom_level -= (this.zoom_level * ZOOM_FACTOR);
-        if (new_zoom < ZOOM_MIN) {
-            new_zoom = ZOOM_MIN;
+        double new_zoom = double.max(
+            this.zoom_level - this.zoom_level * ZOOM_FACTOR, ZOOM_MIN
+        );
+        if (new_zoom == this.zoom_level) {
+            return;
         }
         this.zoom_level = new_zoom;
         notify_property("preferred-height");
@@ -646,13 +658,21 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
                 update_unset_html_colors.begin();
             });
 
-        // Manage zoom level, ensure it's sane
-        config.bind(Application.Configuration.CONVERSATION_VIEWER_ZOOM_KEY, this, "zoom_level");
+        // Load the persisted zoom once, then only write changes back.
+        // A bidirectional binding would slave every open message view
+        // to a single value, so zooming one message would reflow them
+        // all at once (a noticeable stall on large threads). New views
+        // still open at the last-used zoom via the initial read.
+        this.zoom_level = config.conversation_viewer_zoom;
         if (this.zoom_level < ZOOM_MIN) {
             this.zoom_level = ZOOM_MIN;
         } else if (this.zoom_level > ZOOM_MAX) {
             this.zoom_level = ZOOM_MAX;
         }
+        config.bind(
+            Application.Configuration.CONVERSATION_VIEWER_ZOOM_KEY,
+            this, "zoom_level", GLib.SettingsBindFlags.SET
+        );
         var scroll_controller = new Gtk.EventControllerScroll(Gtk.EventControllerScrollFlags.VERTICAL);
         scroll_controller.scroll.connect(on_scroll_event);
         add_controller(scroll_controller);
@@ -804,23 +824,32 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
     private bool on_scroll_event(Gtk.EventControllerScroll scroll_controller, double dx, double dy) {
         var event = (Gdk.ScrollEvent) scroll_controller.get_current_event();
         if (Gdk.ModifierType.CONTROL_MASK in event.get_modifier_state()) {
-            double dir = 0;
-            if (event.get_direction() == Gdk.ScrollDirection.UP)
-                dir = -1;
-            else if (event.get_direction() == Gdk.ScrollDirection.DOWN)
-                dir = 1;
-            else if (event.get_direction() == Gdk.ScrollDirection.SMOOTH) {
-                double delta_x;
-                event.get_deltas(out delta_x, out dir);
-            }
-
-            if (dir < 0) {
+            if (event.get_direction() == Gdk.ScrollDirection.UP) {
                 zoom_in();
                 return true;
-            } else if (dir > 0) {
+            } else if (event.get_direction() == Gdk.ScrollDirection.DOWN) {
                 zoom_out();
                 return true;
+            } else if (event.get_direction() == Gdk.ScrollDirection.SMOOTH) {
+                // Touchpads emit many tiny deltas per gesture. Zooming
+                // on each one floods WebKit with reflows and feels
+                // laggy, so accumulate and zoom in discrete steps
+                // (one per wheel-notch worth of scrolling).
+                double delta_x, delta_y;
+                event.get_deltas(out delta_x, out delta_y);
+                this.zoom_scroll_delta += delta_y;
+                while (this.zoom_scroll_delta <= -1.0) {
+                    zoom_in();
+                    this.zoom_scroll_delta += 1.0;
+                }
+                while (this.zoom_scroll_delta >= 1.0) {
+                    zoom_out();
+                    this.zoom_scroll_delta -= 1.0;
+                }
+                return true;
             }
+        } else {
+            this.zoom_scroll_delta = 0;
         }
         return false;
     }

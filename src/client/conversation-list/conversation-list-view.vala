@@ -158,6 +158,17 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
         }
     }
 
+    private Adw.Animation? scroll_animation = null;
+
+    /** Scrolls the conversation list back to the top. */
+    public void scroll_to_top() {
+        this.scroll_animation = Util.Gtk.animate_adjustment(
+            this,
+            this.scrolled_window.vadjustment,
+            this.scrolled_window.vadjustment.lower
+        );
+    }
+
     public void scroll(Gtk.ScrollType scroll_type) {
         Gtk.ListBoxRow row = this.list.get_selected_row();
 

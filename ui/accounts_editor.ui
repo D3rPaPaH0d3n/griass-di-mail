@@ -2,6 +2,7 @@
 <interface>
   <template class="AccountsEditor" parent="AdwDialog">
     <property name="content-width">640</property>
+    <property name="content-height">700</property>
 
     <child>
       <object class="GtkEventControllerKey">

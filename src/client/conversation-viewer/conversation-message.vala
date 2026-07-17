@@ -677,22 +677,22 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         yield web_view.evaluate_javascript(script, -1, null, null, cancellable);
     }
 
+    // Zoom only touches an already-loaded view; an uninitialised view
+    // reads the persisted zoom level when it is created, so there's no
+    // need to force it to load just to zoom it.
     public void zoom_in() {
-        if (this.web_view == null)
-            initialize_web_view();
-        web_view.zoom_in();
+        if (this.web_view != null)
+            web_view.zoom_in();
     }
 
     public void zoom_out() {
-        if (this.web_view == null)
-            initialize_web_view();
-        web_view.zoom_out();
+        if (this.web_view != null)
+            web_view.zoom_out();
     }
 
     public void zoom_reset() {
-        if (this.web_view == null)
-            initialize_web_view();
-        web_view.zoom_reset();
+        if (this.web_view != null)
+            web_view.zoom_reset();
     }
 
     public void web_view_translate_coordinates(Gtk.Widget widget, int x, int anchor_y, out double x1, out double y1) {

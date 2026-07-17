@@ -885,6 +885,13 @@ public class Sidebar.Tree : Gtk.TreeView {
                 // yes, don't allow single-click editing, but
                 // pass the event on for dragging.
                 text_renderer.editable = false;
+                // Re-emit selection so re-clicking the current folder
+                // is handled (e.g. scroll the list back to the top);
+                // cursor_changed() won't fire when the row is unchanged.
+                var selectable = wrapper.entry as Sidebar.SelectableEntry;
+                if (selectable != null) {
+                    entry_selected(selectable);
+                }
                 return;
             }
 

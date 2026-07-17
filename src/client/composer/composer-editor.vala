@@ -178,7 +178,25 @@ public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
         this.body.set_hexpand(true);
         this.body.set_vexpand(true);
         this.body.show();
-        this.body_bin.child = this.body;
+
+        // Cover the body with an opaque spinner until its WebView has
+        // loaded, otherwise the unpainted view shows as a black flash.
+        var spinner = new Adw.Spinner();
+        spinner.halign = Gtk.Align.CENTER;
+        spinner.valign = Gtk.Align.CENTER;
+        spinner.set_size_request(32, 32);
+        var loading = new Adw.Bin();
+        loading.add_css_class("background");
+        loading.child = spinner;
+        if (this.body.is_content_loaded) {
+            loading.visible = false;
+        }
+        this.body.content_loaded.connect(() => { loading.visible = false; });
+
+        var overlay = new Gtk.Overlay();
+        overlay.child = this.body;
+        overlay.add_overlay(loading);
+        this.body_bin.child = overlay;
 
         this.click_gesture = new Gtk.GestureClick();
         this.click_gesture.propagation_phase = CAPTURE;

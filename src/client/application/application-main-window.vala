@@ -545,7 +545,13 @@ public class Application.MainWindow :
     public async void select_folder(Geary.Folder? to_select,
                                     bool is_interactive,
                                     bool inhibit_autoselect = false) {
-        if (this.selected_folder != to_select) {
+        if (this.selected_folder == to_select) {
+            // Clicking the already-selected folder scrolls the
+            // conversation list back to the top.
+            if (is_interactive && to_select != null) {
+                this.conversation_list_view.scroll_to_top();
+            }
+        } else {
             // Cancel any existing folder loading
             this.folder_open.cancel();
             var cancellable = this.folder_open = new GLib.Cancellable();

@@ -576,6 +576,9 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
     // The current composer, if any
     private ComposerRow? current_composer = null;
 
+    // Keeps the active scroll animation alive until it completes
+    private Adw.Animation? scroll_animation = null;
+
     // The id of the draft referred to by the current composer.
     private Geary.EmailIdentifier? draft_id = null;
 
@@ -1013,31 +1016,43 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
     /**
      * Increases the magnification level used for displaying messages.
      */
+    // The message the user is looking at: the primary message of the
+    // topmost email currently in the viewport. Zoom acts on this one
+    // view so it responds instantly, rather than reflowing the whole
+    // thread.
+    private ConversationMessage? viewport_message() {
+        var adj = this.listbox.get_adjustment();
+        var row = this.listbox.get_row_at_y(
+            (int) adj.value + EMAIL_TOP_OFFSET
+        ) as EmailRow;
+        if (row == null || !row.is_expanded) {
+            return null;
+        }
+        return row.view.primary_message;
+    }
+
     public void zoom_in() {
-        message_view_iterator().foreach((msg_view) => {
-                msg_view.zoom_in();
-                return true;
-            });
+        var msg_view = viewport_message();
+        if (msg_view != null)
+            msg_view.zoom_in();
     }
 
     /**
      * Decreases the magnification level used for displaying messages.
      */
     public void zoom_out() {
-        message_view_iterator().foreach((msg_view) => {
-                msg_view.zoom_out();
-                return true;
-            });
+        var msg_view = viewport_message();
+        if (msg_view != null)
+            msg_view.zoom_out();
     }
 
     /**
      * Resets magnification level used for displaying messages to the default.
      */
     public void zoom_reset() {
-        message_view_iterator().foreach((msg_view) => {
-                msg_view.zoom_reset();
-                return true;
-            });
+        var msg_view = viewport_message();
+        if (msg_view != null)
+            msg_view.zoom_reset();
     }
 
     /**
@@ -1241,9 +1256,11 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
             y = ry - EMAIL_TOP_OFFSET;
         }
 
-        // Use set_value rather than clamp_value since we want to
-        // scroll to the top of the window.
-        this.listbox.get_adjustment().set_value(y);
+        // Animate to the target so reaching the composer or a message
+        // glides into place rather than snapping.
+        this.scroll_animation = Util.Gtk.animate_adjustment(
+            this.listbox, this.listbox.get_adjustment(), y
+        );
     }
 
     private void scroll_to_anchor(EmailRow row, int anchor_y) {

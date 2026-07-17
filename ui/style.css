@@ -43,10 +43,18 @@ conversation-list list {
   background-color: transparent;
 }
 
+@keyframes conversation-row-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 row.conversation-list {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   padding-right: 0.5em;
+  /* Fade rows in as they appear (folder switch, new mail). GTK skips
+     this automatically when animations are disabled. */
+  animation: conversation-row-fade-in 0.25s;
 }
 
 row.conversation-list.drag-n-drop {

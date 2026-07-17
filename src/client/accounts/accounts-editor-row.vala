@@ -389,7 +389,25 @@ internal interface Accounts.ValidatingRow<PaneType> : EditorRow<PaneType> {
 }
 
 
-internal class Accounts.TlsComboBox : Gtk.ComboBox {
+// Item backing a Gtk.DropDown row: an integer value plus its label and
+// optional icon.
+internal class Accounts.ComboItem : GLib.Object {
+
+    public int id { get; construct; }
+    public string label { get; construct; }
+    public string? icon_name { get; construct; }
+
+    public ComboItem(int id, string label, string? icon_name = null) {
+        Object(id: id, label: label, icon_name: icon_name);
+    }
+
+}
+
+
+// Gtk.DropDown is sealed, so these wrap one in an Adw.Bin and expose a
+// typed value plus a changed() signal, matching the row API.
+
+internal class Accounts.TlsComboBox : Adw.Bin {
 
     private const string INSECURE_ICON = "channel-insecure-symbolic";
     private const string SECURE_ICON = "channel-secure-symbolic";
@@ -397,18 +415,21 @@ internal class Accounts.TlsComboBox : Gtk.ComboBox {
 
     public string label { get; private set; default = ""; }
 
+    /** Fired when the selected method changes. */
+    public signal void changed();
+
+
+    private Gtk.DropDown drop;
+
 
     public Geary.TlsNegotiationMethod method {
         get {
-            try {
-                return Geary.TlsNegotiationMethod.for_value(this.active_id);
-            } catch {
-                return Geary.TlsNegotiationMethod.TRANSPORT;
-            }
+            var item = this.drop.selected_item as ComboItem;
+            return (item != null)
+                ? (Geary.TlsNegotiationMethod) item.id
+                : Geary.TlsNegotiationMethod.TRANSPORT;
         }
-        set {
-            this.active_id = value.to_value();
-        }
+        set { select_id(this.drop, value); }
     }
 
 
@@ -418,63 +439,45 @@ internal class Accounts.TlsComboBox : Gtk.ComboBox {
         // service.
         this.label = _("Connection security");
 
-        Gtk.ListStore store = new Gtk.ListStore(
-            3, typeof(string), typeof(string), typeof(string)
+        var store = new GLib.ListStore(typeof(ComboItem));
+        store.append(
+            new ComboItem(Geary.TlsNegotiationMethod.NONE, _("None"), INSECURE_ICON)
         );
-        Gtk.TreeIter iter;
-        store.append(out iter);
-        store.set(
-            iter,
-            0, Geary.TlsNegotiationMethod.NONE.to_value(),
-            1, INSECURE_ICON,
-            2, _("None")
+        store.append(
+            new ComboItem(Geary.TlsNegotiationMethod.START_TLS, _("StartTLS"), SECURE_ICON)
         );
-        store.append(out iter);
-        store.set(
-            iter,
-            0, Geary.TlsNegotiationMethod.START_TLS.to_value(),
-            1, SECURE_ICON,
-            2, _("StartTLS")
-        );
-        store.append(out iter);
-        store.set(
-            iter,
-            0, Geary.TlsNegotiationMethod.TRANSPORT.to_value(),
-            1, SECURE_ICON,
-            2, _("TLS")
+        store.append(
+            new ComboItem(Geary.TlsNegotiationMethod.TRANSPORT, _("TLS"), SECURE_ICON)
         );
 
-        this.model = store;
-        set_id_column(0);
-
-        Gtk.CellRendererText text_renderer = new Gtk.CellRendererText();
-        text_renderer.ellipsize = Pango.EllipsizeMode.END;
-        pack_start(text_renderer, true);
-        add_attribute(text_renderer, "text", 2);
-
-        Gtk.CellRendererPixbuf icon_renderer = new Gtk.CellRendererPixbuf();
-        pack_start(icon_renderer, true);
-        add_attribute(icon_renderer, "icon_name", 1);
+        this.drop = new Gtk.DropDown(store, null);
+        this.drop.factory = new_icon_label_factory();
+        this.drop.notify["selected"].connect(() => { changed(); });
+        this.child = this.drop;
     }
 
 }
 
-internal class Accounts.OutgoingAuthComboBox : Gtk.ComboBox {
+internal class Accounts.OutgoingAuthComboBox : Adw.Bin {
 
 
     public string label { get; private set; }
 
+    /** Fired when the selected source changes. */
+    public signal void changed();
+
+
+    private Gtk.DropDown drop;
+
+
     public Geary.Credentials.Requirement source {
         get {
-            try {
-                return Geary.Credentials.Requirement.for_value(this.active_id);
-            } catch {
-                return Geary.Credentials.Requirement.USE_INCOMING;
-            }
+            var item = this.drop.selected_item as ComboItem;
+            return (item != null)
+                ? (Geary.Credentials.Requirement) item.id
+                : Geary.Credentials.Requirement.USE_INCOMING;
         }
-        set {
-            this.active_id = value.to_value();
-        }
+        set { select_id(this.drop, value); }
     }
 
 
@@ -484,56 +487,76 @@ internal class Accounts.OutgoingAuthComboBox : Gtk.ComboBox {
         // account
         this.label = _("Login");
 
-        Gtk.ListStore store = new Gtk.ListStore(
-            2, typeof(string), typeof(string)
-        );
-        Gtk.TreeIter iter;
-
-        store.append(out iter);
-        store.set(
-            iter,
-            0,
-            Geary.Credentials.Requirement.NONE.to_value(),
-            1,
+        var store = new GLib.ListStore(typeof(ComboItem));
+        store.append(new ComboItem(
+            Geary.Credentials.Requirement.NONE,
             // Translators: ComboBox value for source of SMTP
             // authentication credentials (none) when adding a new
             // account
             _("No login needed")
-        );
-
-        store.append(out iter);
-        store.set(
-            iter,
-            0,
-            Geary.Credentials.Requirement.USE_INCOMING.to_value(),
-            1,
+        ));
+        store.append(new ComboItem(
+            Geary.Credentials.Requirement.USE_INCOMING,
             // Translators: ComboBox value for source of SMTP
             // authentication credentials (use IMAP) when adding a new
             // account
             _("Use same login as receiving")
-        );
-
-        store.append(out iter);
-        store.set(
-            iter,
-            0,
-            Geary.Credentials.Requirement.CUSTOM.to_value(),
-            1,
+        ));
+        store.append(new ComboItem(
+            Geary.Credentials.Requirement.CUSTOM,
             // Translators: ComboBox value for source of SMTP
             // authentication credentials (custom) when adding a new
             // account
             _("Use a different login")
-        );
+        ));
 
-        this.model = store;
-        set_id_column(0);
-
-        Gtk.CellRendererText text_renderer = new Gtk.CellRendererText();
-        text_renderer.ellipsize = Pango.EllipsizeMode.END;
-        pack_start(text_renderer, true);
-        add_attribute(text_renderer, "text", 1);
+        this.drop = new Gtk.DropDown(store, null);
+        this.drop.factory = new_icon_label_factory();
+        this.drop.notify["selected"].connect(() => { changed(); });
+        this.child = this.drop;
     }
 
+}
+
+
+// Select the item in a ComboItem-backed drop-down whose id matches.
+private void select_id(Gtk.DropDown drop, int id) {
+    var model = (GLib.ListStore) drop.model;
+    for (uint i = 0; i < model.get_n_items(); i++) {
+        if (((Accounts.ComboItem) model.get_item(i)).id == id) {
+            drop.selected = i;
+            break;
+        }
+    }
+}
+
+
+// Shared factory: an optional icon followed by an ellipsized label,
+// bound from a ComboItem.
+private Gtk.SignalListItemFactory new_icon_label_factory() {
+    var factory = new Gtk.SignalListItemFactory();
+    factory.setup.connect((obj) => {
+        var item = (Gtk.ListItem) obj;
+        var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 6);
+        var icon = new Gtk.Image();
+        var text = new Gtk.Label(null);
+        text.xalign = 0.0f;
+        text.ellipsize = Pango.EllipsizeMode.END;
+        box.append(icon);
+        box.append(text);
+        item.child = box;
+    });
+    factory.bind.connect((obj) => {
+        var item = (Gtk.ListItem) obj;
+        var data = (Accounts.ComboItem) item.item;
+        var box = (Gtk.Box) item.child;
+        var icon = (Gtk.Image) box.get_first_child();
+        var text = (Gtk.Label) icon.get_next_sibling();
+        icon.icon_name = data.icon_name;
+        icon.visible = (data.icon_name != null);
+        text.label = data.label;
+    });
+    return factory;
 }
 
 

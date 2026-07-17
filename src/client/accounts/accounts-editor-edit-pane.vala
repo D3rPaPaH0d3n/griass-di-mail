@@ -621,14 +621,10 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
 private class Accounts.EmailPrefetchRow :
-    AccountRow<EditorEditPane,Gtk.ComboBoxText> {
+    AccountRow<EditorEditPane,Gtk.DropDown> {
 
 
-    private static bool row_separator(Gtk.TreeModel model, Gtk.TreeIter iter) {
-        GLib.Value v;
-        model.get_value(iter, 0, out v);
-        return v.get_string() == ".";
-    }
+    private const int[] PERIODS = { 14, 30, 90, 180, 365, 720, 1461, -1 };
 
 
     public EmailPrefetchRow(EditorEditPane pane) {
@@ -638,32 +634,33 @@ private class Accounts.EmailPrefetchRow :
             // preference for the length of time (weeks, months or
             // years) that past email should be downloaded.
             _("Download mail"),
-            new Gtk.ComboBoxText()
+            new Gtk.DropDown(null, null)
         );
         set_activatable(false);
 
-        this.value.set_row_separator_func(row_separator);
-
         // Populate the model
-        get_label(14, true);
-        get_label(30, true);
-        get_label(90, true);
-        get_label(180, true);
-        get_label(365, true);
-        get_label(720, true);
-        get_label(1461, true);
-        get_label(-1, true);
+        var store = new GLib.ListStore(typeof(ComboItem));
+        foreach (int duration in PERIODS) {
+            store.append(new ComboItem(duration, get_label(duration)));
+        }
+        this.value.model = store;
+        this.value.expression =
+            new Gtk.PropertyExpression(typeof(ComboItem), null, "label");
 
         // Update before connecting to the changed signal to avoid
         // getting a spurious command.
         update();
 
-        this.value.changed.connect(() => {
+        this.value.notify["selected"].connect(() => {
+                var item = this.value.selected_item as ComboItem;
+                if (item == null) {
+                    return;
+                }
                 pane.commands.execute.begin(
                     new Application.PropertyCommand<int>(
                         this.account,
                         "prefetch-period-days",
-                        int.parse(this.value.get_active_id()),
+                        item.id,
                         // Translators: Tooltip for undoing a change
                         // to the length of time that past email
                         // should be downloaded for an account. The
@@ -679,15 +676,20 @@ private class Accounts.EmailPrefetchRow :
     }
 
     public override void update() {
-        string id = this.account.prefetch_period_days.to_string();
-        if (this.value.get_active_id() != id) {
-            this.value.set_active_id(id);
+        var store = (GLib.ListStore) this.value.model;
+        for (uint i = 0; i < store.get_n_items(); i++) {
+            if (((ComboItem) store.get_item(i)).id ==
+                    this.account.prefetch_period_days) {
+                if (this.value.selected != i) {
+                    this.value.selected = i;
+                }
+                break;
+            }
         }
     }
 
-    private string get_label(int duration, bool append = false) {
+    private string get_label(int duration) {
         string label = "";
-        bool is_custom = false;
         switch (duration) {
         case -1:
             label = _("Everything");
@@ -722,20 +724,12 @@ private class Accounts.EmailPrefetchRow :
             break;
 
         default:
-            is_custom = true;
             label = GLib.ngettext(
                 "%d day back",
                 "%d days back",
                 duration
             ).printf(duration);
             break;
-        }
-
-        if (append) {
-            if (duration == -1 || is_custom) {
-                this.value.append(".", "."); // Separator
-            }
-            this.value.append(duration.to_string(), label);
         }
 
         return label;

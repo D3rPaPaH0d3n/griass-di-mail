@@ -91,6 +91,28 @@ namespace Util.Gtk {
     }
 
     /**
+     * Smoothly animates an adjustment to a target value.
+     *
+     * Returns the running animation; the caller should keep a
+     * reference to it (e.g. in a field) so it isn't finalised before
+     * it completes. Assigning a new one over the old cancels it.
+     */
+    public global::Adw.TimedAnimation animate_adjustment(
+        global::Gtk.Widget widget,
+        global::Gtk.Adjustment adjustment,
+        double to) {
+        var target = new global::Adw.CallbackAnimationTarget((value) => {
+            adjustment.value = value;
+        });
+        var animation = new global::Adw.TimedAnimation(
+            widget, adjustment.value, to, 250, target
+        );
+        animation.easing = EASE_OUT_CUBIC;
+        animation.play();
+        return animation;
+    }
+
+    /**
      * Constructs a frozen GMenu from an existing model using a visitor.
      *
      * The visitor is applied to the given template model to each of

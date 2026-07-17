@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ComponentsPreferencesDialog" parent="AdwPreferencesDialog">
+    <property name="content-height">700</property>
     <child>
       <object class="AdwPreferencesPage">
         <!-- Translators: Preferences page title -->
