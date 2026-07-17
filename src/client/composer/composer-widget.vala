@@ -119,6 +119,25 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         public Application.AccountContext account;
         public Geary.RFC822.MailboxAddresses from;
 
+        // Label shown in the From row and its dropdown list
+        public string display {
+            owned get {
+                string display = this.from.to_full_display();
+                if (!is_primary()) {
+                    // Displayed in the From dropdown to indicate an
+                    // "alternate email address" for an account.  The
+                    // first printf argument will be the alternate
+                    // email address, and the second will be the
+                    // account's primary email address.
+                    var info = this.account.account.information;
+                    display = _("%1$s via %2$s").printf(
+                        display, info.display_name
+                    );
+                }
+                return display;
+            }
+        }
+
         public FromAddressMap(Application.AccountContext account,
                               Geary.RFC822.MailboxAddresses from) {
             this.account = account;
@@ -312,8 +331,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
     private bool extended_headers_shown = false;
 
-    [GtkChild] private unowned Gtk.ListBoxRow from_row_container;
-    [GtkChild] private unowned Gtk.DropDown from_row;
+    [GtkChild] private unowned Adw.ComboRow from_row;
     [GtkChild] private unowned GLib.ListStore from_model;
 
     [GtkChild] private unowned AddressesRow to_row;
@@ -416,6 +434,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         );
 
         this.from_row.notify["selected"].connect(on_envelope_changed);
+        setup_from_popover();
 
         this.to_row.changed.connect(on_envelope_changed);
         this.cc_row.changed.connect(on_envelope_changed);
@@ -2089,60 +2108,41 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         return set_active;
     }
 
-    [GtkCallback]
-    private void on_from_factory_setup(Gtk.SignalListItemFactory factory,
-                                       GLib.Object object) {
-        unowned var item = (Gtk.ListItem) object;
-        var label = new Gtk.Label(null);
-        label.hexpand = true;
-        label.xalign = 0;
-        label.ellipsize = END;
-        item.child = label;
+    // AdwComboRow anchors its popover to the little arrow at the row
+    // end, so it opens as a small menu off to the side. Re-anchor it
+    // to the row's full rectangle so it spans the whole bar.
+    private void setup_from_popover() {
+        var popover = find_popover(this.from_row);
+        if (popover == null) {
+            return;
+        }
+        popover.map.connect(() => {
+            var parent = popover.get_parent();
+            double x = 0, y = 0;
+            if (parent == null ||
+                !this.from_row.translate_coordinates(parent, 0, 0, out x, out y)) {
+                return;
+            }
+            Gdk.Rectangle target = {
+                (int) x, (int) y,
+                this.from_row.get_allocated_width(),
+                this.from_row.get_allocated_height()
+            };
+            popover.set_pointing_to(target);
+            popover.width_request = target.width;
+        });
     }
 
-    [GtkCallback]
-    private void on_from_button_factory_setup(Gtk.SignalListItemFactory factory,
-                                              GLib.Object object) {
-        unowned var item = (Gtk.ListItem) object;
-        var box = new Gtk.Box(VERTICAL, 0);
-        box.hexpand = true;
-        var caption = new Gtk.Label(_("From"));
-        caption.xalign = 0;
-        caption.add_css_class("caption");
-        caption.add_css_class("dim-label");
-        box.append(caption);
-        var label = new Gtk.Label(null);
-        label.hexpand = true;
-        label.xalign = 0;
-        label.ellipsize = END;
-        box.append(label);
-        item.child = box;
-    }
-
-    [GtkCallback]
-    private void on_from_factory_bind(Gtk.SignalListItemFactory factory,
-                                      GLib.Object object) {
-        unowned var item = (Gtk.ListItem) object;
-        unowned var addr_map = (FromAddressMap) item.item;
-
-        // The popup child is a bare label; the button child is a
-        // caption + value box where the value label comes last.
-        unowned var label = item.child as Gtk.Label;
-        if (label == null) {
-            label = (Gtk.Label) ((Gtk.Box) item.child).get_last_child();
+    private static Gtk.Popover? find_popover(Gtk.Widget parent) {
+        for (var child = parent.get_first_child();
+             child != null;
+             child = child.get_next_sibling()) {
+            var popover = child as Gtk.Popover ?? find_popover(child);
+            if (popover != null) {
+                return popover;
+            }
         }
-
-        string display = addr_map.from.to_full_display();
-        if (!addr_map.is_primary()) {
-            // Displayed in the From dropdown to indicate an
-            // "alternate email address" for an account.  The first
-            // printf argument will be the alternate email address,
-            // and the second will be the account's primary email
-            // address.
-            var info = addr_map.account.account.information;
-            display = _("%1$s via %2$s").printf(display, info.display_name);
-        }
-        label.label = display;
+        return null;
     }
 
     private void update_info_label() {
@@ -2158,7 +2158,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     // Updates from combobox contents and visibility, returns true if
     // the from address had to be set
     private bool update_from_field() {
-        this.from_row_container.visible = false;
+        this.from_row.visible = false;
 
         // Don't show in inline unless the current account has
         // multiple email accounts or aliases, since these will be replies to a
@@ -2181,7 +2181,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             return false;
         }
 
-        this.from_row_container.visible = true;
+        this.from_row.visible = true;
 
         // Always add at least the current account. The var set_active
         // is set to true if the current message's from address has

@@ -302,24 +302,13 @@ geary-composer-editor frame {
   border-radius: 0;
 }
 
-/* From row: strip the dropdown's button chrome so it reads like the
- * neighbouring entry rows, value on the left, arrow at the far end. */
-dropdown.geary-composer-from > button {
-  background: none;
-  border: none;
-  box-shadow: none;
-  padding: 6px 12px;
-  min-height: 0;
-  border-radius: 0;
-}
-
-/* Match the size and centering of AdwEntryRow's edit icon */
-dropdown.geary-composer-from > button arrow {
-  -gtk-icon-size: 16px;
-  min-width: 16px;
-  min-height: 16px;
-  margin: 0;
-  padding-right: 9px
+/* From row: an AdwComboRow with the stock .property class (dim
+ * title, full-size subtitle). AdwEntryRow renders its floating
+ * caption with .subtitle typography (font-size: smaller), so match
+ * that exactly. Scope to the label: the box around both labels also
+ * carries a "title" class, and shrinking that shrinks everything. */
+row.geary-composer-from box.title > label.title {
+  font-size: smaller;
 }
 
 geary-composer-embed headerbar {

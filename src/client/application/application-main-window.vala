@@ -908,8 +908,11 @@ public class Application.MainWindow :
             var added = new Gee.TreeSet<FolderContext>();
             added.add_all(to_add.get_folders());
 
-            add_folders(added);
+            // Register the account before adding folders so anything
+            // resolving the selected folder's context (e.g. the
+            // window title) can find it
             this.accounts.add(to_add);
+            add_folders(added);
         }
     }
 
@@ -978,6 +981,17 @@ public class Application.MainWindow :
         foreach (var context in to_add) {
             this.folder_list.add_folder(context);
             context.folder.use_changed.connect(on_use_changed);
+        }
+
+        // The selected folder may have been opened before its entry
+        // (or account context) existed here, leaving the sidebar
+        // unselected and the title empty; sync them now
+        foreach (var context in to_add) {
+            if (context.folder == this.selected_folder) {
+                this.folder_list.select_folder(context.folder);
+                update_title();
+                break;
+            }
         }
     }
 

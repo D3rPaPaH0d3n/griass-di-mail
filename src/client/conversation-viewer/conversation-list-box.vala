@@ -459,6 +459,7 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
         public LoadingRow() {
             base(null);
             add_css_class(LOADING_CLASS);
+            this.activatable = false;
 
             Gtk.Spinner spinner = new Gtk.Spinner();
             spinner.height_request = 16;
@@ -483,6 +484,9 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
             this.child = this.view;
 
             this.focus_on_click = false;
+            // The composer handles its own input; without this the
+            // row shows hover/active styling that activates nothing
+            this.activatable = false;
         }
 
     }

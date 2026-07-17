@@ -45,40 +45,28 @@
                         <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkListBox" id="filled_headers">
+                            <property name="selection-mode">none</property>
                             <style>
                               <class name="boxed-list"/>
                             </style>
                             <child>
-                              <object class="GtkListBoxRow" id="from_row_container">
-                                <property name="activatable">False</property>
-                                <property name="focusable">False</property>
-                                <child>
-                                  <object class="GtkDropDown" id="from_row">
-                                    <property name="hexpand">True</property>
-                                    <property name="focus_on_click">False</property>
-                                    <property name="factory">
-                                      <object class="GtkSignalListItemFactory">
-                                        <signal name="setup" handler="on_from_button_factory_setup"/>
-                                        <signal name="bind" handler="on_from_factory_bind"/>
-                                      </object>
-                                    </property>
-                                    <property name="list-factory">
-                                      <object class="GtkSignalListItemFactory">
-                                        <signal name="setup" handler="on_from_factory_setup"/>
-                                        <signal name="bind" handler="on_from_factory_bind"/>
-                                      </object>
-                                    </property>
-                                    <property name="model">
-                                      <object class="GListStore" id="from_model">
-                                        <property name="item-type">ComposerWidgetFromAddressMap</property>
-                                      </object>
-                                    </property>
-                                    <style>
-                                      <class name="flat"/>
-                                      <class name="geary-composer-from"/>
-                                    </style>
+                              <object class="AdwComboRow" id="from_row">
+                                <!-- Translators: Label for composer From address entry -->
+                                <property name="title" translatable="yes">From</property>
+                                <property name="use-subtitle">True</property>
+                                <property name="focus_on_click">False</property>
+                                <property name="expression">
+                                  <lookup name="display" type="ComposerWidgetFromAddressMap"/>
+                                </property>
+                                <property name="model">
+                                  <object class="GListStore" id="from_model">
+                                    <property name="item-type">ComposerWidgetFromAddressMap</property>
                                   </object>
-                                </child>
+                                </property>
+                                <style>
+                                  <class name="property"/>
+                                  <class name="geary-composer-from"/>
+                                </style>
                               </object>
                             </child>
                             <child>
