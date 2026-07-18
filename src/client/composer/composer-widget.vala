@@ -1128,7 +1128,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         // If we just make the widget invisible, it can still intercept drop signals. So we
         // completely remove it instead.
         if (visible) {
-            int height = hidden_on_attachment_drag_over.get_allocated_height();
+            int height = hidden_on_attachment_drag_over.get_height();
             this.hidden_on_attachment_drag_over.remove(this.hidden_on_attachment_drag_over_child);
             this.visible_on_attachment_drag_over.append(this.visible_on_attachment_drag_over_child);
             this.visible_on_attachment_drag_over.set_size_request(-1, height);
@@ -2092,7 +2092,6 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         Application.AccountContext other_account,
         bool set_active = false
     ) {
-        bool is_primary = true;
         Geary.AccountInformation info = other_account.account.information;
         foreach (Geary.RFC822.MailboxAddress mailbox in info.sender_mailboxes) {
             var addresses = new Geary.RFC822.MailboxAddresses.single(mailbox);
@@ -2118,15 +2117,15 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         }
         popover.map.connect(() => {
             var parent = popover.get_parent();
-            double x = 0, y = 0;
+            Graphene.Point point = { 0, 0 };
             if (parent == null ||
-                !this.from_row.translate_coordinates(parent, 0, 0, out x, out y)) {
+                !this.from_row.compute_point(parent, { 0, 0 }, out point)) {
                 return;
             }
             Gdk.Rectangle target = {
-                (int) x, (int) y,
-                this.from_row.get_allocated_width(),
-                this.from_row.get_allocated_height()
+                (int) point.x, (int) point.y,
+                this.from_row.get_width(),
+                this.from_row.get_height()
             };
             popover.set_pointing_to(target);
             popover.width_request = target.width;

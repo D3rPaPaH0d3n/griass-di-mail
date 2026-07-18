@@ -39,7 +39,9 @@
             </child>
 
             <child>
-              <object class="GtkStatusbar" id="statusbar">
+              <object class="GtkLabel" id="statusbar">
+                <property name="xalign">0</property>
+                <property name="ellipsize">end</property>
               </object>
             </child>
 

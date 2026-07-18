@@ -1789,7 +1789,7 @@ public class Application.MainWindow :
         }
     }
 
-    private void focus_widget(Gtk.Widget? widget) {
+    private new void focus_widget(Gtk.Widget? widget) {
         if (widget != null) {
             widget.focus(TAB_FORWARD);
         } else {
@@ -1805,7 +1805,7 @@ public class Application.MainWindow :
         return (SimpleAction) this.edit_actions.lookup_action(name);
     }
 
-    private void activate_action(GLib.Action? action) {
+    private new void activate_action(GLib.Action? action) {
         if (action != null && action.get_enabled()) {
             action.activate(null);
         } else {

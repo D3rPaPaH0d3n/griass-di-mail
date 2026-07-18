@@ -466,36 +466,68 @@ dialog.geary-remove-confirm .dialog-action-box {
 
 /* FolderList.Tree */
 
-treeview.navigation-sidebar {
+listview.navigation-sidebar {
   border: none;
   background: transparent;
 }
 
-treeview.navigation-sidebar > *:hover {
+/* min-height: 0 keeps the row height driven purely by its content's
+ * padding rather than libadwaita's taller default navigation-sidebar row
+ * height. */
+listview.navigation-sidebar > row {
+  padding: 0;
+  min-height: 0;
+}
+
+/* Match the padding the old GtkTreeView cells had: 9px vertical, 6px on
+ * the far side, flush on the leading edge. Lives on the row's content
+ * widget (not the row container above) so that clicking anywhere in this
+ * padding still lands on a widget carrying the row's data. */
+listview.navigation-sidebar .sidebar-row-content {
+  padding: 9px 6px;
+}
+listview.navigation-sidebar .sidebar-row-content:dir(ltr) {
+  padding-left: 0;
+}
+listview.navigation-sidebar .sidebar-row-content:dir(rtl) {
+  padding-right: 0;
+}
+
+listview.navigation-sidebar > row:hover {
   background-color: color-mix(in srgb, currentColor 7%, transparent);
 }
 
-treeview.navigation-sidebar:selected {
+/* Pressed state: clearly darker while the left button is held down. */
+listview.navigation-sidebar > row:active {
+  background-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+listview.navigation-sidebar > row:selected {
   background-color: color-mix(in srgb, @accent_bg_color 25%, transparent);
 }
 
-treeview.navigation-sidebar:selected:hover {
+listview.navigation-sidebar > row:selected:hover {
   background-color: color-mix(in srgb, @accent_bg_color 32%, transparent);
 }
 
-treeview.navigation-sidebar .cell {
-  padding: 9px 6px;
-}
-treeview.navigation-sidebar .cell:dir(ltr) {
-  padding-left: 0px;
-}
-treeview.navigation-sidebar .cell:dir(rtl) {
-  padding-right: 0px;
+/* Pressed state on the already-selected row: darker still than the
+ * selected/selected:hover backgrounds so the press is visible. */
+listview.navigation-sidebar > row:selected:active {
+  background-color: color-mix(in srgb, @accent_bg_color 50%, transparent);
 }
 
-treeview.navigation-sidebar:drop(active).after,
-treeview.navigation-sidebar:drop(active).before,
-treeview.navigation-sidebar:drop(active).into {
+/* Unread/count badge at the end of a sidebar row */
+listview.navigation-sidebar .sidebar-count {
+  min-width: 1.5em;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 1em;
+  background: alpha(currentColor, 0.15);
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+listview.navigation-sidebar:drop(active) > row:drop(active) {
   border-top: 1px solid @borders;
   border-bottom: 1px solid @borders;
 }

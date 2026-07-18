@@ -349,7 +349,6 @@ class Geary.Graph.FolderTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Geary.Graph.Account account = new_account();
         Geary.Graph.Client client = new_client();
         Gee.List<Geary.Graph.Client.Message>? messages = null;
         client.list_messages.begin(

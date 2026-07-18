@@ -81,6 +81,8 @@ public class Components.ValidatorGroup : GLib.Object, GLib.ListModel, Gtk.Builda
     public void custom_finished(Gtk.Builder builder, GLib.Object? child, string tagname, void* data) {}
     public void custom_tag_end(Gtk.Builder builder, GLib.Object? child, string tagname, void* data) {}
     public bool custom_tag_start(Gtk.Builder builder, GLib.Object? child, string tagname, out Gtk.BuildableParser parser, out void* data) {
+        parser = Gtk.BuildableParser();
+        data = null;
         return false;
     }
     public unowned GLib.Object get_internal_child(Gtk.Builder builder, string childname) {

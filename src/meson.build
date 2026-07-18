@@ -61,6 +61,22 @@ geary_c_args = [
   '-DGOA_API_IS_SUBJECT_TO_CHANGE',
 ]
 
+# Silence warnings that come from valac's generated C (unused temporaries,
+# const-discarding casts, binding pointer mismatches, deprecated GTK symbols).
+# These aren't actionable in the C — the source of truth is the Vala — so
+# suppress them to keep genuine warnings visible. Filtered so non-gcc
+# compilers don't choke on unknown flags.
+geary_c_args += cc.get_supported_arguments([
+  '-Wno-unused-but-set-variable',
+  '-Wno-unused-variable',
+  '-Wno-unused-function',
+  '-Wno-unused-label',
+  '-Wno-discarded-qualifiers',
+  '-Wno-incompatible-pointer-types',
+  '-Wno-pointer-sign',
+  '-Wno-deprecated-declarations',
+])
+
 subdir('engine')
 subdir('client')
 subdir('console')

@@ -512,7 +512,7 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
             uint start_index = ((uint) first.get_index());
             uint end_index = uint.min(
                 // Assume that all messages are the same height
-                start_index + (uint) (this.scrolled_window.vadjustment.page_size / first.get_allocated_height()),
+                start_index + (uint) (this.scrolled_window.vadjustment.page_size / first.get_height()),
                 this.model.get_n_items()
             );
 

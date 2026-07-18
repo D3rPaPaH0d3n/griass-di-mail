@@ -146,7 +146,7 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
 
         // Set a minimal composer height
         composer.set_size_request(
-            -1, this.conversation_scroller.get_allocated_height() / 3 * 2
+            -1, this.conversation_scroller.get_height() / 3 * 2
         );
     }
 

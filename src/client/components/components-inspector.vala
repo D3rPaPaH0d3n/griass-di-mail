@@ -119,6 +119,7 @@ public class Components.Inspector : Adw.ApplicationWindow {
 
         return ret;
 
+#if 0
         //XXX GTK4 - not sure how to handle this
         if (ret == Gdk.EVENT_PROPAGATE &&
             !this.log_pane.search_mode_enabled) {
@@ -131,6 +132,7 @@ public class Components.Inspector : Adw.ApplicationWindow {
         }
 
         return ret;
+#endif
     }
 
     private void enable_log_updates(bool enabled) {

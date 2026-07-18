@@ -84,10 +84,10 @@ namespace Util.Gtk {
      * space added by the CSS margin property, if any.
      */
     public inline int get_border_box_height(global::Gtk.Widget widget) {
-        global::Gtk.StyleContext style = widget.get_style_context();
-        global::Gtk.Border margin = style.get_margin();
-
-        return widget.get_allocated_height() - margin.top - margin.bottom;
+        // In GTK4 a widget's allocated height already excludes the CSS
+        // margin (it lives outside the widget's allocation), so the
+        // border-box height is simply the allocated height.
+        return widget.get_height();
     }
 
     /**

@@ -385,9 +385,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         var drag_widget = new Gtk.ListBox();
         drag_widget.opacity = 0.8;
 
-        Gtk.Allocation allocation;
-        get_allocation(out allocation);
-        drag_widget.set_size_request(allocation.width, allocation.height);
+        drag_widget.set_size_request(get_width(), get_height());
 
         var drag_row = new AccountListRow(this.account, Manager.Status.ENABLED);
         drag_widget.append(drag_row);

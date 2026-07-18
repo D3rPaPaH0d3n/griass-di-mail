@@ -106,9 +106,6 @@ internal class Accounts.EditorRow<PaneType> : Gtk.ListBoxRow {
 
     private void on_drag_source_begin(Gtk.DragSource drag_source, Gdk.Drag drag) {
         // Draw a nice drag icon
-        Gtk.Allocation alloc = Gtk.Allocation();
-        this.get_allocation(out alloc);
-
         //XXX GTK4 lol, let's just make this a proper drag icon at some point
         // Cairo.ImageSurface surface = new Cairo.ImageSurface(
         //     Cairo.Format.ARGB32, alloc.width, alloc.height

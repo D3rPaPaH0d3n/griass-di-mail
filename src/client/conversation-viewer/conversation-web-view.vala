@@ -216,7 +216,7 @@ public class ConversationWebView : Components.WebView {
             // don't get an XServer error trying to allocate a massive
             // window.
             const uint max_pixels = 8 * 1024 * 1024;
-            int width = get_allocated_width();
+            int width = get_width();
             int height = this.preferred_height;
             if (height * width > max_pixels) {
                 height = (int) Math.floor(max_pixels / (double) width);

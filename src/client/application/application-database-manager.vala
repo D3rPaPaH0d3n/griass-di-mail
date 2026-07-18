@@ -21,7 +21,7 @@ internal class Application.DatabaseManager : Geary.BaseObject {
 
     private weak Application.Client application;
 
-    private Gtk.Dialog? dialog = null;
+    private Gtk.Window? dialog = null;
     private Gee.Set<GLib.Cancellable> cancellables =
         new Gee.HashSet<GLib.Cancellable>();
 
@@ -68,18 +68,17 @@ internal class Application.DatabaseManager : Geary.BaseObject {
         /// Translators: Label for account database upgrade dialog
         box.append(new Gtk.Label(_("Account update in progress")));
 
-        this.dialog = new Gtk.Dialog.with_buttons(
+        this.dialog = new Gtk.Window() {
             /// Translators: Window title for account database upgrade
             /// dialog
-            _("Account update"),
-            this.application.get_active_main_window(),
-            MODAL
-        );
+            title = _("Account update"),
+            transient_for = this.application.get_active_main_window(),
+            modal = true,
+            deletable = false
+        };
         this.dialog.add_css_class("geary-upgrade");
-        this.dialog.get_content_area().append(box);
-        this.dialog.deletable = false;
+        this.dialog.set_child(box);
         this.dialog.close_request.connect(on_close_request);
-        this.dialog.close.connect(this.on_close);
         this.dialog.present();
     }
 

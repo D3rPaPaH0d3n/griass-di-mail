@@ -344,16 +344,16 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
                 if (parent == null) {
                     return GLib.Source.CONTINUE;
                 }
-                double x, y;
-                if (!translate_coordinates(parent, 0, 0, out x, out y)) {
+                Graphene.Point point;
+                if (!compute_point(parent, { 0, 0 }, out point)) {
                     return GLib.Source.CONTINUE;
                 }
-                int height = get_allocated_height();
+                int height = get_height();
                 bool stable = (height > 16 &&
                                height == last_height &&
-                               y == last_y);
+                               point.y == last_y);
                 last_height = height;
-                last_y = y;
+                last_y = point.y;
                 if (!stable) {
                     return GLib.Source.CONTINUE;
                 }
@@ -1092,12 +1092,11 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
         Gtk.ListBoxRow initial_row = this.listbox.get_row_at_index(0);
         int loading_height = 0;
         if (initial_row is LoadingRow) {
+            // get_border_box_height already excludes the CSS margin in
+            // GTK4, and the conversation rows carry no top margin, so no
+            // further margin adjustment is needed here.
             loading_height = Util.Gtk.get_border_box_height(initial_row);
             remove(initial_row);
-            // Adjust for the changed margin of the first row
-            var first_row = this.listbox.get_row_at_index(0);
-            var margin = first_row.get_style_context().get_margin();;
-            loading_height -= margin.top;
         }
 
         // None of these will be interesting, so just add them all,
@@ -1247,13 +1246,13 @@ public class ConversationListBox : Adw.Bin, Geary.BaseInterface {
         // GTK4 positions rows via transforms, so allocation
         // coordinates are not parent-relative; translate into the
         // listbox's (unscrolled, full-content) coordinate space.
-        double rx, ry;
-        if (!row.translate_coordinates(this.listbox, 0, 0, out rx, out ry)) {
+        Graphene.Point point;
+        if (!row.compute_point(this.listbox, { 0, 0 }, out point)) {
             return;
         }
         double y = 0;
-        if (ry > EMAIL_TOP_OFFSET) {
-            y = ry - EMAIL_TOP_OFFSET;
+        if (point.y > EMAIL_TOP_OFFSET) {
+            y = point.y - EMAIL_TOP_OFFSET;
         }
 
         // Animate to the target so reaching the composer or a message

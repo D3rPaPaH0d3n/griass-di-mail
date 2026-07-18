@@ -652,8 +652,6 @@ public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
         this.new_link_popover.begin(type, url, (obj, res) => {
                 LinkPopover popover = this.new_link_popover.end(res);
 
-                var style = this.insert_link_button.get_style_context();
-
                 // We have to disconnect then reconnect the selection
                 // changed signal for the duration of the popover
                 // being active since if the user selects the text in
@@ -663,12 +661,10 @@ public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
                 this.body.notify["has-selection"].disconnect(on_selection_changed);
                 popover.closed.connect(() => {
                         this.body.notify["has-selection"].connect(on_selection_changed);
-                        style.set_state(NORMAL);
                     });
 
                 popover.set_parent(this.insert_link_button);
                 popover.popup();
-                style.set_state(ACTIVE);
             });
     }
 

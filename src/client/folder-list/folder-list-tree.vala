@@ -55,6 +55,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
                                  out int natural,
                                  out int minimum_baseline,
                                  out int natural_baseline) {
+        minimum = natural = 0;
         if (orientation == Gtk.Orientation.HORIZONTAL) {
             minimum = 180;
             natural = 300;
@@ -215,16 +216,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
     }
 
     public void deselect_folder() {
-        Gtk.TreeModel model = get_model();
-        Gtk.TreeIter iter;
-        if (model.get_iter_first(out iter)) {
-            Gtk.TreePath? first = model.get_path(iter);
-            if (first != null) {
-                set_cursor(first, null, false);
-            }
-        }
-
-        get_selection().unselect_all();
+        clear_selection();
         this.selected = null;
         folder_selected(null);
     }

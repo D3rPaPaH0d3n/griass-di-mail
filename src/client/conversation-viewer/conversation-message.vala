@@ -698,13 +698,16 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     public void web_view_translate_coordinates(Gtk.Widget widget, int x, int anchor_y, out double x1, out double y1) {
         if (this.web_view == null)
             initialize_web_view();
-        this.web_view.translate_coordinates(widget, x, anchor_y, out x1, out y1);
+        Graphene.Point point;
+        this.web_view.compute_point(widget, { (float) x, (float) anchor_y }, out point);
+        x1 = point.x;
+        y1 = point.y;
     }
 
     public int web_view_get_allocated_height() {
         if (this.web_view == null)
             initialize_web_view();
-        return web_view.get_allocated_height();
+        return web_view.get_height();
     }
 
     /**

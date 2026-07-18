@@ -18,10 +18,7 @@ class ImapConsole : Adw.ApplicationWindow {
 
     [GtkChild] private unowned Gtk.TextView console;
     [GtkChild] private unowned Gtk.Entry cmdline;
-    [GtkChild] private unowned Gtk.Statusbar statusbar;
-
-    private uint statusbar_ctx = 0;
-    private uint statusbar_msg_id = 0;
+    [GtkChild] private unowned Gtk.Label statusbar;
 
     private Geary.Imap.ClientConnection? cx = null;
     private Gee.HashMap<Geary.Imap.Tag, Geary.Imap.StatusResponse> status_responses = new Gee.HashMap<
@@ -32,7 +29,6 @@ class ImapConsole : Adw.ApplicationWindow {
         Object(application: app);
 
         this.cmdline.activate.connect(on_activate);
-        this.statusbar_ctx = statusbar.get_context_id("status");
         cmdline.grab_focus();
     }
 
@@ -43,21 +39,15 @@ class ImapConsole : Adw.ApplicationWindow {
     }
 
     private void clear_status() {
-        if (this.statusbar_msg_id == 0)
-            return;
-
-        this.statusbar.remove(this.statusbar_ctx, this.statusbar_msg_id);
-        this.statusbar_msg_id = 0;
+        this.statusbar.set_text("");
     }
 
     private void status(string text) {
-        clear_status();
-
         string msg = text;
         if (!msg.has_suffix(".") && !msg.has_prefix("usage"))
             msg += ".";
 
-        this.statusbar_msg_id = this.statusbar.push(this.statusbar_ctx, msg);
+        this.statusbar.set_text(msg);
     }
 
     private void exception(Error err) {
