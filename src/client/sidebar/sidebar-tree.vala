@@ -193,7 +193,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             hexpand = true
         };
         var count = new Gtk.Label(null) {
-            xalign = 1
+            halign = Gtk.Align.CENTER
         };
         count.add_css_class("sidebar-count");
         var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 6) {

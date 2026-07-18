@@ -518,11 +518,12 @@ listview.navigation-sidebar > row:selected:active {
 
 /* Unread/count badge at the end of a sidebar row */
 listview.navigation-sidebar .sidebar-count {
-  min-width: 1.5em;
+  min-width: 1.2em;
   margin-left: 6px;
-  padding: 0 6px;
+  padding: 0 4px;
   border-radius: 1em;
   background: alpha(currentColor, 0.15);
+  font-feature-settings: "tnum" 1;
   font-size: 0.8em;
   font-weight: bold;
 }
