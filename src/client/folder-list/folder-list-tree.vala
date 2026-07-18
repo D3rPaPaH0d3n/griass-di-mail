@@ -119,6 +119,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
     public void add_folder(Application.FolderContext context) {
         Geary.Folder folder = context.folder;
         Geary.Account account = folder.account;
+        bool had_folder = (get_folder_entry(folder) != null);
 
         if (!account_branches.has_key(account)) {
             this.account_branches.set(account, new AccountBranch(account));
@@ -135,6 +136,9 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
             inboxes_branch.add_inbox(context);
 
         account_branch.add_folder(context);
+
+        if (!had_folder && get_folder_entry(folder) != null)
+            scroll_to_top();
     }
 
     public void remove_folder(Application.FolderContext context) {

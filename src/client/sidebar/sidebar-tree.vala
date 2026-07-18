@@ -578,6 +578,12 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         return true;
     }
 
+    public void scroll_to_top() {
+        var vadj = this.list_view.vadjustment;
+        if (vadj != null)
+            vadj.value = vadj.lower;
+    }
+
     //
     // Branch bookkeeping
     //
