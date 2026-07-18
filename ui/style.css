@@ -57,6 +57,13 @@ row.conversation-list {
   animation: conversation-row-fade-in 0.25s;
 }
 
+/* Row divider (Gtk.Separator set as row header): inset from the edges
+ * rather than spanning the full width. */
+separator.conversation-list-separator {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 row.conversation-list.drag-n-drop {
   background: @theme_base_color;
   opacity: 0.7;

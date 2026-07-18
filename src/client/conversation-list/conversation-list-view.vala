@@ -96,9 +96,16 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     // -------
     private void header_func(Gtk.ListBoxRow row, Gtk.ListBoxRow? before) {
         if (before != null) {
-            var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-            sep.show();
-            row.set_header(sep);
+            if (row.get_header() == null) {
+                var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
+                sep.add_css_class("conversation-list-separator");
+                sep.show();
+                row.set_header(sep);
+            }
+        } else {
+            // First row: drop any separator left over from when it wasn't
+            // first (e.g. after the previous top row was deleted).
+            row.set_header(null);
         }
     }
 
@@ -143,6 +150,10 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
         } else {
             this.model = new Model(monitor);
             this.list.bind_model(this.model, row_factory);
+            // bind_model doesn't re-run the header func for neighbours when
+            // items change, so a deleted top row leaves the new top row with a
+            // stale separator above it. Re-invalidate on every change.
+            this.model.items_changed.connect(() => this.list.invalidate_headers());
             this.model.conversations_loaded.connect(on_conversations_loaded);
             this.model.conversations_removed.connect(on_conversations_removed);
             this.model.conversation_updated.connect(on_conversation_updated);
