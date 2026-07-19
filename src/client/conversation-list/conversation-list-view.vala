@@ -591,9 +591,14 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
         } else if (this.selection_mode_enabled) {
             this.selection_mode_enabled = false;
         // Set next conversation
-        } else if (this.config.autoselect &&
-                   this.list.get_selected_rows().length() == 0) {
-            restore_row();
+        } else if (this.config.autoselect) {
+            if (this.list.get_selected_rows().length() == 0) {
+                restore_row();
+            } else {
+                // Removal didn't affect the selection; drop the stale
+                // restore row so it doesn't swallow later selections
+                this.to_restore_row = null;
+            }
         }
     }
 
@@ -709,6 +714,17 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     }
 
     private void on_selected_rows_changed() {
+        // When the focused row is removed, GTK moves focus (and with it
+        // the selection) to the row above. Ignore that transient
+        // selection so it isn't opened and marked read; restore_row()
+        // will activate the intended row shortly.
+        if (this.to_restore_row != null && !this.selection_mode_enabled) {
+            var row = this.list.get_selected_row();
+            if (row != null && row != this.to_restore_row) {
+                return;
+            }
+        }
+
         var selected = get_selected_conversations();
 
         if (!selection_changed(selected)) {
