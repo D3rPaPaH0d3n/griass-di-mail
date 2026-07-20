@@ -498,11 +498,21 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         body_drop_target.set_gtypes(
             { typeof(Gdk.FileList), typeof(GLib.File) }
         );
-        // Move the caret to follow the pointer during the drag so the
-        // user can see where the image will land.
+        // While dragging over the body, show the attachment overlay too
+        // so the user can see they can drop above to attach instead of
+        // inlining, and move the caret to follow the pointer so they can
+        // see where an inline image would land.
+        body_drop_target.enter.connect((x, y) => {
+            show_attachment_overlay(true);
+            this.editor.body.set_cursor_at_point(x, y);
+            return Gdk.DragAction.COPY;
+        });
         body_drop_target.motion.connect((x, y) => {
             this.editor.body.set_cursor_at_point(x, y);
             return Gdk.DragAction.COPY;
+        });
+        body_drop_target.leave.connect(() => {
+            show_attachment_overlay(false);
         });
         body_drop_target.drop.connect(on_body_drop);
         this.editor.body.add_controller(body_drop_target);
