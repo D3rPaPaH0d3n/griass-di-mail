@@ -7,15 +7,6 @@
       </object>
     </child>
     <child>
-      <object class="GtkDropTarget">
-        <signal name="enter" handler="on_drop_target_enter"/>
-        <signal name="leave" handler="on_drop_target_leave"/>
-        <signal name="drop" handler="on_drop_target_drop"/>
-        <signal name="accept" handler="on_drop_target_accept"/>
-      </object>
-    </child>
-
-    <child>
       <object class="GtkBox" id="composer_container">
         <property name="orientation">vertical</property>
         <child>
@@ -25,6 +16,17 @@
             </child>
           </object>
         </child>
+        <child>
+          <object class="GtkBox" id="attach_zone">
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkDropTarget" id="attachment_drop_target">
+                <signal name="enter" handler="on_drop_target_enter"/>
+                <signal name="leave" handler="on_drop_target_leave"/>
+                <signal name="drop" handler="on_drop_target_drop"/>
+                <signal name="accept" handler="on_drop_target_accept"/>
+              </object>
+            </child>
         <child>
           <object class="GtkBox" id="hidden_on_attachment_drag_over">
             <child>
@@ -130,12 +132,16 @@
           <object class="GtkBox" id="visible_on_attachment_drag_over">
             <child>
               <object class="GtkBox" id="visible_on_attachment_drag_over_child">
+                <property name="halign">center</property>
                 <property name="valign">center</property>
+                <property name="hexpand">true</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="label1">
+                    <property name="halign">center</property>
                     <property name="valign">center</property>
+                    <property name="justify">center</property>
                     <property name="label" translatable="yes">Drop files here</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -144,12 +150,16 @@
                 </child>
                 <child>
                   <object class="GtkLabel" id="label2">
+                    <property name="halign">center</property>
                     <property name="valign">center</property>
+                    <property name="justify">center</property>
                     <property name="label" translatable="yes">To add them as attachments</property>
                   </object>
                 </child>
               </object>
             </child>
+          </object>
+        </child>
           </object>
         </child>
         <child>

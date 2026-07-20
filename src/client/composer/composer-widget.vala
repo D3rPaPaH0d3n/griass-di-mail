@@ -345,6 +345,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     // private Gtk.Entry subject_spell_entry;
 
     [GtkChild] private unowned Gtk.Box attachments_box;
+    [GtkChild] private unowned Gtk.DropTarget attachment_drop_target;
     [GtkChild] private unowned Gtk.Box hidden_on_attachment_drag_over;
     [GtkChild] private unowned Gtk.Box visible_on_attachment_drag_over;
     [GtkChild] private unowned Gtk.Widget hidden_on_attachment_drag_over_child;
@@ -452,6 +453,14 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             });
         update_subject_spell_checker();
 
+        // The drop target declared in the .ui has no accepted types, so
+        // GtkDropTarget never negotiates file data. Configure it to
+        // accept dropped files (one or many) for attaching.
+        this.attachment_drop_target.set_gtypes(
+            { typeof(Gdk.FileList), typeof(GLib.File) }
+        );
+        this.attachment_drop_target.actions = Gdk.DragAction.COPY;
+
         this.editor = new Editor(config, application.get_web_cache_dir());
         this.editor.insert_image.connect(
             (from_clipboard) => {
@@ -467,7 +476,36 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         Gtk.EventControllerKey editor_key_controller = new Gtk.EventControllerKey();
         editor_key_controller.key_pressed.connect(on_editor_key_pressed);
         this.editor.body.add_controller(editor_key_controller);
+
+        // Intercept Ctrl+V before the WebView's own paste handler so a
+        // clipboard image can be inserted as an inline attachment. The
+        // WebView consumes Ctrl+V for text paste, so the paste action's
+        // accelerator never fires here.
+        Gtk.EventControllerKey paste_key_controller = new Gtk.EventControllerKey();
+        paste_key_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
+        paste_key_controller.key_pressed.connect(on_editor_capture_key_pressed);
+        this.editor.body.add_controller(paste_key_controller);
+
         this.editor_bin.child = this.editor;
+
+        // WebKitGTK does not forward OS file drags to the page's DOM, so
+        // the page's own drop handling never fires. Handle drops onto the
+        // body at the GTK level instead, inserting images inline at the
+        // drop point.
+        var body_drop_target = new Gtk.DropTarget(
+            typeof(Gdk.FileList), Gdk.DragAction.COPY
+        );
+        body_drop_target.set_gtypes(
+            { typeof(Gdk.FileList), typeof(GLib.File) }
+        );
+        // Move the caret to follow the pointer during the drag so the
+        // user can see where the image will land.
+        body_drop_target.motion.connect((x, y) => {
+            this.editor.body.set_cursor_at_point(x, y);
+            return Gdk.DragAction.COPY;
+        });
+        body_drop_target.drop.connect(on_body_drop);
+        this.editor.body.add_controller(body_drop_target);
 
         // Listen to account signals to update from menu.
         this.application.account_available.connect(
@@ -481,6 +519,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         this.editor.body.image_file_dropped.connect(
             on_image_file_dropped
         );
+        this.editor.body.image_uri_dropped.connect(on_image_uri_dropped);
 
         // TODO: also listen for account updates to allow adding identities while writing an email
 
@@ -1154,25 +1193,43 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     [GtkCallback]
     private bool on_drop_target_drop(Gtk.DropTarget drop_target, Value val, double x, double y) {
-        //XXX GTK4 - I'm not sure if this is 100% correct, so best to check
-        if (val.holds(typeof(GLib.File))) {
-            var file = val as GLib.File;
+        var files = new Gee.ArrayList<GLib.File>();
+        if (val.holds(typeof(Gdk.FileList))) {
+            var file_list = (Gdk.FileList) val.get_boxed();
+            foreach (unowned GLib.File file in file_list.get_files()) {
+                files.add(file);
+            }
+        } else if (val.holds(typeof(GLib.File))) {
+            files.add((GLib.File) val.get_object());
+        }
+
+        if (files.is_empty) {
+            return false;
+        }
+
+        // Files dropped on the attachment zone are always attached.
+        // Images dropped into the message body are inserted inline
+        // instead, handled separately by the web view's drop handler.
+        bool added = false;
+        foreach (GLib.File file in files) {
             try {
                 add_attachment_part(file);
-                draft_changed();
-                return true;
+                added = true;
             } catch (Error err) {
                 attachment_failed(err.message);
             }
         }
-
-        return false;
+        if (added) {
+            draft_changed();
+        }
+        return added;
     }
 
     [GtkCallback]
     private bool on_drop_target_accept(Gtk.DropTarget drop_target, Gdk.Drop drop) {
-        //XXX GTK4 I'm not sure if this is 100% correct
-        return drop.formats.contain_mime_type(URI_LIST_MIME_TYPE);
+        return drop.formats.contain_gtype(typeof(Gdk.FileList)) ||
+            drop.formats.contain_gtype(typeof(GLib.File)) ||
+            drop.formats.contain_mime_type(URI_LIST_MIME_TYPE);
     }
 
     /** Returns a representation of the current message. */
@@ -1887,6 +1944,90 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         draft_changed();
     }
 
+    /** Whether the given file looks like an image, by content type. */
+    private bool file_is_image(GLib.File file) {
+        try {
+            var info = file.query_info(
+                "standard::content-type", GLib.FileQueryInfoFlags.NONE
+            );
+            string? content_type = info.get_content_type();
+            return content_type != null && content_type.has_prefix("image/");
+        } catch (GLib.Error err) {
+            return false;
+        }
+    }
+
+    /** Inserts an image file inline in the message body. */
+    private void insert_inline_image_file(GLib.File file) throws GLib.Error {
+        check_attachment_file(file);
+        var file_buffer = new Convey.Memory.FileBuffer(file, true);
+        string content_id = file.get_path() ?? file.get_basename();
+        string unique_filename;
+        add_inline_part(file_buffer, content_id, out unique_filename);
+        this.editor.body.insert_image(
+            Components.WebView.INTERNAL_URL_PREFIX + unique_filename
+        );
+    }
+
+    /** Routes a dropped/pasted file: images go inline, others attach. */
+    private bool insert_or_attach_file(GLib.File file) {
+        try {
+            if (this.editor.body.is_rich_text && file_is_image(file)) {
+                insert_inline_image_file(file);
+            } else {
+                add_attachment_part(file);
+            }
+            return true;
+        } catch (GLib.Error err) {
+            attachment_failed(err.message);
+            return false;
+        }
+    }
+
+    /** Reads image/file references from the clipboard and inserts them. */
+    private void paste_files_from_clipboard() {
+        var clipboard = get_clipboard();
+        if (clipboard.formats.contain_gtype(typeof(Gdk.FileList)) ||
+            clipboard.formats.contain_gtype(typeof(GLib.File))) {
+            var gtype = clipboard.formats.contain_gtype(typeof(Gdk.FileList))
+                ? typeof(Gdk.FileList) : typeof(GLib.File);
+            clipboard.read_value_async.begin(
+                gtype, GLib.Priority.DEFAULT, null, (obj, res) => {
+                    try {
+                        var val = clipboard.read_value_async.end(res);
+                        if (val.holds(typeof(Gdk.FileList))) {
+                            foreach (unowned GLib.File f in
+                                     ((Gdk.FileList) val.get_boxed()).get_files()) {
+                                insert_or_attach_file(f);
+                            }
+                        } else if (val.holds(typeof(GLib.File))) {
+                            insert_or_attach_file((GLib.File) val.get_object());
+                        }
+                        draft_changed();
+                    } catch (GLib.Error err) {
+                        attachment_failed(err.message);
+                    }
+                });
+        } else {
+            clipboard.read_text_async.begin(null, (obj, res) => {
+                try {
+                    string? text = clipboard.read_text_async.end(res);
+                    if (text != null) {
+                        foreach (string line in text.split("\n")) {
+                            string uri = line.strip();
+                            if (uri != "" && !uri.has_prefix("#")) {
+                                insert_or_attach_file(GLib.File.new_for_uri(uri));
+                            }
+                        }
+                        draft_changed();
+                    }
+                } catch (GLib.Error err) {
+                    attachment_failed(err.message);
+                }
+            });
+        }
+    }
+
     /**
      * Handle a pasted image, adding it as an inline attachment
      */
@@ -2057,6 +2198,53 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         if (show_extended && this.current_mode == INLINE_COMPACT) {
             set_mode(INLINE);
         }
+    }
+
+    private bool on_editor_capture_key_pressed(Gtk.EventControllerKey controller,
+                                               uint keyval,
+                                               uint keycode,
+                                               Gdk.ModifierType state) {
+        bool ctrl = (state & Gdk.ModifierType.CONTROL_MASK) != 0;
+        bool shift = (state & Gdk.ModifierType.SHIFT_MASK) != 0;
+
+        // Keep undo/redo within the composer body. Without this Ctrl+Z
+        // falls through to the window's global undo, which reverses the
+        // last mail operation (e.g. un-trashing a message) instead of
+        // undoing the edit.
+        if (ctrl && (keyval == Gdk.Key.z || keyval == Gdk.Key.Z)) {
+            if (shift) {
+                this.editor.body.redo();
+            } else {
+                this.editor.body.undo();
+            }
+            return Gdk.EVENT_STOP;
+        }
+        if (ctrl && !shift && (keyval == Gdk.Key.y || keyval == Gdk.Key.Y)) {
+            this.editor.body.redo();
+            return Gdk.EVENT_STOP;
+        }
+
+        bool is_ctrl_v =
+            (keyval == Gdk.Key.v || keyval == Gdk.Key.V) &&
+            ctrl && !shift;
+        if (is_ctrl_v && this.editor.body.is_rich_text) {
+            var clipboard = get_clipboard();
+            // Raw bitmap image (e.g. a screenshot or "copy image").
+            if (clipboard.formats.contain_gtype(typeof(Gdk.Texture))) {
+                paste_image();
+                return Gdk.EVENT_STOP;
+            }
+            // An image file copied from a file manager arrives as a file
+            // reference; insert it inline rather than letting the view
+            // paste its path as a link.
+            if (clipboard.formats.contain_gtype(typeof(Gdk.FileList)) ||
+                clipboard.formats.contain_gtype(typeof(GLib.File)) ||
+                clipboard.formats.contain_mime_type(URI_LIST_MIME_TYPE)) {
+                paste_files_from_clipboard();
+                return Gdk.EVENT_STOP;
+            }
+        }
+        return Gdk.EVENT_PROPAGATE;
     }
 
     private bool on_editor_key_pressed(Gtk.EventControllerKey controller,
@@ -2425,6 +2613,51 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     /**
      * Handle a dropped image file, adding it as an inline attachment
      */
+    private bool on_body_drop(Gtk.DropTarget drop_target, GLib.Value val,
+                              double x, double y) {
+        var files = new Gee.ArrayList<GLib.File>();
+        if (val.holds(typeof(Gdk.FileList))) {
+            foreach (unowned GLib.File file in
+                     ((Gdk.FileList) val.get_boxed()).get_files()) {
+                files.add(file);
+            }
+        } else if (val.holds(typeof(GLib.File))) {
+            files.add((GLib.File) val.get_object());
+        }
+
+        bool inserted = false;
+        foreach (GLib.File file in files) {
+            if (this.editor.body.is_rich_text && file_is_image(file)) {
+                // Position the caret where the file was dropped, then
+                // insert the image there.
+                this.editor.body.set_cursor_at_point(x, y);
+                try {
+                    insert_inline_image_file(file);
+                    inserted = true;
+                } catch (GLib.Error err) {
+                    attachment_failed(err.message);
+                }
+            }
+        }
+        if (inserted) {
+            draft_changed();
+        }
+        return inserted;
+    }
+
+    private void on_image_uri_dropped(string uri) {
+        var file = GLib.File.new_for_uri(uri);
+        if (!file_is_image(file)) {
+            return;
+        }
+        try {
+            insert_inline_image_file(file);
+            draft_changed();
+        } catch (GLib.Error err) {
+            attachment_failed(err.message);
+        }
+    }
+
     private void on_image_file_dropped(string filename, string file_type, uint8[] contents) {
         Convey.Memory.ByteBuffer buffer = new Convey.Memory.ByteBuffer(contents, contents.length);
         string unique_filename;

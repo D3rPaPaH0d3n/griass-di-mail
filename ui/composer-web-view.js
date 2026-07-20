@@ -106,12 +106,14 @@ ComposerPageState.prototype = {
             }
         }, true);
 
-        // Handle file drag & drop
+        // Handle file drag & drop. A dragover handler that prevents the
+        // default is required, otherwise the browser rejects the drop
+        // and the drop event never fires.
         document.body.addEventListener("drop", function(e) {
             state.handleFileDrop(e);
         }, true);
-        document.body.addEventListener("allowDrop", function(e) {
-            ev.preventDefault();
+        document.body.addEventListener("dragover", function(e) {
+            e.preventDefault();
         }, true);
 
         // Search for and remove a particular styling when we quote
@@ -182,6 +184,14 @@ ComposerPageState.prototype = {
             // Enable modification observation only after the document
             // has been set editable as WebKit will alter some attrs
             this.startBodyObserver();
+        }
+    },
+    setCursorAtPoint: function(x, y) {
+        var range = document.caretRangeFromPoint(x, y);
+        if (range != null) {
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
     },
     undo: function() {
@@ -389,27 +399,54 @@ ComposerPageState.prototype = {
     handleFileDrop: function(dropEvent) {
         dropEvent.preventDefault();
 
-        for (var i = 0; i < dropEvent.dataTransfer.files.length; i++) {
-            const file = dropEvent.dataTransfer.files[i];
+        // Place the caret at the drop location so the image is inserted
+        // where the user dropped it rather than at the previous caret.
+        var range = document.caretRangeFromPoint(
+            dropEvent.clientX, dropEvent.clientY
+        );
+        if (range != null) {
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
 
-            if (!file.type.startsWith('image/'))
-                continue;
+        const state = this;
+        const files = dropEvent.dataTransfer.files;
+        if (files && files.length > 0) {
+            // Files dropped from within the browser expose File objects.
+            for (var i = 0; i < files.length; i++) {
+                const file = files[i];
 
-            const reader = new FileReader();
-            const state = this;
-            reader.onload = (function(filename, imageType) { return function(loadEvent) {
-                // Remove prefixed file type and encoding type
-                var parts = loadEvent.target.result.split(",");
-                if (parts.length < 2)
-                    return;
+                if (!file.type.startsWith('image/'))
+                    continue;
 
-                state._dragDropReceived({
-                    fileName: encodeURIComponent(filename),
-                    fileType: imageType,
-                    content: parts[1]
+                const reader = new FileReader();
+                reader.onload = (function(filename, imageType) { return function(loadEvent) {
+                    // Remove prefixed file type and encoding type
+                    var parts = loadEvent.target.result.split(",");
+                    if (parts.length < 2)
+                        return;
+
+                    state._dragDropReceived({
+                        fileName: encodeURIComponent(filename),
+                        fileType: imageType,
+                        content: parts[1]
+                    });
+                }; })(file.name, file.type);
+                reader.readAsDataURL(file);
+            }
+        } else {
+            // Files dragged from a file manager arrive as a URI list with
+            // no File objects; hand the URIs to the native side to read.
+            var uriList = dropEvent.dataTransfer.getData("text/uri-list");
+            if (uriList) {
+                uriList.split("\n").forEach(function(line) {
+                    var uri = line.trim();
+                    if (uri.length > 0 && uri.charAt(0) != "#") {
+                        state._dragDropReceived({ uri: uri });
+                    }
                 });
-            }; })(file.name, file.type);
-            reader.readAsDataURL(file);
+            }
         }
     }
 };

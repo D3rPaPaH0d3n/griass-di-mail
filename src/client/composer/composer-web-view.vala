@@ -147,6 +147,14 @@ public class Composer.WebView : Components.WebView {
     /** Emitted when an image file has been dropped on the composer */
     public signal void image_file_dropped(string filename, string type, uint8[] contents);
 
+    /**
+     * Emitted when a file URI has been dropped on the composer body.
+     *
+     * Files dragged from a file manager arrive as URIs rather than as
+     * in-page File objects, so the content must be read natively.
+     */
+    public signal void image_uri_dropped(string uri);
+
 
     public WebView(Application.Configuration config, GLib.File cache_dir) {
         base(config, cache_dir);
@@ -208,6 +216,17 @@ public class Composer.WebView : Components.WebView {
                 Util.JS.callable("setRichText").bool(enabled), null
             );
         }
+    }
+
+    /**
+     * Moves the editing caret to the given viewport coordinates.
+     *
+     * Used to insert dropped content where the user dropped it.
+     */
+    public void set_cursor_at_point(double x, double y) {
+        this.call_void.begin(
+            Util.JS.callable("setCursorAtPoint").double(x).double(y), null
+        );
     }
 
     /**
@@ -578,6 +597,15 @@ public class Composer.WebView : Components.WebView {
      */
     private void on_drag_drop_received(GLib.Variant? parameters) {
         var dict = new GLib.VariantDict(parameters);
+
+        // Files dragged from a file manager arrive as a URI; read them
+        // natively rather than via an in-page File object.
+        var uri_value = dict.lookup_value("uri", GLib.VariantType.STRING);
+        if (uri_value != null) {
+            image_uri_dropped(uri_value.get_string());
+            return;
+        }
+
         string file_name = dict.lookup_value(
             "fileName", GLib.VariantType.STRING
         ).get_string();
