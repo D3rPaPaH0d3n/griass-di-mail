@@ -188,7 +188,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
         if (this.contacts == null)
             return;
 
-        if (new_value.length > 3) {
+        if (new_value.length > 0) {
             this.popover.search_contacts.begin(new_value, null, (obj, res) => {
                 this.popover.search_contacts.end(res);
             });
@@ -286,6 +286,13 @@ public class AddressSuggestionPopover : Gtk.Popover {
     public signal void selected_address(Convey.RFC822.MailboxAddress address);
 
     construct {
+        // Present as a full-width dropdown list under the entry rather
+        // than a floating bubble.
+        this.has_arrow = false;
+        this.position = Gtk.PositionType.BOTTOM;
+        this.halign = Gtk.Align.START;
+        add_css_class("menu");
+
         var factory = new Gtk.SignalListItemFactory();
         factory.setup.connect(on_setup_item);
         factory.bind.connect(on_bind_item);
@@ -295,10 +302,17 @@ public class AddressSuggestionPopover : Gtk.Popover {
             bool is_empty = (model.get_n_items() == 0);
             bool was_empty = ((model.get_n_items() - added + removed) == 0);
             if (is_empty != was_empty) {
-                if (was_empty)
+                if (was_empty) {
+                    // Match the popover width to the entry so it reads as
+                    // a list dropped down from the field.
+                    var parent = get_parent();
+                    if (parent != null) {
+                        set_size_request(parent.get_width(), -1);
+                    }
                     popup();
-                else
+                } else {
                     popdown();
+                }
             }
         });
         this.selection = new Gtk.SingleSelection(this.model);
