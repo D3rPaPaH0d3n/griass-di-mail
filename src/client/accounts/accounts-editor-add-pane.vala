@@ -441,19 +441,6 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         });
     }
 
-    private void on_smtp_auth_changed() {
-#if 0
-        if (this.smtp_auth.value.source == Convey.Credentials.Requirement.CUSTOM) {
-            this.sending_list.append(this.smtp_login);
-            this.sending_list.append(this.smtp_password);
-        } else if (this.smtp_login.parent != null) {
-            this.sending_list.remove(this.smtp_login);
-            this.sending_list.remove(this.smtp_password);
-        }
-        check_validation();
-#endif
-    }
-
     private void on_untrusted_host(Convey.AccountInformation account,
                                    Convey.ServiceInformation service,
                                    Convey.Endpoint endpoint,
