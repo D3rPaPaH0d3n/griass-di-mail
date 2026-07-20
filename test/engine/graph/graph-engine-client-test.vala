@@ -6,11 +6,11 @@
  */
 
 
-class Geary.Graph.ClientTest : GraphTestCase {
+class Convey.Graph.ClientTest : GraphTestCase {
 
 
     public ClientTest() {
-        base("Geary.Graph.ClientTest");
+        base("Convey.Graph.ClientTest");
         add_test("ping_sends_get_me", ping_sends_get_me);
         add_test("list_mail_folders_parses_response", list_mail_folders_parses_response);
         add_test("list_messages_parses_response", list_messages_parses_response);
@@ -32,7 +32,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
             """{"id": "user-123"}"""
         );
 
-        Geary.Graph.Client client = new_client();
+        Convey.Graph.Client client = new_client();
 
         client.ping.begin(null, this.async_completion);
         client.ping.end(async_result());
@@ -65,8 +65,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             }"""
         );
 
-        Geary.Graph.Client client = new_client();
-        Gee.List<Geary.Graph.Client.MailFolder>? folders = null;
+        Convey.Graph.Client client = new_client();
+        Gee.List<Convey.Graph.Client.MailFolder>? folders = null;
         client.list_mail_folders.begin(null, (obj, res) => {
             try {
                 folders = client.list_mail_folders.end(res);
@@ -82,13 +82,13 @@ class Geary.Graph.ClientTest : GraphTestCase {
         assert_non_null(folders);
         assert_true(folders.size == 2, "expected 2");
 
-        Geary.Graph.Client.MailFolder inbox = folders[0];
+        Convey.Graph.Client.MailFolder inbox = folders[0];
         assert_equal(inbox.id, "AAMkAGI1");
         assert_equal(inbox.display_name, "Inbox");
         assert_equal(inbox.well_known_name, "inbox");
         assert_false(inbox.is_hidden);
 
-        Geary.Graph.Client.MailFolder custom = folders[1];
+        Convey.Graph.Client.MailFolder custom = folders[1];
         assert_equal(custom.id, "AAMkAGI2");
         assert_equal(custom.display_name, "Custom");
         assert_true(
@@ -127,8 +127,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             }""".printf(recent)
         );
 
-        Geary.Graph.Client client = new_client();
-        Gee.List<Geary.Graph.Client.Message>? messages = null;
+        Convey.Graph.Client client = new_client();
+        Gee.List<Convey.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
             "inbox", 10, 14, 0, null, (obj, res) => {
                 try {
@@ -145,7 +145,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
         assert_non_null(messages);
         assert_true(messages.size == 1, "expected 1");
 
-        Geary.Graph.Client.Message msg = messages[0];
+        Convey.Graph.Client.Message msg = messages[0];
         assert_equal(msg.id, "msg-1");
         assert_equal(msg.conversation_id, "conv-1");
         assert_equal(msg.subject, "Hello");
@@ -199,8 +199,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Geary.Graph.Client client = new_client();
-        Gee.List<Geary.Graph.Client.Message>? messages = null;
+        Convey.Graph.Client client = new_client();
+        Gee.List<Convey.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
             "inbox", 10, 14, 0, null, (obj, res) => {
                 try {
@@ -249,8 +249,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             }"""
         );
 
-        Geary.Graph.Client client = new_client();
-        Geary.Graph.Client.Message? msg = null;
+        Convey.Graph.Client client = new_client();
+        Convey.Graph.Client.Message? msg = null;
         client.fetch_message.begin(
             "msg-1", null, (obj, res) => {
                 try {
@@ -296,8 +296,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             }""".printf(this.base_uri)
         );
 
-        Geary.Graph.Client client = new_client();
-        Geary.Graph.Client.DeltaResult? result = null;
+        Convey.Graph.Client client = new_client();
+        Convey.Graph.Client.DeltaResult? result = null;
         client.delta_messages.begin(
             "inbox", this.base_uri + "/delta-cursor", null, (obj, res) => {
                 try {
@@ -330,8 +330,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             }""".printf(this.base_uri)
         );
 
-        Geary.Graph.Client client = new_client();
-        Geary.Graph.Client.DeltaResult? result = null;
+        Convey.Graph.Client client = new_client();
+        Convey.Graph.Client.DeltaResult? result = null;
         client.delta_messages.begin(
             "inbox", null, null, (obj, res) => {
                 try {
@@ -356,8 +356,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             """{"error": {"code": "resyncRequired"}}"""
         );
 
-        Geary.Graph.Client client = new_client();
-        Geary.Graph.Client.DeltaResult? result = null;
+        Convey.Graph.Client client = new_client();
+        Convey.Graph.Client.DeltaResult? result = null;
         client.delta_messages.begin(
             "inbox", this.base_uri + "/expired-cursor", null, (obj, res) => {
                 try {
@@ -396,8 +396,8 @@ class Geary.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Geary.Graph.Client client = new_client();
-        Geary.ComposedEmail composed = new Geary.ComposedEmail(
+        Convey.Graph.Client client = new_client();
+        Convey.ComposedEmail composed = new Convey.ComposedEmail(
             new GLib.DateTime.now_utc(),
             new RFC822.MailboxAddresses.single(
                 new RFC822.MailboxAddress(null, "user@example.com")
@@ -432,7 +432,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
             ""
         );
 
-        Geary.Graph.Client client = new_client();
+        Convey.Graph.Client client = new_client();
         client.send_message.begin("msg-1", null, this.async_completion);
         client.send_message.end(async_result());
 
@@ -446,12 +446,12 @@ class Geary.Graph.ClientTest : GraphTestCase {
             """{"error": {"code": "serviceUnavailable"}}"""
         );
 
-        Geary.Graph.Client client = new_client();
+        Convey.Graph.Client client = new_client();
         bool failed = false;
         client.ping.begin(null, (obj, res) => {
             try {
                 client.ping.end(res);
-            } catch (Geary.Graph.HttpError.SERVER err) {
+            } catch (Convey.Graph.HttpError.SERVER err) {
                 failed = true;
             } catch (GLib.Error err) {
                 fail("Expected HttpError.SERVER, got: %s".printf(err.message));
@@ -478,7 +478,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Geary.Graph.Client client = new_client();
+        Convey.Graph.Client client = new_client();
         client.ping.begin(null, this.async_completion);
         client.ping.end(async_result());
 
@@ -489,7 +489,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
     }
 
     public void unauthorized_request_refreshes_credentials_and_retries() throws GLib.Error {
-        var mediator = (Geary.GraphStubCredentialsMediator) this.mediator;
+        var mediator = (Convey.GraphStubCredentialsMediator) this.mediator;
         int load_count_before = mediator.load_count;
 
         int hit_count = 0;
@@ -505,7 +505,7 @@ class Geary.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Geary.Graph.Client client = new_client();
+        Convey.Graph.Client client = new_client();
         client.ping.begin(null, this.async_completion);
         client.ping.end(async_result());
 

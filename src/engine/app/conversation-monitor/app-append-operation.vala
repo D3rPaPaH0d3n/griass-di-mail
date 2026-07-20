@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.App.AppendOperation : BatchOperation<EmailIdentifier> {
+private class Convey.App.AppendOperation : BatchOperation<EmailIdentifier> {
 
 
     public AppendOperation(ConversationMonitor monitor,

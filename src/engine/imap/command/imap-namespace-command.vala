@@ -13,7 +13,7 @@
  *
  * See [[https://tools.ietf.org/html/rfc2342|RFC 2342]] for details.
  */
-public class Geary.Imap.NamespaceCommand : Command {
+public class Convey.Imap.NamespaceCommand : Command {
 
     public const string NAME = "NAMESPACE";
 

@@ -1,6 +1,6 @@
-# Norwegian (bokmål) translation of Geary
+# Norwegian (bokmål) translation of Convey
 # Copyright 2016 Software Freedom Conservancy Inc.
-# This file is distributed under the same license as Geary itself
+# This file is distributed under the same license as Convey itself
 #
 # Translators:
 # zatox <niklasolai@gmail.com>, 2013
@@ -12,7 +12,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: geary-master\n"
+"Project-Id-Version: convey-master\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-13 17:58+0200\n"
 "PO-Revision-Date: 2017-06-13 18:05+0200\n"
@@ -25,28 +25,28 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.7.1\n"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:1
-#: ../desktop/org.gnome.Geary.desktop.in.h:1
-#: ../desktop/geary-autostart.desktop.in.h:1
-msgid "Geary"
-msgstr "Geary"
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:1
+#: ../desktop/net.donnybeelo.Convey.desktop.in.h:1
+#: ../desktop/convey-autostart.desktop.in.h:1
+msgid "Convey"
+msgstr "Convey"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:2
-#: ../desktop/org.gnome.Geary.desktop.in.h:4
-#: ../desktop/geary-autostart.desktop.in.h:4
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:2
+#: ../desktop/net.donnybeelo.Convey.desktop.in.h:4
+#: ../desktop/convey-autostart.desktop.in.h:4
 msgid "Send and receive email"
 msgstr "Send og motta e-post"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:3
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:3
 msgid ""
-"Geary is an email application built around conversations, for the GNOME 3 "
+"Convey is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Geary er et samtaleorientert e-postprogram for skrivebordsmiljøet GNOME 3. "
+"Convey er et samtaleorientert e-postprogram for skrivebordsmiljøet GNOME 3. "
 "Det lar deg lese, finne og sende e-post med et enkelt og moderne grensesnitt."
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:4
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:4
 msgid ""
 "Conversations allow you to read a complete discussion without having to find "
 "and click from message to message."
@@ -54,71 +54,71 @@ msgstr ""
 "Samtaler lar deg lese en hel diskusjon uten å måtte trykke deg videre fra "
 "melding til melding."
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:5
-msgid "Geary’s features include:"
-msgstr "Her er noen av Gearys funksjoner:"
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:5
+msgid "Convey’s features include:"
+msgstr "Her er noen av Conveys funksjoner:"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:6
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:6
 msgid "Quick email account setup"
 msgstr "Raskt oppsett av e-postkonto"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:7
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:7
 msgid "Shows related messages together in conversations"
 msgstr "Viser relaterte meldinger som samtaler"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:8
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:8
 msgid "Fast, full text and keyword search"
 msgstr "Raskt søk på nøkkelord og innholdstekst"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:9
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:9
 msgid "Full-featured HTML and plain text message composer"
 msgstr "Meldingsbehandler med fullverdig støtte for HTML og ren tekst"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:10
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:10
 msgid "Desktop notification of new mail"
 msgstr "Vis skrivebordsvarsel ved ny e-post"
 
-#: ../desktop/org.gnome.Geary.appdata.xml.in.h:11
+#: ../desktop/net.donnybeelo.Convey.appdata.xml.in.h:11
 msgid "Compatible with GMail, Yahoo! Mail, Outlook.com and other IMAP servers"
 msgstr "Fungerer med GMail, Yahoo! Mail, Outlook.com og andre IMAP-tjenere"
 
-#: ../desktop/org.gnome.Geary.desktop.in.h:2
+#: ../desktop/net.donnybeelo.Convey.desktop.in.h:2
 msgid "Email"
 msgstr "E-post"
 
-#: ../desktop/org.gnome.Geary.desktop.in.h:3
-msgid "Geary Email"
-msgstr "Geary e-post"
+#: ../desktop/net.donnybeelo.Convey.desktop.in.h:3
+msgid "Convey Email"
+msgstr "Convey e-post"
 
 #. Translators: These are desktop search terms. Do not translate semicolons, end line with a semicolon.
-#: ../desktop/org.gnome.Geary.desktop.in.h:6
+#: ../desktop/net.donnybeelo.Convey.desktop.in.h:6
 msgid "Mail;E-mail;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 msgstr "Post;E-post;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 
-#: ../desktop/org.gnome.Geary.desktop.in.h:7 ../ui/gtk/menus.ui.h:1
+#: ../desktop/net.donnybeelo.Convey.desktop.in.h:7 ../ui/gtk/menus.ui.h:1
 msgid "Compose Message"
 msgstr "Skriv melding"
 
-#: ../desktop/geary-autostart.desktop.in.h:2
-#: ../src/client/application/geary-application.vala:21
+#: ../desktop/convey-autostart.desktop.in.h:2
+#: ../src/client/application/convey-application.vala:21
 msgid "Mail Client"
 msgstr "E-postklient"
 
-#: ../desktop/geary-autostart.desktop.in.h:3
-msgid "Geary Mail"
-msgstr "Geary e-post"
+#: ../desktop/convey-autostart.desktop.in.h:3
+msgid "Convey Mail"
+msgstr "Convey e-post"
 
-#: ../desktop/geary-autostart.desktop.in.h:5
+#: ../desktop/convey-autostart.desktop.in.h:5
 msgid "Email;E-mail;Mail;"
 msgstr "E-post;E-brev;Post;"
 
-#: ../desktop/geary-attach.contract.in.h:1
+#: ../desktop/convey-attach.contract.in.h:1
 msgid "Send by email"
 msgstr "Send via e-post"
 
-#: ../desktop/geary-attach.contract.in.h:2
-msgid "Send files using Geary"
-msgstr "Send filer med Geary"
+#: ../desktop/convey-attach.contract.in.h:2
+msgid "Send files using Convey"
+msgstr "Send filer med Convey"
 
 #: ../src/client/accounts/account-dialog-add-edit-pane.vala:51
 #: ../src/client/components/stock.vala:31
@@ -154,8 +154,8 @@ msgid "First Last"
 msgstr "Fornavn Etternavn"
 
 #: ../src/client/accounts/add-edit-page.vala:235
-msgid "Welcome to Geary."
-msgstr "Velkommen til Geary."
+msgid "Welcome to Convey."
+msgstr "Velkommen til Convey."
 
 #: ../src/client/accounts/add-edit-page.vala:235
 msgid "Enter your account information to get started."
@@ -220,8 +220,8 @@ msgid "        • Invalid account nickname.\n"
 msgstr "        • Ugyldig konto-kallenavn.\n"
 
 #: ../src/client/accounts/add-edit-page.vala:797
-msgid "        • Email address already added to Geary.\n"
-msgstr "        • Denne e-postadressen brukes av Geary allerede.\n"
+msgid "        • Email address already added to Convey.\n"
+msgstr "        • Denne e-postadressen brukes av Convey allerede.\n"
 
 #: ../src/client/accounts/add-edit-page.vala:801
 msgid "        • IMAP connection error.\n"
@@ -247,15 +247,15 @@ msgstr "        • Tilkoblingsfeil.\n"
 msgid "        • Username or password incorrect.\n"
 msgstr "        • Brukernavn eller passord er feil.\n"
 
-#: ../src/client/application/geary-application.vala:22
+#: ../src/client/application/convey-application.vala:22
 msgid "Copyright 2016 Software Freedom Conservancy Inc."
 msgstr "Opphavsrett 2016 Software Freedom Conservancy Inc."
 
-#: ../src/client/application/geary-application.vala:24
-msgid "Visit the Geary web site"
-msgstr "Besøk Geary-nettsiden"
+#: ../src/client/application/convey-application.vala:24
+msgid "Visit the Convey web site"
+msgstr "Besøk Convey-nettsiden"
 
-#: ../src/client/application/geary-application.vala:464
+#: ../src/client/application/convey-application.vala:464
 #, c-format
 msgid "About %s"
 msgstr "Om %s"
@@ -263,251 +263,251 @@ msgstr "Om %s"
 #. Translators: add your name and email address to receive
 #. credit in the About dialog For example: Yamada Taro
 #. <yamada.taro@example.com>
-#: ../src/client/application/geary-application.vala:468
+#: ../src/client/application/convey-application.vala:468
 msgid "translator-credits"
 msgstr ""
 "ProsjektX <https://launchpad.net/~prosjektx>Åka Sikrom <https://launchpad."
 "net/~akrosikam>"
 
-#: ../src/client/application/geary-args.vala:10
-msgid "Start Geary with hidden main window"
-msgstr "Start Geary med skjult hovedvindu"
+#: ../src/client/application/convey-args.vala:10
+msgid "Start Convey with hidden main window"
+msgstr "Start Convey med skjult hovedvindu"
 
-#: ../src/client/application/geary-args.vala:11
+#: ../src/client/application/convey-args.vala:11
 msgid "Output debugging information"
 msgstr "Lag feilsøkingsinformasjon"
 
-#: ../src/client/application/geary-args.vala:12
+#: ../src/client/application/convey-args.vala:12
 msgid "Log conversation monitoring"
 msgstr "Loggfør samtaleovervåking"
 
-#: ../src/client/application/geary-args.vala:13
+#: ../src/client/application/convey-args.vala:13
 msgid "Log network deserialization"
 msgstr "Loggfør nettverksdeserialisering"
 
-#: ../src/client/application/geary-args.vala:14
+#: ../src/client/application/convey-args.vala:14
 msgid "Log network activity"
 msgstr "Loggfør nettverksaktivitet"
 
 #. / The IMAP replay queue is how changes on the server are replicated on the client.
 #. / It could also be called the IMAP events queue.
-#: ../src/client/application/geary-args.vala:17
+#: ../src/client/application/convey-args.vala:17
 msgid "Log IMAP replay queue"
 msgstr "Loggfør IMAP-svarkø"
 
 #. / Serialization is how commands and responses are converted into a stream of bytes for
 #. / network transmission
-#: ../src/client/application/geary-args.vala:20
+#: ../src/client/application/convey-args.vala:20
 msgid "Log network serialization"
 msgstr "Loggfør nettverksserialisering"
 
-#: ../src/client/application/geary-args.vala:21
+#: ../src/client/application/convey-args.vala:21
 msgid "Log periodic activity"
 msgstr "Loggfør periodisk aktivitet"
 
-#: ../src/client/application/geary-args.vala:22
+#: ../src/client/application/convey-args.vala:22
 msgid "Log database queries (generates lots of messages)"
 msgstr "Loggfør databaseforespørsler (fører til veldig mange meldinger)"
 
 #. / "Normalization" can also be called "synchronization"
-#: ../src/client/application/geary-args.vala:24
+#: ../src/client/application/convey-args.vala:24
 msgid "Log folder normalization"
 msgstr "Loggfør mappenormalisering"
 
-#: ../src/client/application/geary-args.vala:25
+#: ../src/client/application/convey-args.vala:25
 msgid "Allow inspection of WebView"
 msgstr "Tillat inspeksjon av WebView"
 
-#: ../src/client/application/geary-args.vala:26
+#: ../src/client/application/convey-args.vala:26
 msgid "Revoke all server certificates with TLS warnings"
 msgstr "Trekk tilbake alle tjenersertifikater med TLS-varsler"
 
-#: ../src/client/application/geary-args.vala:27
+#: ../src/client/application/convey-args.vala:27
 msgid "Perform a graceful quit"
 msgstr "Avslutt på riktig måte"
 
-#: ../src/client/application/geary-args.vala:28
+#: ../src/client/application/convey-args.vala:28
 msgid "Display program version"
 msgstr "Vis programversjon"
 
 #. This gives a command-line hint on how to open new composer windows with mailto:
-#: ../src/client/application/geary-args.vala:53
+#: ../src/client/application/convey-args.vala:53
 #, c-format
 msgid "Use %s to open a new composer window"
 msgstr "Bruk %s for å åpne et nytt meldingsvindu"
 
-#: ../src/client/application/geary-args.vala:54
+#: ../src/client/application/convey-args.vala:54
 msgid "Please report comments, suggestions and bugs to:"
 msgstr "Send kommentarer, forslag og feilrapporter til:"
 
 #. i18n: Command line arguments are invalid
-#: ../src/client/application/geary-args.vala:61
+#: ../src/client/application/convey-args.vala:61
 #, c-format
 msgid "Failed to parse command line options: %s\n"
 msgstr "Klarte ikke å tolke kommandolinjevalg: %s\n"
 
-#: ../src/client/application/geary-args.vala:72
+#: ../src/client/application/convey-args.vala:72
 #, c-format
 msgid "Unrecognized command line option “%s”\n"
 msgstr "«%s» er et ukjent kommandolinjevalg\n"
 
-#: ../src/client/application/geary-controller.vala:57
+#: ../src/client/application/convey-controller.vala:57
 msgid "Delete conversation"
 msgstr "Slett samtale"
 
-#: ../src/client/application/geary-controller.vala:58
+#: ../src/client/application/convey-controller.vala:58
 msgid "Delete conversation (Shift+Delete)"
 msgstr "Slett samtale (Shift+Delete)"
 
-#: ../src/client/application/geary-controller.vala:59
+#: ../src/client/application/convey-controller.vala:59
 msgid "Delete conversations (Shift+Delete)"
 msgstr "Slett samtaler (Shift+Delete)"
 
 #. This refers to the action ("move email to the trash"), not the Trash folder itself
-#: ../src/client/application/geary-controller.vala:63
+#: ../src/client/application/convey-controller.vala:63
 msgid "Move conversation to Trash (Delete, Backspace)"
 msgstr "Flytt samtale til papirkurv (Delete, Rettetast)"
 
-#: ../src/client/application/geary-controller.vala:64
+#: ../src/client/application/convey-controller.vala:64
 msgid "Move conversations to Trash (Delete, Backspace)"
 msgstr "Flytt samtaler til papirkurv (Delete, Rettetast)"
 
 #. This refers to the action ("archive an email"), not the Archive folder itself
-#: ../src/client/application/geary-controller.vala:68
+#: ../src/client/application/convey-controller.vala:68
 msgid "_Archive"
 msgstr "_Arkiver"
 
-#: ../src/client/application/geary-controller.vala:69
+#: ../src/client/application/convey-controller.vala:69
 msgid "Archive conversation (A)"
 msgstr "Arkiver samtale (A)"
 
-#: ../src/client/application/geary-controller.vala:70
+#: ../src/client/application/convey-controller.vala:70
 msgid "Archive conversations (A)"
 msgstr "Arkiver samtaler (A)"
 
-#: ../src/client/application/geary-controller.vala:73
+#: ../src/client/application/convey-controller.vala:73
 msgid "Mark as S_pam"
 msgstr "Marker som sø_ppelpost"
 
-#: ../src/client/application/geary-controller.vala:74
+#: ../src/client/application/convey-controller.vala:74
 msgid "Mark as not S_pam"
 msgstr "Marker som ikke sø_ppelpost"
 
-#: ../src/client/application/geary-controller.vala:76
-#: ../src/client/application/geary-controller.vala:448
+#: ../src/client/application/convey-controller.vala:76
+#: ../src/client/application/convey-controller.vala:448
 msgid "Mark conversation"
 msgstr "Marker samtale"
 
-#: ../src/client/application/geary-controller.vala:77
+#: ../src/client/application/convey-controller.vala:77
 msgid "Mark conversations"
 msgstr "Marker samtaler"
 
-#: ../src/client/application/geary-controller.vala:78
+#: ../src/client/application/convey-controller.vala:78
 msgid "Add label to conversation"
 msgstr "Sett merkelapp på samtale"
 
-#: ../src/client/application/geary-controller.vala:79
+#: ../src/client/application/convey-controller.vala:79
 msgid "Add label to conversations"
 msgstr "Sett merkelapp på samtaler"
 
-#: ../src/client/application/geary-controller.vala:80
-#: ../src/client/application/geary-controller.vala:487
+#: ../src/client/application/convey-controller.vala:80
+#: ../src/client/application/convey-controller.vala:487
 msgid "Move conversation"
 msgstr "Flytt samtale"
 
-#: ../src/client/application/geary-controller.vala:81
+#: ../src/client/application/convey-controller.vala:81
 msgid "Move conversations"
 msgstr "Flytt samtaler"
 
-#: ../src/client/application/geary-controller.vala:450
+#: ../src/client/application/convey-controller.vala:450
 msgid "_Mark as…"
 msgstr "_Marker som …"
 
-#: ../src/client/application/geary-controller.vala:456
+#: ../src/client/application/convey-controller.vala:456
 msgid "Mark as _Read"
 msgstr "Marker som _lest"
 
-#: ../src/client/application/geary-controller.vala:462
+#: ../src/client/application/convey-controller.vala:462
 msgid "Mark as _Unread"
 msgstr "Marker som _ulest"
 
-#: ../src/client/application/geary-controller.vala:468
+#: ../src/client/application/convey-controller.vala:468
 msgid "_Star"
 msgstr "_Stjerne"
 
-#: ../src/client/application/geary-controller.vala:473
+#: ../src/client/application/convey-controller.vala:473
 msgid "U_nstar"
 msgstr "F_jern stjerne"
 
-#: ../src/client/application/geary-controller.vala:483
+#: ../src/client/application/convey-controller.vala:483
 msgid "Add label"
 msgstr "Legg til merkelapp"
 
-#: ../src/client/application/geary-controller.vala:484
+#: ../src/client/application/convey-controller.vala:484
 msgid "_Label"
 msgstr "_Merkelapp"
 
-#: ../src/client/application/geary-controller.vala:488
+#: ../src/client/application/convey-controller.vala:488
 msgid "_Move"
 msgstr "_Flytt"
 
-#: ../src/client/application/geary-controller.vala:492
+#: ../src/client/application/convey-controller.vala:492
 msgid "Compose new message (Ctrl+N, N)"
 msgstr "Skriv ny melding (Ctrl+N, N)"
 
-#: ../src/client/application/geary-controller.vala:496
+#: ../src/client/application/convey-controller.vala:496
 #: ../ui/conversation-email-menus.ui.h:1
 msgid "_Reply"
 msgstr "_Svar"
 
-#: ../src/client/application/geary-controller.vala:497
+#: ../src/client/application/convey-controller.vala:497
 msgid "Reply (Ctrl+R, R)"
 msgstr "Svar (Ctrl+R, R)"
 
-#: ../src/client/application/geary-controller.vala:501
+#: ../src/client/application/convey-controller.vala:501
 msgid "R_eply All"
 msgstr "Sv_ar alle"
 
-#: ../src/client/application/geary-controller.vala:502
+#: ../src/client/application/convey-controller.vala:502
 msgid "Reply all (Ctrl+Shift+R, Shift+R)"
 msgstr "Svar alle (Ctrl+Shift+R, Shift+R)"
 
-#: ../src/client/application/geary-controller.vala:507
+#: ../src/client/application/convey-controller.vala:507
 #: ../ui/conversation-email-menus.ui.h:3
 msgid "_Forward"
 msgstr "_Videresend"
 
-#: ../src/client/application/geary-controller.vala:508
+#: ../src/client/application/convey-controller.vala:508
 msgid "Forward (Ctrl+L, F)"
 msgstr "Videresend (Ctrl+L, F)"
 
-#: ../src/client/application/geary-controller.vala:538
+#: ../src/client/application/convey-controller.vala:538
 msgid "Empty _Spam…"
 msgstr "Tøm _søppelpost …"
 
-#: ../src/client/application/geary-controller.vala:542
+#: ../src/client/application/convey-controller.vala:542
 msgid "Empty _Trash…"
 msgstr "Tøm _papirkurv …"
 
 #. No callback is connected, since we bind the toggle button to the search bar visibility
-#: ../src/client/application/geary-controller.vala:574
+#: ../src/client/application/convey-controller.vala:574
 msgid "Toggle search bar"
 msgstr "Vis/skjul søkefelt"
 
 #. No callback is connected, since we bind the toggle button to the find bar visibility
-#: ../src/client/application/geary-controller.vala:579
+#: ../src/client/application/convey-controller.vala:579
 msgid "Toggle find bar"
 msgstr "Slå av/på søkefelt"
 
-#: ../src/client/application/geary-controller.vala:757
+#: ../src/client/application/convey-controller.vala:757
 msgid "Unable to store server trust exception"
 msgstr "Klarte ikke å lagre godkjenningsunntak for tjener"
 
-#: ../src/client/application/geary-controller.vala:992
+#: ../src/client/application/convey-controller.vala:992
 msgid "Your settings are insecure"
 msgstr "Innstillingene dine er utrygge"
 
-#: ../src/client/application/geary-controller.vala:993
+#: ../src/client/application/convey-controller.vala:993
 msgid ""
 "Your IMAP and/or SMTP settings do not specify SSL or TLS.  This means your "
 "username and password could be read by another person on the network.  Are "
@@ -518,64 +518,64 @@ msgstr ""
 "klartekst, som gjør det mulig for andre å plukke det opp. Er du sikker på at "
 "du vil fortsette?"
 
-#: ../src/client/application/geary-controller.vala:994
+#: ../src/client/application/convey-controller.vala:994
 msgid "Co_ntinue"
 msgstr "Fo_rtsett"
 
-#: ../src/client/application/geary-controller.vala:1041
+#: ../src/client/application/convey-controller.vala:1041
 msgid "Error connecting to the server"
 msgstr "Feil under tilkobling til tjener"
 
-#: ../src/client/application/geary-controller.vala:1042
+#: ../src/client/application/convey-controller.vala:1042
 msgid ""
-"Geary encountered an error while connecting to the server.  Please try again "
+"Convey encountered an error while connecting to the server.  Please try again "
 "in a few moments."
 msgstr ""
-"Geary støtte på en feil under tilkobling til tjener. Vent litt, og prøv "
+"Convey støtte på en feil under tilkobling til tjener. Vent litt, og prøv "
 "deretter på nytt."
 
 #. / Displayed in the space-limited status bar when a message fails to be sent due to error.
-#: ../src/client/application/geary-controller.vala:1079
+#: ../src/client/application/convey-controller.vala:1079
 #: ../src/client/components/status-bar.vala:29
 msgid "Error sending email"
 msgstr "Feil under sending av e-post"
 
-#: ../src/client/application/geary-controller.vala:1080
+#: ../src/client/application/convey-controller.vala:1080
 msgid ""
-"Geary encountered an error sending an email.  If the problem persists, "
+"Convey encountered an error sending an email.  If the problem persists, "
 "please manually delete the email from your Outbox folder."
 msgstr ""
-"Geary fikk et problem med å sende en e-postmelding. Slett meldingen manuelt "
+"Convey fikk et problem med å sende en e-postmelding. Slett meldingen manuelt "
 "fra utboksen hvis problemet ikke forsvinner."
 
 #. Displayed in the space-limited status bar when a message fails to be uploaded
 #. to Sent Mail after being sent.
-#: ../src/client/application/geary-controller.vala:1084
+#: ../src/client/application/convey-controller.vala:1084
 #: ../src/client/components/status-bar.vala:33
 msgid "Error saving sent mail"
 msgstr "Feil under lagring av sent e-postmelding"
 
-#: ../src/client/application/geary-controller.vala:1085
+#: ../src/client/application/convey-controller.vala:1085
 msgid ""
-"Geary encountered an error saving a sent message to Sent Mail.  The message "
+"Convey encountered an error saving a sent message to Sent Mail.  The message "
 "will stay in your Outbox folder until you delete it."
 msgstr ""
-"Geary klarte ikke å lagre en sendt melding i mappen for sendt e-post. "
+"Convey klarte ikke å lagre en sendt melding i mappen for sendt e-post. "
 "Meldingen blir liggende i utboksen til du sletter den."
 
-#: ../src/client/application/geary-controller.vala:1154
+#: ../src/client/application/convey-controller.vala:1154
 msgid "Labels"
 msgstr "Merkelapper"
 
-#. give the user two options: reset the Account local store, or exit Geary.  A third
+#. give the user two options: reset the Account local store, or exit Convey.  A third
 #. could be done to leave the Account in an unopened state, but we don't currently
 #. have provisions for that.
-#: ../src/client/application/geary-controller.vala:1166
+#: ../src/client/application/convey-controller.vala:1166
 #, c-format
 msgid "Unable to open the database for %s"
 msgstr "Klarte ikke å åpne database for %s"
 
-#: ../src/client/application/geary-controller.vala:1167
+#: ../src/client/application/convey-controller.vala:1167
 #, c-format
 msgid ""
 "There was an error opening the local mail database for this account. This is "
@@ -583,7 +583,7 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-"Geary can rebuild the database and re-synchronize with the server or exit.\n"
+"Convey can rebuild the database and re-synchronize with the server or exit.\n"
 "\n"
 "Rebuilding the database will destroy all local email and its attachments. "
 "<b>The mail on the your server will not be affected.</b>"
@@ -593,27 +593,27 @@ msgstr ""
 "\n"
 "%s\n"
 "\n"
-"Geary kan bygge opp databasen på nytt og synkronisere med tjeneren, eller "
+"Convey kan bygge opp databasen på nytt og synkronisere med tjeneren, eller "
 "avslutte.\n"
 "\n"
 "Gjenoppbygging av database fører til at all lokalt lagret e-post inkludert "
 "vedlegg blir slettet. <b>E-post som ligger på tjeneren blir ikke påvirket.</"
 "b>"
 
-#: ../src/client/application/geary-controller.vala:1169
+#: ../src/client/application/convey-controller.vala:1169
 msgid "_Rebuild"
 msgstr "_Bygg på nytt"
 
-#: ../src/client/application/geary-controller.vala:1169
+#: ../src/client/application/convey-controller.vala:1169
 msgid "E_xit"
 msgstr "Av_slutt"
 
-#: ../src/client/application/geary-controller.vala:1178
+#: ../src/client/application/convey-controller.vala:1178
 #, c-format
 msgid "Unable to rebuild database for “%s”"
 msgstr "Klarte ikke å bygge database for «%s» på nytt"
 
-#: ../src/client/application/geary-controller.vala:1179
+#: ../src/client/application/convey-controller.vala:1179
 #, c-format
 msgid ""
 "Error during rebuild:\n"
@@ -625,15 +625,15 @@ msgstr ""
 "%s"
 
 #. some other problem opening the account ... as with other flow path, can't run
-#. Geary today with an account in unopened state, so have to exit
-#: ../src/client/application/geary-controller.vala:1201
-#: ../src/client/application/geary-controller.vala:1211
-#: ../src/client/application/geary-controller.vala:1222
+#. Convey today with an account in unopened state, so have to exit
+#: ../src/client/application/convey-controller.vala:1201
+#: ../src/client/application/convey-controller.vala:1211
+#: ../src/client/application/convey-controller.vala:1222
 #, c-format
 msgid "Unable to open local mailbox for %s"
 msgstr "Klarte ikke å åpne lokal e-postboks for %s"
 
-#: ../src/client/application/geary-controller.vala:1202
+#: ../src/client/application/convey-controller.vala:1202
 #, c-format
 msgid ""
 "There was an error opening the local mail database for this account. This is "
@@ -652,40 +652,40 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/client/application/geary-controller.vala:1212
+#: ../src/client/application/convey-controller.vala:1212
 msgid ""
 "The version number of the local mail database is formatted for a newer "
-"version of Geary. Unfortunately, the database cannot be “rolled back” to "
-"work with this version of Geary.\n"
+"version of Convey. Unfortunately, the database cannot be “rolled back” to "
+"work with this version of Convey.\n"
 "\n"
-"Please install the latest version of Geary and try again."
+"Please install the latest version of Convey and try again."
 msgstr ""
-"Lokal e-postdatabase kommer fra en nyere versjon av Geary. Databasen kan "
+"Lokal e-postdatabase kommer fra en nyere versjon av Convey. Databasen kan "
 "dessverre ikke konverteres tilbake for å brukes med denne versjonen.\n"
 "\n"
-"Installer nyeste versjon av Geary, og prøv på nytt."
+"Installer nyeste versjon av Convey, og prøv på nytt."
 
-#: ../src/client/application/geary-controller.vala:1223
+#: ../src/client/application/convey-controller.vala:1223
 msgid ""
 "There was an error opening the local account. This is probably due to "
 "connectivity issues.\n"
 "\n"
-"Please check your network connection and restart Geary."
+"Please check your network connection and restart Convey."
 msgstr ""
 "Det oppstod en feil under åpning av av lokal konto. Dette kan skyldes "
 "tilkoblingsproblemer.\n"
 "\n"
-"Kontroller nettverksforbindelsen, og start Geary på nytt."
+"Kontroller nettverksforbindelsen, og start Convey på nytt."
 
-#: ../src/client/application/geary-controller.vala:1999
+#: ../src/client/application/convey-controller.vala:1999
 msgid "Undo move (Ctrl+Z)"
 msgstr "Angre flytting (Ctrl+U)"
 
-#: ../src/client/application/geary-controller.vala:2009
+#: ../src/client/application/convey-controller.vala:2009
 msgid "Are you sure you want to open these attachments?"
 msgstr "Er du sikker på at du vil åpne disse vedleggene?"
 
-#: ../src/client/application/geary-controller.vala:2010
+#: ../src/client/application/convey-controller.vala:2010
 msgid ""
 "Attachments may cause damage to your system if opened.  Only open files from "
 "trusted sources."
@@ -693,16 +693,16 @@ msgstr ""
 "Vedlegg kan skade systemet ditt hvis du åpner dem. Bare åpne vedlegg fra "
 "avsendere du stoler på."
 
-#: ../src/client/application/geary-controller.vala:2011
+#: ../src/client/application/convey-controller.vala:2011
 msgid "Don’t _ask me again"
 msgstr "Ikke _spør meg igjen"
 
-#: ../src/client/application/geary-controller.vala:2121
+#: ../src/client/application/convey-controller.vala:2121
 #, c-format
 msgid "A file named “%s” already exists.  Do you want to replace it?"
 msgstr "Filen «%s» finnes allerede. Vil du erstatte den?"
 
-#: ../src/client/application/geary-controller.vala:2123
+#: ../src/client/application/convey-controller.vala:2123
 #, c-format
 msgid ""
 "The file already exists in “%s”.  Replacing it will overwrite its contents."
@@ -710,62 +710,62 @@ msgstr ""
 "Filen finnes allerede i «%s». Innholdet blir overskrevet hvis du erstatter "
 "den."
 
-#: ../src/client/application/geary-controller.vala:2126
+#: ../src/client/application/convey-controller.vala:2126
 msgid "_Replace"
 msgstr "_Erstatt"
 
 #. Find out what to do with the inline composers.
 #. TODO: Remove this in favor of automatically saving drafts
-#: ../src/client/application/geary-controller.vala:2374
+#: ../src/client/application/convey-controller.vala:2374
 msgid "Close open draft messages?"
 msgstr "Vil du lukke alle meldingsutkast?"
 
-#: ../src/client/application/geary-controller.vala:2496
+#: ../src/client/application/convey-controller.vala:2496
 #, c-format
 msgid "Empty all email from your %s folder?"
 msgstr "Vil du tømme mappen %s for meldinger?"
 
-#: ../src/client/application/geary-controller.vala:2497
-msgid "This removes the email from Geary and your email server."
-msgstr "Denne handlingen fjerner e-post fra både Geary og e-posttjeneren."
+#: ../src/client/application/convey-controller.vala:2497
+msgid "This removes the email from Convey and your email server."
+msgstr "Denne handlingen fjerner e-post fra både Convey og e-posttjeneren."
 
-#: ../src/client/application/geary-controller.vala:2498
+#: ../src/client/application/convey-controller.vala:2498
 msgid "This cannot be undone."
 msgstr "Denne handlingen kan ikke gjøres om."
 
-#: ../src/client/application/geary-controller.vala:2499
+#: ../src/client/application/convey-controller.vala:2499
 #, c-format
 msgid "Empty %s"
 msgstr "Tøm %s"
 
-#: ../src/client/application/geary-controller.vala:2516
+#: ../src/client/application/convey-controller.vala:2516
 #, c-format
 msgid "Error emptying %s"
 msgstr "Feil under tømming av %s"
 
-#: ../src/client/application/geary-controller.vala:2546
+#: ../src/client/application/convey-controller.vala:2546
 msgid "Do you want to permanently delete this message?"
 msgid_plural "Do you want to permanently delete these messages?"
 msgstr[0] "Vil du slette denne meldingen permanent?"
 msgstr[1] "Vil du slette disse meldingene permanent?"
 
-#: ../src/client/application/geary-controller.vala:2548
+#: ../src/client/application/convey-controller.vala:2548
 msgid "Delete"
 msgstr "Slett"
 
-#: ../src/client/application/geary-controller.vala:2580
+#: ../src/client/application/convey-controller.vala:2580
 msgid "Undo archive (Ctrl+Z)"
 msgstr "Angre arkivering (Ctrl+Z)"
 
-#: ../src/client/application/geary-controller.vala:2595
+#: ../src/client/application/convey-controller.vala:2595
 msgid "Undo trash (Ctrl+Z)"
 msgstr "Angre flytting til papirkurv (Ctrl+Z)"
 
-#: ../src/client/application/geary-controller.vala:2649
+#: ../src/client/application/convey-controller.vala:2649
 msgid "Undo (Ctrl+Z)"
 msgstr "Angre (Ctrl+Z)"
 
-#: ../src/client/application/geary-controller.vala:2780
+#: ../src/client/application/convey-controller.vala:2780
 msgid "Failed to open default text editor."
 msgstr "Klarte ikke å åpne forvalgt tekstbehandler."
 
@@ -776,7 +776,7 @@ msgstr "%s (%d)"
 
 #: ../src/client/components/search-bar.vala:8
 #: ../src/client/folder-list/folder-list-search-branch.vala:38
-#: ../src/engine/api/geary-special-folder-type.vala:51
+#: ../src/engine/api/convey-special-folder-type.vala:51
 msgid "Search"
 msgstr "Søk"
 
@@ -1096,27 +1096,27 @@ msgstr ""
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:52
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary not to access this "
+"Selecting “Don’t Trust This Server” will cause Convey not to access this "
 "server."
 msgstr ""
-"Geary lar være å bruke tjeneren hvis du velger «Ikke godkjenn denne "
+"Convey lar være å bruke tjeneren hvis du velger «Ikke godkjenn denne "
 "tjeneren»."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:54
-msgid "Geary will not add or update this email account."
-msgstr "Geary lar være å legge til eller oppdatere denne e-postkontoen."
+msgid "Convey will not add or update this email account."
+msgstr "Convey lar være å legge til eller oppdatere denne e-postkontoen."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:59
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary to stop accessing this "
+"Selecting “Don’t Trust This Server” will cause Convey to stop accessing this "
 "account."
 msgstr ""
-"Geary slutter å bruke denne kontoen hvis du velger «Ikke godkjenn denne "
+"Convey slutter å bruke denne kontoen hvis du velger «Ikke godkjenn denne "
 "tjeneren»."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:61
-msgid "Geary will exit if you have no other open email accounts."
-msgstr "Geary avsluttes hvis du ikke har andre e-postkontoer åpent."
+msgid "Convey will exit if you have no other open email accounts."
+msgstr "Convey avsluttes hvis du ikke har andre e-postkontoer åpent."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:66
 msgid ""
@@ -1158,8 +1158,8 @@ msgstr "Det oppstod en feil under behandling av tjenersertifikatet"
 #. strings, and Glade doesn't support the "larger" size attribute. See this bug report for
 #. details: https://bugzilla.gnome.org/show_bug.cgi?id=679006
 #: ../src/client/dialogs/password-dialog.vala:16
-msgid "Geary requires your email password to continue"
-msgstr "Geary trenger e-post-passordet ditt for å kunne fortsette"
+msgid "Convey requires your email password to continue"
+msgstr "Convey trenger e-post-passordet ditt for å kunne fortsette"
 
 #. Label displaying total number of email messages in a folder
 #: ../src/client/folder-list/folder-list-folder-entry.vala:32
@@ -1343,71 +1343,71 @@ msgctxt "Abbreviation for kilobyte"
 msgid "KB"
 msgstr "KB"
 
-#: ../src/engine/api/geary-service-provider.vala:52
+#: ../src/engine/api/convey-service-provider.vala:52
 msgid "Gmail"
 msgstr "Gmail"
 
-#: ../src/engine/api/geary-service-provider.vala:55
+#: ../src/engine/api/convey-service-provider.vala:55
 msgid "Yahoo! Mail"
 msgstr "Yahoo! Mail"
 
-#: ../src/engine/api/geary-service-provider.vala:58
+#: ../src/engine/api/convey-service-provider.vala:58
 msgid "Outlook.com"
 msgstr "Outlook.com"
 
-#: ../src/engine/api/geary-service-provider.vala:61
+#: ../src/engine/api/convey-service-provider.vala:61
 msgid "Other"
 msgstr "Annet"
 
-#: ../src/engine/api/geary-service.vala:20
+#: ../src/engine/api/convey-service.vala:20
 msgid "IMAP"
 msgstr "IMAP"
 
-#: ../src/engine/api/geary-service.vala:23
+#: ../src/engine/api/convey-service.vala:23
 msgid "SMTP"
 msgstr "SMTP"
 
-#: ../src/engine/api/geary-special-folder-type.vala:24
+#: ../src/engine/api/convey-special-folder-type.vala:24
 msgid "Inbox"
 msgstr "Innboks"
 
-#: ../src/engine/api/geary-special-folder-type.vala:27
+#: ../src/engine/api/convey-special-folder-type.vala:27
 msgid "Drafts"
 msgstr "Utkast"
 
-#: ../src/engine/api/geary-special-folder-type.vala:30
+#: ../src/engine/api/convey-special-folder-type.vala:30
 msgid "Sent Mail"
 msgstr "Sendt e-post"
 
-#: ../src/engine/api/geary-special-folder-type.vala:33
+#: ../src/engine/api/convey-special-folder-type.vala:33
 msgid "Starred"
 msgstr "Stjernemerket"
 
-#: ../src/engine/api/geary-special-folder-type.vala:36
+#: ../src/engine/api/convey-special-folder-type.vala:36
 msgid "Important"
 msgstr "Viktig"
 
-#: ../src/engine/api/geary-special-folder-type.vala:39
+#: ../src/engine/api/convey-special-folder-type.vala:39
 msgid "All Mail"
 msgstr "All e-post"
 
-#: ../src/engine/api/geary-special-folder-type.vala:42
+#: ../src/engine/api/convey-special-folder-type.vala:42
 msgid "Spam"
 msgstr "Søppelpost"
 
-#: ../src/engine/api/geary-special-folder-type.vala:45
+#: ../src/engine/api/convey-special-folder-type.vala:45
 msgid "Trash"
 msgstr "Papirkurv"
 
-#: ../src/engine/api/geary-special-folder-type.vala:48
+#: ../src/engine/api/convey-special-folder-type.vala:48
 msgid "Outbox"
 msgstr "Utboks"
 
-#: ../src/engine/api/geary-special-folder-type.vala:54
+#: ../src/engine/api/convey-special-folder-type.vala:54
 msgid "Archive"
 msgstr "Arkiv"
 
-#: ../src/engine/api/geary-special-folder-type.vala:58 ../ui/login.glade.h:29
+#: ../src/engine/api/convey-special-folder-type.vala:58 ../ui/login.glade.h:29
 msgid "None"
 msgstr "Ingen"
 
@@ -1422,7 +1422,7 @@ msgstr "Ingen"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:99
 msgctxt "Search operator"
@@ -1435,7 +1435,7 @@ msgstr "vedlegg"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:108
 msgctxt "Search operator"
@@ -1447,7 +1447,7 @@ msgstr "blindkopi"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:116
 msgctxt "Search operator"
@@ -1460,7 +1460,7 @@ msgstr "innhold"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:125
 msgctxt "Search operator"
@@ -1473,7 +1473,7 @@ msgstr "kopi"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:134
 msgctxt "Search operator"
@@ -1485,7 +1485,7 @@ msgstr "fra"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:142
 msgctxt "Search operator"
@@ -1497,7 +1497,7 @@ msgstr "er"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary
+#. also match the translation in "search.page" of the Convey
 #. User Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:150
 msgctxt "Search operator"
@@ -1510,7 +1510,7 @@ msgstr "emne"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:159
 msgctxt "Search operator"
@@ -1523,7 +1523,7 @@ msgstr "til"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:180
 msgctxt "Search operator value - mail addressed to the user"
@@ -1535,7 +1535,7 @@ msgstr "meg"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:192
 msgctxt "Search operator value - mail sent by the user"
@@ -1547,7 +1547,7 @@ msgstr "meg"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:204
 msgctxt "'is:' search operator value"
@@ -1560,7 +1560,7 @@ msgstr "lest"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:215
 msgctxt "'is:' search operator value"
@@ -1572,7 +1572,7 @@ msgstr "stjernemerket"
 #.
 #. The translated string must be a single word (use '-', '_'
 #. or similar to combine words into one), should be short, and
-#. also match the translation in "search.page" of the Geary User
+#. also match the translation in "search.page" of the Convey User
 #. Guide.
 #: ../src/engine/imap-db/imap-db-account.vala:225
 msgctxt "'is:' search operator value"
@@ -1720,8 +1720,8 @@ msgid "Remove account"
 msgstr "Fjern konto"
 
 #: ../ui/account_spinner.glade.h:1
-msgid "Please wait while Geary validates your account."
-msgstr "Geary kontrollerer kontoen. Vent litt."
+msgid "Please wait while Convey validates your account."
+msgstr "Convey kontrollerer kontoen. Vent litt."
 
 #: ../ui/certificate_warning_dialog.glade.h:1
 msgid "Untrusted Connection"
@@ -1879,7 +1879,7 @@ msgstr "_Blindkopi"
 msgid "_Reply-To"
 msgstr "_Svar til"
 
-#. Geary account mail will be sent from
+#. Convey account mail will be sent from
 #: ../ui/composer-widget.ui.h:8
 msgid "From"
 msgstr "Fra"
@@ -2604,8 +2604,8 @@ msgid "Always _watch for new mail"
 msgstr "Alltid s_jekk for ny e-post"
 
 #: ../ui/preferences-dialog.ui.h:9
-msgid "Geary will run in the background and notify of new mail"
-msgstr "Geary kjører i bakgrunnen og varsler deg når det kommer ny e-post"
+msgid "Convey will run in the background and notify of new mail"
+msgstr "Convey kjører i bakgrunnen og varsler deg når det kommer ny e-post"
 
 #: ../ui/preferences-dialog.ui.h:10
 msgid "Preferences"
@@ -2636,5 +2636,5 @@ msgid "Email address:"
 msgstr "E-postadresse:"
 
 #: ../ui/upgrade_dialog.glade.h:1
-msgid "Geary update in progress…"
-msgstr "Geary-oppdatering pågår …"
+msgid "Convey update in progress…"
+msgstr "Convey-oppdatering pågår …"

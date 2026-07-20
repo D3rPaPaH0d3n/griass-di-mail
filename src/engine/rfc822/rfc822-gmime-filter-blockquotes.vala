@@ -6,7 +6,7 @@
 
 // Filter to insert blockquotes, put a div around the signature marker, and wrap the whole thing
 // in a styled div.
-private class Geary.RFC822.FilterBlockquotes : GMime.Filter {
+private class Convey.RFC822.FilterBlockquotes : GMime.Filter {
     // Invariant: True iff we are either at the beginning of a line, or all characters seen so far
     // have been quote markers or part of a tag.
     private bool in_prefix;
@@ -67,7 +67,7 @@ private class Geary.RFC822.FilterBlockquotes : GMime.Filter {
             uint8 c = inbuf[i];
 
             if (in_prefix && !in_tag) {
-                if (c == Geary.RFC822.Utils.QUOTE_MARKER) {
+                if (c == Convey.RFC822.Utils.QUOTE_MARKER) {
                     current_quote_level++;
                     continue;
                 }
@@ -93,7 +93,7 @@ private class Geary.RFC822.FilterBlockquotes : GMime.Filter {
             if (c == '\n') {
                 // Was this last line a signature marker?
                 if(out_index > 3 &&
-                    Geary.RFC822.Utils.comp_char_arr_slice(outbuf, out_index - 4, "\n-- ")) {
+                    Convey.RFC822.Utils.comp_char_arr_slice(outbuf, out_index - 4, "\n-- ")) {
                     out_index -= 3;
                     insert_string("<div>-- \n</div>", ref out_index);
                 } else {

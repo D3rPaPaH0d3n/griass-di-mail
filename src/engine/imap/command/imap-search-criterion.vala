@@ -14,7 +14,7 @@
  * @see SearchCommand
  */
 
-public class Geary.Imap.SearchCriterion : BaseObject {
+public class Convey.Imap.SearchCriterion : BaseObject {
     private Gee.List<Parameter> parameters = new Gee.ArrayList<Parameter>();
 
     /**

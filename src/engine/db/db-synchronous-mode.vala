@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public enum Geary.Db.SynchronousMode {
+public enum Convey.Db.SynchronousMode {
     OFF = 0,
     NORMAL = 1,
     FULL = 2;

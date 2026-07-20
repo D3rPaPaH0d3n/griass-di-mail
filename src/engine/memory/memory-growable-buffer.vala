@@ -12,7 +12,7 @@
  * ({@link trim}).
  */
 
-public class Geary.Memory.GrowableBuffer : Memory.Buffer, Memory.UnownedBytesBuffer,
+public class Convey.Memory.GrowableBuffer : Memory.Buffer, Memory.UnownedBytesBuffer,
     Memory.UnownedStringBuffer {
     private static uint8[] NUL_ARRAY = { '\0' };
 

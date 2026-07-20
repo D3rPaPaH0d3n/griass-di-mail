@@ -4,19 +4,19 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary {
+namespace Convey {
     /**
-     * Take a Gee object and return a Geary.Iterable for convenience.
+     * Take a Gee object and return a Convey.Iterable for convenience.
      */
-    public Geary.Iterable<G> traverse<G>(Gee.Iterable<G> i) {
-        return new Geary.Iterable<G>(i.iterator());
+    public Convey.Iterable<G> traverse<G>(Gee.Iterable<G> i) {
+        return new Convey.Iterable<G>(i.iterator());
     }
 
     /**
      * Take some non-null items (all must be of type G) and return a
-     * Geary.Iterable for convenience.
+     * Convey.Iterable for convenience.
      */
-    public Geary.Iterable<G> iterate<G>(G g, ...) {
+    public Convey.Iterable<G> iterate<G>(G g, ...) {
         va_list args = va_list();
         G arg = g;
 
@@ -27,18 +27,18 @@ namespace Geary {
             list.add(arg);
         } while((arg = args.arg()) != null);
 
-        return Geary.traverse<G>(list);
+        return Convey.traverse<G>(list);
     }
 
     /**
-     * Take an array of items and return a Geary.Iterable for convenience.
+     * Take an array of items and return a Convey.Iterable for convenience.
      */
-    public Geary.Iterable<G> iterate_array<G>(G[] a, owned Gee.EqualDataFunc<G>? equal_func = null) {
+    public Convey.Iterable<G> iterate_array<G>(G[] a, owned Gee.EqualDataFunc<G>? equal_func = null) {
         // Use a linked list since we will only ever be iterating over
         // it
         var list = new Gee.LinkedList<G>((owned) equal_func);
         list.add_all_array(a);
-        return Geary.traverse<G>(list);
+        return Convey.traverse<G>(list);
     }
 }
 
@@ -52,9 +52,9 @@ namespace Geary {
  * works in foreach.
  */
 
-public class Geary.Iterable<G> : BaseObject {
+public class Convey.Iterable<G> : BaseObject {
     /**
-     * A private class that lets us take a Geary.Iterable and convert it back
+     * A private class that lets us take a Convey.Iterable and convert it back
      * into a Gee.Iterable.
      */
     private class GeeIterable<G> : Gee.Traversable<G>, Gee.Iterable<G>, BaseObject {

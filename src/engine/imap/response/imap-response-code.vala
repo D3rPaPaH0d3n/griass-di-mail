@@ -10,7 +10,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.1]] for more information.
  */
 
-public class Geary.Imap.ResponseCode : Geary.Imap.ListParameter {
+public class Convey.Imap.ResponseCode : Convey.Imap.ListParameter {
     public ResponseCode() {
     }
 

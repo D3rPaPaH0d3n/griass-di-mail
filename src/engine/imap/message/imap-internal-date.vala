@@ -16,7 +16,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-2.3.3]]
  */
 
-public class Geary.Imap.InternalDate : Geary.MessageData.AbstractMessageData, Geary.Imap.MessageData,
+public class Convey.Imap.InternalDate : Convey.MessageData.AbstractMessageData, Convey.Imap.MessageData,
     Gee.Hashable<InternalDate>, Gee.Comparable<InternalDate> {
     // see get_en_us_mon() for explanation
     private const string[] EN_US_MON = {

@@ -10,7 +10,7 @@
  * @see Capabilities
  */
 
-public class Geary.Imap.CapabilityCommand : Command {
+public class Convey.Imap.CapabilityCommand : Command {
 
     public const string NAME = "capability";
 

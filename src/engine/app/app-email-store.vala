@@ -4,42 +4,42 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.App.EmailStore : BaseObject {
-    public weak Geary.Account account { get; private set; }
+public class Convey.App.EmailStore : BaseObject {
+    public weak Convey.Account account { get; private set; }
 
-    public EmailStore(Geary.Account account) {
+    public EmailStore(Convey.Account account) {
         this.account = account;
     }
 
     /**
-     * Return a map of EmailIdentifiers to the special Geary.FolderSupport
+     * Return a map of EmailIdentifiers to the special Convey.FolderSupport
      * interfaces each one supports.  For example, if an EmailIdentifier comes
-     * back mapped to typeof(Geary.FolderSupport.Mark), it can be marked via
+     * back mapped to typeof(Convey.FolderSupport.Mark), it can be marked via
      * mark_email_async().  If an EmailIdentifier doesn't appear in the
      * returned map, no operations are supported on it.
      */
-    public async Gee.MultiMap<Geary.EmailIdentifier, Type>? get_supported_operations_async(
-        Gee.Collection<Geary.EmailIdentifier> emails, Cancellable? cancellable = null) throws Error {
-        Gee.MultiMap<Geary.EmailIdentifier, Geary.FolderPath>? folders
+    public async Gee.MultiMap<Convey.EmailIdentifier, Type>? get_supported_operations_async(
+        Gee.Collection<Convey.EmailIdentifier> emails, Cancellable? cancellable = null) throws Error {
+        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>? folders
             = yield account.get_containing_folders_async(emails, cancellable);
         if (folders == null)
             return null;
 
         Gee.HashSet<Type> all_support = new Gee.HashSet<Type>();
-        all_support.add(typeof(Geary.FolderSupport.Archive));
-        all_support.add(typeof(Geary.FolderSupport.Copy));
-        all_support.add(typeof(Geary.FolderSupport.Create));
-        all_support.add(typeof(Geary.FolderSupport.Mark));
-        all_support.add(typeof(Geary.FolderSupport.Move));
-        all_support.add(typeof(Geary.FolderSupport.Remove));
+        all_support.add(typeof(Convey.FolderSupport.Archive));
+        all_support.add(typeof(Convey.FolderSupport.Copy));
+        all_support.add(typeof(Convey.FolderSupport.Create));
+        all_support.add(typeof(Convey.FolderSupport.Mark));
+        all_support.add(typeof(Convey.FolderSupport.Move));
+        all_support.add(typeof(Convey.FolderSupport.Remove));
 
-        Gee.HashMultiMap<Geary.EmailIdentifier, Type> map
-            = new Gee.HashMultiMap<Geary.EmailIdentifier, Type>();
-        foreach (Geary.EmailIdentifier email in folders.get_keys()) {
+        Gee.HashMultiMap<Convey.EmailIdentifier, Type> map
+            = new Gee.HashMultiMap<Convey.EmailIdentifier, Type>();
+        foreach (Convey.EmailIdentifier email in folders.get_keys()) {
             Gee.HashSet<Type> support = new Gee.HashSet<Type>();
 
-            foreach (Geary.FolderPath path in folders.get(email)) {
-                Geary.Folder folder;
+            foreach (Convey.FolderPath path in folders.get(email)) {
+                Convey.Folder folder;
                 try {
                     folder = account.get_folder(path);
                 } catch (Error e) {
@@ -55,7 +55,7 @@ public class Geary.App.EmailStore : BaseObject {
                     break;
             }
 
-            Geary.Collection.multi_map_set_all<Geary.EmailIdentifier, Type>(map, email, support);
+            Convey.Collection.multi_map_set_all<Convey.EmailIdentifier, Type>(map, email, support);
         }
 
         return (map.size > 0 ? map : null);
@@ -64,10 +64,10 @@ public class Geary.App.EmailStore : BaseObject {
     /**
      * Lists any set of EmailIdentifiers as if they were all in one folder.
      */
-    public async Gee.Collection<Geary.Email>? list_email_by_sparse_id_async(
-        Gee.Collection<Geary.EmailIdentifier> emails, Geary.Email.Field required_fields,
-        Geary.Folder.ListFlags flags, Cancellable? cancellable = null) throws Error {
-        ListOperation op = new Geary.App.ListOperation(required_fields, flags);
+    public async Gee.Collection<Convey.Email>? list_email_by_sparse_id_async(
+        Gee.Collection<Convey.EmailIdentifier> emails, Convey.Email.Field required_fields,
+        Convey.Folder.ListFlags flags, Cancellable? cancellable = null) throws Error {
+        ListOperation op = new Convey.App.ListOperation(required_fields, flags);
         yield do_folder_operation_async(op, emails, cancellable);
         return (op.results.size > 0 ? op.results : null);
     }
@@ -75,12 +75,12 @@ public class Geary.App.EmailStore : BaseObject {
     /**
      * Fetches any EmailIdentifier regardless of what folder it's in.
      */
-    public async Geary.Email fetch_email_async(Geary.EmailIdentifier email_id,
-        Geary.Email.Field required_fields, Geary.Folder.ListFlags flags,
+    public async Convey.Email fetch_email_async(Convey.EmailIdentifier email_id,
+        Convey.Email.Field required_fields, Convey.Folder.ListFlags flags,
         Cancellable? cancellable = null) throws Error {
-        FetchOperation op = new Geary.App.FetchOperation(required_fields, flags);
+        FetchOperation op = new Convey.App.FetchOperation(required_fields, flags);
         yield do_folder_operation_async(op,
-            Geary.iterate<Geary.EmailIdentifier>(email_id).to_array_list(), cancellable);
+            Convey.iterate<Convey.EmailIdentifier>(email_id).to_array_list(), cancellable);
 
         if (op.result == null)
             throw new EngineError.NOT_FOUND("Couldn't fetch email ID %s", email_id.to_string());
@@ -89,22 +89,22 @@ public class Geary.App.EmailStore : BaseObject {
 
     /**
      * Marks any set of EmailIdentifiers as if they were all in one
-     * Geary.FolderSupport.Mark folder.
+     * Convey.FolderSupport.Mark folder.
      */
-    public async void mark_email_async(Gee.Collection<Geary.EmailIdentifier> emails,
-        Geary.EmailFlags? flags_to_add, Geary.EmailFlags? flags_to_remove,
+    public async void mark_email_async(Gee.Collection<Convey.EmailIdentifier> emails,
+        Convey.EmailFlags? flags_to_add, Convey.EmailFlags? flags_to_remove,
         Cancellable? cancellable = null) throws Error {
-        yield do_folder_operation_async(new Geary.App.MarkOperation(flags_to_add, flags_to_remove),
+        yield do_folder_operation_async(new Convey.App.MarkOperation(flags_to_add, flags_to_remove),
             emails, cancellable);
     }
 
     /**
      * Copies any set of EmailIdentifiers as if they were all in one
-     * Geary.FolderSupport.Copy folder.
+     * Convey.FolderSupport.Copy folder.
      */
-    public async void copy_email_async(Gee.Collection<Geary.EmailIdentifier> emails,
-        Geary.FolderPath destination, Cancellable? cancellable = null) throws Error {
-        yield do_folder_operation_async(new Geary.App.CopyOperation(destination),
+    public async void copy_email_async(Gee.Collection<Convey.EmailIdentifier> emails,
+        Convey.FolderPath destination, Cancellable? cancellable = null) throws Error {
+        yield do_folder_operation_async(new Convey.App.CopyOperation(destination),
             emails, cancellable);
     }
 
@@ -114,8 +114,8 @@ public class Geary.App.EmailStore : BaseObject {
         throws GLib.Error {
         bool best_is_open = false;
         int best_count = 0;
-        Geary.FolderPath? best = null;
-        foreach (Geary.FolderPath path in folders_to_ids.get_keys()) {
+        Convey.FolderPath? best = null;
+        foreach (Convey.FolderPath path in folders_to_ids.get_keys()) {
             Folder folder = this.account.get_folder(path);
             if (!folder.get_type().is_a(operation.folder_type))
                 continue;
@@ -124,7 +124,7 @@ public class Geary.App.EmailStore : BaseObject {
             if (count == 0)
                 continue;
 
-            if (folder.get_open_state() == Geary.Folder.OpenState.REMOTE) {
+            if (folder.get_open_state() == Convey.Folder.OpenState.REMOTE) {
                 if (!best_is_open) {
                     best_is_open = true;
                     best_count = 0;
@@ -143,28 +143,28 @@ public class Geary.App.EmailStore : BaseObject {
     }
 
     private async void do_folder_operation_async(AsyncFolderOperation operation,
-        Gee.Collection<Geary.EmailIdentifier> emails, Cancellable? cancellable) throws Error {
+        Gee.Collection<Convey.EmailIdentifier> emails, Cancellable? cancellable) throws Error {
         if (emails.size == 0)
             return;
 
         debug("EmailStore %s running %s on %d emails", account.to_string(),
             operation.get_type().name(), emails.size);
 
-        Gee.MultiMap<Geary.EmailIdentifier, Geary.FolderPath>? ids_to_folders
+        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>? ids_to_folders
             = yield account.get_containing_folders_async(emails, cancellable);
         if (ids_to_folders == null)
             return;
 
-        Gee.MultiMap<Geary.FolderPath, Geary.EmailIdentifier> folders_to_ids
-            = Geary.Collection.reverse_multi_map<Geary.EmailIdentifier, Geary.FolderPath>(ids_to_folders);
-        Geary.FolderPath? path;
+        Gee.MultiMap<Convey.FolderPath, Convey.EmailIdentifier> folders_to_ids
+            = Convey.Collection.reverse_multi_map<Convey.EmailIdentifier, Convey.FolderPath>(ids_to_folders);
+        Convey.FolderPath? path;
         while ((path = next_folder_for_operation(operation, folders_to_ids)) != null) {
-            Geary.Folder folder = this.account.get_folder(path);
-            Gee.Collection<Geary.EmailIdentifier> ids = folders_to_ids.get(path);
+            Convey.Folder folder = this.account.get_folder(path);
+            Gee.Collection<Convey.EmailIdentifier> ids = folders_to_ids.get(path);
             assert(ids.size > 0);
 
             bool open = false;
-            Gee.Collection<Geary.EmailIdentifier>? used_ids = null;
+            Gee.Collection<Convey.EmailIdentifier>? used_ids = null;
             GLib.Error? op_error = null;
             try {
                 yield folder.open_async(Folder.OpenFlags.NONE, cancellable);
@@ -191,8 +191,8 @@ public class Geary.App.EmailStore : BaseObject {
 
             // We don't want to operate on any mails twice.
             if (used_ids != null) {
-                foreach (Geary.EmailIdentifier id in used_ids.to_array()) {
-                    foreach (Geary.FolderPath p in ids_to_folders.get(id))
+                foreach (Convey.EmailIdentifier id in used_ids.to_array()) {
+                    foreach (Convey.FolderPath p in ids_to_folders.get(id))
                         folders_to_ids.remove(p, id);
                 }
             }

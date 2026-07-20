@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Imap.EmailFlags : Geary.EmailFlags {
+public class Convey.Imap.EmailFlags : Convey.EmailFlags {
     public MessageFlags message_flags { get; private set; }
 
     public EmailFlags(MessageFlags flags) {
@@ -27,18 +27,18 @@ public class Geary.Imap.EmailFlags : Geary.EmailFlags {
     }
 
     /**
-     * Converts a generic {@link Geary.EmailFlags} to IMAP's internal representation of them.
+     * Converts a generic {@link Convey.EmailFlags} to IMAP's internal representation of them.
      *
-     * If the Geary.EmailFlags cannot be cast to IMAP's version, they're created.
+     * If the Convey.EmailFlags cannot be cast to IMAP's version, they're created.
      */
-    public static Imap.EmailFlags from_api_email_flags(Geary.EmailFlags api_flags) {
+    public static Imap.EmailFlags from_api_email_flags(Convey.EmailFlags api_flags) {
         Imap.EmailFlags? imap_flags = api_flags as Imap.EmailFlags;
         if (imap_flags != null)
             return imap_flags;
 
         Gee.List<MessageFlag> msg_flags_add;
         Gee.List<MessageFlag> msg_flags_remove;
-        Geary.Imap.MessageFlag.from_email_flags(api_flags, null, out msg_flags_add,
+        Convey.Imap.MessageFlag.from_email_flags(api_flags, null, out msg_flags_add,
             out msg_flags_remove);
 
         Gee.ArrayList<MessageFlag> msg_flags = new Gee.ArrayList<MessageFlag>();

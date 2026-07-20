@@ -17,7 +17,7 @@
  *
  * This works around the GLib error system's lack of extensibility.
  */
-public class Geary.ErrorContext : BaseObject {
+public class Convey.ErrorContext : BaseObject {
 
 
     /** Represents an individual stack frame in a call back-trace. */

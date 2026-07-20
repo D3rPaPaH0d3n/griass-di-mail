@@ -36,11 +36,11 @@ public class Application.AttachmentManager : GLib.Object {
      * overwriting existing files. Files are written with their
      * existing names. Returns true if written to disk, else false.
      */
-    public async bool save_attachments(Gee.Collection<Geary.Attachment> attachments,
+    public async bool save_attachments(Gee.Collection<Convey.Attachment> attachments,
                                        GLib.Cancellable? cancellable) {
         if (attachments.size == 1) {
             return yield save_attachment(
-                Geary.Collection.first(attachments), null, cancellable
+                Convey.Collection.first(attachments), null, cancellable
             );
         } else {
             return yield save_all(attachments, cancellable);
@@ -54,16 +54,16 @@ public class Application.AttachmentManager : GLib.Object {
      * overwriting existing files. Returns true if written to disk,
      * else false.
      */
-    public async bool save_attachment(Geary.Attachment attachment,
+    public async bool save_attachment(Convey.Attachment attachment,
                                       string? alt_name,
                                       GLib.Cancellable? cancellable) {
-        string alt_display_name = Geary.String.is_empty_or_whitespace(alt_name)
+        string alt_display_name = Convey.String.is_empty_or_whitespace(alt_name)
             ? AttachmentManager.untitled_file_name : alt_name;
         string display_name = yield attachment.get_safe_file_name(
             alt_display_name
         );
 
-        Geary.Memory.Buffer? content = yield open_buffer(
+        Convey.Memory.Buffer? content = yield open_buffer(
             attachment, cancellable
         );
 
@@ -84,7 +84,7 @@ public class Application.AttachmentManager : GLib.Object {
      * else false.
      */
     public async bool save_buffer(string display_name,
-                                  Geary.Memory.Buffer buffer,
+                                  Convey.Memory.Buffer buffer,
                                   GLib.Cancellable? cancellable) {
         var dialog = new Gtk.FileDialog();
         dialog.initial_name = display_name;
@@ -102,7 +102,7 @@ public class Application.AttachmentManager : GLib.Object {
         return yield check_and_write(buffer, destination, cancellable);
     }
 
-    private async bool save_all(Gee.Collection<Geary.Attachment> attachments,
+    private async bool save_all(Gee.Collection<Convey.Attachment> attachments,
                                 GLib.Cancellable? cancellable) {
         var dialog = new Gtk.FileDialog();
         dialog.initial_file = download_dir();
@@ -120,7 +120,7 @@ public class Application.AttachmentManager : GLib.Object {
             return false;
 
         bool succeeded = false;
-        foreach (Geary.Attachment attachment in attachments) {
+        foreach (Convey.Attachment attachment in attachments) {
             GLib.File? destination = null;
             try {
                 destination = destination_dir.get_child_for_display_name(
@@ -153,13 +153,13 @@ public class Application.AttachmentManager : GLib.Object {
         return succeeded;
     }
 
-    private async Geary.Memory.Buffer open_buffer(Geary.Attachment attachment,
+    private async Convey.Memory.Buffer open_buffer(Convey.Attachment attachment,
                                                   GLib.Cancellable? cancellable) {
-        Geary.Memory.FileBuffer? content = null;
+        Convey.Memory.FileBuffer? content = null;
         try {
-            yield Geary.Nonblocking.Concurrent.global.schedule_async(
+            yield Convey.Nonblocking.Concurrent.global.schedule_async(
                 () => {
-                    content = new Geary.Memory.FileBuffer(attachment.file, true);
+                    content = new Convey.Memory.FileBuffer(attachment.file, true);
                 },
                 cancellable
             );
@@ -173,7 +173,7 @@ public class Application.AttachmentManager : GLib.Object {
         return content;
     }
 
-    private async bool check_and_write(Geary.Memory.Buffer content,
+    private async bool check_and_write(Convey.Memory.Buffer content,
                                        GLib.File destination,
                                        GLib.Cancellable? cancellable) {
         bool succeeded = false;
@@ -246,7 +246,7 @@ public class Application.AttachmentManager : GLib.Object {
         return (response == "replace");
     }
 
-    private async void write_buffer_to_file(Geary.Memory.Buffer buffer,
+    private async void write_buffer_to_file(Convey.Memory.Buffer buffer,
                                            GLib.File destination,
                                            GLib.Cancellable? cancellable)
         throws GLib.Error {
@@ -272,14 +272,14 @@ public class Application.AttachmentManager : GLib.Object {
 
     private File? download_dir() {
         var download_dir = GLib.Environment.get_user_special_dir(DOWNLOAD);
-        if (Geary.String.is_empty_or_whitespace(download_dir))
+        if (Convey.String.is_empty_or_whitespace(download_dir))
             return null;
         return File.new_for_path(download_dir);
     }
 
     private inline void handle_error(GLib.Error error) {
         this.parent.application.controller.report_problem(
-            new Geary.ProblemReport(error)
+            new Convey.ProblemReport(error)
         );
     }
 

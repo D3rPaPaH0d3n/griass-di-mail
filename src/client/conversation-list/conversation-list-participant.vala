@@ -5,19 +5,19 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class ConversationList.Participant : Geary.BaseObject, Gee.Hashable<Participant> {
+internal class ConversationList.Participant : Convey.BaseObject, Gee.Hashable<Participant> {
     private const string ME = "Me";
-    public Geary.RFC822.MailboxAddress address;
+    public Convey.RFC822.MailboxAddress address;
 
-    public Participant(Geary.RFC822.MailboxAddress address) {
+    public Participant(Convey.RFC822.MailboxAddress address) {
         this.address = address;
     }
 
-    public string get_full_markup(Gee.List<Geary.RFC822.MailboxAddress> account_mailboxes) {
+    public string get_full_markup(Gee.List<Convey.RFC822.MailboxAddress> account_mailboxes) {
         return get_as_markup((address in account_mailboxes) ? ME : address.to_short_display());
     }
 
-    public string get_short_markup(Gee.List<Geary.RFC822.MailboxAddress> account_mailboxes) {
+    public string get_short_markup(Gee.List<Convey.RFC822.MailboxAddress> account_mailboxes) {
         if (address in account_mailboxes)
             return get_as_markup(ME);
 
@@ -31,7 +31,7 @@ internal class ConversationList.Participant : Geary.BaseObject, Gee.Hashable<Par
             // assume address is in Last, First format
             string[] tokens = short_address.split(", ", 2);
             short_address = tokens[1].strip();
-            if (Geary.String.is_empty(short_address))
+            if (Convey.String.is_empty(short_address))
                 return get_full_markup(account_mailboxes);
         }
 
@@ -41,14 +41,14 @@ internal class ConversationList.Participant : Geary.BaseObject, Gee.Hashable<Par
             return get_full_markup(account_mailboxes);
 
         string first_name = tokens[0].strip();
-        if (Geary.String.is_empty_or_whitespace(first_name))
+        if (Convey.String.is_empty_or_whitespace(first_name))
             return get_full_markup(account_mailboxes);
 
         return get_as_markup(first_name);
     }
 
     private string get_as_markup(string participant) {
-        string markup = Geary.HTML.escape_markup(participant);
+        string markup = Convey.HTML.escape_markup(participant);
 
         if (this.address.is_spoofed()) {
             markup = "<s>%s</s>".printf(markup);

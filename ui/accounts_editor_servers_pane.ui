@@ -3,7 +3,7 @@
   <template class="AccountsEditorServersPane" parent="AccountsEditorPane">
     <property name="title" translatable="yes">Server Settings</property>
     <style>
-      <class name="geary-accounts-editor-pane"/>
+      <class name="convey-accounts-editor-pane"/>
     </style>
 
     <property name="child">
@@ -45,15 +45,15 @@
                   <object class="GtkBox" id="pane_content">
                     <property name="orientation">vertical</property>
                     <style>
-                      <class name="geary-accounts-editor-pane-content"/>
+                      <class name="convey-accounts-editor-pane-content"/>
                     </style>
                     <child>
                       <object class="AdwPreferencesGroup">
                         <child>
                           <object class="AdwActionRow" id="account_provider_row">
-                            <!-- Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Geary-->
+                            <!-- Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Convey-->
                             <property name="title" translatable="yes">Account Source</property>
-                            <property name="subtitle" translatable="yes">Geary</property>
+                            <property name="subtitle" translatable="yes">Convey</property>
                             <style>
                               <class name="property"/>
                             </style>

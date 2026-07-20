@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.DeserializerTest : TestCase {
+class Convey.Imap.DeserializerTest : TestCase {
 
 
     protected enum Expect { MESSAGE, EOS, DESER_FAIL; }
@@ -19,7 +19,7 @@ class Geary.Imap.DeserializerTest : TestCase {
 
 
     public DeserializerTest() {
-        base("Geary.Imap.DeserializerTest");
+        base("Convey.Imap.DeserializerTest");
         add_test("parse_unquoted", parse_unquoted);
         add_test("parse_quoted", parse_quoted);
         add_test("parse_number", parse_number);

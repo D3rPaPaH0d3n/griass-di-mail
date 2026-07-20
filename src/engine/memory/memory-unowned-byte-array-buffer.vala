@@ -14,7 +14,7 @@
  * The ByteArray that is returned should ''not'' be modified or freed by the caller.
  */
 
-public interface Geary.Memory.UnownedByteArrayBuffer : Memory.Buffer {
+public interface Convey.Memory.UnownedByteArrayBuffer : Memory.Buffer {
     /**
      * Returns an unowned pointer to the backing ByteArray.
      *

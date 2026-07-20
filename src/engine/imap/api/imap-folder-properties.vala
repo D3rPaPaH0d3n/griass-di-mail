@@ -5,7 +5,7 @@
  */
 
 /**
- * Geary.Imap.FolderProperties represent the Geary API's notion of FolderProperties but
+ * Convey.Imap.FolderProperties represent the Convey API's notion of FolderProperties but
  * also hangs additional useful information available to IMAP-specific code (in the Engine,
  * that includes imap, imap-engine, and imap-db).
  *
@@ -20,7 +20,7 @@
  *
  * In any event, the properties here are updated by the following logic:
  *
- * When a folder is first "seen" by Geary, it generates an Imap.FolderProperties object with all
+ * When a folder is first "seen" by Convey, it generates an Imap.FolderProperties object with all
  * the fields filled in except for status_messages or select_examine_messages, depending on which
  * command was used to discover it.  (In practice, the folder will be first recognized via STATUS,
  * but this isn't guaranteed.)
@@ -38,7 +38,7 @@
  * is considered more authoritative than STATUS.
  */
 
-public class Geary.Imap.FolderProperties : Geary.FolderProperties {
+public class Convey.Imap.FolderProperties : Convey.FolderProperties {
     /**
      * -1 if the Folder was not opened via SELECT or EXAMINE.  Updated as EXISTS server data
      * arrives.
@@ -150,7 +150,7 @@ public class Geary.Imap.FolderProperties : Geary.FolderProperties {
      *
      * Note that have_contents_changed does *not* discern if message flags have changed.
      */
-    public bool have_contents_changed(Geary.Imap.FolderProperties other, string name) {
+    public bool have_contents_changed(Convey.Imap.FolderProperties other, string name) {
         // UIDNEXT changes indicate messages have been added, but not if they've been removed
         if (uid_next != null && other.uid_next != null && !uid_next.equal_to(other.uid_next)) {
             debug("%s FolderProperties changed: UIDNEXT=%s other.UIDNEXT=%s", name,
@@ -197,7 +197,7 @@ public class Geary.Imap.FolderProperties : Geary.FolderProperties {
     /**
      * Update an existing {@link FolderProperties} with fresh {@link StatusData}.
      *
-     * This will force the {@link Geary.FolderProperties.email_total} property to match the
+     * This will force the {@link Convey.FolderProperties.email_total} property to match the
      * {@link status_messages} value.
      */
     public void update_status(StatusData status) {

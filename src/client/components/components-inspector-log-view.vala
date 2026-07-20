@@ -8,7 +8,7 @@
 /**
  * A view that displays the contents of the Engine's log.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-inspector-log-view.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-inspector-log-view.ui")]
 public class Components.InspectorLogView : Gtk.Box {
 
 
@@ -53,14 +53,14 @@ public class Components.InspectorLogView : Gtk.Box {
 
     private class RecordRow : Gtk.Box {
 
-        public Geary.Logging.Record? record {
+        public Convey.Logging.Record? record {
             get { return this._record; }
             set {
                 this._record = value;
                 update();
             }
         }
-        private Geary.Logging.Record? _record = null;
+        private Convey.Logging.Record? _record = null;
 
         private unowned Gtk.Label message_label;
 
@@ -109,7 +109,7 @@ public class Components.InspectorLogView : Gtk.Box {
     private string[] logs_filter_terms = new string[0];
 
     private bool update_logs = true;
-    private Geary.Logging.Record? first_pending = null;
+    private Convey.Logging.Record? first_pending = null;
 
     private bool autoscroll = true;
 
@@ -118,7 +118,7 @@ public class Components.InspectorLogView : Gtk.Box {
 
     private Gee.Set<string> seen_domains = new Gee.HashSet<string>();
 
-    private Geary.AccountInformation? account_filter = null;
+    private Convey.AccountInformation? account_filter = null;
 
     private bool listener_installed = false;
 
@@ -127,15 +127,15 @@ public class Components.InspectorLogView : Gtk.Box {
     public signal void record_selection_changed();
 
 
-    public InspectorLogView(Geary.AccountInformation? filter_by = null) {
+    public InspectorLogView(Convey.AccountInformation? filter_by = null) {
         // Prefill well-known engine logging domains
-        add_domain(Geary.App.ConversationMonitor.LOGGING_DOMAIN);
-        add_domain(Geary.Imap.ClientService.LOGGING_DOMAIN);
-        add_domain(Geary.Imap.ClientService.DESERIALISATION_LOGGING_DOMAIN);
-        add_domain(Geary.Imap.ClientService.PROTOCOL_LOGGING_DOMAIN);
-        add_domain(Geary.Imap.ClientService.REPLAY_QUEUE_LOGGING_DOMAIN);
-        add_domain(Geary.Smtp.ClientService.LOGGING_DOMAIN);
-        add_domain(Geary.Smtp.ClientService.PROTOCOL_LOGGING_DOMAIN);
+        add_domain(Convey.App.ConversationMonitor.LOGGING_DOMAIN);
+        add_domain(Convey.Imap.ClientService.LOGGING_DOMAIN);
+        add_domain(Convey.Imap.ClientService.DESERIALISATION_LOGGING_DOMAIN);
+        add_domain(Convey.Imap.ClientService.PROTOCOL_LOGGING_DOMAIN);
+        add_domain(Convey.Imap.ClientService.REPLAY_QUEUE_LOGGING_DOMAIN);
+        add_domain(Convey.Smtp.ClientService.LOGGING_DOMAIN);
+        add_domain(Convey.Smtp.ClientService.PROTOCOL_LOGGING_DOMAIN);
 
         this.search_bar.connect_entry(this.search_entry);
         this.sidebar.set_header_func(this.sidebar_header_update);
@@ -145,15 +145,15 @@ public class Components.InspectorLogView : Gtk.Box {
     }
 
     /** Loads log records from the logging system into the view. */
-    public void load(Geary.Logging.Record first, Geary.Logging.Record? last) {
+    public void load(Convey.Logging.Record first, Convey.Logging.Record? last) {
         if (last == null) {
             // Install the listener then start adding the backlog
             // (ba-doom-tish) so to avoid the race.
-            Geary.Logging.set_log_listener(this.on_log_record);
+            Convey.Logging.set_log_listener(this.on_log_record);
             this.listener_installed = true;
         }
 
-        Geary.Logging.Record? logs = first;
+        Convey.Logging.Record? logs = first;
         int index = 0;
         while (logs != last) {
             update_record(logs, this.logs_store, index++);
@@ -169,7 +169,7 @@ public class Components.InspectorLogView : Gtk.Box {
 
     ~InspectorLogView() {
         if (this.listener_installed) {
-            Geary.Logging.set_log_listener(null);
+            Convey.Logging.set_log_listener(null);
         }
     }
 
@@ -187,7 +187,7 @@ public class Components.InspectorLogView : Gtk.Box {
         this.autoscroll = enabled;
 
         if (enabled) {
-            Geary.Logging.Record? logs = this.first_pending;
+            Convey.Logging.Record? logs = this.first_pending;
             while (logs != null) {
                 update_record(logs, this.logs_store, -1);
                 logs = logs.next;
@@ -213,7 +213,7 @@ public class Components.InspectorLogView : Gtk.Box {
                 if (cancellable.is_cancelled())
                     break;
 
-                var record = (Geary.Logging.Record) this.logs_store.get_item(i);
+                var record = (Convey.Logging.Record) this.logs_store.get_item(i);
                 out.put_string(record.format());
                 out.put_string(line_sep);
             }
@@ -225,7 +225,7 @@ public class Components.InspectorLogView : Gtk.Box {
                     break;
 
                 uint position = selected.get_nth(i);
-                var record = (Geary.Logging.Record) this.logs_store.get_item(position);
+                var record = (Convey.Logging.Record) this.logs_store.get_item(position);
                 assert(record != null);
 
                 out.put_string(record.format());
@@ -237,7 +237,7 @@ public class Components.InspectorLogView : Gtk.Box {
         }
     }
 
-    private void add_account(Geary.AccountInformation account) {
+    private void add_account(Convey.AccountInformation account) {
         if (this.seen_accounts.add(account.id)) {
             var row = new SidebarRow(ACCOUNT, account.display_name, account.id);
             row.enabled = (
@@ -261,12 +261,12 @@ public class Components.InspectorLogView : Gtk.Box {
         var safe_domain = domain ?? "(none)";
         if (this.seen_domains.add(domain)) {
             var type = (
-                safe_domain.down().has_prefix(Geary.Logging.DOMAIN.down())
+                safe_domain.down().has_prefix(Convey.Logging.DOMAIN.down())
                 ? SidebarRow.RowType.INTERNAL_DOMAIN
                 : SidebarRow.RowType.EXTERNAL_DOMAIN
             );
             var row = new SidebarRow(type, safe_domain, safe_domain);
-            row.enabled = !Geary.Logging.is_suppressed_domain(domain ?? "");
+            row.enabled = !Convey.Logging.is_suppressed_domain(domain ?? "");
             row.notify["enabled"].connect(this.on_domain_enabled_changed);
             int i = 0;
             for (;; i++) {
@@ -295,12 +295,12 @@ public class Components.InspectorLogView : Gtk.Box {
 
     private void update_logs_filter() {
         string cleaned =
-            Geary.String.reduce_whitespace(this.search_entry.text).casefold();
+            Convey.String.reduce_whitespace(this.search_entry.text).casefold();
         this.logs_filter_terms = cleaned.split(" ");
         this.logs_filter.changed(Gtk.FilterChange.DIFFERENT);
     }
 
-    private inline void update_record(Geary.Logging.Record record,
+    private inline void update_record(Convey.Logging.Record record,
                                       GLib.ListStore store,
                                       int position) {
         record.fill_well_known_sources();
@@ -327,7 +327,7 @@ public class Components.InspectorLogView : Gtk.Box {
     }
 
     private bool log_filter_func(GLib.Object object) {
-        unowned var record = (Geary.Logging.Record) object;
+        unowned var record = (Convey.Logging.Record) object;
 
         var account = record.account;
         bool show_row = (
@@ -335,7 +335,7 @@ public class Components.InspectorLogView : Gtk.Box {
         );
 
         if (show_row) {
-            show_row = !Geary.Logging.is_suppressed_domain(record.domain ?? "");
+            show_row = !Convey.Logging.is_suppressed_domain(record.domain ?? "");
         }
 
         string message = record.format();
@@ -382,7 +382,7 @@ public class Components.InspectorLogView : Gtk.Box {
     [GtkCallback]
     private void on_item_factory_bind(Object object) {
         unowned var item = (Gtk.ListItem) object;
-        unowned var record = (Geary.Logging.Record) item.item;
+        unowned var record = (Convey.Logging.Record) item.item;
         unowned var row = (RecordRow) item.child;
 
         row.record = record;
@@ -397,7 +397,7 @@ public class Components.InspectorLogView : Gtk.Box {
         }
     }
 
-    private void on_log_record(Geary.Logging.Record record) {
+    private void on_log_record(Convey.Logging.Record record) {
         if (this.update_logs) {
             GLib.MainContext.default().invoke(() => {
                     update_record(record, this.logs_store, -1);
@@ -423,8 +423,8 @@ public class Components.InspectorLogView : Gtk.Box {
                                            GLib.ParamSpec param) {
         var row = object as SidebarRow;
         if (row != null) {
-            if ((row.enabled && Geary.Logging.unsuppress_domain(row.id)) ||
-                (!row.enabled && Geary.Logging.suppress_domain(row.id))) {
+            if ((row.enabled && Convey.Logging.unsuppress_domain(row.id)) ||
+                (!row.enabled && Convey.Logging.suppress_domain(row.id))) {
                 update_logs_filter();
             }
         }

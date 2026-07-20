@@ -5,16 +5,16 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.App.ConversationOperationQueue : BaseObject {
+private class Convey.App.ConversationOperationQueue : BaseObject {
     public bool is_processing { get; private set; default = false; }
 
     /** Tracks progress running operations in this queue. */
-    public Geary.ProgressMonitor progress_monitor { get; private set; }
+    public Convey.ProgressMonitor progress_monitor { get; private set; }
 
-    private Geary.Nonblocking.Queue<ConversationOperation> mailbox
-        = new Geary.Nonblocking.Queue<ConversationOperation>.fifo();
-    private Geary.Nonblocking.Spinlock processing_done_spinlock
-        = new Geary.Nonblocking.Spinlock();
+    private Convey.Nonblocking.Queue<ConversationOperation> mailbox
+        = new Convey.Nonblocking.Queue<ConversationOperation>.fifo();
+    private Convey.Nonblocking.Spinlock processing_done_spinlock
+        = new Convey.Nonblocking.Spinlock();
 
     /** Fired when an error occurs executing an operation. */
     public signal void operation_error(ConversationOperation op, Error err);

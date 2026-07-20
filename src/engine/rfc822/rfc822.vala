@@ -4,10 +4,10 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.RFC822 {
+namespace Convey.RFC822 {
 
     /**
-     * Common text formats supported by {@link Geary.RFC822}.
+     * Common text formats supported by {@link Convey.RFC822}.
      */
     public enum TextFormat {
         PLAIN,
@@ -55,7 +55,7 @@ namespace Geary.RFC822 {
     }
 
     public GMime.ParserOptions get_parser_options() {
-        return Geary.RFC822.gmime_parser_options;
+        return Convey.RFC822.gmime_parser_options;
     }
 
     public string? get_charset() {

@@ -13,7 +13,7 @@
  * registered via {@link Application.register_action} or similar calls
  * for it to be enabled.
  */
-public class Plugin.Actionable : Geary.BaseObject {
+public class Plugin.Actionable : Convey.BaseObject {
 
 
     /**

@@ -9,7 +9,7 @@
 /**
  * A container of conversation-related actions.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-conversation-actions.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-conversation-actions.ui")]
 public class Components.ConversationActions : Gtk.Box {
 
     public bool show_conversation_actions {
@@ -43,8 +43,8 @@ public class Components.ConversationActions : Gtk.Box {
 
     public int selected_conversations { get; set; }
 
-    private Geary.Account _account;
-    public Geary.Account account {
+    private Convey.Account _account;
+    public Convey.Account account {
         get {
             return this._account;
         }
@@ -73,7 +73,7 @@ public class Components.ConversationActions : Gtk.Box {
     construct {
         // Assemble the mark menus
         Gtk.Builder menu_builder = new Gtk.Builder.from_resource(
-            "/org/gnome/Geary/components-menu-conversation.ui"
+            "/net/donnybeelo/Convey/components-menu-conversation.ui"
         );
         GLib.MenuModel mark_menu = (MenuModel) menu_builder.get_object(
             "mark_message_menu"
@@ -142,7 +142,7 @@ public class Components.ConversationActions : Gtk.Box {
 
         if (this.account != null) {
             switch (this.account.information.service_provider) {
-            case Geary.ServiceProvider.GMAIL:
+            case Convey.ServiceProvider.GMAIL:
                 this.copy_message_button.tooltip_text = ngettext(
                     "Add label to conversation",
                     "Add label to conversations",

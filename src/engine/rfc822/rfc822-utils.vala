@@ -7,7 +7,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-namespace Geary.RFC822.Utils {
+namespace Convey.RFC822.Utils {
 
     // We use DEL to mark quote levels, since it's unlikely to be in
     // email bodies, is a single byte in UTF-8, and is unmolested by
@@ -160,7 +160,7 @@ namespace Geary.RFC822.Utils {
             bool in_inline_pgp_header = false;
             foreach (string line in all_lines) {
                 if (in_inline_pgp_header) {
-                    if (Geary.String.is_empty(line)) {
+                    if (Convey.String.is_empty(line)) {
                         in_inline_pgp_header = false;
                     }
                     continue;
@@ -183,7 +183,7 @@ namespace Geary.RFC822.Utils {
                 if (line.has_prefix("~~~~"))
                     continue;
 
-                if (Geary.String.is_empty_or_whitespace(line)) {
+                if (Convey.String.is_empty_or_whitespace(line)) {
                     buf.append("\n");
                     continue;
                 }
@@ -194,13 +194,13 @@ namespace Geary.RFC822.Utils {
 
             preview = buf.str;
         } else if (format == TextFormat.HTML) {
-            preview = Geary.HTML.html_to_text(text, false);
+            preview = Convey.HTML.html_to_text(text, false);
         }
 
         // XXX really shouldn't have to call make_valid here but do so to
         // avoid segfaults in the regex engine on invalid char data. See
         // issue #186 for the proper fix.
-        return Geary.String.reduce_whitespace(preview.make_valid());
+        return Convey.String.reduce_whitespace(preview.make_valid());
     }
 
     /**

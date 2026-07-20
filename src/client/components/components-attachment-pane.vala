@@ -11,7 +11,7 @@
  * This can be used in an editable or non-editable context, the UI
  * shown will differ slightly based on which is selected.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-attachment-pane.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-attachment-pane.ui")]
 public class Components.AttachmentPane : Gtk.Box {
 
 
@@ -37,14 +37,14 @@ public class Components.AttachmentPane : Gtk.Box {
     };
 
     // Displays an attachment's icon and details
-    [GtkTemplate (ui = "/org/gnome/Geary/components-attachment-view.ui")]
+    [GtkTemplate (ui = "/net/donnybeelo/Convey/components-attachment-view.ui")]
     private class View : Gtk.Grid {
 
 
         private const int ATTACHMENT_ICON_SIZE = 32;
         private const int ATTACHMENT_PREVIEW_SIZE = 64;
 
-        public Geary.Attachment attachment { get; private set; }
+        public Convey.Attachment attachment { get; private set; }
 
         [GtkChild] private unowned Gtk.Image icon;
 
@@ -55,7 +55,7 @@ public class Components.AttachmentPane : Gtk.Box {
         private string gio_content_type;
 
 
-        public View(Geary.Attachment attachment) {
+        public View(Convey.Attachment attachment) {
             this.attachment = attachment;
             string mime_content_type = attachment.content_type.get_mime_type();
             this.gio_content_type = ContentType.from_mime_type(
@@ -73,7 +73,7 @@ public class Components.AttachmentPane : Gtk.Box {
                 attachment.filesize
             );
 
-            if (Geary.String.is_empty(file_name)) {
+            if (Convey.String.is_empty(file_name)) {
                 // XXX Check for unknown types here and try to guess
                 // using attachment data.
                 file_name = file_desc;
@@ -145,8 +145,8 @@ public class Components.AttachmentPane : Gtk.Box {
     /** Determines if this pane's contents can be modified. */
     public bool edit_mode { get; private set; }
 
-    private Gee.List<Geary.Attachment> attachments =
-         new Gee.LinkedList<Geary.Attachment>();
+    private Gee.List<Convey.Attachment> attachments =
+         new Gee.LinkedList<Convey.Attachment>();
 
     private Application.AttachmentManager manager;
 
@@ -191,7 +191,7 @@ public class Components.AttachmentPane : Gtk.Box {
         insert_action_group(GROUP_NAME, this.actions);
     }
 
-    public void add_attachment(Geary.Attachment attachment,
+    public void add_attachment(Convey.Attachment attachment,
                                GLib.Cancellable? cancellable) {
         View view = new View(attachment);
         this.attachments_view.append(view);
@@ -201,11 +201,11 @@ public class Components.AttachmentPane : Gtk.Box {
         update_actions();
     }
 
-    public void open_attachment(Geary.Attachment attachment) {
-        open_attachments.begin(Geary.Collection.single(attachment));
+    public void open_attachment(Convey.Attachment attachment) {
+        open_attachments.begin(Convey.Collection.single(attachment));
     }
 
-    public void save_attachment(Geary.Attachment attachment) {
+    public void save_attachment(Convey.Attachment attachment) {
         this.manager.save_attachment.begin(
             attachment,
             null,
@@ -213,7 +213,7 @@ public class Components.AttachmentPane : Gtk.Box {
         );
     }
 
-    public void remove_attachment(Geary.Attachment attachment) {
+    public void remove_attachment(Convey.Attachment attachment) {
         this.attachments.remove(attachment);
         for (int i = 0; true; i++) {
             unowned var flow_child = this.attachments_view.get_child_at_index(i);
@@ -229,7 +229,7 @@ public class Components.AttachmentPane : Gtk.Box {
     public bool save_all() {
         bool ret = false;
         if (!this.attachments.is_empty) {
-            var all = new Gee.ArrayList<Geary.Attachment>();
+            var all = new Gee.ArrayList<Convey.Attachment>();
             all.add_all(this.attachments);
             this.manager.save_attachments.begin(
                 all,
@@ -239,8 +239,8 @@ public class Components.AttachmentPane : Gtk.Box {
         return ret;
     }
 
-    private Geary.Attachment? get_attachment(GLib.Variant param) {
-        Geary.Attachment? ret = null;
+    private Convey.Attachment? get_attachment(GLib.Variant param) {
+        Convey.Attachment? ret = null;
         string path = (string) param;
         foreach (var attachment in this.attachments) {
             if (attachment.file.get_path() == path) {
@@ -251,8 +251,8 @@ public class Components.AttachmentPane : Gtk.Box {
         return ret;
     }
 
-    private Gee.Collection<Geary.Attachment> get_selected_attachments() {
-        var selected = new Gee.LinkedList<Geary.Attachment>();
+    private Gee.Collection<Convey.Attachment> get_selected_attachments() {
+        var selected = new Gee.LinkedList<Convey.Attachment>();
         this.attachments_view.selected_foreach((box, child) => {
                 selected.add(
                     ((View) child.get_child()).attachment
@@ -310,7 +310,7 @@ public class Components.AttachmentPane : Gtk.Box {
         set_action_enabled(ACTION_SELECT_ALL, len < this.attachments.size);
     }
 
-    private async void open_attachments(Gee.Collection<Geary.Attachment> attachments) {
+    private async void open_attachments(Gee.Collection<Convey.Attachment> attachments) {
         var main = get_root() as Application.MainWindow;
         if (main == null)
             return;
@@ -353,7 +353,7 @@ public class Components.AttachmentPane : Gtk.Box {
 
     private void show_popup(View view, Gdk.Rectangle? rect) {
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/org/gnome/Geary/components-attachment-pane-menus.ui"
+            "/net/donnybeelo/Convey/components-attachment-pane-menus.ui"
         );
         var targets = new Gee.HashMap<string,GLib.Variant>();
         GLib.Variant target = view.attachment.file.get_path();

@@ -11,17 +11,17 @@
  * An interface between the high-level engine API and an IMAP mailbox.
  *
  * Because of the complexities of the IMAP protocol, class takes
- * common operations that a Geary.Folder implementation would need
- * (in particular, {@link Geary.ImapEngine.MinimalFolder}) and makes
+ * common operations that a Convey.Folder implementation would need
+ * (in particular, {@link Convey.ImapEngine.MinimalFolder}) and makes
  * them into simple async calls.
  *
  * When constructed, this class will issue an IMAP SELECT command for
  * the mailbox represented by this folder, placing the session in the
  * Selected state.
  */
-private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
+private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
 
-    private const Geary.Email.Field BASIC_FETCH_FIELDS = Email.Field.ENVELOPE | Email.Field.DATE
+    private const Convey.Email.Field BASIC_FETCH_FIELDS = Email.Field.ENVELOPE | Email.Field.DATE
         | Email.Field.ORIGINATORS | Email.Field.RECEIVERS | Email.Field.REFERENCES
         | Email.Field.SUBJECT | Email.Field.HEADER;
 
@@ -257,7 +257,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
                         // whatever is used by home.pl (dovecot?)
                         // sends UIDNEXT 0. Just ignore these since
                         // there nothing else that can be done. See
-                        // GNOME/geary#711
+                        // GNOME/convey#711
                         if (response_code.get_as_string(1).as_int64() == 0) {
                             warning("Ignoring bad UIDNEXT 0 from server");
                         } else {
@@ -346,7 +346,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
 
         Gee.Set<Imap.UID> search_results = new Gee.HashSet<Imap.UID>();
         yield exec_commands_async(
-            Geary.iterate<Command>(cmd).to_array_list(),
+            Convey.iterate<Command>(cmd).to_array_list(),
             null,
             search_results,
             cancellable
@@ -357,7 +357,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
 
     private Gee.Collection<FetchCommand> assemble_list_commands(
         Imap.MessageSet msg_set,
-        Geary.Email.Field fields,
+        Convey.Email.Field fields,
         GLib.Cancellable? cancellable,
         out FetchBodyDataSpecifier[]? header_specifiers,
         out FetchBodyDataSpecifier? body_specifier,
@@ -373,7 +373,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         // pulled down, not a guarantee); if request is for NONE, that guarantees that the
         // EmailIdentifier will be set, and so fetch UIDs (which looks funny but works when
         // listing a range for contents: UID FETCH x:y UID)
-        if (!msg_set.is_uid || fields == Geary.Email.Field.NONE) {
+        if (!msg_set.is_uid || fields == Convey.Email.Field.NONE) {
             cmds.add(
                 new FetchCommand.data_type(
                     msg_set, FetchDataSpecifier.UID, cancellable
@@ -471,7 +471,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
             // the first MIME section
 
             preview_specifier = new FetchBodyDataSpecifier.peek(FetchBodyDataSpecifier.SectionPart.NONE,
-                { 1 }, 0, Geary.Email.MAX_PREVIEW_BYTES, null);
+                { 1 }, 0, Convey.Email.MAX_PREVIEW_BYTES, null);
             cmds.add(
                 new FetchCommand.body_data_type(
                     msg_set, preview_specifier, cancellable
@@ -495,12 +495,12 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         if (fields.requires_any(Email.Field.PROPERTIES | Email.Field.FLAGS)) {
             Gee.List<FetchDataSpecifier> data_types = new Gee.ArrayList<FetchDataSpecifier>();
 
-            if (fields.require(Geary.Email.Field.PROPERTIES)) {
+            if (fields.require(Convey.Email.Field.PROPERTIES)) {
                 data_types.add(FetchDataSpecifier.INTERNALDATE);
                 data_types.add(FetchDataSpecifier.RFC822_SIZE);
             }
 
-            if (fields.require(Geary.Email.Field.FLAGS))
+            if (fields.require(Convey.Email.Field.FLAGS))
                 data_types.add(FetchDataSpecifier.FLAGS);
 
             cmds.add(new FetchCommand(msg_set, data_types, null, cancellable));
@@ -510,8 +510,8 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
     }
 
     // Returns a no-message-id ImapDB.EmailIdentifier with the UID stored in it.
-    public async Gee.List<Geary.Email>? list_email_async(MessageSet msg_set,
-                                                         Geary.Email.Field fields,
+    public async Gee.List<Convey.Email>? list_email_async(MessageSet msg_set,
+                                                         Convey.Email.Field fields,
                                                          Cancellable? cancellable)
         throws Error {
         Gee.HashMap<SequenceNumber, FetchedData> fetched =
@@ -557,9 +557,9 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         if (fetched.size == 0)
             return null;
 
-        // Convert fetched data into Geary.Email objects
+        // Convert fetched data into Convey.Email objects
         // because this could be for a lot of email, do in a background thread
-        Gee.List<Geary.Email> email_list = new Gee.ArrayList<Geary.Email>();
+        Gee.List<Convey.Email> email_list = new Gee.ArrayList<Convey.Email>();
         yield Nonblocking.Concurrent.global.schedule_async(() => {
             foreach (SequenceNumber seq_num in fetched.keys) {
                 FetchedData fetched_data = fetched.get(seq_num);
@@ -575,7 +575,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
                 }
 
                 try {
-                    Geary.Email email = fetched_data_to_email(
+                    Convey.Email email = fetched_data_to_email(
                         uid,
                         fetched_data,
                         fields,
@@ -683,8 +683,8 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         yield exec_commands_async(cmds, null, null, cancellable);
     }
 
-    public async void mark_email_async(Gee.List<MessageSet> msg_sets, Geary.EmailFlags? flags_to_add,
-        Geary.EmailFlags? flags_to_remove, Cancellable? cancellable) throws Error {
+    public async void mark_email_async(Gee.List<MessageSet> msg_sets, Convey.EmailFlags? flags_to_add,
+        Convey.EmailFlags? flags_to_remove, Cancellable? cancellable) throws Error {
         Gee.List<MessageFlag> msg_flags_add = new Gee.ArrayList<MessageFlag>();
         Gee.List<MessageFlag> msg_flags_remove = new Gee.ArrayList<MessageFlag>();
         MessageFlag.from_email_flags(flags_to_add, flags_to_remove, out msg_flags_add,
@@ -735,7 +735,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         CopyCommand cmd = new CopyCommand(msg_set, mailbox, cancellable);
 
         Gee.Map<Command, StatusResponse>? responses = yield exec_commands_async(
-            Geary.iterate<Command>(cmd).to_array_list(), null, null, cancellable);
+            Convey.iterate<Command>(cmd).to_array_list(), null, null, cancellable);
 
         if (!responses.has_key(cmd))
             return null;
@@ -794,7 +794,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
 
     // NOTE: If fields are added or removed from this method, BASIC_FETCH_FIELDS *must* be updated
     // as well
-    private void fields_to_fetch_data_types(Geary.Email.Field fields,
+    private void fields_to_fetch_data_types(Convey.Email.Field fields,
                                             Gee.List<FetchDataSpecifier> basic_types,
                                             Gee.List<string> header_fields) {
         // The assumption here is that because ENVELOPE is such a common fetch command, the
@@ -802,53 +802,53 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         // envelope separately, the server has to chunk harder parsing the RFC822 header ... have
         // to add References because IMAP ENVELOPE doesn't return them for some reason (but does
         // return Message-ID and In-Reply-To)
-        if (fields.is_all_set(Geary.Email.Field.ENVELOPE)) {
+        if (fields.is_all_set(Convey.Email.Field.ENVELOPE)) {
             basic_types.add(FetchDataSpecifier.ENVELOPE);
             header_fields.add("References");
 
             // remove those flags and process any remaining
-            fields = fields.clear(Geary.Email.Field.ENVELOPE);
+            fields = fields.clear(Convey.Email.Field.ENVELOPE);
         }
 
-        foreach (Geary.Email.Field field in Geary.Email.Field.all()) {
+        foreach (Convey.Email.Field field in Convey.Email.Field.all()) {
             switch (fields & field) {
-                case Geary.Email.Field.DATE:
+                case Convey.Email.Field.DATE:
                     header_fields.add("Date");
                 break;
 
-                case Geary.Email.Field.ORIGINATORS:
+                case Convey.Email.Field.ORIGINATORS:
                     header_fields.add("From");
                     header_fields.add("Sender");
                     header_fields.add("Reply-To");
                 break;
 
-                case Geary.Email.Field.RECEIVERS:
+                case Convey.Email.Field.RECEIVERS:
                     header_fields.add("To");
                     header_fields.add("Cc");
                     header_fields.add("Bcc");
                 break;
 
-                case Geary.Email.Field.REFERENCES:
+                case Convey.Email.Field.REFERENCES:
                     header_fields.add("References");
                     header_fields.add("Message-ID");
                     header_fields.add("In-Reply-To");
                 break;
 
-                case Geary.Email.Field.SUBJECT:
+                case Convey.Email.Field.SUBJECT:
                     header_fields.add("Subject");
                 break;
 
-                case Geary.Email.Field.HEADER:
+                case Convey.Email.Field.HEADER:
                     // TODO: If the entire header is being pulled, then no need to pull down partial
                     // headers; simply get them all and decode what is needed directly
                     basic_types.add(FetchDataSpecifier.RFC822_HEADER);
                 break;
 
-                case Geary.Email.Field.NONE:
-                case Geary.Email.Field.BODY:
-                case Geary.Email.Field.PROPERTIES:
-                case Geary.Email.Field.FLAGS:
-                case Geary.Email.Field.PREVIEW:
+                case Convey.Email.Field.NONE:
+                case Convey.Email.Field.BODY:
+                case Convey.Email.Field.PROPERTIES:
+                case Convey.Email.Field.FLAGS:
+                case Convey.Email.Field.PREVIEW:
                     // not set or fetched separately
                 break;
 
@@ -858,10 +858,10 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         }
     }
 
-    private Geary.Email fetched_data_to_email(
+    private Convey.Email fetched_data_to_email(
         UID uid,
         FetchedData fetched_data,
-        Geary.Email.Field required_fields,
+        Convey.Email.Field required_fields,
         FetchBodyDataSpecifier[]? header_specifiers,
         FetchBodyDataSpecifier? body_specifier,
         FetchBodyDataSpecifier? preview_specifier,
@@ -870,7 +870,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         // note the use of INVALID_ROWID, as the rowid for this email (if one is present in the
         // database) is unknown at this time; this means ImapDB *must* create a new EmailIdentifier
         // for this email after create/merge is completed
-        Geary.Email email = new Geary.Email(new ImapDB.EmailIdentifier.no_message_id(uid));
+        Convey.Email email = new Convey.Email(new ImapDB.EmailIdentifier.no_message_id(uid));
 
         // accumulate these to submit Imap.EmailProperties all at once
         InternalDate? internaldate = null;
@@ -926,14 +926,14 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
                 break;
 
                 default:
-                    // everything else dropped on the floor (not applicable to Geary.Email)
+                    // everything else dropped on the floor (not applicable to Convey.Email)
                 break;
             }
         }
 
         // Only set PROPERTIES if all have been found
         if (internaldate != null && rfc822_size != null)
-            email.set_email_properties(new Geary.Imap.EmailProperties(internaldate, rfc822_size));
+            email.set_email_properties(new Convey.Imap.EmailProperties(internaldate, rfc822_size));
 
         // if any headers were requested, convert its fields now
         if (header_specifiers != null) {
@@ -966,7 +966,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
             }
 
             // When setting email properties below, the relevant
-            // Geary.Email setter needs to be called regardless of
+            // Convey.Email setter needs to be called regardless of
             // whether the value being set is null, since the setter
             // will update the email's flags so we know the email has
             // the field set and it is null.
@@ -1020,7 +1020,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
             }
 
             // SUBJECT
-            if (required_but_not_set(Geary.Email.Field.SUBJECT, required_fields, email)) {
+            if (required_but_not_set(Convey.Email.Field.SUBJECT, required_fields, email)) {
                 RFC822.Subject? subject = null;
                 string? value = headers.get("Subject");
                 if (value != null) {
@@ -1032,7 +1032,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
 
         // It's possible for all these fields to be null even though they were requested from
         // the server, so use requested fields for determination
-        if (required_but_not_set(Geary.Email.Field.REFERENCES, required_fields, email))
+        if (required_but_not_set(Convey.Email.Field.REFERENCES, required_fields, email))
             email.set_full_references(message_id, in_reply_to, references);
 
         // if preview was requested, get it now ... both identifiers
@@ -1064,14 +1064,14 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         // here from the body if possible since for HTML messages at
         // least there's a lot of boilerplate HTML to wade through to
         // get some actual preview text, which usually requires more
-        // than Geary.Email.MAX_PREVIEW_BYTES will allow for
+        // than Convey.Email.MAX_PREVIEW_BYTES will allow for
         if (body_specifier != null) {
             if (fetched_data.body_data_map.has_key(body_specifier)) {
-                email.set_message_body(new Geary.RFC822.Text(
+                email.set_message_body(new Convey.RFC822.Text(
                     fetched_data.body_data_map.get(body_specifier)));
 
                 // Try to set the preview
-                Geary.RFC822.Message? message = null;
+                Convey.RFC822.Message? message = null;
                 try {
                     message = email.get_message();
                 } catch (EngineError.INCOMPLETE_MESSAGE err) {
@@ -1081,9 +1081,9 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
                 }
                 if (message != null) {
                     string preview = message.get_preview();
-                    if (preview.length > Geary.Email.MAX_PREVIEW_BYTES) {
-                        preview = Geary.String.safe_byte_substring(
-                            preview, Geary.Email.MAX_PREVIEW_BYTES
+                    if (preview.length > Convey.Email.MAX_PREVIEW_BYTES) {
+                        preview = Convey.String.safe_byte_substring(
+                            preview, Convey.Email.MAX_PREVIEW_BYTES
                         );
                     }
                     email.set_message_preview(
@@ -1113,8 +1113,8 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
      * atomicity's sake, callers need to remove the returned email ID
      * if a cancel occurred.
     */
-    public async Geary.EmailIdentifier? create_email_async(RFC822.Message message,
-                                                           Geary.EmailFlags? flags,
+    public async Convey.EmailIdentifier? create_email_async(RFC822.Message message,
+                                                           Convey.EmailFlags? flags,
                                                            GLib.DateTime? date_received)
         throws GLib.Error {
         MessageFlags? msg_flags = null;
@@ -1122,7 +1122,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
             Imap.EmailFlags imap_flags = Imap.EmailFlags.from_api_email_flags(flags);
             msg_flags = imap_flags.message_flags;
         } else {
-            msg_flags = new MessageFlags(Geary.iterate<MessageFlag>(MessageFlag.SEEN).to_array_list());
+            msg_flags = new MessageFlags(Convey.iterate<MessageFlag>(MessageFlag.SEEN).to_array_list());
         }
 
         InternalDate? internaldate = null;
@@ -1138,7 +1138,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         );
 
         Gee.Map<Command, StatusResponse> responses = yield exec_commands_async(
-            Geary.iterate<AppendCommand>(cmd).to_array_list(), null, null, null
+            Convey.iterate<AppendCommand>(cmd).to_array_list(), null, null, null
         );
 
         // Grab the response and parse out the UID, if available.
@@ -1236,7 +1236,7 @@ private class Geary.Imap.FolderSession : Geary.Imap.SessionObject {
         }
     }
 
-    private static bool required_but_not_set(Geary.Email.Field check, Geary.Email.Field users_fields, Geary.Email email) {
+    private static bool required_but_not_set(Convey.Email.Field check, Convey.Email.Field users_fields, Convey.Email email) {
         return users_fields.require(check) ? !email.fields.is_all_set(check) : false;
     }
 

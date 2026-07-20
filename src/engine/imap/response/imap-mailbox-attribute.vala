@@ -13,7 +13,7 @@
  * @see MailboxInformation
  */
 
-public class Geary.Imap.MailboxAttribute : Geary.Imap.Flag {
+public class Convey.Imap.MailboxAttribute : Convey.Imap.Flag {
     private static MailboxAttribute? _no_inferiors = null;
     public static MailboxAttribute NO_INFERIORS { get {
         if (_no_inferiors == null)

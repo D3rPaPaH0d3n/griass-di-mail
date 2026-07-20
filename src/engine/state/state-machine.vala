@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.State.Machine : BaseObject {
+public class Convey.State.Machine : BaseObject {
 
     /** The state machine's current state. */
     public uint state { get; private set; }
@@ -15,7 +15,7 @@ public class Geary.State.Machine : BaseObject {
     /** Determines if transition logging is enabled. */
     public bool logging { get; private set; default = false; }
 
-    private Geary.State.MachineDescriptor descriptor;
+    private Convey.State.MachineDescriptor descriptor;
     private Mapping[,] transitions;
     private unowned Transition? default_transition;
     private bool locked = false;

@@ -11,7 +11,7 @@
     </property>
     <property name="model">
       <object class="AdwEnumListModel">
-        <property name="enum-type">GearyTlsNegotiationMethod</property>
+        <property name="enum-type">ConveyTlsNegotiationMethod</property>
       </object>
     </property>
   </template>

@@ -23,8 +23,8 @@ internal class Accounts.EditorRow<PaneType> : Gtk.ListBoxRow {
 
 
     public EditorRow() {
-        add_css_class("geary-settings");
-        add_css_class("geary-labelled-row");
+        add_css_class("convey-settings");
+        add_css_class("convey-labelled-row");
 
         var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 5);
         this.child = box;
@@ -97,10 +97,10 @@ internal class Accounts.EditorRow<PaneType> : Gtk.ListBoxRow {
         this.drag_handle.add_controller(drop_target);
 
         //XXX GTK4 - Disable highlight by default, so we can avoid highlighting the row that was picked up
-        this.drag_handle.add_css_class("geary-drag-handle");
+        this.drag_handle.add_css_class("convey-drag-handle");
         this.drag_handle.visible = true;
 
-        add_css_class("geary-draggable");
+        add_css_class("convey-draggable");
     }
 
 
@@ -113,21 +113,21 @@ internal class Accounts.EditorRow<PaneType> : Gtk.ListBoxRow {
         // Cairo.Context paint = new Cairo.Context(surface);
 
 
-        // add_css_class("geary-drag-icon");
+        // add_css_class("convey-drag-icon");
         // draw(paint);
-        // remove_css_class("geary-drag-icon");
+        // remove_css_class("convey-drag-icon");
 
         // drag_source.set_icon(surface, 0, 0);
 
         // Set a visual hint that the row is being dragged
-        add_css_class("geary-drag-source");
+        add_css_class("convey-drag-source");
         this.drag_picked_up = true;
     }
 
     private void on_drag_source_end(Gtk.DragSource drag_source,
                                     Gdk.Drag drag,
                                     bool delete_data) {
-        remove_css_class("geary-drag-source");
+        remove_css_class("convey-drag-source");
         this.drag_picked_up = false;
     }
 
@@ -241,7 +241,7 @@ internal class Accounts.AddRow<PaneType> : EditorRow<PaneType> {
 
 
     public AddRow() {
-        add_css_class("geary-add-row");
+        add_css_class("convey-add-row");
         var add_icon = new Gtk.Image.from_icon_name("list-add-symbolic");
         add_icon.set_hexpand(true);
 
@@ -255,10 +255,10 @@ internal abstract class Accounts.AccountRow<PaneType,V> :
     LabelledEditorRow<PaneType,V> {
 
 
-    internal Geary.AccountInformation account { get; private set; }
+    internal Convey.AccountInformation account { get; private set; }
 
 
-    protected AccountRow(Geary.AccountInformation account, string label, V value) {
+    protected AccountRow(Convey.AccountInformation account, string label, V value) {
         base(label, value);
         this.account = account;
         this.account.changed.connect(on_account_changed);
@@ -282,12 +282,12 @@ internal abstract class Accounts.AccountRow<PaneType,V> :
 private abstract class Accounts.ServiceRow<PaneType,V> : AccountRow<PaneType,V> {
 
 
-    internal Geary.ServiceInformation service { get; private set; }
+    internal Convey.ServiceInformation service { get; private set; }
 
     protected virtual bool is_value_editable {
         get {
             return (
-                this.account.service_provider == Geary.ServiceProvider.OTHER &&
+                this.account.service_provider == Convey.ServiceProvider.OTHER &&
                 !this.is_goa_account
             );
         }
@@ -299,8 +299,8 @@ private abstract class Accounts.ServiceRow<PaneType,V> : AccountRow<PaneType,V> 
     }
 
 
-    protected ServiceRow(Geary.AccountInformation account,
-                         Geary.ServiceInformation service,
+    protected ServiceRow(Convey.AccountInformation account,
+                         Convey.ServiceInformation service,
                          string label,
                          V value) {
         base(account, label, value);
@@ -419,12 +419,12 @@ internal class Accounts.TlsComboBox : Adw.Bin {
     private Gtk.DropDown drop;
 
 
-    public Geary.TlsNegotiationMethod method {
+    public Convey.TlsNegotiationMethod method {
         get {
             var item = this.drop.selected_item as ComboItem;
             return (item != null)
-                ? (Geary.TlsNegotiationMethod) item.id
-                : Geary.TlsNegotiationMethod.TRANSPORT;
+                ? (Convey.TlsNegotiationMethod) item.id
+                : Convey.TlsNegotiationMethod.TRANSPORT;
         }
         set { select_id(this.drop, value); }
     }
@@ -438,13 +438,13 @@ internal class Accounts.TlsComboBox : Adw.Bin {
 
         var store = new GLib.ListStore(typeof(ComboItem));
         store.append(
-            new ComboItem(Geary.TlsNegotiationMethod.NONE, _("None"), INSECURE_ICON)
+            new ComboItem(Convey.TlsNegotiationMethod.NONE, _("None"), INSECURE_ICON)
         );
         store.append(
-            new ComboItem(Geary.TlsNegotiationMethod.START_TLS, _("StartTLS"), SECURE_ICON)
+            new ComboItem(Convey.TlsNegotiationMethod.START_TLS, _("StartTLS"), SECURE_ICON)
         );
         store.append(
-            new ComboItem(Geary.TlsNegotiationMethod.TRANSPORT, _("TLS"), SECURE_ICON)
+            new ComboItem(Convey.TlsNegotiationMethod.TRANSPORT, _("TLS"), SECURE_ICON)
         );
 
         this.drop = new Gtk.DropDown(store, null);
@@ -467,12 +467,12 @@ internal class Accounts.OutgoingAuthComboBox : Adw.Bin {
     private Gtk.DropDown drop;
 
 
-    public Geary.Credentials.Requirement source {
+    public Convey.Credentials.Requirement source {
         get {
             var item = this.drop.selected_item as ComboItem;
             return (item != null)
-                ? (Geary.Credentials.Requirement) item.id
-                : Geary.Credentials.Requirement.USE_INCOMING;
+                ? (Convey.Credentials.Requirement) item.id
+                : Convey.Credentials.Requirement.USE_INCOMING;
         }
         set { select_id(this.drop, value); }
     }
@@ -486,21 +486,21 @@ internal class Accounts.OutgoingAuthComboBox : Adw.Bin {
 
         var store = new GLib.ListStore(typeof(ComboItem));
         store.append(new ComboItem(
-            Geary.Credentials.Requirement.NONE,
+            Convey.Credentials.Requirement.NONE,
             // Translators: ComboBox value for source of SMTP
             // authentication credentials (none) when adding a new
             // account
             _("No login needed")
         ));
         store.append(new ComboItem(
-            Geary.Credentials.Requirement.USE_INCOMING,
+            Convey.Credentials.Requirement.USE_INCOMING,
             // Translators: ComboBox value for source of SMTP
             // authentication credentials (use IMAP) when adding a new
             // account
             _("Use same login as receiving")
         ));
         store.append(new ComboItem(
-            Geary.Credentials.Requirement.CUSTOM,
+            Convey.Credentials.Requirement.CUSTOM,
             // Translators: ComboBox value for source of SMTP
             // authentication credentials (custom) when adding a new
             // account
@@ -571,7 +571,7 @@ internal class Accounts.EditorPopover : Gtk.Popover {
 
 
     public EditorPopover() {
-        add_css_class("geary-editor");
+        add_css_class("convey-editor");
 
         this.layout.orientation = Gtk.Orientation.VERTICAL;
         this.layout.set_row_spacing(6);

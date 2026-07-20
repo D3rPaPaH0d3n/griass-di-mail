@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.ObjectUtils {
+namespace Convey.ObjectUtils {
 
 /**
  * Creates a set of property bindings from source to dest with the given binding flags.

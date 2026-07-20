@@ -5,14 +5,14 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
-    Geary.FolderSupport.Mark,
-    Geary.FolderSupport.Move,
-    Geary.FolderSupport.Archive,
-    Geary.FolderSupport.Remove,
-    Geary.FolderSupport.Create,
-    Geary.FolderSupport.Copy,
-    Geary.FolderSupport.Empty {
+internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
+    Convey.FolderSupport.Mark,
+    Convey.FolderSupport.Move,
+    Convey.FolderSupport.Archive,
+    Convey.FolderSupport.Remove,
+    Convey.FolderSupport.Create,
+    Convey.FolderSupport.Copy,
+    Convey.FolderSupport.Empty {
 
     private const int MIN_REFRESH_BATCH = 25;
     private const int MAX_REFRESH_BATCH = 500;
@@ -20,20 +20,20 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
     private const int POLL_BATCH = 20;
     private const int64 REMOVED_GRACE_USEC = 5 * 1000 * 1000;
 
-    private Geary.Graph.Account owner;
-    private Geary.Graph.Client client;
-    private Geary.Graph.FolderProperties _properties =
-        new Geary.Graph.FolderProperties(0, 0);
-    private Geary.FolderPath _path;
-    private Geary.Folder.SpecialUse _used_as;
+    private Convey.Graph.Account owner;
+    private Convey.Graph.Client client;
+    private Convey.Graph.FolderProperties _properties =
+        new Convey.Graph.FolderProperties(0, 0);
+    private Convey.FolderPath _path;
+    private Convey.Folder.SpecialUse _used_as;
     private string folder_id;
 
-    private Gee.ArrayList<Geary.Email> email_cache =
-        new Gee.ArrayList<Geary.Email>();
-    private Gee.HashMap<string,Geary.Email> email_by_id =
-        new Gee.HashMap<string,Geary.Email>();
-    private Gee.HashMap<string,Geary.Graph.Client.Message> message_by_id =
-        new Gee.HashMap<string,Geary.Graph.Client.Message>();
+    private Gee.ArrayList<Convey.Email> email_cache =
+        new Gee.ArrayList<Convey.Email>();
+    private Gee.HashMap<string,Convey.Email> email_by_id =
+        new Gee.HashMap<string,Convey.Email>();
+    private Gee.HashMap<string,Convey.Graph.Client.Message> message_by_id =
+        new Gee.HashMap<string,Convey.Graph.Client.Message>();
     private bool is_loaded = false;
     // Graph delta cursor, persisted with the cache after every applied
     // batch; empty means the next sync establishes a fresh baseline.
@@ -48,20 +48,20 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         new Gee.HashMap<string, int64?>();
 
 
-    public override Geary.Account account { get { return this.owner; } }
-    public override Geary.FolderProperties properties { get { return this._properties; } }
-    public override Geary.FolderPath path { get { return this._path; } }
-    public override Geary.Folder.SpecialUse used_as { get { return this._used_as; } }
+    public override Convey.Account account { get { return this.owner; } }
+    public override Convey.FolderProperties properties { get { return this._properties; } }
+    public override Convey.FolderPath path { get { return this._path; } }
+    public override Convey.Folder.SpecialUse used_as { get { return this._used_as; } }
     internal bool is_cache_loaded { get { return this.is_loaded; } }
     internal bool is_delta_unsupported { get { return this.delta_unsupported; } }
     internal string graph_folder_id { get { return this.folder_id; } }
 
 
-    public Folder(Geary.Graph.Account owner,
-                  Geary.Graph.Client client,
-                  Geary.FolderPath path,
+    public Folder(Convey.Graph.Account owner,
+                  Convey.Graph.Client client,
+                  Convey.FolderPath path,
                   string folder_id,
-                  Geary.Folder.SpecialUse used_as) {
+                  Convey.Folder.SpecialUse used_as) {
         this.owner = owner;
         this.client = client;
         this._path = path;
@@ -70,7 +70,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         this.cache_path = compute_cache_path();
     }
 
-    public override async bool open_async(Geary.Folder.OpenFlags open_flags,
+    public override async bool open_async(Convey.Folder.OpenFlags open_flags,
                                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         bool opened = yield base.open_async(open_flags, cancellable);
@@ -106,16 +106,16 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         yield refresh_async(true, cancellable);
     }
 
-    public override async Gee.Collection<Geary.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Geary.EmailIdentifier> ids,
+    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
+        Gee.Collection<Convey.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         check_open();
         yield ensure_loaded(cancellable);
 
-        Gee.HashSet<Geary.EmailIdentifier> contained = new Gee.HashSet<Geary.EmailIdentifier>();
-        foreach (Geary.EmailIdentifier id in ids) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        Gee.HashSet<Convey.EmailIdentifier> contained = new Gee.HashSet<Convey.EmailIdentifier>();
+        foreach (Convey.EmailIdentifier id in ids) {
+            Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
             if (graph != null && this.email_by_id.has_key(graph.graph_id)) {
                 contained.add(id);
             }
@@ -123,16 +123,16 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         return contained;
     }
 
-    public override async Gee.List<Geary.Email>? list_email_by_id_async(
-        Geary.EmailIdentifier? initial_id,
+    public override async Gee.List<Convey.Email>? list_email_by_id_async(
+        Convey.EmailIdentifier? initial_id,
         int count,
-        Geary.Email.Field required_fields,
-        Geary.Folder.ListFlags flags,
+        Convey.Email.Field required_fields,
+        Convey.Folder.ListFlags flags,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         check_open();
         if (count <= 0) {
-            return new Gee.ArrayList<Geary.Email>();
+            return new Gee.ArrayList<Convey.Email>();
         }
         if (flags.is_force_update()) {
             yield refresh_async(true, cancellable);
@@ -140,7 +140,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             yield ensure_loaded(cancellable);
         }
 
-        Gee.ArrayList<Geary.Email> ordered = new Gee.ArrayList<Geary.Email>();
+        Gee.ArrayList<Convey.Email> ordered = new Gee.ArrayList<Convey.Email>();
         if (flags.is_oldest_to_newest()) {
             for (int i = this.email_cache.size - 1; i >= 0; i--) {
                 ordered.add(this.email_cache[i]);
@@ -155,15 +155,15 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             if (index >= 0) {
                 start = flags.is_including_id() ? index : (index + 1);
             } else {
-                throw new Geary.EngineError.NOT_FOUND(
+                throw new Convey.EngineError.NOT_FOUND(
                     "Unknown email identifier: %s", initial_id.to_string()
                 );
             }
         }
 
-        Gee.ArrayList<Geary.Email> listed = new Gee.ArrayList<Geary.Email>();
+        Gee.ArrayList<Convey.Email> listed = new Gee.ArrayList<Convey.Email>();
         for (int i = start; i < ordered.size && listed.size < count; i++) {
-            Geary.Email email = ordered[i];
+            Convey.Email email = ordered[i];
             if (!email.fields.fulfills(required_fields)) {
                 email = yield fetch_email_async(
                     email.id,
@@ -177,10 +177,10 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         return listed;
     }
 
-    public override async Gee.List<Geary.Email>? list_email_by_sparse_id_async(
-        Gee.Collection<Geary.EmailIdentifier> ids,
-        Geary.Email.Field required_fields,
-        Geary.Folder.ListFlags flags,
+    public override async Gee.List<Convey.Email>? list_email_by_sparse_id_async(
+        Gee.Collection<Convey.EmailIdentifier> ids,
+        Convey.Email.Field required_fields,
+        Convey.Folder.ListFlags flags,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         if (is_open()) {
@@ -190,16 +190,16 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 yield ensure_loaded(cancellable);
             }
         } else if (flags.is_force_update() || !this.is_loaded) {
-            throw new Geary.EngineError.OPEN_REQUIRED("%s not open", to_string());
+            throw new Convey.EngineError.OPEN_REQUIRED("%s not open", to_string());
         }
 
-        Gee.ArrayList<Geary.Email> listed = new Gee.ArrayList<Geary.Email>();
-        foreach (Geary.EmailIdentifier id in ids) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        Gee.ArrayList<Convey.Email> listed = new Gee.ArrayList<Convey.Email>();
+        foreach (Convey.EmailIdentifier id in ids) {
+            Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
             if (graph == null) {
                 continue;
             }
-            Geary.Email? email = this.email_by_id.get(graph.graph_id);
+            Convey.Email? email = this.email_by_id.get(graph.graph_id);
             if (email == null) {
                 continue;
             }
@@ -216,29 +216,29 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         return listed;
     }
 
-    public override async Geary.Email fetch_email_async(
-        Geary.EmailIdentifier id,
-        Geary.Email.Field required_fields,
-        Geary.Folder.ListFlags flags,
+    public override async Convey.Email fetch_email_async(
+        Convey.EmailIdentifier id,
+        Convey.Email.Field required_fields,
+        Convey.Folder.ListFlags flags,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         bool is_open_now = is_open();
 
-        Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
         if (graph == null) {
-            throw new Geary.EngineError.BAD_PARAMETERS(
+            throw new Convey.EngineError.BAD_PARAMETERS(
                 "Not a Graph email identifier: %s", id.to_string()
             );
         }
 
-        Geary.Email? email = this.email_by_id.get(graph.graph_id);
+        Convey.Email? email = this.email_by_id.get(graph.graph_id);
         bool needs_full_message =
-            required_fields.requires_any(Geary.Email.Field.BODY | Geary.Email.Field.HEADER);
+            required_fields.requires_any(Convey.Email.Field.BODY | Convey.Email.Field.HEADER);
 
         if (is_open_now && needs_full_message &&
             (email == null || !email.fields.fulfills(required_fields))) {
             try {
-                Geary.Graph.Client.Message full = yield this.client.fetch_message(
+                Convey.Graph.Client.Message full = yield this.client.fetch_message(
                     graph.graph_id, cancellable
                 );
                 this.message_by_id.set(full.id, full);
@@ -248,7 +248,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     build_email(full, email);
                 }
                 try {
-                    Geary.Memory.Buffer full_rfc822 =
+                    Convey.Memory.Buffer full_rfc822 =
                         yield this.client.fetch_message_rfc822(
                             graph.graph_id,
                             cancellable
@@ -262,20 +262,20 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     );
                 }
                 persist_cached_messages();
-            } catch (Geary.Graph.HttpError.NOT_FOUND err) {
+            } catch (Convey.Graph.HttpError.NOT_FOUND err) {
                 debug(
                     "Graph message %s not found, removing from cache",
                     graph.graph_id
                 );
-                Gee.ArrayList<Geary.EmailIdentifier> to_remove =
-                    new Gee.ArrayList<Geary.EmailIdentifier>();
+                Gee.ArrayList<Convey.EmailIdentifier> to_remove =
+                    new Gee.ArrayList<Convey.EmailIdentifier>();
                 to_remove.add(id);
-                Gee.ArrayList<Geary.EmailIdentifier> removed =
+                Gee.ArrayList<Convey.EmailIdentifier> removed =
                     remove_cached_emails(to_remove);
                 if (!removed.is_empty) {
                     notify_email_removed(removed);
                 }
-                throw new Geary.EngineError.NOT_FOUND(
+                throw new Convey.EngineError.NOT_FOUND(
                     "Graph message not found on server: %s", graph.graph_id
                 );
             }
@@ -285,13 +285,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     yield ensure_loaded(cancellable);
                 }
             } else if (!this.is_loaded) {
-                throw new Geary.EngineError.OPEN_REQUIRED("%s not open", to_string());
+                throw new Convey.EngineError.OPEN_REQUIRED("%s not open", to_string());
             }
 
             if (email == null) {
                 email = this.email_by_id.get(graph.graph_id);
                 if (email == null) {
-                    throw new Geary.EngineError.NOT_FOUND(
+                    throw new Convey.EngineError.NOT_FOUND(
                         "Unknown Graph email identifier: %s", graph.graph_id
                     );
                 }
@@ -299,13 +299,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         if (email == null) {
-            throw new Geary.EngineError.NOT_FOUND(
+            throw new Convey.EngineError.NOT_FOUND(
                 "Unknown Graph email identifier: %s", graph.graph_id
             );
         }
 
         if (!email.fields.fulfills(required_fields)) {
-            throw new Geary.EngineError.INCOMPLETE_MESSAGE(
+            throw new Convey.EngineError.INCOMPLETE_MESSAGE(
                 "Required fields not available for Graph message %s", graph.graph_id
             );
         }
@@ -313,14 +313,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
     }
 
     public override void set_used_as_custom(bool enabled) {
-        Geary.Folder.SpecialUse old_use = this._used_as;
-        this._used_as = enabled ? Geary.Folder.SpecialUse.CUSTOM : Geary.Folder.SpecialUse.NONE;
+        Convey.Folder.SpecialUse old_use = this._used_as;
+        this._used_as = enabled ? Convey.Folder.SpecialUse.CUSTOM : Convey.Folder.SpecialUse.NONE;
         notify_use_changed(old_use, this._used_as);
     }
 
-    public async void mark_email_async(Gee.Collection<Geary.EmailIdentifier> to_mark,
-                                       Geary.EmailFlags? flags_to_add,
-                                       Geary.EmailFlags? flags_to_remove,
+    public async void mark_email_async(Gee.Collection<Convey.EmailIdentifier> to_mark,
+                                       Convey.EmailFlags? flags_to_add,
+                                       Convey.EmailFlags? flags_to_remove,
                                        GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
@@ -328,14 +328,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         if (flags_to_add == null && flags_to_remove == null) {
             return;
         }
-        Gee.HashMap<Geary.EmailIdentifier,Geary.EmailFlags> changed =
-            new Gee.HashMap<Geary.EmailIdentifier,Geary.EmailFlags>();
-        foreach (Geary.EmailIdentifier id in to_mark) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        Gee.HashMap<Convey.EmailIdentifier,Convey.EmailFlags> changed =
+            new Gee.HashMap<Convey.EmailIdentifier,Convey.EmailFlags>();
+        foreach (Convey.EmailIdentifier id in to_mark) {
+            Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
             if (graph == null) {
                 continue;
             }
-            Geary.Email? email = this.email_by_id.get(graph.graph_id);
+            Convey.Email? email = this.email_by_id.get(graph.graph_id);
             if (email == null) {
                 continue;
             }
@@ -344,24 +344,24 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             bool? is_flagged = null;
             bool? load_remote_images = null;
             if (flags_to_add != null) {
-                if (flags_to_add.contains(Geary.EmailFlags.UNREAD)) {
+                if (flags_to_add.contains(Convey.EmailFlags.UNREAD)) {
                     is_read = false;
                 }
-                if (flags_to_add.contains(Geary.EmailFlags.FLAGGED)) {
+                if (flags_to_add.contains(Convey.EmailFlags.FLAGGED)) {
                     is_flagged = true;
                 }
-                if (flags_to_add.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
+                if (flags_to_add.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES)) {
                     load_remote_images = true;
                 }
             }
             if (flags_to_remove != null) {
-                if (flags_to_remove.contains(Geary.EmailFlags.UNREAD)) {
+                if (flags_to_remove.contains(Convey.EmailFlags.UNREAD)) {
                     is_read = true;
                 }
-                if (flags_to_remove.contains(Geary.EmailFlags.FLAGGED)) {
+                if (flags_to_remove.contains(Convey.EmailFlags.FLAGGED)) {
                     is_flagged = false;
                 }
-                if (flags_to_remove.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
+                if (flags_to_remove.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES)) {
                     load_remote_images = false;
                 }
             }
@@ -369,32 +369,32 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 continue;
             }
 
-            Geary.EmailFlags updated = email.email_flags ?? new Geary.EmailFlags();
+            Convey.EmailFlags updated = email.email_flags ?? new Convey.EmailFlags();
             if (is_read != null) {
                 if (is_read == true) {
-                    updated.remove(Geary.EmailFlags.UNREAD);
+                    updated.remove(Convey.EmailFlags.UNREAD);
                 } else {
-                    updated.add(Geary.EmailFlags.UNREAD);
+                    updated.add(Convey.EmailFlags.UNREAD);
                 }
             }
             if (is_flagged != null) {
                 if (is_flagged == true) {
-                    updated.add(Geary.EmailFlags.FLAGGED);
+                    updated.add(Convey.EmailFlags.FLAGGED);
                 } else {
-                    updated.remove(Geary.EmailFlags.FLAGGED);
+                    updated.remove(Convey.EmailFlags.FLAGGED);
                 }
             }
             if (load_remote_images != null) {
                 if (load_remote_images == true) {
-                    updated.add(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
+                    updated.add(Convey.EmailFlags.LOAD_REMOTE_IMAGES);
                 } else {
-                    updated.remove(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
+                    updated.remove(Convey.EmailFlags.LOAD_REMOTE_IMAGES);
                 }
             }
             email.set_flags(updated);
             changed.set(email.id, updated);
 
-            Geary.Graph.Client.Message? message = this.message_by_id.get(graph.graph_id);
+            Convey.Graph.Client.Message? message = this.message_by_id.get(graph.graph_id);
             if (message != null) {
                 if (is_read != null) {
                     message.is_read = (is_read == true);
@@ -432,23 +432,23 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
     }
 
-    public async Geary.Revokable?
-        move_email_async(Gee.Collection<Geary.EmailIdentifier> to_move,
-                         Geary.FolderPath destination,
+    public async Convey.Revokable?
+        move_email_async(Gee.Collection<Convey.EmailIdentifier> to_move,
+                         Convey.FolderPath destination,
                          GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
         yield ensure_loaded(cancellable);
 
-        Geary.Graph.Folder destination_folder = get_destination_folder(destination);
+        Convey.Graph.Folder destination_folder = get_destination_folder(destination);
         if (destination_folder.path.compare_to(this.path) == 0) {
-            return new Geary.Graph.NoopRevokable();
+            return new Convey.Graph.NoopRevokable();
         }
 
-        Gee.ArrayList<Geary.EmailIdentifier> candidates = new Gee.ArrayList<Geary.EmailIdentifier>();
+        Gee.ArrayList<Convey.EmailIdentifier> candidates = new Gee.ArrayList<Convey.EmailIdentifier>();
         Gee.ArrayList<string> candidate_ids = new Gee.ArrayList<string>();
-        foreach (Geary.EmailIdentifier id in to_move) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        foreach (Convey.EmailIdentifier id in to_move) {
+            Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
             if (graph == null || !this.email_by_id.has_key(graph.graph_id)) {
                 continue;
             }
@@ -457,7 +457,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         // Show change immediately before the API call completes
-        Gee.ArrayList<Geary.EmailIdentifier> removed = remove_cached_emails(candidates);
+        Gee.ArrayList<Convey.EmailIdentifier> removed = remove_cached_emails(candidates);
         if (!removed.is_empty) {
             notify_email_removed(removed);
         }
@@ -500,7 +500,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         // Return a revokable that can move the messages back to this folder.
-        return new Geary.Graph.RevokableMove(
+        return new Convey.Graph.RevokableMove(
             this.client,
             this.owner,
             new_ids,
@@ -509,23 +509,23 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         );
     }
 
-    public async Geary.Revokable?
-        archive_email_async(Gee.Collection<Geary.EmailIdentifier> email_ids,
+    public async Convey.Revokable?
+        archive_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
                             GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        Geary.Graph.Folder? archive =
-            this.owner.get_graph_special_folder(Geary.Folder.SpecialUse.ARCHIVE);
+        Convey.Graph.Folder? archive =
+            this.owner.get_graph_special_folder(Convey.Folder.SpecialUse.ARCHIVE);
         if (archive == null) {
-            throw new Geary.EngineError.NOT_FOUND(
+            throw new Convey.EngineError.NOT_FOUND(
                 "No archive folder available for Graph account"
             );
         }
         return yield move_email_async(email_ids, archive.path, cancellable);
     }
 
-    public async Geary.EmailIdentifier? create_email_async(
-        Geary.RFC822.Message rfc822,
-        Geary.EmailFlags? flags,
+    public async Convey.EmailIdentifier? create_email_async(
+        Convey.RFC822.Message rfc822,
+        Convey.EmailFlags? flags,
         GLib.DateTime? date_received,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
@@ -541,19 +541,19 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         int64 sort_order = date_received != null
             ? date_received.to_unix()
             : new GLib.DateTime.now_local().to_unix();
-        return new Geary.Graph.EmailIdentifier(message_id, sort_order);
+        return new Convey.Graph.EmailIdentifier(message_id, sort_order);
     }
 
-    public async void remove_email_async(Gee.Collection<Geary.EmailIdentifier> email_ids,
+    public async void remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
                                          GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
         yield ensure_loaded(cancellable);
 
-        Gee.ArrayList<Geary.EmailIdentifier> to_delete = new Gee.ArrayList<Geary.EmailIdentifier>();
+        Gee.ArrayList<Convey.EmailIdentifier> to_delete = new Gee.ArrayList<Convey.EmailIdentifier>();
         Gee.ArrayList<string> graph_ids = new Gee.ArrayList<string>();
-        foreach (Geary.EmailIdentifier id in email_ids) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        foreach (Convey.EmailIdentifier id in email_ids) {
+            Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
             if (graph == null || !this.email_by_id.has_key(graph.graph_id)) {
                 continue;
             }
@@ -562,7 +562,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
 
         // Show change immediately before API calls complete
-        Gee.ArrayList<Geary.EmailIdentifier> removed = remove_cached_emails(to_delete);
+        Gee.ArrayList<Convey.EmailIdentifier> removed = remove_cached_emails(to_delete);
         if (removed.is_empty) {
             return;
         }
@@ -588,8 +588,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         check_open();
         yield ensure_loaded(cancellable);
 
-        Gee.ArrayList<Geary.EmailIdentifier> ids = new Gee.ArrayList<Geary.EmailIdentifier>();
-        foreach (Geary.Email email in this.email_cache) {
+        Gee.ArrayList<Convey.EmailIdentifier> ids = new Gee.ArrayList<Convey.EmailIdentifier>();
+        foreach (Convey.Email email in this.email_cache) {
             ids.add(email.id);
         }
 
@@ -598,18 +598,18 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
     }
 
-    public async void copy_email_async(Gee.Collection<Geary.EmailIdentifier> to_copy,
-                                       Geary.FolderPath destination,
+    public async void copy_email_async(Gee.Collection<Convey.EmailIdentifier> to_copy,
+                                       Convey.FolderPath destination,
                                        GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
         yield ensure_loaded(cancellable);
-        Geary.Graph.Folder destination_folder = get_destination_folder(destination);
+        Convey.Graph.Folder destination_folder = get_destination_folder(destination);
         if (destination_folder.path.compare_to(this.path) == 0) {
             return;
         }
-        foreach (Geary.EmailIdentifier id in to_copy) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        foreach (Convey.EmailIdentifier id in to_copy) {
+            Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
             if (graph == null || !this.email_by_id.has_key(graph.graph_id)) {
                 continue;
             }
@@ -630,7 +630,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             return;
         }
 
-        Gee.List<Geary.Graph.Client.Message> messages = yield this.client.list_messages(
+        Gee.List<Convey.Graph.Client.Message> messages = yield this.client.list_messages(
             this.folder_id,
             get_refresh_limit(),
             this.owner.information.prefetch_period_days,
@@ -696,12 +696,12 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         int batches = 0;
         while (!complete && batches < 5) {
             batches++;
-            Geary.Graph.Client.DeltaResult result;
+            Convey.Graph.Client.DeltaResult result;
             try {
                 result = yield this.client.delta_messages(
                     this.folder_id, cursor, cancellable
                 );
-            } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
+            } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
                 mark_delta_unsupported(err);
                 return yield poll_refresh_async(cancellable);
             } catch (GLib.IOError.CANCELLED err) {
@@ -763,11 +763,11 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 .to_unix();
         }
 
-        Gee.ArrayList<Geary.Graph.Client.Message> fetched =
-            new Gee.ArrayList<Geary.Graph.Client.Message>();
+        Gee.ArrayList<Convey.Graph.Client.Message> fetched =
+            new Gee.ArrayList<Convey.Graph.Client.Message>();
         foreach (string id in changed_ids) {
             try {
-                Geary.Graph.Client.Message message =
+                Convey.Graph.Client.Message message =
                     yield this.client.fetch_message(id, cancellable);
                 if (cutoff_unix > 0 &&
                     message.received_at != null &&
@@ -776,10 +776,10 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     continue;
                 }
                 fetched.add(message);
-            } catch (Geary.Graph.HttpError.NOT_FOUND err) {
+            } catch (Convey.Graph.HttpError.NOT_FOUND err) {
                 // Deleted between the delta response and now.
                 removed.add(id);
-            } catch (Geary.Graph.HttpError.GONE err) {
+            } catch (Convey.Graph.HttpError.GONE err) {
                 removed.add(id);
             }
         }
@@ -808,12 +808,12 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
      */
     private async void delta_baseline(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Geary.Graph.Client.DeltaResult token;
+        Convey.Graph.Client.DeltaResult token;
         try {
             token = yield this.client.delta_messages(
                 this.folder_id, null, cancellable
             );
-        } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
+        } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
             mark_delta_unsupported(err);
             yield refresh_async(true, cancellable);
             return;
@@ -863,7 +863,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             yield refresh_async(true, cancellable);
             return false;
         }
-        Gee.List<Geary.Graph.Client.Message> messages = yield this.client.list_messages(
+        Gee.List<Convey.Graph.Client.Message> messages = yield this.client.list_messages(
             this.folder_id,
             POLL_BATCH,
             this.owner.information.prefetch_period_days,
@@ -879,8 +879,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
     private int64 newest_cached_unix() {
         int64 newest = 0;
-        foreach (Geary.Email cached_email in this.email_cache) {
-            Geary.Graph.EmailIdentifier? graph_id = cached_email.id as Geary.Graph.EmailIdentifier;
+        foreach (Convey.Email cached_email in this.email_cache) {
+            Convey.Graph.EmailIdentifier? graph_id = cached_email.id as Convey.Graph.EmailIdentifier;
             if (graph_id != null && graph_id.sort_order > newest) {
                 newest = graph_id.sort_order;
             }
@@ -895,17 +895,17 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
      * nor sweep_keep is removed (full reconcile). Otherwise only the ids in
      * deleted_ids, if any, are removed.
      */
-    private void apply_refresh(Gee.List<Geary.Graph.Client.Message> messages,
+    private void apply_refresh(Gee.List<Convey.Graph.Client.Message> messages,
                                Gee.Set<string>? sweep_keep,
                                Gee.Set<string>? deleted_ids) {
         bool had_loaded = this.is_loaded;
         int previous_total = this._properties.email_total;
         Gee.Set<string> refreshed_ids = new Gee.HashSet<string>();
-        Gee.ArrayList<Geary.EmailIdentifier> appended = new Gee.ArrayList<Geary.EmailIdentifier>();
-        Gee.ArrayList<Geary.EmailIdentifier> inserted = new Gee.ArrayList<Geary.EmailIdentifier>();
-        Gee.ArrayList<Geary.EmailIdentifier> removed = new Gee.ArrayList<Geary.EmailIdentifier>();
-        Gee.HashMap<Geary.EmailIdentifier, Geary.EmailFlags> flags_changed =
-            new Gee.HashMap<Geary.EmailIdentifier, Geary.EmailFlags>();
+        Gee.ArrayList<Convey.EmailIdentifier> appended = new Gee.ArrayList<Convey.EmailIdentifier>();
+        Gee.ArrayList<Convey.EmailIdentifier> inserted = new Gee.ArrayList<Convey.EmailIdentifier>();
+        Gee.ArrayList<Convey.EmailIdentifier> removed = new Gee.ArrayList<Convey.EmailIdentifier>();
+        Gee.HashMap<Convey.EmailIdentifier, Convey.EmailFlags> flags_changed =
+            new Gee.HashMap<Convey.EmailIdentifier, Convey.EmailFlags>();
 
         int64 newest_cached_timestamp = had_loaded ? newest_cached_unix() : 0;
 
@@ -923,7 +923,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             }
         }
 
-        foreach (Geary.Graph.Client.Message message in messages) {
+        foreach (Convey.Graph.Client.Message message in messages) {
             if (String.is_empty(message.id)) {
                 continue;
             }
@@ -932,14 +932,14 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 continue;
             }
             refreshed_ids.add(message.id);
-            Geary.Email? existing = this.email_by_id.get(message.id);
-            Geary.EmailFlags? old_flags = null;
+            Convey.Email? existing = this.email_by_id.get(message.id);
+            Convey.EmailFlags? old_flags = null;
             if (existing != null && existing.email_flags != null) {
-                old_flags = new Geary.EmailFlags();
+                old_flags = new Convey.EmailFlags();
                 old_flags.add_all(existing.email_flags);
             }
 
-            Geary.Email email = build_email(message, existing);
+            Convey.Email email = build_email(message, existing);
             if (existing == null) {
                 this.email_cache.add(email);
 
@@ -985,7 +985,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 }
             }
             foreach (string cached_id in stale_ids) {
-                Geary.Email? cached = this.email_by_id.get(cached_id);
+                Convey.Email? cached = this.email_by_id.get(cached_id);
                 if (cached != null) {
                     this.email_cache.remove(cached);
                     removed.add(cached.id);
@@ -999,10 +999,10 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         this._properties.set_total(this.email_cache.size);
         this._properties.set_unread(count_unread());
         if (this._properties.email_total != previous_total) {
-            Geary.Folder.CountChangeReason reason =
+            Convey.Folder.CountChangeReason reason =
                 this._properties.email_total > previous_total
-                ? Geary.Folder.CountChangeReason.INSERTED
-                : Geary.Folder.CountChangeReason.REMOVED;
+                ? Convey.Folder.CountChangeReason.INSERTED
+                : Convey.Folder.CountChangeReason.REMOVED;
             notify_email_count_changed(this._properties.email_total, reason);
         }
 
@@ -1028,27 +1028,27 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         this.is_loaded = true;
     }
 
-    internal async bool has_identifier_async(Geary.EmailIdentifier id,
+    internal async bool has_identifier_async(Convey.EmailIdentifier id,
                                              GLib.Cancellable? cancellable)
         throws GLib.Error {
         yield ensure_loaded(cancellable);
         return has_cached_identifier(id);
     }
 
-    internal bool has_cached_identifier(Geary.EmailIdentifier id) {
-        Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+    internal bool has_cached_identifier(Convey.EmailIdentifier id) {
+        Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
         return graph != null && this.email_by_id.has_key(graph.graph_id);
     }
 
-    internal Gee.Collection<Geary.Email> list_cached_emails() {
+    internal Gee.Collection<Convey.Email> list_cached_emails() {
         return this.email_cache.read_only_view;
     }
 
-    private Geary.Graph.Folder get_destination_folder(Geary.FolderPath destination)
+    private Convey.Graph.Folder get_destination_folder(Convey.FolderPath destination)
         throws GLib.Error {
-        Geary.Graph.Folder? folder = this.owner.get_graph_folder(destination);
+        Convey.Graph.Folder? folder = this.owner.get_graph_folder(destination);
         if (folder == null) {
-            throw new Geary.EngineError.NOT_FOUND(
+            throw new Convey.EngineError.NOT_FOUND(
                 "Unknown Graph folder: %s",
                 destination.to_string()
             );
@@ -1056,16 +1056,16 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         return folder;
     }
 
-    private Gee.ArrayList<Geary.EmailIdentifier>
-        remove_cached_emails(Gee.Collection<Geary.EmailIdentifier> ids) {
+    private Gee.ArrayList<Convey.EmailIdentifier>
+        remove_cached_emails(Gee.Collection<Convey.EmailIdentifier> ids) {
         int previous_total = this._properties.email_total;
-        Gee.ArrayList<Geary.EmailIdentifier> removed = new Gee.ArrayList<Geary.EmailIdentifier>();
-        foreach (Geary.EmailIdentifier id in ids) {
-            Geary.Graph.EmailIdentifier? graph = id as Geary.Graph.EmailIdentifier;
+        Gee.ArrayList<Convey.EmailIdentifier> removed = new Gee.ArrayList<Convey.EmailIdentifier>();
+        foreach (Convey.EmailIdentifier id in ids) {
+            Convey.Graph.EmailIdentifier? graph = id as Convey.Graph.EmailIdentifier;
             if (graph == null) {
                 continue;
             }
-            Geary.Email? email = this.email_by_id.get(graph.graph_id);
+            Convey.Email? email = this.email_by_id.get(graph.graph_id);
             if (email == null) {
                 continue;
             }
@@ -1080,7 +1080,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             if (this._properties.email_total != previous_total) {
                 notify_email_count_changed(
                     this._properties.email_total,
-                    Geary.Folder.CountChangeReason.REMOVED
+                    Convey.Folder.CountChangeReason.REMOVED
                 );
             }
             persist_cached_messages();
@@ -1090,7 +1090,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
     private int count_unread() {
         int unread = 0;
-        foreach (Geary.Email email in this.email_cache) {
+        foreach (Convey.Email email in this.email_cache) {
             if (email.email_flags != null && email.email_flags.is_unread()) {
                 unread++;
             }
@@ -1105,10 +1105,10 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
     }
 
-    private Geary.Email build_email(Geary.Graph.Client.Message message,
-                                    Geary.Email? existing = null) {
-        Geary.Email email = existing ?? new Geary.Email(
-            new Geary.Graph.EmailIdentifier(
+    private Convey.Email build_email(Convey.Graph.Client.Message message,
+                                    Convey.Email? existing = null) {
+        Convey.Email email = existing ?? new Convey.Email(
+            new Convey.Graph.EmailIdentifier(
                 message.id,
                 message.received_at != null ? message.received_at.to_unix() : 0
             )
@@ -1118,25 +1118,25 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         // preference so it is written back into the cache. The API does not
         // support this flag, so retain it from the cached existing email.
         if (!message.load_remote_images && existing != null && existing.email_flags != null &&
-            existing.email_flags.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
+            existing.email_flags.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES)) {
             message.load_remote_images = true;
         }
 
         if (message.received_at != null) {
-            email.set_send_date(new Geary.RFC822.Date(message.received_at));
+            email.set_send_date(new Convey.RFC822.Date(message.received_at));
         }
-        Geary.RFC822.MailboxAddresses? from = message.from;
+        Convey.RFC822.MailboxAddresses? from = message.from;
         if (from == null || from.is_empty) {
-            from = new Geary.RFC822.MailboxAddresses.single(
+            from = new Convey.RFC822.MailboxAddresses.single(
                 this.owner.information.primary_mailbox
             );
         }
-        Geary.RFC822.MailboxAddresses to =
-            message.to ?? new Geary.RFC822.MailboxAddresses();
-        Geary.RFC822.MailboxAddresses cc =
-            message.cc ?? new Geary.RFC822.MailboxAddresses();
-        Geary.RFC822.MailboxAddresses bcc =
-            message.bcc ?? new Geary.RFC822.MailboxAddresses();
+        Convey.RFC822.MailboxAddresses to =
+            message.to ?? new Convey.RFC822.MailboxAddresses();
+        Convey.RFC822.MailboxAddresses cc =
+            message.cc ?? new Convey.RFC822.MailboxAddresses();
+        Convey.RFC822.MailboxAddresses bcc =
+            message.bcc ?? new Convey.RFC822.MailboxAddresses();
         try {
             email.set_originators(from, null, null);
         } catch (GLib.Error err) {
@@ -1144,41 +1144,41 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
         email.set_receivers(to, cc, bcc);
 
-        Geary.RFC822.MessageID? message_id = build_message_id(message);
-        Geary.RFC822.MessageIDList? references = build_conversation_references(message);
+        Convey.RFC822.MessageID? message_id = build_message_id(message);
+        Convey.RFC822.MessageIDList? references = build_conversation_references(message);
         if (message_id != null || references != null) {
             email.set_full_references(message_id, null, references);
         }
 
-        email.set_message_subject(new Geary.RFC822.Subject(message.subject));
+        email.set_message_subject(new Convey.RFC822.Subject(message.subject));
         email.set_message_preview(
-            new Geary.RFC822.PreviewText.from_string(message.body_preview)
+            new Convey.RFC822.PreviewText.from_string(message.body_preview)
         );
 
-        var flags = new Geary.EmailFlags();
+        var flags = new Convey.EmailFlags();
         if (!message.is_read) {
-            flags.add(Geary.EmailFlags.UNREAD);
+            flags.add(Convey.EmailFlags.UNREAD);
         }
         if (message.is_flagged) {
-            flags.add(Geary.EmailFlags.FLAGGED);
+            flags.add(Convey.EmailFlags.FLAGGED);
         }
         // Preserve the LOAD_REMOTE_IMAGES flag from the Graph message if set,
         // otherwise preserve the existing cached flag if present.
         if (message.load_remote_images) {
-            flags.add(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
+            flags.add(Convey.EmailFlags.LOAD_REMOTE_IMAGES);
         } else if (existing != null && existing.email_flags != null &&
-                   existing.email_flags.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES)) {
-            flags.add(Geary.EmailFlags.LOAD_REMOTE_IMAGES);
+                   existing.email_flags.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES)) {
+            flags.add(Convey.EmailFlags.LOAD_REMOTE_IMAGES);
         }
         email.set_flags(flags);
 
         GLib.DateTime received = message.received_at ?? new GLib.DateTime.now_local();
-        email.set_email_properties(new Geary.Graph.EmailProperties(received, message.size));
+        email.set_email_properties(new Convey.Graph.EmailProperties(received, message.size));
 
         if (message.body != null) {
             string body = message.body;
-            email.set_message_body(new Geary.RFC822.Text(new Geary.Memory.StringBuffer(body)));
-            Geary.RFC822.Header? header = build_header(message);
+            email.set_message_body(new Convey.RFC822.Text(new Convey.Memory.StringBuffer(body)));
+            Convey.RFC822.Header? header = build_header(message);
             if (header != null) {
                 email.set_message_header(header);
             }
@@ -1187,8 +1187,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         return email;
     }
 
-    private Geary.RFC822.Header? build_header(Geary.Graph.Client.Message message) {
-        Geary.RFC822.Date sent = new Geary.RFC822.Date(
+    private Convey.RFC822.Header? build_header(Convey.Graph.Client.Message message) {
+        Convey.RFC822.Date sent = new Convey.RFC822.Date(
             message.received_at ?? new GLib.DateTime.now_local()
         );
         string header = "";
@@ -1202,13 +1202,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             header += "Cc: %s\r\n".printf(message.cc.to_rfc822_string());
         }
         if (!String.is_empty(message.subject)) {
-            header += "Subject: %s\r\n".printf(new Geary.RFC822.Subject(message.subject).to_rfc822_string());
+            header += "Subject: %s\r\n".printf(new Convey.RFC822.Subject(message.subject).to_rfc822_string());
         }
-        Geary.RFC822.MessageID? message_id = build_message_id(message);
+        Convey.RFC822.MessageID? message_id = build_message_id(message);
         if (message_id != null) {
             header += "Message-Id: %s\r\n".printf(message_id.to_rfc822_string());
         }
-        Geary.RFC822.MessageIDList? references = build_conversation_references(message);
+        Convey.RFC822.MessageIDList? references = build_conversation_references(message);
         if (references != null) {
             header += "References: %s\r\n".printf(references.to_rfc822_string());
         }
@@ -1222,8 +1222,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         header += "Date: %s\r\n\r\n".printf(sent.to_rfc822_string());
 
         try {
-            return new Geary.RFC822.Header(new Geary.Memory.StringBuffer(header));
-        } catch (Geary.RFC822.Error err) {
+            return new Convey.RFC822.Header(new Convey.Memory.StringBuffer(header));
+        } catch (Convey.RFC822.Error err) {
             debug("Could not build Graph headers: %s", err.message);
         }
         return null;
@@ -1237,13 +1237,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         return int.max(MIN_REFRESH_BATCH, int.min(MAX_REFRESH_BATCH, prefetch_days * 20));
     }
 
-    private void populate_full_message(Geary.Email email,
-                                       Geary.Memory.Buffer full_rfc822,
+    private void populate_full_message(Convey.Email email,
+                                       Convey.Memory.Buffer full_rfc822,
                                        string graph_message_id) {
-        Geary.RFC822.Message parsed;
+        Convey.RFC822.Message parsed;
         try {
-            parsed = new Geary.RFC822.Message.from_buffer(full_rfc822);
-        } catch (Geary.RFC822.Error err) {
+            parsed = new Convey.RFC822.Message.from_buffer(full_rfc822);
+        } catch (Convey.RFC822.Error err) {
             debug("Error parsing Graph RFC822 payload: %s", err.message);
             return;
         }
@@ -1253,7 +1253,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         string preview = parsed.get_preview();
         if (!String.is_empty(preview)) {
             email.set_message_preview(
-                new Geary.RFC822.PreviewText.from_string(preview)
+                new Convey.RFC822.PreviewText.from_string(preview)
             );
         }
 
@@ -1262,13 +1262,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
     }
 
-    private void populate_attachments(Geary.Email email,
-                                      Geary.RFC822.Message parsed,
+    private void populate_attachments(Convey.Email email,
+                                      Convey.RFC822.Message parsed,
                                       string graph_message_id) {
-        Gee.List<Geary.RFC822.Part> parts;
+        Gee.List<Convey.RFC822.Part> parts;
         try {
             parts = parsed.get_attachments();
-        } catch (Geary.RFC822.Error err) {
+        } catch (Convey.RFC822.Error err) {
             debug("Error listing Graph attachments: %s", err.message);
             return;
         }
@@ -1283,7 +1283,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         GLib.DirUtils.create_with_parents(attachment_dir, 0700);
 
         int index = 0;
-        foreach (Geary.RFC822.Part part in parts) {
+        foreach (Convey.RFC822.Part part in parts) {
             index++;
             string? filename = part.get_clean_filename();
             if (String.is_empty(filename)) {
@@ -1294,8 +1294,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 "%03d-%s".printf(index, (string) filename)
             );
             try {
-                Geary.Memory.Buffer content = part.write_to_buffer(
-                    Geary.RFC822.Part.EncodingConversion.NONE
+                Convey.Memory.Buffer content = part.write_to_buffer(
+                    Convey.RFC822.Part.EncodingConversion.NONE
                 );
                 GLib.File file = GLib.File.new_for_path(path);
                 file.replace_contents(
@@ -1306,7 +1306,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                     null
                 );
                 email.add_attachment(
-                    new Geary.Graph.Attachment.from_part(
+                    new Convey.Graph.Attachment.from_part(
                         part,
                         file,
                         (int64) content.size
@@ -1322,8 +1322,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         this.email_cache.sort((a, b) => b.id.natural_sort_comparator(a.id));
     }
 
-    private Geary.RFC822.MessageIDList? build_conversation_references(
-        Geary.Graph.Client.Message message
+    private Convey.RFC822.MessageIDList? build_conversation_references(
+        Convey.Graph.Client.Message message
     ) {
         if (String.is_empty(message.conversation_id)) {
             return null;
@@ -1332,34 +1332,34 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             GLib.ChecksumType.SHA1,
             message.conversation_id
         );
-        Geary.RFC822.MessageID conversation_id = new Geary.RFC822.MessageID(
-            "graph-conversation-%s@geary.local".printf(conversation_hash)
+        Convey.RFC822.MessageID conversation_id = new Convey.RFC822.MessageID(
+            "graph-conversation-%s@convey.local".printf(conversation_hash)
         );
-        return new Geary.RFC822.MessageIDList.single(conversation_id);
+        return new Convey.RFC822.MessageIDList.single(conversation_id);
     }
 
-    private Geary.RFC822.MessageID? build_message_id(Geary.Graph.Client.Message message) {
+    private Convey.RFC822.MessageID? build_message_id(Convey.Graph.Client.Message message) {
         if (!String.is_empty(message.internet_message_id)) {
             try {
-                return new Geary.RFC822.MessageID.from_rfc822_string(
+                return new Convey.RFC822.MessageID.from_rfc822_string(
                     message.internet_message_id
                 );
-            } catch (Geary.RFC822.Error err) {
+            } catch (Convey.RFC822.Error err) {
                 debug("Error parsing Graph message-id: %s", err.message);
             }
         }
         if (String.is_empty(message.id)) {
             return null;
         }
-        return new Geary.RFC822.MessageID("graph-%s@geary.local".printf(message.id));
+        return new Convey.RFC822.MessageID("graph-%s@convey.local".printf(message.id));
     }
 
     private string? compute_cache_path() {
         GLib.File? data_dir = this.owner.information.data_dir;
         // Fallback to the user's data dir if account data_dir isn't set yet.
         if (data_dir == null) {
-            // Fallback to ~/.local/share/geary if account data_dir isn't set.
-            string fallback = GLib.Path.build_filename(Environment.get_home_dir(), ".local", "share", "geary");
+            // Fallback to ~/.local/share/convey if account data_dir isn't set.
+            string fallback = GLib.Path.build_filename(Environment.get_home_dir(), ".local", "share", "convey");
             data_dir = GLib.File.new_for_path(fallback);
         }
         string folder_hash = GLib.Checksum.compute_for_string(
@@ -1424,13 +1424,13 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
                 if (item.get_node_type() != Json.NodeType.OBJECT) {
                     continue;
                 }
-                Geary.Graph.Client.Message parsed = parse_cached_message(
+                Convey.Graph.Client.Message parsed = parse_cached_message(
                     messages.get_object_element(i)
                 );
                 if (String.is_empty(parsed.id)) {
                     continue;
                 }
-                Geary.Email email = build_email(parsed);
+                Convey.Email email = build_email(parsed);
                 this.email_cache.add(email);
                 this.email_by_id.set(parsed.id, email);
                 this.message_by_id.set(parsed.id, parsed);
@@ -1458,12 +1458,12 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
             builder.add_string_value(this.delta_link);
             builder.set_member_name("messages");
             builder.begin_array();
-            foreach (Geary.Email email in this.email_cache) {
-                Geary.Graph.EmailIdentifier? graph_id = email.id as Geary.Graph.EmailIdentifier;
+            foreach (Convey.Email email in this.email_cache) {
+                Convey.Graph.EmailIdentifier? graph_id = email.id as Convey.Graph.EmailIdentifier;
                 if (graph_id == null) {
                     continue;
                 }
-                Geary.Graph.Client.Message? message = this.message_by_id.get(graph_id.graph_id);
+                Convey.Graph.Client.Message? message = this.message_by_id.get(graph_id.graph_id);
                 if (message == null) {
                     continue;
                 }
@@ -1482,8 +1482,8 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         }
     }
 
-    private static Geary.Graph.Client.Message parse_cached_message(Json.Object object) {
-        Geary.Graph.Client.Message parsed = new Geary.Graph.Client.Message();
+    private static Convey.Graph.Client.Message parse_cached_message(Json.Object object) {
+        Convey.Graph.Client.Message parsed = new Convey.Graph.Client.Message();
         parsed.id = Client.get_string_member(object, "id") ?? "";
         parsed.conversation_id = Client.get_string_member(object, "conversationId") ?? "";
         parsed.subject = Client.get_string_member(object, "subject") ?? "";
@@ -1504,7 +1504,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
     }
 
     private static void append_cached_message(Json.Builder builder,
-                                              Geary.Graph.Client.Message message) {
+                                              Convey.Graph.Client.Message message) {
         builder.begin_object();
         set_string_member(builder, "id", message.id);
         set_string_member(builder, "conversationId", message.conversation_id);
@@ -1537,21 +1537,21 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         builder.end_object();
     }
 
-    private static string? to_rfc822_string(Geary.RFC822.MailboxAddresses? addresses) {
+    private static string? to_rfc822_string(Convey.RFC822.MailboxAddresses? addresses) {
         return (addresses == null || addresses.is_empty)
             ? null
             : addresses.to_rfc822_string();
     }
 
-    private static Geary.RFC822.MailboxAddresses? parse_addresses_member(Json.Object object,
+    private static Convey.RFC822.MailboxAddresses? parse_addresses_member(Json.Object object,
                                                                           string key) {
         string? value = Client.get_string_member(object, key);
         if (String.is_empty(value)) {
             return null;
         }
         try {
-            return new Geary.RFC822.MailboxAddresses.from_rfc822_string(value);
-        } catch (Geary.RFC822.Error err) {
+            return new Convey.RFC822.MailboxAddresses.from_rfc822_string(value);
+        } catch (Convey.RFC822.Error err) {
         }
         return null;
     }
@@ -1564,7 +1564,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
         builder.add_string_value(value);
     }
 
-    private static int find_index(Gee.List<Geary.Email> emails, Geary.EmailIdentifier id) {
+    private static int find_index(Gee.List<Convey.Email> emails, Convey.EmailIdentifier id) {
         for (int i = 0; i < emails.size; i++) {
             if (emails[i].id.equal_to(id)) {
                 return i;
@@ -1575,7 +1575,7 @@ internal class Geary.Graph.Folder : Geary.AbstractLocalFolder,
 
 }
 
-internal class Geary.Graph.NoopRevokable : Geary.Revokable {
+internal class Convey.Graph.NoopRevokable : Convey.Revokable {
 
     protected override async void internal_revoke_async(GLib.Cancellable? cancellable)
         throws GLib.Error {
@@ -1592,7 +1592,7 @@ internal class Geary.Graph.NoopRevokable : Geary.Revokable {
 }
 
 /**
- * A {@link Geary.Revokable} for Graph API move operations.
+ * A {@link Convey.Revokable} for Graph API move operations.
  *
  * Because the Graph API move is executed immediately (unlike IMAP which can
  * delay the move), this revokable is already in the "committed" state from
@@ -1601,13 +1601,13 @@ internal class Geary.Graph.NoopRevokable : Geary.Revokable {
  * direction so the caller can still undo.  Calling revoke_async() moves the
  * messages back to the original source folder straight away.
  */
-internal class Geary.Graph.RevokableMove : Geary.Revokable {
+internal class Convey.Graph.RevokableMove : Convey.Revokable {
 
     // The Graph API client used to issue move calls.
-    private Geary.Graph.Client client;
+    private Convey.Graph.Client client;
 
     // The account, used to look up folders by path after a move.
-    private Geary.Graph.Account account;
+    private Convey.Graph.Account account;
 
     // The Graph message IDs that now live in `current_folder` and should be
     // moved back to `return_folder` when the user hits Undo.
@@ -1615,17 +1615,17 @@ internal class Geary.Graph.RevokableMove : Geary.Revokable {
 
     // The folder that currently holds the messages (i.e. the destination of
     // the original move, or the source of the next reverse move).
-    private Geary.Graph.Folder current_folder;
+    private Convey.Graph.Folder current_folder;
 
     // The folder the messages should be moved back to on revoke.
-    private Geary.Graph.Folder return_folder;
+    private Convey.Graph.Folder return_folder;
 
 
-    internal RevokableMove(Geary.Graph.Client client,
-                           Geary.Graph.Account account,
+    internal RevokableMove(Convey.Graph.Client client,
+                           Convey.Graph.Account account,
                            Gee.ArrayList<string> message_ids,
-                           Geary.Graph.Folder current_folder,
-                           Geary.Graph.Folder return_folder) {
+                           Convey.Graph.Folder current_folder,
+                           Convey.Graph.Folder return_folder) {
         this.client = client;
         this.account = account;
         this.message_ids = message_ids;
@@ -1698,7 +1698,7 @@ internal class Geary.Graph.RevokableMove : Geary.Revokable {
         // The actual API move already happened; committing just means we hand
         // back a new revokable that points in the reverse direction so the
         // caller can still undo after the commit.
-        Geary.Graph.RevokableMove reverse = new Geary.Graph.RevokableMove(
+        Convey.Graph.RevokableMove reverse = new Convey.Graph.RevokableMove(
             this.client,
             this.account,
             this.message_ids,

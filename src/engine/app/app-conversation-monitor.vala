@@ -38,7 +38,7 @@
  * removed account-wide, so that known conversations can be updated as
  * needed.
  */
-public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
+public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
 
     /**
      * The fields Conversations require to thread emails together.
@@ -46,10 +46,10 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
      * These fields will be retrieved regardless of the Field
      * parameter passed to the constructor.
      */
-    public const Geary.Email.Field REQUIRED_FIELDS = (
-        Geary.Email.Field.REFERENCES |
-        Geary.Email.Field.FLAGS |
-        Geary.Email.Field.DATE
+    public const Convey.Email.Field REQUIRED_FIELDS = (
+        Convey.Email.Field.REFERENCES |
+        Convey.Email.Field.FLAGS |
+        Convey.Email.Field.DATE
     );
 
     /** The GLib logging domain used by this class. */
@@ -58,11 +58,11 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
 
     private struct ProcessJobContext {
 
-        public Gee.Map<Geary.EmailIdentifier,Geary.Email> emails;
+        public Gee.Map<Convey.EmailIdentifier,Convey.Email> emails;
 
 
         public ProcessJobContext() {
-            this.emails = new Gee.HashMap<Geary.EmailIdentifier,Geary.Email>();
+            this.emails = new Gee.HashMap<Convey.EmailIdentifier,Convey.Email>();
         }
 
     }
@@ -156,7 +156,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
     // Determines if the base folder was actually opened or not
     private bool base_was_opened = false;
 
-    private Geary.Email.Field required_fields;
+    private Convey.Email.Field required_fields;
     private ConversationOperationQueue queue;
     private GLib.Cancellable operation_cancellable = new GLib.Cancellable();
 
@@ -278,7 +278,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
      * Creates a conversation monitor for the given folder.
      *
      * @param base_folder a Folder to monitor for conversations
-     * @param required_fields See {@link Geary.Folder}
+     * @param required_fields See {@link Convey.Folder}
      * @param min_window_count Minimum number of conversations that will be loaded
      */
     public ConversationMonitor(Folder base_folder,
@@ -304,7 +304,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
      * cancel any such operations, simply close the monitor via {@link
      * stop_monitoring}.
      *
-     * @param open_flags See {@link Geary.Folder}
+     * @param open_flags See {@link Convey.Folder}
      * @param cancellable Passed to the folder open operation
      */
     public async bool start_monitoring(Folder.OpenFlags open_flags,
@@ -376,7 +376,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
      * Stops monitoring for new messages and closes the base folder.
      *
      * Returns a result code that is semantically identical to the
-     * result of {@link Geary.Folder.close_async}.
+     * result of {@link Convey.Folder.close_async}.
      *
      * The //cancellable// parameter will be used when waiting for
      * internal monitor operations to complete, but will not prevent
@@ -394,7 +394,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
     }
 
     /** Ensures the given email are loaded in the monitor. */
-    public async void load_email(Gee.Collection<Geary.EmailIdentifier> to_load,
+    public async void load_email(Gee.Collection<Convey.EmailIdentifier> to_load,
                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (!this.is_monitoring) {
@@ -418,7 +418,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
     /**
      * Returns the conversation containing the given email, if any.
      */
-    public Conversation? get_by_email_identifier(Geary.EmailIdentifier email_id) {
+    public Conversation? get_by_email_identifier(Convey.EmailIdentifier email_id) {
         return this.conversations.get_by_email_identifier(email_id);
     }
 
@@ -446,16 +446,16 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
     /**
      * Returns the list of folders that disqualify emails from conversations.
      */
-    internal Gee.Collection<Geary.FolderPath> get_search_folder_blacklist() {
+    internal Gee.Collection<Convey.FolderPath> get_search_folder_blacklist() {
         Folder.SpecialUse[] blacklisted_folder_types = {
             JUNK,
             TRASH,
             DRAFTS,
         };
 
-        var blacklist = new Gee.ArrayList<Geary.FolderPath?>();
+        var blacklist = new Gee.ArrayList<Convey.FolderPath?>();
         foreach (var type in blacklisted_folder_types) {
-            Geary.Folder? blacklist_folder = this.base_folder.account.get_special_folder(type);
+            Convey.Folder? blacklist_folder = this.base_folder.account.get_special_folder(type);
             if (blacklist_folder != null) {
                 blacklist.add(blacklist_folder.path);
             }
@@ -470,9 +470,9 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
     /**
      * Returns the list of flags that disqualify emails from conversations.
      */
-    internal Geary.EmailFlags get_search_flag_blacklist() {
-        Geary.EmailFlags flags = new Geary.EmailFlags();
-        flags.add(Geary.EmailFlags.DRAFT);
+    internal Convey.EmailFlags get_search_flag_blacklist() {
+        Convey.EmailFlags flags = new Convey.EmailFlags();
+        flags.add(Convey.EmailFlags.DRAFT);
         return flags;
     }
 
@@ -486,7 +486,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
         int load_count = 0;
         GLib.Error? scan_error = null;
         try {
-            Gee.Collection<Geary.Email>? messages =
+            Gee.Collection<Convey.Email>? messages =
                 yield this.base_folder.list_email_by_id_async(
                     initial_id, count, required_fields, flags,
                     this.operation_cancellable
@@ -522,7 +522,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
 
         GLib.Error? scan_error = null;
         try {
-            Gee.Collection<Geary.Email>? messages =
+            Gee.Collection<Convey.Email>? messages =
                 yield this.base_folder.list_email_by_sparse_id_async(
                     ids, required_fields, flags, this.operation_cancellable
                 );
@@ -557,25 +557,25 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
         throws Error {
         bool opened = false;
 
-        Gee.List<Geary.Email>? emails = null;
+        Gee.List<Convey.Email>? emails = null;
         try {
             yield folder.open_async(
-                Geary.Folder.OpenFlags.NONE, this.operation_cancellable
+                Convey.Folder.OpenFlags.NONE, this.operation_cancellable
             );
             opened = true;
 
             // First just get the bare minimum we need to determine if we even
             // care about the messages.
             emails = yield folder.list_email_by_sparse_id_async(
-                ids, Geary.Email.Field.REFERENCES, flags, this.operation_cancellable
+                ids, Convey.Email.Field.REFERENCES, flags, this.operation_cancellable
             );
             if (emails != null) {
-                Gee.HashSet<Geary.EmailIdentifier> relevant_ids =
-                    new Gee.HashSet<Geary.EmailIdentifier>();
-                foreach (Geary.Email email in emails) {
+                Gee.HashSet<Convey.EmailIdentifier> relevant_ids =
+                    new Gee.HashSet<Convey.EmailIdentifier>();
+                foreach (Convey.Email email in emails) {
                     Gee.Set<RFC822.MessageID>? ancestors = email.get_ancestors();
                     if (ancestors != null &&
-                        Geary.traverse<RFC822.MessageID>(ancestors).any(id => conversations.has_message_id(id)))
+                        Convey.traverse<RFC822.MessageID>(ancestors).any(id => conversations.has_message_id(id)))
                         relevant_ids.add(email.id);
                 }
 
@@ -650,16 +650,16 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
     }
 
     protected virtual void notify_conversation_appended(Conversation conversation,
-        Gee.Collection<Geary.Email> emails) {
+        Gee.Collection<Convey.Email> emails) {
         conversation_appended(conversation, emails);
     }
 
     protected virtual void notify_conversation_trimmed(Conversation conversation,
-        Gee.Collection<Geary.Email> emails) {
+        Gee.Collection<Convey.Email> emails) {
         conversation_trimmed(conversation, emails);
     }
 
-    protected virtual void notify_email_flags_changed(Conversation conversation, Geary.Email email) {
+    protected virtual void notify_email_flags_changed(Conversation conversation, Convey.Email email) {
         conversation.email_flags_changed(email);
         email_flags_changed(conversation, email);
     }
@@ -712,7 +712,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
         return closing;
     }
 
-    private async void process_email_async(Gee.Collection<Geary.Email>? emails,
+    private async void process_email_async(Gee.Collection<Convey.Email>? emails,
                                            ProcessJobContext job)
         throws Error {
         if (emails == null || emails.size == 0) {
@@ -723,18 +723,18 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
         debug("process_email: %d emails", emails.size);
 
         Gee.HashSet<RFC822.MessageID> new_message_ids = new Gee.HashSet<RFC822.MessageID>();
-        foreach (Geary.Email email in emails) {
+        foreach (Convey.Email email in emails) {
             if (!job.emails.has_key(email.id)) {
                 job.emails.set(email.id, email);
 
                 // Expand conversations whose messages have ancestors, and aren't marked
                 // for deletion.
-                Geary.EmailFlags? flags = email.email_flags;
+                Convey.EmailFlags? flags = email.email_flags;
                 bool marked_for_deletion = (flags != null) ? flags.is_deleted() : false;
 
                 Gee.Set<RFC822.MessageID>? ancestors = email.get_ancestors();
                 if (ancestors != null && !marked_for_deletion) {
-                    Geary.traverse<RFC822.MessageID>(ancestors)
+                    Convey.traverse<RFC822.MessageID>(ancestors)
                         .filter(id => !new_message_ids.contains(id))
                         .add_all_to(new_message_ids);
                 }
@@ -750,11 +750,11 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
 
     private async void process_email_complete_async(ProcessJobContext job) {
         Gee.Collection<Conversation>? added = null;
-        Gee.MultiMap<Conversation, Geary.Email>? appended = null;
+        Gee.MultiMap<Conversation, Convey.Email>? appended = null;
         Gee.Collection<Conversation>? removed_due_to_merge = null;
         try {
             // Get known paths for all emails
-            Gee.MultiMap<Geary.EmailIdentifier, Geary.FolderPath>? email_paths =
+            Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>? email_paths =
                 yield this.base_folder.account.get_containing_folders_async(
                     job.emails.keys,
                     this.operation_cancellable
@@ -797,8 +797,8 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
 
         debug("expand_conversations: %d email ids", needed_message_ids.size);
 
-        Gee.Collection<Geary.FolderPath> folder_blacklist = get_search_folder_blacklist();
-        Geary.EmailFlags flag_blacklist = get_search_flag_blacklist();
+        Gee.Collection<Convey.FolderPath> folder_blacklist = get_search_folder_blacklist();
+        Convey.EmailFlags flag_blacklist = get_search_flag_blacklist();
 
         // execute all the local search operations at once
         Nonblocking.Batch batch = new Nonblocking.Batch();
@@ -810,14 +810,14 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
         yield batch.execute_all_async();
 
         // collect their results into a single collection of addt'l emails
-        Gee.HashMap<Geary.EmailIdentifier, Geary.Email> needed_messages = new Gee.HashMap<
-            Geary.EmailIdentifier, Geary.Email>();
+        Gee.HashMap<Convey.EmailIdentifier, Convey.Email> needed_messages = new Gee.HashMap<
+            Convey.EmailIdentifier, Convey.Email>();
         foreach (int id in batch.get_ids()) {
             LocalSearchOperation op = (LocalSearchOperation) batch.get_operation(id);
             if (op.emails != null) {
-                Geary.traverse<Geary.Email>(op.emails.get_keys())
+                Convey.traverse<Convey.Email>(op.emails.get_keys())
                     .filter(e => !needed_messages.has_key(e.id))
-                    .add_all_to_map<Geary.EmailIdentifier>(needed_messages, e => e.id);
+                    .add_all_to_map<Convey.EmailIdentifier>(needed_messages, e => e.id);
             }
         }
 
@@ -829,8 +829,8 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
               needed_message_ids.size, needed_messages.size);
     }
 
-    private void on_folder_opened(Geary.Folder.OpenState state, int count) {
-        if (state == Geary.Folder.OpenState.REMOTE)
+    private void on_folder_opened(Convey.Folder.OpenState state, int count) {
+        if (state == Convey.Folder.OpenState.REMOTE)
             this.queue.add(new ReseedOperation(this));
     }
 
@@ -886,7 +886,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
         }
     }
 
-    private void on_account_email_flags_changed(Geary.Folder folder,
+    private void on_account_email_flags_changed(Convey.Folder folder,
                                                 Gee.Map<EmailIdentifier,EmailFlags> map) {
         Gee.HashSet<EmailIdentifier> inserted_ids = new Gee.HashSet<EmailIdentifier>();
         Gee.HashSet<EmailIdentifier> removed_ids = new Gee.HashSet<EmailIdentifier>();
@@ -897,7 +897,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
                 if (folder == this.base_folder) {
                     // Check to see if the incoming message is sorted later than the last message in the
                     // window. If it is, don't resurrect it since it likely hasn't been loaded yet.
-                    Geary.EmailIdentifier? lowest = this.window_lowest;
+                    Convey.EmailIdentifier? lowest = this.window_lowest;
                     if (lowest != null) {
                         if (lowest.natural_sort_comparator(id) < 0) {
                             debug(
@@ -926,7 +926,7 @@ public class Geary.App.ConversationMonitor : BaseObject, Logging.Source {
 
             // Remove conversation if get_emails yields an empty collection -- this probably means
             // the conversation was deleted.
-            if (conversation.get_emails(Geary.App.Conversation.Ordering.NONE).size == 0) {
+            if (conversation.get_emails(Convey.App.Conversation.Ordering.NONE).size == 0) {
                 debug(
                     "Flagging email %s for deletion evaporates conversation %s",
                     id.to_string(), conversation.to_string()

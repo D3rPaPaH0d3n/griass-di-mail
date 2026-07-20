@@ -10,7 +10,7 @@
  * Because all EmptyBuffers are the same and immutable, only a single may be used: {@link instance}.
  */
 
-public class Geary.Memory.EmptyBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
+public class Convey.Memory.EmptyBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
     Memory.UnownedBytesBuffer, Memory.UnownedByteArrayBuffer {
     private static EmptyBuffer? _instance = null;
     public static EmptyBuffer instance {

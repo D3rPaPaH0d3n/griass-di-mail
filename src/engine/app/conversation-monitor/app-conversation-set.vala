@@ -9,7 +9,7 @@
 /**
  * Creates and maintains set of conversations by adding and removing email.
  */
-private class Geary.App.ConversationSet : BaseObject, Logging.Source {
+private class Convey.App.ConversationSet : BaseObject, Logging.Source {
 
 
     /** The base folder for this set of conversations. */
@@ -40,13 +40,13 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
     private Gee.Set<Conversation> _conversations = new Gee.HashSet<Conversation>();
 
     // Maps email ids to conversations.
-    private Gee.HashMap<Geary.EmailIdentifier, Conversation> email_id_map
-        = new Gee.HashMap<Geary.EmailIdentifier, Conversation>();
+    private Gee.HashMap<Convey.EmailIdentifier, Conversation> email_id_map
+        = new Gee.HashMap<Convey.EmailIdentifier, Conversation>();
 
     // Contains the full set of Message IDs theoretically in each conversation,
     // as determined by the ancestors of all messages in the conversation.
-    private Gee.HashMap<Geary.RFC822.MessageID, Conversation> logical_message_id_map
-        = new Gee.HashMap<Geary.RFC822.MessageID, Conversation>();
+    private Gee.HashMap<Convey.RFC822.MessageID, Conversation> logical_message_id_map
+        = new Gee.HashMap<Convey.RFC822.MessageID, Conversation>();
 
 
     /**
@@ -69,11 +69,11 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
      * with a matching Message-ID header, and any Message ID matching any
      * ancestor of any message in any conversation will match.
      */
-    public bool has_message_id(Geary.RFC822.MessageID message_id) {
+    public bool has_message_id(Convey.RFC822.MessageID message_id) {
         return logical_message_id_map.has_key(message_id);
     }
 
-    public Conversation? get_by_email_identifier(Geary.EmailIdentifier id) {
+    public Conversation? get_by_email_identifier(Convey.EmailIdentifier id) {
         return email_id_map.get(id);
     }
 
@@ -98,12 +98,12 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
                                out Gee.Collection<Conversation> removed_due_to_merge) {
         Gee.HashSet<Conversation> _added =
             new Gee.HashSet<Conversation>();
-        Gee.HashMultiMap<Conversation, Geary.Email> _appended =
-            new Gee.HashMultiMap<Conversation, Geary.Email>();
+        Gee.HashMultiMap<Conversation, Convey.Email> _appended =
+            new Gee.HashMultiMap<Conversation, Convey.Email>();
         Gee.HashSet<Conversation> _removed_due_to_merge =
             new Gee.HashSet<Conversation>();
 
-        foreach (Geary.Email email in emails) {
+        foreach (Convey.Email email in emails) {
             Gee.Set<Conversation> associated = get_associated_conversations(email);
             if (associated.size > 1) {
                 // When multiple conversations hold one or more of the Message-IDs in the email's
@@ -118,7 +118,7 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
 
                 // Note that this call will modify the List so it only holds the to-be-axed
                 // Conversations
-                Gee.Set<Geary.Email> moved_email = new Gee.HashSet<Geary.Email>();
+                Gee.Set<Convey.Email> moved_email = new Gee.HashSet<Convey.Email>();
                 Conversation dest = merge_conversations(
                     associated, moved_email
                 );
@@ -134,14 +134,14 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
 
                 // the dest was always appended to, never created
                 if (!_added.contains(dest)) {
-                    foreach (Geary.Email moved in moved_email)
+                    foreach (Convey.Email moved in moved_email)
                         _appended.set(dest, moved);
                 }
             }
 
             Conversation? conversation = null;
             bool added_conversation = false;
-            Gee.Collection<Geary.FolderPath>? known_paths = id_to_paths.get(email.id);
+            Gee.Collection<Convey.FolderPath>? known_paths = id_to_paths.get(email.id);
             if (known_paths != null) {
                 // Don't add an email with no known paths - it may
                 // have been removed after being listed for adding.
@@ -183,7 +183,7 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
                                                 Gee.MultiMap<Conversation,Email> trimmed) {
         Gee.Set<Conversation> remaining = new Gee.HashSet<Conversation>();
 
-        foreach (Geary.EmailIdentifier id in ids) {
+        foreach (Convey.EmailIdentifier id in ids) {
             Conversation? conversation = email_id_map.get(id);
             // The conversation could be null if the conversation
             // monitor only goes back a few emails, but something old
@@ -191,7 +191,7 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
             // search terms in the search folder.
             if (conversation != null) {
                 // Conditionally remove email from its conversation
-                Geary.Email? email = conversation.get_email_by_id(id);
+                Convey.Email? email = conversation.get_email_by_id(id);
                 if (email != null) {
                     switch (conversation.get_folder_count(id)) {
                     case 0:
@@ -258,7 +258,7 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
             false                           // filter deleted (false, so we remove emails that are flagged for deletion too)
         );
 
-        foreach (Geary.Email conversation_email in conversation_emails)
+        foreach (Convey.Email conversation_email in conversation_emails)
             remove_email_from_conversation(conversation, conversation_email);
 
         if (!_conversations.remove(conversation))
@@ -273,10 +273,10 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
     // Returns a Collection of zero or more Conversations that have Message-IDs associated with
     // the ancestors of the supplied Email ... if more than one, then add_email() should not be
     // called
-    private Gee.Set<Conversation> get_associated_conversations(Geary.Email email) {
-        Gee.Set<Geary.RFC822.MessageID>? ancestors = email.get_ancestors();
+    private Gee.Set<Conversation> get_associated_conversations(Convey.Email email) {
+        Gee.Set<Convey.RFC822.MessageID>? ancestors = email.get_ancestors();
         if (ancestors != null) {
-            return Geary.traverse<Geary.RFC822.MessageID>(ancestors)
+            return Convey.traverse<Convey.RFC822.MessageID>(ancestors)
                 .map_nonnull<Conversation>(a => logical_message_id_map.get(a))
                 .to_hash_set();
         }
@@ -299,7 +299,7 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
      * `added_conversation` is set `true` if the returned conversation
      * was created, else it is set to `false`.
      */
-    private Conversation? add_email(Geary.Email email,
+    private Conversation? add_email(Convey.Email email,
                                     Gee.Collection<FolderPath>? known_paths,
                                     out bool added_conversation) {
         added_conversation = false;
@@ -334,8 +334,8 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
     /**
      * Unconditionally adds an email to a conversation.
      */
-    private void add_email_to_conversation(Conversation conversation, Geary.Email email,
-        Gee.Collection<Geary.FolderPath>? known_paths) {
+    private void add_email_to_conversation(Conversation conversation, Convey.Email email,
+        Gee.Collection<Convey.FolderPath>? known_paths) {
         if (!conversation.add(email, known_paths)) {
             error("Couldn't add duplicate email %s to conversation %s",
                 email.id.to_string(), conversation.to_string());
@@ -345,7 +345,7 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
 
         Gee.Set<RFC822.MessageID>? ancestors = email.get_ancestors();
         if (ancestors != null) {
-            foreach (Geary.RFC822.MessageID ancestor in ancestors)
+            foreach (Convey.RFC822.MessageID ancestor in ancestors)
                 logical_message_id_map.set(ancestor, conversation);
         }
     }
@@ -370,8 +370,8 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
 
         // Collect all emails and their paths from all conversations
         // to be merged, then remove those conversations
-        Gee.MultiMap<Geary.EmailIdentifier,Geary.FolderPath>? id_to_paths =
-            new Gee.HashMultiMap<Geary.EmailIdentifier,Geary.FolderPath>();
+        Gee.MultiMap<Convey.EmailIdentifier,Convey.FolderPath>? id_to_paths =
+            new Gee.HashMultiMap<Convey.EmailIdentifier,Convey.FolderPath>();
         foreach (Conversation conversation in conversations) {
             foreach (EmailIdentifier id in conversation.path_map.get_keys()) {
                 moved_email.add(conversation.get_email_by_id(id));
@@ -383,7 +383,7 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
         }
 
         // Now add all that email back to the destination Conversation
-        foreach (Geary.Email moved in moved_email) {
+        foreach (Convey.Email moved in moved_email) {
             add_email_to_conversation(dest, moved, id_to_paths.get(moved.id));
         }
 
@@ -393,16 +393,16 @@ private class Geary.App.ConversationSet : BaseObject, Logging.Source {
     /**
      * Unconditionally removes an email from a conversation.
      */
-    private void remove_email_from_conversation(Conversation conversation, Geary.Email email) {
+    private void remove_email_from_conversation(Conversation conversation, Convey.Email email) {
         if (!this.email_id_map.unset(email.id)) {
             warning("Email %s already removed from conversation set",
                     email.id.to_string());
         }
 
-        Gee.Set<Geary.RFC822.MessageID>? removed_message_ids = conversation.remove(email);
+        Gee.Set<Convey.RFC822.MessageID>? removed_message_ids = conversation.remove(email);
         debug("Removed %d messages from conversation", removed_message_ids != null ? removed_message_ids.size : 0);
         if (removed_message_ids != null) {
-            foreach (Geary.RFC822.MessageID removed_message_id in removed_message_ids) {
+            foreach (Convey.RFC822.MessageID removed_message_id in removed_message_ids) {
                 if (!logical_message_id_map.unset(removed_message_id)) {
                     error("Message ID %s already removed from conversation set logical map",
                         removed_message_id.to_string());

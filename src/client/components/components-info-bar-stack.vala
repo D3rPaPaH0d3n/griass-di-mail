@@ -12,7 +12,7 @@
  * around the info bar, and manages revealing and hiding itself and
  * the info bars as needed.
  */
-public class Components.InfoBarStack : Gtk.Frame, Geary.BaseInterface {
+public class Components.InfoBarStack : Gtk.Frame, Convey.BaseInterface {
 
 
     /**
@@ -87,7 +87,7 @@ public class Components.InfoBarStack : Gtk.Frame, Geary.BaseInterface {
             return (
                 this.element == null
                 ? Gee.Collection.empty<Components.InfoBar>().iterator()
-                : Geary.Collection.single(this.element).iterator()
+                : Convey.Collection.single(this.element).iterator()
             );
         }
 
@@ -158,7 +158,7 @@ public class Components.InfoBarStack : Gtk.Frame, Geary.BaseInterface {
 
 
     construct {
-        add_css_class("geary-info-bar-stack");
+        add_css_class("convey-info-bar-stack");
         update_queue_type();
     }
 

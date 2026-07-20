@@ -13,7 +13,7 @@
  * queried. Contacts are obtained from the {@link ContactStore} for an
  * account.
  */
-public class Application.Contact : Geary.BaseObject {
+public class Application.Contact : Convey.BaseObject {
 
 
     /** The human-readable name of the contact. */
@@ -58,10 +58,10 @@ public class Application.Contact : Geary.BaseObject {
     public GLib.ListModel email_addresses {
         get {
             if (this._email_addresses == null) {
-                var addrs = new GLib.ListStore(typeof(Geary.RFC822.MailboxAddress));
+                var addrs = new GLib.ListStore(typeof(Convey.RFC822.MailboxAddress));
                 foreach (Folks.EmailFieldDetails email in
                          this.individual.email_addresses) {
-                    var mailbox_addr = new Geary.RFC822.MailboxAddress(
+                    var mailbox_addr = new Convey.RFC822.MailboxAddress(
                         this.display_name, email.value
                     );
                     addrs.append(mailbox_addr);
@@ -82,7 +82,7 @@ public class Application.Contact : Geary.BaseObject {
     internal Folks.Individual? individual { get; private set; }
 
     /** The Engine contact, if any. */
-    private Geary.Contact? engine = null;
+    private Convey.Contact? engine = null;
 
     private weak ContactStore store;
 
@@ -100,7 +100,7 @@ public class Application.Contact : Geary.BaseObject {
 
     internal Contact.for_engine(ContactStore store,
                                 string display_name,
-                                Geary.Contact source) {
+                                Convey.Contact source) {
         this(store, null);
         this.engine = source;
         this.engine.flags.added.connect(on_engine_flags_changed);
@@ -146,10 +146,10 @@ public class Application.Contact : Geary.BaseObject {
         }
 
         for (uint i = 0; i < this.email_addresses.get_n_items(); i++) {
-            var this_addr = (Geary.RFC822.MailboxAddress) this.email_addresses.get_item(i);
+            var this_addr = (Convey.RFC822.MailboxAddress) this.email_addresses.get_item(i);
             bool found = false;
             for (uint j = 0; j < other.email_addresses.get_n_items(); j++) {
-                var other_addr = (Geary.RFC822.MailboxAddress) other.email_addresses.get_item(j);
+                var other_addr = (Convey.RFC822.MailboxAddress) other.email_addresses.get_item(j);
                 if (this_addr.equal_to(other_addr)) {
                     found = true;
                     break;
@@ -188,7 +188,7 @@ public class Application.Contact : Geary.BaseObject {
                     new Gee.HashSet<Folks.EmailFieldDetails>();
                 GLib.Value email_value = GLib.Value(typeof(Gee.Set));
                 for (uint i = 0; i < this.email_addresses.get_n_items(); i++) {
-                    var addr = (Geary.RFC822.MailboxAddress) this.email_addresses.get_item(i);
+                    var addr = (Convey.RFC822.MailboxAddress) this.email_addresses.get_item(i);
                     email_addresses.add(
                         new Folks.EmailFieldDetails(addr.address)
                     );
@@ -205,14 +205,14 @@ public class Application.Contact : Geary.BaseObject {
             }
         }
         if (persona == null) {
-            throw new Geary.EngineError.UNSUPPORTED(
+            throw new Convey.EngineError.UNSUPPORTED(
                 "Supported persona store not found"
             );
         }
 
         Folks.Individual? individual = persona.individual;
         if (individual == null) {
-            throw new Geary.EngineError.UNSUPPORTED(
+            throw new Convey.EngineError.UNSUPPORTED(
                 "Individual not created for persona"
             );
         }
@@ -279,19 +279,19 @@ public class Application.Contact : Geary.BaseObject {
         throws GLib.Error {
         ContactStore? store = this.store;
         if (store != null) {
-            var contacts = new Gee.LinkedList<Geary.Contact>();
+            var contacts = new Gee.LinkedList<Convey.Contact>();
             for (uint i = 0; i < this.email_addresses.get_n_items(); i++) {
-                var mailbox = (Geary.RFC822.MailboxAddress) this.email_addresses.get_item(i);
-                Geary.Contact? contact = yield store.lookup_engine_contact(
+                var mailbox = (Convey.RFC822.MailboxAddress) this.email_addresses.get_item(i);
+                Convey.Contact? contact = yield store.lookup_engine_contact(
                     mailbox, cancellable
                 );
                 if (enabled) {
                     contact.flags.add(
-                        Geary.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
+                        Convey.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
                     );
                 } else {
                     contact.flags.remove(
-                        Geary.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
+                        Convey.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
                     );
                 }
                 contacts.add(contact);
@@ -322,7 +322,7 @@ public class Application.Contact : Geary.BaseObject {
     private void update_name(string name) {
         this.display_name = name;
         this.display_name_is_email =
-            Geary.RFC822.MailboxAddress.is_valid_address(name);
+            Convey.RFC822.MailboxAddress.is_valid_address(name);
     }
 
     private void on_individual_avatar_notify() {
@@ -346,8 +346,8 @@ public class Application.Contact : Geary.BaseObject {
     }
 
     private void update_from_engine() {
-        Geary.RFC822.MailboxAddress mailbox = this.engine.get_rfc822_address();
-        var addrs = new GLib.ListStore(typeof(Geary.RFC822.MailboxAddress));
+        Convey.RFC822.MailboxAddress mailbox = this.engine.get_rfc822_address();
+        var addrs = new GLib.ListStore(typeof(Convey.RFC822.MailboxAddress));
         addrs.append(mailbox);
         this._email_addresses = addrs;
         this.load_remote_resources = this.engine.flags.always_load_remote_images();

@@ -10,7 +10,7 @@
  *
  * @see ExamineCommand
  */
-public class Geary.Imap.SelectCommand : Command {
+public class Convey.Imap.SelectCommand : Command {
 
     public const string NAME = "select";
 

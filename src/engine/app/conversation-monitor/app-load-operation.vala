@@ -8,7 +8,7 @@
 /**
  * Loads a specific email all the way to the end of the vector.
  */
-private class Geary.App.LoadOperation : ConversationOperation {
+private class Convey.App.LoadOperation : ConversationOperation {
 
 
     private EmailIdentifier to_load;
@@ -25,7 +25,7 @@ private class Geary.App.LoadOperation : ConversationOperation {
 
     public override async void execute_async()
         throws GLib.Error {
-        Geary.EmailIdentifier? lowest_known = this.monitor.window_lowest;
+        Convey.EmailIdentifier? lowest_known = this.monitor.window_lowest;
         if (lowest_known == null ||
             this.to_load.natural_sort_comparator(lowest_known) < 0) {
             // XXX the further back to_load is, the more expensive

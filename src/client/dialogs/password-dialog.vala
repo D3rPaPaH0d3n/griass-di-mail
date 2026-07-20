@@ -8,7 +8,7 @@
  * Displays a dialog for collecting the user's password, without allowing them to change their
  * other data.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/password-dialog.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/password-dialog.ui")]
 public class PasswordDialog : Adw.AlertDialog {
 
     [GtkChild] private unowned Adw.PreferencesGroup prefs_group;
@@ -17,16 +17,16 @@ public class PasswordDialog : Adw.AlertDialog {
     [GtkChild] private unowned Adw.SwitchRow remember_password_row;
 
     public PasswordDialog(Gtk.Window? parent,
-                          Geary.AccountInformation account,
-                          Geary.ServiceInformation service,
-                          Geary.Credentials? credentials) {
+                          Convey.AccountInformation account,
+                          Convey.ServiceInformation service,
+                          Convey.Credentials? credentials) {
         if (credentials != null) {
             this.username_row.subtitle = credentials.user;
             this.password_row.text = credentials.token ?? "";
         }
         this.remember_password_row.active = service.remember_password;
 
-        if ((service.protocol == Geary.Protocol.SMTP)) {
+        if ((service.protocol == Convey.Protocol.SMTP)) {
             this.prefs_group.title = _("SMTP Credentials");
         }
 
@@ -36,7 +36,7 @@ public class PasswordDialog : Adw.AlertDialog {
 
     private void refresh_ok_button_sensitivity() {
         string password = this.password_row.text;
-        set_response_enabled("authenticate", !Geary.String.is_empty_or_whitespace(password));
+        set_response_enabled("authenticate", !Convey.String.is_empty_or_whitespace(password));
     }
 
     public async string? get_password(Gtk.Window? parent,

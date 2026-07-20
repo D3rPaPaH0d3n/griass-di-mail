@@ -12,7 +12,7 @@
  * messages to be removed, mark the messages as removed, and update
  * counts.
  */
-private class Geary.ImapEngine.MoveEmailPrepare : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.MoveEmailPrepare : Convey.ImapEngine.SendReplayOperation {
     public Gee.Set<ImapDB.EmailIdentifier>? prepared_for_move = null;
 
     private MinimalFolder engine;

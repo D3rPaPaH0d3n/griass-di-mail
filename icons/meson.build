@@ -40,14 +40,14 @@ install_data(icon_files,
 scalable_dir = join_paths('hicolor', 'scalable', 'apps')
 
 install_data(
-  join_paths(scalable_dir, '@0@.svg'.format(geary_id)),
+  join_paths(scalable_dir, '@0@.svg'.format(convey_id)),
   install_dir: join_paths(data_dir, 'icons', scalable_dir),
 )
 
 symbolic_dir = join_paths('hicolor', 'symbolic', 'apps')
 
 install_data(
-  join_paths(symbolic_dir, 'org.gnome.Geary-symbolic.svg'),
+  join_paths(symbolic_dir, 'net.donnybeelo.Convey-symbolic.svg'),
   install_dir: join_paths(data_dir, 'icons', symbolic_dir),
-  rename: '@0@-symbolic.svg'.format(geary_id)
+  rename: '@0@-symbolic.svg'.format(convey_id)
 )

@@ -32,7 +32,7 @@
  * This class is ''not'' thread safe and should only be used by
  * asynchronous tasks.
  */
-public abstract class Geary.Nonblocking.Lock : BaseObject {
+public abstract class Convey.Nonblocking.Lock : BaseObject {
 
     private class Pending : BaseObject {
         public unowned SourceFunc cb;

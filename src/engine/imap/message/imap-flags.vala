@@ -8,8 +8,8 @@
  * A generic collection of {@link Flags}.
  */
 
-public abstract class Geary.Imap.Flags : Geary.MessageData.AbstractMessageData, Geary.Imap.MessageData,
-    Gee.Hashable<Geary.Imap.Flags> {
+public abstract class Convey.Imap.Flags : Convey.MessageData.AbstractMessageData, Convey.Imap.MessageData,
+    Gee.Hashable<Convey.Imap.Flags> {
     public int size { get { return list.size; } }
 
     protected Gee.Set<Flag> list;
@@ -54,14 +54,14 @@ public abstract class Geary.Imap.Flags : Geary.MessageData.AbstractMessageData, 
         return listp;
     }
 
-    public bool equal_to(Geary.Imap.Flags other) {
+    public bool equal_to(Convey.Imap.Flags other) {
         if (this == other)
             return true;
 
         if (other.size != size)
             return false;
 
-        return Geary.traverse<Flag>(list).all(f => other.contains(f));
+        return Convey.traverse<Flag>(list).all(f => other.contains(f));
     }
 
     public override string to_string() {

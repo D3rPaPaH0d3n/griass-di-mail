@@ -52,7 +52,7 @@ offsets_tokenizer_func (void       *data,
 }
 
 static void
-geary_matches (const Fts5ExtensionApi  *api,
+convey_matches (const Fts5ExtensionApi  *api,
                Fts5Context             *fts_ctx,
                sqlite3_context         *ctx,
                int                      n_args,
@@ -160,9 +160,9 @@ gboolean sqlite3_register_fts5_matches(sqlite3 *db) {
     }
 
     rc = api->xCreateFunction(api,
-                              "geary_matches",
+                              "convey_matches",
                               NULL,
-                              &geary_matches,
+                              &convey_matches,
                               NULL);
 
     return (rc == SQLITE_OK) ? TRUE : FALSE;

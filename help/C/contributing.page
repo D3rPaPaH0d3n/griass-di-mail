@@ -7,20 +7,20 @@
     <link type="next" xref="bugs" />
   </info>
 
-  <title>Contribute to Geary</title>
+  <title>Contribute to Convey</title>
 
-  <p>Want to help improve Geary? There are a number of ways you can
+  <p>Want to help improve Convey? There are a number of ways you can
   contribute:</p>
 
   <list>
     <item><p><link
     href="https://wiki.gnome.org/Apps/Geary/ReportingABug">Bug
     reporting</link>—report new bugs or request new features</p></item>
-    <item><p><link href="https://wiki.gnome.org/Apps/Geary/Translating">Translating</link>—translate Geary’s user interface and user manual into new languages</p></item>
+    <item><p><link href="https://wiki.gnome.org/Apps/Geary/Translating">Translating</link>—translate Convey’s user interface and user manual into new languages</p></item>
     <item><p><link href="https://wiki.gnome.org/Apps/Geary/Development">Development</link>—fix bugs and add new features</p></item>
   </list>
 
   <p>See <link href="https://wiki.gnome.org/Apps/Geary/Contribute">the
   wiki</link> for more information and options for contributing
-  financially to Geary's development.</p>
+  financially to Convey's development.</p>
 </page>

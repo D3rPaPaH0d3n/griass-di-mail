@@ -17,8 +17,8 @@ private errordomain AttachmentError {
  * Composers must always be placed in an instance of {@link
  * Container}.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/composer-widget.ui")]
-public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
+[GtkTemplate (ui = "/net/donnybeelo/Convey/composer-widget.ui")]
+public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
 
     /**
@@ -26,7 +26,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
      *
      * @see load_context
      */
-    public const Geary.Email.Field REQUIRED_FIELDS = ENVELOPE | HEADER | BODY;
+    public const Convey.Email.Field REQUIRED_FIELDS = ENVELOPE | HEADER | BODY;
 
     /// Translators: Title for an empty composer window
     private const string DEFAULT_TITLE = _("New Message");
@@ -117,7 +117,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
     private class FromAddressMap : GLib.Object {
         public Application.AccountContext account;
-        public Geary.RFC822.MailboxAddresses from;
+        public Convey.RFC822.MailboxAddresses from;
 
         // Label shown in the From row and its dropdown list
         public string display {
@@ -139,7 +139,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         }
 
         public FromAddressMap(Application.AccountContext account,
-                              Geary.RFC822.MailboxAddresses from) {
+                              Convey.RFC822.MailboxAddresses from) {
             this.account = account;
             this.from = from;
         }
@@ -179,7 +179,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
 
     static construct {
-        set_css_name("geary-composer-widget");
+        set_css_name("convey-composer-widget");
 
         typeof(AddressesRow).ensure();
         typeof(FromAddressMap).ensure();
@@ -212,13 +212,13 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     private const string ATTACHMENT_KEYWORDS_LOCALISED =
         _("attach|attaching|attaches|attachment|attachments|attached|enclose|enclosed|enclosing|encloses|enclosure|enclosures");
 
-    private const string PASTED_IMAGE_FILENAME_TEMPLATE = "geary-pasted-image-%u.png";
+    private const string PASTED_IMAGE_FILENAME_TEMPLATE = "convey-pasted-image-%u.png";
 
     /** The account the email is being sent from. */
     public Application.AccountContext sender_context { get; private set; }
 
     /** The identifier of the saved email this composer holds, if any. */
-    public Geary.EmailIdentifier? saved_id {
+    public Convey.EmailIdentifier? saved_id {
         get; private set; default = null;
     }
 
@@ -266,7 +266,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     private bool _can_send = true;
 
     /** Currently selected sender mailbox. */
-    public Geary.RFC822.MailboxAddresses from { get; private set; }
+    public Convey.RFC822.MailboxAddresses from { get; private set; }
 
     /** Current text of the `to` entry. */
     public string to {
@@ -299,17 +299,17 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     /** The In-Reply-To header value for the composed email, if any. */
-    public Geary.RFC822.MessageIDList in_reply_to {
-        get; private set; default = new Geary.RFC822.MessageIDList();
+    public Convey.RFC822.MessageIDList in_reply_to {
+        get; private set; default = new Convey.RFC822.MessageIDList();
     }
 
     /** The References header value for the composed email, if any. */
-    public Geary.RFC822.MessageIDList references {
-        get; private set; default = new Geary.RFC822.MessageIDList();
+    public Convey.RFC822.MessageIDList references {
+        get; private set; default = new Convey.RFC822.MessageIDList();
     }
 
     /** Overrides for the draft folder as save destination, if any. */
-    internal Geary.Folder? save_to { get; private set; default = null; }
+    internal Convey.Folder? save_to { get; private set; default = null; }
 
     internal Composer.Header header { get; private set; }
 
@@ -370,19 +370,19 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     private bool top_posting = true;
 
     // The message(s) this email is in reply to/forwarded from
-    private Gee.Set<Geary.EmailIdentifier> referred_ids =
-        new Gee.HashSet<Geary.EmailIdentifier>();
+    private Gee.Set<Convey.EmailIdentifier> referred_ids =
+        new Gee.HashSet<Convey.EmailIdentifier>();
 
-    private Gee.List<Geary.Attachment>? pending_attachments = null;
+    private Gee.List<Convey.Attachment>? pending_attachments = null;
     private AttachPending pending_include = AttachPending.INLINE_ONLY;
-    private Gee.Set<File> attached_files = new Gee.HashSet<File>(Geary.Files.nullable_hash,
-        Geary.Files.nullable_equal);
-    private Gee.Map<string,Geary.Memory.Buffer> inline_files = new Gee.HashMap<string,Geary.Memory.Buffer>();
-    private Gee.Map<string,Geary.Memory.Buffer> cid_files = new Gee.HashMap<string,Geary.Memory.Buffer>();
+    private Gee.Set<File> attached_files = new Gee.HashSet<File>(Convey.Files.nullable_hash,
+        Convey.Files.nullable_equal);
+    private Gee.Map<string,Convey.Memory.Buffer> inline_files = new Gee.HashMap<string,Convey.Memory.Buffer>();
+    private Gee.Map<string,Convey.Memory.Buffer> cid_files = new Gee.HashMap<string,Convey.Memory.Buffer>();
 
-    private Geary.App.DraftManager? draft_manager = null;
+    private Convey.App.DraftManager? draft_manager = null;
     private GLib.Cancellable? draft_manager_opening = null;
-    private Geary.TimeoutManager draft_timer;
+    private Convey.TimeoutManager draft_timer;
     private bool is_draft_saved = false;
     private string draft_status_text {
         get { return this._draft_status_text; }
@@ -414,7 +414,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     internal Widget(ApplicationInterface application,
                     Application.Configuration config,
                     Application.AccountContext initial_account,
-                    Geary.Folder? save_to = null) {
+                    Convey.Folder? save_to = null) {
         //XXX GTK4
         // components_reflow_box_get_type();
         base_ref();
@@ -484,11 +484,11 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
         // TODO: also listen for account updates to allow adding identities while writing an email
 
-        this.from = new Geary.RFC822.MailboxAddresses.single(
+        this.from = new Convey.RFC822.MailboxAddresses.single(
             this.sender_context.account.information.primary_mailbox
         );
 
-        this.draft_timer = new Geary.TimeoutManager.seconds(
+        this.draft_timer = new Convey.TimeoutManager.seconds(
             10, on_draft_timeout
         );
 
@@ -513,7 +513,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     /** Loads an empty message into the composer. */
-    public async void load_empty_body(Geary.RFC822.MailboxAddress? to = null)
+    public async void load_empty_body(Convey.RFC822.MailboxAddress? to = null)
         throws GLib.Error {
         if (to != null) {
             this.to = to.to_full_display();
@@ -543,31 +543,31 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             }
 
             // Assemble the headers.
-            if (!Geary.String.is_empty_or_whitespace(email) &&
+            if (!Convey.String.is_empty_or_whitespace(email) &&
                 headers.contains("to")) {
                 this.to = "%s,%s".printf(
-                    email, Geary.Collection.first(headers.get("to"))
+                    email, Convey.Collection.first(headers.get("to"))
                 );
-            } else if (!Geary.String.is_empty_or_whitespace(email)) {
+            } else if (!Convey.String.is_empty_or_whitespace(email)) {
                 this.to = email;
             } else if (headers.contains("to")) {
-                this.to = Geary.Collection.first(headers.get("to"));
+                this.to = Convey.Collection.first(headers.get("to"));
             }
 
             if (headers.contains("cc"))
-                this.cc = Geary.Collection.first(headers.get("cc"));
+                this.cc = Convey.Collection.first(headers.get("cc"));
 
             if (headers.contains("bcc"))
-                this.bcc = Geary.Collection.first(headers.get("bcc"));
+                this.bcc = Convey.Collection.first(headers.get("bcc"));
 
             if (headers.contains("subject"))
-                this.subject = Geary.Collection.first(headers.get("subject"));
+                this.subject = Convey.Collection.first(headers.get("subject"));
 
             var body = "";
             if (headers.contains("body")) {
-                body = Geary.HTML.preserve_whitespace(
-                    Geary.HTML.escape_markup(
-                        Geary.Collection.first(headers.get("body"))
+                body = Convey.HTML.preserve_whitespace(
+                    Convey.HTML.escape_markup(
+                        Convey.Collection.first(headers.get("body"))
                     )
                 );
             }
@@ -595,31 +595,31 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
      * the current account context's store with those.
      */
     public async void load_context(ContextType type,
-                                   Geary.Email context,
+                                   Convey.Email context,
                                    string? quote)
         throws GLib.Error {
         if (type == NONE) {
-            throw new Geary.EngineError.BAD_PARAMETERS(
+            throw new Convey.EngineError.BAD_PARAMETERS(
                 "Invalid context type: %s", type.to_string()
             );
         }
 
         var full_context = context;
         if (!context.fields.is_all_set(REQUIRED_FIELDS)) {
-            Gee.Collection<Geary.Email>? email =
+            Gee.Collection<Convey.Email>? email =
                 yield this.sender_context.emails.list_email_by_sparse_id_async(
-                    Geary.Collection.single(context.id),
+                    Convey.Collection.single(context.id),
                     REQUIRED_FIELDS,
                     NONE,
                     this.sender_context.cancellable
                 );
             if (email == null || email.is_empty) {
-                throw new Geary.EngineError.INCOMPLETE_MESSAGE(
+                throw new Convey.EngineError.INCOMPLETE_MESSAGE(
                     "Unable to load email fields required for composer: %s",
                     context.fields.to_string()
                 );
             }
-            full_context = Geary.Collection.first(email);
+            full_context = Convey.Collection.first(email);
         }
 
         this.context_type = type;
@@ -629,10 +629,10 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             this.pending_include = AttachPending.ALL;
             this.pending_attachments = full_context.attachments;
         } else if (type == REPLY_SENDER || type == REPLY_ALL) {
-            var attachments = new Gee.ArrayList<Geary.Attachment>();
+            var attachments = new Gee.ArrayList<Convey.Attachment>();
             foreach (var attachment in full_context.attachments) {
                 if (attachment.content_id == null &&
-                    attachment.content_disposition.disposition_type != Geary.Mime.DispositionType.INLINE) {
+                    attachment.content_disposition.disposition_type != Convey.Mime.DispositionType.INLINE) {
                     attachments.add(attachment);
                 }
             }
@@ -677,7 +677,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             if (full_context.subject != null) {
                 this.subject = full_context.subject.value ?? "";
             }
-            Geary.RFC822.Message message = full_context.get_message();
+            Convey.RFC822.Message message = full_context.get_message();
             if (message.has_html_body()) {
                 body = message.get_html_body(null);
                 body_complete = body.contains(
@@ -700,14 +700,14 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                     }
                 }
             }
-            this.subject = Geary.RFC822.Utils.create_subject_for_reply(
+            this.subject = Convey.RFC822.Utils.create_subject_for_reply(
                 full_context
             );
             add_recipients_and_ids(type, full_context);
             complete_quote = Util.Email.quote_email_for_reply(
                 full_context, quote, HTML
             );
-            if (!Geary.String.is_empty(quote)) {
+            if (!Convey.String.is_empty(quote)) {
                 this.top_posting = false;
             } else {
                 this.can_delete_quote = true;
@@ -715,7 +715,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             break;
 
         case FORWARD:
-            this.subject = Geary.RFC822.Utils.create_subject_for_forward(
+            this.subject = Convey.RFC822.Utils.create_subject_for_forward(
                 full_context
             );
             if (full_context.message_id != null) {
@@ -745,7 +745,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
      * forwarded from. There may be multiple if a composer was already
      * open and another email was replied to.
      */
-    public Gee.Set<Geary.EmailIdentifier> get_referred_ids() {
+    public Gee.Set<Convey.EmailIdentifier> get_referred_ids() {
         return this.referred_ids.read_only_view;
     }
 
@@ -899,7 +899,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                 yield close_draft_manager(KEEP);
             } catch (GLib.Error error) {
                 this.application.report_problem(
-                    new Geary.AccountProblemReport(
+                    new Convey.AccountProblemReport(
                         this.sender_context.account.information, error
                     )
                 );
@@ -946,7 +946,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                         this.open_draft_manager.end(res);
                     } catch (GLib.Error error) {
                         this.application.report_problem(
-                            new Geary.AccountProblemReport(
+                            new Convey.AccountProblemReport(
                                 current_account.information, error
                             )
                         );
@@ -962,7 +962,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     /** Overrides the folder used for saving drafts. */
-    public void set_save_to_override(Geary.Folder? save_to) {
+    public void set_save_to_override(Convey.Folder? save_to) {
         this.save_to = save_to;
         this.reopen_draft_manager.begin();
     }
@@ -983,14 +983,14 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
      * Restores the composer's widget state from any replied to messages.
      */
     private async void restore_reply_to_state() {
-        Gee.List<Geary.RFC822.MailboxAddress> sender_addresses =
+        Gee.List<Convey.RFC822.MailboxAddress> sender_addresses =
             this.sender_context.account.information.sender_mailboxes;
-        var to_addresses = new Geary.RFC822.MailboxAddresses();
-        var cc_addresses = new Geary.RFC822.MailboxAddresses();
+        var to_addresses = new Convey.RFC822.MailboxAddresses();
+        var cc_addresses = new Convey.RFC822.MailboxAddresses();
 
         bool new_email = true;
         foreach (var mid in this.in_reply_to) {
-            Gee.MultiMap<Geary.Email, Geary.FolderPath?>? email_map = null;
+            Gee.MultiMap<Convey.Email, Convey.FolderPath?>? email_map = null;
             try {
                 // TODO: Folder blacklist
                 email_map = yield this.sender_context.account
@@ -999,7 +999,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                         ENVELOPE,
                         true,
                         null,
-                        new Geary.EmailFlags.with(Geary.EmailFlags.DRAFT)
+                        new Convey.EmailFlags.with(Convey.EmailFlags.DRAFT)
                     );
             } catch (GLib.Error error) {
                 warning(
@@ -1012,12 +1012,12 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                     if (candidate.message_id != null &&
                         mid.equal_to(candidate.message_id)) {
                         to_addresses = to_addresses.merge_list(
-                            Geary.RFC822.Utils.create_to_addresses_for_reply(
+                            Convey.RFC822.Utils.create_to_addresses_for_reply(
                                 candidate, sender_addresses
                             )
                         );
                         cc_addresses = cc_addresses.merge_list(
-                            Geary.RFC822.Utils.create_cc_addresses_for_reply_all(
+                            Convey.RFC822.Utils.create_cc_addresses_for_reply_all(
                                 candidate, sender_addresses
                             )
                         );
@@ -1079,9 +1079,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             this.current_mode != INLINE &&
             this.current_mode != INLINE_COMPACT
         );
-        if (not_inline && Geary.String.is_empty(to)) {
+        if (not_inline && Convey.String.is_empty(to)) {
             this.to_row.grab_focus();
-        } else if (not_inline && Geary.String.is_empty(subject)) {
+        } else if (not_inline && Convey.String.is_empty(subject)) {
             this.subject_row.grab_focus();
         } else {
             // Need to grab the focus after the content has finished
@@ -1096,13 +1096,13 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         }
     }
 
-    private bool update_from_address(Geary.RFC822.MailboxAddresses? referred_addresses) {
+    private bool update_from_address(Convey.RFC822.MailboxAddresses? referred_addresses) {
         if (referred_addresses != null) {
             var senders = this.sender_context.account.information.sender_mailboxes;
             var referred = referred_addresses.get_all();
-            foreach (Geary.RFC822.MailboxAddress address in senders) {
+            foreach (Convey.RFC822.MailboxAddress address in senders) {
                 if (referred.contains(address)) {
-                    this.from = new Geary.RFC822.MailboxAddresses.single(address);
+                    this.from = new Convey.RFC822.MailboxAddresses.single(address);
                     return true;
                 }
             }
@@ -1176,9 +1176,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     /** Returns a representation of the current message. */
-    public async Geary.ComposedEmail to_composed_email(GLib.DateTime? date_override = null,
+    public async Convey.ComposedEmail to_composed_email(GLib.DateTime? date_override = null,
                                                        bool for_draft = false) {
-        Geary.ComposedEmail email = new Geary.ComposedEmail(
+        Convey.ComposedEmail email = new Convey.ComposedEmail(
             date_override ?? new DateTime.now_local(),
             from
         ).set_to(
@@ -1223,12 +1223,12 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     /** Appends an email or fragment quoted into the composer. */
-    public void append_to_email(Geary.Email referred,
+    public void append_to_email(Convey.Email referred,
                                 string? to_quote,
                                 ContextType type)
-        throws Geary.EngineError {
+        throws Convey.EngineError {
         if (!referred.fields.is_all_set(REQUIRED_FIELDS)) {
-            throw new Geary.EngineError.INCOMPLETE_MESSAGE(
+            throw new Convey.EngineError.INCOMPLETE_MESSAGE(
                 "Required fields not met: %s", referred.fields.to_string()
             );
         }
@@ -1245,24 +1245,24 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     private void add_recipients_and_ids(ContextType type,
-                                        Geary.Email referred) {
-        Gee.List<Geary.RFC822.MailboxAddress> sender_addresses =
+                                        Convey.Email referred) {
+        Gee.List<Convey.RFC822.MailboxAddress> sender_addresses =
             this.sender_context.account.information.sender_mailboxes;
 
         // Add the sender to the To address list if needed
-        this.to_row.addresses = Geary.RFC822.Utils.merge_addresses(
+        this.to_row.addresses = Convey.RFC822.Utils.merge_addresses(
             this.to_row.addresses,
-            Geary.RFC822.Utils.create_to_addresses_for_reply(
+            Convey.RFC822.Utils.create_to_addresses_for_reply(
                 referred, sender_addresses
             )
         );
         if (type == REPLY_ALL) {
             // Add other recipients to the Cc address list if needed,
             // but don't include any already in the To list.
-            this.cc_row.addresses = Geary.RFC822.Utils.remove_addresses(
-                Geary.RFC822.Utils.merge_addresses(
+            this.cc_row.addresses = Convey.RFC822.Utils.remove_addresses(
+                Convey.RFC822.Utils.merge_addresses(
                     this.cc_row.addresses,
-                    Geary.RFC822.Utils.create_cc_addresses_for_reply_all(
+                    Convey.RFC822.Utils.create_cc_addresses_for_reply_all(
                         referred, sender_addresses
                     )
                 ),
@@ -1279,7 +1279,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
         // Merge the new message's references with this
         this.references = this.references.merge_list(
-            Geary.RFC822.Utils.reply_references(referred)
+            Convey.RFC822.Utils.reply_references(referred)
         );
 
         // Include the email in the composer's list of referred email
@@ -1298,7 +1298,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     /** Updates the composer's top level window and headerbar title. */
     public void update_window_title() {
         string subject = this.subject.strip();
-        if (Geary.String.is_empty(subject)) {
+        if (Convey.String.is_empty(subject)) {
             subject = DEFAULT_TITLE;
         }
 
@@ -1374,7 +1374,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                     this.open_draft_manager.end(res);
                 } catch (GLib.Error error) {
                     this.application.report_problem(
-                        new Geary.AccountProblemReport(
+                        new Convey.AccountProblemReport(
                             current_account.information, error
                         )
                     );
@@ -1384,12 +1384,12 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
     }
 
     private async bool should_send() {
-        bool has_subject = !Geary.String.is_empty(subject.strip());
+        bool has_subject = !Convey.String.is_empty(subject.strip());
         bool has_attachment = this.attached_files.size > 0;
         bool has_body = true;
 
         try {
-            has_body = !Geary.String.is_empty(
+            has_body = !Convey.String.is_empty(
                 yield this.editor.body.get_html()
             );
         } catch (Error err) {
@@ -1450,7 +1450,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             }
         } catch (GLib.Error error) {
             this.application.report_problem(
-                new Geary.AccountProblemReport(
+                new Convey.AccountProblemReport(
                     this.sender_context.account.information, error
                 )
             );
@@ -1465,7 +1465,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
      * method typically needs to be called from the main loop as a
      * background async task using the `begin` async call form.
      */
-    private async void open_draft_manager(Geary.EmailIdentifier? editing_draft_id)
+    private async void open_draft_manager(Convey.EmailIdentifier? editing_draft_id)
         throws GLib.Error {
         if (!this.sender_context.account.information.save_drafts) {
             this.header.show_save_and_close = false;
@@ -1483,38 +1483,38 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         );
         this.draft_manager_opening = internal_cancellable;
 
-        Geary.Folder? target = this.save_to;
+        Convey.Folder? target = this.save_to;
         if (target == null) {
             target = yield this.sender_context.account.get_required_special_folder_async(
                 DRAFTS, internal_cancellable
             );
         }
 
-        Geary.EmailFlags? flags = (
+        Convey.EmailFlags? flags = (
             target.used_as == DRAFTS
-            ? new Geary.EmailFlags.with(Geary.EmailFlags.DRAFT)
-            : new Geary.EmailFlags()
+            ? new Convey.EmailFlags.with(Convey.EmailFlags.DRAFT)
+            : new Convey.EmailFlags()
         );
 
         bool opened = false;
         try {
-            var new_manager = yield new Geary.App.DraftManager(
+            var new_manager = yield new Convey.App.DraftManager(
                 this.sender_context.account,
                 target,
                 flags,
                 editing_draft_id,
                 internal_cancellable
             );
-            new_manager.notify[Geary.App.DraftManager.PROP_DRAFT_STATE]
+            new_manager.notify[Convey.App.DraftManager.PROP_DRAFT_STATE]
                 .connect(on_draft_state_changed);
-            new_manager.notify[Geary.App.DraftManager.PROP_CURRENT_DRAFT_ID]
+            new_manager.notify[Convey.App.DraftManager.PROP_CURRENT_DRAFT_ID]
                 .connect(on_draft_id_changed);
             new_manager.fatal
                 .connect(on_draft_manager_fatal);
             this.draft_manager = new_manager;
             opened = true;
             debug("Draft manager opened");
-        } catch (Geary.EngineError.UNSUPPORTED err) {
+        } catch (Convey.EngineError.UNSUPPORTED err) {
             debug(
                 "Drafts folder unsupported, no drafts will be saved: %s",
                 err.message
@@ -1545,7 +1545,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             yield save_draft();
         } catch (GLib.Error error) {
             this.application.report_problem(
-                new Geary.AccountProblemReport(
+                new Convey.AccountProblemReport(
                     current_account.information, error
                 )
             );
@@ -1562,9 +1562,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             this.saved_id = null;
             this.draft_status_text = "";
 
-            old_manager.notify[Geary.App.DraftManager.PROP_DRAFT_STATE]
+            old_manager.notify[Convey.App.DraftManager.PROP_DRAFT_STATE]
                 .disconnect(on_draft_state_changed);
-            old_manager.notify[Geary.App.DraftManager.PROP_CURRENT_DRAFT_ID]
+            old_manager.notify[Convey.App.DraftManager.PROP_CURRENT_DRAFT_ID]
                 .disconnect(on_draft_id_changed);
             old_manager.fatal.disconnect(on_draft_manager_fatal);
 
@@ -1580,22 +1580,22 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
     private void update_draft_state() {
         switch (this.draft_manager.draft_state) {
-            case Geary.App.DraftManager.DraftState.STORED:
+            case Convey.App.DraftManager.DraftState.STORED:
                 this.draft_status_text = DRAFT_SAVED_TEXT;
                 this.is_draft_saved = true;
             break;
 
-            case Geary.App.DraftManager.DraftState.STORING:
+            case Convey.App.DraftManager.DraftState.STORING:
                 this.draft_status_text = DRAFT_SAVING_TEXT;
                 this.is_draft_saved = true;
             break;
 
-            case Geary.App.DraftManager.DraftState.NOT_STORED:
+            case Convey.App.DraftManager.DraftState.NOT_STORED:
                 this.draft_status_text = "";
                 this.is_draft_saved = false;
             break;
 
-            case Geary.App.DraftManager.DraftState.ERROR:
+            case Convey.App.DraftManager.DraftState.ERROR:
                 this.draft_status_text = DRAFT_ERROR_TEXT;
                 this.is_draft_saved = false;
             break;
@@ -1623,9 +1623,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         this.draft_timer.reset();
 
         if (this.draft_manager != null) {
-            Geary.ComposedEmail draft = yield to_composed_email(null, true);
+            Convey.ComposedEmail draft = yield to_composed_email(null, true);
             yield this.draft_manager.update(
-                yield new Geary.RFC822.Message.from_composed_email(
+                yield new Convey.RFC822.Message.from_composed_email(
                     draft, null, GMime.EncodingConstraint.7BIT, null
                 ),
                 null,
@@ -1642,7 +1642,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                 yield save_draft();
             } catch (GLib.Error error) {
                 this.application.report_problem(
-                    new Geary.AccountProblemReport(
+                    new Convey.AccountProblemReport(
                         this.sender_context.account.information, error
                     )
                 );
@@ -1668,7 +1668,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             yield close_draft_manager(DISCARD);
         } catch (GLib.Error error) {
             this.application.report_problem(
-                new Geary.AccountProblemReport(
+                new Convey.AccountProblemReport(
                     this.sender_context.account.information, error
                 )
             );
@@ -1692,13 +1692,13 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         bool have_added = false;
         bool manual_enabled = false;
         if (this.pending_attachments != null) {
-            foreach(Geary.Attachment part in this.pending_attachments) {
+            foreach(Convey.Attachment part in this.pending_attachments) {
                 try {
                     string? content_id = part.content_id;
-                    Geary.Mime.DispositionType? type =
+                    Convey.Mime.DispositionType? type =
                         part.content_disposition.disposition_type;
                     File file = part.file;
-                    if (type == Geary.Mime.DispositionType.INLINE) {
+                    if (type == Convey.Mime.DispositionType.INLINE) {
                         // We only care about the Content Ids of
                         // inline parts, since we need to display them
                         // in the editor web view. However if an
@@ -1707,17 +1707,17 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                         // using a cid: URL anyway, so treat it as an
                         // attachment instead.
                         if (content_id != null) {
-                            Geary.Memory.FileBuffer file_buffer = new Geary.Memory.FileBuffer(file, true);
+                            Convey.Memory.FileBuffer file_buffer = new Convey.Memory.FileBuffer(file, true);
                             this.cid_files[content_id] = file_buffer;
                             this.editor.body.add_internal_resource(
                                 content_id, file_buffer
                             );
                         } else {
-                            type = Geary.Mime.DispositionType.ATTACHMENT;
+                            type = Convey.Mime.DispositionType.ATTACHMENT;
                         }
                     }
 
-                    if (type == Geary.Mime.DispositionType.INLINE ||
+                    if (type == Convey.Mime.DispositionType.INLINE ||
                         include == AttachPending.ALL) {
                         // The pending attachment should be added
                         // automatically, so add it if asked to and it
@@ -1725,9 +1725,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                         if (do_add &&
                             !this.attached_files.contains(file) &&
                             !this.inline_files.has_key(content_id)) {
-                            if (type == Geary.Mime.DispositionType.INLINE) {
+                            if (type == Convey.Mime.DispositionType.INLINE) {
                                 check_attachment_file(file);
-                                Geary.Memory.FileBuffer file_buffer = new Geary.Memory.FileBuffer(file, true);
+                                Convey.Memory.FileBuffer file_buffer = new Convey.Memory.FileBuffer(file, true);
                                 string unused;
                                 add_inline_part(file_buffer, content_id, out unused);
                             } else {
@@ -1786,7 +1786,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         update_attachments_view();
     }
 
-    private void add_inline_part(Geary.Memory.Buffer target, string content_id, out string unique_contentid)
+    private void add_inline_part(Convey.Memory.Buffer target, string content_id, out string unique_contentid)
         throws AttachmentError {
 
         const string UNIQUE_RENAME_TEMPLATE = "%s_%02u";
@@ -1906,7 +1906,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
                 var png_bytes = texture.save_to_png_bytes();
                 uint8[] png_data = png_bytes.get_data();
-                Geary.Memory.ByteBuffer byte_buffer = new Geary.Memory.ByteBuffer.take(png_data, png_data.length);
+                Convey.Memory.ByteBuffer byte_buffer = new Convey.Memory.ByteBuffer.take(png_data, png_data.length);
 
                 GLib.DateTime time_now = new GLib.DateTime.now();
                 string filename = PASTED_IMAGE_FILENAME_TEMPLATE.printf(time_now.hash());
@@ -1948,7 +1948,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                 for (uint i = 0; i < files.get_n_items(); i++) {
                     File file = (File) files.get_item(i);
                     check_attachment_file(file);
-                    Geary.Memory.FileBuffer file_buffer = new Geary.Memory.FileBuffer(file, true);
+                    Convey.Memory.FileBuffer file_buffer = new Convey.Memory.FileBuffer(file, true);
                     string path = file.get_path();
                     string unique_filename;
                     add_inline_part(file_buffer, path, out unique_filename);
@@ -2002,25 +2002,25 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             + this.cc_row.text + (ccbcc ? ", " : "") + this.bcc_row.text;
         StringBuilder tooltip = new StringBuilder();
         if (this.to_row.addresses != null) {
-            foreach(Geary.RFC822.MailboxAddress addr in this.to_row.addresses) {
+            foreach(Convey.RFC822.MailboxAddress addr in this.to_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 To header
                 tooltip.append("%s %s\n".printf(_("To:"), addr.to_full_display()));
             }
         }
         if (this.cc_row.addresses != null) {
-            foreach(Geary.RFC822.MailboxAddress addr in this.cc_row.addresses) {
+            foreach(Convey.RFC822.MailboxAddress addr in this.cc_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 CC header
                 tooltip.append("%s %s\n".printf(_("Cc:"), addr.to_full_display()));
             }
         }
         if (this.bcc_row.addresses != null) {
-            foreach(Geary.RFC822.MailboxAddress addr in this.bcc_row.addresses) {
+            foreach(Convey.RFC822.MailboxAddress addr in this.bcc_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 BCC header
                 tooltip.append("%s %s\n".printf(_("Bcc:"), addr.to_full_display()));
             }
         }
         if (this.reply_to_row.addresses != null) {
-            foreach(Geary.RFC822.MailboxAddress addr in this.reply_to_row.addresses) {
+            foreach(Convey.RFC822.MailboxAddress addr in this.reply_to_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 Reply-To header
                 tooltip.append("%s%s\n".printf(_("Reply-To: "), addr.to_full_display()));
             }
@@ -2092,9 +2092,9 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         Application.AccountContext other_account,
         bool set_active = false
     ) {
-        Geary.AccountInformation info = other_account.account.information;
-        foreach (Geary.RFC822.MailboxAddress mailbox in info.sender_mailboxes) {
-            var addresses = new Geary.RFC822.MailboxAddresses.single(mailbox);
+        Convey.AccountInformation info = other_account.account.information;
+        foreach (Convey.RFC822.MailboxAddress mailbox in info.sender_mailboxes) {
+            var addresses = new Convey.RFC822.MailboxAddresses.single(mailbox);
             var addr_map = new FromAddressMap(other_account, addresses);
 
             this.from_model.append(addr_map);
@@ -2174,7 +2174,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
             this.application.get_account_contexts();
         if (accounts.size < 1 ||
             (accounts.size == 1 &&
-            !Geary.Collection.first(
+            !Convey.Collection.first(
                 accounts
             ).account.information.has_sender_aliases)) {
             return false;
@@ -2222,11 +2222,11 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
 
     private async void update_signature(Cancellable? cancellable = null) {
         string sig = "";
-        Geary.AccountInformation account =
+        Convey.AccountInformation account =
             this.sender_context.account.information;
         if (account.use_signature) {
             sig = account.signature;
-            if (Geary.String.is_empty_or_whitespace(sig)) {
+            if (Convey.String.is_empty_or_whitespace(sig)) {
                 // No signature is specified in the settings, so use
                 // ~/.signature
                 File signature_file = File.new_for_path(Environment.get_home_dir()).get_child(".signature");
@@ -2246,12 +2246,12 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
         // since when changing the selected from account, if the
         // previously selected account had a sig but the newly
         // selected account does not, the old sig gets cleared out.
-        if (Geary.String.is_empty_or_whitespace(sig)) {
+        if (Convey.String.is_empty_or_whitespace(sig)) {
             // Clear out multiple spaces etc so smart_escape
             // doesn't create &nbsp;'s
             sig = "";
         }
-        this.editor.body.update_signature(Geary.HTML.smart_escape(sig));
+        this.editor.body.update_signature(Convey.HTML.smart_escape(sig));
     }
 
     private void update_subject_spell_checker() {
@@ -2403,7 +2403,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
                     this.save_draft.end(res);
                 } catch (GLib.Error error) {
                     this.application.report_problem(
-                        new Geary.AccountProblemReport(
+                        new Convey.AccountProblemReport(
                             current_account.information, error
                         )
                     );
@@ -2426,7 +2426,7 @@ public class Composer.Widget : Adw.Bin, Geary.BaseInterface {
      * Handle a dropped image file, adding it as an inline attachment
      */
     private void on_image_file_dropped(string filename, string file_type, uint8[] contents) {
-        Geary.Memory.ByteBuffer buffer = new Geary.Memory.ByteBuffer(contents, contents.length);
+        Convey.Memory.ByteBuffer buffer = new Convey.Memory.ByteBuffer(contents, contents.length);
         string unique_filename;
         try {
             add_inline_part(buffer, filename, out unique_filename);

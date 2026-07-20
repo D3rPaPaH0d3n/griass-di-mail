@@ -12,7 +12,7 @@
  * 20 charters at most) status message, and a possibly longer
  * explanation of what is happening.
  */
-public class Plugin.InfoBar : Geary.BaseObject {
+public class Plugin.InfoBar : Convey.BaseObject {
 
 
     /** Emitted when the close button is activated. */

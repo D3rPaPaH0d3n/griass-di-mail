@@ -15,7 +15,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-4.3]].
  */
-public class Geary.Imap.QuotedStringParameter : Geary.Imap.StringParameter {
+public class Convey.Imap.QuotedStringParameter : Convey.Imap.StringParameter {
     public QuotedStringParameter(string ascii) {
         base (ascii);
     }

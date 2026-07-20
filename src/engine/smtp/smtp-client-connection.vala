@@ -7,13 +7,13 @@
  */
 
 /** A network connection to a SMTP service. */
-internal class Geary.Smtp.ClientConnection : BaseObject, Logging.Source {
+internal class Convey.Smtp.ClientConnection : BaseObject, Logging.Source {
 
 
     public const uint DEFAULT_TIMEOUT_SEC = 20;
 
 
-    public Geary.Smtp.Capabilities? capabilities { get; private set; default = null; }
+    public Convey.Smtp.Capabilities? capabilities { get; private set; default = null; }
 
     /** {@inheritDoc} */
     public override string logging_domain {
@@ -24,13 +24,13 @@ internal class Geary.Smtp.ClientConnection : BaseObject, Logging.Source {
     public Logging.Source? logging_parent { get { return _logging_parent; } }
     private weak Logging.Source? _logging_parent = null;
 
-    private Geary.Endpoint endpoint;
+    private Convey.Endpoint endpoint;
     private IOStream? cx = null;
     private SocketConnection? socket_cx = null;
     private DataInputStream? dins = null;
     private DataOutputStream douts = null;
 
-    public ClientConnection(Geary.Endpoint endpoint) {
+    public ClientConnection(Convey.Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
@@ -209,7 +209,7 @@ internal class Geary.Smtp.ClientConnection : BaseObject, Logging.Source {
         Response response = yield transaction_async(ehlo, cancellable);
         if (response.code.is_success_completed()) {
             // save list of caps returned in EHLO command
-            capabilities = new Geary.Smtp.Capabilities();
+            capabilities = new Convey.Smtp.Capabilities();
             capabilities.add_ehlo_response(response);
         } else {
             string first_response = response.to_string().strip();

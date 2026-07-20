@@ -13,7 +13,7 @@
  * EmailContext.get_email_store} on their {@link EmailExtension.email}
  * property.
  */
-public interface Plugin.EmailStore : Geary.BaseObject {
+public interface Plugin.EmailStore : Convey.BaseObject {
 
 
     /**

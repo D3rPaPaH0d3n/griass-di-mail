@@ -4,13 +4,13 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.MarkEmail : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.MarkEmail : Convey.ImapEngine.SendReplayOperation {
     private MinimalFolder engine;
     private Gee.List<ImapDB.EmailIdentifier> to_mark = new Gee.ArrayList<ImapDB.EmailIdentifier>();
     private Gee.List<Imap.UID> to_mark_uids = new Gee.ArrayList<Imap.UID>();
-    private Geary.EmailFlags? flags_to_add;
-    private Geary.EmailFlags? flags_to_remove;
-    private Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags>? original_flags = null;
+    private Convey.EmailFlags? flags_to_add;
+    private Convey.EmailFlags? flags_to_remove;
+    private Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags>? original_flags = null;
     private Cancellable? cancellable;
 
     internal int unread_change { get; private set; default=0; }
@@ -33,7 +33,7 @@ private class Geary.ImapEngine.MarkEmail : Geary.ImapEngine.SendReplayOperation 
     public override void notify_remote_removed_ids(Gee.Collection<ImapDB.EmailIdentifier> ids) {
         // don't bother updating on server or backing out locally
         if (original_flags != null)
-            Collection.map_unset_all_keys<EmailIdentifier, Geary.EmailFlags>(original_flags, ids);
+            Collection.map_unset_all_keys<EmailIdentifier, Convey.EmailFlags>(original_flags, ids);
     }
 
     public override async ReplayOperation.Status replay_local_async() throws Error {
@@ -60,7 +60,7 @@ private class Geary.ImapEngine.MarkEmail : Geary.ImapEngine.SendReplayOperation 
         to_mark_uids = yield engine.local_folder.get_email_uids_async(to_mark, cancellable);
 
         // Notify using flags from DB.
-        Gee.Map<EmailIdentifier, Geary.EmailFlags>? map = yield engine.local_folder.get_email_flags_async(
+        Gee.Map<EmailIdentifier, Convey.EmailFlags>? map = yield engine.local_folder.get_email_flags_async(
             original_flags.keys, cancellable);
         if (map != null && map.size > 0)
             engine.replay_notify_email_flags_changed(map);

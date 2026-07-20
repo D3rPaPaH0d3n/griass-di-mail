@@ -5,7 +5,7 @@
  */
 
 /**
- * A @{link Geary.Revokable} for {@link MinimalFolder} move operations.
+ * A @{link Convey.Revokable} for {@link MinimalFolder} move operations.
  *
  * This will delay executing the move until (a) the source Folder is closed or (b) a timeout passes.
  * Even then, it will fire its "committed" signal with a {@link RevokableCommittedMove} to allow
@@ -13,15 +13,15 @@
  * and move the mail back.
  */
 
-private class Geary.ImapEngine.RevokableMove : Revokable {
+private class Convey.ImapEngine.RevokableMove : Revokable {
     private const int COMMIT_TIMEOUT_SEC = 5;
 
     private GenericAccount account;
     private MinimalFolder source;
-    private Geary.Folder destination;
+    private Convey.Folder destination;
     private Gee.Set<ImapDB.EmailIdentifier> move_ids;
 
-    public RevokableMove(GenericAccount account, MinimalFolder source, Geary.Folder destination,
+    public RevokableMove(GenericAccount account, MinimalFolder source, Convey.Folder destination,
         Gee.Set<ImapDB.EmailIdentifier> move_ids) {
         base (COMMIT_TIMEOUT_SEC);
 
@@ -130,7 +130,7 @@ private class Geary.ImapEngine.RevokableMove : Revokable {
         // Capture these for the closure below, since once it gets
         // invoked, this instance may no longer exist.
         GenericAccount account = this.account;
-        Geary.Folder destination = this.destination;
+        Convey.Folder destination = this.destination;
         op.wait_for_ready_async.begin(null, (obj, res) => {
                 try {
                     op.wait_for_ready_async.end(res);

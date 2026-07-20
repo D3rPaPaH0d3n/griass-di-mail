@@ -10,7 +10,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.2]] for more information.
  */
 
-public enum Geary.Imap.ServerDataType {
+public enum Convey.Imap.ServerDataType {
     CAPABILITY,
     EXISTS,
     EXPUNGE,

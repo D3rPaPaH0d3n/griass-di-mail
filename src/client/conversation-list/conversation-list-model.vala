@@ -8,12 +8,12 @@
 
 // The whole goal of this class to wrap the ConversationMonitor with a view that presents a sorted list
 public class ConversationList.Model : Object, ListModel {
-    internal GLib.GenericArray<Geary.App.Conversation> items = new GLib.GenericArray<Geary.App.Conversation>();
-    internal Geary.App.ConversationMonitor monitor { get; set; }
+    internal GLib.GenericArray<Convey.App.Conversation> items = new GLib.GenericArray<Convey.App.Conversation>();
+    internal Convey.App.ConversationMonitor monitor { get; set; }
 
     private bool scanning = false;
 
-    internal Model(Geary.App.ConversationMonitor monitor) {
+    internal Model(Convey.App.ConversationMonitor monitor) {
         this.monitor = monitor;
 
         monitor.conversations_added.connect(on_conversations_added);
@@ -36,21 +36,21 @@ public class ConversationList.Model : Object, ListModel {
     public signal void conversations_added(bool start);
     public signal void conversations_removed(bool start);
     public signal void conversations_loaded();
-    public signal void conversation_updated(Geary.App.Conversation convo);
+    public signal void conversation_updated(Convey.App.Conversation convo);
 
     private static int compare(Object a, Object b) {
-        return Util.Email.compare_conversation_descending(a as Geary.App.Conversation, b as Geary.App.Conversation);
+        return Util.Email.compare_conversation_descending(a as Convey.App.Conversation, b as Convey.App.Conversation);
     }
 
     // ------------------------
     //  Scanning and load_more
     // ------------------------
 
-    private void on_scan_started(Geary.App.ConversationMonitor source) {
+    private void on_scan_started(Convey.App.ConversationMonitor source) {
         this.scanning = true;
     }
 
-    private void on_scan_completed(Geary.App.ConversationMonitor source) {
+    private void on_scan_completed(Convey.App.ConversationMonitor source) {
         this.scanning = false;
         GLib.Timeout.add(100, () => {
             if (!this.scanning) {
@@ -79,16 +79,16 @@ public class ConversationList.Model : Object, ListModel {
     }
 
     public Type get_item_type() {
-        return typeof(Geary.App.Conversation);
+        return typeof(Convey.App.Conversation);
     }
 
     public uint get_n_items() {
         return this.items.length;
     }
 
-    private bool insert_conversation(Geary.App.Conversation convo) {
+    private bool insert_conversation(Convey.App.Conversation convo) {
         // The conversation may be bogus, if so don't do anything
-        Geary.Email? last_email = convo.get_latest_recv_email(Geary.App.Conversation.Location.ANYWHERE);
+        Convey.Email? last_email = convo.get_latest_recv_email(Convey.App.Conversation.Location.ANYWHERE);
 
         if (last_email == null) {
             debug("Cannot add conversation: last email is null");
@@ -100,11 +100,11 @@ public class ConversationList.Model : Object, ListModel {
         return true;
     }
 
-    private GenericArray<uint> conversations_indexes(Gee.Collection<Geary.App.Conversation> conversations) {
+    private GenericArray<uint> conversations_indexes(Gee.Collection<Convey.App.Conversation> conversations) {
         GenericArray<uint> indexes = new GenericArray<uint>();
         uint index;
 
-        foreach (Geary.App.Conversation convo in conversations) {
+        foreach (Convey.App.Conversation convo in conversations) {
             if (this.items.find(convo, out index)) {
                 indexes.add(index);
             }
@@ -153,13 +153,13 @@ public class ConversationList.Model : Object, ListModel {
         }
     }
 
-    private void on_conversations_added(Gee.Collection<Geary.App.Conversation> conversations) {
+    private void on_conversations_added(Gee.Collection<Convey.App.Conversation> conversations) {
         debug("Adding %d conversations.", conversations.size);
 
         conversations_added(true);
 
         var added = 0;
-        foreach (Geary.App.Conversation convo in conversations) {
+        foreach (Convey.App.Conversation convo in conversations) {
             if (insert_conversation(convo)) {
                 added++;
             }
@@ -174,7 +174,7 @@ public class ConversationList.Model : Object, ListModel {
         debug("Added %d/%d conversations.", added, conversations.size);
     }
 
-    private void on_conversations_removed(Gee.Collection<Geary.App.Conversation> conversations) {
+    private void on_conversations_removed(Gee.Collection<Convey.App.Conversation> conversations) {
         GenericArray<uint> indexes = conversations_indexes(conversations);
 
         debug("Removing %d conversations.", conversations.size);
@@ -182,7 +182,7 @@ public class ConversationList.Model : Object, ListModel {
         conversations_removed(true);
 
         var removed = 0;
-        foreach (Geary.App.Conversation convo in conversations) {
+        foreach (Convey.App.Conversation convo in conversations) {
             this.items.remove(convo);
             removed++;
         }
@@ -194,7 +194,7 @@ public class ConversationList.Model : Object, ListModel {
         debug("Removed %ld/%d conversations.", removed, conversations.size);
     }
 
-    private void on_conversation_updated(Geary.App.ConversationMonitor sender, Geary.App.Conversation convo, Gee.Collection<Geary.Email> emails) {
+    private void on_conversation_updated(Convey.App.ConversationMonitor sender, Convey.App.Conversation convo, Gee.Collection<Convey.Email> emails) {
         conversation_updated(convo);
 
         uint initial_index;

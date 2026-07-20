@@ -6,14 +6,14 @@
  */
 
 
-class Geary.ImapDB.AttachmentTest : TestCase {
+class Convey.ImapDB.AttachmentTest : TestCase {
 
 
     private const string ATTACHMENT_BODY = "This is an attachment.\r\n";
 
 
     public AttachmentTest() {
-        base("Geary.ImapDB.AttachmentTest");
+        base("Convey.ImapDB.AttachmentTest");
         add_test("new_from_minimal_mime_part", new_from_minimal_mime_part);
         add_test("new_from_complete_mime_part", new_from_complete_mime_part);
         add_test("new_from_inline_mime_part", new_from_inline_mime_part);
@@ -21,18 +21,18 @@ class Geary.ImapDB.AttachmentTest : TestCase {
 
     public void new_from_minimal_mime_part() throws Error {
         GMime.Part part = new_part(null, ATTACHMENT_BODY.data);
-        part.set_header("Content-Type", "", Geary.RFC822.get_charset());
+        part.set_header("Content-Type", "", Convey.RFC822.get_charset());
 
         Attachment test = new Attachment.from_part(
-            1, new Geary.RFC822.Part(part)
+            1, new Convey.RFC822.Part(part)
         );
         assert_equal(
             test.content_type.to_string(),
-            Geary.Mime.ContentType.ATTACHMENT_DEFAULT.to_string()
+            Convey.Mime.ContentType.ATTACHMENT_DEFAULT.to_string()
         );
         assert_null(test.content_id, "content_id");
         assert_null(test.content_description, "content_description");
-        assert_equal<Geary.Mime.DispositionType?>(
+        assert_equal<Convey.Mime.DispositionType?>(
             test.content_disposition.disposition_type, UNSPECIFIED
         );
         assert_false(test.has_content_filename, "has_content_filename");
@@ -50,19 +50,19 @@ class Geary.ImapDB.AttachmentTest : TestCase {
         part.set_content_description(DESC);
         part.set_content_disposition(
             GMime.ContentDisposition.parse(
-                Geary.RFC822.get_parser_options(),
+                Convey.RFC822.get_parser_options(),
                 "attachment; filename=%s".printf(NAME)
             )
         );
 
         Attachment test = new Attachment.from_part(
-            1, new Geary.RFC822.Part(part)
+            1, new Convey.RFC822.Part(part)
         );
 
         assert_equal(test.content_type.to_string(), TYPE);
         assert_equal(test.content_id, ID);
         assert_equal(test.content_description, DESC);
-        assert_equal<Geary.Mime.DispositionType?>(
+        assert_equal<Convey.Mime.DispositionType?>(
             test.content_disposition.disposition_type, ATTACHMENT
         );
         assert_true(test.has_content_filename, "has_content_filename");
@@ -73,33 +73,33 @@ class Geary.ImapDB.AttachmentTest : TestCase {
         GMime.Part part = new_part(null, ATTACHMENT_BODY.data);
         part.set_content_disposition(
             GMime.ContentDisposition.parse(
-                Geary.RFC822.get_parser_options(),
+                Convey.RFC822.get_parser_options(),
                 "inline"
             )
         );
 
         Attachment test = new Attachment.from_part(
-            1, new Geary.RFC822.Part(part)
+            1, new Convey.RFC822.Part(part)
         );
 
-        assert_equal<Geary.Mime.DispositionType?>(
+        assert_equal<Convey.Mime.DispositionType?>(
             test.content_disposition.disposition_type, INLINE
         );
     }
 
 }
 
-class Geary.ImapDB.AttachmentIoTest : TestCase {
+class Convey.ImapDB.AttachmentIoTest : TestCase {
 
 
     private const string ENCODED_BODY = "This is an attachment.\r\n";
     private const string DECODED_BODY = "This is an attachment.\n";
 
     private GLib.File? tmp_dir;
-    private Geary.Db.Database? db;
+    private Convey.Db.Database? db;
 
     public AttachmentIoTest() {
-        base("Geary.ImapDB.AttachmentIoTest");
+        base("Convey.ImapDB.AttachmentIoTest");
         add_test("save_minimal_attachment", save_minimal_attachment);
         add_test("save_complete_attachment", save_complete_attachment);
         add_test("save_qp_attachment", save_qp_attachment);
@@ -109,12 +109,12 @@ class Geary.ImapDB.AttachmentIoTest : TestCase {
 
     public override void set_up() throws Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("geary-impadb-attachment-io-test-XXXXXX")
+            GLib.DirUtils.make_tmp("convey-impadb-attachment-io-test-XXXXXX")
         );
 
-        this.db = new Geary.Db.Database.transient();
+        this.db = new Convey.Db.Database.transient();
         this.db.open.begin(
-            Geary.Db.DatabaseFlags.NONE, null,
+            Convey.Db.DatabaseFlags.NONE, null,
             this.async_completion
         );
         this.db.open.end(async_result());
@@ -159,15 +159,15 @@ CREATE TABLE MessageAttachmentTable (
             this.db.get_primary_connection(),
             this.tmp_dir,
             1,
-            new Gee.ArrayList<Geary.RFC822.Part>.wrap({
-                    new Geary.RFC822.Part(part)
+            new Gee.ArrayList<Convey.RFC822.Part>.wrap({
+                    new Convey.RFC822.Part(part)
                 }),
             null
         );
 
         assert_equal<int?>(attachments.size, 1, "No attachment provided");
 
-        Geary.Attachment attachment = attachments[0];
+        Convey.Attachment attachment = attachments[0];
         assert_non_null(attachment.file, "Attachment file");
         assert_equal<int64?>(
             attachment.filesize,
@@ -180,7 +180,7 @@ CREATE TABLE MessageAttachmentTable (
         attachments[0].file.read().read_all(buf, out len);
         assert_equal((string) buf[0:len], DECODED_BODY);
 
-        Geary.Db.Result result = this.db.query(
+        Convey.Db.Result result = this.db.query(
             "SELECT * FROM MessageAttachmentTable;"
         );
         assert_false(result.finished, "Row not inserted");
@@ -197,7 +197,7 @@ CREATE TABLE MessageAttachmentTable (
         const string TYPE = "text/plain";
         const string ID = "test-id";
         const string DESCRIPTION = "test description";
-        const Geary.Mime.DispositionType DISPOSITION_TYPE = INLINE;
+        const Convey.Mime.DispositionType DISPOSITION_TYPE = INLINE;
         const string FILENAME = "test.txt";
 
         GMime.Part part = new_part(TYPE, ENCODED_BODY.data);
@@ -205,7 +205,7 @@ CREATE TABLE MessageAttachmentTable (
         part.set_content_description(DESCRIPTION);
         part.set_content_disposition(
             GMime.ContentDisposition.parse(
-                Geary.RFC822.get_parser_options(),
+                Convey.RFC822.get_parser_options(),
                 "inline; filename=%s;".printf(FILENAME)
             ));
 
@@ -213,20 +213,20 @@ CREATE TABLE MessageAttachmentTable (
             this.db.get_primary_connection(),
             this.tmp_dir,
             1,
-            new Gee.ArrayList<Geary.RFC822.Part>.wrap({
-                    new Geary.RFC822.Part(part)
+            new Gee.ArrayList<Convey.RFC822.Part>.wrap({
+                    new Convey.RFC822.Part(part)
                 }),
             null
         );
 
         assert_equal<int?>(attachments.size, 1, "No attachment provided");
 
-        Geary.Attachment attachment = attachments[0];
+        Convey.Attachment attachment = attachments[0];
         assert_equal(attachment.content_type.to_string(), TYPE);
         assert_equal(attachment.content_id, ID);
         assert_equal(attachment.content_description, DESCRIPTION);
         assert_equal(attachment.content_filename, FILENAME);
-        assert_equal<Geary.Mime.DispositionType?>(
+        assert_equal<Convey.Mime.DispositionType?>(
             attachment.content_disposition.disposition_type,
             DISPOSITION_TYPE,
             "Attachment disposition type"
@@ -237,7 +237,7 @@ CREATE TABLE MessageAttachmentTable (
         attachment.file.read().read_all(buf, out len);
         assert_equal((string) buf[0:len], DECODED_BODY);
 
-        Geary.Db.Result result = this.db.query(
+        Convey.Db.Result result = this.db.query(
             "SELECT * FROM MessageAttachmentTable;"
         );
         assert_false(result.finished, "Row not inserted");
@@ -245,8 +245,8 @@ CREATE TABLE MessageAttachmentTable (
         assert_equal(result.string_for("mime_type"), TYPE);
         assert_equal(result.string_for("content_id"), ID);
         assert_equal(result.string_for("description"), DESCRIPTION);
-        assert_equal<Geary.Mime.DispositionType?>(
-            (Geary.Mime.DispositionType) result.int_for("disposition"),
+        assert_equal<Convey.Mime.DispositionType?>(
+            (Convey.Mime.DispositionType) result.int_for("disposition"),
             DISPOSITION_TYPE,
             "Row disposition type"
         );
@@ -274,8 +274,8 @@ abriquent pour te la vendre une =C3=A2me vulgaire.""";
             this.db.get_primary_connection(),
             this.tmp_dir,
             1,
-            new Gee.ArrayList<Geary.RFC822.Part>.wrap({
-                    new Geary.RFC822.Part(part)
+            new Gee.ArrayList<Convey.RFC822.Part>.wrap({
+                    new Convey.RFC822.Part(part)
                 }),
             null
         );
@@ -316,8 +316,8 @@ VALUES (2, 'text/plain');
             this.db.get_primary_connection(),
             this.tmp_dir,
             1,
-            new Gee.ArrayList<Geary.RFC822.Part>.wrap({
-                    new Geary.RFC822.Part(part)
+            new Gee.ArrayList<Convey.RFC822.Part>.wrap({
+                    new Convey.RFC822.Part(part)
                 }),
             null
         );
@@ -334,7 +334,7 @@ VALUES (2, 'text/plain');
             this.db.get_primary_connection(), this.tmp_dir, 1, null
         );
 
-        Geary.Db.Result result = this.db.query(
+        Convey.Db.Result result = this.db.query(
             "SELECT * FROM MessageAttachmentTable;"
         );
         assert_false(result.finished);
@@ -355,7 +355,7 @@ private GMime.Part new_part(string? mime_type,
     GMime.Part part = new GMime.Part.with_type("text", "plain");
     if (mime_type != null) {
         part.set_content_type(GMime.ContentType.parse(
-            Geary.RFC822.get_parser_options(),
+            Convey.RFC822.get_parser_options(),
             mime_type
         ));
     }

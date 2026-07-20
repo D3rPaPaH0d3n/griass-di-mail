@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.ClientConnectionTest : TestCase {
+class Convey.Imap.ClientConnectionTest : TestCase {
 
 
     private class TestCommand : Command {
@@ -20,7 +20,7 @@ class Geary.Imap.ClientConnectionTest : TestCase {
 
 
     public ClientConnectionTest() {
-        base("Geary.Imap.ClientConnectionTest");
+        base("Convey.Imap.ClientConnectionTest");
         add_test("connect_disconnect", connect_disconnect);
         if (GLib.Test.slow()) {
             add_test("idle", idle);

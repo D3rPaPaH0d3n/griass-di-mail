@@ -7,13 +7,13 @@
  */
 
 /**
- * Context allows for an inspector or utility function to determine at runtime what Geary.Db
+ * Context allows for an inspector or utility function to determine at runtime what Convey.Db
  * objects are available to it.  Primarily designed for logging, but could be used in other
  * circumstances.
  *
- * Geary.Db's major classes (Database, Connection, Statement, and Result) inherit from Context.
+ * Convey.Db's major classes (Database, Connection, Statement, and Result) inherit from Context.
  */
-public abstract class Geary.Db.Context : BaseObject, Logging.Source {
+public abstract class Convey.Db.Context : BaseObject, Logging.Source {
 
 
     /** The GLib logging domain used by this class. */

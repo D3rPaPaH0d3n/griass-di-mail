@@ -16,7 +16,7 @@
  * are multiple tasks waiting for items, the first to wait will
  * receive the next item.
  */
-public class Geary.Nonblocking.Queue<G> : BaseObject {
+public class Convey.Nonblocking.Queue<G> : BaseObject {
 
     /** Returns the number of items currently in the queue. */
     public int size { get { return queue.size; } }

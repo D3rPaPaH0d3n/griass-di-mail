@@ -8,17 +8,17 @@
  * Stage two of a {@link RevokableMove}: move messages from folder to destination.
  */
 
-private class Geary.ImapEngine.MoveEmailCommit : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.MoveEmailCommit : Convey.ImapEngine.SendReplayOperation {
     public Gee.Set<Imap.UID> destination_uids = new Gee.HashSet<Imap.UID>();
 
     private MinimalFolder engine;
     private Gee.List<ImapDB.EmailIdentifier> to_move = new Gee.ArrayList<ImapDB.EmailIdentifier>();
-    private Geary.FolderPath destination;
+    private Convey.FolderPath destination;
     private Cancellable? cancellable;
     private Gee.List<Imap.MessageSet>? remaining_msg_sets = null;
 
     public MoveEmailCommit(MinimalFolder engine, Gee.Collection<ImapDB.EmailIdentifier> to_move,
-        Geary.FolderPath destination, Cancellable? cancellable) {
+        Convey.FolderPath destination, Cancellable? cancellable) {
         base.only_remote("MoveEmailCommit", OnError.RETRY);
 
         this.engine = engine;

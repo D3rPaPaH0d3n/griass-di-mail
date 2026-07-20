@@ -8,7 +8,7 @@
 public class MailMerge.TestProcessor : ValaUnit.TestCase {
 
 
-    private class MockEmailIdentifier : Geary.EmailIdentifier {
+    private class MockEmailIdentifier : Convey.EmailIdentifier {
 
 
         private int id;
@@ -22,7 +22,7 @@ public class MailMerge.TestProcessor : ValaUnit.TestCase {
             return GLib.int_hash(this.id);
         }
 
-        public override bool equal_to(Geary.EmailIdentifier other) {
+        public override bool equal_to(Convey.EmailIdentifier other) {
             return (
                 this.get_type() == other.get_type() &&
                 this.id == ((MockEmailIdentifier) other).id
@@ -41,7 +41,7 @@ public class MailMerge.TestProcessor : ValaUnit.TestCase {
             return new GLib.Variant.int32(id);
         }
 
-        public override int natural_sort_comparator(Geary.EmailIdentifier other) {
+        public override int natural_sort_comparator(Convey.EmailIdentifier other) {
             MockEmailIdentifier? other_mock = other as MockEmailIdentifier;
             return (other_mock == null) ? 1 : this.id - other_mock.id;
         }
@@ -106,18 +106,18 @@ public class MailMerge.TestProcessor : ValaUnit.TestCase {
         var original = string_to_email(TEMPLATE_SUBJECT);
         var processor = new Processor(original);
         var merged = processor.merge(
-            Geary.Collection.single_map("subject", "test")
+            Convey.Collection.single_map("subject", "test")
         );
 
         assert_equal(merged.subject.value, "test");
     }
 
-    private Geary.Email string_to_email(string message_text)
+    private Convey.Email string_to_email(string message_text)
         throws GLib.Error {
-        var message = new Geary.RFC822.Message.from_buffer(
-            new Geary.Memory.StringBuffer(message_text.replace("\n","\r\n"))
+        var message = new Convey.RFC822.Message.from_buffer(
+            new Convey.Memory.StringBuffer(message_text.replace("\n","\r\n"))
         );
-        return new Geary.Email.from_message(
+        return new Convey.Email.from_message(
             new MockEmailIdentifier(0), message
         );
     }
@@ -133,7 +133,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Geary Test Suite 1.0
+X-Mailer: Convey Test Suite 1.0
 
 This is the first line.
 
@@ -152,7 +152,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Geary Test Suite 1.0
+X-Mailer: Convey Test Suite 1.0
 
 This is the first line.
 
@@ -171,7 +171,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Geary Test Suite 1.0
+X-Mailer: Convey Test Suite 1.0
 
 Hello {{name}}!
 

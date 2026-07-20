@@ -14,7 +14,7 @@
  * for more information.
  */
 
-public class Geary.Imap.ResponseCodeType : BaseObject, Gee.Hashable<ResponseCodeType> {
+public class Convey.Imap.ResponseCodeType : BaseObject, Gee.Hashable<ResponseCodeType> {
     public const string ALERT = "alert";
     public const string ALREADYEXISTS = "alreadyexists";
     public const string APPENDUID = "appenduid";

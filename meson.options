@@ -45,7 +45,7 @@ option(
   'ref_tracking',
   type: 'feature',
   value: 'disabled',
-  description: 'Enable Geary.BaseObject reference tracking'
+  description: 'Enable Convey.BaseObject reference tracking'
 )
 
 #

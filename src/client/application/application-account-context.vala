@@ -9,19 +9,19 @@
 /**
  * Collects application state related to a single open account.
  */
-public class Application.AccountContext : Geary.BaseObject {
+public class Application.AccountContext : Convey.BaseObject {
 
     /** The account for this context. */
-    public Geary.Account account { get; private set; }
+    public Convey.Account account { get; private set; }
 
     /** The account's Inbox folder */
-    public Geary.Folder? inbox = null;
+    public Convey.Folder? inbox = null;
 
     /** The account's search folder */
-    public Geary.App.SearchFolder search = null;
+    public Convey.App.SearchFolder search = null;
 
     /** The account's email store */
-    public Geary.App.EmailStore emails { get; private set; }
+    public Convey.App.EmailStore emails { get; private set; }
 
     /** The account's contact store */
     public ContactStore contacts { get; private set; }
@@ -66,8 +66,8 @@ public class Application.AccountContext : Geary.BaseObject {
         get; internal set; default = false;
     }
 
-    private Gee.Map<Geary.FolderPath,FolderContext> folders =
-        new Gee.HashMap<Geary.FolderPath,FolderContext>();
+    private Gee.Map<Convey.FolderPath,FolderContext> folders =
+        new Gee.HashMap<Convey.FolderPath,FolderContext>();
 
 
     /** Emitted when folders contexts become available. */
@@ -77,9 +77,9 @@ public class Application.AccountContext : Geary.BaseObject {
     public signal void folders_unavailable(Gee.Collection<FolderContext> unavailable);
 
 
-    public AccountContext(Geary.Account account,
-                          Geary.App.SearchFolder search,
-                          Geary.App.EmailStore emails,
+    public AccountContext(Convey.Account account,
+                          Convey.App.SearchFolder search,
+                          Convey.App.EmailStore emails,
                           Application.ContactStore contacts) {
         this.account = account;
         this.search = search;
@@ -88,16 +88,16 @@ public class Application.AccountContext : Geary.BaseObject {
     }
 
     /** Returns the current effective status for the account. */
-    public Geary.Account.Status get_effective_status() {
-        Geary.Account.Status current = this.account.current_status;
-        Geary.Account.Status effective = 0;
+    public Convey.Account.Status get_effective_status() {
+        Convey.Account.Status current = this.account.current_status;
+        Convey.Account.Status effective = 0;
         if (current.is_online()) {
             effective |= ONLINE;
         }
         if (current.has_service_problem()) {
             // Only retain service problem if the problem isn't auth
             // or cert related, that is handled elsewhere.
-            const Geary.ClientService.Status SPECIALS[] = {
+            const Convey.ClientService.Status SPECIALS[] = {
                 AUTHENTICATION_FAILED,
                 TLS_VALIDATION_FAILED
             };
@@ -119,7 +119,7 @@ public class Application.AccountContext : Geary.BaseObject {
     /**
      * Returns context for a folder belonging to this context's account.
      */
-    public FolderContext? get_folder(Geary.Folder target) {
+    public FolderContext? get_folder(Convey.Folder target) {
         FolderContext? context = null;
         if (this.account == target.account) {
             context = this.folders.get(target.path);

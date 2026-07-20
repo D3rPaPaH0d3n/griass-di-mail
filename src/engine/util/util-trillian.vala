@@ -8,7 +8,7 @@
  * A trillian is a three-state boolean, used when the value is potentially unknown.
  */
 
-public enum Geary.Trillian {
+public enum Convey.Trillian {
     // DO NOT MODIFY unless you know what you're doing.  These values are persisted.
     UNKNOWN = -1,
     FALSE = 0,

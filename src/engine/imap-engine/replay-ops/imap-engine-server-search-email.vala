@@ -10,13 +10,13 @@
  *
  * Note that this does ''no'' searching of local email.
  */
-private class Geary.ImapEngine.ServerSearchEmail : Geary.ImapEngine.AbstractListEmail {
+private class Convey.ImapEngine.ServerSearchEmail : Convey.ImapEngine.AbstractListEmail {
     private Imap.SearchCriteria criteria;
 
-    public ServerSearchEmail(MinimalFolder owner, Imap.SearchCriteria criteria, Geary.Email.Field required_fields,
+    public ServerSearchEmail(MinimalFolder owner, Imap.SearchCriteria criteria, Convey.Email.Field required_fields,
         Cancellable? cancellable) {
         // OLDEST_TO_NEWEST used for vector expansion, if necessary
-        base ("ServerSearchEmail", owner, required_fields, Geary.Folder.ListFlags.OLDEST_TO_NEWEST,
+        base ("ServerSearchEmail", owner, required_fields, Convey.Folder.ListFlags.OLDEST_TO_NEWEST,
             cancellable);
 
         // unlike list, need to retry this as there's no local component to return
@@ -41,7 +41,7 @@ private class Geary.ImapEngine.ServerSearchEmail : Geary.ImapEngine.AbstractList
             return;
 
         // if the earliest UID is not in the local store, then need to expand vector to it
-        Geary.EmailIdentifier? first_id = yield owner.local_folder.get_id_async(uids.first(),
+        Convey.EmailIdentifier? first_id = yield owner.local_folder.get_id_async(uids.first(),
             ImapDB.Folder.ListFlags.NONE, cancellable);
         if (first_id == null)
             yield expand_vector_async(remote, uids.first(), 1);
@@ -59,19 +59,19 @@ private class Geary.ImapEngine.ServerSearchEmail : Geary.ImapEngine.AbstractList
                 local_ids.add(id);
         }
 
-        Gee.List<Geary.Email>? local_list = yield owner.local_folder.list_email_by_sparse_id_async(
+        Gee.List<Convey.Email>? local_list = yield owner.local_folder.list_email_by_sparse_id_async(
             local_ids, required_fields, ImapDB.Folder.ListFlags.PARTIAL_OK, cancellable);
 
         // Build list of local email
-        Gee.Map<ImapDB.EmailIdentifier, Geary.Email> map = new Gee.HashMap<ImapDB.EmailIdentifier, Geary.Email>();
+        Gee.Map<ImapDB.EmailIdentifier, Convey.Email> map = new Gee.HashMap<ImapDB.EmailIdentifier, Convey.Email>();
         if (local_list != null) {
-            foreach (Geary.Email email in local_list)
+            foreach (Convey.Email email in local_list)
                 map.set((ImapDB.EmailIdentifier) email.id, email);
         }
 
         // Convert into fulfilled and unfulfilled email for the base class to complete
         foreach (ImapDB.EmailIdentifier id in map.keys) {
-            Geary.Email? email = map.get(id);
+            Convey.Email? email = map.get(id);
             if (email == null)
                 add_unfulfilled_fields(id.uid, required_fields | ImapDB.Folder.REQUIRED_FIELDS);
             else if (!email.fields.fulfills(required_fields))

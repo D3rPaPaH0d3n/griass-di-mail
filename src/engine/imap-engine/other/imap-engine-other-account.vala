@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.OtherAccount : Geary.ImapEngine.GenericAccount {
+private class Convey.ImapEngine.OtherAccount : Convey.ImapEngine.GenericAccount {
 
     public OtherAccount(AccountInformation config,
                         ImapDB.Account local,

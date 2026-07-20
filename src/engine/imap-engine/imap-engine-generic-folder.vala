@@ -5,11 +5,11 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.GenericFolder : MinimalFolder,
-    Geary.FolderSupport.Archive,
-    Geary.FolderSupport.Remove,
-    Geary.FolderSupport.Create,
-    Geary.FolderSupport.Empty {
+private class Convey.ImapEngine.GenericFolder : MinimalFolder,
+    Convey.FolderSupport.Archive,
+    Convey.FolderSupport.Remove,
+    Convey.FolderSupport.Create,
+    Convey.FolderSupport.Empty {
 
     public GenericFolder(GenericAccount account,
                          ImapDB.Folder local_folder,
@@ -17,11 +17,11 @@ private class Geary.ImapEngine.GenericFolder : MinimalFolder,
         base (account, local_folder, use);
     }
 
-    public async Geary.Revokable?
-        archive_email_async(Gee.Collection<Geary.EmailIdentifier> email_ids,
+    public async Convey.Revokable?
+        archive_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
                             GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        Geary.Folder? archive_folder = null;
+        Convey.Folder? archive_folder = null;
         try {
             archive_folder = yield account.get_required_special_folder_async(
                 Folder.SpecialUse.ARCHIVE, cancellable
@@ -40,7 +40,7 @@ private class Geary.ImapEngine.GenericFolder : MinimalFolder,
     }
 
     public async void
-        remove_email_async(Gee.Collection<Geary.EmailIdentifier> email_ids,
+        remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         yield expunge_email_async(email_ids, cancellable);

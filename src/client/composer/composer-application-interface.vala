@@ -17,7 +17,7 @@ internal interface Composer.ApplicationInterface :
     GLib.Object, Application.AccountInterface {
 
 
-    public abstract void report_problem(Geary.ProblemReport report);
+    public abstract void report_problem(Convey.ProblemReport report);
 
     internal abstract async void send_composed_email(Composer.Widget composer);
 

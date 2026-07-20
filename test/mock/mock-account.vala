@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Mock.Account : Geary.Account,
+public class Mock.Account : Convey.Account,
     ValaUnit.TestAssertions,
     ValaUnit.MockObject {
 
@@ -15,12 +15,12 @@ public class Mock.Account : Geary.Account,
     }
 
 
-    public Account(Geary.AccountInformation config) {
+    public Account(Convey.AccountInformation config) {
         base(config,
              new ClientService(
                  config,
                  config.incoming,
-                 new Geary.Endpoint(
+                 new Convey.Endpoint(
                      new GLib.NetworkAddress(
                          config.incoming.host, config.incoming.port
                      ),
@@ -30,7 +30,7 @@ public class Mock.Account : Geary.Account,
              new ClientService(
                  config,
                  config.outgoing,
-                 new Geary.Endpoint(
+                 new Convey.Endpoint(
                      new GLib.NetworkAddress(
                          config.outgoing.host, config.outgoing.port
                      ),
@@ -71,22 +71,22 @@ public class Mock.Account : Geary.Account,
         void_call("rebuild_async", { cancellable });
     }
 
-    public override Gee.Collection<Geary.Folder>
-        list_matching_folders(Geary.FolderPath? parent) {
+    public override Gee.Collection<Convey.Folder>
+        list_matching_folders(Convey.FolderPath? parent) {
         try {
-            return object_call<Gee.Collection<Geary.Folder>>(
+            return object_call<Gee.Collection<Convey.Folder>>(
                 "get_containing_folders_async",
                 {parent},
-                Gee.List.empty<Geary.Folder>()
+                Gee.List.empty<Convey.Folder>()
             );
         } catch (GLib.Error err) {
-            return Gee.Collection.empty<Geary.Folder>();
+            return Gee.Collection.empty<Convey.Folder>();
         }
     }
 
-    public override async Geary.Folder create_personal_folder(
+    public override async Convey.Folder create_personal_folder(
         string name,
-        Geary.Folder.SpecialUse use = NONE,
+        Convey.Folder.SpecialUse use = NONE,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         return object_call<Folder>(
@@ -97,75 +97,75 @@ public class Mock.Account : Geary.Account,
     }
 
     /** {@inheritDoc} */
-    public override void register_local_folder(Geary.Folder local)
+    public override void register_local_folder(Convey.Folder local)
         throws GLib.Error {
         void_call("register_local_folder", { local });
     }
 
     /** {@inheritDoc} */
-    public override void deregister_local_folder(Geary.Folder local)
+    public override void deregister_local_folder(Convey.Folder local)
         throws GLib.Error {
         void_call("deregister_local_folder", { local });
     }
 
-    public override Geary.EmailIdentifier to_email_identifier(GLib.Variant serialised)
-        throws Geary.EngineError.BAD_PARAMETERS {
+    public override Convey.EmailIdentifier to_email_identifier(GLib.Variant serialised)
+        throws Convey.EngineError.BAD_PARAMETERS {
         try {
-            return object_or_throw_call<Geary.EmailIdentifier>(
+            return object_or_throw_call<Convey.EmailIdentifier>(
                 "to_email_identifier",
                 { box_arg(serialised) },
-                new Geary.EngineError.BAD_PARAMETERS("Mock error")
+                new Convey.EngineError.BAD_PARAMETERS("Mock error")
             );
-        } catch (Geary.EngineError.BAD_PARAMETERS err) {
+        } catch (Convey.EngineError.BAD_PARAMETERS err) {
             throw err;
         } catch (GLib.Error err) {
             return new EmailIdentifer(0);
         }
     }
 
-    public override Geary.FolderPath to_folder_path(GLib.Variant serialised)
-        throws Geary.EngineError.BAD_PARAMETERS {
+    public override Convey.FolderPath to_folder_path(GLib.Variant serialised)
+        throws Convey.EngineError.BAD_PARAMETERS {
         try {
-            return object_or_throw_call<Geary.FolderPath>(
+            return object_or_throw_call<Convey.FolderPath>(
                 "to_folder_path",
                 { box_arg(serialised) },
-                new Geary.EngineError.BAD_PARAMETERS("Mock error")
+                new Convey.EngineError.BAD_PARAMETERS("Mock error")
             );
-        } catch (Geary.EngineError.BAD_PARAMETERS err) {
+        } catch (Convey.EngineError.BAD_PARAMETERS err) {
             throw err;
         } catch (GLib.Error err) {
-            return new Geary.FolderRoot("#mock", false);
+            return new Convey.FolderRoot("#mock", false);
         }
     }
 
-    public override Geary.Folder get_folder(Geary.FolderPath path)
-        throws Geary.EngineError.NOT_FOUND {
+    public override Convey.Folder get_folder(Convey.FolderPath path)
+        throws Convey.EngineError.NOT_FOUND {
         try {
             return object_or_throw_call<Folder>(
                 "get_folder",
                 { path },
-                new Geary.EngineError.NOT_FOUND("Mock error")
+                new Convey.EngineError.NOT_FOUND("Mock error")
             );
-        } catch (Geary.EngineError.NOT_FOUND err) {
+        } catch (Convey.EngineError.NOT_FOUND err) {
             throw err;
         } catch (GLib.Error err) {
             return new Folder(null, null, null, NONE, null);
         }
     }
 
-    public override Gee.Collection<Geary.Folder> list_folders() {
+    public override Gee.Collection<Convey.Folder> list_folders() {
         try {
-            return object_call<Gee.Collection<Geary.Folder>>(
-                "list_folders", {}, Gee.List.empty<Geary.Folder>()
+            return object_call<Gee.Collection<Convey.Folder>>(
+                "list_folders", {}, Gee.List.empty<Convey.Folder>()
             );
         } catch (GLib.Error err) {
-            return Gee.List.empty<Geary.Folder>();
+            return Gee.List.empty<Convey.Folder>();
         }
     }
 
-    public override Geary.Folder? get_special_folder(Geary.Folder.SpecialUse special) {
+    public override Convey.Folder? get_special_folder(Convey.Folder.SpecialUse special) {
         try {
-            return object_call<Geary.Folder?>(
+            return object_call<Convey.Folder?>(
                 "get_special_folder", {box_arg(special)}, null
             );
         } catch (GLib.Error err) {
@@ -173,26 +173,26 @@ public class Mock.Account : Geary.Account,
         }
     }
 
-    public override async Geary.Folder
-        get_required_special_folder_async(Geary.Folder.SpecialUse special,
+    public override async Convey.Folder
+        get_required_special_folder_async(Convey.Folder.SpecialUse special,
                                           GLib.Cancellable? cancellable = null)
     throws GLib.Error {
-        return object_or_throw_call<Geary.Folder>(
+        return object_or_throw_call<Convey.Folder>(
             "get_required_special_folder_async",
             { box_arg(special), cancellable },
-            new Geary.EngineError.NOT_FOUND("Mock call")
+            new Convey.EngineError.NOT_FOUND("Mock call")
         );
     }
 
-    public override async Gee.MultiMap<Geary.Email,Geary.FolderPath?>?
-        local_search_message_id_async(Geary.RFC822.MessageID message_id,
-                                      Geary.Email.Field requested_fields,
+    public override async Gee.MultiMap<Convey.Email,Convey.FolderPath?>?
+        local_search_message_id_async(Convey.RFC822.MessageID message_id,
+                                      Convey.Email.Field requested_fields,
                                       bool partial_ok,
-                                      Gee.Collection<Geary.FolderPath?>? folder_blacklist,
-                                      Geary.EmailFlags? flag_blacklist,
+                                      Gee.Collection<Convey.FolderPath?>? folder_blacklist,
+                                      Convey.EmailFlags? flag_blacklist,
                                       GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        return object_call<Gee.MultiMap<Geary.Email,Geary.FolderPath?>?>(
+        return object_call<Gee.MultiMap<Convey.Email,Convey.FolderPath?>?>(
             "local_search_message_id_async",
             {
                 message_id,
@@ -206,46 +206,46 @@ public class Mock.Account : Geary.Account,
         );
     }
 
-    public override async Gee.List<Geary.Email> list_local_email_async(
-        Gee.Collection<Geary.EmailIdentifier> ids,
-        Geary.Email.Field required_fields,
+    public override async Gee.List<Convey.Email> list_local_email_async(
+        Gee.Collection<Convey.EmailIdentifier> ids,
+        Convey.Email.Field required_fields,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        return object_or_throw_call<Gee.List<Geary.Email>>(
+        return object_or_throw_call<Gee.List<Convey.Email>>(
             "list_local_email_async",
             {ids, box_arg(required_fields), cancellable},
-            new Geary.EngineError.NOT_FOUND("Mock call")
+            new Convey.EngineError.NOT_FOUND("Mock call")
         );
     }
 
-    public override async Geary.Email
-        local_fetch_email_async(Geary.EmailIdentifier email_id,
-                                Geary.Email.Field required_fields,
+    public override async Convey.Email
+        local_fetch_email_async(Convey.EmailIdentifier email_id,
+                                Convey.Email.Field required_fields,
                                 GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        return object_or_throw_call<Geary.Email>(
+        return object_or_throw_call<Convey.Email>(
             "local_fetch_email_async",
             {email_id, box_arg(required_fields), cancellable},
-            new Geary.EngineError.NOT_FOUND("Mock call")
+            new Convey.EngineError.NOT_FOUND("Mock call")
         );
     }
 
-    public override Geary.SearchQuery new_search_query(
-        Gee.List<Geary.SearchQuery.Term> expression,
+    public override Convey.SearchQuery new_search_query(
+        Gee.List<Convey.SearchQuery.Term> expression,
         string text
     ) throws GLib.Error {
         return new SearchQuery(expression, text);
     }
 
-    public override async Gee.Collection<Geary.EmailIdentifier>?
-        local_search_async(Geary.SearchQuery query,
+    public override async Gee.Collection<Convey.EmailIdentifier>?
+        local_search_async(Convey.SearchQuery query,
                            int limit = 100,
                            int offset = 0,
-                           Gee.Collection<Geary.FolderPath?>? folder_blacklist = null,
-                           Gee.Collection<Geary.EmailIdentifier>? search_ids = null,
+                           Gee.Collection<Convey.FolderPath?>? folder_blacklist = null,
+                           Gee.Collection<Convey.EmailIdentifier>? search_ids = null,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        return object_call<Gee.Collection<Geary.EmailIdentifier>?>(
+        return object_call<Gee.Collection<Convey.EmailIdentifier>?>(
             "local_search_async",
             {
                 query,
@@ -260,8 +260,8 @@ public class Mock.Account : Geary.Account,
     }
 
     public override async Gee.Set<string>?
-        get_search_matches_async(Geary.SearchQuery query,
-                                 Gee.Collection<Geary.EmailIdentifier> ids,
+        get_search_matches_async(Convey.SearchQuery query,
+                                 Gee.Collection<Convey.EmailIdentifier> ids,
                                  GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         return object_call<Gee.Set<string>?>(
@@ -269,11 +269,11 @@ public class Mock.Account : Geary.Account,
         );
     }
 
-    public override async Gee.MultiMap<Geary.EmailIdentifier,Geary.FolderPath>?
-        get_containing_folders_async(Gee.Collection<Geary.EmailIdentifier> ids,
+    public override async Gee.MultiMap<Convey.EmailIdentifier,Convey.FolderPath>?
+        get_containing_folders_async(Gee.Collection<Convey.EmailIdentifier> ids,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
-        return object_call<Gee.MultiMap<Geary.EmailIdentifier, Geary.FolderPath>?>(
+        return object_call<Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>?>(
             "get_containing_folders_async", {ids, cancellable}, null
         );
     }

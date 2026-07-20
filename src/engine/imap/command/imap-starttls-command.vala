@@ -8,7 +8,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.2.1]]
  */
 
-public class Geary.Imap.StarttlsCommand : Command {
+public class Convey.Imap.StarttlsCommand : Command {
 
     public const string NAME = "STARTTLS";
 

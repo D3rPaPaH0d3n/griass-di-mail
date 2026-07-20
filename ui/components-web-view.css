@@ -39,7 +39,7 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-  body[data-geary-theme=dark] {
+  body[data-convey-theme=dark] {
     color-scheme: dark;
     --bg-color: #2a2d30;
     --fg-color: #eaeaea;

@@ -5,9 +5,9 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Mock.SearchQuery : Geary.SearchQuery {
+public class Mock.SearchQuery : Convey.SearchQuery {
 
-    internal SearchQuery(Gee.List<Geary.SearchQuery.Term> expression,
+    internal SearchQuery(Gee.List<Convey.SearchQuery.Term> expression,
                          string raw) {
         base(expression, raw);
     }

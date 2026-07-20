@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.EmailIdentifier : Geary.EmailIdentifier {
+internal class Convey.Graph.EmailIdentifier : Convey.EmailIdentifier {
 
     private const string VARIANT_TYPE = "(y(sx))";
 
@@ -18,9 +18,9 @@ internal class Geary.Graph.EmailIdentifier : Geary.EmailIdentifier {
     }
 
     public EmailIdentifier.from_variant(GLib.Variant serialised)
-        throws Geary.EngineError.BAD_PARAMETERS {
+        throws Convey.EngineError.BAD_PARAMETERS {
         if (serialised.get_type_string() != VARIANT_TYPE) {
-            throw new Geary.EngineError.BAD_PARAMETERS(
+            throw new Convey.EngineError.BAD_PARAMETERS(
                 "Invalid serialised id type: %s", serialised.get_type_string()
             );
         }
@@ -32,13 +32,13 @@ internal class Geary.Graph.EmailIdentifier : Geary.EmailIdentifier {
         return this.graph_id.hash();
     }
 
-    public override bool equal_to(Geary.EmailIdentifier other) {
-        Geary.Graph.EmailIdentifier? graph = other as Geary.Graph.EmailIdentifier;
+    public override bool equal_to(Convey.EmailIdentifier other) {
+        Convey.Graph.EmailIdentifier? graph = other as Convey.Graph.EmailIdentifier;
         return graph != null && this.graph_id == graph.graph_id;
     }
 
-    public override int natural_sort_comparator(Geary.EmailIdentifier o) {
-        Geary.Graph.EmailIdentifier? other = o as Geary.Graph.EmailIdentifier;
+    public override int natural_sort_comparator(Convey.EmailIdentifier o) {
+        Convey.Graph.EmailIdentifier? other = o as Convey.Graph.EmailIdentifier;
         if (other == null) {
             return 1;
         }

@@ -9,7 +9,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.4.3]] and
  * [[http://tools.ietf.org/html/rfc4315#section-2.1]]
  */
-public class Geary.Imap.ExpungeCommand : Command {
+public class Convey.Imap.ExpungeCommand : Command {
 
     public const string NAME = "expunge";
     public const string UID_NAME = "uid expunge";

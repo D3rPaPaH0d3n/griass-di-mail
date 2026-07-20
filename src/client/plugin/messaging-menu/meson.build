@@ -28,7 +28,7 @@ if libmessagingmenu_dep.found()
     'unity-' + plugin_name,
     sources: plugin_src,
     dependencies: messaging_menu_dependencies,
-    vala_args: geary_vala_args,
+    vala_args: convey_vala_args,
     c_args: plugin_c_args,
     install: true,
     install_dir: plugin_dest,

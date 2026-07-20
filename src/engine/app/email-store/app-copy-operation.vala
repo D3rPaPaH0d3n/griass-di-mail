@@ -4,19 +4,19 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.App.CopyOperation : Geary.App.AsyncFolderOperation {
-    public override Type folder_type { get { return typeof(Geary.FolderSupport.Copy); } }
+private class Convey.App.CopyOperation : Convey.App.AsyncFolderOperation {
+    public override Type folder_type { get { return typeof(Convey.FolderSupport.Copy); } }
 
-    public Geary.FolderPath destination;
+    public Convey.FolderPath destination;
 
-    public CopyOperation(Geary.FolderPath destination) {
+    public CopyOperation(Convey.FolderPath destination) {
         this.destination = destination;
     }
 
-    public override async Gee.Collection<Geary.EmailIdentifier> execute_async(
-        Geary.Folder folder, Gee.Collection<Geary.EmailIdentifier> ids,
+    public override async Gee.Collection<Convey.EmailIdentifier> execute_async(
+        Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids,
         Cancellable? cancellable) throws Error {
-        Geary.FolderSupport.Copy? copy = folder as Geary.FolderSupport.Copy;
+        Convey.FolderSupport.Copy? copy = folder as Convey.FolderSupport.Copy;
         assert(copy != null);
 
         yield copy.copy_email_async(

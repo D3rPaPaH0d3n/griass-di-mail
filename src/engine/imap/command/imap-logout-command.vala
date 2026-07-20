@@ -8,7 +8,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.1.3]]
  */
 
-public class Geary.Imap.LogoutCommand : Command {
+public class Convey.Imap.LogoutCommand : Command {
 
     public const string NAME = "logout";
 

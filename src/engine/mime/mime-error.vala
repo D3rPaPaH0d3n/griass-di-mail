@@ -5,9 +5,9 @@
  */
 
 /**
- * Errors related to {@link Geary.Mime}.
+ * Errors related to {@link Convey.Mime}.
  */
 
-public errordomain Geary.MimeError {
+public errordomain Convey.MimeError {
     PARSE
 }

@@ -6,28 +6,28 @@
 
 MainLoop? main_loop = null;
 int ec = 0;
-Geary.Endpoint? endpoint = null;
-Geary.Credentials? credentials = null;
-Geary.ComposedEmail? composed_email = null;
+Convey.Endpoint? endpoint = null;
+Convey.Credentials? credentials = null;
+Convey.ComposedEmail? composed_email = null;
 
 async void main_async() throws Error {
-    Geary.Smtp.ClientSession session = new Geary.Smtp.ClientSession(endpoint);
+    Convey.Smtp.ClientSession session = new Convey.Smtp.ClientSession(endpoint);
 
-    Geary.Smtp.Greeting? greeting = yield session.login_async(credentials);
+    Convey.Smtp.Greeting? greeting = yield session.login_async(credentials);
     stdout.printf("%s\n", greeting.to_string());
 
     for (int ctr = 0; ctr < arg_count; ctr++) {
-        Geary.RFC822.Message msg;
+        Convey.RFC822.Message msg;
 
         if (arg_full_file != null) {
             debug("%s", arg_full_file);
-            msg = new Geary.RFC822.Message.from_buffer(new Geary.Memory.FileBuffer(
+            msg = new Convey.RFC822.Message.from_buffer(new Convey.Memory.FileBuffer(
                 File.new_for_path(arg_full_file), true));
         } else {
             string subj_msg = "#%d".printf(ctr + 1);
             composed_email.set_subject(subj_msg);
 
-            if (Geary.String.is_empty(arg_file)) {
+            if (Convey.String.is_empty(arg_file)) {
                 composed_email.body_text = subj_msg;
             } else {
                 string contents;
@@ -36,14 +36,14 @@ async void main_async() throws Error {
                 composed_email.body_text = contents;
             }
 
-            if (!Geary.String.is_empty(arg_html)) {
+            if (!Convey.String.is_empty(arg_html)) {
                 string contents;
                 FileUtils.get_contents(arg_html, out contents);
 
                 composed_email.body_html = contents;
             }
 
-            msg = yield new Geary.RFC822.Message.from_composed_email(
+            msg = yield new Convey.RFC822.Message.from_composed_email(
                 composed_email, null, GMime.EncodingConstraint.7BIT, null
             );
         }
@@ -55,7 +55,7 @@ async void main_async() throws Error {
         stdout.printf("Sent email #%d\n", ctr);
     }
 
-    Geary.Smtp.Response? logout = yield session.logout_async(false);
+    Convey.Smtp.Response? logout = yield session.logout_async(false);
     stdout.printf("%s\n", logout.to_string());
 }
 
@@ -104,7 +104,7 @@ const OptionEntry[] options = {
 const int SMTP_TIMEOUT_SEC = 30;
 
 bool verify_required(string? arg, string name) {
-    if (!Geary.String.is_empty(arg))
+    if (!Convey.String.is_empty(arg))
         return true;
 
     stdout.printf("%s required\n", name);
@@ -141,17 +141,17 @@ int main(string[] args) {
         arg_count = 1;
 
     if (arg_gmail) {
-        endpoint = new Geary.Endpoint(
-            new GLib.NetworkAddress("smtp.gmail.com", Geary.Smtp.SUBMISSION_PORT),
-            Geary.TlsNegotiationMethod.START_TLS,
+        endpoint = new Convey.Endpoint(
+            new GLib.NetworkAddress("smtp.gmail.com", Convey.Smtp.SUBMISSION_PORT),
+            Convey.TlsNegotiationMethod.START_TLS,
             SMTP_TIMEOUT_SEC
         );
     } else {
-        Geary.TlsNegotiationMethod method = Geary.TlsNegotiationMethod.TRANSPORT;
+        Convey.TlsNegotiationMethod method = Convey.TlsNegotiationMethod.TRANSPORT;
         if (arg_no_tls) {
-            method = Geary.TlsNegotiationMethod.START_TLS;
+            method = Convey.TlsNegotiationMethod.START_TLS;
         }
-        endpoint = new Geary.Endpoint(
+        endpoint = new Convey.Endpoint(
             new GLib.NetworkAddress(arg_hostname, (uint16) arg_port),
             method,
             SMTP_TIMEOUT_SEC
@@ -159,24 +159,24 @@ int main(string[] args) {
     }
 
     stdout.printf("Enabling debug: %s\n", arg_debug.to_string());
-    Geary.Logging.init();
+    Convey.Logging.init();
     if (arg_debug) {
-        Geary.Logging.log_to(stdout);
-        GLib.Log.set_writer_func(Geary.Logging.default_log_writer);
+        Convey.Logging.log_to(stdout);
+        GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
     }
 
-    Geary.RFC822.init();
+    Convey.RFC822.init();
 
-    credentials = new Geary.Credentials(
-        Geary.Credentials.Method.PASSWORD, arg_user, arg_pass
+    credentials = new Convey.Credentials(
+        Convey.Credentials.Method.PASSWORD, arg_user, arg_pass
     );
 
     if (arg_full_file == null) {
-        composed_email = new Geary.ComposedEmail(
+        composed_email = new Convey.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Geary.RFC822.MailboxAddresses.single(new Geary.RFC822.MailboxAddress(null, arg_from))
+            new Convey.RFC822.MailboxAddresses.single(new Convey.RFC822.MailboxAddress(null, arg_from))
         ).set_to(
-            new Geary.RFC822.MailboxAddresses.single(new Geary.RFC822.MailboxAddress(null, arg_to))
+            new Convey.RFC822.MailboxAddresses.single(new Convey.RFC822.MailboxAddress(null, arg_to))
         );
     }
 

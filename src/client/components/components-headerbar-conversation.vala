@@ -13,7 +13,7 @@
  *
  * @see Application.MainWindow
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-headerbar-conversation.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-headerbar-conversation.ui")]
 public class Components.ConversationHeaderBar : Adw.Bin {
 
     public bool find_open { get; set; default = false; }

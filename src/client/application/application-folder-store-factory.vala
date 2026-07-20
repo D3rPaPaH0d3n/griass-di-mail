@@ -11,10 +11,10 @@
  * This class provides a common implementation that shares folder
  * objects between different plugin context instances.
  */
-internal class Application.FolderStoreFactory : Geary.BaseObject {
+internal class Application.FolderStoreFactory : Convey.BaseObject {
 
 
-    private class FolderStoreImpl : Geary.BaseObject, Plugin.FolderStore {
+    private class FolderStoreImpl : Convey.BaseObject, Plugin.FolderStore {
 
 
         public override GLib.VariantType folder_variant_type {
@@ -43,9 +43,9 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
             var id = target as EmailStoreFactory.IdImpl;
             if (id != null) {
                 var context = id.account_impl.backing;
-                Gee.MultiMap<Geary.EmailIdentifier,Geary.FolderPath>? multi_folders =
+                Gee.MultiMap<Convey.EmailIdentifier,Convey.FolderPath>? multi_folders =
                     yield context.account.get_containing_folders_async(
-                        Geary.Collection.single(id.backing),
+                        Convey.Collection.single(id.backing),
                         cancellable
                     );
                 if (multi_folders != null) {
@@ -67,12 +67,12 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
             if (account == null) {
                 throw new Plugin.Error.NOT_SUPPORTED("Invalid account object");
             }
-            Geary.Folder engine = yield account.backing.account.create_personal_folder(
+            Convey.Folder engine = yield account.backing.account.create_personal_folder(
                 name, NONE, cancellable
             );
             var folder = this.factory.to_plugin_folder(engine);
             if (folder == null) {
-                throw new Geary.EngineError.NOT_FOUND(
+                throw new Convey.EngineError.NOT_FOUND(
                     "No plugin folder found for the created folder"
                 );
             }
@@ -91,7 +91,7 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
     }
 
 
-    private class FolderImpl : Geary.BaseObject, Plugin.Folder {
+    private class FolderImpl : Convey.BaseObject, Plugin.Folder {
 
 
         // These constants are used to determine the persistent id of
@@ -109,7 +109,7 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
             get { return this.backing.display_name; }
         }
 
-        public Geary.Folder.SpecialUse used_as {
+        public Convey.Folder.SpecialUse used_as {
             get { return this.backing.folder.used_as; }
         }
 
@@ -134,7 +134,7 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
         }
 
         public GLib.Variant to_variant() {
-            Geary.Folder folder = this.backing.folder;
+            Convey.Folder folder = this.backing.folder;
             return new GLib.Variant.tuple({
                     folder.account.information.id,
                         new GLib.Variant.variant(folder.path.to_variant())
@@ -150,8 +150,8 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
 
 
     private Gee.Map<AccountContext,PluginManager.AccountImpl> accounts;
-    private Gee.Map<Geary.Folder,FolderImpl> folders =
-        new Gee.HashMap<Geary.Folder,FolderImpl>();
+    private Gee.Map<Convey.Folder,FolderImpl> folders =
+        new Gee.HashMap<Convey.Folder,FolderImpl>();
     private Gee.Set<FolderStoreImpl> stores =
         new Gee.HashSet<FolderStoreImpl>();
 
@@ -189,12 +189,12 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
     }
 
     /** Returns the plugin folder for the given engine folder. */
-    public Plugin.Folder? to_plugin_folder(Geary.Folder engine) {
+    public Plugin.Folder? to_plugin_folder(Convey.Folder engine) {
         return this.folders.get(engine);
     }
 
     /** Returns the engine folder for the given plugin folder. */
-    public Geary.Folder? to_engine_folder(Plugin.Folder plugin) {
+    public Convey.Folder? to_engine_folder(Plugin.Folder plugin) {
         FolderImpl? impl = plugin as FolderImpl;
         return (impl != null) ? impl.backing.folder : null;
     }
@@ -206,7 +206,7 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
     }
 
     /** Returns the folder context for the given plugin folder id. */
-    public Geary.Folder? get_folder_for_variant(GLib.Variant target) {
+    public Convey.Folder? get_folder_for_variant(GLib.Variant target) {
         string id = (string) target.get_child_value(0);
         AccountContext? context = null;
         foreach (var key in this.accounts.keys) {
@@ -215,10 +215,10 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
                 break;
             }
         }
-        Geary.Folder? folder = null;
+        Convey.Folder? folder = null;
         if (context != null) {
             try {
-                Geary.FolderPath? path = context.account.to_folder_path(
+                Convey.FolderPath? path = context.account.to_folder_path(
                     target.get_child_value(1).get_variant()
                 );
                 folder = context.account.get_folder(path);
@@ -261,7 +261,7 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
                 new FolderImpl(context, this.accounts.get(account))
             );
         }
-        var folder_impls = Geary.traverse(
+        var folder_impls = Convey.traverse(
             to_add
         ).map<FolderImpl>(
             (context => this.folders.get(context.folder))
@@ -273,7 +273,7 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
 
     private void remove_folders(AccountContext account,
                                 Gee.Collection<FolderContext> to_remove) {
-        var folder_impls = Geary.traverse(
+        var folder_impls = Convey.traverse(
             to_remove
         ).map<FolderImpl>(
             (context => this.folders.get(context.folder))
@@ -287,9 +287,9 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
     }
 
     private Gee.Collection<FolderImpl> to_plugin_folders(
-        Gee.Collection<Geary.Folder> folders
+        Gee.Collection<Convey.Folder> folders
     ) {
-        return Geary.traverse(
+        return Convey.traverse(
             folders
         ).map<FolderImpl>(
             (f) => this.folders.get(f)
@@ -306,8 +306,8 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
         remove_folders(account, unavailable);
     }
 
-    private void on_folders_use_changed(Geary.Account account,
-                                        Gee.Collection<Geary.Folder> changed) {
+    private void on_folders_use_changed(Convey.Account account,
+                                        Gee.Collection<Convey.Folder> changed) {
         var folders = to_plugin_folders(changed);
         foreach (FolderImpl folder in folders) {
             folder.folder_type_changed();
@@ -320,7 +320,7 @@ internal class Application.FolderStoreFactory : Geary.BaseObject {
     private void on_folder_selected(GLib.Object object, GLib.ParamSpec param) {
         var main = object as MainWindow;
         if (main != null) {
-            Geary.Folder? selected = main.selected_folder;
+            Convey.Folder? selected = main.selected_folder;
             if (selected != null) {
                 var plugin = to_plugin_folder(selected);
                 if (plugin != null) {

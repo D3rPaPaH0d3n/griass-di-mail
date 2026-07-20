@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.TimeoutManagerTest : TestCase {
+class Convey.TimeoutManagerTest : TestCase {
 
     // add_seconds seems to vary wildly, so needs a large epsilon
     private const double SECONDS_EPSILON = 1.8;
@@ -38,7 +38,7 @@ class Geary.TimeoutManagerTest : TestCase {
 
 
     public TimeoutManagerTest() {
-        base("Geary.TimeoutManagerTest");
+        base("Convey.TimeoutManagerTest");
         add_test("weak_ref", callback_weak_ref);
         add_test("start_reset", start_reset);
         if (Test.slow()) {

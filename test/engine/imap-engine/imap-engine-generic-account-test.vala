@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Geary.ImapEngine.GenericAccountTest : TestCase {
+public class Convey.ImapEngine.GenericAccountTest : TestCase {
 
 
     internal class TestAccount : GenericAccount {
@@ -29,27 +29,27 @@ public class Geary.ImapEngine.GenericAccountTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
-    private Geary.AccountInformation? config = null;
+    private Convey.AccountInformation? config = null;
     private ImapDB.Account? local_account = null;
 
 
     public GenericAccountTest() {
-        base("Geary.ImapEngine.GenericAccountTest");
+        base("Convey.ImapEngine.GenericAccountTest");
         add_test("to_email_identifier", to_email_identifier);
     }
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
             GLib.DirUtils.make_tmp(
-                "geary-imap-engine-generic-account-test-XXXXXX"
+                "convey-imap-engine-generic-account-test-XXXXXX"
             )
         );
 
-        this.config = new Geary.AccountInformation(
+        this.config = new Convey.AccountInformation(
             "test",
             ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Geary.RFC822.MailboxAddress(null, "test@example.com")
+            new Convey.RFC822.MailboxAddress(null, "test@example.com")
         );
 
         this.local_account = new ImapDB.Account(

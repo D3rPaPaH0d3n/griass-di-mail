@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.RFC822.MessageDataTest : TestCase {
+class Convey.RFC822.MessageDataTest : TestCase {
 
     public MessageDataTest() {
-        base("Geary.RFC822.MessageDataTest");
+        base("Convey.RFC822.MessageDataTest");
         add_test("subject_from_rfc822", subject_from_rfc822);
         add_test("date_from_rfc822", date_from_rfc822);
         add_test("date_from_rfc822", date_from_rfc822);
@@ -32,28 +32,28 @@ class Geary.RFC822.MessageDataTest : TestCase {
 
     public void preview_text_with_header() throws GLib.Error {
         PreviewText plain_preview1 = new PreviewText.with_header(
-            new Geary.Memory.StringBuffer(PLAIN_BODY1_HEADERS),
-            new Geary.Memory.StringBuffer(PLAIN_BODY1_ENCODED)
+            new Convey.Memory.StringBuffer(PLAIN_BODY1_HEADERS),
+            new Convey.Memory.StringBuffer(PLAIN_BODY1_ENCODED)
         );
         assert_equal(plain_preview1.buffer.to_string(), PLAIN_BODY1_EXPECTED);
 
         PreviewText base64_preview = new PreviewText.with_header(
-            new Geary.Memory.StringBuffer(BASE64_BODY_HEADERS),
-            new Geary.Memory.StringBuffer(BASE64_BODY_ENCODED)
+            new Convey.Memory.StringBuffer(BASE64_BODY_HEADERS),
+            new Convey.Memory.StringBuffer(BASE64_BODY_ENCODED)
         );
         assert_equal(base64_preview.buffer.to_string(), BASE64_BODY_EXPECTED);
 
         string html_part_headers = "Content-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n";
 
         PreviewText html_preview1 = new PreviewText.with_header(
-            new Geary.Memory.StringBuffer(html_part_headers),
-            new Geary.Memory.StringBuffer(HTML_BODY1_ENCODED)
+            new Convey.Memory.StringBuffer(html_part_headers),
+            new Convey.Memory.StringBuffer(HTML_BODY1_ENCODED)
         );
         assert_equal(html_preview1.buffer.to_string(), HTML_BODY1_EXPECTED);
 
         PreviewText html_preview2 = new PreviewText.with_header(
-            new Geary.Memory.StringBuffer(html_part_headers),
-            new Geary.Memory.StringBuffer(HTML_BODY2_ENCODED)
+            new Convey.Memory.StringBuffer(html_part_headers),
+            new Convey.Memory.StringBuffer(HTML_BODY2_ENCODED)
         );
         assert_equal(html_preview2.buffer.to_string(), HTML_BODY2_EXPECTED);
     }

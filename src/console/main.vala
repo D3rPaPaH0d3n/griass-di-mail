@@ -12,7 +12,7 @@ errordomain CommandException {
 
 const int IMAP_TIMEOUT_SEC = 60 * 15;
 
-[GtkTemplate (ui = "/org/gnome/GearyConsole/imap-console.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/ConveyConsole/imap-console.ui")]
 class ImapConsole : Adw.ApplicationWindow {
     private const int KEEPALIVE_SEC = 60 * 10;
 
@@ -20,10 +20,10 @@ class ImapConsole : Adw.ApplicationWindow {
     [GtkChild] private unowned Gtk.Entry cmdline;
     [GtkChild] private unowned Gtk.Label statusbar;
 
-    private Geary.Imap.ClientConnection? cx = null;
-    private Gee.HashMap<Geary.Imap.Tag, Geary.Imap.StatusResponse> status_responses = new Gee.HashMap<
-        Geary.Imap.Tag, Geary.Imap.StatusResponse>();
-    private Geary.Nonblocking.Event recvd_response_event = new Geary.Nonblocking.Event();
+    private Convey.Imap.ClientConnection? cx = null;
+    private Gee.HashMap<Convey.Imap.Tag, Convey.Imap.StatusResponse> status_responses = new Gee.HashMap<
+        Convey.Imap.Tag, Convey.Imap.StatusResponse>();
+    private Convey.Nonblocking.Event recvd_response_event = new Convey.Nonblocking.Event();
 
     public ImapConsole(Adw.Application app) {
         Object(application: app);
@@ -102,7 +102,7 @@ class ImapConsole : Adw.ApplicationWindow {
                 string arg = tokens[ctr].strip();
                 if (arg == "\"\"") {
                     args += "";
-                } else if (!Geary.String.is_empty(arg)) {
+                } else if (!Convey.String.is_empty(arg)) {
                     args += arg;
                 }
             }
@@ -264,13 +264,13 @@ class ImapConsole : Adw.ApplicationWindow {
     private void capabilities(string cmd, string[] args) throws Error {
         check_connected(cmd, args, 0, null);
 
-        this.cx.send_command(new Geary.Imap.CapabilityCommand(null));
+        this.cx.send_command(new Convey.Imap.CapabilityCommand(null));
     }
 
     private void noop(string cmd, string[] args) throws GLib.Error {
         check_connected(cmd, args, 0, null);
 
-        this.cx.send_command(new Geary.Imap.NoopCommand(null));
+        this.cx.send_command(new Convey.Imap.NoopCommand(null));
     }
 
     private void connect_cmd(string cmd, string[] args) throws Error {
@@ -279,18 +279,18 @@ class ImapConsole : Adw.ApplicationWindow {
 
         check_args(cmd, args, 1, "hostname[:port]");
 
-        Geary.TlsNegotiationMethod method = Geary.TlsNegotiationMethod.TRANSPORT;
+        Convey.TlsNegotiationMethod method = Convey.TlsNegotiationMethod.TRANSPORT;
         if (cmd == "unsecure") {
-            method = Geary.TlsNegotiationMethod.START_TLS;
+            method = Convey.TlsNegotiationMethod.START_TLS;
         }
 
-        cx = new Geary.Imap.ClientConnection(
-            new Geary.Endpoint(
-                new GLib.NetworkAddress(args[0], Geary.Imap.IMAP_TLS_PORT),
+        cx = new Convey.Imap.ClientConnection(
+            new Convey.Endpoint(
+                new GLib.NetworkAddress(args[0], Convey.Imap.IMAP_TLS_PORT),
                 method,
                 IMAP_TIMEOUT_SEC
             ),
-            new Geary.Imap.Quirks()
+            new Convey.Imap.Quirks()
         );
 
         cx.sent_command.connect(on_sent_command);
@@ -344,11 +344,11 @@ class ImapConsole : Adw.ApplicationWindow {
     }
 
     private async void do_starttls_async() throws Error {
-        Geary.Imap.StarttlsCommand cmd = new Geary.Imap.StarttlsCommand(null);
+        Convey.Imap.StarttlsCommand cmd = new Convey.Imap.StarttlsCommand(null);
         this.cx.send_command(cmd);
 
-        Geary.Imap.StatusResponse response = yield wait_for_response_async(cmd.tag);
-        if (response.status == Geary.Imap.Status.OK) {
+        Convey.Imap.StatusResponse response = yield wait_for_response_async(cmd.tag);
+        if (response.status == Convey.Imap.Status.OK) {
             yield cx.starttls_async(null);
             status("STARTTLS completed");
         } else {
@@ -369,7 +369,7 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Logging in...");
         this.cx.send_command(
-            new Geary.Imap.LoginCommand(args[0], args[1], null)
+            new Convey.Imap.LoginCommand(args[0], args[1], null)
         );
     }
 
@@ -378,7 +378,7 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Logging out...");
         this.cx.send_command(
-            new Geary.Imap.LogoutCommand(null)
+            new Convey.Imap.LogoutCommand(null)
         );
     }
 
@@ -388,11 +388,11 @@ class ImapConsole : Adw.ApplicationWindow {
         status("Retrieving ID...");
 
         Gee.HashMap<string, string> fields = new Gee.HashMap<string, string>();
-        fields.set("name", "geary-console");
+        fields.set("name", "convey-console");
         fields.set("version", Config.VERSION);
 
         this.cx.send_command(
-            new Geary.Imap.IdCommand(fields, null)
+            new Convey.Imap.IdCommand(fields, null)
         );
     }
 
@@ -400,22 +400,22 @@ class ImapConsole : Adw.ApplicationWindow {
         check_connected(cmd, args, 0, null);
 
         status("Retrieving NAMESPACE...");
-        this.cx.send_command(new Geary.Imap.NamespaceCommand(null));
+        this.cx.send_command(new Convey.Imap.NamespaceCommand(null));
     }
 
     private void list(string cmd, string[] args) throws Error {
         check_min_connected(cmd, args, 2, "<reference> <mailbox> [special-use]");
 
         status("Listing...");
-        Geary.Imap.ListReturnParameter? return_param = null;
+        Convey.Imap.ListReturnParameter? return_param = null;
         if (args.length >= 3 && args[2] == "special-use") {
-            return_param = new Geary.Imap.ListReturnParameter();
+            return_param = new Convey.Imap.ListReturnParameter();
             return_param.add_special_use();
         }
         this.cx.send_command(
-            new Geary.Imap.ListCommand.wildcarded(
+            new Convey.Imap.ListCommand.wildcarded(
                 args[0],
-                new Geary.Imap.MailboxSpecifier(args[1]),
+                new Convey.Imap.MailboxSpecifier(args[1]),
                 (cmd.down() == "xlist"),
                 return_param,
                 null
@@ -428,8 +428,8 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Opening %s read-only".printf(args[0]));
         this.cx.send_command(
-            new Geary.Imap.ExamineCommand(
-                new Geary.Imap.MailboxSpecifier(args[0]),
+            new Convey.Imap.ExamineCommand(
+                new Convey.Imap.MailboxSpecifier(args[0]),
                 null
             )
         );
@@ -440,8 +440,8 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Creating %s".printf(args[0]));
         this.cx.send_command(
-            new Geary.Imap.CreateCommand(
-                new Geary.Imap.MailboxSpecifier(args[0]),
+            new Convey.Imap.CreateCommand(
+                new Convey.Imap.MailboxSpecifier(args[0]),
                 null
             )
         );
@@ -452,8 +452,8 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Deleting %s".printf(args[0]));
         this.cx.send_command(
-            new Geary.Imap.DeleteCommand(
-                new Geary.Imap.MailboxSpecifier(args[0]),
+            new Convey.Imap.DeleteCommand(
+                new Convey.Imap.MailboxSpecifier(args[0]),
                 null
             )
         );
@@ -464,19 +464,19 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Fetching %s".printf(args[0]));
 
-        Geary.Imap.MessageSet msg_set = (cmd.down() == "fetch")
-            ? new Geary.Imap.MessageSet.custom(args[0])
-            : new Geary.Imap.MessageSet.uid_custom(args[0]);
+        Convey.Imap.MessageSet msg_set = (cmd.down() == "fetch")
+            ? new Convey.Imap.MessageSet.custom(args[0])
+            : new Convey.Imap.MessageSet.uid_custom(args[0]);
 
-        Gee.ArrayList<Geary.Imap.FetchDataSpecifier> data_items = new Gee.ArrayList<Geary.Imap.FetchDataSpecifier>();
+        Gee.ArrayList<Convey.Imap.FetchDataSpecifier> data_items = new Gee.ArrayList<Convey.Imap.FetchDataSpecifier>();
         for (int ctr = 1; ctr < args.length; ctr++) {
-            Geary.Imap.StringParameter stringp = Geary.Imap.StringParameter.get_best_for(args[ctr]);
-            Geary.Imap.FetchDataSpecifier data_type = Geary.Imap.FetchDataSpecifier.from_parameter(stringp);
+            Convey.Imap.StringParameter stringp = Convey.Imap.StringParameter.get_best_for(args[ctr]);
+            Convey.Imap.FetchDataSpecifier data_type = Convey.Imap.FetchDataSpecifier.from_parameter(stringp);
             data_items.add(data_type);
         }
 
         this.cx.send_command(
-            new Geary.Imap.FetchCommand(msg_set, data_items, null, null)
+            new Convey.Imap.FetchCommand(msg_set, data_items, null, null)
         );
     }
 
@@ -485,15 +485,15 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Fetching fields %s".printf(args[0]));
 
-        Geary.Imap.FetchBodyDataSpecifier fields = new Geary.Imap.FetchBodyDataSpecifier(
-            Geary.Imap.FetchBodyDataSpecifier.SectionPart.HEADER_FIELDS, null, -1, -1, args[1:args.length]);
+        Convey.Imap.FetchBodyDataSpecifier fields = new Convey.Imap.FetchBodyDataSpecifier(
+            Convey.Imap.FetchBodyDataSpecifier.SectionPart.HEADER_FIELDS, null, -1, -1, args[1:args.length]);
 
-        Gee.List<Geary.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<Geary.Imap.FetchBodyDataSpecifier>();
+        Gee.List<Convey.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<Convey.Imap.FetchBodyDataSpecifier>();
         list.add(fields);
 
         this.cx.send_command(
-            new Geary.Imap.FetchCommand(
-                new Geary.Imap.MessageSet.custom(args[0]), null, list, null
+            new Convey.Imap.FetchCommand(
+                new Convey.Imap.MessageSet.custom(args[0]), null, list, null
             )
         );
     }
@@ -504,11 +504,11 @@ class ImapConsole : Adw.ApplicationWindow {
         status("Appending %s to %s".printf(args[1], args[0]));
 
         this.cx.send_command(
-            new Geary.Imap.AppendCommand(
-                new Geary.Imap.MailboxSpecifier(args[0]),
+            new Convey.Imap.AppendCommand(
+                new Convey.Imap.MailboxSpecifier(args[0]),
                 null,
                 null,
-                new Geary.Memory.FileBuffer(File.new_for_path(args[1]), true),
+                new Convey.Memory.FileBuffer(File.new_for_path(args[1]), true),
                 null
             )
         );
@@ -519,15 +519,15 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Searching");
 
-        Geary.Imap.SearchCriteria criteria = new Geary.Imap.SearchCriteria();
+        Convey.Imap.SearchCriteria criteria = new Convey.Imap.SearchCriteria();
         foreach (string arg in args)
-            criteria.and(new Geary.Imap.SearchCriterion.simple(arg));
+            criteria.and(new Convey.Imap.SearchCriterion.simple(arg));
 
-        Geary.Imap.SearchCommand search;
+        Convey.Imap.SearchCommand search;
         if (cmd == "uid-search")
-            search = new Geary.Imap.SearchCommand.uid(criteria, null);
+            search = new Convey.Imap.SearchCommand.uid(criteria, null);
         else
-            search = new Geary.Imap.SearchCommand(criteria, null);
+            search = new Convey.Imap.SearchCommand(criteria, null);
 
         this.cx.send_command(search);
     }
@@ -538,7 +538,7 @@ class ImapConsole : Adw.ApplicationWindow {
         status("Closing");
 
         this.cx.send_command(
-            new Geary.Imap.CloseCommand(null)
+            new Convey.Imap.CloseCommand(null)
         );
     }
 
@@ -547,15 +547,15 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Status %s".printf(args[0]));
 
-        Geary.Imap.StatusDataType[] data_items = new Geary.Imap.StatusDataType[0];
+        Convey.Imap.StatusDataType[] data_items = new Convey.Imap.StatusDataType[0];
         for (int ctr = 1; ctr < args.length; ctr++) {
-            Geary.Imap.StringParameter stringp = Geary.Imap.StringParameter.get_best_for(args[ctr]);
-            data_items += Geary.Imap.StatusDataType.from_parameter(stringp);
+            Convey.Imap.StringParameter stringp = Convey.Imap.StringParameter.get_best_for(args[ctr]);
+            data_items += Convey.Imap.StatusDataType.from_parameter(stringp);
         }
 
         this.cx.send_command(
-            new Geary.Imap.StatusCommand(
-                new Geary.Imap.MailboxSpecifier(args[0]),
+            new Convey.Imap.StatusCommand(
+                new Convey.Imap.MailboxSpecifier(args[0]),
                 data_items,
                 null
             )
@@ -567,16 +567,16 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Preview %s".printf(args[0]));
 
-        Geary.Imap.FetchBodyDataSpecifier preview_data_type = new Geary.Imap.FetchBodyDataSpecifier.peek(
-            Geary.Imap.FetchBodyDataSpecifier.SectionPart.NONE, { 1 }, 0, Geary.Email.MAX_PREVIEW_BYTES,
+        Convey.Imap.FetchBodyDataSpecifier preview_data_type = new Convey.Imap.FetchBodyDataSpecifier.peek(
+            Convey.Imap.FetchBodyDataSpecifier.SectionPart.NONE, { 1 }, 0, Convey.Email.MAX_PREVIEW_BYTES,
             null);
 
-        Gee.ArrayList<Geary.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<Geary.Imap.FetchBodyDataSpecifier>();
+        Gee.ArrayList<Convey.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<Convey.Imap.FetchBodyDataSpecifier>();
         list.add(preview_data_type);
 
         this.cx.send_command(
-            new Geary.Imap.FetchCommand(
-                new Geary.Imap.MessageSet.custom(args[0]), null, list, null
+            new Convey.Imap.FetchCommand(
+                new Convey.Imap.MessageSet.custom(args[0]), null, list, null
             )
         );
     }
@@ -621,13 +621,13 @@ class ImapConsole : Adw.ApplicationWindow {
         append_to_console("\n");
     }
 
-    private void on_sent_command(Geary.Imap.Command cmd) {
+    private void on_sent_command(Convey.Imap.Command cmd) {
         append_to_console("[L] ");
         append_to_console(cmd.to_string());
         append_to_console("\n");
     }
 
-    private void on_received_status_response(Geary.Imap.StatusResponse status_response) {
+    private void on_received_status_response(Convey.Imap.StatusResponse status_response) {
         append_to_console("[R] ");
         append_to_console(status_response.to_string());
         append_to_console("\n");
@@ -638,9 +638,9 @@ class ImapConsole : Adw.ApplicationWindow {
         recvd_response_event.blind_notify();
     }
 
-    private async Geary.Imap.StatusResponse wait_for_response_async(Geary.Imap.Tag tag) throws Error {
+    private async Convey.Imap.StatusResponse wait_for_response_async(Convey.Imap.Tag tag) throws Error {
         for (;;) {
-            Geary.Imap.StatusResponse? response = status_responses.get(tag);
+            Convey.Imap.StatusResponse? response = status_responses.get(tag);
             if (response != null)
                 return response;
 
@@ -648,13 +648,13 @@ class ImapConsole : Adw.ApplicationWindow {
         }
     }
 
-    private void on_received_server_data(Geary.Imap.ServerData server_data) {
+    private void on_received_server_data(Convey.Imap.ServerData server_data) {
         append_to_console("[D] ");
         append_to_console(server_data.to_string());
         append_to_console("\n");
     }
 
-    private void on_received_bad_response(Geary.Imap.RootParameters root, Geary.ImapError err) {
+    private void on_received_bad_response(Convey.Imap.RootParameters root, Convey.ImapError err) {
         append_to_console("[E] ");
         append_to_console(err.message);
         append_to_console(": ");
@@ -670,8 +670,8 @@ class ImapConsole : Adw.ApplicationWindow {
 }
 
 int main(string[] args) {
-    Geary.Logging.init();
-    Geary.Logging.log_to(stdout);
+    Convey.Logging.init();
+    Convey.Logging.log_to(stdout);
 
     Adw.Application app = new Adw.Application(null, GLib.ApplicationFlags.DEFAULT_FLAGS);
 

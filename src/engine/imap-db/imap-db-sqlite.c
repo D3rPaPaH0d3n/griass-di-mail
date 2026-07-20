@@ -24,7 +24,7 @@
 
 /*
  * Defines SQLite FTS3/4 tokeniser with the same name as the one used
- * in Geary prior to version 3.40, so that database upgrades that
+ * in Convey prior to version 3.40, so that database upgrades that
  * still reference this tokeniser can complete successfully.
  */
 

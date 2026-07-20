@@ -8,20 +8,20 @@
 /**
  * A view that displays information about an application error.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-inspector-error-view.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-inspector-error-view.ui")]
 public class Components.InspectorErrorView : Adw.Bin {
 
 
     [GtkChild] private unowned Gtk.TextView problem_text;
 
-    private Geary.ErrorContext error;
-    private Geary.AccountInformation? account;
-    private Geary.ServiceInformation? service;
+    private Convey.ErrorContext error;
+    private Convey.AccountInformation? account;
+    private Convey.ServiceInformation? service;
 
 
-    public InspectorErrorView(Geary.ErrorContext error,
-                              Geary.AccountInformation? account,
-                              Geary.ServiceInformation? service) {
+    public InspectorErrorView(Convey.ErrorContext error,
+                              Convey.AccountInformation? account,
+                              Convey.ServiceInformation? service) {
         this.error = error;
         this.account = account;
         this.service = service;
@@ -77,7 +77,7 @@ public class Components.InspectorErrorView : Adw.Bin {
             details.append_c('\n');
             details.append("Back trace:");
             details.append(line_sep);
-            foreach (Geary.ErrorContext.StackFrame frame in
+            foreach (Convey.ErrorContext.StackFrame frame in
                      this.error.backtrace) {
                 details.append_printf(" * %s", frame.to_string());
                 details.append(line_sep);

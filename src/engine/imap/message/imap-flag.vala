@@ -13,7 +13,7 @@
  * @see MailboxAttribute
  */
 
-public abstract class Geary.Imap.Flag : BaseObject, Gee.Hashable<Geary.Imap.Flag> {
+public abstract class Convey.Imap.Flag : BaseObject, Gee.Hashable<Convey.Imap.Flag> {
     public string value { get; private set; }
 
     /**
@@ -33,7 +33,7 @@ public abstract class Geary.Imap.Flag : BaseObject, Gee.Hashable<Geary.Imap.Flag
         return Ascii.stri_equal(this.value, value);
     }
 
-    public bool equal_to(Geary.Imap.Flag flag) {
+    public bool equal_to(Convey.Imap.Flag flag) {
         return (flag == this) ? true : flag.equals_string(value);
     }
 

@@ -13,7 +13,7 @@
  * search, then collects search results and presents them via the
  * folder interface.
  */
-public class Geary.App.SearchFolder :
+public class Convey.App.SearchFolder :
     AbstractLocalFolder, FolderSupport.Remove {
 
 
@@ -21,7 +21,7 @@ public class Geary.App.SearchFolder :
     public const int MAX_RESULT_EMAILS = 1000;
 
     /** The canonical name of the search folder. */
-    public const string MAGIC_BASENAME = "$GearyAccountSearchFolder$";
+    public const string MAGIC_BASENAME = "$ConveyAccountSearchFolder$";
 
     private const Folder.SpecialUse[] EXCLUDE_TYPES = {
         DRAFTS,
@@ -204,8 +204,8 @@ public class Geary.App.SearchFolder :
     }
 
     /** {@inheritDoc} */
-    public override async Gee.Collection<Geary.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Geary.EmailIdentifier> ids,
+    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
+        Gee.Collection<Convey.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
         debug("Waiting for checking contains");
@@ -214,7 +214,7 @@ public class Geary.App.SearchFolder :
         result_mutex.release(ref result_mutex_token);
 
         debug("Checking contains");
-        return Geary.traverse(
+        return Convey.traverse(
             ids
         ).filter(
             (id) => existing_ids.has_key(id)

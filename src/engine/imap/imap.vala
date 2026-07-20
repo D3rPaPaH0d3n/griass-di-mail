@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.Imap {
+namespace Convey.Imap {
 
 private int init_count = 0;
 

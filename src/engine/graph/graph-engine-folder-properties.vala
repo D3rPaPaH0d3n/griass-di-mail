@@ -5,15 +5,15 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.FolderProperties : Geary.FolderProperties {
+internal class Convey.Graph.FolderProperties : Convey.FolderProperties {
 
     public FolderProperties(int total, int unread) {
         base(
             total,
             unread,
-            Geary.Trillian.FALSE,
-            Geary.Trillian.FALSE,
-            Geary.Trillian.TRUE,
+            Convey.Trillian.FALSE,
+            Convey.Trillian.FALSE,
+            Convey.Trillian.TRUE,
             false,
             false,
             false

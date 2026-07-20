@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.RemoveEmail : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.RemoveEmail : Convey.ImapEngine.SendReplayOperation {
     private MinimalFolder engine;
     private Gee.List<ImapDB.EmailIdentifier> to_remove = new Gee.ArrayList<ImapDB.EmailIdentifier>();
     private Cancellable? cancellable;
@@ -44,7 +44,7 @@ private class Geary.ImapEngine.RemoveEmail : Geary.ImapEngine.SendReplayOperatio
         engine.replay_notify_email_removed(removed_ids);
 
         engine.replay_notify_email_count_changed(Numeric.int_floor(original_count - removed_ids.size, 0),
-            Geary.Folder.CountChangeReason.REMOVED);
+            Convey.Folder.CountChangeReason.REMOVED);
 
         return ReplayOperation.Status.CONTINUE;
     }
@@ -73,7 +73,7 @@ private class Geary.ImapEngine.RemoveEmail : Geary.ImapEngine.SendReplayOperatio
             engine.replay_notify_email_inserted(removed_ids);
         }
 
-        engine.replay_notify_email_count_changed(original_count, Geary.Folder.CountChangeReason.INSERTED);
+        engine.replay_notify_email_count_changed(original_count, Convey.Folder.CountChangeReason.INSERTED);
     }
 
     public override string describe_state() {

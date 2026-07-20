@@ -12,12 +12,12 @@
  */
 public class Application.Client : Adw.Application {
 
-    public const string NAME = "Geary" + Config.NAME_SUFFIX;
-    public const string RESOURCE_BASE_PATH = "/org/gnome/Geary";
-    public const string SCHEMA_ID = "org.gnome.Geary";
+    public const string NAME = "Convey" + Config.NAME_SUFFIX;
+    public const string RESOURCE_BASE_PATH = "/net/donnybeelo/Convey";
+    public const string SCHEMA_ID = "net.donnybeelo.Convey";
     public const string DESCRIPTION = _("Send and receive email");
     public const string COPYRIGHT_1 = _("Copyright © 2016 Software Freedom Conservancy Inc.");
-    public const string COPYRIGHT_2 = _("Copyright © 2016-2021 Geary Development Team.");
+    public const string COPYRIGHT_2 = _("Copyright © 2016-2021 Convey Development Team.");
 
     // keep these in sync with meson_options.txt
     public const string PROFILE_RELEASE = "release";
@@ -138,7 +138,7 @@ public class Application.Client : Adw.Application {
     /**
      * The global email subsystem controller for this app instance.
      */
-    public Geary.Engine? engine {
+    public Convey.Engine? engine {
         get; private set; default = null;
     }
 
@@ -174,7 +174,7 @@ public class Application.Client : Adw.Application {
     }
 
     /**
-     * Determines if Geary configured to run as as a background service.
+     * Determines if Convey configured to run as as a background service.
      *
      * If this returns `true`, then the primary application instance
      * will continue to run in the background after the last window is
@@ -187,7 +187,7 @@ public class Application.Client : Adw.Application {
     }
 
     /**
-     * Determines if Geary appears to be running under Flatpak.
+     * Determines if Convey appears to be running under Flatpak.
      *
      * If this returns `true`, then the application instance
      * appears to be running inside a Flatpak sandbox.
@@ -224,14 +224,14 @@ public class Application.Client : Adw.Application {
     private string binary;
     private GLib.Cancellable controller_cancellable = new GLib.Cancellable();
     private Components.Inspector? inspector = null;
-    private Geary.Nonblocking.Mutex controller_mutex = new Geary.Nonblocking.Mutex();
+    private Convey.Nonblocking.Mutex controller_mutex = new Convey.Nonblocking.Mutex();
     private GLib.Notification? error_notification = null;
 
 
     /**
      * Returns name/value pairs of application information.
      *
-     * This includes Geary library version information, the current
+     * This includes Convey library version information, the current
      * desktop, and so on.
      */
     public Gee.Collection<RuntimeDetail?> get_runtime_information() {
@@ -239,9 +239,9 @@ public class Application.Client : Adw.Application {
             new Gee.LinkedList<RuntimeDetail?>();
 
         /// Application runtime information label
-        info.add({ _("Geary version"), Config.VERSION });
+        info.add({ _("Convey version"), Config.VERSION });
         /// Application runtime information label
-        info.add({ _("Geary revision"), Config.REVNO });
+        info.add({ _("Convey revision"), Config.REVNO });
         /// Application runtime information label
         info.add({ _("GTK version"),
                     "%u.%u.%u".printf(
@@ -321,7 +321,7 @@ public class Application.Client : Adw.Application {
     public override int handle_local_options(GLib.VariantDict options) {
         int ret = -1;
         if (options.contains(OPTION_DEBUG)) {
-            Geary.Logging.log_to(GLib.stdout);
+            Convey.Logging.log_to(GLib.stdout);
         }
         if (options.contains(OPTION_VERSION)) {
             GLib.stdout.printf(
@@ -348,11 +348,11 @@ public class Application.Client : Adw.Application {
         // Calls Gtk.init(), amongst other things
         base.startup();
 
-        this.engine = new Geary.Engine(get_resource_directory());
+        this.engine = new Convey.Engine(get_resource_directory());
         this.config = new Configuration(SCHEMA_ID);
         this.autostart = new StartupManager(this);
 
-        // Ensure all geary windows have an icon
+        // Ensure all convey windows have an icon
         Gtk.Window.set_default_icon_name(Config.APP_ID);
 
         // Application accels
@@ -376,9 +376,9 @@ public class Application.Client : Adw.Application {
 
         //XXX GTK4 key shortcut themes aren't supported yet: https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
 #if 0
-        // Load Geary CSS for single key shortcuts
+        // Load Convey CSS for single key shortcuts
         load_css(this.single_key_shortcuts,
-                 "resource:///org/gnome/Geary/single-key-shortcuts.css");
+                 "resource:///net/donnybeelo/Convey/single-key-shortcuts.css");
         update_single_key_shortcuts();
         this.config.notify[Configuration.SINGLE_KEY_SHORTCUTS].connect(
             on_single_key_shortcuts_toggled
@@ -418,7 +418,7 @@ public class Application.Client : Adw.Application {
 
         // GApplication will stop the main loop, so we need to keep
         // pumping here to allow destroy_controller() to exit. To
-        // avoid bug(s) where Geary hangs at exit, shut the whole
+        // avoid bug(s) where Convey hangs at exit, shut the whole
         // thing down if it takes too long to complete
         int64 start_usec = get_monotonic_time();
         while (!controller_closed) {
@@ -430,7 +430,7 @@ public class Application.Client : Adw.Application {
                 // and b) we can run under gdb with
                 // G_DEBUG=fatal-warnings and have it break when
                 // this happens, and maybe debug it.
-                warning("Forcing shutdown of Geary, %ss passed...",
+                warning("Forcing shutdown of Convey, %ss passed...",
                         (delta_usec / USEC_PER_SEC).to_string());
                 Posix.exit(2);
             }
@@ -441,7 +441,7 @@ public class Application.Client : Adw.Application {
         this.autostart = null;
 
         Util.Date.terminate();
-        Geary.Logging.clear();
+        Convey.Logging.clear();
 
         base.shutdown();
     }
@@ -531,7 +531,7 @@ public class Application.Client : Adw.Application {
             "logo-icon-name", Config.APP_ID,
             "version", Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
             "website", "https://gitlab.gnome.org/GNOME/geary/-/wikis",
-            "website-label", _("Visit the Geary web site"),
+            "website-label", _("Visit the Convey web site"),
             "title", _("About %s").printf(NAME),
             // Translators: add your name and email address to receive
             // credit in the About dialog For example: Yamada Taro
@@ -565,14 +565,14 @@ public class Application.Client : Adw.Application {
         if (id != null) {
             EmailStoreFactory email = this.controller.plugins.globals.email;
             AccountContext? context = email.get_account_for_variant(id);
-            Geary.EmailIdentifier? email_id =
+            Convey.EmailIdentifier? email_id =
                 email.get_email_identifier_for_variant(id);
             if (context != null && email_id != null) {
                 // Determine what folders the email is in
-                Gee.MultiMap<Geary.EmailIdentifier,Geary.FolderPath>? folders = null;
+                Gee.MultiMap<Convey.EmailIdentifier,Convey.FolderPath>? folders = null;
                 try {
                     folders = yield context.account.get_containing_folders_async(
-                        Geary.Collection.single(email_id),
+                        Convey.Collection.single(email_id),
                         context.cancellable
                     );
                 } catch (GLib.Error err) {
@@ -585,14 +585,14 @@ public class Application.Client : Adw.Application {
                     // inbox if that contains it, else use the first
                     // path found
                     var paths = folders.get(email_id);
-                    Geary.Folder? selected = main.selected_folder;
+                    Convey.Folder? selected = main.selected_folder;
                     if (selected == null ||
                         selected.account != context.account ||
                         !(selected.path in paths)) {
                         selected = null;
                         foreach (var path in paths) {
                             try {
-                                Geary.Folder folder =
+                                Convey.Folder folder =
                                     context.account.get_folder(path);
                                 if (folder.used_as == INBOX) {
                                     selected = folder;
@@ -609,7 +609,7 @@ public class Application.Client : Adw.Application {
                         if (selected == null && !paths.is_empty) {
                             try {
                                 selected = context.account.get_folder(
-                                    Geary.Collection.first(paths)
+                                    Convey.Collection.first(paths)
                                 );
                             } catch (GLib.Error err) {
                                 warning(
@@ -623,7 +623,7 @@ public class Application.Client : Adw.Application {
                     if (selected != null) {
                         yield main.show_email(
                             selected,
-                            Geary.Collection.single(email_id),
+                            Convey.Collection.single(email_id),
                             true
                         );
                     }
@@ -643,7 +643,7 @@ public class Application.Client : Adw.Application {
     public async void show_folder(GLib.Variant? id) {
         MainWindow main = yield this.present();
         if (id != null) {
-            Geary.Folder? folder =
+            Convey.Folder? folder =
                 this.controller.plugins.globals.folders.get_folder_for_variant(id);
             if (folder != null) {
                 yield main.select_folder(folder, true);
@@ -682,7 +682,7 @@ public class Application.Client : Adw.Application {
         prefs.present(get_active_main_window());
     }
 
-    public async void new_composer(Geary.RFC822.MailboxAddress? to = null) {
+    public async void new_composer(Convey.RFC822.MailboxAddress? to = null) {
         MainWindow main = yield this.present();
         AccountContext? account = null;
         if (main.selected_account != null) {
@@ -691,7 +691,7 @@ public class Application.Client : Adw.Application {
             );
         }
         if (account == null) {
-            account = Geary.Collection.first(
+            account = Convey.Collection.first(
                 this.controller.get_account_contexts()
             );
         }
@@ -709,8 +709,8 @@ public class Application.Client : Adw.Application {
         yield this.controller.compose_mailto(mailto);
     }
 
-    public async void new_window(Geary.Folder? select_folder,
-                                 Gee.Collection<Geary.App.Conversation>? select_conversations) {
+    public async void new_window(Convey.Folder? select_folder,
+                                 Gee.Collection<Convey.App.Conversation>? select_conversations) {
         yield create_controller();
 
         bool do_select = (
@@ -739,27 +739,27 @@ public class Application.Client : Adw.Application {
     public GLib.File get_home_config_directory() {
         return GLib.File.new_for_path(
             Environment.get_user_config_dir()
-        ).get_child(get_geary_home_dir_name());
+        ).get_child(get_convey_home_dir_name());
     }
 
     /** Returns the application's base home cache directory. */
     public GLib.File get_home_cache_directory() {
         return GLib.File.new_for_path(
             GLib.Environment.get_user_cache_dir()
-        ).get_child(get_geary_home_dir_name());
+        ).get_child(get_convey_home_dir_name());
     }
 
     /** Returns the application's base home data directory. */
     public GLib.File get_home_data_directory() {
         return GLib.File.new_for_path(
             GLib.Environment.get_user_data_dir()
-        ).get_child(get_geary_home_dir_name());
+        ).get_child(get_convey_home_dir_name());
     }
 
     /** Returns the application's base static resources directory. */
     public GLib.File get_resource_directory() {
         return (is_installed)
-            ? this.install_prefix.get_child("share").get_child("geary")
+            ? this.install_prefix.get_child("share").get_child("convey")
             : GLib.File.new_for_path(Config.SOURCE_ROOT_DIR);
     }
 
@@ -814,7 +814,7 @@ public class Application.Client : Adw.Application {
             try {
                 yield launcher.launch(get_active_window(), null);
             } catch (GLib.Error err) {
-                this.controller.report_problem(new Geary.ProblemReport(err));
+                this.controller.report_problem(new Convey.ProblemReport(err));
             }
         }
     }
@@ -847,18 +847,18 @@ public class Application.Client : Adw.Application {
         paths += home.get_child(
             ".config"
         ).get_child(
-            "geary"
+            "convey"
         );
         paths += home.get_child(
             ".var"
         ).get_child(
             "app"
         ).get_child(
-            "org.gnome.Geary"
+            "net.donnybeelo.Convey"
         ).get_child(
             "config"
         ).get_child(
-            "geary"
+            "convey"
         );
         return paths;
     }
@@ -908,7 +908,7 @@ public class Application.Client : Adw.Application {
                 // likely still loading folders after being
                 // opened. Add a listener to try again later.
                 try {
-                    Geary.Account? first = Geary.Collection.first<Geary.Account>(
+                    Convey.Account? first = Convey.Collection.first<Convey.Account>(
                         this.engine.get_accounts()
                     );
                     if (first != null) {
@@ -928,7 +928,7 @@ public class Application.Client : Adw.Application {
     private async void create_controller() {
         bool first_run = false;
         bool open_failed = false;
-        int mutex_token = Geary.Nonblocking.Mutex.INVALID_TOKEN;
+        int mutex_token = Convey.Nonblocking.Mutex.INVALID_TOKEN;
         try {
             mutex_token = yield this.controller_mutex.claim_async();
             if (this.controller == null) {
@@ -952,12 +952,12 @@ public class Application.Client : Adw.Application {
             warning("Error creating controller: %s", err.message);
             var dialog = new Dialogs.ProblemDetailsDialog(
                 this,
-                new Geary.ProblemReport(err)
+                new Convey.ProblemReport(err)
             );
             dialog.present(null);
         }
 
-        if (mutex_token != Geary.Nonblocking.Mutex.INVALID_TOKEN) {
+        if (mutex_token != Convey.Nonblocking.Mutex.INVALID_TOKEN) {
             try {
                 this.controller_mutex.release(ref mutex_token);
             } catch (GLib.Error error) {
@@ -1010,38 +1010,38 @@ public class Application.Client : Adw.Application {
         bool activated = false;
 
         // Suppress some noisy domains from third-party libraries
-        Geary.Logging.suppress_domain("GdkPixbuf");
-        Geary.Logging.suppress_domain("GLib-Net");
+        Convey.Logging.suppress_domain("GdkPixbuf");
+        Convey.Logging.suppress_domain("GLib-Net");
 
         // Suppress the engine's sub-domains that are extremely
         // verbose by default unless requested not to do so
         if (!options.contains(OPTION_LOG_CONVERSATIONS)) {
-            Geary.Logging.suppress_domain(
-                Geary.App.ConversationMonitor.LOGGING_DOMAIN
+            Convey.Logging.suppress_domain(
+                Convey.App.ConversationMonitor.LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_DESERIALIZER)) {
-            Geary.Logging.suppress_domain(
-                Geary.Imap.ClientService.DESERIALISATION_LOGGING_DOMAIN
+            Convey.Logging.suppress_domain(
+                Convey.Imap.ClientService.DESERIALISATION_LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_IMAP)) {
-            Geary.Logging.suppress_domain(
-                Geary.Imap.ClientService.PROTOCOL_LOGGING_DOMAIN
+            Convey.Logging.suppress_domain(
+                Convey.Imap.ClientService.PROTOCOL_LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_REPLAY_QUEUE)) {
-            Geary.Logging.suppress_domain(
-                Geary.Imap.ClientService.REPLAY_QUEUE_LOGGING_DOMAIN
+            Convey.Logging.suppress_domain(
+                Convey.Imap.ClientService.REPLAY_QUEUE_LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_SMTP)) {
-            Geary.Logging.suppress_domain(
-                Geary.Smtp.ClientService.PROTOCOL_LOGGING_DOMAIN
+            Convey.Logging.suppress_domain(
+                Convey.Smtp.ClientService.PROTOCOL_LOGGING_DOMAIN
             );
         }
         if (options.contains(OPTION_LOG_SQL)) {
-            Geary.Db.Context.enable_sql_logging = true;
+            Convey.Db.Context.enable_sql_logging = true;
         }
 
         if (options.contains(OPTION_NEW_WINDOW)) {
@@ -1120,7 +1120,7 @@ public class Application.Client : Adw.Application {
         }
     }
 
-    private string get_geary_home_dir_name() {
+    private string get_convey_home_dir_name() {
         // Return the standard name if running a release build or
         // running under Flatpak, otherwise append the build profile
         // as a suffix so (e.g.) devel builds don't mess with release
@@ -1131,8 +1131,8 @@ public class Application.Client : Adw.Application {
         // hence don't need the suffix.
         return (
             Config.PROFILE == PROFILE_RELEASE || this.is_flatpak_sandboxed
-            ? "geary"
-            : "geary-" + Config.PROFILE
+            ? "convey"
+            : "convey-" + Config.PROFILE
         );
     }
 
@@ -1161,8 +1161,8 @@ public class Application.Client : Adw.Application {
     private void on_activate_new_window() {
         // If there was an existing active main, select the same
         // account/folder/conversation.
-        Geary.Folder? folder = null;
-        Gee.Collection<Geary.App.Conversation>? conversations = null;
+        Convey.Folder? folder = null;
+        Gee.Collection<Convey.App.Conversation>? conversations = null;
         MainWindow? current = this.last_active_main_window;
         if (current != null) {
             folder = current.selected_folder;
@@ -1192,7 +1192,7 @@ public class Application.Client : Adw.Application {
     private void on_activate_help() {
         try {
             if (this.is_installed) {
-                var launcher = new Gtk.UriLauncher("help:geary");
+                var launcher = new Gtk.UriLauncher("help:convey");
                 launcher.launch.begin(get_active_window(), null);
             } else {
                 Pid pid;
@@ -1220,9 +1220,9 @@ public class Application.Client : Adw.Application {
         }
     }
 
-    private void on_folders_first_available(Geary.Account account,
-        Gee.BidirSortedSet<Geary.Folder>? available,
-        Gee.BidirSortedSet<Geary.Folder>? unavailable
+    private void on_folders_first_available(Convey.Account account,
+        Gee.BidirSortedSet<Convey.Folder>? available,
+        Gee.BidirSortedSet<Convey.Folder>? unavailable
     ) {
         if (get_active_main_window().select_first_inbox(true)) {
             // The handler has done its job, so disconnect it
@@ -1244,7 +1244,7 @@ public class Application.Client : Adw.Application {
         if (main != null) {
             this.controller.unregister_window(main);
             if (this.last_active_main_window == main) {
-                this.last_active_main_window = Geary.Collection.first(
+                this.last_active_main_window = Convey.Collection.first(
                     get_main_windows()
                 );
             }

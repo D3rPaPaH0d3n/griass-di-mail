@@ -8,7 +8,7 @@
 /**
  * Displays technical details when a problem has been reported.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/problem-details-dialog.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/problem-details-dialog.ui")]
 public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
 
 
@@ -39,17 +39,17 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
     private Components.InspectorLogView log_pane;
     private Components.InspectorSystemView system_pane;
 
-    private Geary.ErrorContext error;
-    private Geary.AccountInformation? account;
-    private Geary.ServiceInformation? service;
+    private Convey.ErrorContext error;
+    private Convey.AccountInformation? account;
+    private Convey.ServiceInformation? service;
 
 
     public ProblemDetailsDialog(Application.Client application,
-                                Geary.ProblemReport report) {
-        Geary.AccountProblemReport? account_report =
-            report as Geary.AccountProblemReport;
-        Geary.ServiceProblemReport? service_report =
-            report as Geary.ServiceProblemReport;
+                                Convey.ProblemReport report) {
+        Convey.AccountProblemReport? account_report =
+            report as Convey.AccountProblemReport;
+        Convey.ServiceProblemReport? service_report =
+            report as Convey.ServiceProblemReport;
 
         this.error = report.error;
         this.account = (account_report != null) ? account_report.account : null;
@@ -198,7 +198,7 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
         }
 
         string clipboard_value = (string) bytes.get_data();
-        if (!Geary.String.is_empty(clipboard_value)) {
+        if (!Convey.String.is_empty(clipboard_value)) {
             get_clipboard().set_text(clipboard_value);
         }
     }
@@ -213,7 +213,7 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
         dialog.title = _("Save As");
         dialog.accept_label = _("Save As");
         dialog.initial_name = new DateTime.now_local().format(
-            "Geary Problem Report - %F %T.txt"
+            "Convey Problem Report - %F %T.txt"
         );
 
         try {

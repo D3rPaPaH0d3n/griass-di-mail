@@ -5,7 +5,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapDB.Attachment : Geary.Attachment {
+private class Convey.ImapDB.Attachment : Convey.Attachment {
 
 
     public const Email.Field REQUIRED_FIELDS = Email.REQUIRED_FOR_MESSAGE;
@@ -40,7 +40,7 @@ private class Geary.ImapDB.Attachment : Geary.Attachment {
         Mime.ContentDisposition? disposition = part.content_disposition;
         if (disposition == null) {
             disposition = new Mime.ContentDisposition.simple(
-                Geary.Mime.DispositionType.UNSPECIFIED
+                Convey.Mime.DispositionType.UNSPECIFIED
             );
         }
 
@@ -54,11 +54,11 @@ private class Geary.ImapDB.Attachment : Geary.Attachment {
         );
     }
 
-    internal Attachment.from_row(Geary.Db.Result result, File attachments_dir)
+    internal Attachment.from_row(Convey.Db.Result result, File attachments_dir)
         throws Error {
         string? content_filename = result.string_for("filename");
         if (content_filename == ImapDB.Attachment.NULL_FILE_NAME) {
-            // Prior to 0.12, Geary would store the untranslated
+            // Prior to 0.12, Convey would store the untranslated
             // string "none" as the filename when none was
             // specified by the MIME content disposition. Check
             // for that and clean it up.
@@ -176,7 +176,7 @@ private class Geary.ImapDB.Attachment : Geary.Attachment {
         GLib.OutputStream target_stream = target.create(
             FileCreateFlags.NONE, cancellable
         );
-        GMime.Stream stream = new Geary.Stream.MimeOutputStream(
+        GMime.Stream stream = new Convey.Stream.MimeOutputStream(
             target_stream
         );
         stream = new GMime.StreamBuffer(
@@ -256,7 +256,7 @@ private class Geary.ImapDB.Attachment : Geary.Attachment {
     // ImapDB.Email class.
     internal static void add_attachments(Db.Connection cx,
                                          GLib.File attachments_path,
-                                         Geary.Email email,
+                                         Convey.Email email,
                                          int64 message_id,
                                          Cancellable? cancellable = null)
         throws Error {

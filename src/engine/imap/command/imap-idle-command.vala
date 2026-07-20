@@ -11,7 +11,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc2177]]
  */
-public class Geary.Imap.IdleCommand : Command {
+public class Convey.Imap.IdleCommand : Command {
 
     public const string NAME = "IDLE";
 
@@ -21,13 +21,13 @@ public class Geary.Imap.IdleCommand : Command {
     public bool idle_started { get; private set; default = false; }
 
     private bool serialised = false;
-    private Geary.Nonblocking.Semaphore? exit_lock;
+    private Convey.Nonblocking.Semaphore? exit_lock;
     private GLib.Cancellable? exit_cancellable = new GLib.Cancellable();
 
 
     public IdleCommand(GLib.Cancellable? should_send) {
         base(NAME, null, should_send);
-        this.exit_lock = new Geary.Nonblocking.Semaphore(this.exit_cancellable);
+        this.exit_lock = new Convey.Nonblocking.Semaphore(this.exit_cancellable);
     }
 
     /** Causes the idle command to exit, if currently executing. **/

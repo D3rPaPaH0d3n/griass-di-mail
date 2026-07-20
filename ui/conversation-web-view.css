@@ -72,19 +72,19 @@ pre {
  * Message chrome style.
  */
 
-.geary-signature {
+.convey-signature {
     color: #777;
     display: inline;
 }
 
-.geary-signature a,
-.geary-quote-container a {
+.convey-signature a,
+.convey-quote-container a {
     color: #5fb2e7;
 }
 
 @media screen {
 
-  .geary_replaced_inline_image {
+  .convey_replaced_inline_image {
     display: block;
     max-width: 100%;
     margin: 1em 0;
@@ -92,7 +92,7 @@ pre {
 
   /* Inline collapsible quote blocks */
 
-  .geary-quote-container {
+  .convey-quote-container {
     position: relative;
     /* Split 1em of top/bottom margin between here and the default
     blockquote style, so if a message specifies 0px margin and padding
@@ -104,11 +104,11 @@ pre {
     color: var(--quote-container-fg);
     background-color: var(--quote-container-bg);/* recv-quoted */
   }
-  .geary-sent .geary-quote-container {
+  .convey-sent .convey-quote-container {
     background-color: var(--quote-container-bg);/* sent-quoted */
   }
 
-  .geary-quote-container > .geary-quote {
+  .convey-quote-container > .convey-quote {
     position: relative;
     padding: 0;
     border: 0;
@@ -116,18 +116,18 @@ pre {
     overflow: hidden;
     z-index: 0;
   }
-  .geary-quote-container.geary-controllable.geary-hide > .geary-quote {
+  .convey-quote-container.convey-controllable.convey-hide > .convey-quote {
     /* Use a fraction value to cut the last visible line off half way. */
     max-height: calc(6em - 8px);
   }
 
-  .geary-quote-container.geary-controllable > .geary-quote > blockquote {
+  .convey-quote-container.convey-controllable > .convey-quote > blockquote {
     /* Add space between the quote and the hider button */
     margin-bottom: 18px;
   }
 
-  .geary-quote-container > .geary-shower,
-  .geary-quote-container > .geary-hider {
+  .convey-quote-container > .convey-shower,
+  .convey-quote-container > .convey-hider {
     position: absolute;
     display: none;
     left: 0;
@@ -138,15 +138,15 @@ pre {
     -webkit-user-drag: none;
   }
 
-  .geary-quote-container.geary-controllable.geary-hide > .geary-hider {
+  .convey-quote-container.convey-controllable.convey-hide > .convey-hider {
     display: none;
   }
-  .geary-quote-container.geary-controllable.geary-hide > .geary-shower,
-  .geary-quote-container.geary-controllable > .geary-hider {
+  .convey-quote-container.convey-controllable.convey-hide > .convey-shower,
+  .convey-quote-container.convey-controllable > .convey-hider {
     display: block;
   }
 
-  .geary-quote-container .geary-button {
+  .convey-quote-container .convey-button {
     display: block;
     width: 100%;
     height: 16px;
@@ -176,7 +176,7 @@ pre {
     text-shadow: 0 1px var(--button-text-shadow-color);
     box-shadow: inset 0 1px var(--button-box-shadow-color);
   }
-  .geary-quote-container .geary-button:hover {
+  .convey-quote-container .convey-button:hover {
     /* Likewise the properties below also workaround WK Bug 166648,
      * and taken from gtk/theme/Adwaita/gtk-contained.css. */
     color: var(--hover-button-color);
@@ -190,25 +190,25 @@ pre {
 
   /* Highlight search terms */
 
-  .geary_search_coloring *::selection {
+  .convey_search_coloring *::selection {
     background-color: #00ddff;
   }
 }
 
-#geary-message-headers {
+#convey-message-headers {
   display: none !important;
 }
 
 @media print {
-  .geary-button {
+  .convey-button {
     display: none;
   }
 
-  #geary-message-headers, #geary-message-headers * {
+  #convey-message-headers, #convey-message-headers * {
     all: initial !important;
   }
 
-  #geary-message-headers {
+  #convey-message-headers {
     display: table !important;
     width: 100% !important;
     transition: height 2s !important;
@@ -217,21 +217,21 @@ pre {
     margin-bottom: 0.75em !important;
   }
 
-  #geary-message-headers tr {
+  #convey-message-headers tr {
     display: table-row !important;
   }
 
-  #geary-message-headers th, #geary-message-headers td {
+  #convey-message-headers th, #convey-message-headers td {
     display: table-cell !important;
     line-height: 1.5em !important;
   }
 
-  #geary-message-headers th {
+  #convey-message-headers th {
     font-weight: bold !important;
     padding-right: 2ex !important;
   }
 
-  #geary-message-headers td {
+  #convey-message-headers td {
     width: 100% !important;
   }
 }

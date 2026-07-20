@@ -12,11 +12,11 @@ private const int TIMEOUT = 10;
 
 public struct Integration.Configuration {
 
-    Geary.Protocol type;
-    Geary.ServiceProvider provider;
-    Geary.ServiceInformation service;
-    Geary.Endpoint target;
-    Geary.Credentials credentials;
+    Convey.Protocol type;
+    Convey.ServiceProvider provider;
+    Convey.ServiceInformation service;
+    Convey.Endpoint target;
+    Convey.Credentials credentials;
 
 }
 
@@ -32,11 +32,11 @@ int main(string[] args) {
 
     Test.init(ref args);
 
-    Geary.RFC822.init();
-    Geary.HTML.init();
-    Geary.Logging.init();
-    Geary.Logging.log_to(stderr);
-    GLib.Log.set_writer_func(Geary.Logging.default_log_writer);
+    Convey.RFC822.init();
+    Convey.HTML.init();
+    Convey.Logging.init();
+    Convey.Logging.log_to(stderr);
+    GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
 
     Integration.Configuration config = load_config(args);
 
@@ -78,11 +78,11 @@ int main(string[] args) {
 private Integration.Configuration load_config(string[] args) {
     int i = 1;
     try {
-        Geary.Protocol type = Geary.Protocol.for_value(args[i++]);
-        Geary.ServiceProvider provider = Geary.ServiceProvider.for_value(
+        Convey.Protocol type = Convey.Protocol.for_value(args[i++]);
+        Convey.ServiceProvider provider = Convey.ServiceProvider.for_value(
             args[i++]
         );
-        Geary.ServiceInformation service = new Geary.ServiceInformation(
+        Convey.ServiceInformation service = new Convey.ServiceInformation(
             type, provider
         );
 
@@ -91,13 +91,13 @@ private Integration.Configuration load_config(string[] args) {
             service.port = service.get_default_port();
         }
 
-        Geary.Credentials credentials = new Geary.Credentials(
+        Convey.Credentials credentials = new Convey.Credentials(
             PASSWORD, args[i++], args[i++]
         );
 
         provider.set_service_defaults(service);
 
-        Geary.Endpoint target = new Geary.Endpoint(
+        Convey.Endpoint target = new Convey.Endpoint(
             new NetworkAddress(service.host, service.port),
             service.transport_security,
             TIMEOUT
@@ -107,7 +107,7 @@ private Integration.Configuration load_config(string[] args) {
     } catch (GLib.Error err) {
         error(
             "Error loading config: %s",
-            (new Geary.ErrorContext(err)).format_full_error()
+            (new Convey.ErrorContext(err)).format_full_error()
         );
     }
 

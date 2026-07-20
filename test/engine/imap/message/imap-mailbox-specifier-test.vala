@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.MailboxSpecifierTest : TestCase {
+class Convey.Imap.MailboxSpecifierTest : TestCase {
 
 
     public MailboxSpecifierTest() {
-        base("Geary.Imap.MailboxSpecifierTest");
+        base("Convey.Imap.MailboxSpecifierTest");
         add_test("to_parameter", to_parameter);
         add_test("from_parameter", from_parameter);
         add_test("from_folder_path", from_folder_path);

@@ -1,4 +1,4 @@
-geary_help_pages = [
+convey_help_pages = [
   'accounts.page',
   'archive.page',
   'bugs.page',
@@ -14,11 +14,11 @@ geary_help_pages = [
   'write.page',
 ]
 
-geary_help_media = [
-  'figures/geary.svg'
+convey_help_media = [
+  'figures/convey.svg'
 ]
 
 gnome.yelp(meson.project_name(),
-  sources: geary_help_pages,
-  media: geary_help_media
+  sources: convey_help_pages,
+  media: convey_help_media
 )

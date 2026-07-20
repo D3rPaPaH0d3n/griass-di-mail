@@ -2,7 +2,7 @@
 Automated Test Infrastructure
 =============================
 
-Geary currently supports three types of automated tests:
+Convey currently supports three types of automated tests:
 
  * Engine unit tests
  * Client (GTK and JavaScript) unit tests
@@ -29,7 +29,7 @@ they execute GTK code.
 Integration tests
 -----------------
 
-Integration tests run Geary's network code against actual servers, to
+Integration tests run Convey's network code against actual servers, to
 ensure that the code also works in the real world.
 
 The integration tests are built by default, but not currently hooked

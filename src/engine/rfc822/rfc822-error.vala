@@ -7,7 +7,7 @@
 /**
  * An error that is thrown when manipulating RFC 822 objects and data.
  */
-public errordomain Geary.RFC822.Error {
+public errordomain Convey.RFC822.Error {
     INVALID,
     NOT_FOUND,
     FAILED

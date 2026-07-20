@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public enum Geary.Db.TransactionOutcome {
+public enum Convey.Db.TransactionOutcome {
     ROLLBACK = 0,
     COMMIT = 1,
 

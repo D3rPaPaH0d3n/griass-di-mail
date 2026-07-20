@@ -6,14 +6,14 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
+public class ContactEntryCompletion : Adw.EntryRow, Convey.BaseInterface {
         //XXX GTK4 probably want to create a ContactEntryRow or something like that, GtkEntryCompletion is deprecated
 #if 0
 
 
     // Minimum visibility for the contact to appear in autocompletion.
-    private const Geary.Contact.Importance VISIBILITY_THRESHOLD =
-        Geary.Contact.Importance.RECEIVED_FROM;
+    private const Convey.Contact.Importance VISIBILITY_THRESHOLD =
+        Convey.Contact.Importance.RECEIVED_FROM;
 
 
     public enum Column {
@@ -23,7 +23,7 @@ public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
         public static Type[] get_types() {
             return {
                 typeof(Application.Contact), // CONTACT
-                typeof(Geary.RFC822.MailboxAddress) // MAILBOX
+                typeof(Convey.RFC822.MailboxAddress) // MAILBOX
             };
         }
     }
@@ -88,7 +88,7 @@ public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
 
         Gtk.ListStore model = (Gtk.ListStore) this.model;
         string completion_key = this.current_key;
-        if (!Geary.String.is_empty_or_whitespace(completion_key)) {
+        if (!Convey.String.is_empty_or_whitespace(completion_key)) {
             this.search_cancellable = new GLib.Cancellable();
             this.search_contacts.begin(completion_key, this.search_cancellable);
         } else {
@@ -189,8 +189,8 @@ public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
             // Format and use the selected address
             GLib.Value value;
             this.model.get_value(iter, Column.MAILBOX, out value);
-            Geary.RFC822.MailboxAddress mailbox =
-                (Geary.RFC822.MailboxAddress) value.get_object();
+            Convey.RFC822.MailboxAddress mailbox =
+                (Convey.RFC822.MailboxAddress) value.get_object();
             string formatted = mailbox.to_full_display();
             if (this.cursor_at_address != 0) {
                 // Isn't the first address, so add some whitespace to
@@ -245,7 +245,7 @@ public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
         if (!cancellable.is_cancelled()) {
             Gtk.ListStore model = new_model();
             foreach (Application.Contact contact in results) {
-                foreach (Geary.RFC822.MailboxAddress addr
+                foreach (Convey.RFC822.MailboxAddress addr
                          in contact.email_addresses) {
                     Gtk.TreeIter iter;
                     model.append(out iter);
@@ -258,7 +258,7 @@ public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
         }
     }
 
-    private string match_prefix_contact(Geary.RFC822.MailboxAddress mailbox) {
+    private string match_prefix_contact(Convey.RFC822.MailboxAddress mailbox) {
         string email = match_prefix_string(mailbox.address);
         if (mailbox.name != null && !mailbox.is_spoofed()) {
             string real_name = match_prefix_string(mailbox.name);
@@ -275,7 +275,7 @@ public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
 
     private string? match_prefix_string(string haystack) {
         string value = haystack;
-        if (!Geary.String.is_empty(this.current_key)) {
+        if (!Convey.String.is_empty(this.current_key)) {
             bool matched = false;
             try {
                 string escaped_needle = Regex.escape_string(
@@ -341,8 +341,8 @@ public class ContactEntryCompletion : Adw.EntryRow, Geary.BaseInterface {
                                 Gtk.TreeIter iter) {
         GLib.Value value;
         tree_model.get_value(iter, Column.MAILBOX, out value);
-        Geary.RFC822.MailboxAddress? mailbox =
-            value.get_object() as Geary.RFC822.MailboxAddress;
+        Convey.RFC822.MailboxAddress? mailbox =
+            value.get_object() as Convey.RFC822.MailboxAddress;
 
         string markup = "";
         if (mailbox != null) {

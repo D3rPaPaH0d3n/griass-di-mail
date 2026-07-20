@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.Stream {
+namespace Convey.Stream {
 
     /**
      * Provides an asynchronous version of OutputStream.write_all().

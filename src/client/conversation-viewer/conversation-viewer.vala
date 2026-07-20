@@ -9,8 +9,8 @@
 /**
  * Displays the messages in a conversation and in-window composers.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/conversation-viewer.ui")]
-public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
+[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-viewer.ui")]
+public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
 
     /**
      * The current conversation listbox, if any.
@@ -34,7 +34,7 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
 
     private Application.Configuration config;
 
-    private Gee.Set<Geary.App.Conversation>? selection_while_composing = null;
+    private Gee.Set<Convey.App.Conversation>? selection_while_composing = null;
     private GLib.Cancellable? find_cancellable = null;
 
     [GtkChild] public unowned Components.ConversationHeaderBar headerbar;
@@ -70,7 +70,7 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
 
 
     static construct {
-        set_css_name("geary-conversation-viewer");
+        set_css_name("convey-conversation-viewer");
     }
 
     /**
@@ -120,7 +120,7 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
      * Puts the view into composer mode, showing an embedded composer.
      */
     public void do_compose_embedded(Composer.Widget composer,
-                                    Geary.Email? referred) {
+                                    Convey.Email? referred) {
         this.current_composer = composer;
         Composer.Embed embed = new Composer.Embed(
             referred,
@@ -194,9 +194,9 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
     /**
      * Shows a conversation in the viewer.
      */
-    public async void load_conversation(Geary.App.Conversation conversation,
-                                        Gee.Collection<Geary.EmailIdentifier> scroll_to,
-                                        Geary.App.EmailStore store,
+    public async void load_conversation(Convey.App.Conversation conversation,
+                                        Gee.Collection<Convey.EmailIdentifier> scroll_to,
+                                        Convey.App.EmailStore store,
                                         Application.ContactStore contacts,
                                         bool start_mark_timer)
         throws GLib.Error {
@@ -226,7 +226,7 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
 #if 0
                 this.conversation_find_entry.set_icon_from_icon_name(
                     Gtk.EntryIconPosition.PRIMARY,
-                    found || Geary.String.is_empty(this.conversation_find_entry.text)
+                    found || Convey.String.is_empty(this.conversation_find_entry.text)
                     ? "edit-find-symbolic" : "computer-fail-symbolic"
                 );
 #endif
@@ -240,7 +240,7 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
         // from the search folder if that's where we are at
         var query = get_find_search_query(conversation.base_folder.account);
         if (query == null) {
-            var search_folder = conversation.base_folder as Geary.App.SearchFolder;
+            var search_folder = conversation.base_folder as Convey.App.SearchFolder;
             if (search_folder != null) {
                 query = search_folder.query;
             }
@@ -335,9 +335,9 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
         }
     }
 
-    private Geary.SearchQuery? get_find_search_query(Geary.Account account)
+    private Convey.SearchQuery? get_find_search_query(Convey.Account account)
         throws GLib.Error {
-        Geary.SearchQuery? query = null;
+        Convey.SearchQuery? query = null;
         if (this.conversation_find_bar.get_search_mode()) {
             string text = this.conversation_find_entry.get_text().strip();
             // Require find string of at least two chars to avoid
@@ -376,13 +376,13 @@ public class ConversationViewer : Adw.Bin, Geary.BaseInterface {
             } else {
                 // Find became disabled, re-show search terms if any
                 this.current_list.search.unmark_terms();
-                Geary.App.SearchFolder? search_folder = (
+                Convey.App.SearchFolder? search_folder = (
                     this.current_list.conversation.base_folder
-                    as Geary.App.SearchFolder
+                    as Convey.App.SearchFolder
                 );
                 this.conversation_find_undo.reset();
                 if (search_folder != null) {
-                    Geary.SearchQuery? query = search_folder.query;
+                    Convey.SearchQuery? query = search_folder.query;
                     if (query != null) {
                         this.current_list.search.highlight_matching_email.begin(
                             query,

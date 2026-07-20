@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-[GtkTemplate (ui = "/org/gnome/Geary/certificate-warning-dialog.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/certificate-warning-dialog.ui")]
 public class CertificateWarningDialog : Adw.AlertDialog {
 
     public enum Result {
@@ -21,9 +21,9 @@ public class CertificateWarningDialog : Adw.AlertDialog {
     [GtkChild] private unowned Gtk.Label dont_trust_label;
     [GtkChild] private unowned Gtk.Label contact_label;
 
-    public CertificateWarningDialog(Geary.AccountInformation account,
-                                    Geary.ServiceInformation service,
-                                    Geary.Endpoint endpoint,
+    public CertificateWarningDialog(Convey.AccountInformation account,
+                                    Convey.ServiceInformation service,
+                                    Convey.Endpoint endpoint,
                                     bool is_validation) {
         this.title = _("Untrusted Connection: %s").printf(account.display_name);
 
@@ -45,14 +45,14 @@ public class CertificateWarningDialog : Adw.AlertDialog {
             // could be a new or existing account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Geary not to access this server.")
+                + _("Selecting “Don’t Trust This Server” will cause Convey not to access this server.")
                 + "</b> "
-                + _("Geary will not add or update this email account.");
+                + _("Convey will not add or update this email account.");
         } else {
             // a registered account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Geary to stop accessing this account.")
+                + _("Selecting “Don’t Trust This Server” will cause Convey to stop accessing this account.")
                 + "</b> ";
         }
         this.dont_trust_label.use_markup = true;

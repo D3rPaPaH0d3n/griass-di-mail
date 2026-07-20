@@ -4,20 +4,20 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.App.LocalSearchOperation : Geary.Nonblocking.BatchOperation {
+private class Convey.App.LocalSearchOperation : Convey.Nonblocking.BatchOperation {
     // IN
-    public Geary.Account account;
+    public Convey.Account account;
     public RFC822.MessageID message_id;
-    public Geary.Email.Field required_fields;
-    public Gee.Collection<Geary.FolderPath>? blacklist;
-    public Geary.EmailFlags? flag_blacklist;
+    public Convey.Email.Field required_fields;
+    public Gee.Collection<Convey.FolderPath>? blacklist;
+    public Convey.EmailFlags? flag_blacklist;
 
     // OUT
-    public Gee.MultiMap<Geary.Email, Geary.FolderPath?>? emails = null;
+    public Gee.MultiMap<Convey.Email, Convey.FolderPath?>? emails = null;
 
-    public LocalSearchOperation(Geary.Account account, RFC822.MessageID message_id,
-        Geary.Email.Field required_fields, Gee.Collection<Geary.FolderPath?> blacklist,
-        Geary.EmailFlags? flag_blacklist) {
+    public LocalSearchOperation(Convey.Account account, RFC822.MessageID message_id,
+        Convey.Email.Field required_fields, Gee.Collection<Convey.FolderPath?> blacklist,
+        Convey.EmailFlags? flag_blacklist) {
         this.account = account;
         this.message_id = message_id;
         this.required_fields = required_fields;

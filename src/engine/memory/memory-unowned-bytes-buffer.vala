@@ -16,7 +16,7 @@
  * The buffers that are returned should ''not'' be modified or freed by the caller.
  */
 
-public interface Geary.Memory.UnownedBytesBuffer : Memory.Buffer {
+public interface Convey.Memory.UnownedBytesBuffer : Memory.Buffer {
     /**
      * Returns an unowned pointer of the backing buffer.
      *

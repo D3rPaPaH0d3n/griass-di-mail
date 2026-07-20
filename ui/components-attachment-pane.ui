@@ -5,7 +5,7 @@
     <property name="name">box</property>
     <style>
       <class name="view"/>
-      <class name="geary-attachment-pane"/>
+      <class name="convey-attachment-pane"/>
     </style>
 
     <child>

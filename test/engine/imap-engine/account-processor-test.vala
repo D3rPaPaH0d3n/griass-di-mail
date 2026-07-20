@@ -9,7 +9,7 @@ errordomain AccountProcessorTestError {
     TEST;
 }
 
-public class Geary.ImapEngine.AccountProcessorTest : TestCase {
+public class Convey.ImapEngine.AccountProcessorTest : TestCase {
 
 
     public class TestOperation : AccountOperation {
@@ -20,7 +20,7 @@ public class Geary.ImapEngine.AccountProcessorTest : TestCase {
 
         private Nonblocking.Spinlock spinlock = new Nonblocking.Spinlock();
 
-        internal TestOperation(Geary.Account account) {
+        internal TestOperation(Convey.Account account) {
             base(account);
         }
 
@@ -40,7 +40,7 @@ public class Geary.ImapEngine.AccountProcessorTest : TestCase {
 
     public class OtherOperation : TestOperation {
 
-        internal OtherOperation(Geary.Account account) {
+        internal OtherOperation(Convey.Account account) {
             base(account);
         }
 
@@ -48,15 +48,15 @@ public class Geary.ImapEngine.AccountProcessorTest : TestCase {
 
 
     private AccountProcessor? processor = null;
-    private Geary.Account? account = null;
-    private Geary.AccountInformation? info = null;
+    private Convey.Account? account = null;
+    private Convey.AccountInformation? info = null;
     private uint succeeded;
     private uint failed;
     private uint completed;
 
 
     public AccountProcessorTest() {
-        base("Geary.ImapEngine.AccountProcessorTest");
+        base("Convey.ImapEngine.AccountProcessorTest");
         add_test("success", success);
         add_test("failure", failure);
         add_test("duplicate", duplicate);
@@ -64,7 +64,7 @@ public class Geary.ImapEngine.AccountProcessorTest : TestCase {
     }
 
     public override void set_up() {
-        this.info = new Geary.AccountInformation(
+        this.info = new Convey.AccountInformation(
             "test-info",
             ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),

@@ -21,7 +21,7 @@
         </property>
         <property name="model">
           <object class="AdwEnumListModel">
-            <property name="enum-type">GearyCredentialsRequirement</property>
+            <property name="enum-type">ConveyCredentialsRequirement</property>
           </object>
         </property>
       </object>

@@ -9,10 +9,10 @@
 /**
  * A search query implementation that provides full-text search.
  */
-internal class Geary.FtsSearchQuery : Geary.SearchQuery {
+internal class Convey.FtsSearchQuery : Convey.SearchQuery {
 
 
-    private const string EMAIL_TEXT_STEMMED_TERMS = "geary-stemmed-terms";
+    private const string EMAIL_TEXT_STEMMED_TERMS = "convey-stemmed-terms";
 
 
     internal bool has_stemmed_terms { get; private set; default = false; }
@@ -148,7 +148,7 @@ internal class Geary.FtsSearchQuery : Geary.SearchQuery {
     ) throws GLib.Error {
         var sql = new GLib.StringBuilder();
         sql.append("""
-            SELECT mst.rowid, geary_matches(MessageSearchTable)
+            SELECT mst.rowid, convey_matches(MessageSearchTable)
             FROM MessageSearchTable as mst
             WHERE rowid IN (
         """);
@@ -350,7 +350,7 @@ internal class Geary.FtsSearchQuery : Geary.SearchQuery {
 
     private int sql_bind_term_conditions(Db.Statement sql,
                                          int index)
-        throws Geary.DatabaseError {
+        throws Convey.DatabaseError {
         int next_index = index;
         // Per sql_add_term_conditions, add all non-negated terms
         // first before adding any negated terms.
@@ -370,7 +370,7 @@ internal class Geary.FtsSearchQuery : Geary.SearchQuery {
     private inline int sql_bind_term_condition(Db.Statement sql,
                                                SearchQuery.Term term,
                                                int index)
-        throws Geary.DatabaseError {
+        throws Convey.DatabaseError {
         int next_index = index;
         var type = term.get_type();
         if (type == typeof(SearchQuery.EmailTextTerm)) {

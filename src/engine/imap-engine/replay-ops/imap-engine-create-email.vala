@@ -6,13 +6,13 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.CreateEmail : SendReplayOperation {
+private class Convey.ImapEngine.CreateEmail : SendReplayOperation {
 
-    public Geary.EmailIdentifier? created_id { get; private set; default = null; }
+    public Convey.EmailIdentifier? created_id { get; private set; default = null; }
 
     private MinimalFolder engine;
     private RFC822.Message? rfc822;
-    private Geary.EmailFlags? flags;
+    private Convey.EmailFlags? flags;
     private DateTime? date_received;
     private Cancellable? cancellable;
 
@@ -63,10 +63,10 @@ private class Geary.ImapEngine.CreateEmail : SendReplayOperation {
             // TODO: need to prevent gaps between UIDS that may occur
             // here if this is created before we know of an earlier
             // message that has arrived.
-            Geary.Email created = new Geary.Email(this.created_id);
-            Gee.Map<Geary.Email, bool> results =
+            Convey.Email created = new Convey.Email(this.created_id);
+            Gee.Map<Convey.Email, bool> results =
                 yield this.engine.local_folder.create_or_merge_email_async(
-                    Geary.iterate<Geary.Email>(created).to_array_list(),
+                    Convey.iterate<Convey.Email>(created).to_array_list(),
                     true,
                     this.engine.harvester,
                     this.cancellable

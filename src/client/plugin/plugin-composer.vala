@@ -14,7 +14,7 @@
  * visible until {@link present} is called, allowing it to be
  * configured via calls to this interface first, if required.
  */
-public interface Plugin.Composer : Geary.BaseObject {
+public interface Plugin.Composer : Convey.BaseObject {
 
 
     /**

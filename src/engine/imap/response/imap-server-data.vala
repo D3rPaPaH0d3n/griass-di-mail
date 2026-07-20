@@ -10,7 +10,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.2]] for more information.
  */
 
-public class Geary.Imap.ServerData : ServerResponse {
+public class Convey.Imap.ServerData : ServerResponse {
     public ServerDataType server_data_type { get; private set; }
 
     private ServerData(Tag tag, ServerDataType server_data_type, Quirks quirks) {

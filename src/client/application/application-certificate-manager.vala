@@ -49,7 +49,7 @@ public class Application.CertificateManager : GLib.Object {
         bool has_uris = false;
         if (init_okay) {
             has_uris = (
-                !Geary.String.is_empty(Gcr.pkcs11_get_trust_store_uri()) &&
+                !Convey.String.is_empty(Gcr.pkcs11_get_trust_store_uri()) &&
                 Gcr.pkcs11_get_trust_lookup_uris().length > 0
             );
             if (has_uris) {
@@ -94,14 +94,14 @@ public class Application.CertificateManager : GLib.Object {
             store_dir,
             use_gcr
         );
-        Geary.Endpoint.default_tls_database = this.pinning_database;
+        Convey.Endpoint.default_tls_database = this.pinning_database;
     }
 
     /**
      * Destroys an instance, de-installs the pinning database.
      */
     ~CertificateManager() {
-        Geary.Endpoint.default_tls_database = null;
+        Convey.Endpoint.default_tls_database = null;
     }
 
 
@@ -111,9 +111,9 @@ public class Application.CertificateManager : GLib.Object {
      * Returns true if the user accepted the certificate.
      */
     public async void prompt_pin_certificate(Gtk.Window parent,
-                                             Geary.AccountInformation account,
-                                             Geary.ServiceInformation service,
-                                             Geary.Endpoint endpoint,
+                                             Convey.AccountInformation account,
+                                             Convey.ServiceInformation service,
+                                             Convey.Endpoint endpoint,
                                              bool is_validation,
                                              GLib.Cancellable? cancellable)
         throws CertificateManagerError {
@@ -161,7 +161,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
 
 
     /** A certificate and the identities it is trusted for. */
-    private class TrustContext : Geary.BaseObject {
+    private class TrustContext : Convey.BaseObject {
 
 
         // Perform IO at high priority since UI and network
@@ -211,7 +211,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
                                string identity,
                                GLib.Cancellable? cancellable)
             throws GLib.Error {
-            yield Geary.Files.make_directory_with_parents(dir, cancellable);
+            yield Convey.Files.make_directory_with_parents(dir, cancellable);
             GLib.File storage = dir.get_child(FILENAME_FORMAT.printf(identity));
             GLib.FileOutputStream f_out = yield storage.replace_async(
                 null, false, GLib.FileCreateFlags.NONE, IO_PRIO, cancellable
@@ -460,8 +460,8 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
                     } catch (GLib.IOError.NOT_FOUND err) {
                         // Cert was not found saved, so it not pinned
                     } catch (GLib.Error err) {
-                        Geary.ErrorContext err_context =
-                            new Geary.ErrorContext(err);
+                        Convey.ErrorContext err_context =
+                            new Convey.ErrorContext(err);
                         debug("Error loading pinned certificate: %s",
                               err_context.format_full_error());
                     }
@@ -476,7 +476,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
                                        GLib.Cancellable? cancellable)
         throws GLib.Error {
         bool pinned = false;
-        yield Geary.Nonblocking.Concurrent.global.schedule_async(() => {
+        yield Convey.Nonblocking.Concurrent.global.schedule_async(() => {
                 pinned = is_pinned(chain, identity, cancellable);
             }, cancellable);
         return pinned;
@@ -484,7 +484,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
 
     private TrustContext? lookup_id(string id) {
         lock (this.pinned_certs) {
-            return Geary.traverse(this.pinned_certs.values).first_matching(
+            return Convey.traverse(this.pinned_certs.values).first_matching(
                 (ctx) => ctx.id == id
             );
         }
@@ -492,7 +492,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
 
     private TrustContext? lookup_tls_certificate(GLib.TlsCertificate cert) {
         lock (this.pinned_certs) {
-            return Geary.traverse(this.pinned_certs.values).first_matching(
+            return Convey.traverse(this.pinned_certs.values).first_matching(
                 (ctx) => ctx.certificate.is_same(cert)
             );
         }

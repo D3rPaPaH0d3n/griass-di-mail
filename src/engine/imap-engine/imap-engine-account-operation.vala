@@ -33,14 +33,14 @@
  * equal_to} method to specify which instances are considered to be
  * duplicates.
  */
-public abstract class Geary.ImapEngine.AccountOperation : BaseObject, Logging.Source {
+public abstract class Convey.ImapEngine.AccountOperation : BaseObject, Logging.Source {
 
 
     /** {@inheritDoc} */
     public Logging.Source? logging_parent { get { return account; } }
 
     /** The account this operation applies to. */
-    protected weak Geary.Account account { get; private set; }
+    protected weak Convey.Account account { get; private set; }
 
 
     /**
@@ -49,7 +49,7 @@ public abstract class Geary.ImapEngine.AccountOperation : BaseObject, Logging.So
      * The passed in `account` will be the account the operation will
      * apply to.
      */
-    protected AccountOperation(Geary.Account account) {
+    protected AccountOperation(Convey.Account account) {
         this.account = account;
     }
 
@@ -122,11 +122,11 @@ public abstract class Geary.ImapEngine.AccountOperation : BaseObject, Logging.So
  * considered equal, for the purpose of not en-queuing duplicate
  * operations.
  */
-public abstract class Geary.ImapEngine.FolderOperation : AccountOperation {
+public abstract class Convey.ImapEngine.FolderOperation : AccountOperation {
 
 
     /** The folder this operation applies to. */
-    protected weak Geary.Folder folder { get; private set; }
+    protected weak Convey.Folder folder { get; private set; }
 
 
     /**
@@ -135,7 +135,7 @@ public abstract class Geary.ImapEngine.FolderOperation : AccountOperation {
      * The passed in `folder` and `account` will be the objects the
      * operation will apply to.
      */
-    protected FolderOperation(Geary.Account account, Geary.Folder folder) {
+    protected FolderOperation(Convey.Account account, Convey.Folder folder) {
         base(account);
         this.folder = folder;
     }

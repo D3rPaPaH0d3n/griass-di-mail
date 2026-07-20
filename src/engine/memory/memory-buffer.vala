@@ -21,7 +21,7 @@
  * @see UnownedBytesBuffer
  */
 
-public abstract class Geary.Memory.Buffer : BaseObject {
+public abstract class Convey.Memory.Buffer : BaseObject {
     /**
      * Returns the number of valid (usable) bytes in the buffer.
      */

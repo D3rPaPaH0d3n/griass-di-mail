@@ -31,7 +31,7 @@
     </child>
     <style>
       <class name="dim-label"/>
-      <class name="geary-placeholder-pane"/>
+      <class name="convey-placeholder-pane"/>
     </style>
   </template>
 </interface>

@@ -6,7 +6,7 @@
  */
 
 
-class Geary.ContactStoreImplTest : TestCase {
+class Convey.ContactStoreImplTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
@@ -15,7 +15,7 @@ class Geary.ContactStoreImplTest : TestCase {
 
 
     public ContactStoreImplTest() {
-        base("Geary.ContactStoreImplTest");
+        base("Convey.ContactStoreImplTest");
         add_test("get_by_rfc822", get_by_rfc822);
         add_test("search_no_match", search_no_match);
         add_test("search_email_match", search_email_match);
@@ -28,20 +28,20 @@ class Geary.ContactStoreImplTest : TestCase {
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("geary-contact-harvester-test-XXXXXX")
+            GLib.DirUtils.make_tmp("convey-contact-harvester-test-XXXXXX")
         );
-        GLib.File db_file = this.tmp_dir.get_child("geary.db");
+        GLib.File db_file = this.tmp_dir.get_child("convey.db");
         GLib.File attachments_dir = this.tmp_dir.get_child("attachments");
 
         this.db = new ImapDB.Database(
             db_file,
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             attachments_dir,
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_UPGRADE),
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_VACUUM)
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
         );
         this.db.open.begin(
-            Geary.Db.DatabaseFlags.CREATE_FILE, null,
+            Convey.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         this.db.open.end(async_result());

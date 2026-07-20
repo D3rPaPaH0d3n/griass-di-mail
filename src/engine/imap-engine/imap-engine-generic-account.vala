@@ -6,7 +6,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
+private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
 
 
     /** Default IMAP session pool size. */
@@ -320,7 +320,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
      *
      * The account must have been opened before calling this method.
      */
-    public async Imap.FolderSession claim_folder_session(Geary.FolderPath path,
+    public async Imap.FolderSession claim_folder_session(Convey.FolderPath path,
                                                          GLib.Cancellable? cancellable)
         throws Error {
         check_open();
@@ -467,11 +467,11 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
                     (parent != null && path_parent != null &&
                      path_parent.equal_to(parent)));
             })
-            .map<Geary.Folder>(p => folders.get(p))
+            .map<Convey.Folder>(p => folders.get(p))
             .to_array_list();
     }
 
-    public override async Geary.Folder get_required_special_folder_async(
+    public override async Convey.Folder get_required_special_folder_async(
         Folder.SpecialUse special,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
@@ -482,7 +482,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
         }
         check_open();
 
-        Geary.Folder? folder = get_special_folder(special);
+        Convey.Folder? folder = get_special_folder(special);
         if (folder == null) {
             var account = yield claim_account_session(cancellable);
             try {
@@ -564,7 +564,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
         this.local_folders.unset(path);
     }
 
-    private ImapDB.EmailIdentifier check_id(Geary.EmailIdentifier id) throws EngineError {
+    private ImapDB.EmailIdentifier check_id(Convey.EmailIdentifier id) throws EngineError {
         ImapDB.EmailIdentifier? imapdb_id = id as ImapDB.EmailIdentifier;
         if (imapdb_id == null)
             throw new EngineError.BAD_PARAMETERS("EmailIdentifier %s not from ImapDB folder", id.to_string());
@@ -572,9 +572,9 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
         return imapdb_id;
     }
 
-    private Gee.Collection<ImapDB.EmailIdentifier> check_ids(Gee.Collection<Geary.EmailIdentifier> ids)
+    private Gee.Collection<ImapDB.EmailIdentifier> check_ids(Gee.Collection<Convey.EmailIdentifier> ids)
         throws EngineError {
-        foreach (Geary.EmailIdentifier id in ids) {
+        foreach (Convey.EmailIdentifier id in ids) {
             if (!(id is ImapDB.EmailIdentifier))
                 throw new EngineError.BAD_PARAMETERS("EmailIdentifier %s not from ImapDB folder", id.to_string());
         }
@@ -590,16 +590,16 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
         return new FtsSearchQuery(expression, text, this.stemmer);
     }
 
-    public override async Gee.MultiMap<Geary.Email, Geary.FolderPath?>? local_search_message_id_async(
-        Geary.RFC822.MessageID message_id, Geary.Email.Field requested_fields, bool partial_ok,
-        Gee.Collection<Geary.FolderPath?>? folder_blacklist, Geary.EmailFlags? flag_blacklist,
+    public override async Gee.MultiMap<Convey.Email, Convey.FolderPath?>? local_search_message_id_async(
+        Convey.RFC822.MessageID message_id, Convey.Email.Field requested_fields, bool partial_ok,
+        Gee.Collection<Convey.FolderPath?>? folder_blacklist, Convey.EmailFlags? flag_blacklist,
         Cancellable? cancellable = null) throws Error {
         return yield local.search_message_id_async(
             message_id, requested_fields, partial_ok, folder_blacklist, flag_blacklist, cancellable);
     }
 
-    public override async Geary.Email local_fetch_email_async(Geary.EmailIdentifier email_id,
-        Geary.Email.Field required_fields, Cancellable? cancellable = null) throws Error {
+    public override async Convey.Email local_fetch_email_async(Convey.EmailIdentifier email_id,
+        Convey.Email.Field required_fields, Cancellable? cancellable = null) throws Error {
         return yield local.fetch_email_async(check_id(email_id), required_fields, cancellable);
     }
 
@@ -614,22 +614,22 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
         );
     }
 
-    public override async Gee.Collection<Geary.EmailIdentifier>? local_search_async(Geary.SearchQuery query,
-        int limit = 100, int offset = 0, Gee.Collection<Geary.FolderPath?>? folder_blacklist = null,
-        Gee.Collection<Geary.EmailIdentifier>? search_ids = null, Cancellable? cancellable = null) throws Error {
+    public override async Gee.Collection<Convey.EmailIdentifier>? local_search_async(Convey.SearchQuery query,
+        int limit = 100, int offset = 0, Gee.Collection<Convey.FolderPath?>? folder_blacklist = null,
+        Gee.Collection<Convey.EmailIdentifier>? search_ids = null, Cancellable? cancellable = null) throws Error {
         if (offset < 0)
             throw new EngineError.BAD_PARAMETERS("Offset must not be negative");
 
         return yield local.search_async(query, limit, offset, folder_blacklist, search_ids, cancellable);
     }
 
-    public override async Gee.Set<string>? get_search_matches_async(Geary.SearchQuery query,
-        Gee.Collection<Geary.EmailIdentifier> ids, Cancellable? cancellable = null) throws Error {
+    public override async Gee.Set<string>? get_search_matches_async(Convey.SearchQuery query,
+        Gee.Collection<Convey.EmailIdentifier> ids, Cancellable? cancellable = null) throws Error {
         return yield local.get_search_matches_async(query, check_ids(ids), cancellable);
     }
 
     public override async Gee.MultiMap<EmailIdentifier,FolderPath>?
-        get_containing_folders_async(Gee.Collection<Geary.EmailIdentifier> ids,
+        get_containing_folders_async(Gee.Collection<Convey.EmailIdentifier> ids,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
         Gee.MultiMap<EmailIdentifier,FolderPath> map =
@@ -678,7 +678,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
      * equivalents need to exist beforehand — they are not created.
      *
      * If `are_existing` is true, the folders are assumed to have been
-     * seen before and the {@link Geary.Account.folders_created} signal is
+     * seen before and the {@link Convey.Account.folders_created} signal is
      * not fired.
      */
     internal Gee.Collection<Folder> add_folders(Gee.Collection<ImapDB.Folder> db_folders,
@@ -717,9 +717,9 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
      *
      * This is functionally equivalent to {@link update_folders}.
      */
-    internal void update_folder(Geary.Folder folder) {
-        Gee.Collection<Geary.Folder> folders =
-            new Gee.LinkedList<Geary.Folder>();
+    internal void update_folder(Convey.Folder folder) {
+        Gee.Collection<Convey.Folder> folders =
+            new Gee.LinkedList<Convey.Folder>();
         folders.add(folder);
         debug("Folder updated: %s", folder.path.to_string());
         this.sync.folders_contents_altered(folders);
@@ -730,7 +730,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
      *
      * This is functionally equivalent to {@link update_folder}.
      */
-    internal void update_folders(Gee.Collection<Geary.Folder> folders) {
+    internal void update_folders(Gee.Collection<Convey.Folder> folders) {
         if (!folders.is_empty) {
             this.sync.folders_contents_altered(folders);
         }
@@ -740,7 +740,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
      * Marks a folder as a specific special folder type.
      */
     internal void promote_folders(Gee.Map<Folder.SpecialUse,Folder> specials) {
-        var changed = new Gee.HashSet<Geary.Folder>();
+        var changed = new Gee.HashSet<Convey.Folder>();
         foreach (var special in specials.keys) {
             MinimalFolder? minimal = specials.get(special) as MinimalFolder;
             if (minimal.used_as != special) {
@@ -778,7 +778,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
         Gee.TreeSet<MinimalFolder> removed = new Gee.TreeSet<MinimalFolder>(
             Account.folder_path_comparator
         );
-        foreach(Geary.Folder folder in folders) {
+        foreach(Convey.Folder folder in folders) {
             MinimalFolder? impl = this.remote_folders.get(folder.path);
             if (impl != null) {
                 this.remote_folders.unset(folder.path);
@@ -880,7 +880,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
                                              Gee.BidirSortedSet<Folder>? unavailable) {
         base.notify_folders_available_unavailable(available, unavailable);
         if (available != null) {
-            foreach (Geary.Folder folder in available) {
+            foreach (Convey.Folder folder in available) {
                 folder.email_appended.connect(notify_email_appended);
                 folder.email_inserted.connect(notify_email_inserted);
                 folder.email_removed.connect(notify_email_removed);
@@ -890,7 +890,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
             }
         }
         if (unavailable != null) {
-            foreach (Geary.Folder folder in unavailable) {
+            foreach (Convey.Folder folder in unavailable) {
                 folder.email_appended.disconnect(notify_email_appended);
                 folder.email_inserted.disconnect(notify_email_inserted);
                 folder.email_removed.disconnect(notify_email_removed);
@@ -902,31 +902,31 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_appended(Geary.Folder folder, Gee.Collection<Geary.EmailIdentifier> ids) {
+    protected override void notify_email_appended(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
         base.notify_email_appended(folder, ids);
         schedule_unseen_update(folder);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_inserted(Geary.Folder folder, Gee.Collection<Geary.EmailIdentifier> ids) {
+    protected override void notify_email_inserted(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
         base.notify_email_inserted(folder, ids);
         schedule_unseen_update(folder);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_removed(Geary.Folder folder, Gee.Collection<Geary.EmailIdentifier> ids) {
+    protected override void notify_email_removed(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
         base.notify_email_removed(folder, ids);
         schedule_unseen_update(folder);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_locally_removed(Geary.Folder folder, Gee.Collection<Geary.EmailIdentifier> ids) {
+    protected override void notify_email_locally_removed(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
         base.notify_email_locally_removed(folder, ids);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_flags_changed(Geary.Folder folder,
-        Gee.Map<Geary.EmailIdentifier, Geary.EmailFlags> flag_map) {
+    protected override void notify_email_flags_changed(Convey.Folder folder,
+        Gee.Map<Convey.EmailIdentifier, Convey.EmailFlags> flag_map) {
         base.notify_email_flags_changed(folder, flag_map);
         schedule_unseen_update(folder);
     }
@@ -960,7 +960,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
     /**
      * Hooks up and queues an {@link RefreshFolderUnseen} operation.
      */
-    private void schedule_unseen_update(Geary.Folder folder) {
+    private void schedule_unseen_update(Convey.Folder folder) {
         MinimalFolder? impl = folder as MinimalFolder;
         if (impl != null) {
             impl.refresh_unseen();
@@ -1152,7 +1152,7 @@ private abstract class Geary.ImapEngine.GenericAccount : Geary.Account {
 /**
  * Account operation for loading local folders from the database.
  */
-internal class Geary.ImapEngine.LoadFolders : AccountOperation {
+internal class Convey.ImapEngine.LoadFolders : AccountOperation {
 
 
     private weak ImapDB.Account local;
@@ -1203,7 +1203,7 @@ internal class Geary.ImapEngine.LoadFolders : AccountOperation {
 /**
  * Account operation for starting remote mail services.
  */
-internal class Geary.ImapEngine.StartServices : AccountOperation {
+internal class Convey.ImapEngine.StartServices : AccountOperation {
 
 
     private Outbox.Folder outbox;
@@ -1228,7 +1228,7 @@ internal class Geary.ImapEngine.StartServices : AccountOperation {
 /**
  * Account operation for populating the full-text-search table.
  */
-internal class Geary.ImapEngine.PopulateSearchTable : AccountOperation {
+internal class Convey.ImapEngine.PopulateSearchTable : AccountOperation {
 
 
     internal PopulateSearchTable(GenericAccount account) {
@@ -1248,7 +1248,7 @@ internal class Geary.ImapEngine.PopulateSearchTable : AccountOperation {
 /**
  * Account operation that updates folders from the remote.
  */
-internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
+internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
 
 
     private weak GenericAccount generic_account;
@@ -1275,7 +1275,7 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
             (a,b) => a.compare_to(b)
         );
 
-        Geary.traverse<Geary.Folder>(
+        Convey.traverse<Convey.Folder>(
             this.account.list_folders()
         ).add_all_to_map<FolderPath>(
             existing_folders, f => f.path
@@ -1314,7 +1314,7 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
 
     private async bool enumerate_remote_folders_async(Imap.AccountSession remote,
                                                       Gee.Map<FolderPath,Imap.Folder> folders,
-                                                      Geary.FolderPath? parent,
+                                                      Convey.FolderPath? parent,
                                                       GLib.Cancellable? cancellable)
         throws Error {
         bool results_suspect = false;
@@ -1347,13 +1347,13 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
     }
 
     private async void update_folders_async(Imap.AccountSession remote,
-                                            Gee.Map<FolderPath,Geary.Folder> existing_folders,
+                                            Gee.Map<FolderPath,Convey.Folder> existing_folders,
                                             Gee.Map<FolderPath,Imap.Folder> remote_folders,
                                             bool remote_folders_suspect,
                                             GLib.Cancellable? cancellable) {
         // update all remote folders properties in the local store and
         // active in the system
-        Gee.HashSet<Geary.FolderPath> altered_paths = new Gee.HashSet<Geary.FolderPath>();
+        Gee.HashSet<Convey.FolderPath> altered_paths = new Gee.HashSet<Convey.FolderPath>();
         foreach (Imap.Folder remote_folder in remote_folders.values) {
             MinimalFolder? minimal_folder = existing_folders.get(remote_folder.path)
                 as MinimalFolder;
@@ -1403,15 +1403,15 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
         }
 
         // If path in remote but not local, need to add it
-        Gee.ArrayList<Imap.Folder> to_add = Geary.traverse<Imap.Folder>(remote_folders.values)
+        Gee.ArrayList<Imap.Folder> to_add = Convey.traverse<Imap.Folder>(remote_folders.values)
             .filter(f => !existing_folders.has_key(f.path))
             .to_array_list();
 
         // Remove if path in local but not remote
-        Gee.ArrayList<Geary.Folder> to_remove
-            = Geary.traverse<Gee.Map.Entry<FolderPath,Geary.Folder>>(existing_folders)
+        Gee.ArrayList<Convey.Folder> to_remove
+            = Convey.traverse<Gee.Map.Entry<FolderPath,Convey.Folder>>(existing_folders)
             .filter(e => !remote_folders.has_key(e.key))
-            .map<Geary.Folder>(e => (Geary.Folder) e.value)
+            .map<Convey.Folder>(e => (Convey.Folder) e.value)
             .to_array_list();
 
         // For folders to add, clone them and their properties
@@ -1419,7 +1419,7 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
         var generic_account = (GenericAccount) this.account;
         var local = generic_account.local;
         Gee.ArrayList<ImapDB.Folder> to_build = new Gee.ArrayList<ImapDB.Folder>();
-        foreach (Geary.Imap.Folder remote_folder in to_add) {
+        foreach (Convey.Imap.Folder remote_folder in to_add) {
             try {
                 to_build.add(
                     yield local.clone_folder_async(remote_folder, cancellable)
@@ -1456,7 +1456,7 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
 
             // Let the remote know as well
             remote.folders_removed(
-                Geary.traverse<Geary.Folder>(removed)
+                Convey.traverse<Convey.Folder>(removed)
                 .map<FolderPath>(f => f.path).to_array_list()
             );
         }
@@ -1465,8 +1465,8 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
             // Notify of updated folders only when already
             // connected. This will cause them to get refreshed.
             if (altered_paths.size > 0) {
-                Gee.ArrayList<Geary.Folder> altered = new Gee.ArrayList<Geary.Folder>();
-                foreach (Geary.FolderPath altered_path in altered_paths) {
+                Gee.ArrayList<Convey.Folder> altered = new Gee.ArrayList<Convey.Folder>();
+                foreach (Convey.FolderPath altered_path in altered_paths) {
                     if (existing_folders.has_key(altered_path))
                         altered.add(existing_folders.get(altered_path));
                     else
@@ -1478,7 +1478,7 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
             // Notify all remote folders after re-connecting so they
             // get fully sync'ed
             if (remote_folders.size > 0) {
-                var remotes = new Gee.ArrayList<Geary.Folder>();
+                var remotes = new Gee.ArrayList<Convey.Folder>();
                 foreach (var path in remote_folders.keys) {
                     if (existing_folders.has_key(path)) {
                         remotes.add(existing_folders.get(path));
@@ -1514,7 +1514,7 @@ internal class Geary.ImapEngine.UpdateRemoteFolders : AccountOperation {
  * This performs a IMAP STATUS on the folder, but only if it is not
  * open - if it is open it is already maintaining its unseen count.
  */
-internal class Geary.ImapEngine.RefreshFolderUnseen : FolderOperation {
+internal class Convey.ImapEngine.RefreshFolderUnseen : FolderOperation {
 
 
     internal RefreshFolderUnseen(MinimalFolder folder,
@@ -1524,7 +1524,7 @@ internal class Geary.ImapEngine.RefreshFolderUnseen : FolderOperation {
 
     public override async void execute(GLib.Cancellable cancellable) throws GLib.Error {
         GenericAccount account = (GenericAccount) this.account;
-        if (this.folder.get_open_state() == Geary.Folder.OpenState.CLOSED) {
+        if (this.folder.get_open_state() == Convey.Folder.OpenState.CLOSED) {
             Imap.AccountSession? remote = yield account.claim_account_session(
                 cancellable
             );

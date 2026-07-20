@@ -8,7 +8,7 @@
 /**
  * Handles an insertion of messages from a monitor's base folder.
  */
-private class Geary.App.InsertOperation : BatchOperation<EmailIdentifier> {
+private class Convey.App.InsertOperation : BatchOperation<EmailIdentifier> {
 
 
     public InsertOperation(ConversationMonitor monitor,
@@ -23,7 +23,7 @@ private class Geary.App.InsertOperation : BatchOperation<EmailIdentifier> {
         // avoid involuntarily growing the window larger more than it
         // needs to be.
         bool needs_more = this.monitor.should_load_more;
-        Geary.EmailIdentifier? lowest = this.monitor.window_lowest;
+        Convey.EmailIdentifier? lowest = this.monitor.window_lowest;
         if (lowest != null) {
             Gee.Iterator<EmailIdentifier> iter = batch.iterator();
             while (iter.next()) {

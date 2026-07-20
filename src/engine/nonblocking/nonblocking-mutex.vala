@@ -19,7 +19,7 @@
  * This class is ''not'' thread safe and should only be used by
  * asynchronous tasks.
  */
-public class Geary.Nonblocking.Mutex : BaseObject {
+public class Convey.Nonblocking.Mutex : BaseObject {
 
     public const int INVALID_TOKEN = -1;
 

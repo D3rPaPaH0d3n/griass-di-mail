@@ -8,7 +8,7 @@
  * Allows for a common string to be represented as an {@link Memory.Buffer}.
  */
 
-public class Geary.Memory.StringBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
+public class Convey.Memory.StringBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
     Memory.UnownedBytesBuffer {
     public override size_t size {
         get {

@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.ConfigFileTest : TestCase {
+class Convey.ConfigFileTest : TestCase {
 
 
     private const string TEST_KEY = "test-key";
@@ -16,7 +16,7 @@ class Geary.ConfigFileTest : TestCase {
 
 
     public ConfigFileTest() {
-        base("Geary.ConfigFileTest");
+        base("Convey.ConfigFileTest");
         add_test("test_string", test_string);
         add_test("test_string_fallback", test_string_fallback);
         add_test("test_string_list", test_string_list);

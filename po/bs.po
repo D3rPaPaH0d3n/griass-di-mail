@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bosnianuniversetranslation\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=geary&keywords=I18N+L10N&component=general\n"
+"product=convey&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2015-02-27 05:58+0000\n"
 "PO-Revision-Date: 2015-03-03 20:57+0100\n"
 "Last-Translator: Samir Ribic <samir.ribic@etf.unsa.ba>\n"
@@ -21,38 +21,38 @@ msgstr ""
 "X-Generator: Poedit 1.7.4\n"
 "X-Launchpad-Export-Date: 2015-02-15 06:28+0000\n"
 
-#: ../desktop/geary.desktop.in.h:1 ../desktop/geary-autostart.desktop.in.h:1
-msgid "Geary"
-msgstr "Geary"
+#: ../desktop/convey.desktop.in.h:1 ../desktop/convey-autostart.desktop.in.h:1
+msgid "Convey"
+msgstr "Convey"
 
-#: ../desktop/geary.desktop.in.h:2 ../desktop/geary-autostart.desktop.in.h:2
-#: ../src/client/application/geary-application.vala:18
+#: ../desktop/convey.desktop.in.h:2 ../desktop/convey-autostart.desktop.in.h:2
+#: ../src/client/application/convey-application.vala:18
 msgid "Mail Client"
 msgstr "Mail klijent"
 
-#: ../desktop/geary.desktop.in.h:3 ../desktop/geary-autostart.desktop.in.h:3
-msgid "Geary Mail"
-msgstr "Geary Mail"
+#: ../desktop/convey.desktop.in.h:3 ../desktop/convey-autostart.desktop.in.h:3
+msgid "Convey Mail"
+msgstr "Convey Mail"
 
-#: ../desktop/geary.desktop.in.h:4 ../desktop/geary-autostart.desktop.in.h:4
+#: ../desktop/convey.desktop.in.h:4 ../desktop/convey-autostart.desktop.in.h:4
 msgid "Send and receive email"
 msgstr "Šaljite i primajte e-poštu"
 
-#: ../desktop/geary.desktop.in.h:5 ../desktop/geary-autostart.desktop.in.h:5
+#: ../desktop/convey.desktop.in.h:5 ../desktop/convey-autostart.desktop.in.h:5
 msgid "Email;E-mail;Mail;"
 msgstr "Epošta;E-pošta;pošta;"
 
-#: ../desktop/geary.desktop.in.h:6
+#: ../desktop/convey.desktop.in.h:6
 msgid "Compose Message"
 msgstr "Sastavi poruku"
 
-#: ../desktop/geary-attach.contract.in.h:1
+#: ../desktop/convey-attach.contract.in.h:1
 msgid "Send by email"
 msgstr "Poslano e-poštom"
 
-#: ../desktop/geary-attach.contract.in.h:2
-msgid "Send files using Geary"
-msgstr "Šalji datoteke koristeći Geary"
+#: ../desktop/convey-attach.contract.in.h:2
+msgid "Send files using Convey"
+msgstr "Šalji datoteke koristeći Convey"
 
 #: ../src/client/accounts/account-dialog-add-edit-pane.vala:48
 #: ../src/client/components/stock.vala:31
@@ -81,8 +81,8 @@ msgid "First Last"
 msgstr "Prvi Posljednji"
 
 #: ../src/client/accounts/add-edit-page.vala:230
-msgid "Welcome to Geary."
-msgstr "Dobrodošli u Geary."
+msgid "Welcome to Convey."
+msgstr "Dobrodošli u Convey."
 
 #: ../src/client/accounts/add-edit-page.vala:230
 msgid "Enter your account information to get started."
@@ -147,8 +147,8 @@ msgid "        &#8226; Invalid account nickname.\n"
 msgstr "        &#8226; Nadimak korisničkog računa nije dozvoljen..\n"
 
 #: ../src/client/accounts/add-edit-page.vala:758
-msgid "        &#8226; Email address already added to Geary.\n"
-msgstr "        &#8226; Adresa e-pošte je već dodana u Geary.\n"
+msgid "        &#8226; Email address already added to Convey.\n"
+msgstr "        &#8226; Adresa e-pošte je već dodana u Convey.\n"
 
 #: ../src/client/accounts/add-edit-page.vala:762
 msgid "        &#8226; IMAP connection error.\n"
@@ -174,273 +174,273 @@ msgstr "        &#8226; Greška veze.\n"
 msgid "        &#8226; Username or password incorrect.\n"
 msgstr "        &#8226; Korisničko ime ili lozinka nije tačna.\n"
 
-#: ../src/client/application/geary-application.vala:19
+#: ../src/client/application/convey-application.vala:19
 msgid "Copyright 2011-2015 Yorba Foundation"
 msgstr "Zaštita autorskog prava 2011-2015 Yorba Foundation"
 
-#: ../src/client/application/geary-application.vala:21
+#: ../src/client/application/convey-application.vala:21
 msgid "Visit the Yorba web site"
 msgstr "Posjeti Yorba internet stranicu"
 
-#: ../src/client/application/geary-args.vala:10
-msgid "Start Geary with hidden main window"
-msgstr "Započni Geary sa skrivenim glavnim prozorom"
+#: ../src/client/application/convey-args.vala:10
+msgid "Start Convey with hidden main window"
+msgstr "Započni Convey sa skrivenim glavnim prozorom"
 
-#: ../src/client/application/geary-args.vala:11
+#: ../src/client/application/convey-args.vala:11
 msgid "Output debugging information"
 msgstr "Informacije debugging izlaza"
 
-#: ../src/client/application/geary-args.vala:12
+#: ../src/client/application/convey-args.vala:12
 msgid "Log conversation monitoring"
 msgstr "Prijavite monitoring razgovora"
 
-#: ../src/client/application/geary-args.vala:13
+#: ../src/client/application/convey-args.vala:13
 msgid "Log network deserialization"
 msgstr "Prijavite deserijalizaciju mreže"
 
-#: ../src/client/application/geary-args.vala:14
+#: ../src/client/application/convey-args.vala:14
 msgid "Log network activity"
 msgstr "Prijavite aktivnosti mreže"
 
 #. / The IMAP replay queue is how changes on the server are replicated on the client.
 #. / It could also bje called the IMAP events queue.
-#: ../src/client/application/geary-args.vala:17
+#: ../src/client/application/convey-args.vala:17
 msgid "Log IMAP replay queue"
 msgstr "Prijavite IMAP replay red"
 
 #. / Serialization is how commands and responses are converted into a stream of bytes for
 #. / network transmission
-#: ../src/client/application/geary-args.vala:20
+#: ../src/client/application/convey-args.vala:20
 msgid "Log network serialization"
 msgstr "Prijavite serijalizaciju mreže"
 
-#: ../src/client/application/geary-args.vala:21
+#: ../src/client/application/convey-args.vala:21
 msgid "Log periodic activity"
 msgstr "Prijavite periodične aktivnosti"
 
-#: ../src/client/application/geary-args.vala:22
+#: ../src/client/application/convey-args.vala:22
 msgid "Log database queries (generates lots of messages)"
 msgstr "Prijavite redove baze podataka (generisaće puno poruka)"
 
 #. / "Normalization" can also bje called "synchronization"
-#: ../src/client/application/geary-args.vala:24
+#: ../src/client/application/convey-args.vala:24
 msgid "Log folder normalization"
 msgstr "Prijavite normalizaciju direktorija"
 
-#: ../src/client/application/geary-args.vala:25
+#: ../src/client/application/convey-args.vala:25
 msgid "Allow inspection of WebView"
 msgstr "Dozvolite inspekciju WebView-a"
 
-#: ../src/client/application/geary-args.vala:26
+#: ../src/client/application/convey-args.vala:26
 msgid "Revoke all server certificates with TLS warnings"
 msgstr "Opozovi sve certifikate servera sa TSL upozorenjima"
 
-#: ../src/client/application/geary-args.vala:27
+#: ../src/client/application/convey-args.vala:27
 msgid "Display program version"
 msgstr "Prikaži verziju programa"
 
 #. This gives a command-line hint on how to opijen new composer windows with mailto:
-#: ../src/client/application/geary-args.vala:51
+#: ../src/client/application/convey-args.vala:51
 #, c-format
 msgid "Use %s to open a new composer window"
 msgstr "Koristite %s da bi ste otvorili novi prozor za sastavljanje"
 
-#: ../src/client/application/geary-args.vala:52
+#: ../src/client/application/convey-args.vala:52
 msgid "Please report comments, suggestions and bugs to:"
 msgstr "Molimo vas da ostavite komentar, sugestiju ili prijavite bug na:"
 
 #. i18n: Command linije arguments are invalid
-#: ../src/client/application/geary-args.vala:59
+#: ../src/client/application/convey-args.vala:59
 #, c-format
 msgid "Failed to parse command line options: %s\n"
 msgstr "Analiza opcija komandne linije nije uspjela: %s\n"
 
-#: ../src/client/application/geary-args.vala:70
+#: ../src/client/application/convey-args.vala:70
 #, c-format
 msgid "Unrecognized command line option \"%s\"\n"
 msgstr "Opcija komandne linije nije prepoznata  \"%s\"\n"
 
-#: ../src/client/application/geary-controller.vala:60
+#: ../src/client/application/convey-controller.vala:60
 msgid "Delete conversation (Shift+Delete)"
 msgstr "Izbriši konverzaciju (Shift+Delete)"
 
-#: ../src/client/application/geary-controller.vala:61
+#: ../src/client/application/convey-controller.vala:61
 msgid "Delete conversations (Shift+Delete)"
 msgstr "Izbriši konverzacije (Shift+Delete)"
 
 #. This refers to the action ("move email to the trash"), not the Trash folder itself
-#: ../src/client/application/geary-controller.vala:65
+#: ../src/client/application/convey-controller.vala:65
 msgid "Move conversation to Trash (Delete, Backspace)"
 msgstr "Prebaci konverzaciju u smeće (Delete, Backspace)"
 
-#: ../src/client/application/geary-controller.vala:66
+#: ../src/client/application/convey-controller.vala:66
 msgid "Move conversations to Trash (Delete, Backspace)"
 msgstr "Prebaci konverzacije u smeće (Delete, Backspace)"
 
 #. This refers to the action ("archive an email"), not the Archive folder itself
-#: ../src/client/application/geary-controller.vala:70
+#: ../src/client/application/convey-controller.vala:70
 msgid "_Archive"
 msgstr "_Arhiva"
 
-#: ../src/client/application/geary-controller.vala:71
+#: ../src/client/application/convey-controller.vala:71
 msgid "Archive conversation (A)"
 msgstr "Arhiviraj konverzaciju (A)"
 
-#: ../src/client/application/geary-controller.vala:72
+#: ../src/client/application/convey-controller.vala:72
 msgid "Archive conversations (A)"
 msgstr "Arhiviraj konverzacije (A)"
 
-#: ../src/client/application/geary-controller.vala:75
+#: ../src/client/application/convey-controller.vala:75
 msgid "Mark as S_pam"
 msgstr "Označi kao S_pam"
 
-#: ../src/client/application/geary-controller.vala:76
+#: ../src/client/application/convey-controller.vala:76
 msgid "Mark as not S_pam"
 msgstr "Označi kao da nije S_pam"
 
-#: ../src/client/application/geary-controller.vala:78
-#: ../src/client/application/geary-controller.vala:348
+#: ../src/client/application/convey-controller.vala:78
+#: ../src/client/application/convey-controller.vala:348
 msgid "Mark conversation"
 msgstr "Označi konverzaciju"
 
-#: ../src/client/application/geary-controller.vala:79
+#: ../src/client/application/convey-controller.vala:79
 msgid "Mark conversations"
 msgstr "Označi konverzacije"
 
-#: ../src/client/application/geary-controller.vala:80
+#: ../src/client/application/convey-controller.vala:80
 msgid "Add label to conversation"
 msgstr "Dodaj oznaku konverzacije"
 
-#: ../src/client/application/geary-controller.vala:81
+#: ../src/client/application/convey-controller.vala:81
 msgid "Add label to conversations"
 msgstr "Dodaj oznaku konverzacija"
 
-#: ../src/client/application/geary-controller.vala:82
-#: ../src/client/application/geary-controller.vala:387
+#: ../src/client/application/convey-controller.vala:82
+#: ../src/client/application/convey-controller.vala:387
 msgid "Move conversation"
 msgstr "Pomjeri konverzaciju"
 
-#: ../src/client/application/geary-controller.vala:83
+#: ../src/client/application/convey-controller.vala:83
 msgid "Move conversations"
 msgstr "Pomjeri konverzacije"
 
-#: ../src/client/application/geary-controller.vala:324
+#: ../src/client/application/convey-controller.vala:324
 msgid "A_ccounts"
 msgstr "Korisnički r_ačuni"
 
-#: ../src/client/application/geary-controller.vala:329
+#: ../src/client/application/convey-controller.vala:329
 #: ../src/client/components/stock.vala:27
 msgid "_Preferences"
 msgstr "_Podešavanja"
 
-#: ../src/client/application/geary-controller.vala:333
+#: ../src/client/application/convey-controller.vala:333
 #: ../src/client/components/stock.vala:25
 msgid "_Help"
 msgstr "_Pomoć"
 
-#: ../src/client/application/geary-controller.vala:337
+#: ../src/client/application/convey-controller.vala:337
 #: ../src/client/components/stock.vala:21
 msgid "_About"
 msgstr "_O programu"
 
-#: ../src/client/application/geary-controller.vala:341
+#: ../src/client/application/convey-controller.vala:341
 msgid "_Donate"
 msgstr "_Donirajte"
 
-#: ../src/client/application/geary-controller.vala:345
+#: ../src/client/application/convey-controller.vala:345
 #: ../src/client/components/stock.vala:29
 msgid "_Quit"
 msgstr "_Izađi"
 
-#: ../src/client/application/geary-controller.vala:350
+#: ../src/client/application/convey-controller.vala:350
 msgid "_Mark as..."
 msgstr "_Označi kao..."
 
-#: ../src/client/application/geary-controller.vala:356
+#: ../src/client/application/convey-controller.vala:356
 msgid "Mark as _Read"
 msgstr "Označi kao _pročitano"
 
-#: ../src/client/application/geary-controller.vala:362
+#: ../src/client/application/convey-controller.vala:362
 msgid "Mark as _Unread"
 msgstr "Označi kao _nepročitano"
 
-#: ../src/client/application/geary-controller.vala:368
+#: ../src/client/application/convey-controller.vala:368
 msgid "_Star"
 msgstr "_Dodaj zvijezdu"
 
-#: ../src/client/application/geary-controller.vala:373
+#: ../src/client/application/convey-controller.vala:373
 msgid "U_nstar"
 msgstr "U_kloni zvijezdu"
 
-#: ../src/client/application/geary-controller.vala:383
+#: ../src/client/application/convey-controller.vala:383
 msgid "Add label"
 msgstr "Dodaj oznaku"
 
-#: ../src/client/application/geary-controller.vala:384
+#: ../src/client/application/convey-controller.vala:384
 msgid "_Label"
 msgstr "_Oznaka"
 
-#: ../src/client/application/geary-controller.vala:388
+#: ../src/client/application/convey-controller.vala:388
 msgid "_Move"
 msgstr "_Premjesti"
 
-#: ../src/client/application/geary-controller.vala:392
+#: ../src/client/application/convey-controller.vala:392
 msgid "Compose new message (Ctrl+N, N)"
 msgstr "Stvori novu poruku (Ctrl+N, N)"
 
 #. Reply to a message.
-#: ../src/client/application/geary-controller.vala:396
+#: ../src/client/application/convey-controller.vala:396
 #: ../src/client/conversation-viewer/conversation-viewer.vala:1857
 msgid "_Reply"
 msgstr "_Odgovori"
 
-#: ../src/client/application/geary-controller.vala:397
+#: ../src/client/application/convey-controller.vala:397
 msgid "Reply (Ctrl+R, R)"
 msgstr "Odgovori (Ctrl+R, R)"
 
-#: ../src/client/application/geary-controller.vala:401
+#: ../src/client/application/convey-controller.vala:401
 msgid "R_eply All"
 msgstr "O_dgovori svima"
 
-#: ../src/client/application/geary-controller.vala:402
+#: ../src/client/application/convey-controller.vala:402
 msgid "Reply all (Ctrl+Shift+R, Shift+R)"
 msgstr "Odgovori svima (Ctrl+Shift+R, Shift+R)"
 
 #. Forward a message.
-#: ../src/client/application/geary-controller.vala:407
+#: ../src/client/application/convey-controller.vala:407
 #: ../src/client/conversation-viewer/conversation-viewer.vala:1867
 msgid "_Forward"
 msgstr "_Proslijedi"
 
-#: ../src/client/application/geary-controller.vala:408
+#: ../src/client/application/convey-controller.vala:408
 msgid "Forward (Ctrl+L, F)"
 msgstr "Proslijedi (Ctrl+L, F)"
 
-#: ../src/client/application/geary-controller.vala:446
+#: ../src/client/application/convey-controller.vala:446
 msgid "Empty"
 msgstr "Isprazni"
 
-#: ../src/client/application/geary-controller.vala:447
+#: ../src/client/application/convey-controller.vala:447
 msgid "Empty Spam or Trash folders"
 msgstr "Prazni fascikle sa smećem ili spamom"
 
-#: ../src/client/application/geary-controller.vala:451
+#: ../src/client/application/convey-controller.vala:451
 msgid "Empty _Spam…"
 msgstr "Isprazni_spamom"
 
-#: ../src/client/application/geary-controller.vala:455
+#: ../src/client/application/convey-controller.vala:455
 msgid "Empty _Trash…"
 msgstr "Isprazni s_meće"
 
-#: ../src/client/application/geary-controller.vala:693
+#: ../src/client/application/convey-controller.vala:693
 msgid "Unable to store server trust exception"
 msgstr "NIje moguće pohraniti izuzetak povjerenja prema serveru"
 
-#: ../src/client/application/geary-controller.vala:930
+#: ../src/client/application/convey-controller.vala:930
 msgid "Your settings are insecure"
 msgstr "Vaše postavke nisu sigurne"
 
-#: ../src/client/application/geary-controller.vala:931
+#: ../src/client/application/convey-controller.vala:931
 msgid ""
 "Your IMAP and/or SMTP settings do not specify SSL or TLS.  This means your "
 "username and password could be read by another person on the network.  Are "
@@ -450,52 +450,52 @@ msgstr ""
 "korisničko ime i lozinka mogu biti pročitani od strane druge osobe na mreži. "
 "Želite li ovo da uradite?"
 
-#: ../src/client/application/geary-controller.vala:932
+#: ../src/client/application/convey-controller.vala:932
 msgid "Co_ntinue"
 msgstr "Nas_tavi"
 
 #. / Displayed in the space-limited status bar when a message fails to bje sent due to error.
-#: ../src/client/application/geary-controller.vala:1010
+#: ../src/client/application/convey-controller.vala:1010
 #: ../src/client/components/status-bar.vala:29
 msgid "Error sending email"
 msgstr "Greška u slanju e-pošte"
 
-#: ../src/client/application/geary-controller.vala:1011
+#: ../src/client/application/convey-controller.vala:1011
 msgid ""
-"Geary encountered an error sending an email.  If the problem persists, "
+"Convey encountered an error sending an email.  If the problem persists, "
 "please manually delete the email from your Outbox folder."
 msgstr ""
-"Geary je naišao na grešku prilikom slanja e-pošte. Ako se problem i dalje "
+"Convey je naišao na grešku prilikom slanja e-pošte. Ako se problem i dalje "
 "postoji, molm da ručno izbrišete e-poštu iz vašeg Outbox direktorija."
 
 #. Displayed in the space-limited status bar when a message fails to bje uploaded
 #. to Sent Mail after being sent.
-#: ../src/client/application/geary-controller.vala:1015
+#: ../src/client/application/convey-controller.vala:1015
 #: ../src/client/components/status-bar.vala:33
 msgid "Error saving sent mail"
 msgstr "Greška prilikom snimanja poslane e-pošte"
 
-#: ../src/client/application/geary-controller.vala:1016
+#: ../src/client/application/convey-controller.vala:1016
 msgid ""
-"Geary encountered an error saving a sent message to Sent Mail.  The message "
+"Convey encountered an error saving a sent message to Sent Mail.  The message "
 "will stay in your Outbox folder until you delete it."
 msgstr ""
-"Geary je naišao na grešku prilikom snimanja poslane poruke u Poslane Poruke. "
+"Convey je naišao na grešku prilikom snimanja poslane poruke u Poslane Poruke. "
 "Ova poruka će ostati u vašem Outbox direktoriju dok je ne izbrišete."
 
-#: ../src/client/application/geary-controller.vala:1085
+#: ../src/client/application/convey-controller.vala:1085
 msgid "Labels"
 msgstr "Oznake"
 
-#. give the user two options: reset the Account local storije, or exit Geary.  A third
+#. give the user two options: reset the Account local storije, or exit Convey.  A third
 #. could bje donje to leave the Account in an unopened stati, but we don't currently
 #. have provisions for that.
-#: ../src/client/application/geary-controller.vala:1097
+#: ../src/client/application/convey-controller.vala:1097
 #, c-format
 msgid "Unable to open the database for %s"
 msgstr "Otvaranje baze podataka onemogućeno za %s"
 
-#: ../src/client/application/geary-controller.vala:1098
+#: ../src/client/application/convey-controller.vala:1098
 #, c-format
 msgid ""
 "There was an error opening the local mail database for this account. This is "
@@ -503,7 +503,7 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-"Geary can rebuild the database and re-synchronize with the server or exit.\n"
+"Convey can rebuild the database and re-synchronize with the server or exit.\n"
 "\n"
 "Rebuilding the database will destroy all local email and its attachments. "
 "<b>The mail on the your server will not be affected.</b>"
@@ -514,26 +514,26 @@ msgstr ""
 "\n"
 "%s\n"
 "\n"
-"Geary može obnoviti bazu podataka i re-siknronizirati sa serverom ili "
+"Convey može obnoviti bazu podataka i re-siknronizirati sa serverom ili "
 "izaći.\n"
 "\n"
 "Obnavljanje baze podataka će uništiti svu lokalnu e-poštu i privitke.  <b>To "
 "neće utjecati na poštu na vašem serveru.</b>"
 
-#: ../src/client/application/geary-controller.vala:1100
+#: ../src/client/application/convey-controller.vala:1100
 msgid "_Rebuild"
 msgstr "_Obnovi"
 
-#: ../src/client/application/geary-controller.vala:1100
+#: ../src/client/application/convey-controller.vala:1100
 msgid "E_xit"
 msgstr "I_zlaz"
 
-#: ../src/client/application/geary-controller.vala:1109
+#: ../src/client/application/convey-controller.vala:1109
 #, c-format
 msgid "Unable to rebuild database for \"%s\""
 msgstr "Nije noguće obnoviti bazu podataka za \"%s\""
 
-#: ../src/client/application/geary-controller.vala:1110
+#: ../src/client/application/convey-controller.vala:1110
 #, c-format
 msgid ""
 "Error during rebuild:\n"
@@ -545,15 +545,15 @@ msgstr ""
 "%s"
 
 #. some other problem opening the account ... as with other flow path, can't run
-#. Geary today with an account in unopened stati, so have to exit
-#: ../src/client/application/geary-controller.vala:1132
-#: ../src/client/application/geary-controller.vala:1142
-#: ../src/client/application/geary-controller.vala:1153
+#. Convey today with an account in unopened stati, so have to exit
+#: ../src/client/application/convey-controller.vala:1132
+#: ../src/client/application/convey-controller.vala:1142
+#: ../src/client/application/convey-controller.vala:1153
 #, c-format
 msgid "Unable to open local mailbox for %s"
 msgstr "NIje moguće otvoriti lokalno poštansko sanduče za %s"
 
-#: ../src/client/application/geary-controller.vala:1133
+#: ../src/client/application/convey-controller.vala:1133
 #, c-format
 msgid ""
 "There was an error opening the local mail database for this account. This is "
@@ -572,55 +572,55 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/client/application/geary-controller.vala:1143
+#: ../src/client/application/convey-controller.vala:1143
 msgid ""
 "The version number of the local mail database is formatted for a newer "
-"version of Geary. Unfortunately, the database cannot be \"rolled back\" to "
-"work with this version of Geary.\n"
+"version of Convey. Unfortunately, the database cannot be \"rolled back\" to "
+"work with this version of Convey.\n"
 "\n"
-"Please install the latest version of Geary and try again."
+"Please install the latest version of Convey and try again."
 msgstr ""
 "Broj verzije lokalne baze podataka za poštu je pormatiran za noviju verziju "
-"Geary-a. Nažalost baza podataka ne može biti \"izverzirana\" da bi radila sa "
-"ovom verzijom Geary-a. \n"
+"Convey-a. Nažalost baza podataka ne može biti \"izverzirana\" da bi radila sa "
+"ovom verzijom Convey-a. \n"
 "\n"
-"Molimo instalirajte posljednju verziju Geary-a i pokušajte ponovo."
+"Molimo instalirajte posljednju verziju Convey-a i pokušajte ponovo."
 
-#: ../src/client/application/geary-controller.vala:1154
+#: ../src/client/application/convey-controller.vala:1154
 msgid ""
 "There was an error opening the local account. This is probably due to "
 "connectivity issues.\n"
 "\n"
-"Please check your network connection and restart Geary."
+"Please check your network connection and restart Convey."
 msgstr ""
 "Došlo je do greške prilikom otvaranja lokalnog korisničkog računa. Ovo je "
 "nastalo vjerovatno zbog problema sa konekcijom.\n"
 "\n"
-"Molim da provjerite vašu konekciju i da restartujete Geary."
+"Molim da provjerite vašu konekciju i da restartujete Convey."
 
-#: ../src/client/application/geary-controller.vala:1662
+#: ../src/client/application/convey-controller.vala:1662
 #, c-format
 msgid "About %s"
 msgstr "O programu %s"
 
 #. / Translators: add your nami and email address to receive credit in the About dialog
 #. / For example: Yamada Taro <yamada.taro@example.com>
-#: ../src/client/application/geary-controller.vala:1665
+#: ../src/client/application/convey-controller.vala:1665
 msgid "translator-credits"
 msgstr ""
 "   Mirza Krajina https://launchpad.net/~krajina\n"
 "  Samir Ribić https://launchpad.net/~megaribi"
 
-#: ../src/client/application/geary-controller.vala:1931
+#: ../src/client/application/convey-controller.vala:1931
 msgid "Undo move (Ctrl+Z)"
 msgstr "Poništi pomijeranje (Ctrl+Z)"
 
-#: ../src/client/application/geary-controller.vala:1941
+#: ../src/client/application/convey-controller.vala:1941
 #, c-format
 msgid "Are you sure you want to open \"%s\"?"
 msgstr "Da li ste sigurnu da želite otvoriti \"%s\"?"
 
-#: ../src/client/application/geary-controller.vala:1942
+#: ../src/client/application/convey-controller.vala:1942
 msgid ""
 "Attachments may cause damage to your system if opened.  Only open files from "
 "trusted sources."
@@ -628,77 +628,77 @@ msgstr ""
 "Privici mogu izazvati štetu na vašem sistemu ako se otvore. Otvarajte "
 "datoteke samo iz pouzdanih izvora."
 
-#: ../src/client/application/geary-controller.vala:1943
+#: ../src/client/application/convey-controller.vala:1943
 msgid "Don't _ask me again"
 msgstr "Ne _pitaj me ponovo"
 
-#: ../src/client/application/geary-controller.vala:1961
+#: ../src/client/application/convey-controller.vala:1961
 #, c-format
 msgid "A file named \"%s\" already exists.  Do you want to replace it?"
 msgstr "Datoteka nazvana „%s“ već postoji.  Želite li da je zamijenite?"
 
-#: ../src/client/application/geary-controller.vala:1963
+#: ../src/client/application/convey-controller.vala:1963
 #, c-format
 msgid ""
 "The file already exists in \"%s\".  Replacing it will overwrite its contents."
 msgstr ""
 "Datoteka već postoji u „%s“.  Njenom zamjenom ćete presnimiti njen sadržaj."
 
-#: ../src/client/application/geary-controller.vala:1966
+#: ../src/client/application/convey-controller.vala:1966
 msgid "_Replace"
 msgstr "_Zamijeni"
 
 #. Find out what to do with the inline composers.
 #. TODO: Remove this in favor of automatically saving drafts
-#: ../src/client/application/geary-controller.vala:2264
+#: ../src/client/application/convey-controller.vala:2264
 msgid "Close open draft messages?"
 msgstr "Zatvori otvorene draft poruke?"
 
-#: ../src/client/application/geary-controller.vala:2394
+#: ../src/client/application/convey-controller.vala:2394
 #, c-format
 msgid "Empty all email from your %s folder?"
 msgstr "Isprazniti svu elektronsku poštu iz vaše %s fascikle?"
 
-#: ../src/client/application/geary-controller.vala:2395
-msgid "This removes the email from Geary and your email server."
+#: ../src/client/application/convey-controller.vala:2395
+msgid "This removes the email from Convey and your email server."
 msgstr ""
-"Ovo uklanja elektronsku pošto iz Geary i vađeg servera za elektronsku poštu"
+"Ovo uklanja elektronsku pošto iz Convey i vađeg servera za elektronsku poštu"
 
-#: ../src/client/application/geary-controller.vala:2396
+#: ../src/client/application/convey-controller.vala:2396
 msgid "This cannot be undone."
 msgstr "Ovo ne možete poništiti."
 
-#: ../src/client/application/geary-controller.vala:2397
+#: ../src/client/application/convey-controller.vala:2397
 #, c-format
 msgid "Empty %s"
 msgstr "Isprazni %s"
 
-#: ../src/client/application/geary-controller.vala:2414
+#: ../src/client/application/convey-controller.vala:2414
 #, c-format
 msgid "Error emptying %s"
 msgstr "Greška prilikom pražnjenja %s"
 
 #         translations.
-#: ../src/client/application/geary-controller.vala:2444
+#: ../src/client/application/convey-controller.vala:2444
 msgid "Do you want to permanently delete this message?"
 msgid_plural "Do you want to permanently delete these messages?"
 msgstr[0] "Da li želite da trajno obrišete poruku?"
 msgstr[1] "Da li želite da trajno obrišete poruke?"
 msgstr[2] "Da li želite da trajno obrišete poruke?"
 
-#: ../src/client/application/geary-controller.vala:2446
+#: ../src/client/application/convey-controller.vala:2446
 msgid "Delete"
 msgstr "Izbriši"
 
-#: ../src/client/application/geary-controller.vala:2477
+#: ../src/client/application/convey-controller.vala:2477
 msgid "Undo archive (Ctrl+Z)"
 msgstr "Poništi arhiviranje (Ctrl+Z)"
 
-#: ../src/client/application/geary-controller.vala:2492
+#: ../src/client/application/convey-controller.vala:2492
 msgid "Undo trash (Ctrl+Z)"
 msgstr "Poništi smeće (Ctrl+Z)"
 
-#: ../src/client/application/geary-controller.vala:2545
+#: ../src/client/application/convey-controller.vala:2545
 msgid "Undo (Ctrl+Z)"
 msgstr "Poništi (Ctrl+Z)"
 
@@ -726,7 +726,7 @@ msgstr "nije nađeno"
 
 #: ../src/client/components/main-toolbar.vala:11
 #: ../src/client/folder-list/folder-list-search-branch.vala:38
-#: ../src/engine/api/geary-special-folder-type.vala:51
+#: ../src/engine/api/convey-special-folder-type.vala:51
 msgid "Search"
 msgstr "Traži"
 
@@ -1125,28 +1125,28 @@ msgstr ""
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:52
 msgid ""
-"Selecting \"Don't Trust This Server\" will cause Geary not to access this "
+"Selecting \"Don't Trust This Server\" will cause Convey not to access this "
 "server."
 msgstr ""
-"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Geary ne "
+"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Convey ne "
 "pristupa ovom serveru."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:54
-msgid "Geary will not add or update this email account."
-msgstr "Geary neće dodati ili ažururati ovaj korisnički račun e-pošte."
+msgid "Convey will not add or update this email account."
+msgstr "Convey neće dodati ili ažururati ovaj korisnički račun e-pošte."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:59
 msgid ""
-"Selecting \"Don't Trust This Server\" will cause Geary to stop accessing "
+"Selecting \"Don't Trust This Server\" will cause Convey to stop accessing "
 "this account."
 msgstr ""
-"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Geary prestane "
+"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Convey prestane "
 "pristupati ovom korisničkom računu."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:61
-msgid "Geary will exit if you have no other open email accounts."
+msgid "Convey will exit if you have no other open email accounts."
 msgstr ""
-"Geary će izaći, ukoliko nemate drugih otvorenih korisničkoh računa e-pošte."
+"Convey će izaći, ukoliko nemate drugih otvorenih korisničkoh računa e-pošte."
 
 #: ../src/client/dialogs/certificate-warning-dialog.vala:66
 msgid ""
@@ -1188,7 +1188,7 @@ msgstr "Došlo je do greške prilikom obrade certifikata servera"
 #. strings, and Glade doesn't support the "larger" size attribute. Seje this bug report for
 #. details: https://bugzilla.gnome.org/show_bug.cgi?id=679006
 #: ../src/client/dialogs/password-dialog.vala:16
-msgid "Geary requires your email password to continue"
+msgid "Convey requires your email password to continue"
 msgstr "Zupčinko zahtjeva vašu lozinku el. pošte da bi nastavio"
 
 #         translations.
@@ -1391,85 +1391,85 @@ msgctxt "Abbreviation for kilobyte"
 msgid "KB"
 msgstr "KB"
 
-#: ../src/engine/api/geary-service-provider.vala:52
+#: ../src/engine/api/convey-service-provider.vala:52
 msgid "Gmail"
 msgstr "Gmail"
 
-#: ../src/engine/api/geary-service-provider.vala:55
+#: ../src/engine/api/convey-service-provider.vala:55
 msgid "Yahoo! Mail"
 msgstr "Yahoo! Mail"
 
-#: ../src/engine/api/geary-service-provider.vala:58
+#: ../src/engine/api/convey-service-provider.vala:58
 msgid "Outlook.com"
 msgstr "Outlook.com"
 
-#: ../src/engine/api/geary-service-provider.vala:61
+#: ../src/engine/api/convey-service-provider.vala:61
 msgid "Other"
 msgstr "Ostalo"
 
-#: ../src/engine/api/geary-service.vala:20
+#: ../src/engine/api/convey-service.vala:20
 msgid "IMAP"
 msgstr "IMAP"
 
-#: ../src/engine/api/geary-service.vala:23
+#: ../src/engine/api/convey-service.vala:23
 msgid "SMTP"
 msgstr "SMTP"
 
-#: ../src/engine/api/geary-special-folder-type.vala:24
+#: ../src/engine/api/convey-special-folder-type.vala:24
 msgid "Inbox"
 msgstr "Dolazna pošta"
 
-#: ../src/engine/api/geary-special-folder-type.vala:27
+#: ../src/engine/api/convey-special-folder-type.vala:27
 msgid "Drafts"
 msgstr "Skice"
 
-#: ../src/engine/api/geary-special-folder-type.vala:30
+#: ../src/engine/api/convey-special-folder-type.vala:30
 msgid "Sent Mail"
 msgstr "Poslana pošta"
 
-#: ../src/engine/api/geary-special-folder-type.vala:33
+#: ../src/engine/api/convey-special-folder-type.vala:33
 msgid "Starred"
 msgstr "Sa zvjezdicom"
 
-#: ../src/engine/api/geary-special-folder-type.vala:36
+#: ../src/engine/api/convey-special-folder-type.vala:36
 msgid "Important"
 msgstr "Važno"
 
-#: ../src/engine/api/geary-special-folder-type.vala:39
+#: ../src/engine/api/convey-special-folder-type.vala:39
 msgid "All Mail"
 msgstr "Sva pošta"
 
-#: ../src/engine/api/geary-special-folder-type.vala:42
+#: ../src/engine/api/convey-special-folder-type.vala:42
 msgid "Spam"
 msgstr "Spam"
 
-#: ../src/engine/api/geary-special-folder-type.vala:45
+#: ../src/engine/api/convey-special-folder-type.vala:45
 msgid "Trash"
 msgstr "Smeće"
 
-#: ../src/engine/api/geary-special-folder-type.vala:48
+#: ../src/engine/api/convey-special-folder-type.vala:48
 msgid "Outbox"
 msgstr "Odlazno sanduče"
 
-#: ../src/engine/api/geary-special-folder-type.vala:54
+#: ../src/engine/api/convey-special-folder-type.vala:54
 msgid "Archive"
 msgstr "Arhiva"
 
-#: ../src/engine/api/geary-special-folder-type.vala:58 ../ui/login.glade.h:25
+#: ../src/engine/api/convey-special-folder-type.vala:58 ../ui/login.glade.h:25
 msgid "None"
 msgstr "Ništa"
 
 #. Map of user-supplied search field names to column names.
 #. / Can bje typed in the search box liki attachment:file.txt to find
 #. / messages with attachments with a particular nami.  The translated
-#. / string must match the string in Geary's help documentation.
+#. / string must match the string in Convey's help documentation.
 #: ../src/engine/imap-db/imap-db-account.vala:710
 msgid "attachment"
 msgstr "prilog"
 
 #. / Can bje typed in the search box liki bcc:johndoe@example.com to find
 #. / messages bcc'd to a particular person.  The translated
-#. / string must match the string in Geary's help documentation.
+#. / string must match the string in Convey's help documentation.
 #. Fields we allow the token to bje "me" as in from:me.
 #: ../src/engine/imap-db/imap-db-account.vala:714
 #: ../src/engine/imap-db/imap-db-account.vala:738
@@ -1478,14 +1478,14 @@ msgstr "bcc"
 
 #. / Can bje typed in the search box liki body:word to find the word only
 #. / if it occurs in the body of a message.  The translated
-#. / string must match the string in Geary's help documentation.
+#. / string must match the string in Convey's help documentation.
 #: ../src/engine/imap-db/imap-db-account.vala:718
 msgid "body"
 msgstr "tijelo"
 
 #. / Can bje typed in the search box liki cc:johndoe@example.com to find
 #. / messages cc'd to a particular person.  The translated
-#. / string must match the string in Geary's help documentation.
+#. / string must match the string in Convey's help documentation.
 #: ../src/engine/imap-db/imap-db-account.vala:722
 #: ../src/engine/imap-db/imap-db-account.vala:738
 msgid "cc"
@@ -1493,7 +1493,7 @@ msgstr "cc"
 
 #. / Can bje typed in the search box liki from:johndoe@example.com to
 #. / find messages from a particular sender.  The translated
-#. / string must match the string in Geary's help documentation.
+#. / string must match the string in Convey's help documentation.
 #: ../src/engine/imap-db/imap-db-account.vala:726
 #: ../src/engine/imap-db/imap-db-account.vala:738
 msgid "from"
@@ -1501,14 +1501,14 @@ msgstr "od"
 
 #. / Can bje typed in the search box liki subject:word to find the word
 #. / only if it occurs in the subject of a message.  The translated
-#. / string must match the string in Geary's help documentation.
+#. / string must match the string in Convey's help documentation.
 #: ../src/engine/imap-db/imap-db-account.vala:730
 msgid "subject"
 msgstr "tema"
 
 #. / Can bje typed in the search box liki to:johndoe@example.com to find
 #. / messages received by a particular person.  The translated
-#. / string must match the string in Geary's help documentation.
+#. / string must match the string in Convey's help documentation.
 #: ../src/engine/imap-db/imap-db-account.vala:734
 #: ../src/engine/imap-db/imap-db-account.vala:738
 msgid "to"
@@ -1516,7 +1516,7 @@ msgstr "za"
 
 #. "me" can bje typed liki from:me or cc:me, etc. as a shorthand
 #. to find mail to or from yourself in search.  The translated
-#. string must match the string in Geary's help documentation.
+#. string must match the string in Convey's help documentation.
 #: ../src/engine/imap-db/imap-db-account.vala:754
 msgid "me"
 msgstr "ja"
@@ -1637,8 +1637,8 @@ msgid "Remove account"
 msgstr "Ukloni korisnički račun"
 
 #: ../ui/account_spinner.glade.h:1
-msgid "Please wait while Geary validates your account."
-msgstr "Molim sačekajte dok Geary ne potvrdi vaš korisnički račun."
+msgid "Please wait while Convey validates your account."
+msgstr "Molim sačekajte dok Convey ne potvrdi vaš korisnički račun."
 
 #: ../ui/certificate_warning_dialog.glade.h:1
 msgid "Untrusted Connection"
@@ -1846,7 +1846,7 @@ msgstr "_Bcc"
 msgid "_Reply-To"
 msgstr "_Odgovori"
 
-#. Geary account mail will bje sent from
+#. Convey account mail will bje sent from
 #: ../ui/composer.glade.h:52
 msgid "From"
 msgstr "Od"
@@ -2056,8 +2056,8 @@ msgid "Always _watch for new mail"
 msgstr "Uvijek _prati novu poštu"
 
 #: ../ui/preferences.glade.h:10
-msgid "Geary will run in the background and notify of new mail"
-msgstr "Geary će raditi u pozadini i informnisati o novoj pošti"
+msgid "Convey will run in the background and notify of new mail"
+msgstr "Convey će raditi u pozadini i informnisati o novoj pošti"
 
 #: ../ui/remove_confirm.glade.h:1
 msgid ""
@@ -2084,5 +2084,5 @@ msgid "Email address:"
 msgstr "Adresa e-pošte:"
 
 #: ../ui/upgrade_dialog.glade.h:1
-msgid "Geary update in progress…"
+msgid "Convey update in progress…"
 msgstr "Dogradnja Zupčinka je u toku…"

@@ -8,7 +8,7 @@
  * Utility methods for manipulating and examining data particular to MIME.
  */
 
-namespace Geary.Mime.DataFormat {
+namespace Convey.Mime.DataFormat {
 
 private const char[] CONTENT_TYPE_TOKEN_SPECIALS = {
     '(', ')', '<', '>', '@', ',', ';', ':', '\\', '"', '/', '[', ']', '?', '='

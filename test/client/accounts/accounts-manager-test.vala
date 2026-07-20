@@ -11,9 +11,9 @@ class Accounts.ManagerTest : TestCase {
     private const string TEST_ID = "test";
 
     private Manager? test = null;
-    private Geary.CredentialsMediator? mediator = null;
-    private Geary.AccountInformation? account = null;
-    private Geary.RFC822.MailboxAddress primary_mailbox;
+    private Convey.CredentialsMediator? mediator = null;
+    private Convey.AccountInformation? account = null;
+    private Convey.RFC822.MailboxAddress primary_mailbox;
     private File? tmp = null;
 
 
@@ -43,14 +43,14 @@ class Accounts.ManagerTest : TestCase {
             GLib.DirUtils.make_tmp("accounts-manager-test-XXXXXX")
         );
 
-        this.primary_mailbox = new Geary.RFC822.MailboxAddress(
+        this.primary_mailbox = new Convey.RFC822.MailboxAddress(
             null, "test1@example.com"
         );
 
         this.mediator = new Mock.CredentialsMediator();
-        this.account = new Geary.AccountInformation(
+        this.account = new Convey.AccountInformation(
             TEST_ID,
-            Geary.ServiceProvider.OTHER,
+            Convey.ServiceProvider.OTHER,
             this.mediator,
             this.primary_mailbox
         );
@@ -88,10 +88,10 @@ class Accounts.ManagerTest : TestCase {
 
     public void create_orphan_account() throws GLib.Error {
         this.test.new_orphan_account.begin(
-            Geary.ServiceProvider.OTHER, this.primary_mailbox, null,
+            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Geary.AccountInformation account1 =
+        Convey.AccountInformation account1 =
             this.test.new_orphan_account.end(async_result());
         assert(account1.id == "account_01");
 
@@ -102,10 +102,10 @@ class Accounts.ManagerTest : TestCase {
         this.test.create_account.end(async_result());
 
         this.test.new_orphan_account.begin(
-            Geary.ServiceProvider.OTHER, this.primary_mailbox, null,
+            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Geary.AccountInformation account2 =
+        Convey.AccountInformation account2 =
             this.test.new_orphan_account.end(async_result());
         assert(account2.id == "account_02");
     }
@@ -118,10 +118,10 @@ class Accounts.ManagerTest : TestCase {
         this.test.create_account.end(async_result());
 
         this.test.new_orphan_account.begin(
-            Geary.ServiceProvider.OTHER, this.primary_mailbox, null,
+            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Geary.AccountInformation account1 =
+        Convey.AccountInformation account1 =
             this.test.new_orphan_account.end(async_result());
         assert(account1.id == "account_01");
 
@@ -132,10 +132,10 @@ class Accounts.ManagerTest : TestCase {
         this.test.create_account.end(async_result());
 
         this.test.new_orphan_account.begin(
-            Geary.ServiceProvider.OTHER, this.primary_mailbox, null,
+            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Geary.AccountInformation account2 =
+        Convey.AccountInformation account2 =
             this.test.new_orphan_account.end(async_result());
         assert(account2.id == "account_02");
     }
@@ -147,10 +147,10 @@ class Accounts.ManagerTest : TestCase {
         existing.make_directory();
 
         this.test.new_orphan_account.begin(
-            Geary.ServiceProvider.OTHER, this.primary_mailbox, null,
+            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Geary.AccountInformation account =
+        Convey.AccountInformation account =
             this.test.new_orphan_account.end(async_result());
         assert(account.id == "account_03");
     }
@@ -164,13 +164,13 @@ class Accounts.ManagerTest : TestCase {
         this.account.signature = "blarg";
         this.account.use_signature = false;
 
-        Geary.ConfigFile file =
-            new Geary.ConfigFile(this.tmp.get_child("config.ini"));
+        Convey.ConfigFile file =
+            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
 
         Accounts.AccountConfigV1 config = new Accounts.AccountConfigV1(false);
         config.save(this.account, file);
 
-        Geary.AccountInformation copy = config.load(
+        Convey.AccountInformation copy = config.load(
             file, TEST_ID, this.mediator, null, null
         );
 
@@ -188,11 +188,11 @@ class Accounts.ManagerTest : TestCase {
         Accounts.AccountConfigLegacy config =
             new Accounts.AccountConfigLegacy();
 
-        Geary.ConfigFile file =
-            new Geary.ConfigFile(this.tmp.get_child("config.ini"));
+        Convey.ConfigFile file =
+            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
 
         config.save(this.account, file);
-        Geary.AccountInformation copy = config.load(
+        Convey.AccountInformation copy = config.load(
             file, TEST_ID, this.mediator, null, null
         );
 
@@ -202,21 +202,21 @@ class Accounts.ManagerTest : TestCase {
     public void service_config_v1() throws GLib.Error {
         // take a copy before updating the service info so we don't
         // also copy the test data
-        Geary.AccountInformation copy = new Geary.AccountInformation.copy(
+        Convey.AccountInformation copy = new Convey.AccountInformation.copy(
             this.account
         );
 
         this.account.outgoing.host = "blarg";
         this.account.outgoing.port = 1234;
-        this.account.outgoing.transport_security = Geary.TlsNegotiationMethod.NONE;
-        this.account.outgoing.credentials = new Geary.Credentials(
-            Geary.Credentials.Method.PASSWORD, "testerson"
+        this.account.outgoing.transport_security = Convey.TlsNegotiationMethod.NONE;
+        this.account.outgoing.credentials = new Convey.Credentials(
+            Convey.Credentials.Method.PASSWORD, "testerson"
         );
         this.account.outgoing.credentials_requirement =
-            Geary.Credentials.Requirement.NONE;
+            Convey.Credentials.Requirement.NONE;
         Accounts.ServiceConfigV1 config = new Accounts.ServiceConfigV1();
-        Geary.ConfigFile file =
-            new Geary.ConfigFile(this.tmp.get_child("config.ini"));
+        Convey.ConfigFile file =
+            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
 
         config.save(this.account, this.account.outgoing, file);
         config.load(file, copy, copy.outgoing);
@@ -227,21 +227,21 @@ class Accounts.ManagerTest : TestCase {
     public void service_config_legacy() throws GLib.Error {
         // take a copy before updating the service info so we don't
         // also copy the test data
-        Geary.AccountInformation copy = new Geary.AccountInformation.copy(
+        Convey.AccountInformation copy = new Convey.AccountInformation.copy(
             this.account
         );
 
         this.account.outgoing.host = "blarg";
         this.account.outgoing.port = 1234;
-        this.account.outgoing.transport_security = Geary.TlsNegotiationMethod.NONE;
-        this.account.outgoing.credentials = new Geary.Credentials(
-            Geary.Credentials.Method.PASSWORD, "testerson"
+        this.account.outgoing.transport_security = Convey.TlsNegotiationMethod.NONE;
+        this.account.outgoing.credentials = new Convey.Credentials(
+            Convey.Credentials.Method.PASSWORD, "testerson"
         );
         this.account.outgoing.credentials_requirement =
-            Geary.Credentials.Requirement.NONE;
+            Convey.Credentials.Requirement.NONE;
         Accounts.ServiceConfigLegacy config = new Accounts.ServiceConfigLegacy();
-        Geary.ConfigFile file =
-            new Geary.ConfigFile(this.tmp.get_child("config.ini"));
+        Convey.ConfigFile file =
+            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
 
         config.save(this.account, this.account.outgoing, file);
         config.load(file, copy, copy.outgoing);

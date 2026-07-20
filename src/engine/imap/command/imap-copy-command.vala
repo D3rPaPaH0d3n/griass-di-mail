@@ -8,7 +8,7 @@
 /**
  * See [[http://tools.ietf.org/html/rfc3501#section-6.4.7]]
  */
-public class Geary.Imap.CopyCommand : Command {
+public class Convey.Imap.CopyCommand : Command {
 
     public const string NAME = "copy";
     public const string UID_NAME = "uid copy";

@@ -68,10 +68,10 @@ public class Plugin.EmailTemplates :
     public override async void activate(bool is_startup) throws GLib.Error {
         // Add localised first, so if we need to create a folder it
         // will be created localised.
-        Geary.iterate_array(LOC_NAMES.split("|")).map<string>(
+        Convey.iterate_array(LOC_NAMES.split("|")).map<string>(
             (name) => name.strip()
         ).add_all_to(this.folder_names);
-        Geary.iterate_array(UNLOC_NAMES.split("|")).map<string>(
+        Convey.iterate_array(UNLOC_NAMES.split("|")).map<string>(
             (name) => name.strip()
         ).add_all_to(this.folder_names);
 

@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.HTML {
+namespace Convey.HTML {
 
 // Regex to detect URLs.
 // Originally from here: http://daringfireball.net/2010/07/improved_regex_for_matching_urls
@@ -168,7 +168,7 @@ public string smart_escape(string? text) {
  */
 public string html_to_text(string html,
                            bool include_blockquotes = true,
-                           string encoding = Geary.RFC822.UTF8_CHARSET) {
+                           string encoding = Convey.RFC822.UTF8_CHARSET) {
     Html.Doc *doc = Html.Doc.read_doc(html, "", encoding, Html.ParserOption.RECOVER |
         Html.ParserOption.NOERROR | Html.ParserOption.NOWARNING | Html.ParserOption.NOBLANKS |
         Html.ParserOption.NONET | Html.ParserOption.COMPACT);

@@ -20,12 +20,12 @@
  * operation for the caller.  Vacuuming locks the database for an extended period of time, and GC
  * attempts to determine when it's best to do that by tracking the number of messages reaped by
  * the garbage collector.  (Vacuuming is really only advantageous when lots of rows have been
- * deleted in the database; without garbage collection, Geary's database tends to merely grow in
+ * deleted in the database; without garbage collection, Convey's database tends to merely grow in
  * size.)  Unlike garbage collection, vacuuming is not designed to run in the background and the
  * user should be presented a busy monitor while it's occurring.
  */
 
-private class Geary.ImapDB.GC {
+private class Convey.ImapDB.GC {
     // Maximum number of days between reaping runs.
     private const int REAP_DAYS_SPAN = 10;
 
@@ -186,7 +186,7 @@ private class Geary.ImapDB.GC {
      * presented a busy indicator.  Operations against the database should not be expected to run
      * until this completes.  Cancellation will not work once vacuuming has started.
      *
-     * @throws Geary.EngineError.ALREADY_OPEN if {@link is_running} is true.
+     * @throws Convey.EngineError.ALREADY_OPEN if {@link is_running} is true.
      */
     public async void vacuum_async(Cancellable? cancellable) throws Error {
         if (is_running)
@@ -207,7 +207,7 @@ private class Geary.ImapDB.GC {
 
         // NOTE: VACUUM cannot happen inside a transaction, so to avoid blocking the main thread,
         // run a non-transacted command from a background thread
-        Geary.Db.DatabaseConnection cx = yield db.open_connection(cancellable);
+        Convey.Db.DatabaseConnection cx = yield db.open_connection(cancellable);
         yield Nonblocking.Concurrent.global.schedule_async(() => {
             cx.exec("VACUUM", cancellable);
 
@@ -247,7 +247,7 @@ private class Geary.ImapDB.GC {
      * to be interrupted (i.e. the application closes) and pick back up where it left off when the
      * application restarts.
      *
-     * @throws Geary.EngineError.ALREADY_OPEN if {@link is_running} is true.
+     * @throws Convey.EngineError.ALREADY_OPEN if {@link is_running} is true.
      */
     public async void reap_async(Cancellable? cancellable) throws Error {
         if (is_running)
@@ -268,7 +268,7 @@ private class Geary.ImapDB.GC {
         // Find all messages unlinked from the location table and older than the GC reap date ...
         // this is necessary because we can't be certain at any point in time that the local store
         // is fully synchronized with the server.  For example, it's possible we recvd a message in
-        // the Inbox, the user archived it, then closed Geary before the engine could synchronize
+        // the Inbox, the user archived it, then closed Convey before the engine could synchronize
         // with All Mail.  In that situation, the email is completely unlinked from the
         // MessageLocationTable but still on the server.  This attempts to give some "breathing
         // room" and not remove that message until we feel more comfortable that it's truly

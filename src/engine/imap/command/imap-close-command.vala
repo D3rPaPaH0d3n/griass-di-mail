@@ -8,7 +8,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.4.2]]
  */
 
-public class Geary.Imap.CloseCommand : Command {
+public class Convey.Imap.CloseCommand : Command {
 
     public const string NAME = "close";
 

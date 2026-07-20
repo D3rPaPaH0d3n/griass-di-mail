@@ -10,23 +10,23 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.4.2]]
  */
 
-public class Geary.Imap.Envelope : Geary.MessageData.AbstractMessageData, Geary.Imap.MessageData {
-    public Geary.RFC822.Date? sent { get; private set; }
-    public Geary.RFC822.Subject subject { get; private set; }
-    public Geary.RFC822.MailboxAddresses from { get; private set; }
-    public Geary.RFC822.MailboxAddresses sender { get; private set; }
-    public Geary.RFC822.MailboxAddresses reply_to { get; private set; }
-    public Geary.RFC822.MailboxAddresses? to { get; private set; }
-    public Geary.RFC822.MailboxAddresses? cc { get; private set; }
-    public Geary.RFC822.MailboxAddresses? bcc { get; private set; }
-    public Geary.RFC822.MessageIDList? in_reply_to { get; private set; }
-    public Geary.RFC822.MessageID? message_id { get; private set; }
+public class Convey.Imap.Envelope : Convey.MessageData.AbstractMessageData, Convey.Imap.MessageData {
+    public Convey.RFC822.Date? sent { get; private set; }
+    public Convey.RFC822.Subject subject { get; private set; }
+    public Convey.RFC822.MailboxAddresses from { get; private set; }
+    public Convey.RFC822.MailboxAddresses sender { get; private set; }
+    public Convey.RFC822.MailboxAddresses reply_to { get; private set; }
+    public Convey.RFC822.MailboxAddresses? to { get; private set; }
+    public Convey.RFC822.MailboxAddresses? cc { get; private set; }
+    public Convey.RFC822.MailboxAddresses? bcc { get; private set; }
+    public Convey.RFC822.MessageIDList? in_reply_to { get; private set; }
+    public Convey.RFC822.MessageID? message_id { get; private set; }
 
-    public Envelope(Geary.RFC822.Date? sent, Geary.RFC822.Subject subject,
-        Geary.RFC822.MailboxAddresses from, Geary.RFC822.MailboxAddresses sender,
-        Geary.RFC822.MailboxAddresses reply_to, Geary.RFC822.MailboxAddresses? to,
-        Geary.RFC822.MailboxAddresses? cc, Geary.RFC822.MailboxAddresses? bcc,
-        Geary.RFC822.MessageIDList? in_reply_to, Geary.RFC822.MessageID? message_id) {
+    public Envelope(Convey.RFC822.Date? sent, Convey.RFC822.Subject subject,
+        Convey.RFC822.MailboxAddresses from, Convey.RFC822.MailboxAddresses sender,
+        Convey.RFC822.MailboxAddresses reply_to, Convey.RFC822.MailboxAddresses? to,
+        Convey.RFC822.MailboxAddresses? cc, Convey.RFC822.MailboxAddresses? bcc,
+        Convey.RFC822.MessageIDList? in_reply_to, Convey.RFC822.MessageID? message_id) {
         this.sent = sent;
         this.subject = subject;
         this.from = from;

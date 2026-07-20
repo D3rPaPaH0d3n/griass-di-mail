@@ -7,19 +7,19 @@
  */
 
 /**
- * An database-backed implementation of Geary.Contacts
+ * An database-backed implementation of Convey.Contacts
  */
-internal class Geary.ContactStoreImpl : ContactStore, BaseObject {
+internal class Convey.ContactStoreImpl : ContactStore, BaseObject {
 
 
-    private Geary.Db.Database backing;
+    private Convey.Db.Database backing;
 
 
-    internal ContactStoreImpl(Geary.Db.Database backing) {
+    internal ContactStoreImpl(Convey.Db.Database backing) {
         this.backing = backing;
     }
 
-    public async Contact? get_by_rfc822(Geary.RFC822.MailboxAddress mailbox,
+    public async Contact? get_by_rfc822(Convey.RFC822.MailboxAddress mailbox,
                                         GLib.Cancellable? cancellable)
         throws GLib.Error {
         Contact? contact = null;
@@ -98,7 +98,7 @@ internal class Geary.ContactStoreImpl : ContactStore, BaseObject {
                            GLib.Cancellable? cancellable)
         throws GLib.Error {
         Gee.Collection<Contact> contacts = new Gee.LinkedList<Contact>();
-        string normalised_query = Geary.Db.normalise_case_insensitive_query(query);
+        string normalised_query = Convey.Db.normalise_case_insensitive_query(query);
         if (!String.is_empty(normalised_query)) {
             normalised_query = normalised_query + "%";
             Db.Statement stmt = cx.prepare("""

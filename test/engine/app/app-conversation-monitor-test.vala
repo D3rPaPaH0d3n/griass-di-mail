@@ -6,7 +6,7 @@
  */
 
 
-class Geary.App.ConversationMonitorTest : TestCase {
+class Convey.App.ConversationMonitorTest : TestCase {
 
 
     AccountInformation? account_info = null;
@@ -17,7 +17,7 @@ class Geary.App.ConversationMonitorTest : TestCase {
 
 
     public ConversationMonitorTest() {
-        base("Geary.App.ConversationMonitorTest");
+        base("Convey.App.ConversationMonitorTest");
         add_test("start_stop_monitoring", start_stop_monitoring);
         add_test("open_error", open_error);
         add_test("close_during_open_error", close_during_open_error);
@@ -427,13 +427,13 @@ class Geary.App.ConversationMonitorTest : TestCase {
     private Email setup_email(int id, Email? references = null) {
         Email email = new Email(new Mock.EmailIdentifer(id));
         DateTime now = new DateTime.now_local();
-        Geary.RFC822.MessageID mid = new Geary.RFC822.MessageID(
+        Convey.RFC822.MessageID mid = new Convey.RFC822.MessageID(
             "test%d@localhost".printf(id)
         );
 
-        Geary.RFC822.MessageIDList refs_list = null;
+        Convey.RFC822.MessageIDList refs_list = null;
         if (references != null) {
-            refs_list = new Geary.RFC822.MessageIDList.single(
+            refs_list = new Convey.RFC822.MessageIDList.single(
                 references.message_id
             );
         }

@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.Attachment : Geary.Attachment {
+internal class Convey.Graph.Attachment : Convey.Attachment {
 
     internal Attachment(Mime.ContentType content_type,
                         string? content_id,
@@ -18,13 +18,13 @@ internal class Geary.Graph.Attachment : Geary.Attachment {
         set_file_info(file, file_size);
     }
 
-    internal Attachment.from_part(Geary.RFC822.Part part,
+    internal Attachment.from_part(Convey.RFC822.Part part,
                                   GLib.File file,
                                   int64 file_size) {
         Mime.ContentDisposition? disposition = part.content_disposition;
         if (disposition == null) {
             disposition = new Mime.ContentDisposition.simple(
-                Geary.Mime.DispositionType.UNSPECIFIED
+                Convey.Mime.DispositionType.UNSPECIFIED
             );
         }
         this(

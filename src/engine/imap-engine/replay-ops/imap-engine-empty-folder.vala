@@ -9,7 +9,7 @@
  * ensuring the entire folder is emptied even if only a portion of it is synchronized locally.
  */
 
-private class Geary.ImapEngine.EmptyFolder : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.EmptyFolder : Convey.ImapEngine.SendReplayOperation {
     private MinimalFolder engine;
     private Cancellable? cancellable;
     private Gee.Set<ImapDB.EmailIdentifier>? removed_ids = null;
@@ -38,7 +38,7 @@ private class Geary.ImapEngine.EmptyFolder : Geary.ImapEngine.SendReplayOperatio
 
             int new_count = Numeric.int_floor(original_count - removed_ids.size, 0);
             if (new_count != original_count)
-                engine.replay_notify_email_count_changed(new_count, Geary.Folder.CountChangeReason.REMOVED);
+                engine.replay_notify_email_count_changed(new_count, Convey.Folder.CountChangeReason.REMOVED);
             return ReplayOperation.Status.CONTINUE;
         }
 
@@ -64,7 +64,7 @@ private class Geary.ImapEngine.EmptyFolder : Geary.ImapEngine.SendReplayOperatio
             engine.replay_notify_email_inserted(removed_ids);
         }
 
-        engine.replay_notify_email_count_changed(original_count, Geary.Folder.CountChangeReason.INSERTED);
+        engine.replay_notify_email_count_changed(original_count, Convey.Folder.CountChangeReason.INSERTED);
     }
 
     public override string describe_state() {

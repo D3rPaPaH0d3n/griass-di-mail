@@ -13,7 +13,7 @@
  * complete, and to ease the implementation. See comments in {@link
  * MinimalFolder.close_async}.
  */
-private class Geary.ImapEngine.UserClose : Geary.ImapEngine.ReplayOperation {
+private class Convey.ImapEngine.UserClose : Convey.ImapEngine.ReplayOperation {
 
     /** Determines the state of the close operation. */
     public Trillian is_closing = Trillian.UNKNOWN;

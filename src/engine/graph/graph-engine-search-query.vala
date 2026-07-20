@@ -5,9 +5,9 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.SearchQuery : Geary.SearchQuery {
+internal class Convey.Graph.SearchQuery : Convey.SearchQuery {
 
-    public SearchQuery(Gee.List<Geary.SearchQuery.Term> expression, string text) {
+    public SearchQuery(Gee.List<Convey.SearchQuery.Term> expression, string text) {
         base(expression, text);
     }
 

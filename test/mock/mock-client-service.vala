@@ -5,23 +5,23 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Mock.ClientService : Geary.ClientService {
+public class Mock.ClientService : Convey.ClientService {
 
 
-    public ClientService(Geary.AccountInformation account,
-                         Geary.ServiceInformation configuration,
-                         Geary.Endpoint remote) {
+    public ClientService(Convey.AccountInformation account,
+                         Convey.ServiceInformation configuration,
+                         Convey.Endpoint remote) {
         base(account, configuration, remote);
     }
 
     public override async void start(GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        throw new Geary.EngineError.UNSUPPORTED("Mock method");
+        throw new Convey.EngineError.UNSUPPORTED("Mock method");
     }
 
     public override async void stop(GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        throw new Geary.EngineError.UNSUPPORTED("Mock method");
+        throw new Convey.EngineError.UNSUPPORTED("Mock method");
     }
 
     public override void became_reachable() {

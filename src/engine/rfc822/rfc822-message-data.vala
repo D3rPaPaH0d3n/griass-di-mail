@@ -12,8 +12,8 @@
  * The value of these objects is the decoded form of the header
  * data. Encoded forms can be obtained via {@link to_rfc822_string}.
  */
-public interface Geary.RFC822.DecodedMessageData :
-    Geary.MessageData.AbstractMessageData {
+public interface Convey.RFC822.DecodedMessageData :
+    Convey.MessageData.AbstractMessageData {
 
     /** Returns an RFC822-safe string representation of the data. */
     public abstract string to_rfc822_string();
@@ -27,8 +27,8 @@ public interface Geary.RFC822.DecodedMessageData :
  * data. Decoded forms can be obtained via means specific to
  * implementations of this interface.
  */
-public interface Geary.RFC822.EncodedMessageData :
-    Geary.MessageData.BlockMessageData {
+public interface Convey.RFC822.EncodedMessageData :
+    Convey.MessageData.BlockMessageData {
 
 }
 
@@ -38,8 +38,8 @@ public interface Geary.RFC822.EncodedMessageData :
  * The decoded form of the id is the `addr-spec` portion, that is,
  * without the leading `<` and tailing `>`.
  */
-public class Geary.RFC822.MessageID :
-    Geary.MessageData.StringMessageData, DecodedMessageData {
+public class Convey.RFC822.MessageID :
+    Convey.MessageData.StringMessageData, DecodedMessageData {
 
     public MessageID(string value) {
         base(value);
@@ -100,8 +100,8 @@ public class Geary.RFC822.MessageID :
 /**
  * A immutable list of RFC822 Message-ID values.
  */
-public class Geary.RFC822.MessageIDList :
-    Geary.MessageData.AbstractMessageData,
+public class Convey.RFC822.MessageIDList :
+    Convey.MessageData.AbstractMessageData,
     DecodedMessageData {
 
 
@@ -300,9 +300,9 @@ public class Geary.RFC822.MessageIDList :
 
 }
 
-public class Geary.RFC822.Date :
-    Geary.MessageData.AbstractMessageData,
-    Gee.Hashable<Geary.RFC822.Date>,
+public class Convey.RFC822.Date :
+    Convey.MessageData.AbstractMessageData,
+    Gee.Hashable<Convey.RFC822.Date>,
     DecodedMessageData {
 
 
@@ -335,7 +335,7 @@ public class Geary.RFC822.Date :
         return this.rfc822;
     }
 
-    public virtual bool equal_to(Geary.RFC822.Date other) {
+    public virtual bool equal_to(Convey.RFC822.Date other) {
         return this == other || this.value.equal(other.value);
     }
 
@@ -349,9 +349,9 @@ public class Geary.RFC822.Date :
 
 }
 
-public class Geary.RFC822.Subject :
-    Geary.MessageData.StringMessageData,
-    Geary.MessageData.SearchableMessageData,
+public class Convey.RFC822.Subject :
+    Convey.MessageData.StringMessageData,
+    Convey.MessageData.SearchableMessageData,
     DecodedMessageData {
 
     public const string REPLY_PREFACE = "Re:";
@@ -434,7 +434,7 @@ public class Geary.RFC822.Subject :
     }
 
     /**
-     * See Geary.MessageData.SearchableMessageData.
+     * See Convey.MessageData.SearchableMessageData.
      */
     public string to_searchable_string() {
         return value;
@@ -442,8 +442,8 @@ public class Geary.RFC822.Subject :
 
 }
 
-public class Geary.RFC822.Header :
-    Geary.MessageData.BlockMessageData, EncodedMessageData {
+public class Convey.RFC822.Header :
+    Convey.MessageData.BlockMessageData, EncodedMessageData {
 
 
     private GMime.HeaderList headers;
@@ -511,8 +511,8 @@ public class Geary.RFC822.Header :
 
 }
 
-public class Geary.RFC822.Text :
-    Geary.MessageData.BlockMessageData, EncodedMessageData {
+public class Convey.RFC822.Text :
+    Convey.MessageData.BlockMessageData, EncodedMessageData {
 
 
     private class GMimeBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
@@ -559,8 +559,8 @@ public class Geary.RFC822.Text :
 
 }
 
-public class Geary.RFC822.Full :
-    Geary.MessageData.BlockMessageData, EncodedMessageData {
+public class Convey.RFC822.Full :
+    Convey.MessageData.BlockMessageData, EncodedMessageData {
 
     public Full(Memory.Buffer buffer) {
         base("RFC822.Full", buffer);
@@ -569,7 +569,7 @@ public class Geary.RFC822.Full :
 }
 
 /** Represents text providing a preview of an email's body. */
-public class Geary.RFC822.PreviewText : Geary.RFC822.Text {
+public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
 
     public PreviewText(Memory.Buffer _buffer) {
         base (_buffer);
@@ -581,7 +581,7 @@ public class Geary.RFC822.PreviewText : Geary.RFC822.Text {
         // Parse the header.
         GMime.Stream header_stream = Utils.create_stream_mem(preview_header);
         GMime.Parser parser = new GMime.Parser.with_stream(header_stream);
-        GMime.Part? gpart = parser.construct_part(Geary.RFC822.get_parser_options()) as GMime.Part;
+        GMime.Part? gpart = parser.construct_part(Convey.RFC822.get_parser_options()) as GMime.Part;
         if (gpart != null) {
             Part part = new Part(gpart);
 
@@ -601,7 +601,7 @@ public class Geary.RFC822.PreviewText : Geary.RFC822.Text {
                     Memory.Buffer preview_buffer = part.write_to_buffer(
                         Part.EncodingConversion.UTF8
                     );
-                    preview_text = Geary.RFC822.Utils.to_preview_text(
+                    preview_text = Convey.RFC822.Utils.to_preview_text(
                         preview_buffer.get_valid_utf8(),
                         is_html ? TextFormat.HTML : TextFormat.PLAIN
                     );
@@ -611,17 +611,17 @@ public class Geary.RFC822.PreviewText : Geary.RFC822.Text {
             }
         }
 
-        base(new Geary.Memory.StringBuffer(preview_text));
+        base(new Convey.Memory.StringBuffer(preview_text));
     }
 
     public PreviewText.from_string(string preview) {
-        base (new Geary.Memory.StringBuffer(preview));
+        base (new Convey.Memory.StringBuffer(preview));
     }
 
 }
 
-public class Geary.RFC822.AuthenticationResults :
-    Geary.MessageData.StringMessageData {
+public class Convey.RFC822.AuthenticationResults :
+    Convey.MessageData.StringMessageData {
 
     public AuthenticationResults(string value) {
         base(value);

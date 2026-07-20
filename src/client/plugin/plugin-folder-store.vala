@@ -13,7 +13,7 @@
  * FolderContext.get_folder_store} on their {@link
  * FolderExtension.folders} property.
  */
-public interface Plugin.FolderStore : Geary.BaseObject {
+public interface Plugin.FolderStore : Convey.BaseObject {
 
 
     /**

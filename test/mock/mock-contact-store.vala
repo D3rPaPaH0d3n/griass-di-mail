@@ -6,26 +6,26 @@
  */
 
 internal class Mock.ContactStore : GLib.Object,
-    Geary.ContactStore, ValaUnit.TestAssertions, ValaUnit.MockObject {
+    Convey.ContactStore, ValaUnit.TestAssertions, ValaUnit.MockObject {
 
     protected Gee.Queue<ValaUnit.ExpectedCall> expected {
         get; set; default = new Gee.LinkedList<ValaUnit.ExpectedCall>();
     }
 
-    public async Geary.Contact? get_by_rfc822(Geary.RFC822.MailboxAddress address,
+    public async Convey.Contact? get_by_rfc822(Convey.RFC822.MailboxAddress address,
                                               GLib.Cancellable? cancellable)
         throws GLib.Error {
-        return object_call<Geary.Contact?>(
+        return object_call<Convey.Contact?>(
             "get_by_rfc822", { address, cancellable }, null
         );
     }
 
-    public async Gee.Collection<Geary.Contact> search(string query,
+    public async Gee.Collection<Convey.Contact> search(string query,
                                                       uint min_importance,
                                                       uint limit,
                                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        return object_call<Gee.Collection<Geary.Contact>>(
+        return object_call<Gee.Collection<Convey.Contact>>(
             "search",
             {
                 box_arg(query),
@@ -33,11 +33,11 @@ internal class Mock.ContactStore : GLib.Object,
                 uint_arg(limit),
                 cancellable
             },
-            Gee.Collection.empty<Geary.Contact>()
+            Gee.Collection.empty<Convey.Contact>()
         );
     }
 
-    public async void update_contacts(Gee.Collection<Geary.Contact> updated,
+    public async void update_contacts(Gee.Collection<Convey.Contact> updated,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         void_call("update_contacts", { updated, cancellable });

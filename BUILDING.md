@@ -1,16 +1,16 @@
-Building and running Geary
+Building and running Convey
 ==========================
 
-Geary uses the [Meson](http://mesonbuild.com) and
+Convey uses the [Meson](http://mesonbuild.com) and
 [Ninja](https://ninja-build.org) build systems. You will need these
 and a number of other development libraries installed to build
-Geary. See the Dependencies section below for a list of packages to
+Convey. See the Dependencies section below for a list of packages to
 install.
 
 Building, running, tests and documentation
 ------------------------------------------
 
-To build Geary, run the following commands from the top-level
+To build Convey, run the following commands from the top-level
 directory of the source code repository:
 
 ```
@@ -18,11 +18,11 @@ meson build
 ninja -C build
 ```
 
-Once built, Geary can be run directly from the build directory without
+Once built, Convey can be run directly from the build directory without
 being installed:
 
 ```
-./build/src/geary
+./build/src/convey
 ```
 
 Note that certain desktop integration (such as being listed in an
@@ -42,7 +42,7 @@ build, installing, and so on.
 Build profiles
 --------------
 
-Geary can be built using a number of different build profiles, which
+Convey can be built using a number of different build profiles, which
 determine things like the application id, the location of stored data,
 the name of the application, icon and other visual elements.
 
@@ -51,7 +51,7 @@ and `configure` commands, using the standard `-Dprofile=…` option. See
 the `profile` option in `meson_options.txt` for the current list of
 supported types.
 
-Maintainers must use the `release` build profile when packaging Geary,
+Maintainers must use the `release` build profile when packaging Convey,
 otherwise when run it will use branding and data locations intended
 for development only.
 
@@ -64,7 +64,7 @@ options.
 Dependencies
 ------------
 
-Building Geary requires the following major libraries and tools:
+Building Convey requires the following major libraries and tools:
 
  * GTK 3
  * WebKitGTK (Specifically the API 4.1 variant)
@@ -74,7 +74,7 @@ Building Geary requires the following major libraries and tools:
 See the `meson.build` file in the top-level directory for the complete
 list of required dependencies and minimum versions.
 
-Geary requires SQLite is built with both FTS3 and FTS5 support. Ensure
+Convey requires SQLite is built with both FTS3 and FTS5 support. Ensure
 `--enable-fts5`, `-DSQLITE_ENABLE_FTS3` and
 `-DSQLITE_ENABLE_FTS3_PARENTHESIS` are passed to the SQLite configure
 script.

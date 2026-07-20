@@ -9,10 +9,10 @@
  * the basics needed for any type of folder, and is intended to work with both local
  * and remote folder types.
  */
-public abstract class FolderList.AbstractFolderEntry : Geary.BaseObject, Sidebar.Entry, Sidebar.SelectableEntry {
-    public Geary.Folder folder { get; private set; }
+public abstract class FolderList.AbstractFolderEntry : Convey.BaseObject, Sidebar.Entry, Sidebar.SelectableEntry {
+    public Convey.Folder folder { get; private set; }
 
-    protected AbstractFolderEntry(Geary.Folder folder) {
+    protected AbstractFolderEntry(Convey.Folder folder) {
         this.folder = folder;
     }
 

@@ -9,7 +9,7 @@
 /**
  * Updates an existing message locally after an unsolicited FETCH.
  */
-private class Geary.ImapEngine.ReplayUpdate : Geary.ImapEngine.ReplayOperation {
+private class Convey.ImapEngine.ReplayUpdate : Convey.ImapEngine.ReplayOperation {
 
 
     private MinimalFolder owner;
@@ -55,8 +55,8 @@ private class Geary.ImapEngine.ReplayUpdate : Geary.ImapEngine.ReplayOperation {
             }
 
             if (id != null) {
-                Gee.Map<Geary.ImapDB.EmailIdentifier, Geary.EmailFlags> changed_map =
-                new Gee.HashMap<Geary.ImapDB.EmailIdentifier, Geary.EmailFlags>();
+                Gee.Map<Convey.ImapDB.EmailIdentifier, Convey.EmailFlags> changed_map =
+                new Gee.HashMap<Convey.ImapDB.EmailIdentifier, Convey.EmailFlags>();
                 changed_map.set(id, new Imap.EmailFlags(message_flags));
 
                 yield this.owner.local_folder.set_email_flags_async(changed_map, null);

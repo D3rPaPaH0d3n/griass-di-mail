@@ -8,14 +8,14 @@
  * Gmail's All Mail folder supports basic operations as well as true removal of emails.
  */
 
-private class Geary.ImapEngine.GmailAllMailFolder : MinimalFolder, FolderSupport.Remove {
+private class Convey.ImapEngine.GmailAllMailFolder : MinimalFolder, FolderSupport.Remove {
     public GmailAllMailFolder(GmailAccount account,
                               ImapDB.Folder local_folder) {
         base(account, local_folder, ALL_MAIL);
     }
 
     public async void
-        remove_email_async(Gee.Collection<Geary.EmailIdentifier> email_ids,
+        remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         yield GmailFolder.true_remove_email_async(this, email_ids, cancellable);

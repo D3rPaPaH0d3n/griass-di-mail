@@ -19,7 +19,7 @@
  *
  * This class is not thread-safe.
  */
-public class Geary.Imap.ClientService : Geary.ClientService {
+public class Convey.Imap.ClientService : Convey.ClientService {
 
 
     /** The GLib logging domain used for IMAP sub-system logging. */
@@ -340,7 +340,7 @@ public class Geary.Imap.ClientService : Geary.ClientService {
         } catch (GLib.IOError.CANCELLED err) {
             // Nothing to do here
         } catch (GLib.Error err) {
-            Geary.ErrorContext context = new Geary.ErrorContext(err);
+            Convey.ErrorContext context = new Convey.ErrorContext(err);
             debug("Error creating new session for the pool: %s",
                   context.format_full_error());
             notify_connection_failed(context);
@@ -358,7 +358,7 @@ public class Geary.Imap.ClientService : Geary.ClientService {
                 this.free_queue.send(new_session);
                 notify_connected();
             } catch (GLib.Error err) {
-                Geary.ErrorContext context = new Geary.ErrorContext(err);
+                Convey.ErrorContext context = new Convey.ErrorContext(err);
                 debug("Error adding new session to the pool: %s",
                       context.format_full_error());
                 notify_connection_failed(context);
@@ -547,7 +547,7 @@ public class Geary.Imap.ClientService : Geary.ClientService {
                 (obj, res) => { this.remove_session_async.end(res); }
             );
             if (session.disconnected == ClientSession.DisconnectReason.REMOTE_ERROR) {
-                Geary.ErrorContext context = new Geary.ErrorContext(
+                Convey.ErrorContext context = new Convey.ErrorContext(
                     new GLib.IOError.NOT_CONNECTED("Session disconnected, remote error")
                 );
                 notify_connection_failed(context);

@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Smtp.Response {
+public class Convey.Smtp.Response {
     public ResponseCode code { get; private set; }
     public ResponseLine first_line { get; private set; }
     public Gee.List<ResponseLine> lines { get; private set; }

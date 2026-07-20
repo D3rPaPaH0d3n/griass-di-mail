@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.FetchDataDecoderTest : TestCase {
+class Convey.Imap.FetchDataDecoderTest : TestCase {
 
 
     public FetchDataDecoderTest() {
-        base("Geary.Imap.FetchDataDecoderTest");
+        base("Convey.Imap.FetchDataDecoderTest");
         add_test("envelope_basic", envelope_basic);
         add_test(
             "envelope_mailbox_missing_mailbox_name_quirk",

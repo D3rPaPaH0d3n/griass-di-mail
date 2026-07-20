@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Smtp.Request {
+public class Convey.Smtp.Request {
     public Command cmd { get; private set; }
     public string[]? args { get; private set; }
 
@@ -35,7 +35,7 @@ public class Geary.Smtp.Request {
     }
 }
 
-public class Geary.Smtp.HeloRequest : Geary.Smtp.Request {
+public class Convey.Smtp.HeloRequest : Convey.Smtp.Request {
     public HeloRequest(string domain) {
         base (Command.HELO, { domain });
     }
@@ -45,7 +45,7 @@ public class Geary.Smtp.HeloRequest : Geary.Smtp.Request {
     }
 }
 
-public class Geary.Smtp.EhloRequest : Geary.Smtp.Request {
+public class Convey.Smtp.EhloRequest : Convey.Smtp.Request {
     public EhloRequest(string domain) {
         base (Command.EHLO, { domain });
     }
@@ -56,14 +56,14 @@ public class Geary.Smtp.EhloRequest : Geary.Smtp.Request {
     }
 }
 
-public class Geary.Smtp.MailRequest : Geary.Smtp.Request {
-    public MailRequest(Geary.RFC822.MailboxAddress reverse_path) {
+public class Convey.Smtp.MailRequest : Convey.Smtp.Request {
+    public MailRequest(Convey.RFC822.MailboxAddress reverse_path) {
         base (Command.MAIL, { "from:<%s>".printf(reverse_path.to_rfc822_address()) });
     }
 }
 
-public class Geary.Smtp.RcptRequest : Geary.Smtp.Request {
-    public RcptRequest(Geary.RFC822.MailboxAddress to) {
+public class Convey.Smtp.RcptRequest : Convey.Smtp.Request {
+    public RcptRequest(Convey.RFC822.MailboxAddress to) {
         base (Command.RCPT, { "to:<%s>".printf(to.to_rfc822_address()) });
     }
 }

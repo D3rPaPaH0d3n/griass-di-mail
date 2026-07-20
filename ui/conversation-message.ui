@@ -35,7 +35,7 @@
                         <property name="ellipsize">end</property>
                         <property name="xalign">0</property>
                         <style>
-                          <class name="geary-header"/>
+                          <class name="convey-header"/>
                         </style>
                       </object>
                     </child>
@@ -44,7 +44,7 @@
                         <property name="label" translatable="yes">1/1/1970	</property>
                         <property name="ellipsize">end</property>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
@@ -59,12 +59,12 @@
                     <property name="ellipsize">end</property>
                     <property name="xalign">0</property>
                     <style>
-                      <class name="geary-header-value"/>
+                      <class name="convey-header-value"/>
                     </style>
                   </object>
                 </child>
                 <style>
-                  <class name="geary-headers"/>
+                  <class name="convey-headers"/>
                 </style>
               </object>
             </child>
@@ -85,7 +85,7 @@
                         <property name="selection_mode">none</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
@@ -95,7 +95,7 @@
                         <property name="label" translatable="yes">1/1/1970	</property>
                         <property name="ellipsize">end</property>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
@@ -111,7 +111,7 @@
                         <property name="yalign">0</property>
                         <style>
                           <class name="dim-label"/>
-                          <class name="geary-header"/>
+                          <class name="convey-header"/>
                         </style>
                       </object>
                     </child>
@@ -125,7 +125,7 @@
                         <property name="selection_mode">none</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
@@ -141,7 +141,7 @@
                         <property name="yalign">0</property>
                         <style>
                           <class name="dim-label"/>
-                          <class name="geary-header"/>
+                          <class name="convey-header"/>
                         </style>
                       </object>
                     </child>
@@ -154,7 +154,7 @@
                         <property name="selection_mode">none</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
@@ -171,7 +171,7 @@
                     <property name="selectable">True</property>
                     <property name="xalign">0</property>
                     <style>
-                      <class name="geary-header-value"/>
+                      <class name="convey-header-value"/>
                     </style>
                   </object>
                 </child>
@@ -185,7 +185,7 @@
                         <property name="yalign">0</property>
                         <style>
                           <class name="dim-label"/>
-                          <class name="geary-header"/>
+                          <class name="convey-header"/>
                         </style>
                       </object>
                     </child>
@@ -195,7 +195,7 @@
                         <property name="hexpand">True</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
@@ -211,7 +211,7 @@
                         <property name="yalign">0</property>
                         <style>
                           <class name="dim-label"/>
-                          <class name="geary-header"/>
+                          <class name="convey-header"/>
                         </style>
                       </object>
                     </child>
@@ -221,7 +221,7 @@
                         <property name="hexpand">True</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
@@ -237,7 +237,7 @@
                         <property name="yalign">0</property>
                         <style>
                           <class name="dim-label"/>
-                          <class name="geary-header"/>
+                          <class name="convey-header"/>
                         </style>
                       </object>
                     </child>
@@ -247,21 +247,21 @@
                         <property name="hexpand">True</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
                         <style>
-                          <class name="geary-header-value"/>
+                          <class name="convey-header-value"/>
                         </style>
                       </object>
                     </child>
                   </object>
                 </child>
                 <style>
-                  <class name="geary-headers"/>
+                  <class name="convey-headers"/>
                 </style>
               </object>
             </child>
           </object>
         </child>
         <style>
-          <class name="geary-message-summary"/>
+          <class name="convey-message-summary"/>
         </style>
       </object>
     </child>
@@ -284,7 +284,7 @@
                   <object class="GtkBox" id="body_container">
                     <property name="orientation">vertical</property>
                     <style>
-                      <class name="geary-message-body"/>
+                      <class name="convey-message-body"/>
                     </style>
                   </object>
                 </child>
@@ -292,7 +292,7 @@
                   <object class="GtkProgressBar" id="body_progress">
                     <property name="valign">start</property>
                     <style>
-                      <class name="geary-body-progress"/>
+                      <class name="convey-body-progress"/>
                     </style>
                   </object>
                 </child>
@@ -303,7 +303,7 @@
       </object>
     </child>
     <style>
-      <class name="geary-message"/>
+      <class name="convey-message"/>
     </style>
   </template>
 </interface>

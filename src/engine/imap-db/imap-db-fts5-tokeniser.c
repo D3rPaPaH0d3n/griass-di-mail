@@ -257,7 +257,7 @@ gboolean sqlite3_register_fts5_tokeniser(sqlite3 *db) {
     }
 
     rc = api->xCreateTokenizer(api,
-                               "geary_tokeniser",
+                               "convey_tokeniser",
                                NULL,
                                tokeniser,
                                NULL);
@@ -268,10 +268,10 @@ gboolean sqlite3_register_fts5_tokeniser(sqlite3 *db) {
 // Entry point for external loadable library, required when using
 // command line SQLite tool. The name of this function must match the
 // name of the shared module.
-int sqlite3_gearytokeniser_init(sqlite3 *db,
+int sqlite3_conveytokeniser_init(sqlite3 *db,
                                 unused char **error_message,
                                 const sqlite3_api_routines *api) {
-    g_info("Loading geary_tokeniser\n");
+    g_info("Loading convey_tokeniser\n");
     SQLITE_EXTENSION_INIT2(api);
     return sqlite3_register_fts5_tokeniser(db) ? SQLITE_OK : SQLITE_ABORT;
 }

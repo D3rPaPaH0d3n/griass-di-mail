@@ -12,7 +12,7 @@
  * implement any additional extension interfaces (such as {@link
  * NotificationExtension}) as required.
  */
-public abstract class Plugin.PluginBase : Geary.BaseObject {
+public abstract class Plugin.PluginBase : Convey.BaseObject {
 
     /**
      * Returns an object for interacting with the client application.

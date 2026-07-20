@@ -11,7 +11,7 @@
  *
  * This class is immutable.
  */
-public class Geary.Mime.ContentType : Geary.BaseObject {
+public class Convey.Mime.ContentType : Convey.BaseObject {
 
     /**
      * MIME wildcard for comparing {@link media_type} and {@link media_subtype}.
@@ -75,7 +75,7 @@ public class Geary.Mime.ContentType : Geary.BaseObject {
             throw new MimeError.PARSE("Invalid MIME Content-Type: %s", str);
 
         return new ContentType.from_gmime(GMime.ContentType.parse(
-          Geary.RFC822.get_parser_options(),
+          Convey.RFC822.get_parser_options(),
           str
         ));
     }
@@ -85,7 +85,7 @@ public class Geary.Mime.ContentType : Geary.BaseObject {
      *
      * Returns null if it could not be guessed.
      */
-    public static ContentType? guess_type(string? file_name, Geary.Memory.Buffer? buf)
+    public static ContentType? guess_type(string? file_name, Convey.Memory.Buffer? buf)
         throws Error {
         string? mime_type = null;
 
@@ -94,7 +94,7 @@ public class Geary.Mime.ContentType : Geary.BaseObject {
             // avoid the intermediate glib_content_type step here?
             string glib_type = GLib.ContentType.guess(file_name, null, null);
             mime_type = GLib.ContentType.get_mime_type(glib_type);
-            if (Geary.String.is_empty(mime_type)) {
+            if (Convey.String.is_empty(mime_type)) {
                 mime_type = null;
             }
         }
@@ -114,7 +114,7 @@ public class Geary.Mime.ContentType : Geary.BaseObject {
         }
 
         return (
-            !Geary.String.is_empty_or_whitespace(mime_type)
+            !Convey.String.is_empty_or_whitespace(mime_type)
             ? ContentType.parse(mime_type)
             : null
         );

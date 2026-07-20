@@ -4,29 +4,29 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
+public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
 
     private const int INBOX_ORDINAL = -2; // First account branch is zero
     private const int SEARCH_ORDINAL = -1;
 
 
-    public signal void folder_selected(Geary.Folder? folder);
-    public signal void folder_activated(Geary.Folder? folder);
-    public signal void copy_conversation(Geary.Folder folder);
-    public signal void move_conversation(Geary.Folder folder);
+    public signal void folder_selected(Convey.Folder? folder);
+    public signal void folder_activated(Convey.Folder? folder);
+    public signal void copy_conversation(Convey.Folder folder);
+    public signal void move_conversation(Convey.Folder folder);
 
-    public Geary.Folder? selected { get ; private set; default = null; }
+    public Convey.Folder? selected { get ; private set; default = null; }
 
-    private Gee.HashMap<Geary.Account, AccountBranch> account_branches
-        = new Gee.HashMap<Geary.Account, AccountBranch>();
+    private Gee.HashMap<Convey.Account, AccountBranch> account_branches
+        = new Gee.HashMap<Convey.Account, AccountBranch>();
     private InboxesBranch inboxes_branch = new InboxesBranch();
     private SearchBranch? search_branch = null;
 
 
     public Tree() {
         //XXX GTK4 need to set up proper GdkContentFormats here
-        base(new Gdk.ContentFormats({ "application/x-geary-mail" }),
+        base(new Gdk.ContentFormats({ "application/x-convey-mail" }),
              Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
         base_ref();
         set_activate_on_single_click(true);
@@ -66,7 +66,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
         minimum_baseline = natural_baseline = -1;
     }
 
-    public void set_has_new(Geary.Folder folder, bool has_new) {
+    public void set_has_new(Convey.Folder folder, bool has_new) {
         FolderEntry? entry = get_folder_entry(folder);
         if (entry != null) {
             entry.set_has_new(has_new);
@@ -81,7 +81,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
         }
     }
 
-    private FolderEntry? get_folder_entry(Geary.Folder folder) {
+    private FolderEntry? get_folder_entry(Convey.Folder folder) {
         AccountBranch? account_branch = account_branches.get(folder.account);
         return (account_branch == null ? null :
             account_branch.get_entry_for_path(folder.path));
@@ -111,14 +111,14 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
         }
     }
 
-    public void set_user_folders_root_name(Geary.Account account, string name) {
+    public void set_user_folders_root_name(Convey.Account account, string name) {
         if (account_branches.has_key(account))
             account_branches.get(account).user_folder_group.rename(name);
     }
 
     public void add_folder(Application.FolderContext context) {
-        Geary.Folder folder = context.folder;
-        Geary.Account account = folder.account;
+        Convey.Folder folder = context.folder;
+        Convey.Account account = folder.account;
         bool had_folder = (get_folder_entry(folder) != null);
 
         if (!account_branches.has_key(account)) {
@@ -142,8 +142,8 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
     }
 
     public void remove_folder(Application.FolderContext context) {
-        Geary.Folder folder = context.folder;
-        Geary.Account account = folder.account;
+        Convey.Folder folder = context.folder;
+        Convey.Account account = folder.account;
 
         var account_branch = this.account_branches.get(account);
 
@@ -169,7 +169,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
         account_branch.remove_folder(folder.path);
     }
 
-    public void remove_account(Geary.Account account) {
+    public void remove_account(Convey.Account account) {
         account.information.notify["ordinal"].disconnect(on_ordinal_changed);
 
         // If a folder on this account is selected, unselect it.
@@ -191,7 +191,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
             prune(inboxes_branch);
     }
 
-    public void select_folder(Geary.Folder to_select) {
+    public void select_folder(Convey.Folder to_select) {
         if (this.selected != to_select) {
             bool selected = false;
             if (to_select.used_as == INBOX) {
@@ -207,7 +207,7 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
         }
     }
 
-    public bool select_inbox(Geary.Account account) {
+    public bool select_inbox(Convey.Account account) {
         if (!has_branch(inboxes_branch))
             return false;
 
@@ -244,8 +244,8 @@ public class FolderList.Tree : Sidebar.Tree, Geary.BaseInterface {
     }
 #endif
 
-    public void set_search(Geary.Engine engine,
-                           Geary.App.SearchFolder search_folder) {
+    public void set_search(Convey.Engine engine,
+                           Convey.App.SearchFolder search_folder) {
         if (search_branch != null && has_branch(search_branch)) {
             // We already have a search folder.  If it's the same one, just
             // select it.  If it's a new search folder, remove the old one and

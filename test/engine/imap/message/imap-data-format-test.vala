@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.DataFormatTest : TestCase {
+class Convey.Imap.DataFormatTest : TestCase {
 
 
     public DataFormatTest() {
-        base("Geary.Imap.DataFormatTest");
+        base("Convey.Imap.DataFormatTest");
         add_test("is_atom_special", is_atom_special);
     }
 

@@ -9,7 +9,7 @@
  * Implementation of the email plugin extension context.
  */
 internal class Application.EmailPluginContext :
-    Geary.BaseObject, Plugin.EmailContext {
+    Convey.BaseObject, Plugin.EmailContext {
 
 
     private unowned Client application;
@@ -35,7 +35,7 @@ internal class Application.EmailPluginContext :
     public void add_email_info_bar(Plugin.EmailIdentifier displayed,
                                     Plugin.InfoBar info_bar,
                                     uint priority) {
-        Geary.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
+        Convey.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
         if (id != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.conversation_viewer.current_list != null) {
@@ -54,7 +54,7 @@ internal class Application.EmailPluginContext :
 
     public void remove_email_info_bar(Plugin.EmailIdentifier displayed,
                                       Plugin.InfoBar info_bar) {
-        Geary.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
+        Convey.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
         if (id != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.conversation_viewer.current_list != null) {
@@ -68,8 +68,8 @@ internal class Application.EmailPluginContext :
         }
     }
 
-    internal void email_displayed(Geary.AccountInformation account,
-                                  Geary.Email email) {
+    internal void email_displayed(Convey.AccountInformation account,
+                                  Convey.Email email) {
         AccountContext? context =
             this.application.controller.get_context_for_account(account);
         if (context != null) {
@@ -79,8 +79,8 @@ internal class Application.EmailPluginContext :
         }
     }
 
-    internal void email_sent(Geary.AccountInformation account,
-                             Geary.Email email) {
+    internal void email_sent(Convey.AccountInformation account,
+                             Convey.Email email) {
         AccountContext? context =
             this.application.controller.get_context_for_account(account);
         if (context != null) {

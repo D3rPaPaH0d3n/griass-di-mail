@@ -1,3 +1,3 @@
-geary_resources = gnome.compile_resources('org.gnome.Geary',
-  files('org.gnome.Geary.gresource.xml'),
+convey_resources = gnome.compile_resources('net.donnybeelo.Convey',
+  files('net.donnybeelo.Convey.gresource.xml'),
 )

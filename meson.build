@@ -1,4 +1,4 @@
-project('geary', [ 'vala', 'c' ],
+project('convey', [ 'vala', 'c' ],
   version: '46.0',
   license: 'LGPL-2.1-or-later',
   meson_version: '>= 1.7',
@@ -26,11 +26,11 @@ elif profile != 'release'
 endif
 
 # Configurable install dirs
-geary_prefix = get_option('prefix')
-bin_dir = geary_prefix / get_option('bindir')
-data_dir = geary_prefix / get_option('datadir')
-lib_dir = geary_prefix / get_option('libdir')
-locale_dir = geary_prefix / get_option('localedir')
+convey_prefix = get_option('prefix')
+bin_dir = convey_prefix / get_option('bindir')
+data_dir = convey_prefix / get_option('datadir')
+lib_dir = convey_prefix / get_option('libdir')
+locale_dir = convey_prefix / get_option('localedir')
 
 # Source dirs
 metadata_dir = meson.project_source_root() / 'bindings'/ 'metadata'
@@ -142,8 +142,8 @@ libmessagingmenu_dep = dependency('messaging-menu', version: '>= 12.10', require
 #
 
 # Build variables
-geary_id = 'org.gnome.Geary@0@'.format(appid_suffix)
-geary_version = meson.project_version()
+convey_id = 'net.donnybeelo.Convey@0@'.format(appid_suffix)
+convey_version = meson.project_version()
 revno = get_option('revno')
 if revno == ''
   revno = run_command('build-aux/git_version.py', check: false).stdout().strip()
@@ -154,7 +154,7 @@ i18n = import('i18n')
 
 # Static install dirs
 dbus_services_dir = data_dir / 'dbus-1' / 'services'
-client_lib_dir = lib_dir / 'geary'
+client_lib_dir = lib_dir / 'convey'
 plugins_dir = client_lib_dir / 'plugins'
 web_extensions_dir = client_lib_dir / 'web-extensions'
 

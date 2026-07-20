@@ -7,7 +7,7 @@
       <placeholder/>
     </child>
     <style>
-      <class name="geary_email"/>
+      <class name="convey_email"/>
     </style>
   </template>
   <object class="GtkBox" id="actions">
@@ -71,7 +71,7 @@
     <property name="hexpand">True</property>
     <property name="orientation">vertical</property>
     <style>
-      <class name="geary-submessages"/>
+      <class name="convey-submessages"/>
     </style>
   </object>
 </interface>

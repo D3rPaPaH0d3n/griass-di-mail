@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.IdleManagerTest : TestCase {
+class Convey.IdleManagerTest : TestCase {
 
 
     private class WeakRefTest : GLib.Object {
@@ -34,7 +34,7 @@ class Geary.IdleManagerTest : TestCase {
 
 
     public IdleManagerTest() {
-        base("Geary.IdleManagerTest");
+        base("Convey.IdleManagerTest");
         add_test("weak_ref", callback_weak_ref);
         add_test("start_reset", start_reset);
         add_test("test_run", test_run);

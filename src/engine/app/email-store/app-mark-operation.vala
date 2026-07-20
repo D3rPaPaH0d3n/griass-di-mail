@@ -4,21 +4,21 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.App.MarkOperation : Geary.App.AsyncFolderOperation {
-    public override Type folder_type { get { return typeof(Geary.FolderSupport.Mark); } }
+private class Convey.App.MarkOperation : Convey.App.AsyncFolderOperation {
+    public override Type folder_type { get { return typeof(Convey.FolderSupport.Mark); } }
 
-    public Geary.EmailFlags? flags_to_add;
-    public Geary.EmailFlags? flags_to_remove;
+    public Convey.EmailFlags? flags_to_add;
+    public Convey.EmailFlags? flags_to_remove;
 
-    public MarkOperation(Geary.EmailFlags? flags_to_add, Geary.EmailFlags? flags_to_remove) {
+    public MarkOperation(Convey.EmailFlags? flags_to_add, Convey.EmailFlags? flags_to_remove) {
         this.flags_to_add = flags_to_add;
         this.flags_to_remove = flags_to_remove;
     }
 
-    public override async Gee.Collection<Geary.EmailIdentifier> execute_async(
-        Geary.Folder folder, Gee.Collection<Geary.EmailIdentifier> ids,
+    public override async Gee.Collection<Convey.EmailIdentifier> execute_async(
+        Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids,
         Cancellable? cancellable) throws Error {
-        Geary.FolderSupport.Mark? mark = folder as Geary.FolderSupport.Mark;
+        Convey.FolderSupport.Mark? mark = folder as Convey.FolderSupport.Mark;
         assert(mark != null);
 
         yield mark.mark_email_async(

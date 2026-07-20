@@ -17,7 +17,7 @@
  *  * For {@link Type.EXISTING_LINK}, the user will be presented with
  *    an update, delete and open buttons.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/composer-link-popover.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/composer-link-popover.ui")]
 public class Composer.LinkPopover : Gtk.Popover {
 
     private const string[] HTTP_SCHEMES = { "http", "https" };
@@ -48,7 +48,7 @@ public class Composer.LinkPopover : Gtk.Popover {
 
     [GtkChild] private new unowned Gtk.Button remove;
 
-    private Geary.TimeoutManager validation_timeout;
+    private Convey.TimeoutManager validation_timeout;
 
 
     /** Emitted when the link URL has changed. */
@@ -73,7 +73,7 @@ public class Composer.LinkPopover : Gtk.Popover {
             this.insert.hide();
             break;
         }
-        this.validation_timeout = new Geary.TimeoutManager.milliseconds(
+        this.validation_timeout = new Convey.TimeoutManager.milliseconds(
             150, () => { validate(); }
         );
     }
@@ -95,7 +95,7 @@ public class Composer.LinkPopover : Gtk.Popover {
 
     private void validate() {
         string? text = this.url.get_text().strip();
-        bool is_empty = Geary.String.is_empty(text);
+        bool is_empty = Convey.String.is_empty(text);
         bool is_valid = false;
         bool is_nominal = false;
         bool is_mailto = false;
@@ -112,15 +112,15 @@ public class Composer.LinkPopover : Gtk.Popover {
                 string? scheme = url.get_scheme();
                 string? path = url.get_path();
                 if (scheme in HTTP_SCHEMES) {
-                    is_nominal = Geary.Inet.is_valid_display_host(url.get_host());
+                    is_nominal = Convey.Inet.is_valid_display_host(url.get_host());
                 } else if (scheme == "mailto") {
                     is_mailto = true;
                     is_nominal = (
-                        !Geary.String.is_empty(path) &&
-                        Geary.RFC822.MailboxAddress.is_valid_address(path)
+                        !Convey.String.is_empty(path) &&
+                        Convey.RFC822.MailboxAddress.is_valid_address(path)
                     );
                 } else if (scheme in OTHER_SCHEMES) {
-                    is_nominal = !Geary.String.is_empty(path);
+                    is_nominal = !Convey.String.is_empty(path);
                 }
             } else if (text == "http:/" || text == "https:/") {
                 // Don't let the URL entry switch to invalid and back

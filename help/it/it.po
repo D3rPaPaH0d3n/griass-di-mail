@@ -1,11 +1,11 @@
-# Italian translation for geary.
-# Copyright (C) 2014 geary's COPYRIGHT HOLDER
-# This file is distributed under the same license as the geary package.
+# Italian translation for convey.
+# Copyright (C) 2014 convey's COPYRIGHT HOLDER
+# This file is distributed under the same license as the convey package.
 # Federico Bruni <fede@inventati.org>, 2014-2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: geary help master\n"
+"Project-Id-Version: convey help master\n"
 "POT-Creation-Date: 2023-02-28 17:44+0000\n"
 "PO-Revision-Date: 2023-03-13 22:12+0100\n"
 "Last-Translator: Federico Bruni <fede@inventati.org>\n"
@@ -36,7 +36,7 @@ msgstr "Editor degli account"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Geary’s application menu button "
+"<em>accounts editor</em>. To open it, click Convey’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
@@ -69,15 +69,15 @@ msgstr "Aggiungere account"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Geary will automatically use any email accounts you have added via the "
+"Convey will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not "
 "have any accounts added to <app>Online Accounts</app>, you will be prompted "
-"to add an account the first time you run Geary."
+"to add an account the first time you run Convey."
 msgstr ""
-"Geary userà automaticamente qualsiasi account email aggiunto tramite il "
+"Convey userà automaticamente qualsiasi account email aggiunto tramite il "
 "pannello <app>Account online</app> delle <app>Impostazioni di GNOME</app>. "
 "Se non è stato aggiunto alcun account a <app>Account online</app>, verrà "
-"richiesto di aggiungere un account al primo avvio di Geary."
+"richiesto di aggiungere un account al primo avvio di Convey."
 
 #. (itstool) path: section/p
 #: C/accounts.page:37
@@ -87,7 +87,7 @@ msgid ""
 "providers supported by <app>Online Accounts</app>, <app>GNOME Settings</app> "
 "will be opened and you will be asked for your account information there. For "
 "other email providers, you will be asked for your account information by "
-"Geary. Once entered, click <gui>Create</gui> and the account information "
+"Convey. Once entered, click <gui>Create</gui> and the account information "
 "will be checked and then added."
 msgstr ""
 "Per aggiungere ulteriori account, aprire l'editor degli account e scegliere "
@@ -95,7 +95,7 @@ msgstr ""
 "fornitori supportati da <app>Account Online</app>, si aprirà "
 "<app>Impostazioni GNOME</app> dove verranno chieste le informazioni "
 "sull'account. Per gli altri fornitori di email, i dati degli account saranno "
-"chiesti da Geary. Dopo averli inseriti, fare clic su <gui>Crea</gui> e i "
+"chiesti da Convey. Dopo averli inseriti, fare clic su <gui>Crea</gui> e i "
 "dati saranno controllati e poi aggiunti."
 
 #. (itstool) path: section/title
@@ -107,12 +107,12 @@ msgstr "Aggiornare account esistenti"
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account "
-"you wish to update. Geary will display settings for the account. From there, "
+"you wish to update. Convey will display settings for the account. From there, "
 "you can add and remove additional sender email addresses, edit your email "
 "signature, and various other settings."
 msgstr ""
 "Per aggiornare account esistenti, aprire l'editor degli account e scegliere "
-"l'account da aggiornare. Geary mostrerà le impostazioni dell'account, dove "
+"l'account da aggiornare. Convey mostrerà le impostazioni dell'account, dove "
 "si possono aggiungere e togliere ulteriori indirizzi email del mittente, "
 "cambiare la firma e molte altre impostazioni."
 
@@ -120,11 +120,11 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Geary will download and store locally. Geary can only use locally available "
+"Convey will download and store locally. Convey can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
 "L'impostazione <gui>Scarica posta</gui> permette di configurare quanta posta "
-"Geary debba scaricare e conservare in locale. Geary può usare solo la posta "
+"Convey debba scaricare e conservare in locale. Convey può usare solo la posta "
 "disponibile localmente quando mostra o ricerca le conversazioni."
 
 #. (itstool) path: section/p
@@ -133,14 +133,14 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Geary will check the settings, then update the account. Note that "
+"and Convey will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
 msgstr ""
 "Per modificare le impostazioni del server dell'account, scorrere in fondo "
 "alla finestra e fare clic su <gui>Impostazioni del server</gui>. Dopo aver "
-"modificato le impostazioni, fare clic su <gui>Applica</gui> e Geary "
+"modificato le impostazioni, fare clic su <gui>Applica</gui> e Convey "
 "controllerà le impostazioni e aggiornerà l'account. Non è possibile "
 "modificare le impostazioni (nome del server, tipo di sicurezza e "
 "credenziali) di account aggiunti tramite il pannello <app>Account online</"
@@ -162,13 +162,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Geary "
+"The <gui>Save sent email on server</gui> checkbox controls whether Convey "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder. "
 "If de-selected, you will no be able to see any email messages you have sent, "
 "unless your server automatically saves them for you."
 msgstr ""
 "La casella di spunta <gui>Salva la posta inviata sul server</gui> stabilisce "
-"se Geary debba salvare una copia delle email inviate nella cartella "
+"se Convey debba salvare una copia delle email inviate nella cartella "
 "<gui>Inviata</gui>. Se deselezionata, non sarà possibile visualizzare i "
 "messaggi inviati, a meno che il server non li salvi automaticamente."
 
@@ -192,16 +192,16 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Geary, open the accounts editor and choose "
-"the account you wish to remove. Geary will display settings for the account. "
+"To remove an account added via Convey, open the accounts editor and choose "
+"the account you wish to remove. Convey will display settings for the account. "
 "Scroll to the bottom of the window and click <gui>Remove Account</gui>. You "
 "will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
 "<gui>Undo</gui> in the popup notification, or by typing <keyseq><key>Ctrl</"
 "key><key>U</key></keyseq>."
 msgstr ""
-"Per rimuovere un account aggiunto tramite Geary, aprire l'editor degli "
-"account e scegliere l'account da rimuovere. Geary mostrerà le impostazioni "
+"Per rimuovere un account aggiunto tramite Convey, aprire l'editor degli "
+"account e scegliere l'account da rimuovere. Convey mostrerà le impostazioni "
 "dell'account. Scorrere in fondo alla finestra e fare clic su <gui>Rimuovi "
 "account</gui>. Verrà chiesta la conferma di rimozione account. Dopo aver "
 "confermato, se si cambia idea è ancora possibile annullare la rimozione "
@@ -216,13 +216,13 @@ msgstr "Archivia, cestina e elimina messaggi"
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Geary lets you archive messages if your server supports it. Clicking the "
+"Convey lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
 "email organised by moving old and replied-to email out of the way."
 msgstr ""
-"Geary permette di archiviare i messaggi, se il server lo consente. Facendo "
+"Convey permette di archiviare i messaggi, se il server lo consente. Facendo "
 "clic sul pulsante <gui style=\"button\">Archivia</gui> della barra degli "
 "strumenti la conversazione viene spostata dalla cartella corrente alla "
 "cartella <gui>Archivio</gui> per la maggior parte dei servizi di email, "
@@ -287,8 +287,8 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/bugs.page:10
-msgid "Need help with Geary?"
-msgstr "Serve aiuto con Geary?"
+msgid "Need help with Convey?"
+msgstr "Serve aiuto con Convey?"
 
 #. (itstool) path: section/title
 #: C/bugs.page:13
@@ -298,12 +298,12 @@ msgstr "Supporto"
 #. (itstool) path: section/p
 #: C/bugs.page:15
 msgid ""
-"If you are having trouble using Geary, please <link href=\"https://wiki."
+"If you are having trouble using Convey, please <link href=\"https://wiki."
 "gnome.org/Apps/Geary/Contact\">get in touch</link> with the Geary community "
 "about the problem."
 msgstr ""
 "Se hai difficoltà nell'uso di Geary, <link href=\"https://wiki.gnome.org/"
-"Apps/Geary/Contact\">contatta</link> la comunità di Geary per discutere il "
+"Apps/Convey/Contact\">contatta</link> la comunità di Convey per discutere il "
 "problema."
 
 #. (itstool) path: section/title
@@ -314,11 +314,11 @@ msgstr "Segnalazione bug"
 #. (itstool) path: section/p
 #: C/bugs.page:23
 msgid ""
-"If you suspect you have found a bug in Geary, please follow the <link href="
+"If you suspect you have found a bug in Convey, please follow the <link href="
 "\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">bug reporting "
 "guidelines</link> so the problem can be diagnosed and fixed."
 msgstr ""
-"Se credi di aver trovato un bug in Geary, segui le <link href=\"https://wiki."
+"Se credi di aver trovato un bug in Convey, segui le <link href=\"https://wiki."
 "gnome.org/Apps/Geary/ReportingABug\">linee guida per la segnalazione di "
 "problemi</link> in modo che possa essere diagnosticato e corretto."
 
@@ -333,9 +333,9 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:32
-msgid "Geary version and installation method (Package? Flathub? Source code?)"
+msgid "Convey version and installation method (Package? Flathub? Source code?)"
 msgstr ""
-"Versione di Geary e metodo di installazione (pacchetto? Flathub? Codice "
+"Versione di Convey e metodo di installazione (pacchetto? Flathub? Codice "
 "sorgente?)"
 
 #. (itstool) path: item/p
@@ -374,26 +374,26 @@ msgstr "Cosa ti aspettavi che succedesse?"
 #. (itstool) path: section/p
 #: C/bugs.page:44
 msgid ""
-"Log files can be accessed via the Geary Inspector, press <keyseq><key>Alt</"
+"Log files can be accessed via the Convey Inspector, press <keyseq><key>Alt</"
 "key><key>I</key></keyseq> to open it, select and save any relevant log "
 "files, and attach them to the bug report."
 msgstr ""
-"Ai file di registro si può accedere tramite l'ispettore di Geary: premere "
+"Ai file di registro si può accedere tramite l'ispettore di Convey: premere "
 "<keyseq><key>Alt</key><key>I</key></keyseq> per aprirlo, selezionare e "
 "salvare qualsiasi file di registro rilevante, e allegarli alla segnalazione "
 "bug."
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Geary"
-msgstr "Contribuisci a Geary"
+msgid "Contribute to Convey"
+msgstr "Contribuisci a Convey"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Geary? There are a number of ways you can contribute:"
+"Want to help improve Convey? There are a number of ways you can contribute:"
 msgstr ""
-"Vuoi aiutare a migliorare Geary? Ci sono vari modi in cui puoi dare un "
+"Vuoi aiutare a migliorare Convey? Ci sono vari modi in cui puoi dare un "
 "contributo:"
 
 #. (itstool) path: item/p
@@ -409,10 +409,10 @@ msgstr ""
 #: C/contributing.page:19
 msgid ""
 "<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Translating</"
-"link>—translate Geary’s user interface and user manual into new languages"
+"link>—translate Convey’s user interface and user manual into new languages"
 msgstr ""
 "<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Traduzione</"
-"link>—traduci l'interfaccia utente e il manuale di Geary in nuove lingue"
+"link>—traduci l'interfaccia utente e il manuale di Convey in nuove lingue"
 
 #. (itstool) path: item/p
 #: C/contributing.page:20
@@ -428,34 +428,34 @@ msgstr ""
 msgid ""
 "See <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">the wiki</"
 "link> for more information and options for contributing financially to "
-"Geary's development."
+"Convey's development."
 msgstr ""
 "Visita la <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">pagina "
 "wiki</link> per maggiori informazioni e per conoscere le opzioni per "
-"contribuire finanziariamente allo sviluppo di Geary."
+"contribuire finanziariamente allo sviluppo di Convey."
 
 #. (itstool) path: info/title
 #: C/index.page:7
 msgctxt "link:trail"
-msgid "Geary"
-msgstr "Geary"
+msgid "Convey"
+msgstr "Convey"
 
 #. (itstool) path: info/title
 #: C/index.page:8
 msgctxt "text"
-msgid "Geary"
-msgstr "Geary"
+msgid "Convey"
+msgstr "Convey"
 
 #. (itstool) path: info/title
 #: C/index.page:9
 msgctxt "link"
-msgid "Geary"
-msgstr "Geary"
+msgid "Convey"
+msgstr "Convey"
 
 #. (itstool) path: page/title
 #: C/index.page:12
-msgid "<_:media-1/> <span>Geary</span>"
-msgstr "<_:media-1/> <span>Geary</span>"
+msgid "<_:media-1/> <span>Convey</span>"
+msgstr "<_:media-1/> <span>Convey</span>"
 
 #. (itstool) path: section/title
 #: C/index.page:18
@@ -464,8 +464,8 @@ msgstr "Introduzione"
 
 #. (itstool) path: section/title
 #: C/index.page:22
-msgid "Using Geary"
-msgstr "Uso di Geary"
+msgid "Using Convey"
+msgstr "Uso di Convey"
 
 #. (itstool) path: section/title
 #: C/index.page:26
@@ -485,12 +485,12 @@ msgstr "Etichettare una conversazione"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Geary lets you apply one or more <em>labels</em> to each conversation. Geary "
+"Convey lets you apply one or more <em>labels</em> to each conversation. Convey "
 "labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
-"Geary permette di applicare una o più <em>etichette</em> a una "
-"conversazione. Le etichette in Geary corrispondono alle etichette in Gmail e "
+"Convey permette di applicare una o più <em>etichette</em> a una "
+"conversazione. Le etichette in Convey corrispondono alle etichette in Gmail e "
 "alle normali cartelle in altri servizi di posta."
 
 #. (itstool) path: section/p
@@ -562,28 +562,28 @@ msgstr "Limiti"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Geary is still in early development. Geary supports IMAP and has been tested "
+"Convey is still in early development. Convey supports IMAP and has been tested "
 "with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Geary may not yet work well with some IMAP "
-"servers. At this time Geary is still missing numerous features including "
+"for Outlook.com is provided. Convey may not yet work well with some IMAP "
+"servers. At this time Convey is still missing numerous features including "
 "offline mode."
 msgstr ""
-"Geary è ancora in fase iniziale di sviluppo. Supporta il protocollo IMAP e è "
+"Convey è ancora in fase iniziale di sviluppo. Supporta il protocollo IMAP e è "
 "stato testato con Gmail, Yahoo e il server mail libero Dovecot. È fornito "
-"anche un supporto sperimentale a Outlook.com. Geary potrebbe non funzionare "
-"ancora correttamente con alcuni server IMAP. Per il momento a Geary mancano "
+"anche un supporto sperimentale a Outlook.com. Convey potrebbe non funzionare "
+"ancora correttamente con alcuni server IMAP. Per il momento a Convey mancano "
 "varie funzionalità, tra cui la modalità offline."
 
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Geary, "
+"To learn more about the features we're working on and the future of Convey, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
 "Per avere informazioni sulle funzionalità a cui stiamo lavorando e sul "
 "futuro di Geary, visita la <link href=\"https://wiki.gnome.org/Apps/Geary"
-"\">pagina wiki</link> di Geary."
+"\">pagina wiki</link> di Convey."
 
 #. (itstool) path: page/title
 #. (itstool) path: section/title
@@ -594,11 +594,11 @@ msgstr "Panoramica"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Geary is an email application built around conversations, for the GNOME 3 "
+"Convey is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Geary è un'applicazione di posta elettronica basata sulle conversazioni, per "
+"Convey è un'applicazione di posta elettronica basata sulle conversazioni, per "
 "l'ambiente desktop GNOME 3. Permette di leggere, trovare e inviare email con "
 "un'interfaccia semplice e moderna."
 
@@ -614,10 +614,10 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Geary window is divided into several areas: The folder list, the "
+"The main Convey window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
-"La finestra principale di Geary è divisa in varie aree: l'elenco delle "
+"La finestra principale di Convey è divisa in varie aree: l'elenco delle "
 "cartelle, l'elenco delle conversazioni e il visualizzatore delle "
 "conversazioni."
 
@@ -630,11 +630,11 @@ msgstr "Elenco delle cartelle"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Geary uses the term <em>label</em> for any folder "
+"for your email accounts. Convey uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "L'<em>elenco delle cartelle</em> mostra tutte le <em>cartelle</em> e le "
-"<em>etichette</em> dei propri account di posta. Geary usa il termine "
+"<em>etichette</em> dei propri account di posta. Convey usa il termine "
 "<em>etichetta</em> per indicare qualsiasi cartella creata per organizzare i "
 "propri messaggi."
 
@@ -665,38 +665,38 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Geary displays a count "
+"sender. If a conversation has more than one message, Convey displays a count "
 "of messages in the conversation."
 msgstr ""
 "Il nome del mittente appare in grassetto se ci sono dei messaggi non letti "
-"inviati da quel mittente. Se una conversazione ha più di un messaggio, Geary "
+"inviati da quel mittente. Se una conversazione ha più di un messaggio, Convey "
 "indica il numero di messaggi nella conversazione."
 
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Geary does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Geary "
+"Convey does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Convey "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Geary will fetch more messages "
+"simply scroll down the conversation list and Convey will fetch more messages "
 "automatically."
 msgstr ""
-"Geary non scarica automaticamente tutti i messaggi di tutte le cartelle di "
+"Convey non scarica automaticamente tutti i messaggi di tutte le cartelle di "
 "posta. Quando si apre la prima volta la posta in arrivo o qualsiasi altra "
-"cartella, Geary scarica i messaggi più recenti di quella cartella. Per "
-"vedere più messaggi, scorrere in giù l'elenco delle conversazioni: Geary "
+"cartella, Convey scarica i messaggi più recenti di quella cartella. Per "
+"vedere più messaggi, scorrere in giù l'elenco delle conversazioni: Convey "
 "recupererà automaticamente altri messaggi."
 
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Geary can act on a group of conversations. To select "
+"Some commands in Convey can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the "
 "last conversation."
 msgstr ""
-"Alcuni comandi in Geary possono agire su un gruppo di conversazioni. Per "
+"Alcuni comandi in Convey possono agire su un gruppo di conversazioni. Per "
 "selezionare più di una conversazione, tenere premuto il tasto <key>Ctrl</"
 "key> e fare clic su ogni conversazione nell'elenco delle conversazioni. "
 "Oppure fare clic sulla prima conversazione di una serie consecutiva, tenere "
@@ -719,11 +719,11 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Geary collapses messages that you’ve already "
+"When you view a conversation, Convey collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
-"Quando si legge una conversazione, Geary contrae i messaggi già letti. Fare "
+"Quando si legge una conversazione, Convey contrae i messaggi già letti. Fare "
 "clic sui messaggi compressi per espanderli e sull'intestazione di un "
 "messaggio espanso per contrarlo."
 
@@ -757,12 +757,12 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Geary will display the first starred message in a conversation "
+"starred, and Convey will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "Fare clic sul pulsante della stella presente su ciascun messaggio per "
 "contrassegnarlo o meno come speciale. Contrassegnare un messaggio come "
-"speciale aggiunge l'intera conversazione agli speciali; Geary mostrerà il "
+"speciale aggiunge l'intera conversazione agli speciali; Convey mostrerà il "
 "primo messaggio speciale di una conversazione quando si ritorna ad essa."
 
 #. (itstool) path: section/p
@@ -797,12 +797,12 @@ msgstr "Preferenze"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Geary allows you to customise how it works via its <gui style=\"group"
+"Convey allows you to customise how it works via its <gui style=\"group"
 "\">Preferences</gui> window. To open the window, select <gui style=\"menuitem"
 "\">Preferences</gui> from the application menu on the main window's toolbar. "
 "You can change the following options:"
 msgstr ""
-"Geary permette di personalizzare il suo funzionamento attraverso la finestra "
+"Convey permette di personalizzare il suo funzionamento attraverso la finestra "
 "delle <gui style=\"group\">Preferenze</gui>. Per aprire la finestra, "
 "selezionare <gui style=\"menuitem\">Preferenze</gui> dal menù "
 "dell'applicazione nella barra degli strumenti della finestra principale. Si "
@@ -816,13 +816,13 @@ msgstr "<gui>Seleziona automaticamente il messaggio successivo</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Geary automatically selects the latest message "
+"When this option is enabled, Convey automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Geary automatically selects an adjacent message."
+"message, Convey automatically selects an adjacent message."
 msgstr ""
-"Quando questa opzione è abilitata, Geary seleziona automaticamente l'ultimo "
+"Quando questa opzione è abilitata, Convey seleziona automaticamente l'ultimo "
 "messaggio di una cartella quando si è in quella cartella. Inoltre, dopo "
-"l'archiviazione di un messaggio, Geary seleziona automaticamente un "
+"l'archiviazione di un messaggio, Convey seleziona automaticamente un "
 "messaggio vicino."
 
 #. (itstool) path: item/title
@@ -863,11 +863,11 @@ msgstr "<gui>Controllare la nuova posta dopo la chiusura</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:38
 msgid ""
-"Geary will watch your accounts for new mail even when the main window is not "
+"Convey will watch your accounts for new mail even when the main window is not "
 "open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
-"Geary controllerà la presenza di nuova posta per i tuoi account anche quando "
+"Convey controllerà la presenza di nuova posta per i tuoi account anche quando "
 "la finestra principale non è aperta. Per far ciò, si avvierà silenziosamente "
 "al login e continuerà a girare dopo la chiusura di tutte le finestre."
 
@@ -879,12 +879,12 @@ msgstr "Ricerca"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Geary supports a per-account full text search. To start a search, select a "
+"Convey supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) and start typing. Results will appear after a brief delay."
 msgstr ""
-"Geary supporta una ricerca «full text» per account. Per avviare una ricerca, "
+"Convey supporta una ricerca «full text» per account. Per avviare una ricerca, "
 "selezionare una cartella associata all'account in cui si vuole fare la "
 "ricerca, fare clic sulla casella di ricerca nella barra degli strumenti (o "
 "premere <keyseq><key>Ctrl</key><key>S</key></keyseq>) e iniziare a scrivere. "
@@ -902,12 +902,12 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Geary "
+"Keywords that match your search are highlighted in the message view. Convey "
 "will match different forms of the same word, for example searching for \"walk"
 "\" will also match \"walking\" and \"walked.\""
 msgstr ""
 "Le parole chiave che corrispondono alla ricerca sono evidenziate nella vista "
-"dei messaggi. Geary individuerà una corrispondenza anche per forme diverse "
+"dei messaggi. Convey individuerà una corrispondenza anche per forme diverse "
 "della stessa parola, per esempio la ricerca di \"canta\" troverà come "
 "corrispondenti le parole \"cantare\" e \"cantante\"."
 
@@ -918,9 +918,9 @@ msgstr "Operatori di ricerca"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Geary supports the following operators to limit the scope of searches:"
+msgid "Convey supports the following operators to limit the scope of searches:"
 msgstr ""
-"Geary supporta i seguenti operatori che permettono di limitare l'estensione "
+"Convey supporta i seguenti operatori che permettono di limitare l'estensione "
 "delle ricerche:"
 
 #. (itstool) path: td/p
@@ -1055,12 +1055,12 @@ msgstr "Scorciatoie da tastiera"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Geary has keyboard shortcuts for most common operations. Use the built-in "
+"Convey has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the "
 "main window's toolbar, or using the keyboard shortcuts listed below."
 msgstr ""
-"Geary ha scorciatoie da tastiera per le operazioni più comuni. Usa l'aiuto "
+"Convey ha scorciatoie da tastiera per le operazioni più comuni. Usa l'aiuto "
 "integrato per scoprire l'elenco completo. Per aprirlo, selezionare <gui "
 "style=\"menuitem\">Scorciatoie da tastiera</gui> dal menù dell'applicazione "
 "sulla barra degli strumenti della finestra principale, oppure usando le "
@@ -1070,7 +1070,7 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Geary:"
+"Convey:"
 msgstr ""
 "Si possono usare le seguenti scorciatoie da tastiera per accedere al manuale "
 "in linea dall'applicazione:"
@@ -1161,11 +1161,11 @@ msgstr "Segnare i messaggi come letti o non letti"
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Geary marks messages as read automatically as you read them. To manually "
+"Convey marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
-"Geary contrassegna automaticamente i messaggi come letti quando vengono "
+"Convey contrassegna automaticamente i messaggi come letti quando vengono "
 "letti. Per segnare manualmente una conversazione come letta o non letta fare "
 "clic sull'icona del cerchio nell'elenco delle conversazioni."
 
@@ -1227,13 +1227,13 @@ msgstr "Annullamento invio"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Geary will wait 5 seconds before delivering the "
+"When sending an email, Convey will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui style=\"button"
 "\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
 "more changes to it."
 msgstr ""
-"Quando si invia un'email, Geary aspetterà 5 secondi prima di consegnare il "
+"Quando si invia un'email, Convey aspetterà 5 secondi prima di consegnare il "
 "messaggio. Nel corso di questo tempo, è possibile fare clic su <gui style="
 "\"button\">Annulla</gui> sulla notifica a comparsa che appare oppure "
 "digitare <keyseq><key>Ctrl</key><key>Z</key></keyseq> per riaprire l'email e "
@@ -1262,13 +1262,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/write.page:41
 msgid ""
-"When entering an email address into any of these fields, Geary will provide "
+"When entering an email address into any of these fields, Convey will provide "
 "suggestions from your desktop address book and from previously sent and "
 "received email messages. To choose one of these suggestions, simply click on "
 "it."
 msgstr ""
 "Quando si inserisce un indirizzo email in uno qualsiasi di questi campi, "
-"Geary fornirà suggerimenti presi dalla rubrica del desktop e dai messaggi "
+"Convey fornirà suggerimenti presi dalla rubrica del desktop e dai messaggi "
 "email precedentemente inviati e ricevuti. Per scegliere uno di questi "
 "suggerimenti, basta fare clic su di esso."
 
@@ -1322,12 +1322,12 @@ msgstr "Formattazione del testo, immagini e allegati"
 #. (itstool) path: section/p
 #: C/write.page:68
 msgid ""
-"Geary's email composer lets you use text styles such as <em>bold</em> and "
+"Convey's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it, and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar "
 "at the bottom of the composer area."
 msgstr ""
-"Il compositore email di Geary permette di usare stili di testo come il "
+"Il compositore email di Convey permette di usare stili di testo come il "
 "<em>grassetto</em> e il <em>corsivo</em>, indentare il testo per citarlo e "
 "creare collegamenti a pagine web. Basta selezionare il testo e fare clic sul "
 "pulsante apposito nella barra degli strumenti di formattazione in fondo al "
@@ -1408,12 +1408,12 @@ msgstr "Controllo ortografico"
 #. (itstool) path: section/p
 #: C/write.page:106
 msgid ""
-"Geary supports spell-checking your composed email in one or more languages, "
+"Convey supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
 msgstr ""
-"Geary fornisce il controllo ortografico in una o più lingue mentre si digita "
+"Convey fornisce il controllo ortografico in una o più lingue mentre si digita "
 "il testo nella finestra di composizione dell'email. Per abilitarlo, "
 "assicurarsi di avere installati i dizionari del controllo ortografico per le "
 "lingue desiderate. Consultare il manuale del proprio computer per sapere "
@@ -1447,10 +1447,10 @@ msgstr "Salvataggio bozze e ripristino messaggi scartati"
 #. (itstool) path: section/p
 #: C/write.page:125
 msgid ""
-"For mail servers that support drafts, Geary will automatically save the "
+"For mail servers that support drafts, Convey will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
-"Se si usa un server mail che supporta le bozze, Geary salverà il messaggio "
+"Se si usa un server mail che supporta le bozze, Convey salverà il messaggio "
 "sul server automaticamente dopo un breve ritardo, mentre lo si scrive."
 
 #. (itstool) path: section/p
@@ -1466,8 +1466,8 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:133
-msgid "Geary will delete the draft when you send the message."
-msgstr "Geary elimina la bozza quando il messaggio viene inviato."
+msgid "Convey will delete the draft when you send the message."
+msgstr "Convey elimina la bozza quando il messaggio viene inviato."
 
 #. (itstool) path: note/p
 #: C/write.page:136
@@ -1493,18 +1493,18 @@ msgstr "Messaggi di testo semplice"
 #. (itstool) path: section/p
 #: C/write.page:148
 msgid ""
-"Geary can also send plain text messages. Press the <gui style=\"button"
+"Convey can also send plain text messages. Press the <gui style=\"button"
 "\">More options</gui> button at the end of the bottom toolbar, then choose "
 "\"Rich Text\" or \"Plain Text\". Plain text mode is useful when sending "
 "email to mailing lists that prohibit rich text (HTML) messages, or when "
-"sending email to people that do no use modern clients like Geary."
+"sending email to people that do no use modern clients like Convey."
 msgstr ""
-"Geary può inviare anche messaggi di testo semplice. Premere il pulsante <gui "
+"Convey può inviare anche messaggi di testo semplice. Premere il pulsante <gui "
 "style=\"button\">Più opzioni</gui> alla fine della barra degli strumenti in "
 "basso e scegliere «Testo formattato» o «Testo semplice». La modalità a testo "
 "semplice è utile per inviare email alle mailing list che proibiscono i "
 "messaggi con testo formattato (HTML) o per inviare email a persone che non "
-"usano client di posta moderni come Geary."
+"usano client di posta moderni come Convey."
 
 #. (itstool) path: section/p
 #: C/write.page:155

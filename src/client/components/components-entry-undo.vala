@@ -8,7 +8,7 @@
 /**
  * Provides per-GTK Editable undo and redo using a command stack.
  */
-public class Components.EntryUndo : Geary.BaseObject {
+public class Components.EntryUndo : Convey.BaseObject {
 
 
     private const ActionEntry[] EDIT_ACTIONS = {

@@ -9,36 +9,36 @@
 /**
  * A widget for displaying an email in a conversation.
  *
- * This view corresponds to {@link Geary.Email}, displaying the
- * email's primary message (a {@link Geary.RFC822.Message}), any
- * sub-messages (also instances of {@link Geary.RFC822.Message}) and
+ * This view corresponds to {@link Convey.Email}, displaying the
+ * email's primary message (a {@link Convey.RFC822.Message}), any
+ * sub-messages (also instances of {@link Convey.RFC822.Message}) and
  * attachments. The RFC822 messages are themselves displayed by {@link
  * ConversationMessage}.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/conversation-email.ui")]
-public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
+[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-email.ui")]
+public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     // This isn't a Gtk.Grid since when added to a Gtk.ListBoxRow the
     // hover style isn't applied to it.
 
-    private const string MANUAL_READ_CLASS = "geary-manual-read";
-    private const string SENT_CLASS = "geary-sent";
-    private const string STARRED_CLASS = "geary-starred";
-    private const string UNREAD_CLASS = "geary-unread";
+    private const string MANUAL_READ_CLASS = "convey-manual-read";
+    private const string SENT_CLASS = "convey-sent";
+    private const string STARRED_CLASS = "convey-starred";
+    private const string UNREAD_CLASS = "convey-unread";
 
     /** Fields that must be available for constructing the view. */
-    internal const Geary.Email.Field REQUIRED_FOR_CONSTRUCT = (
-        Geary.Email.Field.ENVELOPE |
-        Geary.Email.Field.PREVIEW |
-        Geary.Email.Field.FLAGS
+    internal const Convey.Email.Field REQUIRED_FOR_CONSTRUCT = (
+        Convey.Email.Field.ENVELOPE |
+        Convey.Email.Field.PREVIEW |
+        Convey.Email.Field.FLAGS
     );
 
     /** Fields that must be available for loading the body. */
-    internal const Geary.Email.Field REQUIRED_FOR_LOAD = (
+    internal const Convey.Email.Field REQUIRED_FOR_LOAD = (
         // Include those needed by the constructor since we'll replace
         // the ctor's email arg value once the body has been fully
         // loaded
         REQUIRED_FOR_CONSTRUCT |
-        Geary.Email.REQUIRED_FOR_MESSAGE
+        Convey.Email.REQUIRED_FOR_MESSAGE
     );
 
     // Time to wait loading the body before showing the progress meter
@@ -68,7 +68,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
     private class MessageViewIterator :
         Gee.Traversable<ConversationMessage>,
         Gee.Iterator<ConversationMessage>,
-        Geary.BaseObject {
+        Convey.BaseObject {
 
 
         public bool read_only {
@@ -138,7 +138,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
 
     static construct {
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/org/gnome/Geary/conversation-email-menus.ui"
+            "/net/donnybeelo/Convey/conversation-email-menus.ui"
         );
         email_menu_template = (GLib.MenuModel) builder.get_object("email_menu");
         email_menu_trash_section  = (GLib.MenuModel) builder.get_object("email_menu_trash");
@@ -154,12 +154,12 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
      * testing or b) assumed to be the same over the life of this view
      * object.
      */
-    public Geary.Email email { get; private set; }
+    public Convey.Email email { get; private set; }
 
     /** Determines if this email currently flagged as unread. */
     public bool is_unread {
         get {
-            Geary.EmailFlags? flags = this.email.email_flags;
+            Convey.EmailFlags? flags = this.email.email_flags;
             return (flags != null && flags.is_unread());
         }
     }
@@ -167,7 +167,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
     /** Determines if this email currently flagged as starred. */
     public bool is_starred {
         get {
-            Geary.EmailFlags? flags = this.email.email_flags;
+            Convey.EmailFlags? flags = this.email.email_flags;
             return (flags != null && flags.is_flagged());
         }
     }
@@ -207,10 +207,10 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
     /** Determines the message body loading state. */
     public LoadState message_body_state { get; private set; default = NOT_STARTED; }
 
-    public Geary.App.Conversation conversation;
+    public Convey.App.Conversation conversation;
 
     // Store from which to load message content, if needed
-    private Geary.App.EmailStore email_store;
+    private Convey.App.EmailStore email_store;
 
     // Store from which to lookup contacts
     private Application.ContactStore contacts;
@@ -220,18 +220,18 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
 
     private Application.Configuration config;
 
-    private Geary.TimeoutManager body_loading_timeout;
+    private Convey.TimeoutManager body_loading_timeout;
 
     /** Determines if all message's web views have finished loading. */
-    private Geary.Nonblocking.Spinlock message_bodies_loaded_lock;
+    private Convey.Nonblocking.Spinlock message_bodies_loaded_lock;
 
     // Message view with selected text, if any
     private ConversationMessage? body_selection_message = null;
 
     // A subset of the message's attachments that are displayed in the
     // attachments view
-    private Gee.List<Geary.Attachment> displayed_attachments =
-         new Gee.LinkedList<Geary.Attachment>();
+    private Gee.List<Convey.Attachment> displayed_attachments =
+         new Gee.LinkedList<Convey.Attachment>();
 
     // Tracks if Shift key handler has been installed on the main
     // window, for updating email menu trash/delete actions.
@@ -264,9 +264,9 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
      * the complete email, but does not attempt any possibly
      * long-running loading processes.
      */
-    public ConversationEmail(Geary.App.Conversation conversation,
-                             Geary.Email email,
-                             Geary.App.EmailStore email_store,
+    public ConversationEmail(Convey.App.Conversation conversation,
+                             Convey.Email email,
+                             Convey.App.EmailStore email_store,
                              Application.ContactStore contacts,
                              Application.Configuration config,
                              bool is_sent,
@@ -281,7 +281,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
         this.config = config;
         this.load_cancellable = load_cancellable;
         this.message_bodies_loaded_lock =
-            new Geary.Nonblocking.Spinlock(load_cancellable);
+            new Convey.Nonblocking.Spinlock(load_cancellable);
 
         if (is_sent) {
             add_css_class(SENT_CLASS);
@@ -306,7 +306,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
 
         this.load_cancellable.cancelled.connect(on_load_cancelled);
 
-        this.body_loading_timeout = new Geary.TimeoutManager.milliseconds(
+        this.body_loading_timeout = new Convey.TimeoutManager.milliseconds(
             BODY_LOAD_TIMEOUT_MSEC, this.on_body_loading_timeout
         );
 
@@ -328,7 +328,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
         } catch (IOError.CANCELLED err) {
             // okay
         } catch (Error err) {
-            Geary.RFC822.MailboxAddress? from =
+            Convey.RFC822.MailboxAddress? from =
                 this.primary_message.primary_originator;
             debug("Contact load failed for \"%s\": %s",
                   from != null ? from.to_string() : "<unknown>", err.message);
@@ -365,7 +365,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
                 );
                 loaded = true;
                 this.body_loading_timeout.reset();
-            } catch (Geary.EngineError.INCOMPLETE_MESSAGE err) {
+            } catch (Convey.EngineError.INCOMPLETE_MESSAGE err) {
                 // Don't have the complete message at the moment, so
                 // download it in the background. Don't reset the body
                 // load timeout here since this will attempt to fetch
@@ -443,7 +443,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
     /**
      * Updates the current email's flags and dependent UI state.
      */
-    public void update_flags(Geary.Email email) {
+    public void update_flags(Convey.Email email) {
         this.email.set_flags(email.email_flags);
         update_email_state();
     }
@@ -484,9 +484,9 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
     public async void view_source() {
         var main = get_root() as Application.MainWindow;
         if (main != null) {
-            Geary.Email email = this.email;
+            Convey.Email email = this.email;
             try {
-                yield Geary.Nonblocking.Concurrent.global.schedule_async(
+                yield Convey.Nonblocking.Concurrent.global.schedule_async(
                     () => {
                         string source = (
                             email.header.buffer.to_string() +
@@ -494,7 +494,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
                         );
                         string temporary_filename;
                         int temporary_handle = GLib.FileUtils.open_tmp(
-                            "geary-message-XXXXXX.txt",
+                            "convey-message-XXXXXX.txt",
                             out temporary_filename
                         );
                         GLib.FileUtils.set_contents(temporary_filename, source);
@@ -517,7 +517,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
                 );
             } catch (GLib.Error error) {
                 main.application.controller.report_problem(
-                    new Geary.ProblemReport(error)
+                    new Convey.ProblemReport(error)
                 );
             }
         }
@@ -564,7 +564,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
         builder.end_object();
         Json.Generator generator = new Json.Generator();
         generator.set_root(builder.get_root());
-        string js = "geary.addPrintHeaders(" + generator.to_data(null) + ");";
+        string js = "convey.addPrintHeaders(" + generator.to_data(null) + ");";
         yield this.primary_message.evaluate_javascript(js, null);
 
         Gtk.Window? window = get_root() as Gtk.Window;
@@ -576,18 +576,18 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
         // RW filesystem override in place to allow printing to PDF to
         // work, when using that directory.
         var download_dir = GLib.Environment.get_user_special_dir(DOWNLOAD);
-        if (!Geary.String.is_empty_or_whitespace(download_dir)) {
+        if (!Convey.String.is_empty_or_whitespace(download_dir)) {
             settings.set(Gtk.PRINT_SETTINGS_OUTPUT_DIR, download_dir);
         }
 
         if (this.email.subject != null) {
-            string file_name = Geary.String.reduce_whitespace(this.email.subject.value);
+            string file_name = Convey.String.reduce_whitespace(this.email.subject.value);
             file_name = file_name.replace("/", "_");
             if (file_name.char_count() > 128) {
-                file_name = Geary.String.safe_byte_substring(file_name, 128);
+                file_name = Convey.String.safe_byte_substring(file_name, 128);
             }
 
-            if (!Geary.String.is_empty(file_name)) {
+            if (!Convey.String.is_empty(file_name)) {
                 settings.set(Gtk.PRINT_SETTINGS_OUTPUT_BASENAME, file_name);
             }
         }
@@ -625,7 +625,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
                 this.body_loading_timeout.start();
             }
 
-            Geary.Email? loaded = null;
+            Convey.Email? loaded = null;
             try {
                 debug("Downloading remote message: %s", this.email.to_string());
                 loaded = yield this.email_store.fetch_email_async(
@@ -662,13 +662,13 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
 
     private async void update_body()
         throws GLib.Error {
-        Geary.RFC822.Message message = this.email.get_message();
+        Convey.RFC822.Message message = this.email.get_message();
 
         // Load all mime parts and construct CID resources from them
 
-        Gee.Map<string,Geary.Memory.Buffer> cid_resources =
-            new Gee.HashMap<string,Geary.Memory.Buffer>();
-        foreach (Geary.Attachment attachment in email.attachments) {
+        Gee.Map<string,Convey.Memory.Buffer> cid_resources =
+            new Gee.HashMap<string,Convey.Memory.Buffer>();
+        foreach (Convey.Attachment attachment in email.attachments) {
             // Assume all parts are attachments. As the primary and
             // secondary message bodies are loaded, any displayed
             // inline will be removed from the list.
@@ -677,7 +677,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
             if (attachment.content_id != null) {
                 try {
                     cid_resources[attachment.content_id] =
-                        new Geary.Memory.FileBuffer(attachment.file, true);
+                        new Convey.Memory.FileBuffer(attachment.file, true);
                 } catch (Error err) {
                     debug("Could not open attachment: %s", err.message);
                 }
@@ -692,11 +692,11 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
             message, this.load_cancellable
         );
 
-        Gee.List<Geary.RFC822.Message> sub_messages = message.get_sub_messages();
+        Gee.List<Convey.RFC822.Message> sub_messages = message.get_sub_messages();
         if (sub_messages.size > 0) {
             this.primary_message.body_container.append(this.sub_messages);
         }
-        foreach (Geary.RFC822.Message sub_message in sub_messages) {
+        foreach (Convey.RFC822.Message sub_message in sub_messages) {
             ConversationMessage attached_message =
                 new ConversationMessage.from_message(
                     sub_message,
@@ -751,7 +751,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
             );
             bool supports_delete = (
                 in_base_folder &&
-                this.conversation.base_folder is Geary.FolderSupport.Remove
+                this.conversation.base_folder is Convey.FolderSupport.Remove
             );
             bool is_shift_down = false;
             var main = get_root() as Application.MainWindow;
@@ -834,9 +834,9 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
 
         var main = get_root() as Application.MainWindow;
         if (main != null) {
-            Geary.AccountInformation account = this.email_store.account.information;
+            Convey.AccountInformation account = this.email_store.account.information;
             main.application.controller.report_problem(
-                new Geary.ServiceProblemReport(account, account.incoming, error)
+                new Convey.ServiceProblemReport(account, account.incoming, error)
             );
         }
     }
@@ -879,13 +879,13 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
 
     private void on_save_image(string uri,
                                string? alt_text,
-                               Geary.Memory.Buffer? content) {
+                               Convey.Memory.Buffer? content) {
         var main = get_root() as Application.MainWindow;
         if (main != null) {
             if (uri.has_prefix(Components.WebView.CID_URL_PREFIX)) {
                 string cid = uri.substring(Components.WebView.CID_URL_PREFIX.length);
                 try {
-                    Geary.Attachment attachment = this.email.get_attachment_by_content_id(
+                    Convey.Attachment attachment = this.email.get_attachment_by_content_id(
                         cid
                     );
                     main.attachments.save_attachment.begin(
@@ -903,7 +903,7 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
                 // from it directly. GIO seems to decode any %-encoded
                 // chars anyway.
                 string? display_name = source.get_basename();
-                if (Geary.String.is_empty_or_whitespace(display_name)) {
+                if (Convey.String.is_empty_or_whitespace(display_name)) {
                     display_name = Application.AttachmentManager.untitled_file_name;
                 }
                 main.attachments.save_buffer.begin(
@@ -916,11 +916,11 @@ public class ConversationEmail : Gtk.Box, Geary.BaseInterface {
     }
 
     private void on_resource_loaded(string id) {
-        Gee.Iterator<Geary.Attachment> displayed =
+        Gee.Iterator<Convey.Attachment> displayed =
             this.displayed_attachments.iterator();
         while (displayed.has_next()) {
             displayed.next();
-            Geary.Attachment? attachment = displayed.get();
+            Convey.Attachment? attachment = displayed.get();
             if (attachment.content_id == id) {
                 displayed.remove();
             }

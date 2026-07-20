@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.ListParameterTest : TestCase {
+class Convey.Imap.ListParameterTest : TestCase {
 
 
     public ListParameterTest() {
-        base("Geary.Imap.ListParameterTest");
+        base("Convey.Imap.ListParameterTest");
         add_test("add_to_multiple_parents", add_to_multiple_parents);
     }
 

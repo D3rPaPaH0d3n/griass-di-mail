@@ -15,7 +15,7 @@
  * ([[https://tools.ietf.org/html/rfc6154]]) RFCs for examples of this in use.
  */
 
-public class Geary.Imap.ListReturnParameter : ListParameter {
+public class Convey.Imap.ListReturnParameter : ListParameter {
     /**
      * See [[https://tools.ietf.org/html/rfc6154]]
      */

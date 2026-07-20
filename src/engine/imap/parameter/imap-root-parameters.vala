@@ -14,7 +14,7 @@
  * @see Command
  */
 
-public class Geary.Imap.RootParameters : Geary.Imap.ListParameter {
+public class Convey.Imap.RootParameters : Convey.Imap.ListParameter {
     public RootParameters() {
     }
 

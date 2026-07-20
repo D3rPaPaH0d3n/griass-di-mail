@@ -14,7 +14,7 @@
  * The buffers that are returned should ''not'' be modified or freed by the caller.
  */
 
-public interface Geary.Memory.UnownedStringBuffer : Memory.Buffer {
+public interface Convey.Memory.UnownedStringBuffer : Memory.Buffer {
     /**
      * Returns an unowned string version of the backing buffer.
      *

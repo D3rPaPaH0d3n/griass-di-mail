@@ -1,5 +1,5 @@
 #
-# Geary CI config.
+# Convey CI config.
 #
 
 include:
@@ -8,13 +8,10 @@ include:
    ref: aec7a6ce7bb38902c70641526f6611e27141784a
  - project: 'GNOME/citemplates'
    file: 'flatpak/flatpak_ci_initiative.yml'
- - component: gitlab.gnome.org/GNOME/citemplates/release-service@master
-   inputs:
-     dist-job-name: "flatpak"
 
 
 variables:
-  FDO_UPSTREAM_REPO: gnome/geary
+  FDO_UPSTREAM_REPO: donnybeelo/geary
 
   # ImapDB and other tests that touch the disk are super slow on CI
   # runners like gcc150.osuosl.org that use platter drives still.
@@ -28,7 +25,6 @@ variables:
 stages:
   - prepare
   - build
-  - deploy
 
 
 ##
@@ -48,7 +44,7 @@ build.container.fedora@x86_64:
     GIT_STRATEGY: none
     # Expiry sets fdo.expires on the image
     FDO_EXPIRES_AFTER: 8w
-    # Geary build dependencies (Fedora packages)
+    # Convey build dependencies (Fedora packages)
     FDO_DISTRIBUTION_PACKAGES: >-
       appstream
       dbus-daemon
@@ -106,7 +102,7 @@ build.container.fedora@x86_64:
 ##
 # Stage: Build
 #
-# This stage actually builds & tests Geary. It does so both in Fedora, and in Flatpak
+# This stage actually builds & tests Convey. It does so both in Fedora, and in Flatpak
 ##
 
 fedora:
@@ -131,20 +127,10 @@ fedora:
 flatpak:
   stage: build
   variables:
-    APP_ID: org.gnome.Geary.Devel
-    FLATPAK_MODULE: geary
-    MANIFEST_PATH: org.gnome.Geary.json
+    APP_ID: net.donnybeelo.Convey.Devel
+    FLATPAK_MODULE: convey
+    MANIFEST_PATH: net.donnybeelo.Convey.json
     RUNTIME_REPO: 'https://nightly.gnome.org/gnome-nightly.flatpakrepo'
     TEST_RUN_ARGS: $TEST_ARGS
-    BUNDLE: geary-dev.flatpak
+    BUNDLE: convey-dev.flatpak
   extends: .flatpak
-
-##
-# Stage: Deploy
-#
-# This stage is meant for deplying any nightly (Flatpak) builds, docs, etc
-##
-
-nightly:
-  extends: '.publish_nightly'
-  needs: ['flatpak']

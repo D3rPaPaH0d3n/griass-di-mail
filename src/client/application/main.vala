@@ -7,15 +7,15 @@
 int main(string[] args) {
     // Init logging right up front so as to capture as many log
     // messages as possible
-    Geary.Logging.init();
-    GLib.Log.set_writer_func(Geary.Logging.default_log_writer);
+    Convey.Logging.init();
+    GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
 
     Application.Client app = new Application.Client();
 
     int ec = app.run(args);
 
 #if REF_TRACKING
-    Geary.BaseObject.dump_refs(stdout);
+    Convey.BaseObject.dump_refs(stdout);
 #endif
 
     return ec;

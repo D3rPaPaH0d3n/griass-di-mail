@@ -11,8 +11,8 @@
 public class MailMerge.Processor : GLib.Object {
 
 
-    public const Geary.Email.Field REQUIRED_FIELDS = (
-        ENVELOPE | Geary.Email.REQUIRED_FOR_MESSAGE
+    public const Convey.Email.Field REQUIRED_FIELDS = (
+        ENVELOPE | Convey.Email.REQUIRED_FOR_MESSAGE
     );
 
 
@@ -99,7 +99,7 @@ public class MailMerge.Processor : GLib.Object {
         return FIELD_START + name + FIELD_END;
     }
 
-    public static bool is_mail_merge_template(Geary.Email email)
+    public static bool is_mail_merge_template(Convey.Email email)
         throws GLib.Error {
         var found = (
             (email.subject != null &&
@@ -146,12 +146,12 @@ public class MailMerge.Processor : GLib.Object {
 
 
     /** The email template being processed. */
-    public Geary.Email template {
+    public Convey.Email template {
         get; private set;
     }
 
     /** The email constructed by the processor. */
-    public Geary.ComposedEmail? email {
+    public Convey.ComposedEmail? email {
         get; private set; default = null;
     }
 
@@ -161,7 +161,7 @@ public class MailMerge.Processor : GLib.Object {
     }
 
     /** Constructs a new merge processor with the given template. */
-    public Processor(Geary.Email template) {
+    public Processor(Convey.Email template) {
         this.template = template;
     }
 
@@ -171,10 +171,10 @@ public class MailMerge.Processor : GLib.Object {
      * Creates a new composed email based on the template and given
      * data, set it as the {@email} property and returns it.
      */
-    public Geary.ComposedEmail merge(Gee.Map<string,string> values)
+    public Convey.ComposedEmail merge(Gee.Map<string,string> values)
         throws GLib.Error {
         var from = format_mailbox_addresses(this.template.from, values);
-        var email = this.email = new Geary.ComposedEmail(
+        var email = this.email = new Convey.ComposedEmail(
             new GLib.DateTime.now(), from
         );
         email.set_to(format_mailbox_addresses(this.template.to, values));
@@ -206,13 +206,13 @@ public class MailMerge.Processor : GLib.Object {
         return email;
     }
 
-    private inline Geary.RFC822.MailboxAddresses? format_mailbox_addresses(
-        Geary.RFC822.MailboxAddresses? addresses,
+    private inline Convey.RFC822.MailboxAddresses? format_mailbox_addresses(
+        Convey.RFC822.MailboxAddresses? addresses,
         Gee.Map<string,string> values
     ) {
-        Geary.RFC822.MailboxAddresses? formatted = null;
+        Convey.RFC822.MailboxAddresses? formatted = null;
         if (addresses != null && !addresses.is_empty) {
-            formatted = new Geary.RFC822.MailboxAddresses();
+            formatted = new Convey.RFC822.MailboxAddresses();
             foreach (var addr in addresses) {
                 formatted = formatted.merge_mailbox(
                     format_mailbox_address(addr, values)
@@ -222,13 +222,13 @@ public class MailMerge.Processor : GLib.Object {
         return formatted;
     }
 
-    private inline Geary.RFC822.MailboxAddress? format_mailbox_address(
-        Geary.RFC822.MailboxAddress? address,
+    private inline Convey.RFC822.MailboxAddress? format_mailbox_address(
+        Convey.RFC822.MailboxAddress? address,
         Gee.Map<string,string> values
     ) {
-        Geary.RFC822.MailboxAddress? formatted = null;
+        Convey.RFC822.MailboxAddress? formatted = null;
         if (address != null) {
-            formatted = new Geary.RFC822.MailboxAddress(
+            formatted = new Convey.RFC822.MailboxAddress(
                 format_string(address.name, values),
                 format_string(address.address, values)
             );

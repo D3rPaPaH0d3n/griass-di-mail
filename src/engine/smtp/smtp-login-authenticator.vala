@@ -12,7 +12,7 @@
  * See [[https://tools.ietf.org/html/draft-murchison-sasl-login-00]]
  */
 
-public class Geary.Smtp.LoginAuthenticator : Geary.Smtp.Authenticator {
+public class Convey.Smtp.LoginAuthenticator : Convey.Smtp.Authenticator {
     public LoginAuthenticator(Credentials credentials) {
         base ("LOGIN", credentials);
     }

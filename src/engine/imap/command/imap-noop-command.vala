@@ -10,7 +10,7 @@
  * @see IdleCommand
  */
 
-public class Geary.Imap.NoopCommand : Command {
+public class Convey.Imap.NoopCommand : Command {
 
     public const string NAME = "noop";
 

@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.App.FillWindowOperation : ConversationOperation {
+private class Convey.App.FillWindowOperation : ConversationOperation {
 
 
     // Maximum and minimum number of messages to load in one fill

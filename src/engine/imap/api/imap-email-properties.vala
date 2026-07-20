@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Imap.EmailProperties : Geary.EmailProperties, Gee.Hashable<Geary.Imap.EmailProperties> {
+public class Convey.Imap.EmailProperties : Convey.EmailProperties, Gee.Hashable<Convey.Imap.EmailProperties> {
 
 
     public InternalDate? internaldate { get; private set; }
@@ -17,7 +17,7 @@ public class Geary.Imap.EmailProperties : Geary.EmailProperties, Gee.Hashable<Ge
         this.rfc822_size = rfc822_size;
     }
 
-    public bool equal_to(Geary.Imap.EmailProperties other) {
+    public bool equal_to(Convey.Imap.EmailProperties other) {
         if (this == other)
             return true;
 

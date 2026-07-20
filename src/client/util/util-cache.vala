@@ -6,7 +6,7 @@
  */
 
 /** A simple least-recently-used cache. */
-public class Util.Cache.Lru<T> : Geary.BaseObject {
+public class Util.Cache.Lru<T> : Convey.BaseObject {
 
 
     private class CacheEntry<T> {

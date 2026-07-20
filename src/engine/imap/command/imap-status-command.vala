@@ -12,7 +12,7 @@
  *
  * @see StatusData
  */
-public class Geary.Imap.StatusCommand : Command {
+public class Convey.Imap.StatusCommand : Command {
 
 
     public const string NAME = "STATUS";

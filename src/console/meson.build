@@ -12,13 +12,13 @@ console_dependencies = [
   engine_dep,
 ]
 
-console_resources = gnome.compile_resources('org.gnome.GearyConsole',
-  files('org.gnome.GearyConsole.gresource.xml'),
+console_resources = gnome.compile_resources('net.donnybeelo.ConveyConsole',
+  files('net.donnybeelo.ConveyConsole.gresource.xml'),
 )
 
-console = executable('geary-console',
+console = executable('convey-console',
   [ console_sources, console_resources ],
   dependencies: console_dependencies,
-  vala_args: geary_vala_args,
-  c_args: geary_c_args,
+  vala_args: convey_vala_args,
+  c_args: convey_c_args,
 )

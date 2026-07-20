@@ -17,7 +17,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-4.1]]
  */
-public class Geary.Imap.AtomParameter : Geary.Imap.UnquotedStringParameter {
+public class Convey.Imap.AtomParameter : Convey.Imap.UnquotedStringParameter {
 
     public AtomParameter(string value) {
         base (value);

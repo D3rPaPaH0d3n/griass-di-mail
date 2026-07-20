@@ -10,7 +10,7 @@
  * Makes a file available as a {@link Memory.Buffer}.
  */
 
-public class Geary.Memory.FileBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
+public class Convey.Memory.FileBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
     private File file;
     private MappedFile mmap;
 
@@ -31,7 +31,7 @@ public class Geary.Memory.FileBuffer : Memory.Buffer, Memory.UnownedBytesBuffer 
      */
     public FileBuffer(File file, bool readonly) throws Error {
         if (file.get_path() == null)
-            throw new IOError.NOT_FOUND("File for Geary.Memory.FileBuffer not found");
+            throw new IOError.NOT_FOUND("File for Convey.Memory.FileBuffer not found");
 
         this.file = file;
         mmap = new MappedFile(file.get_path(), !readonly);

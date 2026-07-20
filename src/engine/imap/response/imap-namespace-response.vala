@@ -8,9 +8,9 @@
 /**
  * Response for a NAMESPACE command.
  *
- * @see Geary.Imap.NamespaceCommand
+ * @see Convey.Imap.NamespaceCommand
  */
-public class Geary.Imap.NamespaceResponse : BaseObject {
+public class Convey.Imap.NamespaceResponse : BaseObject {
 
 
     public Gee.List<Namespace>? personal { get; private set; default = null; }

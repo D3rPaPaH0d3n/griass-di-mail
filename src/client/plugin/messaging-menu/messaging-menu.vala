@@ -93,7 +93,7 @@ public class Plugin.MessagingMenu :
     }
 
     private string get_source_id(Folder folder) {
-        return "geary%s".printf(folder.to_variant().print(false));
+        return "convey%s".printf(folder.to_variant().print(false));
     }
 
     private void on_activate_source(string source_id) {

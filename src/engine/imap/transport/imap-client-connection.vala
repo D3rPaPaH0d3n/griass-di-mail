@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Geary.Imap.ClientConnection : BaseObject, Logging.Source {
+public class Convey.Imap.ClientConnection : BaseObject, Logging.Source {
 
 
     /**
@@ -63,7 +63,7 @@ public class Geary.Imap.ClientConnection : BaseObject, Logging.Source {
     public Logging.Source? logging_parent { get { return _logging_parent; } }
     private weak Logging.Source? _logging_parent = null;
 
-    private Geary.Endpoint endpoint;
+    private Convey.Endpoint endpoint;
     private int cx_id;
     private Quirks quirks;
     private IOStream? cx = null;
@@ -77,8 +77,8 @@ public class Geary.Imap.ClientConnection : BaseObject, Logging.Source {
 
     private size_t bytes_accumulator = 0;
 
-    private Geary.Nonblocking.Queue<Command> pending_queue =
-        new Geary.Nonblocking.Queue<Command>.fifo();
+    private Convey.Nonblocking.Queue<Command> pending_queue =
+        new Convey.Nonblocking.Queue<Command>.fifo();
     private Gee.Queue<Command> sent_queue = new Gee.LinkedList<Command>();
     private Command? current_command = null;
     private uint command_timeout;
@@ -115,7 +115,7 @@ public class Geary.Imap.ClientConnection : BaseObject, Logging.Source {
 
 
     public ClientConnection(
-        Geary.Endpoint endpoint,
+        Convey.Endpoint endpoint,
         Quirks quirks,
         uint command_timeout = Command.DEFAULT_RESPONSE_TIMEOUT_SEC,
         uint idle_timeout_sec = DEFAULT_IDLE_TIMEOUT_SEC) {

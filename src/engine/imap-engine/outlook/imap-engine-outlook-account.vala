@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.OutlookAccount : Geary.ImapEngine.GenericAccount {
+private class Convey.ImapEngine.OutlookAccount : Convey.ImapEngine.GenericAccount {
 
 
     public static void setup_account(AccountInformation account) {

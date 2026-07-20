@@ -8,7 +8,7 @@
 /**
  * An account editor pane for adding a new account.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/accounts_editor_add_pane.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_add_pane.ui")]
 internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
 
@@ -25,10 +25,10 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
     protected override weak Accounts.Editor editor { get; set; }
 
-    private Geary.ServiceProvider provider;
+    private Convey.ServiceProvider provider;
 
     private Manager accounts;
-    private Geary.Engine engine;
+    private Convey.Engine engine;
 
 
     [GtkChild] private unowned Adw.HeaderBar header;
@@ -67,7 +67,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     internal EditorAddPane(Editor editor) {
         Object(editor: editor);
 
-        this.provider = Geary.ServiceProvider.OTHER;
+        this.provider = Convey.ServiceProvider.OTHER;
 
         this.accounts = editor.application.controller.account_manager;
         this.engine = editor.application.engine;
@@ -89,10 +89,10 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         string? message = null;
         Gtk.Widget? to_focus = null;
 
-        Geary.AccountInformation account =
+        Convey.AccountInformation account =
             yield this.accounts.new_orphan_account(
                 this.provider,
-                new Geary.RFC822.MailboxAddress(
+                new Convey.RFC822.MailboxAddress(
                     this.name_row.text.strip(),
                     this.email_row.text.strip()
                 ),
@@ -103,7 +103,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         account.outgoing = this.sending_service_widget.service_mutable;
         account.untrusted_host.connect(on_untrusted_host);
 
-        if (this.provider == Geary.ServiceProvider.OTHER &&
+        if (this.provider == Convey.ServiceProvider.OTHER &&
                 !this.did_auto_config) {
             bool imap_valid = false;
             bool smtp_valid = false;
@@ -113,7 +113,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                     account, account.incoming, cancellable
                 );
                 imap_valid = true;
-            } catch (Geary.ImapError.UNAUTHENTICATED err) {
+            } catch (Convey.ImapError.UNAUTHENTICATED err) {
                 debug("Error authenticating IMAP service: %s", err.message);
                 to_focus = this.receiving_service_widget;
                 // Translators: In-app notification label
@@ -126,7 +126,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                 // Nothing to do here, someone just cancelled
                 debug("IMAP validation was cancelled: %s", err.message);
             } catch (GLib.Error err) {
-                Geary.ErrorContext context = new Geary.ErrorContext(err);
+                Convey.ErrorContext context = new Convey.ErrorContext(err);
                 debug("Error validating IMAP service: %s",
                       context.format_full_error());
                 //XXX GTK4 not sure how to design a nice API for this
@@ -146,13 +146,13 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                         cancellable
                     );
                     smtp_valid = true;
-                } catch (Geary.SmtpError.AUTHENTICATION_FAILED err) {
+                } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
                     debug("Error authenticating SMTP service: %s", err.message);
                     // There was an SMTP auth error, but IMAP already
                     // succeeded, so the user probably needs to
                     // specify custom creds here
                     this.receiving_service_widget.service.credentials_requirement =
-                        Geary.Credentials.Requirement.CUSTOM;
+                        Convey.Credentials.Requirement.CUSTOM;
                     to_focus = this.receiving_service_widget;
                     // Translators: In-app notification label
                     message = _("Check your sending login and password");
@@ -163,7 +163,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                     // Nothing to do here, someone just cancelled
                     debug("SMTP validation was cancelled: %s", err.message);
                 } catch (GLib.Error err) {
-                    Geary.ErrorContext context = new Geary.ErrorContext(err);
+                    Convey.ErrorContext context = new Convey.ErrorContext(err);
                     debug("Error validating SMTP service: %s",
                           context.format_full_error());
                     to_focus = this.sending_service_widget;
@@ -179,7 +179,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                     account, account.incoming, cancellable
                 );
                 is_valid = true;
-            } catch (Geary.ImapError.UNAUTHENTICATED err) {
+            } catch (Convey.ImapError.UNAUTHENTICATED err) {
                 debug("Error authenticating provider: %s", err.message);
                 to_focus = this.email_row;
                 // Translators: In-app notification label
@@ -189,7 +189,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                 // handler will be dealing with it
                 debug("Error validating SMTP certificate: %s", err.message);
             } catch (GLib.Error err) {
-                Geary.ErrorContext context = new Geary.ErrorContext(err);
+                Convey.ErrorContext context = new Convey.ErrorContext(err);
                 debug("Error validating SMTP service: %s",
                       context.format_full_error());
                 is_valid = false;
@@ -232,19 +232,19 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         }
     }
 
-    private Geary.ServiceInformation new_imap_service() {
-        var service = new Geary.ServiceInformation(
-            Geary.Protocol.IMAP, this.provider
+    private Convey.ServiceInformation new_imap_service() {
+        var service = new Convey.ServiceInformation(
+            Convey.Protocol.IMAP, this.provider
         );
-        service.credentials = new Geary.Credentials(
-            Geary.Credentials.Method.PASSWORD, ""
+        service.credentials = new Convey.Credentials(
+            Convey.Credentials.Method.PASSWORD, ""
         );
         return service;
     }
 
-    private Geary.ServiceInformation new_smtp_service() {
-        return new Geary.ServiceInformation(
-            Geary.Protocol.SMTP, this.provider
+    private Convey.ServiceInformation new_smtp_service() {
+        return new Convey.ServiceInformation(
+            Convey.Protocol.SMTP, this.provider
         );
     }
 
@@ -300,8 +300,8 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
             throws Accounts.AutoConfigError {
         AutoConfigValues auto_config_values = auto_config.get_config.end(res);
 
-        Geary.ServiceInformation imap_service = this.receiving_service_widget.service;
-        Geary.ServiceInformation smtp_service = this.sending_service_widget.service;
+        Convey.ServiceInformation imap_service = this.receiving_service_widget.service;
+        Convey.ServiceInformation smtp_service = this.sending_service_widget.service;
 
         imap_service.host = auto_config_values.imap_server;
         imap_service.port = (uint16) uint.parse(auto_config_values.imap_port);
@@ -319,20 +319,20 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
         switch (auto_config_values.id) {
         case "googlemail.com":
-            this.provider = Geary.ServiceProvider.GMAIL;
+            this.provider = Convey.ServiceProvider.GMAIL;
             break;
         case "hotmail.com":
-            this.provider = Geary.ServiceProvider.OUTLOOK;
+            this.provider = Convey.ServiceProvider.OUTLOOK;
             break;
         default:
-            this.provider = Geary.ServiceProvider.OTHER;
+            this.provider = Convey.ServiceProvider.OTHER;
             break;
         }
     }
 
     private void set_server_settings_from_hostname(string hostname) {
-        Geary.ServiceInformation imap_service = this.receiving_service_widget.service;
-        Geary.ServiceInformation smtp_service = this.sending_service_widget.service;
+        Convey.ServiceInformation imap_service = this.receiving_service_widget.service;
+        Convey.ServiceInformation smtp_service = this.sending_service_widget.service;
         string smtp_hostname = "smtp." + hostname;
         string imap_hostname = "imap." + hostname;
         string last_imap_hostname = "";
@@ -413,13 +413,13 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
         // Do not update entries if changed by user
         if (imap_service.credentials.user == this.last_valid_email) {
-            imap_service.credentials = new Geary.Credentials(
-                Geary.Credentials.Method.PASSWORD, email
+            imap_service.credentials = new Convey.Credentials(
+                Convey.Credentials.Method.PASSWORD, email
             );
         }
         if (smtp_service.credentials.user == this.last_valid_email) {
-            smtp_service.credentials = new Geary.Credentials(
-                Geary.Credentials.Method.PASSWORD, email
+            smtp_service.credentials = new Convey.Credentials(
+                Convey.Credentials.Method.PASSWORD, email
             );
         }
 
@@ -442,7 +442,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
     private void on_smtp_auth_changed() {
 #if 0
-        if (this.smtp_auth.value.source == Geary.Credentials.Requirement.CUSTOM) {
+        if (this.smtp_auth.value.source == Convey.Credentials.Requirement.CUSTOM) {
             this.sending_list.append(this.smtp_login);
             this.sending_list.append(this.smtp_password);
         } else if (this.smtp_login.parent != null) {
@@ -453,9 +453,9 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
 #endif
     }
 
-    private void on_untrusted_host(Geary.AccountInformation account,
-                                   Geary.ServiceInformation service,
-                                   Geary.Endpoint endpoint,
+    private void on_untrusted_host(Convey.AccountInformation account,
+                                   Convey.ServiceInformation service,
+                                   Convey.Endpoint endpoint,
                                    GLib.TlsConnection cx) {
         this.editor.prompt_pin_certificate.begin(
             account, service, endpoint, this.op_cancellable,
@@ -477,11 +477,11 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     private void on_action_button_clicked() {
         if (this.stack.get_visible_child_name() == "user_settings") {
             switch (this.provider) {
-            case Geary.ServiceProvider.GMAIL:
-            case Geary.ServiceProvider.OUTLOOK:
+            case Convey.ServiceProvider.GMAIL:
+            case Convey.ServiceProvider.OUTLOOK:
                 add_goa_account();
                 break;
-            case Geary.ServiceProvider.OTHER:
+            case Convey.ServiceProvider.OTHER:
                 switch_to_server_settings();
                 break;
             }

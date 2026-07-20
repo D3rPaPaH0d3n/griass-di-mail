@@ -7,7 +7,7 @@
 /**
  * An abstract base class representing a single task of asynchronous work.
  */
-public abstract class Geary.Nonblocking.BatchOperation : BaseObject {
+public abstract class Convey.Nonblocking.BatchOperation : BaseObject {
     /**
      * Called by {@link Nonblocking.Batch} when execution should start.
      *
@@ -51,7 +51,7 @@ public abstract class Geary.Nonblocking.BatchOperation : BaseObject {
  * operations in smaller chunks (to avoid flooding the thread's MainLoop).  These may be added in
  * the future.
  */
-public class Geary.Nonblocking.Batch : BaseObject {
+public class Convey.Nonblocking.Batch : BaseObject {
     /**
      * An invalid {@link BatchOperation} identifier.
      */

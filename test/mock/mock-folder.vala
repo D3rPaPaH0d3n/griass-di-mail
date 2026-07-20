@@ -5,28 +5,28 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Mock.Folder : Geary.Folder,
+public class Mock.Folder : Convey.Folder,
     ValaUnit.TestAssertions,
     ValaUnit.MockObject {
 
 
-    public override Geary.Account account {
+    public override Convey.Account account {
         get { return this._account; }
     }
 
-    public override Geary.FolderProperties properties {
+    public override Convey.FolderProperties properties {
         get { return this._properties; }
     }
 
-    public override Geary.FolderPath path {
+    public override Convey.FolderPath path {
         get { return this._path; }
     }
 
-    public override Geary.Folder.SpecialUse used_as {
+    public override Convey.Folder.SpecialUse used_as {
         get { return this._used_as; }
     }
 
-    public override Geary.ProgressMonitor opening_monitor {
+    public override Convey.ProgressMonitor opening_monitor {
         get { return this._opening_monitor; }
     }
 
@@ -35,18 +35,18 @@ public class Mock.Folder : Geary.Folder,
     }
 
 
-    private Geary.Account _account;
-    private Geary.FolderProperties _properties;
-    private Geary.FolderPath _path;
-    private Geary.Folder.SpecialUse _used_as;
-    private Geary.ProgressMonitor _opening_monitor;
+    private Convey.Account _account;
+    private Convey.FolderProperties _properties;
+    private Convey.FolderPath _path;
+    private Convey.Folder.SpecialUse _used_as;
+    private Convey.ProgressMonitor _opening_monitor;
 
 
-    public Folder(Geary.Account? account,
-                  Geary.FolderProperties? properties,
-                  Geary.FolderPath? path,
-                  Geary.Folder.SpecialUse used_as,
-                  Geary.ProgressMonitor? monitor) {
+    public Folder(Convey.Account? account,
+                  Convey.FolderProperties? properties,
+                  Convey.FolderPath? path,
+                  Convey.Folder.SpecialUse used_as,
+                  Convey.ProgressMonitor? monitor) {
         this._account = account;
         this._properties = properties ?? new FolderPoperties();
         this._path = path;
@@ -54,11 +54,11 @@ public class Mock.Folder : Geary.Folder,
         this._opening_monitor = monitor;
     }
 
-    public override Geary.Folder.OpenState get_open_state() {
-        return Geary.Folder.OpenState.CLOSED;
+    public override Convey.Folder.OpenState get_open_state() {
+        return Convey.Folder.OpenState.CLOSED;
     }
 
-    public override async bool open_async(Geary.Folder.OpenFlags open_flags,
+    public override async bool open_async(Convey.Folder.OpenFlags open_flags,
                                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         return yield boolean_call_async(
@@ -77,7 +77,7 @@ public class Mock.Folder : Geary.Folder,
 
     public override async void wait_for_close_async(GLib.Cancellable? cancellable = null)
     throws GLib.Error {
-        throw new Geary.EngineError.UNSUPPORTED("Mock method");
+        throw new Convey.EngineError.UNSUPPORTED("Mock method");
     }
 
     public override async void synchronise_remote(GLib.Cancellable? cancellable)
@@ -85,56 +85,56 @@ public class Mock.Folder : Geary.Folder,
         void_call("synchronise_remote", { cancellable });
     }
 
-    public override async Gee.Collection<Geary.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Geary.EmailIdentifier> ids,
+    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
+        Gee.Collection<Convey.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
-        return yield object_call_async<Gee.Collection<Geary.EmailIdentifier>>(
+        return yield object_call_async<Gee.Collection<Convey.EmailIdentifier>>(
             "contains_identifiers",
             {ids, cancellable},
-            new Gee.LinkedList<Geary.EmailIdentifier>()
+            new Gee.LinkedList<Convey.EmailIdentifier>()
         );
     }
 
-    public override async Gee.List<Geary.Email>?
-        list_email_by_id_async(Geary.EmailIdentifier? initial_id,
+    public override async Gee.List<Convey.Email>?
+        list_email_by_id_async(Convey.EmailIdentifier? initial_id,
                                int count,
-                               Geary.Email.Field required_fields,
-                               Geary.Folder.ListFlags flags,
+                               Convey.Email.Field required_fields,
+                               Convey.Folder.ListFlags flags,
                                GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        return yield object_call_async<Gee.List<Geary.Email>?>(
+        return yield object_call_async<Gee.List<Convey.Email>?>(
             "list_email_by_id_async",
             {initial_id, int_arg(count), box_arg(required_fields), box_arg(flags), cancellable},
             null
         );
     }
 
-    public override async Gee.List<Geary.Email>?
-        list_email_by_sparse_id_async(Gee.Collection<Geary.EmailIdentifier> ids,
-                                      Geary.Email.Field required_fields,
-                                      Geary.Folder.ListFlags flags,
+    public override async Gee.List<Convey.Email>?
+        list_email_by_sparse_id_async(Gee.Collection<Convey.EmailIdentifier> ids,
+                                      Convey.Email.Field required_fields,
+                                      Convey.Folder.ListFlags flags,
                                       GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        return yield object_call_async<Gee.List<Geary.Email>?>(
+        return yield object_call_async<Gee.List<Convey.Email>?>(
             "list_email_by_sparse_id_async",
             {ids, box_arg(required_fields), box_arg(flags), cancellable},
             null
         );
     }
 
-    public override async Geary.Email
-        fetch_email_async(Geary.EmailIdentifier email_id,
-                          Geary.Email.Field required_fields,
-                          Geary.Folder.ListFlags flags,
+    public override async Convey.Email
+        fetch_email_async(Convey.EmailIdentifier email_id,
+                          Convey.Email.Field required_fields,
+                          Convey.Folder.ListFlags flags,
                           GLib.Cancellable? cancellable = null)
     throws GLib.Error {
-        throw new Geary.EngineError.UNSUPPORTED("Mock method");
+        throw new Convey.EngineError.UNSUPPORTED("Mock method");
     }
 
     public override void set_used_as_custom(bool enabled)
-        throws Geary.EngineError.UNSUPPORTED {
-        throw new Geary.EngineError.UNSUPPORTED("Mock method");
+        throws Convey.EngineError.UNSUPPORTED {
+        throw new Convey.EngineError.UNSUPPORTED("Mock method");
     }
 
 }

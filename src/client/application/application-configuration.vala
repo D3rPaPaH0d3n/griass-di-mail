@@ -9,7 +9,7 @@
 /**
  * Provides properties to access application GSettings values.
  */
-public class Application.Configuration : Geary.BaseObject {
+public class Application.Configuration : Convey.BaseObject {
 
 
     public const string ASK_OPEN_ATTACHMENT_KEY = "ask-open-attachment";
@@ -291,38 +291,38 @@ public class Application.Configuration : Geary.BaseObject {
         this.settings.set_strv(SPELL_CHECK_VISIBLE_LANGUAGES, value);
     }
 
-    public Geary.SearchQuery.Strategy get_search_strategy() {
+    public Convey.SearchQuery.Strategy get_search_strategy() {
         switch (settings.get_string(SEARCH_STRATEGY_KEY).down()) {
             case "exact":
-                return Geary.SearchQuery.Strategy.EXACT;
+                return Convey.SearchQuery.Strategy.EXACT;
 
             case "aggressive":
-                return Geary.SearchQuery.Strategy.AGGRESSIVE;
+                return Convey.SearchQuery.Strategy.AGGRESSIVE;
 
             case "horizon":
-                return Geary.SearchQuery.Strategy.HORIZON;
+                return Convey.SearchQuery.Strategy.HORIZON;
 
             case "conservative":
             default:
-                return Geary.SearchQuery.Strategy.CONSERVATIVE;
+                return Convey.SearchQuery.Strategy.CONSERVATIVE;
         }
     }
 
-    public void set_search_strategy(Geary.SearchQuery.Strategy strategy) {
+    public void set_search_strategy(Convey.SearchQuery.Strategy strategy) {
         switch (strategy) {
-            case Geary.SearchQuery.Strategy.EXACT:
+            case Convey.SearchQuery.Strategy.EXACT:
                 settings.set_string(SEARCH_STRATEGY_KEY, "exact");
             break;
 
-            case Geary.SearchQuery.Strategy.AGGRESSIVE:
+            case Convey.SearchQuery.Strategy.AGGRESSIVE:
                 settings.set_string(SEARCH_STRATEGY_KEY, "aggressive");
             break;
 
-            case Geary.SearchQuery.Strategy.HORIZON:
+            case Convey.SearchQuery.Strategy.HORIZON:
                 settings.set_string(SEARCH_STRATEGY_KEY, "horizon");
             break;
 
-            case Geary.SearchQuery.Strategy.CONSERVATIVE:
+            case Convey.SearchQuery.Strategy.CONSERVATIVE:
             default:
                 settings.set_string(SEARCH_STRATEGY_KEY, "conservative");
             break;

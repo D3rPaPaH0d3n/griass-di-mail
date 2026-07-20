@@ -12,7 +12,7 @@
  * to the client application's internal machinery.
  *
  * Since the client application and engine objects have no API
- * stability guarantee, Geary will refuse to load out-of-tree plugins
+ * stability guarantee, Convey will refuse to load out-of-tree plugins
  * that implement this extension point.
  */
 public interface Plugin.TrustedExtension : PluginBase {

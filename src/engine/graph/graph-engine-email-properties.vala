@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.EmailProperties : Geary.EmailProperties {
+internal class Convey.Graph.EmailProperties : Convey.EmailProperties {
 
     public EmailProperties(GLib.DateTime date_received, int64 total_bytes) {
         base(date_received, total_bytes);

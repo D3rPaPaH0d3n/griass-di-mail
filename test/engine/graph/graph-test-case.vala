@@ -6,7 +6,7 @@
  */
 
 /** Base class for Graph engine unit tests. */
-class Geary.GraphTestCase : TestCase {
+class Convey.GraphTestCase : TestCase {
 
 
     private const string TEST_TOKEN = "test-graph-token";
@@ -14,7 +14,7 @@ class Geary.GraphTestCase : TestCase {
 
     public Soup.Server server { get; private set; }
     public string base_uri { get; private set; }
-    public Geary.CredentialsMediator mediator { get; private set; }
+    public Convey.CredentialsMediator mediator { get; private set; }
     public AccountInformation account { get; private set; }
     public File? tmp_dir { get; private set; }
 
@@ -50,15 +50,15 @@ class Geary.GraphTestCase : TestCase {
             new RFC822.MailboxAddress(null, "user@example.com")
         );
         this.account.account_backend = AccountBackend.MICROSOFT_GRAPH;
-        this.account.incoming.credentials = new Geary.Credentials(
-            Geary.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
+        this.account.incoming.credentials = new Convey.Credentials(
+            Convey.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
         );
-        this.account.outgoing.credentials = new Geary.Credentials(
-            Geary.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
+        this.account.outgoing.credentials = new Convey.Credentials(
+            Convey.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
         );
 
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("geary-graph-test-XXXXXX")
+            GLib.DirUtils.make_tmp("convey-graph-test-XXXXXX")
         );
         this.account.set_account_directories(this.tmp_dir, this.tmp_dir);
     }
@@ -133,15 +133,15 @@ class Geary.GraphTestCase : TestCase {
     }
 
     /** Returns a Client configured to talk to the test Soup.Server. */
-    public Geary.Graph.Client new_client() {
-        return new Geary.Graph.Client(this.account, this.base_uri);
+    public Convey.Graph.Client new_client() {
+        return new Convey.Graph.Client(this.account, this.base_uri);
     }
 
 }
 
 
 /** Simple request capture for a Soup.Server handler. */
-public class Geary.SoupServerCapture : GLib.Object {
+public class Convey.SoupServerCapture : GLib.Object {
 
     public string path { get; private set; }
     public string method { get; private set; default = ""; }
@@ -181,30 +181,30 @@ public class Geary.SoupServerCapture : GLib.Object {
  * client makes. Tests that need to simulate token failures can
  * subclass or replace this.
  */
-public class Geary.GraphStubCredentialsMediator :
+public class Convey.GraphStubCredentialsMediator :
     GLib.Object,
-    Geary.CredentialsMediator {
+    Convey.CredentialsMediator {
 
 
     public bool fail_load { get; set; default = false; }
     public int load_count { get; private set; default = 0; }
 
 
-    public async bool load_token(Geary.AccountInformation account,
-                                 Geary.ServiceInformation service,
+    public async bool load_token(Convey.AccountInformation account,
+                                 Convey.ServiceInformation service,
                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.load_count++;
         if (this.fail_load) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            throw new Convey.EngineError.SERVER_UNAVAILABLE(
                 "Test-induced load failure"
             );
         }
         return true;
     }
 
-    public async bool prompt_token(Geary.AccountInformation account,
-                                   Geary.ServiceInformation service,
+    public async bool prompt_token(Convey.AccountInformation account,
+                                   Convey.ServiceInformation service,
                                    GLib.Cancellable? cancellable)
         throws GLib.Error {
         return false;

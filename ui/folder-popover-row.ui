@@ -40,7 +40,7 @@
       </object>
     </child>
     <style>
-      <class name="geary-folder-popover-list-row"/>
+      <class name="convey-folder-popover-list-row"/>
     </style>
   </template>
 </interface>

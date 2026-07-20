@@ -556,7 +556,7 @@ Changes:
  * Make single-key shortcuts optional, brig up to date with Gmail
  * Substantial client application/controller/main window/composer class
    cleanup
- * Geary.Engine API cleanup
+ * Convey.Engine API cleanup
  * Improve logging initialisation
  * Online manual updates
 
@@ -586,7 +586,7 @@ Changes:
  * Improved missing attachment detection in composer
  * App-wide notification preferences now handled by desktop
  * Initial plugin system
- * Rename development app id to org.gnome.Geary.Devel
+ * Rename development app id to net.donnybeelo.Convey.Devel
  * Publish nightly devel Flatpak builds to nightly.gnome.org
  * Tighten Flatpak sandbox permissions
  * Convert Flatpak manifest to YML
@@ -645,7 +645,7 @@ Enhancements included in this release:
  * Messages can be replied to via by a different account
  * Added a number of keyboard shortcuts for common operations
  * Support for Development and Beta build profiles
- * Bug causing Geary to use 100% CPU fixed
+ * Bug causing Convey to use 100% CPU fixed
  * Numerous bug fixes and user interface improvements
  * Numerous user interface translation updates
 
@@ -974,7 +974,7 @@ And for the user manual:
  * Piotr Drąg (pl)
  * Rafael Fontenelle (pt_BR)
 
-Geary 0.11.0 - 15 May 2016
+Convey 0.11.0 - 15 May 2016
 --------------------------
 
   * Add archive special folder support (#713986)
@@ -1033,7 +1033,7 @@ Geary 0.11.0 - 15 May 2016
       Marek Černocký (cs)
       Simon Linden (de)
 
-Geary 0.10.0 - 30 March 2015
+Convey 0.10.0 - 30 March 2015
 ----------------------------
 
   * Undo Archive/Trash/Move of email (#721828)
@@ -1046,7 +1046,7 @@ Geary 0.10.0 - 30 March 2015
   * Updated translations
 
 
-Geary 0.9.1 - 2 February 2015
+Convey 0.9.1 - 2 February 2015
 -----------------------------
 
   * Support HTML signatures (#738895)
@@ -1063,7 +1063,7 @@ Geary 0.9.1 - 2 February 2015
   * Updated translations
 
 
-Geary 0.9.0 - 19 December 2014
+Convey 0.9.0 - 19 December 2014
 ------------------------------
 
   * Improved full-text search experience (#720361)
@@ -1076,10 +1076,10 @@ Geary 0.9.0 - 19 December 2014
   * Updated translations
 
 
-Geary 0.8.3 - 19 December 2014
+Convey 0.8.3 - 19 December 2014
 ------------------------------
 
-  * Prevent race condition causing Geary window not to open (#737811)
+  * Prevent race condition causing Convey window not to open (#737811)
   * Compile with Vala 0.28 (#741077)
   * Updated SSLv3 POODLE fallback (#741132)
   * Fixed connection state handler to return to IDLE
@@ -1088,19 +1088,19 @@ Geary 0.8.3 - 19 December 2014
   * Updated translations
 
 
-Geary 0.8.2 - 4 November 2014
+Convey 0.8.2 - 4 November 2014
 -----------------------------
 
   * "View Source" creates temp files only readable by user (#724436)
   * elementary Contractor support (#734717)
-  * Prevent displaying blank window when Geary first starts (#720360, #737811)
+  * Prevent displaying blank window when Convey first starts (#720360, #737811)
   * Disable SSLv3 (POODLE attack) (#739019)
   * Fix IMAP problems when running under Turkish locale (#714892)
   * Don't crash when closing composer (#739141)
   * Updated translations
 
 
-Geary 0.8.1 - 7 October 2014
+Convey 0.8.1 - 7 October 2014
 ----------------------------
 
   * Display properly-scaled icons under GTK+ 3.14
@@ -1112,7 +1112,7 @@ Geary 0.8.1 - 7 October 2014
   * Updated Spanish, German translations
 
 
-Geary 0.8.0 - 19 September 2014
+Convey 0.8.0 - 19 September 2014
 -------------------------------
 
   * Enforce CSS scope style rules when viewing emails
@@ -1120,7 +1120,7 @@ Geary 0.8.0 - 19 September 2014
   * Updated translations
 
 
-Geary 0.7.2 - 2 September 2014
+Convey 0.7.2 - 2 September 2014
 ------------------------------
 
   * Warn user of TLS certificate issues when connecting (#713247)
@@ -1131,7 +1131,7 @@ Geary 0.7.2 - 2 September 2014
   * Updated translations
 
 
-Geary 0.7.1 - 20 August 2014
+Convey 0.7.1 - 20 August 2014
 ----------------------------
 
   * Show attachments lacking a Content-Disposition
@@ -1144,7 +1144,7 @@ Geary 0.7.1 - 20 August 2014
   * Updated translations
 
 
-Geary 0.7.0 - 18 July 2014
+Convey 0.7.0 - 18 July 2014
 --------------------------
 
   * Major overhaul of email composer, now inline in main window and redesigned
@@ -1155,20 +1155,20 @@ Geary 0.7.0 - 18 July 2014
   * Improved connection retry
   * Various bug fixes
 
-Geary 0.6.5 - 4 November 2014
+Convey 0.6.5 - 4 November 2014
 -----------------------------
 
   * Fixed help documentation installation of translated pages
 
 
-Geary 0.6.4 - 4 November 2014
+Convey 0.6.4 - 4 November 2014
 -----------------------------
 
   * French documentation added
   * Updated translations
 
 
-Geary 0.6.3 - 2 September 2014
+Convey 0.6.3 - 2 September 2014
 ------------------------------
 
   * Warn user of TLS certificate issues when connecting (#713247)
@@ -1176,7 +1176,7 @@ Geary 0.6.3 - 2 September 2014
   * Compile with Vala 0.25 and better
 
 
-Geary 0.6.2 - 20 August 2014
+Convey 0.6.2 - 20 August 2014
 ----------------------------
 
   * Patch major memory leak due to GMime bindings
@@ -1185,7 +1185,7 @@ Geary 0.6.2 - 20 August 2014
   * Prevent Inbox from being cleared on startup w/ Dovecot, Zimbra, and more.
 
 
-Geary 0.6.1 - 1 July 2014
+Convey 0.6.1 - 1 July 2014
 -------------------------
 
   * Copy and move message bug fixes (esp. to prevent lost emails)
@@ -1193,14 +1193,14 @@ Geary 0.6.1 - 1 July 2014
   * Prevent failure when deleting Outbox message
   * Don't save draft messages on server when UIDPLUS not available
   * Correct severe database command error (statement too long)
-  * Fix bug when launching Geary with file URIs for attachments
+  * Fix bug when launching Convey with file URIs for attachments
   * Prevent the IMAP account synchronizer from deadlocking
   * Fix server compatibility issues (mail.ru, netcourrier.com)
   * Italian translation of help documentation
   * Improved translations
 
 
-Geary 0.6.0 - 17 March 2014
+Convey 0.6.0 - 17 March 2014
 ---------------------------
 
   * Cleaned up star/unstar and mark as read/unread functionality
@@ -1208,7 +1208,7 @@ Geary 0.6.0 - 17 March 2014
   * Many bugfixes
 
 
-Geary 0.5.3 - 3 March 2014
+Convey 0.5.3 - 3 March 2014
 --------------------------
 
   * Better styling of collapsed quotes
@@ -1221,7 +1221,7 @@ Geary 0.5.3 - 3 March 2014
   * Other miscellaneous bugfixes
 
 
-Geary 0.5.2 - 14 February 2014
+Convey 0.5.2 - 14 February 2014
 ------------------------------
 
   * Improved recognition of special folders for "Other" accounts
@@ -1232,7 +1232,7 @@ Geary 0.5.2 - 14 February 2014
   * Miscellaneous bugfixes
 
 
-Geary 0.5.1 - 30 January 2014
+Convey 0.5.1 - 30 January 2014
 -----------------------------
 
   * Ability to save sent mail
@@ -1243,7 +1243,7 @@ Geary 0.5.1 - 30 January 2014
   * Speed improvements & miscellaneous bugfixes
 
 
-Geary 0.5.0 - 12 December 2013
+Convey 0.5.0 - 12 December 2013
 ------------------------------
 
   * Port to GtkApplication
@@ -1251,20 +1251,20 @@ Geary 0.5.0 - 12 December 2013
   * Miscellaneous bugfixes
 
 
-Geary 0.4.3 - 12 December 2013
+Convey 0.4.3 - 12 December 2013
 ------------------------------
 
   * Fix "squished" conversation list when used with certain themes
   * Compile-time support for WebKitGTK 2.0
 
 
-Geary 0.4.2 - 20 November 2013
+Convey 0.4.2 - 20 November 2013
 ------------------------------
 
   * Compile with Vala 0.22.1
 
 
-Geary 0.4.1 - 11 November 2013
+Convey 0.4.1 - 11 November 2013
 ------------------------------
 
   * Compile-time support for WebKitGTK 2.2
@@ -1276,7 +1276,7 @@ Geary 0.4.1 - 11 November 2013
   * New translations
 
 
-Geary 0.4.0 - 3 October 2013
+Convey 0.4.0 - 3 October 2013
 ------------------------------
 
   * Per-account full text search
@@ -1292,7 +1292,7 @@ Geary 0.4.0 - 3 October 2013
   * Hundreds of bugs fixed and small improvements
 
 
-Geary 0.3.1 - 9 April 2013
+Convey 0.3.1 - 9 April 2013
 ---------------------------
 
   * Reduced CPU and memory footprint
@@ -1300,7 +1300,7 @@ Geary 0.3.1 - 9 April 2013
   * Stability improvements
 
 
-Geary 0.3.0 - 19 March 2013
+Convey 0.3.0 - 19 March 2013
 ---------------------------
 
   * Support for multiple accounts
@@ -1317,13 +1317,13 @@ Geary 0.3.0 - 19 March 2013
   * Conversation viewer WebKit inspector
   * Many bugfixes
 
-Geary 0.2.2 - 18 October 2012
+Convey 0.2.2 - 18 October 2012
 -----------------------------
 
   * Fix PLAIN authentication (failed w/ Yahoo! and other SMTP servers)
   * Build will fail if intltool not installed (necessary for .desktop)
 
-Geary 0.2.1 - 8 October 2012
+Convey 0.2.1 - 8 October 2012
 ----------------------------
 
   * Save attachments FileChooserDialog now displays network mounts
@@ -1334,7 +1334,7 @@ Geary 0.2.1 - 8 October 2012
   * Icon and desktop file cache updated after uninstall
   * Various translation fixes, including translations not being displayed
 
-Geary 0.2.0 - 1 October 2012
+Convey 0.2.0 - 1 October 2012
 ----------------------------
 
   * Fixed Dovecot-related IMAP issues
@@ -1346,7 +1346,7 @@ Geary 0.2.0 - 1 October 2012
   * Messaging Menu integration
   * Numerous bug and stability fixes
 
-Geary 0.1.90 - 05 September 2012
+Convey 0.1.90 - 05 September 2012
 --------------------------------
 
   * Support for sending and receiving attachments
@@ -1361,7 +1361,7 @@ Geary 0.1.90 - 05 September 2012
   * Strings marked for translation and .pot file now available
   * Numerous bug and stability fixes
 
-Geary 0.1.0 - 04 May 2012
+Convey 0.1.0 - 04 May 2012
 -------------------------
 
   * Initial release.  Features include:

@@ -19,7 +19,7 @@
  *
  * @see Deserializer
  */
-public class Geary.Imap.Serializer : BaseObject {
+public class Convey.Imap.Serializer : BaseObject {
 
 
     private const string EOL = "\r\n";

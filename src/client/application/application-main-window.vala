@@ -6,9 +6,9 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-[GtkTemplate (ui = "/org/gnome/Geary/application-main-window.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/application-main-window.ui")]
 public class Application.MainWindow :
-    Adw.ApplicationWindow, Geary.BaseInterface {
+    Adw.ApplicationWindow, Convey.BaseInterface {
 
 
     // Named actions.
@@ -112,13 +112,13 @@ public class Application.MainWindow :
     }
 
     /** Currently selected account, null if none selected */
-    public Geary.Account? selected_account { get; private set; default = null; }
+    public Convey.Account? selected_account { get; private set; default = null; }
 
     /** Currently selected folder, null if none selected */
-    public Geary.Folder? selected_folder { get; private set; default = null; }
+    public Convey.Folder? selected_folder { get; private set; default = null; }
 
     /** Conversations for the current folder, null if none selected */
-    public Geary.App.ConversationMonitor? conversations {
+    public Convey.App.ConversationMonitor? conversations {
         get; private set; default = null;
     }
 
@@ -201,14 +201,14 @@ public class Application.MainWindow :
 
     // Caches the last non-search folder so it can be re-selected on
     // the search folder closing
-    private Geary.Folder? previous_non_search_folder = null;
+    private Convey.Folder? previous_non_search_folder = null;
 
-    private Geary.AggregateProgressMonitor progress_monitor = new Geary.AggregateProgressMonitor();
+    private Convey.AggregateProgressMonitor progress_monitor = new Convey.AggregateProgressMonitor();
 
     private GLib.Cancellable action_update_cancellable = new GLib.Cancellable();
     private GLib.Cancellable folder_open = new GLib.Cancellable();
 
-    private Geary.TimeoutManager update_ui_timeout;
+    private Convey.TimeoutManager update_ui_timeout;
     private int64 update_ui_last = 0;
 
     [GtkChild] private unowned Gtk.ToggleButton search_button;
@@ -250,7 +250,7 @@ public class Application.MainWindow :
     private Components.ProblemReportInfoBar? service_problem_infobar = null;
 
     /** Fired when the user requests an account status be retried. */
-    public signal void retry_service_problem(Geary.ClientService.Status problem);
+    public signal void retry_service_problem(Convey.ClientService.Status problem);
 
 
     /** Keybinding signal for replying to sender for the current conversation. */
@@ -402,7 +402,7 @@ public class Application.MainWindow :
 
         this.attachments = new AttachmentManager(this);
 
-        this.update_ui_timeout = new Geary.TimeoutManager.seconds(
+        this.update_ui_timeout = new Convey.TimeoutManager.seconds(
             UPDATE_UI_INTERVAL, on_update_ui_timeout
         );
         this.update_ui_timeout.repetition = FOREVER;
@@ -481,7 +481,7 @@ public class Application.MainWindow :
             ? account.get_folder(this.selected_folder)
             : null
         );
-        string title = _("Geary");
+        string title = _("Convey");
         string? account_name = null;
         string? folder_name = null;
         if (account != null && folder != null) {
@@ -499,10 +499,10 @@ public class Application.MainWindow :
     }
 
     /** Updates the window's account status info bars. */
-    public void update_account_status(Geary.Account.Status status,
+    public void update_account_status(Convey.Account.Status status,
                                       bool has_auth_error,
                                       bool has_cert_error,
-                                      Geary.Account? problem_source) {
+                                      Convey.Account? problem_source) {
         // Only ever show one info bar at a time. Offline is primary
         // since nothing else can happen when offline. Service
         // problems are secondary since auth and cert problems can't
@@ -512,13 +512,13 @@ public class Application.MainWindow :
         if (!status.is_online()) {
             this.info_bars.add(this.offline_infobar);
         } else if (status.has_service_problem()) {
-            Geary.ClientService? service = (
+            Convey.ClientService? service = (
                 problem_source.incoming.last_error != null
                 ? problem_source.incoming
                 : problem_source.outgoing
             );
             this.service_problem_infobar = new Components.ProblemReportInfoBar(
-                new Geary.ServiceProblemReport(
+                new Convey.ServiceProblemReport(
                     problem_source.information,
                     service.configuration,
                     service.last_error.thrown
@@ -542,7 +542,7 @@ public class Application.MainWindow :
      * caused directly by human request (e.g. clicking on a folder in
      * the folder list), as opposed to some side effect.
      */
-    public async void select_folder(Geary.Folder? to_select,
+    public async void select_folder(Convey.Folder? to_select,
                                     bool is_interactive,
                                     bool inhibit_autoselect = false) {
         if (this.selected_folder == to_select) {
@@ -614,7 +614,7 @@ public class Application.MainWindow :
                 this.progress_monitor.add(to_select.opening_monitor);
                 to_select.properties.notify.connect(update_headerbar);
 
-                this.conversations = new Geary.App.ConversationMonitor(
+                this.conversations = new Convey.App.ConversationMonitor(
                     to_select,
                     // Include fields for the conversation viewer as well so
                     // conversations can be displayed without having to go
@@ -642,8 +642,8 @@ public class Application.MainWindow :
     }
 
     /** Selects the given account, folder and conversations. */
-    public async void show_conversations(Geary.Folder location,
-                                         Gee.Collection<Geary.App.Conversation> to_show,
+    public async void show_conversations(Convey.Folder location,
+                                         Gee.Collection<Convey.App.Conversation> to_show,
                                          bool is_interactive) {
         bool inhibit_autoselect = (location != this.selected_folder);
         yield select_folder(location, is_interactive, inhibit_autoselect);
@@ -655,9 +655,9 @@ public class Application.MainWindow :
             // Since conversation ids don't persist between
             // conversation monitor instances, need to load
             // conversations based on their messages.
-            var latest_email = new Gee.HashSet<Geary.EmailIdentifier>();
+            var latest_email = new Gee.HashSet<Convey.EmailIdentifier>();
             foreach (var stale in to_show) {
-                Geary.Email? first = stale.get_latest_recv_email(IN_FOLDER);
+                Convey.Email? first = stale.get_latest_recv_email(IN_FOLDER);
                 if (first != null) {
                     latest_email.add(first.id);
                 }
@@ -668,7 +668,7 @@ public class Application.MainWindow :
             if (!loaded.is_empty) {
                 yield select_conversations(
                     loaded,
-                    Gee.Collection.empty<Geary.EmailIdentifier>(),
+                    Gee.Collection.empty<Convey.EmailIdentifier>(),
                     is_interactive
                 );
             }
@@ -676,8 +676,8 @@ public class Application.MainWindow :
     }
 
     /** Selects the given account, folder and email. */
-    public async void show_email(Geary.Folder location,
-                                 Gee.Collection<Geary.EmailIdentifier> to_show,
+    public async void show_email(Convey.Folder location,
+                                 Gee.Collection<Convey.EmailIdentifier> to_show,
                                  bool is_interactive) {
         bool inhibit_autoselect = (location != this.selected_folder);
         yield select_folder(location, is_interactive, inhibit_autoselect);
@@ -690,7 +690,7 @@ public class Application.MainWindow :
             if (loaded.size == 1) {
                 // A single conversation was loaded, so ensure we
                 // scroll to the email in the conversation.
-                Geary.App.Conversation? target = Geary.Collection.first(loaded);
+                Convey.App.Conversation? target = Convey.Collection.first(loaded);
                 ConversationListBox? current_list =
                     this.conversation_viewer.current_list;
                 if (current_list != null &&
@@ -712,7 +712,7 @@ public class Application.MainWindow :
                 // Multiple conversations found, just select those
                 yield select_conversations(
                     loaded,
-                    Gee.Collection.empty<Geary.EmailIdentifier>(),
+                    Gee.Collection.empty<Convey.EmailIdentifier>(),
                     is_interactive
                 );
             }
@@ -756,9 +756,9 @@ public class Application.MainWindow :
             // any of the composer's referred emails (preferring the
             // latest), and if so add it inline, otherwise add it full
             // paned.
-            Geary.Email? latest_referred = null;
+            Convey.Email? latest_referred = null;
             if (this.conversation_viewer.current_list != null) {
-                Geary.App.Conversation selected =
+                Convey.App.Conversation selected =
                     this.conversation_viewer.current_list.conversation;
                 // When editing an existing draft, use the draft email
                 // itself as the anchor so the composer appears at the
@@ -775,7 +775,7 @@ public class Application.MainWindow :
                     );
                 }
                 if (latest_referred == null) {
-                    Gee.Collection<Geary.EmailIdentifier>? referrants =
+                    Gee.Collection<Convey.EmailIdentifier>? referrants =
                         composer.get_referred_ids();
                     latest_referred = selected.get_emails(
                         RECV_DATE_DESCENDING
@@ -881,7 +881,7 @@ public class Application.MainWindow :
 
     internal bool select_first_inbox(bool is_interactive) {
         bool success = false;
-        Geary.Folder? inbox = get_first_inbox();
+        Convey.Folder? inbox = get_first_inbox();
         if (inbox != null) {
             this.select_folder.begin(inbox, is_interactive);
             success = true;
@@ -896,8 +896,8 @@ public class Application.MainWindow :
             );
 
             this.progress_monitor.add(to_add.account.background_progress);
-            Geary.Smtp.ClientService? smtp = (
-                to_add.account.outgoing as Geary.Smtp.ClientService
+            Convey.Smtp.ClientService? smtp = (
+                to_add.account.outgoing as Convey.Smtp.ClientService
             );
             if (smtp != null) {
                 this.progress_monitor.add(smtp.sending_monitor);
@@ -929,7 +929,7 @@ public class Application.MainWindow :
      * otherwise no folder will be.
      */
     private async void remove_account(AccountContext to_remove,
-                                      Geary.Folder? to_select) {
+                                      Convey.Folder? to_select) {
         if (this.accounts.contains(to_remove)) {
             // Explicitly unset the selected folder if it belongs to the
             // account so we block until it's gone. This also clears the
@@ -956,8 +956,8 @@ public class Application.MainWindow :
             to_remove.folders_available.disconnect(on_folders_unavailable);
 
             this.progress_monitor.remove(to_remove.account.background_progress);
-            Geary.Smtp.ClientService? smtp = (
-                to_remove.account.outgoing as Geary.Smtp.ClientService
+            Convey.Smtp.ClientService? smtp = (
+                to_remove.account.outgoing as Convey.Smtp.ClientService
             );
             if (smtp != null) {
                 this.progress_monitor.remove(smtp.sending_monitor);
@@ -977,7 +977,7 @@ public class Application.MainWindow :
         var map = new Gee.HashMap<string,string>();
         foreach (var context in to_add) {
             var folder = context.folder;
-            if (folder.used_as == Geary.Folder.SpecialUse.NONE)
+            if (folder.used_as == Convey.Folder.SpecialUse.NONE)
                 continue;
             map.set(
                 folder.path.to_string().substring(1),
@@ -1005,7 +1005,7 @@ public class Application.MainWindow :
     private void remove_folders(Gee.Collection<FolderContext> to_remove,
                                 bool update_selecton) {
         foreach (var context in to_remove) {
-            Geary.Folder folder = context.folder;
+            Convey.Folder folder = context.folder;
             if (this.selected_folder == folder) {
                 var account = get_selected_account_context();
                 if (account != null) {
@@ -1028,10 +1028,10 @@ public class Application.MainWindow :
         return context;
     }
 
-    private Geary.Folder? get_first_inbox() {
-        Geary.Folder? inbox = null;
+    private Convey.Folder? get_first_inbox() {
+        Convey.Folder? inbox = null;
         try {
-            Geary.Account? first = Geary.Collection.first<Geary.Account>(
+            Convey.Account? first = Convey.Collection.first<Convey.Account>(
                 this.application.engine.get_accounts()
             );
             if (first != null) {
@@ -1213,11 +1213,11 @@ public class Application.MainWindow :
         check_shift_event(keyval, false);
     }
 
-    internal async bool prompt_empty_folder(Geary.Folder.SpecialUse type) {
+    internal async bool prompt_empty_folder(Convey.Folder.SpecialUse type) {
         var folder_name = Util.I18n.to_folder_type_display_name(type);
         var dialog = new Adw.AlertDialog(
             _("Empty all email from your %s folder?").printf(folder_name),
-            _("This removes the email from Geary and your email server.") +
+            _("This removes the email from Convey and your email server.") +
             "  <b>" + _("This cannot be undone.") + "</b>");
         dialog.body_use_markup = true;
         dialog.add_response("cancel", _("_Cancel"));
@@ -1311,10 +1311,10 @@ public class Application.MainWindow :
         return (response == "delete");
     }
 
-    private async Gee.Collection<Geary.App.Conversation>
+    private async Gee.Collection<Convey.App.Conversation>
         load_conversations_for_email(
-            Geary.Folder location,
-            Gee.Collection<Geary.EmailIdentifier> to_load) {
+            Convey.Folder location,
+            Gee.Collection<Convey.EmailIdentifier> to_load) {
         bool was_loaded = false;
         // Can't assume the conversation monitor is valid, so check
         // it first.
@@ -1331,12 +1331,12 @@ public class Application.MainWindow :
 
         // Conversation monitor may have changed since resuming from
         // the last async statement, so check it's still valid again.
-        var loaded = new Gee.HashSet<Geary.App.Conversation>();
+        var loaded = new Gee.HashSet<Convey.App.Conversation>();
         if (was_loaded &&
             this.conversations != null &&
             this.conversations.base_folder == location) {
             foreach (var id in to_load) {
-                Geary.App.Conversation? conversation =
+                Convey.App.Conversation? conversation =
                     this.conversations.get_by_email_identifier(id);
                 if (conversation != null) {
                     loaded.add(conversation);
@@ -1346,11 +1346,11 @@ public class Application.MainWindow :
         return loaded;
     }
 
-    private inline void handle_error(Geary.AccountInformation? account,
+    private inline void handle_error(Convey.AccountInformation? account,
                                      GLib.Error error) {
-        Geary.ProblemReport? report = (account != null)
-            ? new Geary.AccountProblemReport(account, error)
-            : new Geary.ProblemReport(error);
+        Convey.ProblemReport? report = (account != null)
+            ? new Convey.AccountProblemReport(account, error)
+            : new Convey.ProblemReport(error);
         this.controller.report_problem(report);
     }
 
@@ -1368,7 +1368,7 @@ public class Application.MainWindow :
         }
     }
 
-    private void select_account(Geary.Account? account) {
+    private void select_account(Convey.Account? account) {
         if (this.selected_account != account) {
             this.selected_account = account;
             this.search_bar.set_account(account);
@@ -1384,8 +1384,8 @@ public class Application.MainWindow :
         }
     }
 
-    private async void select_conversations(Gee.Collection<Geary.App.Conversation> to_select,
-                                            Gee.Collection<Geary.EmailIdentifier> scroll_to,
+    private async void select_conversations(Gee.Collection<Convey.App.Conversation> to_select,
+                                            Gee.Collection<Convey.EmailIdentifier> scroll_to,
                                             bool is_interactive) {
         bool start_mark_timer = (
             this.previous_selection_was_interactive && is_interactive
@@ -1411,7 +1411,7 @@ public class Application.MainWindow :
 
             case 1:
                 update_conversation_actions(SINGLE);
-                Geary.App.Conversation? convo = Geary.Collection.first(to_select);
+                Convey.App.Conversation? convo = Convey.Collection.first(to_select);
 
                 // It's possible for a conversation with zero email to
                 // be selected, when it has just evaporated after its
@@ -1428,7 +1428,7 @@ public class Application.MainWindow :
                             context.contacts,
                             start_mark_timer
                         );
-                    } catch (Geary.EngineError.NOT_FOUND err) {
+                    } catch (Convey.EngineError.NOT_FOUND err) {
                         // The first interesting email from the
                         // conversation wasn't found.
                         // This happens:
@@ -1453,7 +1453,7 @@ public class Application.MainWindow :
         }
     }
 
-    private async void open_conversation_monitor(Geary.App.ConversationMonitor to_open,
+    private async void open_conversation_monitor(Convey.App.ConversationMonitor to_open,
                                                  GLib.Cancellable cancellable) {
         to_open.scan_completed.connect(on_scan_completed);
         to_open.scan_error.connect(on_scan_error);
@@ -1475,7 +1475,7 @@ public class Application.MainWindow :
         );
     }
 
-    private void close_conversation_monitor(Geary.App.ConversationMonitor to_close) {
+    private void close_conversation_monitor(Convey.App.ConversationMonitor to_close) {
         to_close.scan_completed.disconnect(on_scan_completed);
         to_close.scan_error.disconnect(on_scan_error);
 
@@ -1499,9 +1499,9 @@ public class Application.MainWindow :
         );
     }
 
-    private async void create_composer(Geary.Account send_context,
+    private async void create_composer(Convey.Account send_context,
                                        Composer.Widget.ContextType type,
-                                       Geary.Email context,
+                                       Convey.Email context,
                                        string? quote) {
         var composer = yield this.controller.compose_with_context(
             this.controller.get_context_for_account(send_context.information),
@@ -1513,7 +1513,7 @@ public class Application.MainWindow :
     }
 
     private async void create_composer_from_viewer(Composer.Widget.ContextType type) {
-        Geary.Account? account = this.selected_account;
+        Convey.Account? account = this.selected_account;
         ConversationEmail? email_view = null;
         ConversationListBox? list_view = this.conversation_viewer.current_list;
         if (list_view != null) {
@@ -1542,7 +1542,7 @@ public class Application.MainWindow :
     }
 
     private void on_refresh_folder() {
-        Geary.Folder? folder = this.selected_folder;
+        Convey.Folder? folder = this.selected_folder;
         if (folder == null) {
             return;
         }
@@ -1558,7 +1558,7 @@ public class Application.MainWindow :
         });
     }
 
-    private void on_conversations_selected(Gee.Set<Geary.App.Conversation> selected) {
+    private void on_conversations_selected(Gee.Set<Convey.App.Conversation> selected) {
         bool folded = this.outer_view.collapsed;
 
         // If folded, selection handled by activate
@@ -1587,13 +1587,13 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_conversation_activated(Geary.App.Conversation activated, uint button) {
+    private void on_conversation_activated(Convey.App.Conversation activated, uint button) {
         if (button == Gdk.BUTTON_PRIMARY) {
             bool collapsed = this.inner_view.collapsed;
             this.outer_view.show_content = true;
             if (collapsed) {
-                Gee.Collection<Geary.App.Conversation> selected =
-                    new Gee.ArrayList<Geary.App.Conversation>();
+                Gee.Collection<Convey.App.Conversation> selected =
+                    new Gee.ArrayList<Convey.App.Conversation>();
                 selected.add(activated);
                 select_conversations.begin(selected, Gee.Collection.empty(), true);
             }
@@ -1606,7 +1606,7 @@ public class Application.MainWindow :
             } else {
                 // TODO: Determine how to map between conversations
                 // and drafts correctly.
-                Geary.Email draft = activated.get_latest_recv_email(IN_FOLDER);
+                Convey.Email draft = activated.get_latest_recv_email(IN_FOLDER);
                 this.create_composer.begin(
                     this.selected_folder.account,
                     EDIT,
@@ -1690,7 +1690,7 @@ public class Application.MainWindow :
         get_window_action(ACTION_FORWARD_CONVERSATION).set_enabled(reply_sensitive);
 
         bool copy_enabled = (
-            sensitive && (this.selected_folder is Geary.FolderSupport.Copy)
+            sensitive && (this.selected_folder is Convey.FolderSupport.Copy)
         );
         get_window_action(ACTION_SHOW_COPY_MENU).set_enabled(copy_enabled);
         foreach (var actions in this.folder_conversation_actions) {
@@ -1698,20 +1698,20 @@ public class Application.MainWindow :
         }
 
         bool mark_enabled = (
-            sensitive && (this.selected_folder is Geary.FolderSupport.Mark)
+            sensitive && (this.selected_folder is Convey.FolderSupport.Mark)
         );
         foreach (var actions in this.folder_conversation_actions) {
             actions.set_mark_sensitive(mark_enabled);
         }
 
         get_window_action(ACTION_ARCHIVE_CONVERSATION).set_enabled(
-            sensitive && (this.selected_folder is Geary.FolderSupport.Archive)
+            sensitive && (this.selected_folder is Convey.FolderSupport.Archive)
         );
         get_window_action(ACTION_TRASH_CONVERSATION).set_enabled(
             sensitive && this.selected_folder_supports_trash
         );
         get_window_action(ACTION_DELETE_CONVERSATION).set_enabled(
-            sensitive && (this.selected_folder is Geary.FolderSupport.Remove)
+            sensitive && (this.selected_folder is Convey.FolderSupport.Remove)
         );
 
         this.update_context_dependent_actions.begin(sensitive);
@@ -1733,16 +1733,16 @@ public class Application.MainWindow :
         GLib.Cancellable cancellable = new Cancellable();
         this.action_update_cancellable = cancellable;
 
-        Gee.MultiMap<Geary.EmailIdentifier, Type>? selected_operations = null;
+        Gee.MultiMap<Convey.EmailIdentifier, Type>? selected_operations = null;
         if (this.selected_folder != null) {
             AccountContext? context =
                 this.controller.get_context_for_account(
                     this.selected_folder.account.information
                 );
             if (context != null) {
-                Gee.Collection<Geary.EmailIdentifier> ids =
-                    new Gee.LinkedList<Geary.EmailIdentifier>();
-                foreach (Geary.App.Conversation convo in
+                Gee.Collection<Convey.EmailIdentifier> ids =
+                    new Gee.LinkedList<Convey.EmailIdentifier>();
+                foreach (Convey.App.Conversation convo in
                          this.conversation_list_view.selected) {
                     ids.add_all(convo.get_email_ids());
                 }
@@ -1765,7 +1765,7 @@ public class Application.MainWindow :
 
             get_window_action(ACTION_SHOW_COPY_MENU).set_enabled(
                 sensitive &&
-                (supported_operations.contains(typeof(Geary.FolderSupport.Copy)))
+                (supported_operations.contains(typeof(Convey.FolderSupport.Copy)))
             );
         }
     }
@@ -1827,7 +1827,7 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_scan_completed(Geary.App.ConversationMonitor monitor) {
+    private void on_scan_completed(Convey.App.ConversationMonitor monitor) {
         // Done scanning.  Check if we have enough messages to fill
         // the conversation list; if not, trigger a load_more();
         Gtk.Scrollbar? scrollbar = (
@@ -1843,12 +1843,12 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_scan_error(Geary.App.ConversationMonitor monitor,
+    private void on_scan_error(Convey.App.ConversationMonitor monitor,
                                GLib.Error err) {
-        Geary.AccountInformation account =
+        Convey.AccountInformation account =
             monitor.base_folder.account.information;
         this.controller.report_problem(
-            new Geary.ServiceProblemReport(account, account.incoming, err)
+            new Convey.ServiceProblemReport(account, account.incoming, err)
         );
     }
 
@@ -1903,7 +1903,7 @@ public class Application.MainWindow :
             if (selected > 0) {
                 select_conversations.begin(
                     this.conversation_list_view.selected,
-                    Gee.Collection.empty<Geary.EmailIdentifier>(),
+                    Gee.Collection.empty<Convey.EmailIdentifier>(),
                     false
                 );
             }
@@ -1917,17 +1917,17 @@ public class Application.MainWindow :
     private void on_service_problem_retry() {
         this.info_bars.remove(this.service_problem_infobar);
         this.service_problem_infobar = null;
-        retry_service_problem(Geary.ClientService.Status.CONNECTION_FAILED);
+        retry_service_problem(Convey.ClientService.Status.CONNECTION_FAILED);
     }
 
     private void on_cert_problem_retry() {
         this.info_bars.remove(this.cert_problem_infobar);
-        retry_service_problem(Geary.ClientService.Status.TLS_VALIDATION_FAILED);
+        retry_service_problem(Convey.ClientService.Status.TLS_VALIDATION_FAILED);
     }
 
     private void on_auth_problem_retry() {
         this.info_bars.remove(this.auth_problem_infobar);
-        retry_service_problem(Geary.ClientService.Status.AUTHENTICATION_FAILED);
+        retry_service_problem(Convey.ClientService.Status.AUTHENTICATION_FAILED);
     }
 
     private void on_update_ui_timeout() {
@@ -1943,7 +1943,7 @@ public class Application.MainWindow :
         // If we're not shutting down, select the inbox of the first
         // account so that we show something other than empty
         // conversation list/viewer.
-        Geary.Folder? to_select = null;
+        Convey.Folder? to_select = null;
         if (!is_shutdown) {
             to_select = get_first_inbox();
         }
@@ -1958,9 +1958,9 @@ public class Application.MainWindow :
         remove_folders(unavailable, true);
     }
 
-    private void on_use_changed(Geary.Folder folder,
-                                Geary.Folder.SpecialUse old_type,
-                                Geary.Folder.SpecialUse new_type) {
+    private void on_use_changed(Convey.Folder folder,
+                                Convey.Folder.SpecialUse old_type,
+                                Convey.Folder.SpecialUse new_type) {
         // Update the main window
         AccountContext? context = this.controller.get_context_for_account(
             folder.account.information
@@ -1975,7 +1975,7 @@ public class Application.MainWindow :
                 // from the folder list, we need to check for any and re-add
                 // them. See issue #11.
                 try {
-                    foreach (Geary.Folder child in
+                    foreach (Convey.Folder child in
                              folder.account.list_matching_folders(folder.path)) {
                         FolderContext? child_context = context.get_folder(child);
                         if (child_context != null) {
@@ -2070,7 +2070,7 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_folder_selected(Geary.Folder? folder) {
+    private void on_folder_selected(Convey.Folder? folder) {
         this.select_folder.begin(folder, true);
     }
 
@@ -2078,11 +2078,11 @@ public class Application.MainWindow :
         if (parameter != null) {
             int account_number = parameter.get_int32();
             try {
-                Gee.Collection<Geary.Account> accounts =
+                Gee.Collection<Convey.Account> accounts =
                     this.application.engine.get_accounts();
                 if (account_number < accounts.size) {
-                    Geary.Account account = accounts.to_array()[account_number];
-                    Geary.Folder inbox = account.get_special_folder(INBOX);
+                    Convey.Account account = accounts.to_array()[account_number];
+                    Convey.Folder inbox = account.get_special_folder(INBOX);
                     this.select_folder.begin(inbox, true);
                 }
             } catch (GLib.Error error) {
@@ -2092,7 +2092,7 @@ public class Application.MainWindow :
     }
 
     private void on_search(string text) {
-        if (Geary.String.is_empty_or_whitespace(text)) {
+        if (Convey.String.is_empty_or_whitespace(text)) {
             stop_search(true);
         } else {
             this.start_search(text, true);
@@ -2105,7 +2105,7 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_folder_activated(Geary.Folder? folder) {
+    private void on_folder_activated(Convey.Folder? folder) {
         if (folder != null) {
             this.inner_view.show_content = true;
             // Focus on conversation list will autoselect
@@ -2183,7 +2183,7 @@ public class Application.MainWindow :
         bool read_selected = false;
         bool starred_selected = false;
         bool unstarred_selected = false;
-        foreach (Geary.App.Conversation conversation in
+        foreach (Convey.App.Conversation conversation in
                  this.conversation_list_view.selected) {
             if (conversation.is_unread())
                 unread_selected = true;
@@ -2192,10 +2192,10 @@ public class Application.MainWindow :
             // don't add the menu option and have it not do anything.
             //
             // Sort by Date: field to correspond with ConversationViewer ordering
-            Geary.Email? latest = conversation.get_latest_sent_email(
-                Geary.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER);
+            Convey.Email? latest = conversation.get_latest_sent_email(
+                Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER);
             if (latest != null && latest.email_flags != null
-                && !latest.email_flags.contains(Geary.EmailFlags.UNREAD))
+                && !latest.email_flags.contains(Convey.EmailFlags.UNREAD))
                 read_selected = true;
 
             if (conversation.is_flagged()) {
@@ -2218,9 +2218,9 @@ public class Application.MainWindow :
         );
     }
 
-    private void on_mark_conversations(Gee.Collection<Geary.App.Conversation> conversations,
-                                       Geary.NamedFlag flag) {
-        Geary.Folder? location = this.selected_folder;
+    private void on_mark_conversations(Gee.Collection<Convey.App.Conversation> conversations,
+                                       Convey.NamedFlag flag) {
+        Convey.Folder? location = this.selected_folder;
         if (location != null) {
             this.controller.mark_conversations.begin(
                 location,
@@ -2239,12 +2239,12 @@ public class Application.MainWindow :
     }
 
     private void on_mark_as_read() {
-        Geary.Folder? location = this.selected_folder;
+        Convey.Folder? location = this.selected_folder;
         if (location != null) {
             this.controller.mark_conversations.begin(
                 location,
                 this.conversation_list_view.selected,
-                Geary.EmailFlags.UNREAD,
+                Convey.EmailFlags.UNREAD,
                 false,
                 (obj, res) => {
                     try {
@@ -2259,12 +2259,12 @@ public class Application.MainWindow :
     }
 
     private void on_mark_as_unread() {
-        Geary.Folder? location = this.selected_folder;
+        Convey.Folder? location = this.selected_folder;
         if (location != null) {
             this.controller.mark_conversations.begin(
                 location,
                 this.conversation_list_view.selected,
-                Geary.EmailFlags.UNREAD,
+                Convey.EmailFlags.UNREAD,
                 true,
                 (obj, res) => {
                     try {
@@ -2279,12 +2279,12 @@ public class Application.MainWindow :
     }
 
     private void on_mark_as_starred() {
-        Geary.Folder? location = this.selected_folder;
+        Convey.Folder? location = this.selected_folder;
         if (location != null) {
             this.controller.mark_conversations.begin(
                 location,
                 this.conversation_list_view.selected,
-                Geary.EmailFlags.FLAGGED,
+                Convey.EmailFlags.FLAGGED,
                 true,
                 (obj, res) => {
                     try {
@@ -2299,12 +2299,12 @@ public class Application.MainWindow :
     }
 
     private void on_mark_as_unstarred() {
-        Geary.Folder? location = this.selected_folder;
+        Convey.Folder? location = this.selected_folder;
         if (location != null) {
             this.controller.mark_conversations.begin(
                 location,
                 this.conversation_list_view.selected,
-                Geary.EmailFlags.FLAGGED,
+                Convey.EmailFlags.FLAGGED,
                 false,
                 (obj, res) => {
                     try {
@@ -2319,12 +2319,12 @@ public class Application.MainWindow :
     }
 
     private void on_mark_as_junk_toggle() {
-        Geary.Folder? source = this.selected_folder;
+        Convey.Folder? source = this.selected_folder;
         if (source != null) {
-            Geary.Folder.SpecialUse destination =
+            Convey.Folder.SpecialUse destination =
                 (source.used_as != JUNK)
-                ? Geary.Folder.SpecialUse.JUNK
-                : Geary.Folder.SpecialUse.INBOX;
+                ? Convey.Folder.SpecialUse.JUNK
+                : Convey.Folder.SpecialUse.INBOX;
             this.controller.move_conversations_special.begin(
                 source,
                 destination,
@@ -2341,9 +2341,9 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_move_conversation(Geary.Folder destination) {
-        Geary.FolderSupport.Move source =
-            this.selected_folder as Geary.FolderSupport.Move;
+    private void on_move_conversation(Convey.Folder destination) {
+        Convey.FolderSupport.Move source =
+            this.selected_folder as Convey.FolderSupport.Move;
         if (source != null) {
             this.controller.move_conversations.begin(
                 source,
@@ -2362,9 +2362,9 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_copy_conversation(Geary.Folder destination) {
-        Geary.FolderSupport.Copy source =
-            this.selected_folder as Geary.FolderSupport.Copy;
+    private void on_copy_conversation(Convey.Folder destination) {
+        Convey.FolderSupport.Copy source =
+            this.selected_folder as Convey.FolderSupport.Copy;
         if (source != null) {
             this.controller.copy_conversations.begin(
                 source,
@@ -2384,7 +2384,7 @@ public class Application.MainWindow :
     }
 
     private void on_archive_conversation() {
-        Geary.Folder source = this.selected_folder;
+        Convey.Folder source = this.selected_folder;
         if (source != null) {
             this.controller.move_conversations_special.begin(
                 source,
@@ -2403,7 +2403,7 @@ public class Application.MainWindow :
     }
 
     private void on_trash_conversation() {
-        Geary.Folder source = this.selected_folder;
+        Convey.Folder source = this.selected_folder;
         if (source != null) {
             this.controller.move_conversations_special.begin(
                 source,
@@ -2426,11 +2426,11 @@ public class Application.MainWindow :
     }
 
     private async void do_delete_conversation() {
-        var target = this.selected_folder as Geary.FolderSupport.Remove;
+        var target = this.selected_folder as Convey.FolderSupport.Remove;
         if (target == null)
             return;
 
-        Gee.Collection<Geary.App.Conversation> conversations =
+        Gee.Collection<Convey.App.Conversation> conversations =
             this.conversation_list_view.selected;
         if (!yield prompt_delete_conversations(conversations.size))
             return;
@@ -2447,7 +2447,7 @@ public class Application.MainWindow :
     }
 
     private void on_email_loaded(ConversationListBox view,
-                                 Geary.Email loaded) {
+                                 Convey.Email loaded) {
         this.controller.email_loaded(
             view.conversation.base_folder.account.information,
             loaded
@@ -2455,24 +2455,24 @@ public class Application.MainWindow :
     }
 
     private void on_email_mark(ConversationListBox view,
-                               Gee.Collection<Geary.EmailIdentifier> messages,
-                               Geary.NamedFlag? to_add,
-                               Geary.NamedFlag? to_remove) {
-        Geary.Folder? location = this.selected_folder;
+                               Gee.Collection<Convey.EmailIdentifier> messages,
+                               Convey.NamedFlag? to_add,
+                               Convey.NamedFlag? to_remove) {
+        Convey.Folder? location = this.selected_folder;
         if (location != null) {
-            Geary.EmailFlags add_flags = null;
+            Convey.EmailFlags add_flags = null;
             if (to_add != null) {
-                add_flags = new Geary.EmailFlags();
+                add_flags = new Convey.EmailFlags();
                 add_flags.add(to_add);
             }
-            Geary.EmailFlags remove_flags = null;
+            Convey.EmailFlags remove_flags = null;
             if (to_remove != null) {
-                remove_flags = new Geary.EmailFlags();
+                remove_flags = new Convey.EmailFlags();
                 remove_flags.add(to_remove);
             }
             this.controller.mark_messages.begin(
                 location,
-                Geary.Collection.single(view.conversation),
+                Convey.Collection.single(view.conversation),
                 messages,
                 add_flags,
                 remove_flags,
@@ -2488,7 +2488,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_reply_to_sender(Geary.Email target, string? quote) {
+    private void on_email_reply_to_sender(Convey.Email target, string? quote) {
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, REPLY_SENDER, target, quote
@@ -2497,7 +2497,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_reply_to_all(Geary.Email target, string? quote) {
+    private void on_email_reply_to_all(Convey.Email target, string? quote) {
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, REPLY_ALL, target, quote
@@ -2506,7 +2506,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_forward(Geary.Email target, string? quote) {
+    private void on_email_forward(Convey.Email target, string? quote) {
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, FORWARD, target, quote
@@ -2515,12 +2515,12 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_trash(ConversationListBox view, Geary.Email target) {
+    private void on_email_trash(ConversationListBox view, Convey.Email target) {
         do_trash_email.begin(view, target);
     }
 
-    private async void do_trash_email(ConversationListBox view, Geary.Email target) {
-        Geary.Folder? source = this.selected_folder;
+    private async void do_trash_email(ConversationListBox view, Convey.Email target) {
+        Convey.Folder? source = this.selected_folder;
         if (source == null)
             return;
 
@@ -2528,28 +2528,28 @@ public class Application.MainWindow :
             yield this.controller.move_messages_special(
                 source,
                 TRASH,
-                Geary.Collection.single(view.conversation),
-                Geary.Collection.single(target.id));
+                Convey.Collection.single(view.conversation),
+                Convey.Collection.single(target.id));
         } catch (GLib.Error err) {
             handle_error(source.account.information, err);
         }
     }
 
-    private void on_email_delete(ConversationListBox view, Geary.Email target) {
+    private void on_email_delete(ConversationListBox view, Convey.Email target) {
         do_delete_email.begin(view, target);
     }
 
-    private async void do_delete_email(ConversationListBox view, Geary.Email target) {
-        Geary.FolderSupport.Remove? source =
-            this.selected_folder as Geary.FolderSupport.Remove;
+    private async void do_delete_email(ConversationListBox view, Convey.Email target) {
+        Convey.FolderSupport.Remove? source =
+            this.selected_folder as Convey.FolderSupport.Remove;
         if (source == null || !yield prompt_delete_messages(1))
             return;
 
         try {
             yield this.controller.delete_messages(
                 source,
-                Geary.Collection.single(view.conversation),
-                Geary.Collection.single(target.id));
+                Convey.Collection.single(view.conversation),
+                Convey.Collection.single(target.id));
         } catch (GLib.Error err) {
             handle_error(source.account.information, err);
         }

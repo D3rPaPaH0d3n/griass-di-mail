@@ -8,7 +8,7 @@
  * Stores a map of name-values pairs as ''ASCII'' (i.e. 7-bit) strings.
  */
 
-public class Geary.GenericCapabilities : BaseObject {
+public class Convey.GenericCapabilities : BaseObject {
     public string name_separator { get; private set; }
     public string? value_separator { get; private set; }
 

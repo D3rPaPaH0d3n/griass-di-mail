@@ -10,7 +10,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-6.4.4]].
  */
-public class Geary.Imap.SearchCommand : Command {
+public class Convey.Imap.SearchCommand : Command {
 
     public const string NAME = "search";
     public const string UID_NAME = "uid search";

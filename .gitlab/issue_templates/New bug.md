@@ -6,12 +6,12 @@ comments such as this with the requested information.
 
 **Your installation**
 
-To obtain installation information, copy it from Geary's Problem
-Report dialog if shown (or else open the Geary Inspector by typing
+To obtain installation information, copy it from Convey's Problem
+Report dialog if shown (or else open the Convey Inspector by typing
 Shift + Alt + I) by selecting System, and clicking the Copy
 button, then pasting here.
 
- * Geary version:                    <!-- "x.y.z" -->
+ * Convey version:                    <!-- "x.y.z" -->
  * Installation method:              <!-- Package? Flathub? Self-compiled? -->
  * Desktop environment:              <!-- GNOME? KDE? Something else? -->
  * Operating system and version:     <!-- Ubuntu 18.04? Fedora 29? -->
@@ -27,18 +27,18 @@ button, then pasting here.
 
 **What happened?**
 
-What did Geary do that was unexpected?
+What did Convey do that was unexpected?
 
 
 **What did you expect to happen?**
 
-What did you expect Geary to do?
+What did you expect Convey to do?
 
 
 **Relevant logs and/or screenshots**
 
-To obtain log information, save it from Geary's Problem Report dialog
-if shown (or else open the Geary Inspector by typing Shift + Alt + I),
+To obtain log information, save it from Convey's Problem Report dialog
+if shown (or else open the Convey Inspector by typing Shift + Alt + I),
 by clicking the Save As button and attaching the resulting file
 to this issue.
 

@@ -11,7 +11,7 @@
  * Gmail's drafts folders supports basic operations as well as true
  * removal of messages and creating new ones (IMAP APPEND).
  */
-private class Geary.ImapEngine.GmailDraftsFolder :
+private class Convey.ImapEngine.GmailDraftsFolder :
     MinimalFolder, FolderSupport.Create, FolderSupport.Remove {
 
     public GmailDraftsFolder(GmailAccount account,

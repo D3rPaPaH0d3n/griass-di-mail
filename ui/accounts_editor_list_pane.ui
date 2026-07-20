@@ -3,7 +3,7 @@
   <template class="AccountsEditorListPane" parent="AccountsEditorPane">
     <property name="title" translatable="yes">Accounts</property>
     <style>
-      <class name="geary-accounts-editor-pane"/>
+      <class name="convey-accounts-editor-pane"/>
     </style>
 
     <property name="child">
@@ -62,7 +62,7 @@
                           <object class="GtkLabel">
                             <property name="halign">start</property>
                             <property name="valign">end</property>
-                            <property name="label" translatable="yes">Welcome to Geary</property>
+                            <property name="label" translatable="yes">Welcome to Convey</property>
                             <property name="xalign">0</property>
                             <property name="wrap">True</property>
                             <style>
@@ -89,7 +89,7 @@
                           </object>
                         </child>
                         <style>
-                          <class name="geary-welcome-panel"/>
+                          <class name="convey-welcome-panel"/>
                         </style>
                       </object>
                     </child>
@@ -103,7 +103,7 @@
                       </object>
                     </child>
                     <style>
-                      <class name="geary-accounts-editor-pane-content"/>
+                      <class name="convey-accounts-editor-pane-content"/>
                     </style>
                   </object>
                 </child>

@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.RFC822.MailboxAddressesTest : TestCase {
+class Convey.RFC822.MailboxAddressesTest : TestCase {
 
     public MailboxAddressesTest() {
-        base("Geary.RFC822.MailboxAddressesTest");
+        base("Convey.RFC822.MailboxAddressesTest");
         add_test("from_rfc822_string_encoded", from_rfc822_string_encoded);
         add_test("from_rfc822_string_quoted", from_rfc822_string_quoted);
         add_test("to_rfc822_string", to_rfc822_string);

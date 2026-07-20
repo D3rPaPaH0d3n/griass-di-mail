@@ -6,14 +6,14 @@
  */
 
 
-class Geary.ImapDB.DatabaseTest : TestCase {
+class Convey.ImapDB.DatabaseTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
 
 
     public DatabaseTest() {
-        base("Geary.ImapDb.DatabaseTest");
+        base("Convey.ImapDb.DatabaseTest");
         add_test("open_new", open_new);
         add_test("upgrade_0_6", upgrade_0_6);
         add_test("utf8_case_insensitive_collation",
@@ -22,7 +22,7 @@ class Geary.ImapDB.DatabaseTest : TestCase {
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("geary-imap-db-database-test-XXXXXX")
+            GLib.DirUtils.make_tmp("convey-imap-db-database-test-XXXXXX")
         );
     }
 
@@ -36,12 +36,12 @@ class Geary.ImapDB.DatabaseTest : TestCase {
             this.tmp_dir.get_child("test.db"),
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             this.tmp_dir.get_child("attachments"),
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_UPGRADE),
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_VACUUM)
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
         );
 
         db.open.begin(
-            Geary.Db.DatabaseFlags.CREATE_FILE, null,
+            Convey.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         db.open.end(async_result());
@@ -96,12 +96,12 @@ class Geary.ImapDB.DatabaseTest : TestCase {
             db_file,
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             attachments_dir,
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_UPGRADE),
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_VACUUM)
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
         );
 
         db.open.begin(
-            Geary.Db.DatabaseFlags.CREATE_FILE, null,
+            Convey.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         db.open.end(async_result());
@@ -130,12 +130,12 @@ class Geary.ImapDB.DatabaseTest : TestCase {
             this.tmp_dir.get_child("test.db"),
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             this.tmp_dir.get_child("attachments"),
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_UPGRADE),
-            new Geary.SimpleProgressMonitor(Geary.ProgressType.DB_VACUUM)
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
+            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
         );
 
         db.open.begin(
-            Geary.Db.DatabaseFlags.CREATE_FILE, null,
+            Convey.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         db.open.end(async_result());

@@ -13,8 +13,8 @@ let ConversationPageState = function() {
     this.init.apply(this, arguments);
 };
 
-ConversationPageState.QUOTE_CONTAINER_CLASS = "geary-quote-container";
-ConversationPageState.QUOTE_HIDE_CLASS = "geary-hide";
+ConversationPageState.QUOTE_CONTAINER_CLASS = "convey-quote-container";
+ConversationPageState.QUOTE_HIDE_CLASS = "convey-hide";
 
 // Keep these in sync with ConversationWebView
 ConversationPageState.NOT_DECEPTIVE = 0;
@@ -40,11 +40,11 @@ ConversationPageState.prototype = {
      * Add email headers for printing
      */
     addPrintHeaders: function(headers) {
-        let headerTable = document.getElementById('geary-message-headers');
+        let headerTable = document.getElementById('convey-message-headers');
         if (headerTable) headerTable.parentNode.removeChild(headerTable);
 
         headerTable = document.createElement('table');
-        headerTable.id = 'geary-message-headers';
+        headerTable.id = 'convey-message-headers';
         for (var header in headers) {
             let row = headerTable.appendChild(document.createElement('tr'));
             let name = row.appendChild(document.createElement('th'));
@@ -96,14 +96,14 @@ ConversationPageState.prototype = {
                     ConversationPageState.QUOTE_CONTAINER_CLASS
                 );
                 if (isControllable) {
-                    quoteContainer.classList.add("geary-controllable");
+                    quoteContainer.classList.add("convey-controllable");
                     quoteContainer.classList.add(
                         ConversationPageState.QUOTE_HIDE_CLASS
                     );
                 }
 
                 let quoteDiv = document.createElement("DIV");
-                quoteDiv.classList.add("geary-quote");
+                quoteDiv.classList.add("convey-quote");
 
                 quoteDiv.appendChild(blockquote);
                 quoteContainer.appendChild(quoteDiv);
@@ -114,7 +114,7 @@ ConversationPageState.prototype = {
                 let state = this;
                 function newControllerButton(styleClass, text) {
                     let button = document.createElement("BUTTON");
-                    button.classList.add("geary-button");
+                    button.classList.add("convey-button");
                     button.type = "button";
                     button.onclick = function() {
                         let hide = ConversationPageState.QUOTE_HIDE_CLASS;
@@ -143,10 +143,10 @@ ConversationPageState.prototype = {
 
                 if (isControllable) {
                     quoteContainer.appendChild(newControllerButton(
-                        "geary-shower", "▼        ▼        ▼"
+                        "convey-shower", "▼        ▼        ▼"
                     ));
                     quoteContainer.appendChild(newControllerButton(
-                        "geary-hider", "▲        ▲        ▲"
+                        "convey-hider", "▲        ▲        ▲"
                     ));
                 }
             }
@@ -193,7 +193,7 @@ ConversationPageState.prototype = {
             let elem = possibleSigs.item(i);
             let parent = elem.parentNode;
             let signatureContainer = document.createElement("DIV");
-            signatureContainer.classList.add("geary-signature");
+            signatureContainer.classList.add("convey-signature");
             do {
                 // Get its sibling _before_ we move it into the signature div.
                 let sibling = elem.nextSibling;
@@ -375,4 +375,4 @@ ConversationPageState.isDescendantOf = function(node,
     return false;
 };
 
-var geary = new ConversationPageState();
+var convey = new ConversationPageState();

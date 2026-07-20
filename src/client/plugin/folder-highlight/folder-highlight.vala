@@ -22,7 +22,7 @@ public class Plugin.FolderHighlight :
     PluginBase, NotificationExtension, FolderExtension, TrustedExtension {
 
 
-    private const Geary.Folder.SpecialUse[] MONITORED_TYPES = {
+    private const Convey.Folder.SpecialUse[] MONITORED_TYPES = {
         INBOX, NONE
     };
 
@@ -77,7 +77,7 @@ public class Plugin.FolderHighlight :
     private void on_new_messages_arrived(Folder folder,
                                          int total,
                                          Gee.Collection<EmailIdentifier> added) {
-        Geary.Folder? engine = this.client_plugins.to_engine_folder(folder);
+        Convey.Folder? engine = this.client_plugins.to_engine_folder(folder);
         if (engine != null) {
             foreach (global::Application.MainWindow window
                      in this.client_application.get_main_windows()) {
@@ -87,7 +87,7 @@ public class Plugin.FolderHighlight :
     }
 
     private void on_new_messages_retired(Folder folder, int total) {
-        Geary.Folder? engine = this.client_plugins.to_engine_folder(folder);
+        Convey.Folder? engine = this.client_plugins.to_engine_folder(folder);
         if (engine != null) {
             foreach (global::Application.MainWindow window
                      in this.client_application.get_main_windows()) {

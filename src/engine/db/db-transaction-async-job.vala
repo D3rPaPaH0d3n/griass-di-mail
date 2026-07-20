@@ -5,7 +5,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.Db.TransactionAsyncJob : BaseObject {
+private class Convey.Db.TransactionAsyncJob : BaseObject {
 
     internal DatabaseConnection? default_cx { get; private set; }
     internal Cancellable cancellable { get; private set; }

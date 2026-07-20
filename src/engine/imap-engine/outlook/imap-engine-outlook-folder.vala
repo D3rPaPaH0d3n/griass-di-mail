@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.OutlookFolder : GenericFolder {
+private class Convey.ImapEngine.OutlookFolder : GenericFolder {
     public OutlookFolder(OutlookAccount account,
                          ImapDB.Folder local_folder,
                          Folder.SpecialUse use) {
