@@ -34,12 +34,9 @@
     </ul>
   </description>
 
-  <url type="homepage">https://gitlab.gnome.org/GNOME/geary/-/wikis</url>
-  <url type="faq">https://gitlab.gnome.org/GNOME/geary/-/wikis/FAQ</url>
-  <url type="bugtracker">https://gitlab.gnome.org/GNOME/geary/-/issues</url>
-  <url type="vcs-browser">https://gitlab.gnome.org/GNOME/geary/</url>
-  <url type="translate">https://gitlab.gnome.org/GNOME/geary/-/wikis/Translating</url>
-  <url type="donation">https://gnome.org/donate</url>
+  <url type="homepage">https://gitlab.gnome.org/donnybeelo/geary</url>
+  <url type="bugtracker">https://gitlab.gnome.org/donnybeelo/geary/-/issues</url>
+  <url type="vcs-browser">https://gitlab.gnome.org/donnybeelo/geary</url>
 
   <!-- Screenshots reference the repo raw URL. Once a release is tagged,
        replace HEAD with the tag so store listings stay stable. -->
