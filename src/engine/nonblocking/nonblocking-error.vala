@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public errordomain Geary.NonblockingError {
+public errordomain Convey.NonblockingError {
     /**
      * Indicates a call was made when it shouldn't have been; that the primitive was in such a
      * state that it cannot properly respond or account for the requested change.

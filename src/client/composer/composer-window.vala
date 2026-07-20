@@ -41,7 +41,7 @@ public class Composer.Window : Gtk.ApplicationWindow, Container {
         group.add_window(this);
 
         // XXX Bug 764622
-        set_property("name", "GearyComposerWindow");
+        set_property("name", "ConveyComposerWindow");
 
         this.child = this.composer;
 

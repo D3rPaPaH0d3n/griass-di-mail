@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Geary.Outbox.EmailIdentifierTest : TestCase {
+public class Convey.Outbox.EmailIdentifierTest : TestCase {
 
 
     public EmailIdentifierTest() {
-        base("Geary.Outbox.EmailIdentifierTest");
+        base("Convey.Outbox.EmailIdentifierTest");
         add_test("variant_representation", variant_representation);
     }
 

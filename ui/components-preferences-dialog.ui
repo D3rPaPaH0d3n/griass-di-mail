@@ -36,7 +36,7 @@
               <object class="AdwSwitchRow" id="startup_notifications_row">
                 <!-- Translators: Preferences label -->
                 <property name="title" translatable="yes">_Watch for new mail when closed</property>
-                <property name="tooltip-text" translatable="yes">Geary will keep running after all windows are closed</property>
+                <property name="tooltip-text" translatable="yes">Convey will keep running after all windows are closed</property>
                 <property name="use-underline">True</property>
               </object>
             </child>

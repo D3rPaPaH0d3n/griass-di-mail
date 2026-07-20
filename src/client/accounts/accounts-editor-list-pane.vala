@@ -8,7 +8,7 @@
 /**
  * An account editor pane for listing all known accounts.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/accounts_editor_list_pane.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_list_pane.ui")]
 internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 
 
@@ -22,7 +22,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
             return -1;
         }
 
-        return Geary.AccountInformation.compare_ascending(
+        return Convey.AccountInformation.compare_ascending(
             account_a.account, account_b.account
         );
     }
@@ -62,8 +62,8 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 
     [GtkChild] private unowned Gtk.ScrolledWindow accounts_list_scrolled;
 
-    private Gee.Map<Geary.AccountInformation,EditorEditPane> edit_pane_cache =
-        new Gee.HashMap<Geary.AccountInformation,EditorEditPane>();
+    private Gee.Map<Convey.AccountInformation,EditorEditPane> edit_pane_cache =
+        new Gee.HashMap<Convey.AccountInformation,EditorEditPane>();
 
 
     public EditorListPane(Editor editor) {
@@ -75,7 +75,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         this.accounts = editor.accounts;
 
         this.accounts_list.set_sort_func(ordinal_sort);
-        foreach (Geary.AccountInformation account in this.accounts.iterable()) {
+        foreach (Convey.AccountInformation account in this.accounts.iterable()) {
             add_account(account, this.accounts.get_status(account));
         }
 
@@ -108,7 +108,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         this.editor.push_pane(new EditorAddPane(this.editor));
     }
 
-    internal void show_existing_account(Geary.AccountInformation account) {
+    internal void show_existing_account(Convey.AccountInformation account) {
         EditorEditPane? edit_pane = this.edit_pane_cache.get(account);
         if (edit_pane == null) {
             edit_pane = new EditorEditPane(this.editor, account);
@@ -118,7 +118,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
     }
 
     /** Removes an account from the list. */
-    internal void remove_account(Geary.AccountInformation account) {
+    internal void remove_account(Convey.AccountInformation account) {
         AccountListRow? row = get_account_row(account);
         if (row != null) {
             this.commands.execute.begin(
@@ -128,7 +128,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         }
     }
 
-    private void add_account(Geary.AccountInformation account,
+    private void add_account(Convey.AccountInformation account,
                              Manager.Status status) {
         AccountListRow row = new AccountListRow(account, status);
         row.moved.connect(on_account_row_moved);
@@ -150,7 +150,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         }
     }
 
-    private AccountListRow? get_account_row(Geary.AccountInformation account) {
+    private AccountListRow? get_account_row(Convey.AccountInformation account) {
         for (int i = 0; true; i++) {
             unowned var row = this.accounts_list.get_row_at_index(i) as AccountListRow;
             if (row == null)
@@ -161,13 +161,13 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         return null;
     }
 
-    private void on_account_added(Geary.AccountInformation account,
+    private void on_account_added(Convey.AccountInformation account,
                                   Manager.Status status) {
         add_account(account, status);
         update_welcome_panel();
     }
 
-    private void on_account_status_changed(Geary.AccountInformation account,
+    private void on_account_status_changed(Convey.AccountInformation account,
                                            Manager.Status status) {
         AccountListRow? row = get_account_row(account);
         if (row != null) {
@@ -191,7 +191,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         );
     }
 
-    private void on_account_removed(Geary.AccountInformation account) {
+    private void on_account_removed(Convey.AccountInformation account) {
         AccountListRow? row = get_account_row(account);
         if (row != null) {
             this.accounts_list.remove(row);
@@ -256,10 +256,10 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 }
 
 
-[GtkTemplate (ui = "/org/gnome/Geary/accounts-editor-account-list-row.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-editor-account-list-row.ui")]
 private class Accounts.AccountListRow : Adw.ActionRow {
 
-    public Geary.AccountInformation account { get; construct set; }
+    public Convey.AccountInformation account { get; construct set; }
 
     [GtkChild] private unowned Gtk.Image drag_icon;
     [GtkChild] private unowned Gtk.Image unavailable_icon;
@@ -276,7 +276,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         update();
     }
 
-    public AccountListRow(Geary.AccountInformation account,
+    public AccountListRow(Convey.AccountInformation account,
                           Manager.Status status) {
         Object(account: account);
         update_status(status);
@@ -288,22 +288,22 @@ private class Accounts.AccountListRow : Adw.ActionRow {
 
     public void update() {
         string name = this.account.display_name;
-        if (Geary.String.is_empty(name)) {
+        if (Convey.String.is_empty(name)) {
             name = account.primary_mailbox.to_address_display("", "");
         }
         this.title = name;
 
         string? details = this.account.service_label;
         switch (account.service_provider) {
-        case Geary.ServiceProvider.GMAIL:
+        case Convey.ServiceProvider.GMAIL:
             details = _("Gmail");
             break;
 
-        case Geary.ServiceProvider.OUTLOOK:
+        case Convey.ServiceProvider.OUTLOOK:
             details = _("Outlook.com");
             break;
 
-        case Geary.ServiceProvider.OTHER:
+        case Convey.ServiceProvider.OTHER:
             // no-op: Use the generated label
             break;
         }
@@ -396,7 +396,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         drag.set_hotspot((int) this.drag_x, (int) this.drag_y);
 
         // Set a visual hint that the row is being dragged
-        add_css_class("geary-drag-source");
+        add_css_class("convey-drag-source");
         this.drag_picked_up = true;
     }
 
@@ -404,7 +404,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
     private void on_drag_source_end(Gtk.DragSource drag_source,
                                     Gdk.Drag drag,
                                     bool delete_data) {
-        remove_css_class("geary-drag-source");
+        remove_css_class("convey-drag-source");
         this.drag_picked_up = false;
     }
 
@@ -504,14 +504,14 @@ internal class Accounts.ReorderAccountCommand : Application.Command {
     }
 
     private void move_source(int destination) {
-        Gee.List<Geary.AccountInformation> accounts =
+        Gee.List<Convey.AccountInformation> accounts =
             this.manager.iterable().to_linked_list();
-        accounts.sort(Geary.AccountInformation.compare_ascending);
+        accounts.sort(Convey.AccountInformation.compare_ascending);
         accounts.remove(this.source.account);
         accounts.insert(destination, this.source.account);
 
         int ord = 0;
-        foreach (Geary.AccountInformation account in accounts) {
+        foreach (Convey.AccountInformation account in accounts) {
             if (account.ordinal != ord) {
                 account.ordinal = ord;
                 account.changed();
@@ -528,11 +528,11 @@ internal class Accounts.ReorderAccountCommand : Application.Command {
 internal class Accounts.RemoveAccountCommand : Application.Command {
 
 
-    private Geary.AccountInformation account;
+    private Convey.AccountInformation account;
     private Manager manager;
 
 
-    public RemoveAccountCommand(Geary.AccountInformation account,
+    public RemoveAccountCommand(Convey.AccountInformation account,
                                 Manager manager) {
         this.account = account;
         this.manager = manager;

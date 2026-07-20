@@ -27,7 +27,7 @@ class Application.ClientTest : TestCase {
 
     public void paths_when_installed() throws GLib.Error {
         string[] args = new string[] {
-            Config.INSTALL_PREFIX + "/bin/geary",
+            Config.INSTALL_PREFIX + "/bin/convey",
             // Specify this so the app doesn't actually attempt
             // to start up
             "-v"
@@ -38,7 +38,7 @@ class Application.ClientTest : TestCase {
 
         assert_equal(
             this.test_article.get_resource_directory().get_path(),
-            Config.INSTALL_PREFIX + "/share/geary"
+            Config.INSTALL_PREFIX + "/share/convey"
         );
         assert_equal(
             this.test_article.get_desktop_directory().get_path(),

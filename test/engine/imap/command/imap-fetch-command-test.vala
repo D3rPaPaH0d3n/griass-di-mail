@@ -5,14 +5,14 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.FetchCommandTest : TestCase {
+class Convey.Imap.FetchCommandTest : TestCase {
 
 
     private MessageSet? msg_set = null;
 
 
     public FetchCommandTest() {
-        base("Geary.Imap.FetchCommandTest");
+        base("Convey.Imap.FetchCommandTest");
         add_test("list_ctor_single_data_item", list_ctor_single_data_item);
         add_test("list_ctor_single_body_item", list_ctor_single_body_item);
         add_test("list_ctor_multiple_data_item", list_ctor_multiple_data_item);

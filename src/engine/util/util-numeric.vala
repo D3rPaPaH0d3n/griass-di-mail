@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.Numeric {
+namespace Convey.Numeric {
 
 public inline int int_floor(int value, int floor) {
     return (value >= floor) ? value : floor;

@@ -9,7 +9,7 @@
  * Implementation of the folder plugin extension context.
  */
 internal class Application.FolderPluginContext :
-    Geary.BaseObject, Plugin.FolderContext {
+    Convey.BaseObject, Plugin.FolderContext {
 
 
     private unowned Client application;
@@ -35,7 +35,7 @@ internal class Application.FolderPluginContext :
     public void add_folder_info_bar(Plugin.Folder selected,
                                     Plugin.InfoBar info_bar,
                                     uint priority) {
-        Geary.Folder? folder = this.globals.folders.to_engine_folder(selected);
+        Convey.Folder? folder = this.globals.folders.to_engine_folder(selected);
         if (folder != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.selected_folder == folder) {
@@ -53,7 +53,7 @@ internal class Application.FolderPluginContext :
 
     public void remove_folder_info_bar(Plugin.Folder selected,
                                        Plugin.InfoBar info_bar) {
-        Geary.Folder? folder = this.globals.folders.to_engine_folder(selected);
+        Convey.Folder? folder = this.globals.folders.to_engine_folder(selected);
         if (folder != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.selected_folder == folder) {
@@ -73,7 +73,7 @@ internal class Application.FolderPluginContext :
         if (context != null) {
             try {
                 context.folder.set_used_as_custom(true);
-            } catch (Geary.EngineError err) {
+            } catch (Convey.EngineError err) {
                 throw new Plugin.Error.NOT_SUPPORTED(
                     "Failed to register folder use: %s", err.message
                 );
@@ -89,7 +89,7 @@ internal class Application.FolderPluginContext :
         if (context != null) {
             try {
                 context.folder.set_used_as_custom(false);
-            } catch (Geary.EngineError err) {
+            } catch (Convey.EngineError err) {
                 throw new Plugin.Error.NOT_SUPPORTED(
                     "Failed to unregister folder use: %s", err.message
                 );

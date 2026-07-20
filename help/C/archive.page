@@ -7,7 +7,7 @@
   </info>
   <title>Archive, trash and delete messages</title>
 
-  <p>Geary lets you archive messages if your server supports
+  <p>Convey lets you archive messages if your server supports
   it. Clicking the <gui style="button">Archive</gui> toolbar button
   moves the conversation from the current folder to the
   <gui>Archive</gui> folder for most email services, or to <gui>All

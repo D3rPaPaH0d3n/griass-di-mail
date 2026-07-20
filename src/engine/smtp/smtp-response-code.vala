@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Smtp.ResponseCode {
+public class Convey.Smtp.ResponseCode {
     public const int STRLEN = 3;
 
     public const int MIN = 100;

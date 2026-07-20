@@ -7,7 +7,7 @@
 /**
  * Draws the count badge and calculates its dimensions.
  */
-public class CountBadge : Geary.BaseObject {
+public class CountBadge : Convey.BaseObject {
     public const string UNREAD_BG_COLOR = "#888888";
 	public const int SPACING = 6;
 

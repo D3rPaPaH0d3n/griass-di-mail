@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Mime.ContentTypeTest : TestCase {
+class Convey.Mime.ContentTypeTest : TestCase {
 
     public ContentTypeTest() {
-        base("Geary.Mime.ContentTypeTest");
+        base("Convey.Mime.ContentTypeTest");
         add_test("static_defaults", static_defaults);
         add_test("parse", parse);
         add_test("get_file_name_extension", get_file_name_extension);

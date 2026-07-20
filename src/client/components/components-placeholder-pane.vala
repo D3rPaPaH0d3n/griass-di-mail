@@ -8,11 +8,11 @@
 /**
  * A placeholder image and message for empty views.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-placeholder-pane.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-placeholder-pane.ui")]
 public class Components.PlaceholderPane : Gtk.Box {
 
 
-    public const string CLASS_HAS_TEXT = "geary-has-text";
+    public const string CLASS_HAS_TEXT = "convey-has-text";
 
 
     /** The icon name of the pane's image. */
@@ -47,10 +47,10 @@ public class Components.PlaceholderPane : Gtk.Box {
 
 
     private void update() {
-        if (Geary.String.is_empty_or_whitespace(this.title_label.get_text())) {
+        if (Convey.String.is_empty_or_whitespace(this.title_label.get_text())) {
             this.title_label.hide();
         }
-        if (Geary.String.is_empty_or_whitespace(this.subtitle_label.get_text())) {
+        if (Convey.String.is_empty_or_whitespace(this.subtitle_label.get_text())) {
             this.subtitle_label.hide();
         }
         if (this.title_label.visible || this.subtitle_label.visible) {

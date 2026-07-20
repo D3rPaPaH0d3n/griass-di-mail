@@ -13,7 +13,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-9]], "sequence-set" and "seq-range".
  */
 
-public class Geary.Imap.MessageSet : BaseObject {
+public class Convey.Imap.MessageSet : BaseObject {
     // 2^32 in base 10 requires ten bytes (characters) on the wire plus a separator between each
     // one, i.e. ~11 bytes per seqnum or UID ... to keep lists below server maximums, this value
     // is set to keep max. command length somewhere under 1K (including tag, command, parameters,

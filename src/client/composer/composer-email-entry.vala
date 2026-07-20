@@ -12,7 +12,7 @@
 public class Composer.EmailEntry : Gtk.Entry {
 
     /** The entry's list of possibly valid email addresses. */
-    public Geary.RFC822.MailboxAddresses addresses {
+    public Convey.RFC822.MailboxAddresses addresses {
         get { return this._addresses; }
         set {
             this._addresses = value;
@@ -21,7 +21,7 @@ public class Composer.EmailEntry : Gtk.Entry {
             this.text = value.to_full_display();
         }
     }
-    private Geary.RFC822.MailboxAddresses _addresses = new Geary.RFC822.MailboxAddresses();
+    private Convey.RFC822.MailboxAddresses _addresses = new Convey.RFC822.MailboxAddresses();
 
     /** Determines if the entry contains only valid email addresses. */
     public bool is_valid { get; private set; default = false; }
@@ -60,7 +60,7 @@ public class Composer.EmailEntry : Gtk.Entry {
 
     private void validate_addresses() {
         bool is_valid = !this._addresses.is_empty;
-        foreach (Geary.RFC822.MailboxAddress address in this.addresses) {
+        foreach (Convey.RFC822.MailboxAddress address in this.addresses) {
             if (!address.is_valid()) {
                 is_valid = false;
                 return;
@@ -81,16 +81,16 @@ public class Composer.EmailEntry : Gtk.Entry {
         }
 #endif
 
-        if (Geary.String.is_empty_or_whitespace(text)) {
-            this._addresses = new Geary.RFC822.MailboxAddresses();
+        if (Convey.String.is_empty_or_whitespace(text)) {
+            this._addresses = new Convey.RFC822.MailboxAddresses();
             this.is_valid = false;
         } else {
             try {
                 this._addresses =
-                    new Geary.RFC822.MailboxAddresses.from_rfc822_string(text);
+                    new Convey.RFC822.MailboxAddresses.from_rfc822_string(text);
                 this.is_valid = true;
-            } catch (Geary.RFC822.Error err) {
-                this._addresses = new Geary.RFC822.MailboxAddresses();
+            } catch (Convey.RFC822.Error err) {
+                this._addresses = new Convey.RFC822.MailboxAddresses();
                 this.is_valid = false;
             }
         }

@@ -16,7 +16,7 @@
  * as in a database.
  */
 
-public abstract class Geary.Imap.FetchDataDecoder : BaseObject {
+public abstract class Convey.Imap.FetchDataDecoder : BaseObject {
     public FetchDataSpecifier data_item { get; private set; }
 
     protected FetchDataDecoder(FetchDataSpecifier data_item) {
@@ -79,7 +79,7 @@ public abstract class Geary.Imap.FetchDataDecoder : BaseObject {
     }
 }
 
-public class Geary.Imap.UIDDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.UIDDecoder : Convey.Imap.FetchDataDecoder {
     public UIDDecoder() {
         base (FetchDataSpecifier.UID);
     }
@@ -89,7 +89,7 @@ public class Geary.Imap.UIDDecoder : Geary.Imap.FetchDataDecoder {
     }
 }
 
-public class Geary.Imap.MessageFlagsDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.MessageFlagsDecoder : Convey.Imap.FetchDataDecoder {
     public MessageFlagsDecoder() {
         base (FetchDataSpecifier.FLAGS);
     }
@@ -103,7 +103,7 @@ public class Geary.Imap.MessageFlagsDecoder : Geary.Imap.FetchDataDecoder {
     }
 }
 
-public class Geary.Imap.InternalDateDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.InternalDateDecoder : Convey.Imap.FetchDataDecoder {
     public InternalDateDecoder() {
         base (FetchDataSpecifier.INTERNALDATE);
     }
@@ -113,7 +113,7 @@ public class Geary.Imap.InternalDateDecoder : Geary.Imap.FetchDataDecoder {
     }
 }
 
-public class Geary.Imap.RFC822SizeDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.RFC822SizeDecoder : Convey.Imap.FetchDataDecoder {
     public RFC822SizeDecoder() {
         base (FetchDataSpecifier.RFC822_SIZE);
     }
@@ -123,7 +123,7 @@ public class Geary.Imap.RFC822SizeDecoder : Geary.Imap.FetchDataDecoder {
     }
 }
 
-public class Geary.Imap.EnvelopeDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
 
 
     private Quirks quirks;
@@ -151,7 +151,7 @@ public class Geary.Imap.EnvelopeDecoder : Geary.Imap.FetchDataDecoder {
         if (message_id != null && message_id.is_empty())
             message_id = null;
 
-        Geary.RFC822.Date? sent_date = null;
+        Convey.RFC822.Date? sent_date = null;
         if (sent != null) {
             try {
                 sent_date = new RFC822.Date.from_rfc822_string(sent.ascii);
@@ -165,7 +165,7 @@ public class Geary.Imap.EnvelopeDecoder : Geary.Imap.FetchDataDecoder {
 
         return new Envelope(
             sent_date,
-            new Geary.RFC822.Subject.from_rfc822_string(subject.ascii),
+            new Convey.RFC822.Subject.from_rfc822_string(subject.ascii),
             parse_addresses(from),
             parse_addresses(sender),
             parse_addresses(reply_to),
@@ -179,8 +179,8 @@ public class Geary.Imap.EnvelopeDecoder : Geary.Imap.FetchDataDecoder {
 
     // TODO: This doesn't handle group lists (see Johnson, p.268) -- this will throw an
     // ImapError.TYPE_ERROR if this occurs.
-    private Geary.RFC822.MailboxAddresses? parse_addresses(ListParameter listp) throws ImapError {
-        Gee.List<Geary.RFC822.MailboxAddress> list = new Gee.ArrayList<Geary.RFC822.MailboxAddress>();
+    private Convey.RFC822.MailboxAddresses? parse_addresses(ListParameter listp) throws ImapError {
+        Gee.List<Convey.RFC822.MailboxAddress> list = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
         for (int ctr = 0; ctr < listp.size; ctr++) {
             ListParameter fields = listp.get_as_empty_list(ctr);
             StringParameter? name = fields.get_as_nullable_string(0);
@@ -195,7 +195,7 @@ public class Geary.Imap.EnvelopeDecoder : Geary.Imap.FetchDataDecoder {
                 domain = null;
             }
 
-            Geary.RFC822.MailboxAddress addr = new Geary.RFC822.MailboxAddress.imap(
+            Convey.RFC822.MailboxAddress addr = new Convey.RFC822.MailboxAddress.imap(
                 (name != null) ? name.nullable_ascii : null,
                 (source_route != null) ? source_route.nullable_ascii : null,
                 mailbox != null ? mailbox.ascii : "",
@@ -204,7 +204,7 @@ public class Geary.Imap.EnvelopeDecoder : Geary.Imap.FetchDataDecoder {
             list.add(addr);
         }
 
-        return new Geary.RFC822.MailboxAddresses(list);
+        return new Convey.RFC822.MailboxAddresses(list);
     }
 
     private RFC822.MessageID? new_message_id(string? rfc822) {
@@ -232,36 +232,36 @@ public class Geary.Imap.EnvelopeDecoder : Geary.Imap.FetchDataDecoder {
     }
 }
 
-public class Geary.Imap.RFC822HeaderDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.RFC822HeaderDecoder : Convey.Imap.FetchDataDecoder {
     public RFC822HeaderDecoder() {
         base (FetchDataSpecifier.RFC822_HEADER);
     }
 
     protected override MessageData decode_literal(LiteralParameter literalp) throws ImapError {
-        return new Geary.Imap.RFC822Header(literalp.value);
+        return new Convey.Imap.RFC822Header(literalp.value);
     }
 }
 
-public class Geary.Imap.RFC822TextDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.RFC822TextDecoder : Convey.Imap.FetchDataDecoder {
     public RFC822TextDecoder() {
         base (FetchDataSpecifier.RFC822_TEXT);
     }
 
     protected override MessageData decode_literal(LiteralParameter literalp) throws ImapError {
-        return new Geary.Imap.RFC822Text(literalp.value);
+        return new Convey.Imap.RFC822Text(literalp.value);
     }
 
     protected override MessageData decode_nil(NilParameter nilp) throws ImapError {
-        return new Geary.Imap.RFC822Text(Memory.EmptyBuffer.instance);
+        return new Convey.Imap.RFC822Text(Memory.EmptyBuffer.instance);
     }
 }
 
-public class Geary.Imap.RFC822FullDecoder : Geary.Imap.FetchDataDecoder {
+public class Convey.Imap.RFC822FullDecoder : Convey.Imap.FetchDataDecoder {
     public RFC822FullDecoder() {
         base (FetchDataSpecifier.RFC822);
     }
 
     protected override MessageData decode_literal(LiteralParameter literalp) throws ImapError {
-        return new Geary.Imap.RFC822Full(literalp.value);
+        return new Convey.Imap.RFC822Full(literalp.value);
     }
 }

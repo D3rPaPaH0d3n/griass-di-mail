@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.String.Test : TestCase {
+class Convey.String.Test : TestCase {
 
     public Test() {
-        base("Geary.String.Test");
+        base("Convey.String.Test");
         add_test("test_whitespace", test_whitespace);
         add_test("test_nonprinting", test_nonprinting);
         add_test("test_contains_any_char", test_contains_any_char);

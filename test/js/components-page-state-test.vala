@@ -148,21 +148,21 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
         run_javascript(
             "window.darkReaderAutoCalled = false; window.darkReaderDisabledCalled = false;"
         );
-        run_javascript("geary.setUnsetHtmlColors(true);");
+        run_javascript("convey.setUnsetHtmlColors(true);");
         assert(Util.JS.to_bool(run_javascript("window.darkReaderAutoCalled")));
         assert(!Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
         assert(Util.JS.to_bool(run_javascript(
-            "document.body.getAttribute('data-geary-theme') == 'dark'"
+            "document.body.getAttribute('data-convey-theme') == 'dark'"
         )));
 
         run_javascript(
             "window.darkReaderAutoCalled = false; window.darkReaderDisabledCalled = false;"
         );
-        run_javascript("geary.setUnsetHtmlColors(false);");
+        run_javascript("convey.setUnsetHtmlColors(false);");
         assert(!Util.JS.to_bool(run_javascript("window.darkReaderAutoCalled")));
         assert(Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
         assert(!Util.JS.to_bool(run_javascript(
-            "document.body.hasAttribute('data-geary-theme')"
+            "document.body.hasAttribute('data-convey-theme')"
         )));
     }
 
@@ -180,7 +180,7 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
             "        window.darkReaderDisabledCalled = true;\n" +
             "    }\n" +
             "};\n" +
-            "var geary = new PageState()",
+            "var convey = new PageState()",
             WebKit.UserContentInjectedFrames.TOP_FRAME,
             WebKit.UserScriptInjectionTime.START,
             null,
@@ -195,7 +195,7 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
     private void assert_test_result(string expected)
         throws GLib.Error {
         string? result = Util.JS.to_string(
-            run_javascript("geary.testResult")
+            run_javascript("convey.testResult")
         );
         assert_equal(result, expected);
     }

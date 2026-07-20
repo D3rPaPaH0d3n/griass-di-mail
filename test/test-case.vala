@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-/** Base class for Geary unit tests. */
+/** Base class for Convey unit tests. */
 public class TestCase : ValaUnit.TestCase {
 
     /** GLib.File URI for resources in test/data. */
-    public const string RESOURCE_URI = "resource:///org/gnome/GearyTest";
+    public const string RESOURCE_URI = "resource:///net/donnybeelo/ConveyTest";
 
 
     public TestCase(string name) {

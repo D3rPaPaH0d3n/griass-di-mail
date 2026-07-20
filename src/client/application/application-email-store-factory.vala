@@ -11,16 +11,16 @@
  * This class provides a common implementation that shares email
  * objects between different plugin context instances.
  */
-internal class Application.EmailStoreFactory : Geary.BaseObject {
+internal class Application.EmailStoreFactory : Convey.BaseObject {
 
 
-    private const Geary.Email.Field REQUIRED_FIELDS = (
+    private const Convey.Email.Field REQUIRED_FIELDS = (
         ENVELOPE |
         FLAGS
     );
 
 
-    private class EmailStoreImpl : Geary.BaseObject, Plugin.EmailStore {
+    private class EmailStoreImpl : Convey.BaseObject, Plugin.EmailStore {
 
 
         private weak EmailStoreFactory factory;
@@ -48,10 +48,10 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
             // only a single account, so optimise for that a bit.
 
             var found_accounts = new Gee.HashMap<
-                AccountContext, Gee.Set<Geary.EmailIdentifier>
+                AccountContext, Gee.Set<Convey.EmailIdentifier>
             >();
             AccountContext? current_account = null;
-            Gee.Set<Geary.EmailIdentifier>? engine_ids = null;
+            Gee.Set<Convey.EmailIdentifier>? engine_ids = null;
             foreach (Plugin.EmailIdentifier plugin_id in plugin_ids) {
                 IdImpl? id_impl = plugin_id as IdImpl;
                 if (id_impl != null) {
@@ -59,7 +59,7 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
                         current_account = id_impl.account_impl.backing;
                         engine_ids = found_accounts.get(current_account);
                         if (engine_ids == null) {
-                            engine_ids = new Gee.HashSet<Geary.EmailIdentifier>();
+                            engine_ids = new Gee.HashSet<Convey.EmailIdentifier>();
                             found_accounts.set(current_account, engine_ids);
                         }
                     }
@@ -68,7 +68,7 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
             }
 
             foreach (var context in found_accounts.keys) {
-                Gee.Collection<Geary.Email> batch =
+                Gee.Collection<Convey.Email> batch =
                     yield context.emails.list_email_by_sparse_id_async(
                         found_accounts.get(context),
                         REQUIRED_FIELDS,
@@ -112,8 +112,8 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
 
 
     /** Implementation of the plugin email interface. */
-    internal class EmailImpl : Geary.BaseObject,
-        Geary.EmailHeaderSet,
+    internal class EmailImpl : Convey.BaseObject,
+        Convey.EmailHeaderSet,
         Plugin.Email {
 
 
@@ -127,65 +127,65 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
         }
         private IdImpl? _id = null;
 
-        public Geary.RFC822.MailboxAddresses? from {
+        public Convey.RFC822.MailboxAddresses? from {
             get { return this.backing.from; }
         }
 
-        public Geary.RFC822.MailboxAddress? sender {
+        public Convey.RFC822.MailboxAddress? sender {
             get { return this.backing.sender; }
         }
 
-        public Geary.RFC822.MailboxAddresses? reply_to {
+        public Convey.RFC822.MailboxAddresses? reply_to {
             get { return this.backing.reply_to; }
         }
 
-        public Geary.RFC822.MailboxAddresses? to {
+        public Convey.RFC822.MailboxAddresses? to {
             get { return this.backing.to; }
         }
 
-        public Geary.RFC822.MailboxAddresses? cc {
+        public Convey.RFC822.MailboxAddresses? cc {
             get { return this.backing.cc; }
         }
 
-        public Geary.RFC822.MailboxAddresses? bcc {
+        public Convey.RFC822.MailboxAddresses? bcc {
             get { return this.backing.bcc; }
         }
 
-        public Geary.RFC822.MessageID? message_id {
+        public Convey.RFC822.MessageID? message_id {
             get { return this.backing.message_id; }
         }
 
-        public Geary.RFC822.MessageIDList? in_reply_to {
+        public Convey.RFC822.MessageIDList? in_reply_to {
             get { return this.backing.in_reply_to; }
         }
 
-        public Geary.RFC822.MessageIDList? references {
+        public Convey.RFC822.MessageIDList? references {
             get { return this.backing.references; }
         }
 
-        public Geary.RFC822.Subject? subject {
+        public Convey.RFC822.Subject? subject {
             get { return this.backing.subject; }
         }
 
-        public Geary.RFC822.Date? date {
+        public Convey.RFC822.Date? date {
             get { return this.backing.date; }
         }
 
-        public Geary.EmailFlags flags {
+        public Convey.EmailFlags flags {
             get { return this.backing.email_flags; }
         }
 
-        internal Geary.Email backing { get; private set; }
+        internal Convey.Email backing { get; private set; }
         internal PluginManager.AccountImpl account { get; private set; }
 
 
-        internal EmailImpl(Geary.Email backing,
+        internal EmailImpl(Convey.Email backing,
                            PluginManager.AccountImpl account) {
             this.backing = backing;
             this.account = account;
         }
 
-        public Geary.RFC822.MailboxAddress? get_primary_originator() {
+        public Convey.RFC822.MailboxAddress? get_primary_originator() {
             return Util.Email.get_primary_originator(this.backing);
         }
 
@@ -193,16 +193,16 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
                                          bool convert,
                                          GLib.Cancellable? cancellable)
             throws GLib.Error {
-            if (!(Geary.Email.REQUIRED_FOR_MESSAGE in this.backing.fields)) {
-                Geary.Account account = this.account.backing.account;
+            if (!(Convey.Email.REQUIRED_FOR_MESSAGE in this.backing.fields)) {
+                Convey.Account account = this.account.backing.account;
                 this.backing = yield account.local_fetch_email_async(
                     this.backing.id,
-                    Geary.Email.REQUIRED_FOR_MESSAGE | this.backing.fields,
+                    Convey.Email.REQUIRED_FOR_MESSAGE | this.backing.fields,
                     cancellable
                 );
             }
 
-            Geary.RFC822.Message message = this.backing.get_message();
+            Convey.RFC822.Message message = this.backing.get_message();
             string body = "";
             switch (type) {
             case PLAIN:
@@ -226,17 +226,17 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
     }
 
 
-    internal class IdImpl : Geary.BaseObject,
+    internal class IdImpl : Convey.BaseObject,
         Gee.Hashable<Plugin.EmailIdentifier>, Plugin.EmailIdentifier {
 
 
         public Plugin.Account account { get { return this.account_impl; } }
         internal PluginManager.AccountImpl account_impl;
 
-        internal Geary.EmailIdentifier backing { get; private set; }
+        internal Convey.EmailIdentifier backing { get; private set; }
 
 
-        internal IdImpl(Geary.EmailIdentifier backing,
+        internal IdImpl(Convey.EmailIdentifier backing,
                         PluginManager.AccountImpl account) {
             this.backing = backing;
             this.account_impl = account;
@@ -306,13 +306,13 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
         }
     }
 
-    public Geary.Email? to_engine_email(Plugin.Email plugin) {
+    public Convey.Email? to_engine_email(Plugin.Email plugin) {
         var impl = plugin as EmailImpl;
         return (impl != null) ? impl.backing : null;
     }
 
     public Gee.Collection<Plugin.EmailIdentifier> to_plugin_ids(
-        Gee.Collection<Geary.EmailIdentifier> engine_ids,
+        Gee.Collection<Convey.EmailIdentifier> engine_ids,
         AccountContext account
     ) {
         var plugin_ids = new Gee.HashSet<Plugin.EmailIdentifier>();
@@ -322,12 +322,12 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
         return plugin_ids;
     }
 
-    public Geary.EmailIdentifier? to_engine_id(Plugin.EmailIdentifier plugin) {
+    public Convey.EmailIdentifier? to_engine_id(Plugin.EmailIdentifier plugin) {
         var impl = plugin as IdImpl;
         return (impl != null) ? impl.backing : null;
     }
 
-    public Plugin.Email to_plugin_email(Geary.Email engine,
+    public Plugin.Email to_plugin_email(Convey.Email engine,
                                         AccountContext account) {
         return new EmailImpl(engine, this.accounts.get(account));
     }
@@ -347,9 +347,9 @@ internal class Application.EmailStoreFactory : Geary.BaseObject {
     }
 
     /** Returns the engine email id for the given plugin email id. */
-    public Geary.EmailIdentifier?
+    public Convey.EmailIdentifier?
         get_email_identifier_for_variant(GLib.Variant target) {
-        Geary.EmailIdentifier? id = null;
+        Convey.EmailIdentifier? id = null;
         var context = get_account_for_variant(target);
         if (context != null) {
             try {

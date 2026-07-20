@@ -8,7 +8,7 @@
  */
 
 /** GNOME Online Accounts token adapter. */
-public class GoaMediator : Geary.CredentialsMediator, Object {
+public class GoaMediator : Convey.CredentialsMediator, Object {
 
 
     private const string PROVIDER_TYPE_WINDOWS_LIVE = "windows_live";
@@ -25,25 +25,25 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
         this.handle = handle;
     }
 
-    public Geary.ServiceProvider get_service_provider() {
-        Geary.ServiceProvider provider = Geary.ServiceProvider.OTHER;
+    public Convey.ServiceProvider get_service_provider() {
+        Convey.ServiceProvider provider = Convey.ServiceProvider.OTHER;
         switch (this.handle.get_account().provider_type) {
         case "google":
-            provider = Geary.ServiceProvider.GMAIL;
+            provider = Convey.ServiceProvider.GMAIL;
             break;
 
         case PROVIDER_TYPE_WINDOWS_LIVE:
         case PROVIDER_TYPE_MS_GRAPH:
-            provider = Geary.ServiceProvider.OUTLOOK;
+            provider = Convey.ServiceProvider.OUTLOOK;
             break;
         }
         return provider;
     }
 
-    public Geary.AccountBackend get_account_backend() {
-        Geary.AccountBackend backend = Geary.AccountBackend.IMAP_SMTP;
+    public Convey.AccountBackend get_account_backend() {
+        Convey.AccountBackend backend = Convey.AccountBackend.IMAP_SMTP;
         if (this.handle.get_account().provider_type == PROVIDER_TYPE_MS_GRAPH) {
-            backend = Geary.AccountBackend.MICROSOFT_GRAPH;
+            backend = Convey.AccountBackend.MICROSOFT_GRAPH;
         }
         return backend;
     }
@@ -52,19 +52,19 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
         return this.handle.get_account().provider_name;
     }
 
-    public async void update(Geary.AccountInformation geary_account,
+    public async void update(Convey.AccountInformation convey_account,
                              GLib.Cancellable? cancellable)
         throws GLib.Error {
         // Call this to get the exception thrown if no auth method is
         // supported.
         get_auth_method();
 
-        update_imap_config(geary_account.incoming);
-        update_smtp_config(geary_account.outgoing);
+        update_imap_config(convey_account.incoming);
+        update_smtp_config(convey_account.outgoing);
     }
 
-    public virtual async bool load_token(Geary.AccountInformation account,
-                                         Geary.ServiceInformation service,
+    public virtual async bool load_token(Convey.AccountInformation account,
+                                         Convey.ServiceInformation service,
                                          Cancellable? cancellable)
         throws GLib.Error {
         // Per GOA docs
@@ -97,13 +97,13 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
 
         case PASSWORD:
             switch (service.protocol) {
-            case Geary.Protocol.IMAP:
+            case Convey.Protocol.IMAP:
                 yield this.handle.get_password_based().call_get_password(
                     "imap-password", cancellable, out token
                 );
                 break;
 
-            case Geary.Protocol.SMTP:
+            case Convey.Protocol.SMTP:
                 yield this.handle.get_password_based().call_get_password(
                     "smtp-password", cancellable, out token
                 );
@@ -122,14 +122,14 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
         return loaded;
     }
 
-    private Geary.Credentials.Method get_auth_method() throws GLib.Error {
+    private Convey.Credentials.Method get_auth_method() throws GLib.Error {
         if (this.handle.get_oauth2_based() != null) {
-            return Geary.Credentials.Method.OAUTH2;
+            return Convey.Credentials.Method.OAUTH2;
         }
         if (this.handle.get_password_based() != null) {
-            return Geary.Credentials.Method.PASSWORD;
+            return Convey.Credentials.Method.PASSWORD;
         }
-        throw new Geary.EngineError.UNSUPPORTED(
+        throw new Convey.EngineError.UNSUPPORTED(
             "GOA account supports neither password or OAuth2 auth"
         );
     }
@@ -156,40 +156,40 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
 
     private bool has_mail_endpoints(Goa.Mail mail) {
         return (
-            !Geary.String.is_empty(mail.imap_host) &&
-            !Geary.String.is_empty(mail.smtp_host)
+            !Convey.String.is_empty(mail.imap_host) &&
+            !Convey.String.is_empty(mail.smtp_host)
         );
     }
 
-    private string get_service_user_name(Geary.Protocol protocol)
+    private string get_service_user_name(Convey.Protocol protocol)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
         if (mail != null) {
             string? user = null;
             switch (protocol) {
-            case Geary.Protocol.IMAP:
+            case Convey.Protocol.IMAP:
                 user = mail.imap_user_name;
                 break;
 
-            case Geary.Protocol.SMTP:
+            case Convey.Protocol.SMTP:
                 user = mail.smtp_user_name;
                 break;
             }
-            if (!Geary.String.is_empty_or_whitespace(user)) {
+            if (!Convey.String.is_empty_or_whitespace(user)) {
                 return (string) user;
             }
         }
 
         string mailbox = this.handle.get_account().presentation_identity;
-        if (Geary.String.is_empty_or_whitespace(mailbox)) {
-            throw new Geary.EngineError.UNSUPPORTED(
+        if (Convey.String.is_empty_or_whitespace(mailbox)) {
+            throw new Convey.EngineError.UNSUPPORTED(
                 "GOA account does not include a mailbox identity"
             );
         }
         return mailbox;
     }
 
-    private void update_imap_config(Geary.ServiceInformation service)
+    private void update_imap_config(Convey.ServiceInformation service)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
         bool use_microsoft_fallback = (
@@ -200,21 +200,21 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
             parse_host_name(service, mail.imap_host);
 
             if (mail.imap_use_ssl) {
-                service.transport_security = Geary.TlsNegotiationMethod.TRANSPORT;
+                service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
             } else if (mail.imap_use_tls) {
-                service.transport_security = Geary.TlsNegotiationMethod.START_TLS;
+                service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
             } else {
-                service.transport_security = Geary.TlsNegotiationMethod.NONE;
+                service.transport_security = Convey.TlsNegotiationMethod.NONE;
             }
         } else if (use_microsoft_fallback) {
             parse_host_name(service, get_default_imap_host());
-            service.transport_security = Geary.TlsNegotiationMethod.TRANSPORT;
+            service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
         } else {
             return;
         }
 
-        service.credentials = new Geary.Credentials(
-            get_auth_method(), get_service_user_name(Geary.Protocol.IMAP)
+        service.credentials = new Convey.Credentials(
+            get_auth_method(), get_service_user_name(Convey.Protocol.IMAP)
         );
 
         if (service.port == 0) {
@@ -222,7 +222,7 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
         }
     }
 
-    private void update_smtp_config(Geary.ServiceInformation service)
+    private void update_smtp_config(Convey.ServiceInformation service)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
         bool use_microsoft_fallback = (
@@ -233,30 +233,30 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
             parse_host_name(service, mail.smtp_host);
 
             if (mail.smtp_use_ssl) {
-                service.transport_security = Geary.TlsNegotiationMethod.TRANSPORT;
+                service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
             } else if (mail.smtp_use_tls) {
-                service.transport_security = Geary.TlsNegotiationMethod.START_TLS;
+                service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
             } else {
-                service.transport_security = Geary.TlsNegotiationMethod.NONE;
+                service.transport_security = Convey.TlsNegotiationMethod.NONE;
             }
 
             if (mail.smtp_use_auth) {
-                service.credentials_requirement = Geary.Credentials.Requirement.CUSTOM;
+                service.credentials_requirement = Convey.Credentials.Requirement.CUSTOM;
             } else {
-                service.credentials_requirement = Geary.Credentials.Requirement.NONE;
+                service.credentials_requirement = Convey.Credentials.Requirement.NONE;
             }
 
             if (mail.smtp_use_auth) {
-                service.credentials = new Geary.Credentials(
-                    get_auth_method(), get_service_user_name(Geary.Protocol.SMTP)
+                service.credentials = new Convey.Credentials(
+                    get_auth_method(), get_service_user_name(Convey.Protocol.SMTP)
                 );
             }
         } else if (use_microsoft_fallback) {
             parse_host_name(service, get_default_smtp_host());
-            service.transport_security = Geary.TlsNegotiationMethod.START_TLS;
-            service.credentials_requirement = Geary.Credentials.Requirement.CUSTOM;
-            service.credentials = new Geary.Credentials(
-                get_auth_method(), get_service_user_name(Geary.Protocol.SMTP)
+            service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
+            service.credentials_requirement = Convey.Credentials.Requirement.CUSTOM;
+            service.credentials = new Convey.Credentials(
+                get_auth_method(), get_service_user_name(Convey.Protocol.SMTP)
             );
         } else {
             return;
@@ -267,7 +267,7 @@ public class GoaMediator : Geary.CredentialsMediator, Object {
         }
     }
 
-    private void parse_host_name(Geary.ServiceInformation service,
+    private void parse_host_name(Convey.ServiceInformation service,
                                  string host_name) {
         // Fall back to trying to use the host name as-is.
         // At least the user can see it in the settings if

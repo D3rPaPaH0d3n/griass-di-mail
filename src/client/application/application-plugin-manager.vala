@@ -121,7 +121,7 @@ public class Application.PluginManager : GLib.Object {
 
 
     /** A plugin-specific implementation of its Application object. */
-    internal class ApplicationImpl : Geary.BaseObject, Plugin.Application {
+    internal class ApplicationImpl : Convey.BaseObject, Plugin.Application {
 
 
         internal weak Client backing;
@@ -166,10 +166,10 @@ public class Application.PluginManager : GLib.Object {
             if (id == null) {
                 throw new Plugin.Error.NOT_FOUND("Email id not found");
             }
-            Gee.Collection<Geary.Email>? email = null;
+            Gee.Collection<Convey.Email>? email = null;
             try {
                 email = yield source_impl.backing.emails.list_email_by_sparse_id_async(
-                    Geary.Collection.single(id),
+                    Convey.Collection.single(id),
                     Composer.Widget.REQUIRED_FIELDS,
                     NONE,
                     source_impl.backing.cancellable
@@ -182,7 +182,7 @@ public class Application.PluginManager : GLib.Object {
             if (email == null || email.is_empty) {
                 throw new Plugin.Error.NOT_FOUND("Email not found for id");
             }
-            var context = Geary.Collection.first(email);
+            var context = Convey.Collection.first(email);
 
             var type = Composer.Widget.ContextType.NONE;
             switch (plugin_type) {
@@ -240,7 +240,7 @@ public class Application.PluginManager : GLib.Object {
         }
 
         public void show_folder(Plugin.Folder folder) {
-            Geary.Folder? target = this.globals.folders.to_engine_folder(folder);
+            Convey.Folder? target = this.globals.folders.to_engine_folder(folder);
             if (target != null) {
                 MainWindow window = this.backing.get_active_main_window();
                 window.select_folder.begin(target, true);
@@ -256,7 +256,7 @@ public class Application.PluginManager : GLib.Object {
                );
            }
 
-           Geary.Folder? target = this.globals.folders.to_engine_folder(folder);
+           Convey.Folder? target = this.globals.folders.to_engine_folder(folder);
            if (target != null) {
                if (!yield main.prompt_empty_folder(target.used_as)) {
                    throw new Plugin.Error.PERMISSION_DENIED(
@@ -272,7 +272,7 @@ public class Application.PluginManager : GLib.Object {
                            controller.empty_folder.end(res);
                        } catch (GLib.Error error) {
                            controller.report_problem(
-                               new Geary.AccountProblemReport(
+                               new Convey.AccountProblemReport(
                                    target.account.information,
                                    error
                                )
@@ -283,7 +283,7 @@ public class Application.PluginManager : GLib.Object {
            }
         }
 
-        public void report_problem(Geary.ProblemReport problem) {
+        public void report_problem(Convey.ProblemReport problem) {
             this.backing.controller.report_problem(problem);
         }
 
@@ -329,7 +329,7 @@ public class Application.PluginManager : GLib.Object {
     }
 
 
-    internal class AccountImpl : Geary.BaseObject, Plugin.Account {
+    internal class AccountImpl : Convey.BaseObject, Plugin.Account {
 
 
         public string display_name {
@@ -349,7 +349,7 @@ public class Application.PluginManager : GLib.Object {
 
 
     /** An implementation of the plugin Composer interface. */
-    internal class ComposerImpl : Geary.BaseObject, Plugin.Composer {
+    internal class ComposerImpl : Convey.BaseObject, Plugin.Composer {
 
 
         public bool can_send { get; set; default = false; }
@@ -624,18 +624,18 @@ public class Application.PluginManager : GLib.Object {
     }
 
     /** Returns the engine account for the given plugin account, if any. */
-    public Geary.Account? to_engine_account(Plugin.Account plugin) {
+    public Convey.Account? to_engine_account(Plugin.Account plugin) {
         var impl = plugin as AccountImpl;
         return (impl != null) ? impl.backing.account : null;
     }
 
     /** Returns the engine folder for the given plugin folder, if any. */
-    public Geary.Folder? to_engine_folder(Plugin.Folder plugin) {
+    public Convey.Folder? to_engine_folder(Plugin.Folder plugin) {
         return this.globals.folders.to_engine_folder(plugin);
     }
 
     /** Returns the engine email for the given plugin email, if any. */
-    public Geary.Email? to_engine_email(Plugin.Email plugin) {
+    public Convey.Email? to_engine_email(Plugin.Email plugin) {
         return this.globals.email.to_engine_email(plugin);
     }
 

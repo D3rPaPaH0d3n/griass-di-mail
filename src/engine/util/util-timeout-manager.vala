@@ -14,7 +14,7 @@
  * Note this class is not thread safe and should only be invoked from
  * the main loop.
  */
-public class Geary.TimeoutManager : BaseObject {
+public class Convey.TimeoutManager : BaseObject {
 
 
     /** Specifies the priority the timeout should be given. */

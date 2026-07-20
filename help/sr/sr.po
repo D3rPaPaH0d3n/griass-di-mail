@@ -1,11 +1,11 @@
-# Serbian translation for geary.
-# Copyright (C) 2026 geary's COPYRIGHT HOLDER
-# This file is distributed under the same license as the geary package.
+# Serbian translation for convey.
+# Copyright (C) 2026 convey's COPYRIGHT HOLDER
+# This file is distributed under the same license as the convey package.
 # Марко Костић <marko.m.kostic@gmail.com>,  2026.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: geary gnome-44\n"
+"Project-Id-Version: convey gnome-44\n"
 "POT-Creation-Date: 2026-03-31 19:42+0000\n"
 "PO-Revision-Date: 2026-04-04 06:50+0200\n"
 "Last-Translator: Марко Костић <marko.m.kostic@gmail.com>\n"
@@ -39,7 +39,7 @@ msgstr "Уређивач налога"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Geary’s application menu button "
+"<em>accounts editor</em>. To open it, click Convey’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
@@ -71,10 +71,10 @@ msgstr "Додавање налога"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Geary will automatically use any email accounts you have added via the "
+"Convey will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not "
 "have any accounts added to <app>Online Accounts</app>, you will be prompted "
-"to add an account the first time you run Geary."
+"to add an account the first time you run Convey."
 msgstr ""
 "Гери ће аутоматски користити све налоге е-поште које сте додали путем окна "
 "<app>Налози на мрежи</app> у <app>Гномовим подешавањима</app>. Ако немате "
@@ -89,7 +89,7 @@ msgid ""
 "providers supported by <app>Online Accounts</app>, <app>GNOME Settings</app> "
 "will be opened and you will be asked for your account information there. For "
 "other email providers, you will be asked for your account information by "
-"Geary. Once entered, click <gui>Create</gui> and the account information "
+"Convey. Once entered, click <gui>Create</gui> and the account information "
 "will be checked and then added."
 msgstr ""
 "Да бисте додали додатне налоге, отворите уређивач налога, а затим изаберите "
@@ -109,7 +109,7 @@ msgstr "Ажурирање постојећих налога"
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account "
-"you wish to update. Geary will display settings for the account. From there, "
+"you wish to update. Convey will display settings for the account. From there, "
 "you can add and remove additional sender email addresses, edit your email "
 "signature, and various other settings."
 msgstr ""
@@ -122,7 +122,7 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Geary will download and store locally. Geary can only use locally available "
+"Convey will download and store locally. Convey can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
 "Подешавање <gui>Преузми пошту</gui> омогућава вам да подесите колико ће "
@@ -135,7 +135,7 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Geary will check the settings, then update the account. Note that "
+"and Convey will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
@@ -164,7 +164,7 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Geary "
+"The <gui>Save sent email on server</gui> checkbox controls whether Convey "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder. "
 "If de-selected, you will no be able to see any email messages you have sent, "
 "unless your server automatically saves them for you."
@@ -194,8 +194,8 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Geary, open the accounts editor and choose "
-"the account you wish to remove. Geary will display settings for the account. "
+"To remove an account added via Convey, open the accounts editor and choose "
+"the account you wish to remove. Convey will display settings for the account. "
 "Scroll to the bottom of the window and click <gui>Remove Account</gui>. You "
 "will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
@@ -218,7 +218,7 @@ msgstr "Архивирање, бацање у смеће и брисање по�
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Geary lets you archive messages if your server supports it. Clicking the "
+"Convey lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
@@ -288,7 +288,7 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/bugs.page:10
-msgid "Need help with Geary?"
+msgid "Need help with Convey?"
 msgstr "Потребна вам је помоћ са Геријем?"
 
 #. (itstool) path: section/title
@@ -299,7 +299,7 @@ msgstr "Добијање подршке"
 #. (itstool) path: section/p
 #: C/bugs.page:15
 msgid ""
-"If you are having trouble using Geary, please <link href=\"https://"
+"If you are having trouble using Convey, please <link href=\"https://"
 "wiki.gnome.org/Apps/Geary/Contact\">get in touch</link> with the Geary "
 "community about the problem."
 msgstr ""
@@ -315,7 +315,7 @@ msgstr "Пријављивање грешака"
 #. (itstool) path: section/p
 #: C/bugs.page:23
 msgid ""
-"If you suspect you have found a bug in Geary, please follow the <link "
+"If you suspect you have found a bug in Convey, please follow the <link "
 "href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">bug reporting "
 "guidelines</link> so the problem can be diagnosed and fixed."
 msgstr ""
@@ -335,7 +335,7 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:32
-msgid "Geary version and installation method (Package? Flathub? Source code?)"
+msgid "Convey version and installation method (Package? Flathub? Source code?)"
 msgstr "Верзија Герија и начин инсталације (Пакет? Флатхаб? Изворни код?)"
 
 #. (itstool) path: item/p
@@ -374,7 +374,7 @@ msgstr "Шта сте очекивали да се деси?"
 #. (itstool) path: section/p
 #: C/bugs.page:44
 msgid ""
-"Log files can be accessed via the Geary Inspector, press <keyseq><key>Alt</"
+"Log files can be accessed via the Convey Inspector, press <keyseq><key>Alt</"
 "key><key>I</key></keyseq> to open it, select and save any relevant log "
 "files, and attach them to the bug report."
 msgstr ""
@@ -384,13 +384,13 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Geary"
+msgid "Contribute to Convey"
 msgstr "Допринесите Герију"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Geary? There are a number of ways you can contribute:"
+"Want to help improve Convey? There are a number of ways you can contribute:"
 msgstr ""
 "Желите да помогнете у побољшању Герија? Постоји више начина на које можете "
 "допринети:"
@@ -408,7 +408,7 @@ msgstr ""
 #: C/contributing.page:19
 msgid ""
 "<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Translating</"
-"link>—translate Geary’s user interface and user manual into new languages"
+"link>—translate Convey’s user interface and user manual into new languages"
 msgstr ""
 "<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Превођење</"
 "link> — преведите Геријево корисничко прочеље и корисничко упутство на нове "
@@ -428,7 +428,7 @@ msgstr ""
 msgid ""
 "See <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">the wiki</"
 "link> for more information and options for contributing financially to "
-"Geary's development."
+"Convey's development."
 msgstr ""
 "Погледајте <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">вики</"
 "link> за више информација и могућности за новчани допринос развоју Герија."
@@ -436,24 +436,24 @@ msgstr ""
 #. (itstool) path: info/title
 #: C/index.page:7
 msgctxt "link:trail"
-msgid "Geary"
+msgid "Convey"
 msgstr "Гери"
 
 #. (itstool) path: info/title
 #: C/index.page:8
 msgctxt "text"
-msgid "Geary"
+msgid "Convey"
 msgstr "Гери"
 
 #. (itstool) path: info/title
 #: C/index.page:9
 msgctxt "link"
-msgid "Geary"
+msgid "Convey"
 msgstr "Гери"
 
 #. (itstool) path: page/title
 #: C/index.page:12
-msgid "<_:media-1/> <span>Geary</span>"
+msgid "<_:media-1/> <span>Convey</span>"
 msgstr "<_:media-1/> <span>Гери</span>"
 
 #. (itstool) path: section/title
@@ -463,7 +463,7 @@ msgstr "Увод"
 
 #. (itstool) path: section/title
 #: C/index.page:22
-msgid "Using Geary"
+msgid "Using Convey"
 msgstr "Коришћење Герија"
 
 #. (itstool) path: section/title
@@ -484,7 +484,7 @@ msgstr "Означавање преписке"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Geary lets you apply one or more <em>labels</em> to each conversation. Geary "
+"Convey lets you apply one or more <em>labels</em> to each conversation. Convey "
 "labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
@@ -559,10 +559,10 @@ msgstr "Ограничења"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Geary is still in early development. Geary supports IMAP and has been tested "
+"Convey is still in early development. Convey supports IMAP and has been tested "
 "with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Geary may not yet work well with some IMAP "
-"servers. At this time Geary is still missing numerous features including "
+"for Outlook.com is provided. Convey may not yet work well with some IMAP "
+"servers. At this time Convey is still missing numerous features including "
 "offline mode."
 msgstr ""
 "Гери је још увек у раној фази развоја. Гери подржава ИМАП и тестиран је са "
@@ -574,7 +574,7 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Geary, "
+"To learn more about the features we're working on and the future of Convey, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
@@ -591,7 +591,7 @@ msgstr "Преглед"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Geary is an email application built around conversations, for the GNOME 3 "
+"Convey is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
@@ -611,7 +611,7 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Geary window is divided into several areas: The folder list, the "
+"The main Convey window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
 "Главни прозор Герија је подељен на неколико области: списак фасцикли, списак "
@@ -626,7 +626,7 @@ msgstr "Списак фасцикли"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Geary uses the term <em>label</em> for any folder "
+"for your email accounts. Convey uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "Списак <em>фасцикли</em> приказује све <em>фасцикле</em> и <em>ознаке</em> "
@@ -660,7 +660,7 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Geary displays a count "
+"sender. If a conversation has more than one message, Convey displays a count "
 "of messages in the conversation."
 msgstr ""
 "Име сваког пошиљаоца се појављује подебљано ако постоје непрочитане поруке "
@@ -670,10 +670,10 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Geary does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Geary "
+"Convey does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Convey "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Geary will fetch more messages "
+"simply scroll down the conversation list and Convey will fetch more messages "
 "automatically."
 msgstr ""
 "Гери не преузима аутоматски све поруке у свим вашим фасциклама поште. Када "
@@ -684,7 +684,7 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Geary can act on a group of conversations. To select "
+"Some commands in Convey can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the "
@@ -712,7 +712,7 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Geary collapses messages that you’ve already "
+"When you view a conversation, Convey collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
@@ -748,7 +748,7 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Geary will display the first starred message in a conversation "
+"starred, and Convey will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "Кликните на дугме са звездицом које се налази на свакој поруци да бисте "
@@ -788,7 +788,7 @@ msgstr "Преференце"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Geary allows you to customise how it works via its <gui "
+"Convey allows you to customise how it works via its <gui "
 "style=\"group\">Preferences</gui> window. To open the window, select <gui "
 "style=\"menuitem\">Preferences</gui> from the application menu on the main "
 "window's toolbar. You can change the following options:"
@@ -806,9 +806,9 @@ msgstr "<gui>Аутоматски изабери следећу поруку</gu
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Geary automatically selects the latest message "
+"When this option is enabled, Convey automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Geary automatically selects an adjacent message."
+"message, Convey automatically selects an adjacent message."
 msgstr ""
 "Када је ова опција омогућена, Гери аутоматски бира најновију поруку у "
 "фасцикли када уђете у њу. Поред тога, након архивирања поруке, Гери "
@@ -852,7 +852,7 @@ msgstr "<gui>Прати нову пошту када је затворено</gu
 #. (itstool) path: item/p
 #: C/preferences.page:38
 msgid ""
-"Geary will watch your accounts for new mail even when the main window is not "
+"Convey will watch your accounts for new mail even when the main window is not "
 "open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
@@ -868,7 +868,7 @@ msgstr "Претрага"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Geary supports a per-account full text search. To start a search, select a "
+"Convey supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) and start typing. Results will appear after a brief delay."
@@ -891,7 +891,7 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Geary "
+"Keywords that match your search are highlighted in the message view. Convey "
 "will match different forms of the same word, for example searching for "
 "\"walk\" will also match \"walking\" and \"walked.\""
 msgstr ""
@@ -906,7 +906,7 @@ msgstr "Оператори претраге"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Geary supports the following operators to limit the scope of searches:"
+msgid "Convey supports the following operators to limit the scope of searches:"
 msgstr "Гери подржава следеће операторе за ограничавање обима претраге:"
 
 #. (itstool) path: td/p
@@ -1041,7 +1041,7 @@ msgstr "Пречице тастатуре"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Geary has keyboard shortcuts for most common operations. Use the built-in "
+"Convey has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the "
 "main window's toolbar, or using the keyboard shortcuts listed below."
@@ -1056,7 +1056,7 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Geary:"
+"Convey:"
 msgstr ""
 "Следеће пречице на тастатури се могу користити за приступ помоћи на мрежи за "
 "Гери:"
@@ -1146,7 +1146,7 @@ msgstr "Означавање порука као прочитаних или н�
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Geary marks messages as read automatically as you read them. To manually "
+"Convey marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
@@ -1211,7 +1211,7 @@ msgstr "Поништавање слања"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Geary will wait 5 seconds before delivering the "
+"When sending an email, Convey will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui "
 "style=\"button\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
@@ -1246,7 +1246,7 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/write.page:41
 msgid ""
-"When entering an email address into any of these fields, Geary will provide "
+"When entering an email address into any of these fields, Convey will provide "
 "suggestions from your desktop address book and from previously sent and "
 "received email messages. To choose one of these suggestions, simply click on "
 "it."
@@ -1306,7 +1306,7 @@ msgstr "Форматирање текста, слике и прилози"
 #. (itstool) path: section/p
 #: C/write.page:68
 msgid ""
-"Geary's email composer lets you use text styles such as <em>bold</em> and "
+"Convey's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it, and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar "
 "at the bottom of the composer area."
@@ -1389,7 +1389,7 @@ msgstr "Провера правописа"
 #. (itstool) path: section/p
 #: C/write.page:106
 msgid ""
-"Geary supports spell-checking your composed email in one or more languages, "
+"Convey supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
@@ -1427,7 +1427,7 @@ msgstr "Чување нацрта и враћање одбачених пору�
 #. (itstool) path: section/p
 #: C/write.page:125
 msgid ""
-"For mail servers that support drafts, Geary will automatically save the "
+"For mail servers that support drafts, Convey will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
 "За сервере поште који подржавају нацрте, Гери ће аутоматски сачувати поруку "
@@ -1446,7 +1446,7 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:133
-msgid "Geary will delete the draft when you send the message."
+msgid "Convey will delete the draft when you send the message."
 msgstr "Гери ће обрисати нацрт када пошаљете поруку."
 
 #. (itstool) path: note/p
@@ -1473,11 +1473,11 @@ msgstr "Поруке у обичном тексту"
 #. (itstool) path: section/p
 #: C/write.page:148
 msgid ""
-"Geary can also send plain text messages. Press the <gui "
+"Convey can also send plain text messages. Press the <gui "
 "style=\"button\">More options</gui> button at the end of the bottom toolbar, "
 "then choose \"Rich Text\" or \"Plain Text\". Plain text mode is useful when "
 "sending email to mailing lists that prohibit rich text (HTML) messages, or "
-"when sending email to people that do no use modern clients like Geary."
+"when sending email to people that do no use modern clients like Convey."
 msgstr ""
 "Гери такође може да шаље поруке у обичном тексту. Притисните дугме <gui "
 "style=\"button\">Више опција</gui> на крају доње палете алата, а затим "

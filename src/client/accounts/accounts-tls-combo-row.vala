@@ -5,14 +5,14 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-[GtkTemplate (ui = "/org/gnome/Geary/accounts-tls-combo-row.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-tls-combo-row.ui")]
 internal class Accounts.TlsComboRow : Adw.ComboRow {
 
     private const string INSECURE_ICON = "channel-insecure-symbolic";
     private const string SECURE_ICON = "channel-secure-symbolic";
 
 
-    public Geary.TlsNegotiationMethod method {
+    public Convey.TlsNegotiationMethod method {
         get { return ((Adw.EnumListItem) this.selected_item).value; }
         set { this.selected = value; }
     }
@@ -39,12 +39,12 @@ internal class Accounts.TlsComboRow : Adw.ComboRow {
                                  GLib.Object object) {
         unowned var item = (Gtk.ListItem) object;
         unowned var enum_item = (Adw.EnumListItem) item.item;
-        var method = (Geary.TlsNegotiationMethod) enum_item.get_value();
+        var method = (Convey.TlsNegotiationMethod) enum_item.get_value();
 
         unowned var box = (Gtk.Box) item.child;
 
         unowned var image = (Gtk.Image) box.get_first_child();
-        if (method == Geary.TlsNegotiationMethod.NONE)
+        if (method == Convey.TlsNegotiationMethod.NONE)
             image.icon_name = "channel-insecure-symbolic";
         else
             image.icon_name = "channel-secure-symbolic";

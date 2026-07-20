@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Db.Result : Geary.Db.Context {
+public class Convey.Db.Result : Convey.Db.Context {
     public bool finished { get; private set; default = false; }
 
 

@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.Smtp.DataFormat {
+namespace Convey.Smtp.DataFormat {
 
 public const string ARG_SEPARATOR = " ";
 

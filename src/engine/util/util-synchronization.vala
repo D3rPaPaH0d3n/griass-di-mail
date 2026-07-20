@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.Synchronization {
+namespace Convey.Synchronization {
 
 /**
  * A synchronization primitive that spins waiting for a completion state to be reached.

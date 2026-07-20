@@ -11,7 +11,7 @@
  * This class provides a convenient, high-level API for the {@link
  * GLib.KeyFile} class.
  */
-public class Geary.ConfigFile {
+public class Convey.ConfigFile {
 
 
     /** A string parser that can be used to extract custom values. */

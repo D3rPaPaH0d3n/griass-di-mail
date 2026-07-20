@@ -11,14 +11,14 @@
 
   <section id="features">
     <title>Overview</title>
-    <p>Geary has keyboard shortcuts for most common operations. Use
+    <p>Convey has keyboard shortcuts for most common operations. Use
     the built-in help to discover the full list. To open the shortcuts
     help, select <gui style="menuitem">Keyboard Shortcuts</gui> from
     the application menu on the main window's toolbar, or using the
     keyboard shortcuts listed below.</p>
 
     <p>The following keyboard shortcuts can be used to access on-line
-    help from Geary:</p>
+    help from Convey:</p>
     <table frame="all" rules="rows">
       <tr>
         <td><p>Display this help manual</p></td>

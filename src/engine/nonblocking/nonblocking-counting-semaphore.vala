@@ -16,7 +16,7 @@
  * This class is ''not'' thread safe and should only be used by
  * asynchronous tasks.
  */
-public class Geary.Nonblocking.CountingSemaphore : Geary.Nonblocking.Lock {
+public class Convey.Nonblocking.CountingSemaphore : Convey.Nonblocking.Lock {
     /**
      * The number of tasks which have {@link acquire} the semaphore.
      */

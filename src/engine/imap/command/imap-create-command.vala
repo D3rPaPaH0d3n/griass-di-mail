@@ -15,19 +15,19 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.3.3]] and
  * [[https://tools.ietf.org/html/rfc6154#section-3]]
  */
-public class Geary.Imap.CreateCommand : Command {
+public class Convey.Imap.CreateCommand : Command {
 
     public const string NAME_ATOM = "create";
     public const string USE_ATOM = "use";
 
     public MailboxSpecifier mailbox { get; private set; }
 
-    public Geary.Folder.SpecialUse use {
+    public Convey.Folder.SpecialUse use {
         get; private set; default = NONE;
     }
 
 
-    private static MailboxAttribute? get_special_folder_type(Geary.Folder.SpecialUse use) {
+    private static MailboxAttribute? get_special_folder_type(Convey.Folder.SpecialUse use) {
         switch (use) {
         case ALL_MAIL:
             return MailboxAttribute.SPECIAL_FOLDER_ALL;
@@ -62,7 +62,7 @@ public class Geary.Imap.CreateCommand : Command {
     }
 
     public CreateCommand.special_use(MailboxSpecifier mailbox,
-                                     Geary.Folder.SpecialUse use,
+                                     Convey.Folder.SpecialUse use,
                                      GLib.Cancellable? should_send) {
         this(mailbox, should_send);
         this.use = use;

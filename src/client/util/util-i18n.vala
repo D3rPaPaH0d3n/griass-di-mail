@@ -23,7 +23,7 @@ namespace Util.I18n {
         Intl.textdomain(package_name);
     }
 
-    // TODO: Geary should be able to use langpacks from the build directory
+    // TODO: Convey should be able to use langpacks from the build directory
     private string get_langpack_dir_path(string program_path) {
         return Config.LANGUAGE_SUPPORT_DIRECTORY;
     }
@@ -250,9 +250,9 @@ namespace Util.I18n {
      * to_folder_type_display_name} is returned, otherwise the last
      * folder path step is returned.
      */
-    public string? to_folder_display_name(Geary.Folder folder) {
+    public string? to_folder_display_name(Convey.Folder folder) {
         var name = to_folder_type_display_name(folder.used_as);
-        if (Geary.String.is_empty_or_whitespace(name)) {
+        if (Convey.String.is_empty_or_whitespace(name)) {
             name = folder.path.name;
         }
         return name;
@@ -261,7 +261,7 @@ namespace Util.I18n {
     /**
      * Returns the localised name for a specific folder type, if any.
      */
-    public unowned string? to_folder_type_display_name(Geary.Folder.SpecialUse use) {
+    public unowned string? to_folder_type_display_name(Convey.Folder.SpecialUse use) {
         switch (use) {
             case INBOX:
                 return _("Inbox");

@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Nonblocking.ReportingSemaphore<G> : Geary.Nonblocking.Semaphore {
+public class Convey.Nonblocking.ReportingSemaphore<G> : Convey.Nonblocking.Semaphore {
     public G result { get; private set; }
     public Error? err { get; private set; default = null; }
 

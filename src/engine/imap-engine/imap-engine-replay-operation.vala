@@ -8,7 +8,7 @@
 /**
  * Base class for folder operations executed by {@link ReplayQueue}.
  */
-private abstract class Geary.ImapEngine.ReplayOperation : Geary.BaseObject, Gee.Comparable<ReplayOperation> {
+private abstract class Convey.ImapEngine.ReplayOperation : Convey.BaseObject, Gee.Comparable<ReplayOperation> {
 
     /**
      * Specifies the call scope (local, remote, both) of an operation.

@@ -20,7 +20,7 @@ public class Plugin.NotificationBadge :
     PluginBase, NotificationExtension, FolderExtension, TrustedExtension {
 
 
-    private const Geary.Folder.SpecialUse[] MONITORED_TYPES = {
+    private const Convey.Folder.SpecialUse[] MONITORED_TYPES = {
         INBOX, NONE
     };
 

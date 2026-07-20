@@ -25,11 +25,11 @@ public class FolderList.InboxFolderEntry : FolderList.FolderEntry {
         return this.display_name;
     }
 
-    public Geary.AccountInformation get_account_information() {
+    public Convey.AccountInformation get_account_information() {
         return folder.account.information;
     }
 
-    private void on_information_changed(Geary.AccountInformation config) {
+    private void on_information_changed(Convey.AccountInformation config) {
         if (this.display_name != config.display_name) {
             this.display_name = config.display_name;
             entry_changed();

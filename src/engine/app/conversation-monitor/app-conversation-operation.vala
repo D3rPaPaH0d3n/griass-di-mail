@@ -13,7 +13,7 @@
  * ConversationMonitor} to asynchronously keep conversations up to
  * date as messages are added to, updated, and removed from folders.
  */
-internal abstract class Geary.App.ConversationOperation : BaseObject {
+internal abstract class Convey.App.ConversationOperation : BaseObject {
 
 
     /** Determines if multiple instances of this operation can be queued. */
@@ -36,7 +36,7 @@ internal abstract class Geary.App.ConversationOperation : BaseObject {
 /**
  * An operation that executes on a collection in batches.
  */
-internal abstract class Geary.App.BatchOperation<T> : ConversationOperation {
+internal abstract class Convey.App.BatchOperation<T> : ConversationOperation {
 
 
     private const int BATCH_MAX_N = 100;

@@ -7,8 +7,8 @@
 // A special branch that sits before the accounts branches, containing only
 // the inboxes for all accounts.
 public class FolderList.InboxesBranch : Sidebar.Branch {
-    public Gee.HashMap<Geary.Account, InboxFolderEntry> folder_entries {
-        get; private set; default = new Gee.HashMap<Geary.Account, InboxFolderEntry>(); }
+    public Gee.HashMap<Convey.Account, InboxFolderEntry> folder_entries {
+        get; private set; default = new Gee.HashMap<Convey.Account, InboxFolderEntry>(); }
 
     public InboxesBranch() {
         base(
@@ -24,11 +24,11 @@ public class FolderList.InboxesBranch : Sidebar.Branch {
 
         InboxFolderEntry entry_a = (InboxFolderEntry) a;
         InboxFolderEntry entry_b = (InboxFolderEntry) b;
-        return Geary.AccountInformation.compare_ascending(entry_a.get_account_information(),
+        return Convey.AccountInformation.compare_ascending(entry_a.get_account_information(),
             entry_b.get_account_information());
     }
 
-    public InboxFolderEntry? get_entry_for_account(Geary.Account account) {
+    public InboxFolderEntry? get_entry_for_account(Convey.Account account) {
         return folder_entries.get(account);
     }
 
@@ -40,7 +40,7 @@ public class FolderList.InboxesBranch : Sidebar.Branch {
         inbox.folder.account.information.notify["ordinal"].connect(on_ordinal_changed);
     }
 
-    public void remove_inbox(Geary.Account account) {
+    public void remove_inbox(Convey.Account account) {
         Sidebar.Entry? entry = folder_entries.get(account);
         if(entry == null) {
             debug("Could not remove inbox for %s", account.to_string());

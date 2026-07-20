@@ -14,9 +14,9 @@
  *
  * See [[https://tools.ietf.org/html/rfc5322#section-3.4]]
  */
-public class Geary.RFC822.MailboxAddresses :
-    Geary.MessageData.AbstractMessageData,
-    Geary.MessageData.SearchableMessageData,
+public class Convey.RFC822.MailboxAddresses :
+    Convey.MessageData.AbstractMessageData,
+    Convey.MessageData.SearchableMessageData,
     Gee.Hashable<MailboxAddresses>,
     DecodedMessageData {
 
@@ -93,7 +93,7 @@ public class Geary.RFC822.MailboxAddresses :
     public MailboxAddresses.from_rfc822_string(string rfc822)
         throws Error {
         var list = GMime.InternetAddressList.parse(
-            Geary.RFC822.get_parser_options(),
+            Convey.RFC822.get_parser_options(),
             rfc822
         );
         if (list == null) {
@@ -292,7 +292,7 @@ public class Geary.RFC822.MailboxAddresses :
     }
 
     /**
-     * See Geary.MessageData.SearchableMessageData.
+     * See Convey.MessageData.SearchableMessageData.
      */
     public string to_searchable_string() {
         return list_to_string(addrs, (a) => a.to_searchable_string());

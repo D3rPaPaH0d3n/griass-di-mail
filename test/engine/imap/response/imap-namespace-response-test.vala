@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.NamespaceResponseTest : TestCase {
+class Convey.Imap.NamespaceResponseTest : TestCase {
 
 
     public NamespaceResponseTest() {
-        base("Geary.Imap.NamespaceResponseTest");
+        base("Convey.Imap.NamespaceResponseTest");
         add_test("minimal", minimal);
         add_test("complete", complete);
         add_test("cyrus", cyrus);

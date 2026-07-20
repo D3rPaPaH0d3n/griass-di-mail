@@ -16,7 +16,7 @@
  * @see FetchBodyDataSpecifier
  */
 
-public enum Geary.Imap.FetchDataSpecifier {
+public enum Convey.Imap.FetchDataSpecifier {
     UID,
     FLAGS,
     INTERNALDATE,

@@ -10,11 +10,11 @@
  * can be simply dropped (ignored) and the callback will be called at the scheduled time.
  */
 
-namespace Geary.Scheduler {
+namespace Convey.Scheduler {
 
 private Gee.HashSet<ScheduledInstance>? scheduled_map = null;
 
-private class ScheduledInstance : BaseObject, Geary.ReferenceSemantics {
+private class ScheduledInstance : BaseObject, Convey.ReferenceSemantics {
     protected int manual_ref_count { get; protected set; }
 
     private unowned SourceFunc? cb;
@@ -89,7 +89,7 @@ private class ScheduledInstance : BaseObject, Geary.ReferenceSemantics {
     }
 }
 
-public class Scheduled : Geary.SmartReference {
+public class Scheduled : Convey.SmartReference {
     internal Scheduled(ScheduledInstance instance) {
         base (instance);
     }

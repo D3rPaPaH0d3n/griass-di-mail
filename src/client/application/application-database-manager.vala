@@ -7,13 +7,13 @@
  */
 
 /** Manages progress when upgrading and rebuilding account databases. */
-internal class Application.DatabaseManager : Geary.BaseObject {
+internal class Application.DatabaseManager : Convey.BaseObject {
 
 
     /* Progress monitor for database operations. */
-    public Geary.AggregateProgressMonitor monitor {
+    public Convey.AggregateProgressMonitor monitor {
         public get; private set;
-        default = new Geary.AggregateProgressMonitor();
+        default = new Convey.AggregateProgressMonitor();
     }
 
     /** Determines whether or not the database dialog is visible. */
@@ -40,7 +40,7 @@ internal class Application.DatabaseManager : Geary.BaseObject {
      *
      * Accounts should be added before being opened.
      */
-    public void add_account(Geary.Account account,
+    public void add_account(Convey.Account account,
                             GLib.Cancellable? cancellable = null) {
         monitor.add(account.db_upgrade_monitor);
         monitor.add(account.db_vacuum_monitor);
@@ -52,7 +52,7 @@ internal class Application.DatabaseManager : Geary.BaseObject {
     /**
      * Stops an account from being monitored.
      */
-    public void remove_account(Geary.Account account) {
+    public void remove_account(Convey.Account account) {
         monitor.remove(account.db_upgrade_monitor);
         monitor.remove(account.db_vacuum_monitor);
     }
@@ -76,7 +76,7 @@ internal class Application.DatabaseManager : Geary.BaseObject {
             modal = true,
             deletable = false
         };
-        this.dialog.add_css_class("geary-upgrade");
+        this.dialog.add_css_class("convey-upgrade");
         this.dialog.set_child(box);
         this.dialog.close_request.connect(on_close_request);
         this.dialog.present();

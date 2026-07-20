@@ -8,12 +8,12 @@
 /**
  * An account editor pane for editing a specific account's preferences.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/accounts_editor_edit_pane.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_edit_pane.ui")]
 internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
 
 
     /** {@inheritDoc} */
-    internal Geary.AccountInformation account { get ; protected set; }
+    internal Convey.AccountInformation account { get ; protected set; }
 
     /** {@inheritDoc} */
     internal Application.CommandStack commands {
@@ -49,13 +49,13 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     [GtkChild] private unowned Gtk.Button remove_button;
 
 
-    public EditorEditPane(Editor editor, Geary.AccountInformation account) {
+    public EditorEditPane(Editor editor, Convey.AccountInformation account) {
         this.editor = editor;
         this.account = account;
 
         update_display_name();
 
-        foreach (Geary.RFC822.MailboxAddress sender in
+        foreach (Convey.RFC822.MailboxAddress sender in
                  account.sender_mailboxes) {
             this.senders_list.append(new_mailbox_row(sender));
         }
@@ -93,7 +93,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         this.signature_bin.add(this.signature_preview);
 
         this.signature_preview.load_html(
-            Geary.HTML.smart_escape(account.signature)
+            Convey.HTML.smart_escape(account.signature)
         );
 
         this.remove_button.set_visible(
@@ -116,14 +116,14 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     internal string? get_default_name() {
         string? name = this.account.primary_mailbox.name;
 
-        if (Geary.String.is_empty_or_whitespace(name)) {
+        if (Convey.String.is_empty_or_whitespace(name)) {
             name = this.editor.accounts.get_account_name();
         }
 
         return name;
     }
 
-    internal MailboxRow new_mailbox_row(Geary.RFC822.MailboxAddress sender) {
+    internal MailboxRow new_mailbox_row(Convey.RFC822.MailboxAddress sender) {
         MailboxRow row = new MailboxRow(this.account, sender, this);
         //XXX GTK4
         // row.move_to.connect(on_sender_row_moved);
@@ -180,7 +180,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         if (!this.editor.accounts.is_goa_account(account)) {
             var dialog = new Adw.AlertDialog(
                 _("Remove Account: %s").printf(account.primary_mailbox.address),
-                _("This will remove it from Geary and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
+                _("This will remove it from Convey and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
             );
             dialog.add_css_class("warning");
 
@@ -268,7 +268,7 @@ private class Accounts.DisplayNameRow : AccountRow<EditorEditPane,Gtk.Entry> {
     private GLib.Cancellable? cancellable;
 
 
-    public DisplayNameRow(Geary.AccountInformation account,
+    public DisplayNameRow(Convey.AccountInformation account,
                           Application.CommandStack commands,
                           GLib.Cancellable? cancellable) {
         base(
@@ -324,7 +324,7 @@ private class Accounts.DisplayNameRow : AccountRow<EditorEditPane,Gtk.Entry> {
             );
         }
 
-        if (Geary.String.is_empty(value)) {
+        if (Convey.String.is_empty(value)) {
         }
     }
 
@@ -337,15 +337,15 @@ private class Accounts.DisplayNameRow : AccountRow<EditorEditPane,Gtk.Entry> {
 
 private class Accounts.MailboxRow : Adw.ActionRow {
 
-    public Geary.AccountInformation account { get; construct set; }
+    public Convey.AccountInformation account { get; construct set; }
 
-    public Geary.RFC822.MailboxAddress mailbox { get; construct set; }
+    public Convey.RFC822.MailboxAddress mailbox { get; construct set; }
 
     public unowned Accounts.EditorEditPane pane { get; construct set; }
 
 
-    public MailboxRow(Geary.AccountInformation account,
-                      Geary.RFC822.MailboxAddress mailbox,
+    public MailboxRow(Convey.AccountInformation account,
+                      Convey.RFC822.MailboxAddress mailbox,
                       Accounts.EditorEditPane pane) {
         Object(
             account: account,
@@ -390,7 +390,7 @@ private class Accounts.MailboxRow : Adw.ActionRow {
         this.title = mailbox.address.strip();
 
         string? name = this.mailbox.name;
-        if (Geary.String.is_empty_or_whitespace(name)) {
+        if (Convey.String.is_empty_or_whitespace(name)) {
             // Translators: Label used to indicate the user has
             // provided no display name for one of their sender
             // email addresses in their account settings.
@@ -442,14 +442,14 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
 
 
     private MailboxRow row;
-    private Geary.RFC822.MailboxAddress new_mailbox;
+    private Convey.RFC822.MailboxAddress new_mailbox;
 
-    private Geary.RFC822.MailboxAddress old_mailbox;
+    private Convey.RFC822.MailboxAddress old_mailbox;
     private int mailbox_index;
 
 
     public UpdateMailboxCommand(MailboxRow row,
-                                Geary.RFC822.MailboxAddress new_mailbox) {
+                                Convey.RFC822.MailboxAddress new_mailbox) {
         this.row = row;
         this.new_mailbox = new_mailbox;
 
@@ -487,13 +487,13 @@ internal class Accounts.ReorderMailboxCommand : Application.Command {
     private int source_index;
     private int target_index;
 
-    private Geary.AccountInformation account;
+    private Convey.AccountInformation account;
     private Gtk.ListBox list;
 
 
     public ReorderMailboxCommand(MailboxRow source,
                                  int target_index,
-                                 Geary.AccountInformation account,
+                                 Convey.AccountInformation account,
                                  Gtk.ListBox list) {
         this.source = source;
         this.source_index = source.get_index();
@@ -531,7 +531,7 @@ internal class Accounts.RemoveMailboxCommand : Application.Command {
 
     private MailboxRow row;
 
-    private Geary.RFC822.MailboxAddress mailbox;
+    private Convey.RFC822.MailboxAddress mailbox;
     private int mailbox_index;
     private Gtk.ListBox list;
 
@@ -569,7 +569,7 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
     private Components.WebView signature_view;
-    private Geary.AccountInformation account;
+    private Convey.AccountInformation account;
 
     private string old_value;
     private bool old_enabled;
@@ -579,11 +579,11 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
     public SignatureChangedCommand(Components.WebView signature_view,
-                                   Geary.AccountInformation account) {
+                                   Convey.AccountInformation account) {
         this.signature_view = signature_view;
         this.account = account;
 
-        this.old_value = Geary.HTML.smart_escape(account.signature);
+        this.old_value = Convey.HTML.smart_escape(account.signature);
         this.old_enabled = account.use_signature;
 
         // Translators: Label used as the undo tooltip after removing
@@ -595,8 +595,8 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
     public async override void execute(GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.new_value = yield this.signature_view.get_html();
-        this.new_enabled = !Geary.String.is_empty_or_whitespace(
-            Geary.HTML.html_to_text(this.new_value)
+        this.new_enabled = !Convey.String.is_empty_or_whitespace(
+            Convey.HTML.html_to_text(this.new_value)
         );
         update_account_signature(this.new_value, this.new_enabled);
     }

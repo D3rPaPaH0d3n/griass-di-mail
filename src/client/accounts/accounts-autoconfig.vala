@@ -17,8 +17,8 @@ internal class Accounts.AutoConfigValues {
     // incomingServer[type="imap"].port
     public string imap_port { get; set; default = ""; }
     // incomingServer[type="imap"].socketType
-    public Geary.TlsNegotiationMethod imap_tls_method {
-        get; set; default = Geary.TlsNegotiationMethod.TRANSPORT;
+    public Convey.TlsNegotiationMethod imap_tls_method {
+        get; set; default = Convey.TlsNegotiationMethod.TRANSPORT;
     }
 
     // outgoingServer[type="smtp"].hostname
@@ -26,8 +26,8 @@ internal class Accounts.AutoConfigValues {
     // outgoingServer[type="smtp"].port
     public string smtp_port { get; set; default = ""; }
     // outgoingServer[type="smtp"].socketType
-    public Geary.TlsNegotiationMethod smtp_tls_method {
-        get; set; default = Geary.TlsNegotiationMethod.TRANSPORT;
+    public Convey.TlsNegotiationMethod smtp_tls_method {
+        get; set; default = Convey.TlsNegotiationMethod.TRANSPORT;
     }
 
 }
@@ -157,14 +157,14 @@ internal class Accounts.AutoConfig {
         return node.get_content();
     }
 
-    private Geary.TlsNegotiationMethod get_tls_method(string method) {
+    private Convey.TlsNegotiationMethod get_tls_method(string method) {
         switch (method) {
         case "SSL":
-            return Geary.TlsNegotiationMethod.TRANSPORT;
+            return Convey.TlsNegotiationMethod.TRANSPORT;
         case "STARTTLS":
-            return Geary.TlsNegotiationMethod.START_TLS;
+            return Convey.TlsNegotiationMethod.START_TLS;
         default:
-            return Geary.TlsNegotiationMethod.NONE;
+            return Convey.TlsNegotiationMethod.NONE;
         }
     }
 }

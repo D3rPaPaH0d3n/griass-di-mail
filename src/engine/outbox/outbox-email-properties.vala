@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.Outbox.EmailProperties : Geary.EmailProperties {
+private class Convey.Outbox.EmailProperties : Convey.EmailProperties {
 
 
     public EmailProperties(GLib.DateTime date_received, long total_bytes) {

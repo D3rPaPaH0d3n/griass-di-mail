@@ -12,7 +12,7 @@
  * @see FetchCommand
  * @see StoreCommand
  */
-public class Geary.Imap.FetchedData : Object {
+public class Convey.Imap.FetchedData : Object {
     /**
      * The positional address of the email in the mailbox.
      */

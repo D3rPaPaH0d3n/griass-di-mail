@@ -10,7 +10,7 @@
  * Authenticators expect to use complete {@link Credentials}, i.e. user and pass must not be null.
  */
 
-public abstract class Geary.Smtp.Authenticator : BaseObject {
+public abstract class Convey.Smtp.Authenticator : BaseObject {
     /**
      * The user-visible name for this {@link Authenticator}.
      */

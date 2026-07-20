@@ -4,10 +4,10 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private abstract class Geary.App.AsyncFolderOperation : BaseObject {
+private abstract class Convey.App.AsyncFolderOperation : BaseObject {
     public abstract Type folder_type { get; }
 
-    public abstract async Gee.Collection<Geary.EmailIdentifier> execute_async(
-        Geary.Folder folder, Gee.Collection<Geary.EmailIdentifier> ids,
+    public abstract async Gee.Collection<Convey.EmailIdentifier> execute_async(
+        Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids,
         Cancellable? cancellable) throws Error;
 }

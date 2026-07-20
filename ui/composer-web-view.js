@@ -16,7 +16,7 @@ ComposerPageState.SPACE_CHAR_REGEX = /[\s]/i;
 ComposerPageState.WORD_CHAR_REGEX = /[\s\\'!"#$%&()*+,\-.\/:;<=>?@\[\]^_`{|}~\u2000-\u206F\u2E00-\u2E7F]/i;
 ComposerPageState.QUOTE_MARKER = "\x7f"; // delete
 ComposerPageState.PROTOCOL_REGEX = /^(aim|apt|bitcoin|cvs|ed2k|ftp|file|finger|git|gtalk|http|https|irc|ircs|irc6|lastfm|ldap|ldaps|magnet|news|nntp|rsync|sftp|skype|smb|sms|svn|telnet|tftp|ssh|webcal|xmpp):/i;
-// Taken from Geary.HTML.URL_REGEX, without the inline modifier (?x)
+// Taken from Convey.HTML.URL_REGEX, without the inline modifier (?x)
 // at the start, which is unsupported in JS
 ComposerPageState.URL_REGEX = new RegExp("\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)"+
                                          "(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+"+
@@ -52,7 +52,7 @@ ComposerPageState.prototype = {
     loaded: function() {
         let state = this;
 
-        this.bodyPart = document.getElementById("geary-body");
+        this.bodyPart = document.getElementById("convey-body");
         if (this.bodyPart != null) {
             // Capture clicks on the document that aren't on an
             // existing part and prevent focus leaving it. Bug 779369.
@@ -64,16 +64,16 @@ ComposerPageState.prototype = {
             });
         } else {
             // This happens if we are loading a draft created by a MUA
-            // that isn't Geary, so we can't rely on any of the
+            // that isn't Convey, so we can't rely on any of the
             // expected HTML structure to be in place.
             this.bodyPart = document.body;
         }
 
-        this.signaturePart = document.getElementById("geary-signature");
+        this.signaturePart = document.getElementById("convey-signature");
         if (this.signaturePart != null) {
             ComposerPageState.linkify(this.signaturePart);
         }
-        this.quotePart = document.getElementById("geary-quote");
+        this.quotePart = document.getElementById("convey-quote");
 
         // Should be using 'e.key' in listeners below instead of
         // keyIdentifier, but that was only fixed in WK in Oct 2016
@@ -249,10 +249,10 @@ ComposerPageState.prototype = {
         if (this.signaturePart != null) {
             if (signature.trim()) {
                 this.signaturePart.innerHTML = signature;
-                this.signaturePart.classList.remove("geary-no-display");
+                this.signaturePart.classList.remove("convey-no-display");
             } else {
                 this.signaturePart.innerHTML = "";
-                this.signaturePart.classList.add("geary-no-display");
+                this.signaturePart.classList.add("convey-no-display");
             }
         }
     },
@@ -763,4 +763,4 @@ let SelectionUtil = {
 };
 
 
-var geary = new ComposerPageState();
+var convey = new ComposerPageState();

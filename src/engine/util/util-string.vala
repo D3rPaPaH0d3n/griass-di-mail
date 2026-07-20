@@ -8,7 +8,7 @@
 [CCode (cname = "g_utf8_substring")]
 extern string glib_substring(string str, long start_pos, long end_pos);
 
-namespace Geary.String {
+namespace Convey.String {
 
 /** The end-of-string character, NUL. */
 public const char EOS = '\0';

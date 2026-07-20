@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public enum Geary.Smtp.Command {
+public enum Convey.Smtp.Command {
     HELO,
     EHLO,
     QUIT,

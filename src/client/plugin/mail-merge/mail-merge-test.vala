@@ -8,12 +8,12 @@
 
 int main(string[] args) {
     GLib.Test.init(ref args);
-    Geary.RFC822.init();
-    Geary.HTML.init();
-    Geary.Logging.init();
+    Convey.RFC822.init();
+    Convey.HTML.init();
+    Convey.Logging.init();
     if (GLib.Test.verbose()) {
-        GLib.Log.set_writer_func(Geary.Logging.default_log_writer);
-        Geary.Logging.log_to(GLib.stdout);
+        GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
+        Convey.Logging.log_to(GLib.stdout);
     }
 
     GLib.TestSuite root = GLib.TestSuite.get_root();

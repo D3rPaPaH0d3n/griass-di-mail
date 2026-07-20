@@ -6,12 +6,12 @@
  */
 
 /**
- * Errors thrown by {@link Geary.Graph.Client} for non-2xx HTTP responses.
+ * Errors thrown by {@link Convey.Graph.Client} for non-2xx HTTP responses.
  *
  * Lets callers branch on the actual status class instead of parsing the
  * error message string.
  */
-public errordomain Geary.Graph.HttpError {
+public errordomain Convey.Graph.HttpError {
     BAD_REQUEST,
     UNAUTHORIZED,
     NOT_FOUND,

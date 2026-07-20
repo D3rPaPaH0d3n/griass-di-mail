@@ -6,21 +6,21 @@
 
 /**
  * ImapDB.Folder provides an interface for retrieving messages from the local store in methods
- * that are synonymous with Geary.Folder's interface, but with some differences that deal with
+ * that are synonymous with Convey.Folder's interface, but with some differences that deal with
  * how IMAP addresses and organizes email.
  *
  * One important note about ImapDB.Folder: if an EmailIdentifier is returned (either by itself
- * or attached to a Geary.Email), it will always be an ImapDB.EmailIdentifier and it will always
+ * or attached to a Convey.Email), it will always be an ImapDB.EmailIdentifier and it will always
  * have a valid Imap.UID present.  This is not the case for EmailIdentifiers returned from
  * ImapDB.Account, as those EmailIdentifiers aren't associated with a Folder, which UIDs require.
  */
 
-private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
+private class Convey.ImapDB.Folder : BaseObject, Convey.ReferenceSemantics {
 
     /**
      * Fields required for a message to be stored in the database.
      */
-    public const Geary.Email.Field REQUIRED_FIELDS = (
+    public const Convey.Email.Field REQUIRED_FIELDS = (
         // Required for primary duplicate detection done with properties
         Email.Field.PROPERTIES |
         // Required for secondary duplicate detection via UID
@@ -34,7 +34,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
     /**
      * Fields required for a message to be considered for full-text indexing.
      */
-    public const Geary.Email.Field REQUIRED_FTS_FIELDS = Geary.Email.REQUIRED_FOR_MESSAGE;
+    public const Convey.Email.Field REQUIRED_FTS_FIELDS = Convey.Email.REQUIRED_FOR_MESSAGE;
 
     private const int LIST_EMAIL_WITH_MESSAGE_CHUNK_COUNT = 10;
     private const int LIST_EMAIL_METADATA_COUNT = 100;
@@ -64,13 +64,13 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             return is_all_set(INCLUDE_MARKED_FOR_REMOVE);
         }
 
-        public static ListFlags from_folder_flags(Geary.Folder.ListFlags flags) {
+        public static ListFlags from_folder_flags(Convey.Folder.ListFlags flags) {
             ListFlags result = NONE;
 
-            if (flags.is_all_set(Geary.Folder.ListFlags.INCLUDING_ID))
+            if (flags.is_all_set(Convey.Folder.ListFlags.INCLUDING_ID))
                 result |= INCLUDING_ID;
 
-            if (flags.is_all_set(Geary.Folder.ListFlags.OLDEST_TO_NEWEST))
+            if (flags.is_all_set(Convey.Folder.ListFlags.OLDEST_TO_NEWEST))
                 result |= OLDEST_TO_NEWEST;
 
             return result;
@@ -93,18 +93,18 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
     protected int manual_ref_count { get; protected set; }
 
-    private Geary.Db.Database db;
-    private Geary.FolderPath path;
+    private Convey.Db.Database db;
+    private Convey.FolderPath path;
     private GLib.File attachments_path;
     private string account_owner_email;
     private int64 folder_id;
-    private Geary.Imap.FolderProperties properties;
+    private Convey.Imap.FolderProperties properties;
 
     /**
      * Fired after one or more emails have been fetched with all Fields, and
      * saved locally.
      */
-    public signal void email_complete(Gee.Collection<Geary.EmailIdentifier> email_ids);
+    public signal void email_complete(Gee.Collection<Convey.EmailIdentifier> email_ids);
 
     /**
      * Fired when an email's unread (aka seen) status has changed.  This allows the account to
@@ -112,12 +112,12 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
      */
     public signal void unread_updated(Gee.Map<ImapDB.EmailIdentifier, bool> unread_status);
 
-    internal Folder(Geary.Db.Database db,
-                    Geary.FolderPath path,
+    internal Folder(Convey.Db.Database db,
+                    Convey.FolderPath path,
                     GLib.File attachments_path,
                     string account_owner_email,
                     int64 folder_id,
-                    Geary.Imap.FolderProperties properties) {
+                    Convey.Imap.FolderProperties properties) {
         this.db = db;
         this.path = path;
         this.attachments_path = attachments_path;
@@ -127,15 +127,15 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         this.properties = properties;
     }
 
-    public unowned Geary.FolderPath get_path() {
+    public unowned Convey.FolderPath get_path() {
         return path;
     }
 
-    public Geary.Imap.FolderProperties get_properties() {
+    public Convey.Imap.FolderProperties get_properties() {
         return properties;
     }
 
-    internal void set_properties(Geary.Imap.FolderProperties properties) {
+    internal void set_properties(Convey.Imap.FolderProperties properties) {
         this.properties = properties;
     }
 
@@ -157,7 +157,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
      * SELECT/EXAMINED (see update_folder_select_examine_async())
      * unless update_uid_info is true.
      */
-    public async void update_folder_status(Geary.Imap.FolderProperties remote_properties,
+    public async void update_folder_status(Convey.Imap.FolderProperties remote_properties,
                                            bool respect_marked_for_remove,
                                            Cancellable? cancellable)
         throws Error {
@@ -230,7 +230,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
      * Updates folder's SELECT/EXAMINE message count, UIDVALIDITY, UIDNEXT, unseen, and recent.
      * See also update_folder_status_async().
      */
-    public async void update_folder_select_examine(Geary.Imap.FolderProperties remote_properties,
+    public async void update_folder_select_examine(Convey.Imap.FolderProperties remote_properties,
                                                    Cancellable? cancellable)
         throws Error {
         yield this.db.exec_transaction_async(Db.TransactionType.RW, (cx) => {
@@ -284,20 +284,20 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
                                     ContactHarvester harvester,
                                     GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Gee.HashMap<Geary.Email, bool> results = new Gee.HashMap<Geary.Email, bool>();
+        Gee.HashMap<Convey.Email, bool> results = new Gee.HashMap<Convey.Email, bool>();
 
-        Gee.ArrayList<Geary.Email> list = traverse<Geary.Email>(emails).to_array_list();
+        Gee.ArrayList<Convey.Email> list = traverse<Convey.Email>(emails).to_array_list();
         int index = 0;
         while (index < list.size) {
             int stop = Numeric.int_ceiling(index + CREATE_MERGE_EMAIL_CHUNK_COUNT, list.size);
-            Gee.List<Geary.Email> slice = list.slice(index, stop);
+            Gee.List<Convey.Email> slice = list.slice(index, stop);
 
-            Gee.ArrayList<Geary.EmailIdentifier> complete_ids = new Gee.ArrayList<Geary.EmailIdentifier>();
+            Gee.ArrayList<Convey.EmailIdentifier> complete_ids = new Gee.ArrayList<Convey.EmailIdentifier>();
             int total_unread_change = 0;
             yield db.exec_transaction_async(Db.TransactionType.RW, (cx) => {
-                foreach (Geary.Email email in slice) {
-                    Geary.Email.Field pre_fields;
-                    Geary.Email.Field post_fields;
+                foreach (Convey.Email email in slice) {
+                    Convey.Email.Field pre_fields;
+                    Convey.Email.Field post_fields;
                     int unread_change = 0;
                     bool created = do_create_or_merge_email(
                         cx, email,
@@ -310,7 +310,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
                     // in essence, only fire the "email-completed" signal if the local version didn't
                     // have all the fields but after the create/merge now does
-                    if (post_fields.is_all_set(Geary.Email.Field.ALL) && !pre_fields.is_all_set(Geary.Email.Field.ALL))
+                    if (post_fields.is_all_set(Convey.Email.Field.ALL) && !pre_fields.is_all_set(Convey.Email.Field.ALL))
                         complete_ids.add(email.id);
 
                     if (update_totals) {
@@ -346,8 +346,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
     }
 
     /** Returns a subset of the given ids that are in this folder. */
-    public async Gee.Collection<Geary.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Geary.EmailIdentifier> ids,
+    public async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
+        Gee.Collection<Convey.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
         var contained_ids = new Gee.HashMap<int64?,EmailIdentifier>(
@@ -394,8 +394,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return contained_ids.values;
     }
 
-    public async Gee.List<Geary.Email>? list_email_by_id_async(ImapDB.EmailIdentifier? initial_id,
-        int count, Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable)
+    public async Gee.List<Convey.Email>? list_email_by_id_async(ImapDB.EmailIdentifier? initial_id,
+        int count, Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable)
         throws Error {
         if (count <= 0)
             return null;
@@ -476,8 +476,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
     // ListFlags.OLDEST_TO_NEWEST is ignored.  INCLUDING_ID means including *both* identifiers.
     // Without this flag, neither are considered as part of the range.
-    public async Gee.List<Geary.Email>? list_email_by_range_async(ImapDB.EmailIdentifier start_id,
-        ImapDB.EmailIdentifier end_id, Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable)
+    public async Gee.List<Convey.Email>? list_email_by_range_async(ImapDB.EmailIdentifier start_id,
+        ImapDB.EmailIdentifier end_id, Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable)
         throws Error {
         bool including_id = flags.is_all_set(ListFlags.INCLUDING_ID);
 
@@ -530,8 +530,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
     // ListFlags.OLDEST_TO_NEWEST is ignored.  INCLUDING_ID means including *both* identifiers.
     // Without this flag, neither are considered as part of the range.
-    public async Gee.List<Geary.Email>? list_email_by_uid_range_async(Imap.UID start,
-        Imap.UID end, Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable)
+    public async Gee.List<Convey.Email>? list_email_by_uid_range_async(Imap.UID start,
+        Imap.UID end, Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable)
         throws Error {
         bool including_id = flags.is_all_set(ListFlags.INCLUDING_ID);
         bool only_incomplete = flags.is_all_set(ListFlags.ONLY_INCOMPLETE);
@@ -576,8 +576,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return yield list_email_in_chunks_async(locations, required_fields, flags, cancellable);
     }
 
-    public async Gee.List<Geary.Email>? list_email_by_sparse_id_async(Gee.Collection<ImapDB.EmailIdentifier> ids,
-        Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
+    public async Gee.List<Convey.Email>? list_email_by_sparse_id_async(Gee.Collection<ImapDB.EmailIdentifier> ids,
+        Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
         if (ids.size == 0)
             return null;
 
@@ -662,8 +662,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return (incomplete_locations.size > 0) ? incomplete_locations : null;
     }
 
-    private async Gee.List<Geary.Email>? list_email_in_chunks_async(Gee.List<LocationIdentifier>? ids,
-        Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
+    private async Gee.List<Convey.Email>? list_email_in_chunks_async(Gee.List<LocationIdentifier>? ids,
+        Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
         if (ids == null || ids.size == 0)
             return null;
 
@@ -673,7 +673,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
         int length_rounded_up = Numeric.int_round_up(ids.size, chunk_count);
 
-        Gee.List<Geary.Email> results = new Gee.ArrayList<Geary.Email>();
+        Gee.List<Convey.Email> results = new Gee.ArrayList<Convey.Email>();
         for (int start = 0; start < length_rounded_up; start += chunk_count) {
             // stop is the index *after* the end of the slice
             int stop = Numeric.int_ceiling((start + chunk_count), ids.size);
@@ -681,7 +681,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             Gee.List<LocationIdentifier>? slice = ids.slice(start, stop);
             assert(slice != null && slice.size > 0);
 
-            Gee.List<Geary.Email>? list = null;
+            Gee.List<Convey.Email>? list = null;
             yield db.exec_transaction_async(Db.TransactionType.RO, (cx, cancellable) => {
                 list = do_list_email(cx, slice, required_fields, flags, cancellable);
 
@@ -698,9 +698,9 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return (results.size > 0) ? results : null;
     }
 
-    public async Geary.Email fetch_email_async(ImapDB.EmailIdentifier id,
-        Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
-        Geary.Email? email = null;
+    public async Convey.Email fetch_email_async(ImapDB.EmailIdentifier id,
+        Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
+        Convey.Email? email = null;
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
             LocationIdentifier? location = do_get_location_for_id(cx, id, flags, cancellable);
             if (location == null)
@@ -936,7 +936,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         }, cancellable);
     }
 
-    public async Gee.Collection<Geary.EmailIdentifier>? detach_emails_before_timestamp(DateTime cutoff,
+    public async Gee.Collection<Convey.EmailIdentifier>? detach_emails_before_timestamp(DateTime cutoff,
         GLib.Cancellable? cancellable) throws Error {
         debug("Detaching emails before %s for folder ID %s", cutoff.to_string(), this.folder_id.to_string());
         Gee.ArrayList<ImapDB.EmailIdentifier>? deleted_email_ids = null;
@@ -1061,29 +1061,29 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
     }
 
     public async int mark_email_async(Gee.Collection<ImapDB.EmailIdentifier> to_mark,
-        Geary.EmailFlags? flags_to_add, Geary.EmailFlags? flags_to_remove, Cancellable? cancellable)
+        Convey.EmailFlags? flags_to_add, Convey.EmailFlags? flags_to_remove, Cancellable? cancellable)
         throws Error {
         int unread_change = 0; // Negative means messages are read, positive means unread.
         Gee.Map<ImapDB.EmailIdentifier, bool> unread_status = new Gee.HashMap<ImapDB.EmailIdentifier, bool>();
         yield db.exec_transaction_async(Db.TransactionType.RW, (cx, cancellable) => {
             // fetch flags for each email
-            Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags>? map = do_get_email_flags(cx,
+            Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags>? map = do_get_email_flags(cx,
                 to_mark, ListFlags.NONE, cancellable);
             if (map == null)
                 return Db.TransactionOutcome.COMMIT;
 
             // update flags according to arguments
             foreach (ImapDB.EmailIdentifier id in map.keys) {
-                Geary.Imap.EmailFlags flags = ((Geary.Imap.EmailFlags) map.get(id));
+                Convey.Imap.EmailFlags flags = ((Convey.Imap.EmailFlags) map.get(id));
 
                 if (flags_to_add != null) {
-                    foreach (Geary.NamedFlag flag in flags_to_add.get_all()) {
+                    foreach (Convey.NamedFlag flag in flags_to_add.get_all()) {
                         if (flags.contains(flag))
                             continue;
 
                         flags.add(flag);
 
-                        if (flag.equal_to(Geary.EmailFlags.UNREAD)) {
+                        if (flag.equal_to(Convey.EmailFlags.UNREAD)) {
                             unread_change++;
                             unread_status.set(id, true);
                         }
@@ -1091,13 +1091,13 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
                 }
 
                 if (flags_to_remove != null) {
-                    foreach (Geary.NamedFlag flag in flags_to_remove.get_all()) {
+                    foreach (Convey.NamedFlag flag in flags_to_remove.get_all()) {
                         if (!flags.contains(flag))
                             continue;
 
                         flags.remove(flag);
 
-                        if (flag.equal_to(Geary.EmailFlags.UNREAD)) {
+                        if (flag.equal_to(Convey.EmailFlags.UNREAD)) {
                             unread_change--;
                             unread_status.set(id, false);
                         }
@@ -1136,9 +1136,9 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return uids;
     }
 
-    internal async Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags>? get_email_flags_async(
+    internal async Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags>? get_email_flags_async(
         Gee.Collection<EmailIdentifier> ids, Cancellable? cancellable) throws Error {
-        Gee.Map<EmailIdentifier, Geary.EmailFlags>? map = null;
+        Gee.Map<EmailIdentifier, Convey.EmailFlags>? map = null;
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx, cancellable) => {
             map = do_get_email_flags(cx, ids, ListFlags.NONE, cancellable);
 
@@ -1148,7 +1148,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return map;
     }
 
-    public async void set_email_flags_async(Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags> map,
+    public async void set_email_flags_async(Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags> map,
         Cancellable? cancellable) throws Error {
         Error? error = null;
         int unread_change = 0; // Negative means messages are read, positive means unread.
@@ -1156,21 +1156,21 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         try {
             yield db.exec_transaction_async(Db.TransactionType.RW, (cx, cancellable) => {
                 // TODO get current flags, compare to ones being set
-                Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags>? existing_map =
+                Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags>? existing_map =
                     do_get_email_flags(cx, map.keys, ListFlags.NONE, cancellable);
 
                 if (existing_map != null) {
                     foreach(ImapDB.EmailIdentifier id in map.keys) {
-                        Geary.EmailFlags? existing_flags = existing_map.get(id);
+                        Convey.EmailFlags? existing_flags = existing_map.get(id);
                         if (existing_flags == null)
                             continue;
 
-                        Geary.EmailFlags new_flags = map.get(id);
-                        if (!existing_flags.contains(Geary.EmailFlags.UNREAD) &&
-                            new_flags.contains(Geary.EmailFlags.UNREAD))
+                        Convey.EmailFlags new_flags = map.get(id);
+                        if (!existing_flags.contains(Convey.EmailFlags.UNREAD) &&
+                            new_flags.contains(Convey.EmailFlags.UNREAD))
                             unread_change++;
-                        else if (existing_flags.contains(Geary.EmailFlags.UNREAD) &&
-                            !new_flags.contains(Geary.EmailFlags.UNREAD))
+                        else if (existing_flags.contains(Convey.EmailFlags.UNREAD) &&
+                            !new_flags.contains(Convey.EmailFlags.UNREAD))
                             unread_change--;
                     }
                 }
@@ -1209,7 +1209,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
             // Check to see if message is unread (this only affects non-marked emails.)
             if (do_get_unread_count_for_ids(cx,
-                Geary.iterate<ImapDB.EmailIdentifier>(id).to_array_list(), cancellable) > 0) {
+                Convey.iterate<ImapDB.EmailIdentifier>(id).to_array_list(), cancellable) > 0) {
                 do_add_to_unread_count(cx, -1, cancellable);
                 was_unread = true;
             }
@@ -1358,14 +1358,14 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         }, cancellable);
     }
 
-    public async Gee.Map<ImapDB.EmailIdentifier, Geary.Email.Field>? list_email_fields_by_id_async(
+    public async Gee.Map<ImapDB.EmailIdentifier, Convey.Email.Field>? list_email_fields_by_id_async(
         Gee.Collection<ImapDB.EmailIdentifier> ids, ListFlags flags, Cancellable? cancellable)
         throws Error {
         if (ids.size == 0)
             return null;
 
-        Gee.HashMap<ImapDB.EmailIdentifier,Geary.Email.Field> map = new Gee.HashMap<
-            ImapDB.EmailIdentifier,Geary.Email.Field>();
+        Gee.HashMap<ImapDB.EmailIdentifier,Convey.Email.Field> map = new Gee.HashMap<
+            ImapDB.EmailIdentifier,Convey.Email.Field>();
 
         // Break up the work
         Gee.List<ImapDB.EmailIdentifier> list = new Gee.ArrayList<ImapDB.EmailIdentifier>();
@@ -1391,7 +1391,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
                     Db.Result results = fetch_stmt.exec(cancellable);
                     if (!results.finished)
-                        map.set(location.email_id, (Geary.Email.Field) results.int_at(0));
+                        map.set(location.email_id, (Convey.Email.Field) results.int_at(0));
                 }
 
                 return Db.TransactionOutcome.SUCCESS;
@@ -1473,7 +1473,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
      * stack.
      */
     private int64 do_search_for_duplicates(Db.Connection cx,
-                                           Geary.Email email,
+                                           Convey.Email email,
                                            ImapDB.EmailIdentifier email_id,
                                            Cancellable? cancellable)
         throws Error {
@@ -1566,9 +1566,9 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
      * Returns `true` if created, else was merged and returns `false`.
      */
     private bool do_create_or_merge_email(Db.Connection cx,
-                                          Geary.Email email,
-                                          out Geary.Email.Field pre_fields,
-                                          out Geary.Email.Field post_fields,
+                                          Convey.Email email,
+                                          out Convey.Email.Field pre_fields,
+                                          out Convey.Email.Field post_fields,
                                           ref int unread_count_change,
                                           GLib.Cancellable? cancellable)
         throws GLib.Error {
@@ -1618,7 +1618,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             // Found the same or a duplicate message, so merge it. We
             // special-case flag-only updates, which happens often and
             // will only write to the DB if necessary.
-            if (email.fields != Geary.Email.Field.FLAGS) {
+            if (email.fields != Convey.Email.Field.FLAGS) {
                 do_merge_email(
                     cx, location, email,
                     out pre_fields, out post_fields,
@@ -1627,7 +1627,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
                 );
 
                 // Already associated with folder and flags were known.
-                if (is_associated && pre_fields.is_all_set(Geary.Email.Field.FLAGS))
+                if (is_associated && pre_fields.is_all_set(Convey.Email.Field.FLAGS))
                     unread_count_change = 0;
             } else {
                 do_merge_email_flags(
@@ -1640,7 +1640,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             // Message was not found, so create a new message for it
             was_created = true;
             MessageRow row = new MessageRow.from_email(email);
-            pre_fields = Geary.Email.Field.NONE;
+            pre_fields = Convey.Email.Field.NONE;
             post_fields = email.fields;
 
             Db.Statement stmt = cx.prepare(
@@ -1703,7 +1703,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
     }
 
     internal static void do_add_email_to_search_table(Db.Connection cx, int64 message_id,
-        Geary.Email email, Cancellable? cancellable) throws Error {
+        Convey.Email email, Cancellable? cancellable) throws Error {
         string? body = null;
         try {
             body = email.get_message().get_searchable_body();
@@ -1717,7 +1717,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             // Ignore.
         }
 
-        // Often when Geary first adds a message to the FTS table
+        // Often when Convey first adds a message to the FTS table
         // these fields will all be null or empty strings. Check that
         // this isn't the case beforehand to avoid the IO overhead.
 
@@ -1728,14 +1728,14 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         string? bcc = email.bcc != null ? email.bcc.to_searchable_string() : null;
         string? flags = email.email_flags != null ? email.email_flags.serialise() : null;
 
-        if (!Geary.String.is_empty(body) ||
-            !Geary.String.is_empty(attachments) ||
-            !Geary.String.is_empty(subject) ||
-            !Geary.String.is_empty(from) ||
-            !Geary.String.is_empty(recipients) ||
-            !Geary.String.is_empty(cc) ||
-            !Geary.String.is_empty(bcc) ||
-            !Geary.String.is_empty(flags)) {
+        if (!Convey.String.is_empty(body) ||
+            !Convey.String.is_empty(attachments) ||
+            !Convey.String.is_empty(subject) ||
+            !Convey.String.is_empty(from) ||
+            !Convey.String.is_empty(recipients) ||
+            !Convey.String.is_empty(cc) ||
+            !Convey.String.is_empty(bcc) ||
+            !Convey.String.is_empty(flags)) {
 
             Db.Statement stmt = cx.prepare("""
                 INSERT INTO MessageSearchTable
@@ -1765,9 +1765,9 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return !result.finished;
     }
 
-    private Gee.List<Geary.Email>? do_list_email(Db.Connection cx, Gee.List<LocationIdentifier> locations,
-        Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
-        Gee.List<Geary.Email> emails = new Gee.ArrayList<Geary.Email>();
+    private Gee.List<Convey.Email>? do_list_email(Db.Connection cx, Gee.List<LocationIdentifier> locations,
+        Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
+        Gee.List<Convey.Email> emails = new Gee.ArrayList<Convey.Email>();
         foreach (LocationIdentifier location in locations) {
             try {
                 emails.add(do_location_to_email(cx, location, required_fields, flags, cancellable));
@@ -1788,7 +1788,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
     // Throws EngineError.NOT_FOUND if message_id is invalid.  Note that this does not verify that
     // the message is indeed in this folder.
     internal static MessageRow do_fetch_message_row(Db.Connection cx, int64 message_id,
-        Geary.Email.Field requested_fields, out Geary.Email.Field db_fields,
+        Convey.Email.Field requested_fields, out Convey.Email.Field db_fields,
         Cancellable? cancellable) throws Error {
         Db.Statement stmt = cx.prepare(
             "SELECT %s FROM MessageTable WHERE id=?".printf(fields_to_columns(requested_fields)));
@@ -1798,22 +1798,22 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         if (results.finished)
             throw new EngineError.NOT_FOUND("No message ID %s found in database", message_id.to_string());
 
-        db_fields = (Geary.Email.Field) results.int_for("fields");
+        db_fields = (Convey.Email.Field) results.int_for("fields");
         return new MessageRow.from_result(requested_fields, results);
     }
 
-    private Geary.Email do_location_to_email(Db.Connection cx, LocationIdentifier location,
-        Geary.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
+    private Convey.Email do_location_to_email(Db.Connection cx, LocationIdentifier location,
+        Convey.Email.Field required_fields, ListFlags flags, Cancellable? cancellable) throws Error {
         if (!flags.include_marked_for_remove() && location.marked_removed) {
             throw new EngineError.NOT_FOUND("Message %s marked as removed in %s",
                 location.email_id.to_string(), to_string());
         }
 
         // look for perverse case
-        if (required_fields == Geary.Email.Field.NONE)
-            return new Geary.Email(location.email_id);
+        if (required_fields == Convey.Email.Field.NONE)
+            return new Convey.Email(location.email_id);
 
-        Geary.Email.Field db_fields;
+        Convey.Email.Field db_fields;
         MessageRow row = do_fetch_message_row(cx, location.message_id, required_fields,
             out db_fields, cancellable);
         if (!flags.is_all_set(ListFlags.PARTIAL_OK) && !row.fields.fulfills(required_fields)) {
@@ -1822,57 +1822,57 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
                 location.email_id.to_string(), to_string(), row.fields, required_fields);
         }
 
-        Geary.Email email = row.to_email(location.email_id);
+        Convey.Email email = row.to_email(location.email_id);
         Attachment.add_attachments(
             cx, this.attachments_path, email, location.message_id, cancellable
         );
         return email;
     }
 
-    private static string fields_to_columns(Geary.Email.Field fields) {
+    private static string fields_to_columns(Convey.Email.Field fields) {
         // always pull the rowid and fields of the message
         StringBuilder builder = new StringBuilder("id, fields");
-        foreach (Geary.Email.Field field in Geary.Email.Field.all()) {
+        foreach (Convey.Email.Field field in Convey.Email.Field.all()) {
             unowned string? append = null;
             if (fields.is_all_set(fields)) {
                 switch (field) {
-                    case Geary.Email.Field.DATE:
+                    case Convey.Email.Field.DATE:
                         append = "date_field, date_time_t";
                     break;
 
-                    case Geary.Email.Field.ORIGINATORS:
+                    case Convey.Email.Field.ORIGINATORS:
                         append = "from_field, sender, reply_to";
                     break;
 
-                    case Geary.Email.Field.RECEIVERS:
+                    case Convey.Email.Field.RECEIVERS:
                         append = "to_field, cc, bcc";
                     break;
 
-                    case Geary.Email.Field.REFERENCES:
+                    case Convey.Email.Field.REFERENCES:
                         append = "message_id, in_reply_to, reference_ids";
                     break;
 
-                    case Geary.Email.Field.SUBJECT:
+                    case Convey.Email.Field.SUBJECT:
                         append = "subject";
                     break;
 
-                    case Geary.Email.Field.HEADER:
+                    case Convey.Email.Field.HEADER:
                         append = "header";
                     break;
 
-                    case Geary.Email.Field.BODY:
+                    case Convey.Email.Field.BODY:
                         append = "body";
                     break;
 
-                    case Geary.Email.Field.PREVIEW:
+                    case Convey.Email.Field.PREVIEW:
                         append = "preview";
                     break;
 
-                    case Geary.Email.Field.FLAGS:
+                    case Convey.Email.Field.FLAGS:
                         append = "flags";
                     break;
 
-                    case Geary.Email.Field.PROPERTIES:
+                    case Convey.Email.Field.PROPERTIES:
                         append = "internaldate, internaldate_time_t, rfc822_size";
                     break;
 
@@ -1911,7 +1911,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         return (uids.size > 0) ? uids : null;
     }
 
-    private Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags>? do_get_email_flags(Db.Connection cx,
+    private Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags>? do_get_email_flags(Db.Connection cx,
         Gee.Collection<ImapDB.EmailIdentifier>? ids, ListFlags flags,
         Cancellable? cancellable) throws Error {
         Gee.List<LocationIdentifier>? locs;
@@ -1927,8 +1927,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         // prepare Statement for reuse
         Db.Statement fetch_stmt = cx.prepare("SELECT flags FROM MessageTable WHERE id=?");
 
-        Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags> map = new Gee.HashMap<
-            ImapDB.EmailIdentifier, Geary.EmailFlags>();
+        Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags> map = new Gee.HashMap<
+            ImapDB.EmailIdentifier, Convey.EmailFlags>();
         // TODO: Unroll this loop
         foreach (LocationIdentifier location in locs) {
             fetch_stmt.reset(Db.ResetScope.CLEAR_BINDINGS);
@@ -1939,13 +1939,13 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
                 continue;
 
             map.set(location.email_id,
-                new Geary.Imap.EmailFlags(Geary.Imap.MessageFlags.deserialize(results.string_at(0))));
+                new Convey.Imap.EmailFlags(Convey.Imap.MessageFlags.deserialize(results.string_at(0))));
         }
 
         return (map.size > 0) ? map : null;
     }
 
-    private Geary.EmailFlags? do_get_email_flags_single(Db.Connection cx, int64 message_id,
+    private Convey.EmailFlags? do_get_email_flags_single(Db.Connection cx, int64 message_id,
         Cancellable? cancellable) throws Error {
         Db.Statement fetch_stmt = cx.prepare("SELECT flags FROM MessageTable WHERE id=?");
         fetch_stmt.bind_rowid(0, message_id);
@@ -1955,11 +1955,11 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         if (results.finished || results.is_null_at(0))
             return null;
 
-        return new Geary.Imap.EmailFlags(Geary.Imap.MessageFlags.deserialize(results.string_at(0)));
+        return new Convey.Imap.EmailFlags(Convey.Imap.MessageFlags.deserialize(results.string_at(0)));
     }
 
     // TODO: Unroll loop
-    private void do_set_email_flags(Db.Connection cx, Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags> map,
+    private void do_set_email_flags(Db.Connection cx, Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags> map,
         Cancellable? cancellable) throws Error {
         Db.Statement update_message = cx.prepare(
             "UPDATE MessageTable SET flags = ?, fields = fields | ? WHERE id = ?"
@@ -1987,16 +1987,16 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
 
             // Update MessageTable
 
-            Geary.Imap.EmailFlags? flags = map.get(id) as Geary.Imap.EmailFlags;
+            Convey.Imap.EmailFlags? flags = map.get(id) as Convey.Imap.EmailFlags;
             if (flags == null) {
                 throw new EngineError.BAD_PARAMETERS(
-                    "Email with Geary.Imap.EmailFlags required"
+                    "Email with Convey.Imap.EmailFlags required"
                 );
             }
 
             update_message.reset(Db.ResetScope.CLEAR_BINDINGS);
             update_message.bind_string(0, flags.message_flags.serialize());
-            update_message.bind_int(1, Geary.Email.Field.FLAGS);
+            update_message.bind_int(1, Convey.Email.Field.FLAGS);
             update_message.bind_rowid(2, id.message_id);
             update_message.exec(cancellable);
 
@@ -2009,43 +2009,43 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         }
     }
 
-    private bool do_fetch_email_fields(Db.Connection cx, int64 message_id, out Geary.Email.Field fields,
+    private bool do_fetch_email_fields(Db.Connection cx, int64 message_id, out Convey.Email.Field fields,
         Cancellable? cancellable) throws Error {
         Db.Statement stmt = cx.prepare("SELECT fields FROM MessageTable WHERE id=?");
         stmt.bind_rowid(0, message_id);
 
         Db.Result results = stmt.exec(cancellable);
         if (results.finished) {
-            fields = Geary.Email.Field.NONE;
+            fields = Convey.Email.Field.NONE;
 
             return false;
         }
 
-        fields = (Geary.Email.Field) results.int_at(0);
+        fields = (Convey.Email.Field) results.int_at(0);
 
         return true;
     }
 
     private void do_merge_message_row(Db.Connection cx,
                                       MessageRow row,
-                                      out Geary.Email.Field new_fields,
+                                      out Convey.Email.Field new_fields,
                                       ref int unread_count_change,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Geary.Email.Field available_fields;
+        Convey.Email.Field available_fields;
         if (!do_fetch_email_fields(cx, row.id, out available_fields, cancellable))
             throw new EngineError.NOT_FOUND("No message with ID %s found in database", row.id.to_string());
 
         // This calculates the fields in the row that are not in the database already and then adds
         // any available mutable fields provided by the caller
         new_fields = (row.fields ^ available_fields) & row.fields;
-        new_fields |= (row.fields & Geary.Email.MUTABLE_FIELDS);
-        if (new_fields == Geary.Email.Field.NONE) {
+        new_fields |= (row.fields & Convey.Email.MUTABLE_FIELDS);
+        if (new_fields == Convey.Email.Field.NONE) {
             // nothing to add
             return;
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.DATE)) {
+        if (new_fields.is_any_set(Convey.Email.Field.DATE)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET date_field=?, date_time_t=? WHERE id=?");
             stmt.bind_string(0, row.date);
@@ -2055,7 +2055,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.ORIGINATORS)) {
+        if (new_fields.is_any_set(Convey.Email.Field.ORIGINATORS)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET from_field=?, sender=?, reply_to=? WHERE id=?");
             stmt.bind_string(0, row.from);
@@ -2066,7 +2066,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.RECEIVERS)) {
+        if (new_fields.is_any_set(Convey.Email.Field.RECEIVERS)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET to_field=?, cc=?, bcc=? WHERE id=?");
             stmt.bind_string(0, row.to);
@@ -2077,7 +2077,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.REFERENCES)) {
+        if (new_fields.is_any_set(Convey.Email.Field.REFERENCES)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET message_id=?, in_reply_to=?, reference_ids=? WHERE id=?");
             stmt.bind_string(0, row.message_id);
@@ -2088,7 +2088,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.SUBJECT)) {
+        if (new_fields.is_any_set(Convey.Email.Field.SUBJECT)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET subject=? WHERE id=?");
             stmt.bind_string(0, row.subject);
@@ -2097,7 +2097,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.HEADER)) {
+        if (new_fields.is_any_set(Convey.Email.Field.HEADER)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET header=? WHERE id=?");
             stmt.bind_string_buffer(0, row.header);
@@ -2106,7 +2106,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.BODY)) {
+        if (new_fields.is_any_set(Convey.Email.Field.BODY)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET body=? WHERE id=?");
             stmt.bind_string_buffer(0, row.body);
@@ -2115,7 +2115,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.PREVIEW)) {
+        if (new_fields.is_any_set(Convey.Email.Field.PREVIEW)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET preview=? WHERE id=?");
             stmt.bind_string(0, row.preview);
@@ -2124,11 +2124,11 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.FLAGS)) {
+        if (new_fields.is_any_set(Convey.Email.Field.FLAGS)) {
             // Fetch existing flags to update unread count
-            Geary.EmailFlags? old_flags = do_get_email_flags_single(cx, row.id, cancellable);
-            Geary.EmailFlags new_flags = new Geary.Imap.EmailFlags(
-                    Geary.Imap.MessageFlags.deserialize(row.email_flags));
+            Convey.EmailFlags? old_flags = do_get_email_flags_single(cx, row.id, cancellable);
+            Convey.EmailFlags new_flags = new Convey.Imap.EmailFlags(
+                    Convey.Imap.MessageFlags.deserialize(row.email_flags));
 
             if (old_flags != null && (old_flags.is_unread() != new_flags.is_unread()))
                 unread_count_change += new_flags.is_unread() ? 1 : -1;
@@ -2143,7 +2143,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             stmt.exec(cancellable);
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.PROPERTIES)) {
+        if (new_fields.is_any_set(Convey.Email.Field.PROPERTIES)) {
             Db.Statement stmt = cx.prepare(
                 "UPDATE MessageTable SET internaldate=?, internaldate_time_t=?, rfc822_size=? WHERE id=?");
             stmt.bind_string(0, row.internaldate);
@@ -2164,7 +2164,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
     }
 
     private void do_merge_email_in_search_table(Db.Connection cx, int64 message_id,
-        Geary.Email.Field new_fields, Geary.Email email, Cancellable? cancellable) throws Error {
+        Convey.Email.Field new_fields, Convey.Email email, Cancellable? cancellable) throws Error {
 
         // We can't simply issue an UPDATE here for the changed
         // fields, since it will likely corrupt the
@@ -2188,8 +2188,8 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         string? bcc = row.string_at(6);
         string? flags = row.string_at(7);
 
-        if (new_fields.is_any_set(Geary.Email.REQUIRED_FOR_MESSAGE) &&
-            email.fields.is_all_set(Geary.Email.REQUIRED_FOR_MESSAGE)) {
+        if (new_fields.is_any_set(Convey.Email.REQUIRED_FOR_MESSAGE) &&
+            email.fields.is_all_set(Convey.Email.REQUIRED_FOR_MESSAGE)) {
             try {
                 body = email.get_message().get_searchable_body();
             } catch (Error e) {
@@ -2202,24 +2202,24 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             }
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.SUBJECT)) {
+        if (new_fields.is_any_set(Convey.Email.Field.SUBJECT)) {
             if (email.subject != null)
                 email.subject.to_searchable_string();
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.ORIGINATORS)) {
+        if (new_fields.is_any_set(Convey.Email.Field.ORIGINATORS)) {
             if (email.from != null)
                 from = email.from.to_searchable_string();
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.RECEIVERS)) {
+        if (new_fields.is_any_set(Convey.Email.Field.RECEIVERS)) {
             if (email.cc != null)
                 cc =  email.cc.to_searchable_string();
             if (email.bcc != null)
                 bcc = email.bcc.to_searchable_string();
         }
 
-        if (new_fields.is_any_set(Geary.Email.Field.FLAGS)) {
+        if (new_fields.is_any_set(Convey.Email.Field.FLAGS)) {
             if (email.email_flags != null) {
                 flags = email.email_flags.serialise();
             }
@@ -2253,22 +2253,22 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
     // do_merge_email(), as updating FLAGS happens often and doesn't require a lot of extra work
     private void do_merge_email_flags(Db.Connection cx,
                                       LocationIdentifier location,
-                                      Geary.Email email,
-                                      out Geary.Email.Field pre_fields,
-                                      out Geary.Email.Field post_fields,
+                                      Convey.Email email,
+                                      out Convey.Email.Field pre_fields,
+                                      out Convey.Email.Field post_fields,
                                       ref int unread_count_change,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        assert(email.fields == Geary.Email.Field.FLAGS);
+        assert(email.fields == Convey.Email.Field.FLAGS);
 
         // fetch MessageRow and its fields, note that the fields now include FLAGS if they didn't
         // already
-        MessageRow row = do_fetch_message_row(cx, location.message_id, Geary.Email.Field.FLAGS,
+        MessageRow row = do_fetch_message_row(cx, location.message_id, Convey.Email.Field.FLAGS,
             out pre_fields, cancellable);
         post_fields = pre_fields;
 
         // Only update if changed
-        Geary.Email row_email = row.to_email(location.email_id);
+        Convey.Email row_email = row.to_email(location.email_id);
         if (row_email.email_flags == null ||
             !row_email.email_flags.equal_to(email.email_flags)) {
 
@@ -2284,21 +2284,21 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
             // message_id in so it can look the location back up.
             do_set_email_flags(
                 cx,
-                Collection.single_map<ImapDB.EmailIdentifier,Geary.EmailFlags>(
+                Collection.single_map<ImapDB.EmailIdentifier,Convey.EmailFlags>(
                     (ImapDB.EmailIdentifier) row_email.id, email.email_flags
                 ),
                 cancellable
             );
 
-            post_fields |= Geary.Email.Field.FLAGS;
+            post_fields |= Convey.Email.Field.FLAGS;
         }
     }
 
     private void do_merge_email(Db.Connection cx,
                                 LocationIdentifier location,
-                                Geary.Email email,
-                                out Geary.Email.Field pre_fields,
-                                out Geary.Email.Field post_fields,
+                                Convey.Email email,
+                                out Convey.Email.Field pre_fields,
+                                out Convey.Email.Field post_fields,
                                 ref int unread_count_change,
                                 GLib.Cancellable? cancellable)
         throws GLib.Error {
@@ -2306,19 +2306,19 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         MessageRow row = do_fetch_message_row(cx, location.message_id,
             email.fields | Email.REQUIRED_FOR_MESSAGE | Attachment.REQUIRED_FIELDS,
             out pre_fields, cancellable);
-        Geary.Email.Field fetched_fields = row.fields;
+        Convey.Email.Field fetched_fields = row.fields;
         post_fields = pre_fields | email.fields;
         row.merge_from_remote(email);
 
-        if (email.fields == Geary.Email.Field.NONE)
+        if (email.fields == Convey.Email.Field.NONE)
             return;
 
         // Merge in any fields in the submitted email that aren't already in the database or are mutable
         int new_unread_count = 0;
         if (((fetched_fields & email.fields) != email.fields) ||
-            email.fields.is_any_set(Geary.Email.MUTABLE_FIELDS)) {
+            email.fields.is_any_set(Convey.Email.MUTABLE_FIELDS)) {
             // Build the combined email from the merge, which will be used to save the attachments
-            Geary.Email combined_email = row.to_email(location.email_id);
+            Convey.Email combined_email = row.to_email(location.email_id);
 
             // Update attachments if not already in the database
             if (!fetched_fields.fulfills(Attachment.REQUIRED_FIELDS)
@@ -2334,7 +2334,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
                 );
             }
 
-            Geary.Email.Field new_fields;
+            Convey.Email.Field new_fields;
             do_merge_message_row(
                 cx, row,
                 out new_fields,
@@ -2348,7 +2348,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
                 do_add_email_to_search_table(cx, location.message_id, combined_email, cancellable);
         } else {
             // If the email is ready to go, we still may need to update the unread count.
-            Geary.EmailFlags? combined_flags = do_get_email_flags_single(cx, location.message_id,
+            Convey.EmailFlags? combined_flags = do_get_email_flags_single(cx, location.message_id,
                 cancellable);
             if (combined_flags != null && combined_flags.is_unread())
                 new_unread_count = 1;
@@ -2421,7 +2421,7 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         sql.append(") AND fields <> ?");
 
         Db.Statement stmt = cx.prepare(sql.str);
-        stmt.bind_int(0, Geary.Email.Field.ALL);
+        stmt.bind_int(0, Convey.Email.Field.ALL);
 
         Db.Result results = stmt.exec(cancellable);
 
@@ -2565,10 +2565,10 @@ private class Geary.ImapDB.Folder : BaseObject, Geary.ReferenceSemantics {
         // Fetch flags for each email and update this folder's unread count.
         // (Note that this only flags for emails which have NOT been marked for removal
         // are included.)
-        Gee.Map<ImapDB.EmailIdentifier, Geary.EmailFlags>? flag_map = do_get_email_flags(cx,
+        Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags>? flag_map = do_get_email_flags(cx,
             ids, ListFlags.INCLUDE_MARKED_FOR_REMOVE, cancellable);
         if (flag_map != null)
-            return Geary.traverse<Geary.EmailFlags>(flag_map.values).count_matching(f => f.is_unread());
+            return Convey.traverse<Convey.EmailFlags>(flag_map.values).count_matching(f => f.is_unread());
 
         return 0;
     }

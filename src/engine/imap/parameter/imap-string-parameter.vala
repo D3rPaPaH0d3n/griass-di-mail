@@ -19,7 +19,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.3]]
  */
 
-public abstract class Geary.Imap.StringParameter : Geary.Imap.Parameter {
+public abstract class Convey.Imap.StringParameter : Convey.Imap.Parameter {
     /**
      * The unquoted, decoded string as 7-bit ASCII.
      */

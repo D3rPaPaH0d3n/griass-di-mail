@@ -11,21 +11,21 @@
  * one is present, which is why these elements are MessageData but not the elements within the
  * lists (Flag, Attribute).
  *
- * Also note that Imap.MessageData requires {@link Geary.MessageData.AbstractMessageData}.
+ * Also note that Imap.MessageData requires {@link Convey.MessageData.AbstractMessageData}.
  *
  * TODO: Add an abstract to_parameter() method that can be used to serialize the message data.
  */
 
-public interface Geary.Imap.MessageData : Geary.MessageData.AbstractMessageData {
+public interface Convey.Imap.MessageData : Convey.MessageData.AbstractMessageData {
 }
 
-public class Geary.Imap.RFC822Size : Geary.MessageData.Int64MessageData, Geary.Imap.MessageData {
+public class Convey.Imap.RFC822Size : Convey.MessageData.Int64MessageData, Convey.Imap.MessageData {
     public RFC822Size(int64 value) {
         base (value);
     }
 }
 
-public class Geary.Imap.RFC822Header : Geary.RFC822.Header, Geary.Imap.MessageData {
+public class Convey.Imap.RFC822Header : Convey.RFC822.Header, Convey.Imap.MessageData {
     public RFC822Header(Memory.Buffer buffer)
         throws ImapError {
         try {
@@ -36,13 +36,13 @@ public class Geary.Imap.RFC822Header : Geary.RFC822.Header, Geary.Imap.MessageDa
     }
 }
 
-public class Geary.Imap.RFC822Text : Geary.RFC822.Text, Geary.Imap.MessageData {
+public class Convey.Imap.RFC822Text : Convey.RFC822.Text, Convey.Imap.MessageData {
     public RFC822Text(Memory.Buffer buffer) {
         base (buffer);
     }
 }
 
-public class Geary.Imap.RFC822Full : Geary.RFC822.Full, Geary.Imap.MessageData {
+public class Convey.Imap.RFC822Full : Convey.RFC822.Full, Convey.Imap.MessageData {
     public RFC822Full(Memory.Buffer buffer) {
         base (buffer);
     }

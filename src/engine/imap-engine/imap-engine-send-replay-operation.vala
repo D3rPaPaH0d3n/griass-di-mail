@@ -8,7 +8,7 @@
 /**
  * A replay operation for a user-initiated operation.
  */
-private abstract class Geary.ImapEngine.SendReplayOperation : Geary.ImapEngine.ReplayOperation {
+private abstract class Convey.ImapEngine.SendReplayOperation : Convey.ImapEngine.ReplayOperation {
     protected SendReplayOperation(string name, ReplayOperation.OnError on_remote_error = OnError.THROW) {
         base (name, ReplayOperation.Scope.LOCAL_AND_REMOTE, on_remote_error);
     }

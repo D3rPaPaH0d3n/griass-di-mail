@@ -11,7 +11,7 @@ Content-Type: multipart/alternative; boundary="=-NJextDaQ1tE2ZGhW9Wm0"
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Geary Test Suite 1.0
+X-Mailer: Convey Test Suite 1.0
 
 --=-NJextDaQ1tE2ZGhW9Wm0
 Content-Type: text/plain; charset=UTF-8; format=flowed

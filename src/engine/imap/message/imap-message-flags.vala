@@ -12,7 +12,7 @@
  * @see FetchedData
  */
 
-public class Geary.Imap.MessageFlags : Geary.Imap.Flags {
+public class Convey.Imap.MessageFlags : Convey.Imap.Flags {
     public MessageFlags(Gee.Collection<MessageFlag> flags) {
         base (flags);
     }

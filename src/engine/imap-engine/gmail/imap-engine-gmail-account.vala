@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.GmailAccount : Geary.ImapEngine.GenericAccount {
+private class Convey.ImapEngine.GmailAccount : Convey.ImapEngine.GenericAccount {
 
     // Archive is handled specially, so don't require it
     private const Folder.SpecialUse[] SUPPORTED_SPECIAL_FOLDERS = {
@@ -38,7 +38,7 @@ private class Geary.ImapEngine.GmailAccount : Geary.ImapEngine.GenericAccount {
     }
 
 
-    public GmailAccount(Geary.AccountInformation config,
+    public GmailAccount(Convey.AccountInformation config,
                         ImapDB.Account local,
                         Endpoint incoming_remote,
                         Endpoint outgoing_remote) {

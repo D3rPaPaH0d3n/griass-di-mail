@@ -8,7 +8,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.2.3]]
  */
 
-public class Geary.Imap.LoginCommand : Command {
+public class Convey.Imap.LoginCommand : Command {
 
     public const string NAME = "login";
 

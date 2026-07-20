@@ -6,8 +6,8 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.AccountSynchronizer :
-    Geary.BaseObject, Logging.Source {
+private class Convey.ImapEngine.AccountSynchronizer :
+    Convey.BaseObject, Logging.Source {
 
 
     private enum Reason {
@@ -157,7 +157,7 @@ private class Geary.ImapEngine.AccountSynchronizer :
 /**
  * Base class for folder synchronisation account operations.
  */
-private abstract class Geary.ImapEngine.FolderSync : FolderOperation {
+private abstract class Convey.ImapEngine.FolderSync : FolderOperation {
 
 
     protected GLib.DateTime sync_max_epoch { get; private set; }
@@ -177,7 +177,7 @@ private abstract class Geary.ImapEngine.FolderSync : FolderOperation {
     }
 
     ~FolderSync() {
-        weak Geary.Folder? folder = this.folder;
+        weak Convey.Folder? folder = this.folder;
         if (folder != null) {
             this.folder.closed.disconnect(on_folder_close);
         }
@@ -279,7 +279,7 @@ private abstract class Geary.ImapEngine.FolderSync : FolderOperation {
  * for it to finish opening for normalisation and pre-fetching to
  * complete, then closes it again.
  */
-private class Geary.ImapEngine.RefreshFolderSync : FolderSync {
+private class Convey.ImapEngine.RefreshFolderSync : FolderSync {
 
 
     internal RefreshFolderSync(GenericAccount account,
@@ -308,7 +308,7 @@ private class Geary.ImapEngine.RefreshFolderSync : FolderSync {
  * It also truncates email that extends past the epoch, ensuring no
  * more email is stored than is desired.
  */
-private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
+private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
 
 
 
@@ -325,7 +325,7 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
 
         // Detach older emails outside the prefetch window
         if (this.account.information.prefetch_period_days >= 0) {
-            Gee.Collection<Geary.EmailIdentifier>? detached_ids =
+            Gee.Collection<Convey.EmailIdentifier>? detached_ids =
                 yield local_folder.detach_emails_before_timestamp(max_epoch,
                                                                   cancellable);
             if (detached_ids != null) {
@@ -343,7 +343,7 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
 
         // get oldest local email and its time, as well as number
         // of messages in local store
-        Gee.List<Geary.Email>? list = yield local_folder.list_email_by_id_async(
+        Gee.List<Convey.Email>? list = yield local_folder.list_email_by_id_async(
             null,
             1,
             Email.Field.PROPERTIES,
@@ -351,7 +351,7 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
             cancellable
         );
 
-        Geary.Email? current_oldest = null;
+        Convey.Email? current_oldest = null;
         if (list != null && list.size > 0) {
             current_oldest = list[0];
         }
@@ -405,8 +405,8 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
         }
     }
 
-    private async Geary.Email? expand_vector(DateTime next_epoch,
-                                             Geary.Email? current_oldest,
+    private async Convey.Email? expand_vector(DateTime next_epoch,
+                                             Convey.Email? current_oldest,
                                              Cancellable cancellable)
         throws Error {
         debug("Expanding vector to %s", next_epoch.to_string());
@@ -417,7 +417,7 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
         );
     }
 
-    private async void expand_to_previous(Geary.Email? current_oldest,
+    private async void expand_to_previous(Convey.Email? current_oldest,
                                           Cancellable cancellable)
         throws Error {
         // there's nothing between the oldest local and the epoch,
@@ -428,7 +428,7 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
         // works if id is null, as that means the local folder is
         // empty and so we should at least pull the first one to get a
         // marker of age
-        Geary.EmailIdentifier? id =
+        Convey.EmailIdentifier? id =
             (current_oldest != null) ? current_oldest.id : null;
         debug(
             "Unable to locate epoch messages on remote folder%s, fetching one past oldest...",
@@ -437,8 +437,8 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
         yield this.folder.list_email_by_id_async(
             id,
             1,
-            Geary.Email.Field.NONE,
-            Geary.Folder.ListFlags.NONE,
+            Convey.Email.Field.NONE,
+            Convey.Folder.ListFlags.NONE,
             cancellable
         );
     }
@@ -461,8 +461,8 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
         yield this.folder.list_email_by_id_async(
             null,
             int.MAX,
-            Geary.Email.Field.NONE,
-            Geary.Folder.ListFlags.NONE,
+            Convey.Email.Field.NONE,
+            Convey.Folder.ListFlags.NONE,
             cancellable
         );
     }
@@ -477,7 +477,7 @@ private class Geary.ImapEngine.FullFolderSync : RefreshFolderSync {
  * does not extend pass the epoch, ensuring no more email is stored
  * than is desired.
  */
-private class Geary.ImapEngine.TruncateToEpochFolderSync : FolderSync {
+private class Convey.ImapEngine.TruncateToEpochFolderSync : FolderSync {
 
 
     private IdleGarbageCollection? post_idle_detach_op;
@@ -498,7 +498,7 @@ private class Geary.ImapEngine.TruncateToEpochFolderSync : FolderSync {
 
         // Detach older emails outside the prefetch window
         if (this.account.information.prefetch_period_days >= 0) {
-            Gee.Collection<Geary.EmailIdentifier>? detached_ids =
+            Gee.Collection<Convey.EmailIdentifier>? detached_ids =
                 yield local_folder.detach_emails_before_timestamp(max_epoch,
                                                                   cancellable);
             if (detached_ids != null) {
@@ -520,7 +520,7 @@ private class Geary.ImapEngine.TruncateToEpochFolderSync : FolderSync {
  * storage operations, which are handled instead by the
  * {@link IdleGarbageCollection}.
  */
-private class Geary.ImapEngine.ForegroundGarbageCollection: AccountOperation {
+private class Convey.ImapEngine.ForegroundGarbageCollection: AccountOperation {
 
     internal ForegroundGarbageCollection(GenericAccount account) {
         base(account);
@@ -552,10 +552,10 @@ private class Geary.ImapEngine.ForegroundGarbageCollection: AccountOperation {
  * app is idle in the background. Vacuuming will be permitted and if
  * messages have been removed a reap will be forced.
  */
-private class Geary.ImapEngine.IdleGarbageCollection: AccountOperation {
+private class Convey.ImapEngine.IdleGarbageCollection: AccountOperation {
 
     // Vacuum is allowed as we're running in the background
-    private Geary.ImapDB.Database.GarbageCollectionOptions options = ALLOW_VACUUM;
+    private Convey.ImapDB.Database.GarbageCollectionOptions options = ALLOW_VACUUM;
 
     internal IdleGarbageCollection(GenericAccount account) {
         base(account);

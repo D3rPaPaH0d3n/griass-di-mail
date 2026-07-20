@@ -8,7 +8,7 @@
 /**
  * See [[http://www.ietf.org/rfc/rfc2971.txt]]
  */
-public class Geary.Imap.IdCommand : Command {
+public class Convey.Imap.IdCommand : Command {
 
     public const string NAME = "id";
 

@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.Service : Geary.ClientService {
+internal class Convey.Graph.Service : Convey.ClientService {
 
-    public Service(Geary.AccountInformation account,
-                   Geary.ServiceInformation configuration,
-                   Geary.Endpoint remote) {
+    public Service(Convey.AccountInformation account,
+                   Convey.ServiceInformation configuration,
+                   Convey.Endpoint remote) {
         base(account, configuration, remote);
     }
 
@@ -29,7 +29,7 @@ internal class Geary.Graph.Service : Geary.ClientService {
     }
 
     protected override void became_unreachable() {
-        this.current_status = Geary.ClientService.Status.UNREACHABLE;
+        this.current_status = Convey.ClientService.Status.UNREACHABLE;
     }
 
 }

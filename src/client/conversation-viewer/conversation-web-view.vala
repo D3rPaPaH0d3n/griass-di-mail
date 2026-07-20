@@ -157,7 +157,7 @@ public class ConversationWebView : Components.WebView {
             });
 
         controller.search(
-            Geary.Collection.first(terms),
+            Convey.Collection.first(terms),
             WebKit.FindOptions.CASE_INSENSITIVE |
             WebKit.FindOptions.WRAP_AROUND,
             128

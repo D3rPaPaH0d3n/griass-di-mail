@@ -1,6 +1,6 @@
-# Hungarian translation for geary.
+# Hungarian translation for convey.
 # Copyright (C) 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026 Free Software Foundation, Inc.
-# This file is distributed under the same license as the geary package.
+# This file is distributed under the same license as the convey package.
 #
 # lukibeni <lukacs.bence1 at gmail dot com>, 2012, 2013.
 # metalsasi <metalsasi at gmail dot com>, 2012.
@@ -9,7 +9,7 @@
 # Balázs Meskó <mesko.balazs at fsf dot hu>, 2018, 2020, 2021.
 msgid ""
 msgstr ""
-"Project-Id-Version: geary-master\n"
+"Project-Id-Version: convey-master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/geary/issues/\n"
 "POT-Creation-Date: 2025-12-12 00:02+0000\n"
 "PO-Revision-Date: 2026-02-21 19:12+0100\n"
@@ -22,108 +22,108 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 25.08.1\n"
 
-#: desktop/geary-attach.contract.desktop.in:2
+#: desktop/convey-attach.contract.desktop.in:2
 msgid "Send by email"
 msgstr "Elküldés levélben"
 
-#: desktop/geary-attach.contract.desktop.in:5
-msgid "Send files using Geary"
-msgstr "Fájlok küldése a Geary használatával"
+#: desktop/convey-attach.contract.desktop.in:5
+msgid "Send files using Convey"
+msgstr "Fájlok küldése a Convey használatával"
 
 #. Translators: The application name
-#: desktop/geary-autostart.desktop.in.in:2
-#: desktop/org.gnome.Geary.desktop.in.in:2
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:11
+#: desktop/convey-autostart.desktop.in.in:2
+#: desktop/net.donnybeelo.Convey.desktop.in.in:2
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:11
 #: src/client/accounts/accounts-editor-servers-pane.vala:551
 #: src/client/application/application-main-window.vala:710
-msgid "Geary"
-msgstr "Geary"
+msgid "Convey"
+msgstr "Convey"
 
-#: desktop/geary-autostart.desktop.in.in:3
-#: desktop/org.gnome.Geary.desktop.in.in:3
+#: desktop/convey-autostart.desktop.in.in:3
+#: desktop/net.donnybeelo.Convey.desktop.in.in:3
 msgid "Email"
 msgstr "E-mail"
 
 #. Translators: The application's summary / tagline
-#: desktop/geary-autostart.desktop.in.in:4
-#: desktop/org.gnome.Geary.desktop.in.in:4
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:15
+#: desktop/convey-autostart.desktop.in.in:4
+#: desktop/net.donnybeelo.Convey.desktop.in.in:4
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:15
 #: src/client/application/application-client.vala:18
 msgid "Send and receive email"
 msgstr "E-mailek küldése és fogadása"
 
 #. Translators: These are desktop search terms. Do not translate semicolons, end line with a semicolon.
-#: desktop/geary-autostart.desktop.in.in:6
+#: desktop/convey-autostart.desktop.in.in:6
 msgid "Email;E-mail;Mail;"
 msgstr "Email;E-mail;Levél;"
 
 #. Translators: These are desktop search terms. Do not translate semicolons, end line with a semicolon.
-#: desktop/org.gnome.Geary.desktop.in.in:6
+#: desktop/net.donnybeelo.Convey.desktop.in.in:6
 msgid "Mail;E-mail;email;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 msgstr "Levél;Levelezés;E-mail;Email;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 
-#: desktop/org.gnome.Geary.desktop.in.in:23
+#: desktop/net.donnybeelo.Convey.desktop.in.in:23
 msgid "Compose Message"
 msgstr "Levél írása"
 
-#: desktop/org.gnome.Geary.desktop.in.in:27
+#: desktop/net.donnybeelo.Convey.desktop.in.in:27
 msgid "New Window"
 msgstr "Új ablak"
 
-#: desktop/org.gnome.Geary.gschema.xml:8
+#: desktop/net.donnybeelo.Convey.gschema.xml:8
 msgid "Maximize window"
 msgstr "Ablak maximalizálása"
 
-#: desktop/org.gnome.Geary.gschema.xml:9
+#: desktop/net.donnybeelo.Convey.gschema.xml:9
 msgid "True if the application window is maximized, false otherwise."
 msgstr "Igaz, ha az alkalmazásablak teljes méretű, különben hamis."
 
-#: desktop/org.gnome.Geary.gschema.xml:14
+#: desktop/net.donnybeelo.Convey.gschema.xml:14
 msgid "Width of window"
 msgstr "Ablak szélessége"
 
-#: desktop/org.gnome.Geary.gschema.xml:15
+#: desktop/net.donnybeelo.Convey.gschema.xml:15
 msgid "The last recorded width of the application window."
 msgstr "Az alkalmazásablak legutóbb mentett szélessége."
 
-#: desktop/org.gnome.Geary.gschema.xml:20
+#: desktop/net.donnybeelo.Convey.gschema.xml:20
 msgid "Height of window"
 msgstr "Ablak magassága"
 
-#: desktop/org.gnome.Geary.gschema.xml:21
+#: desktop/net.donnybeelo.Convey.gschema.xml:21
 msgid "The last recorded height of the application window."
 msgstr "Az alkalmazásablak legutóbb mentett magassága."
 
-#: desktop/org.gnome.Geary.gschema.xml:26
+#: desktop/net.donnybeelo.Convey.gschema.xml:26
 msgid "Show/hide formatting toolbar"
 msgstr "Formázási eszköztár megjelenítése/elrejtése"
 
-#: desktop/org.gnome.Geary.gschema.xml:27
+#: desktop/net.donnybeelo.Convey.gschema.xml:27
 msgid "True if the formatting toolbar in the composer is shown."
 msgstr "Igaz, ha a formázási eszköztár megjelenik a levélíróban."
 
-#: desktop/org.gnome.Geary.gschema.xml:32
+#: desktop/net.donnybeelo.Convey.gschema.xml:32
 msgid "Autoselect next message"
 msgstr "Következő levél automatikus kiválasztása"
 
-#: desktop/org.gnome.Geary.gschema.xml:33
+#: desktop/net.donnybeelo.Convey.gschema.xml:33
 msgid "True if we should autoselect the next available conversation."
 msgstr ""
 "Igaz, ha a következő elérhető beszélgetést automatikusan ki kell választani."
 
-#: desktop/org.gnome.Geary.gschema.xml:38
+#: desktop/net.donnybeelo.Convey.gschema.xml:38
 msgid "Display message previews"
 msgstr "Beszélgetés előnézetek megjelenítése"
 
-#: desktop/org.gnome.Geary.gschema.xml:39
+#: desktop/net.donnybeelo.Convey.gschema.xml:39
 msgid "True if we should display a short preview of each message."
 msgstr "Igaz, ha minden levélről jelenjen meg egy rövid előnézet."
 
-#: desktop/org.gnome.Geary.gschema.xml:44
+#: desktop/net.donnybeelo.Convey.gschema.xml:44
 msgid "Override colors in HTML emails"
 msgstr "HTML e-mailekben lévő színek felülbírálása"
 
-#: desktop/org.gnome.Geary.gschema.xml:45
+#: desktop/net.donnybeelo.Convey.gschema.xml:45
 msgid ""
 "Overrides the original colors in HTML messages to integrate better with the "
 "app theme."
@@ -131,19 +131,19 @@ msgstr ""
 "Felülbírálja a HTML-üzenetekben lévő eredeti színeket, hogy jobban "
 "illeszkedjenek az alkalmazás témájához."
 
-#: desktop/org.gnome.Geary.gschema.xml:50
+#: desktop/net.donnybeelo.Convey.gschema.xml:50
 msgid "Move messages by default"
 msgstr "Üzenetek áthelyezése alapértelmezetten"
 
-#: desktop/org.gnome.Geary.gschema.xml:51
+#: desktop/net.donnybeelo.Convey.gschema.xml:51
 msgid "When tagging a message, move it to destination folder."
 msgstr "Egy üzenet címkézésekor az üzenet áthelyezése a célmappába."
 
-#: desktop/org.gnome.Geary.gschema.xml:56
+#: desktop/net.donnybeelo.Convey.gschema.xml:56
 msgid "Use single key shortcuts"
 msgstr "Egybillentyűs gyorsbillentyűk használata"
 
-#: desktop/org.gnome.Geary.gschema.xml:57
+#: desktop/net.donnybeelo.Convey.gschema.xml:57
 msgid ""
 "Enables shortcuts for email actions that do not require pressing <Ctrl> to "
 "emulate those used by Gmail."
@@ -151,11 +151,11 @@ msgstr ""
 "Engedélyezi a gyorsbillentyűket az olyan e-mail-műveleteknél, amelyek nem "
 "igénylik a <Ctrl> lenyomását, a Gmail által használtak utánzása érdekében."
 
-#: desktop/org.gnome.Geary.gschema.xml:64
+#: desktop/net.donnybeelo.Convey.gschema.xml:64
 msgid "Languages that shall be used in the spell checker"
 msgstr "A nyelvek, amelyek használva lesznek a helyesírás-ellenőrzőben"
 
-#: desktop/org.gnome.Geary.gschema.xml:65
+#: desktop/net.donnybeelo.Convey.gschema.xml:65
 msgid ""
 "A list of POSIX locales, with the empty list disabling spell checking and "
 "the null list using desktop languages by default."
@@ -163,11 +163,11 @@ msgstr ""
 "POSIX területi beállítások listája, az üres listával letiltja a helyesírás-"
 "ellenőrzést, és a null lista az asztal nyelveit használja alapértelmezetten."
 
-#: desktop/org.gnome.Geary.gschema.xml:72
+#: desktop/net.donnybeelo.Convey.gschema.xml:72
 msgid "Languages that are displayed in the spell checker popover"
 msgstr "A nyelvek, melyek megjelennek a helyesírás-ellenőrző felugróban"
 
-#: desktop/org.gnome.Geary.gschema.xml:73
+#: desktop/net.donnybeelo.Convey.gschema.xml:73
 msgid ""
 "List of languages that are always displayed in the popover of the spell "
 "checker."
@@ -175,72 +175,72 @@ msgstr ""
 "A nyelvek listája, amely mindig megjelenik a helyesírás-ellenőrző "
 "felugrójában."
 
-#: desktop/org.gnome.Geary.gschema.xml:78
+#: desktop/net.donnybeelo.Convey.gschema.xml:78
 msgid "Run application in background on logon and when closed"
 msgstr ""
 "Az alkalmazás futtatása a háttérben a bejelentkezéskor és ha be van zárva"
 
-#: desktop/org.gnome.Geary.gschema.xml:79
+#: desktop/net.donnybeelo.Convey.gschema.xml:79
 msgid "True to run application in background."
 msgstr "Igaz az alkalmazás háttérben való futtatásához."
 
-#: desktop/org.gnome.Geary.gschema.xml:84
+#: desktop/net.donnybeelo.Convey.gschema.xml:84
 msgid "Ask when opening an attachment"
 msgstr "Kérdezzen egy melléklet megnyitásakor"
 
-#: desktop/org.gnome.Geary.gschema.xml:85
+#: desktop/net.donnybeelo.Convey.gschema.xml:85
 msgid "True to ask when opening an attachment."
 msgstr "Igaz, ha kérdezzen egy melléklet megnyitásakor."
 
-#: desktop/org.gnome.Geary.gschema.xml:90
+#: desktop/net.donnybeelo.Convey.gschema.xml:90
 msgid "Whether to compose emails in HTML"
 msgstr "Az e-mailek írása HTML-ben történjen-e"
 
-#: desktop/org.gnome.Geary.gschema.xml:91
+#: desktop/net.donnybeelo.Convey.gschema.xml:91
 msgid "True to compose emails in HTML; false for plain text."
 msgstr ""
 "Igaz, ha a levelek HTML-ben legyenek megírva; hamis esetén egyszerű szöveg."
 
-#: desktop/org.gnome.Geary.gschema.xml:96
+#: desktop/net.donnybeelo.Convey.gschema.xml:96
 msgid "Advisory strategy for full-text searching"
 msgstr "Tanácsadó stratégia a teljes szöveges keresésnél"
 
-#: desktop/org.gnome.Geary.gschema.xml:97
+#: desktop/net.donnybeelo.Convey.gschema.xml:97
 msgid ""
 "Acceptable values are “exact”, “conservative”, “aggressive”, and “horizon”."
 msgstr ""
 "Az elfogadható értékek: „exact” (pontos), „conservative” (konzervatív), "
 "„aggressive” (agresszív) és „horizon” (horizont)."
 
-#: desktop/org.gnome.Geary.gschema.xml:102
+#: desktop/net.donnybeelo.Convey.gschema.xml:102
 msgid "Zoom of conversation viewer"
 msgstr "A beszélgetésmegjelenítő nagyítása"
 
-#: desktop/org.gnome.Geary.gschema.xml:103
+#: desktop/net.donnybeelo.Convey.gschema.xml:103
 msgid "The zoom to apply on the conservation view."
 msgstr "A beszélgetés nézeten alkalmazandó nagyítás."
 
-#: desktop/org.gnome.Geary.gschema.xml:108
+#: desktop/net.donnybeelo.Convey.gschema.xml:108
 msgid "Size of detached composer window"
 msgstr "A leválasztott levélíró ablak mérete"
 
-#: desktop/org.gnome.Geary.gschema.xml:109
+#: desktop/net.donnybeelo.Convey.gschema.xml:109
 msgid "The last recorded size of the detached composer window."
 msgstr "A leválasztott levélíró ablak legutóbb elmentett mérete."
 
-#: desktop/org.gnome.Geary.gschema.xml:114
+#: desktop/net.donnybeelo.Convey.gschema.xml:114
 msgid "Allow images for these domains"
 msgstr "Képek engedélyezése ezeknél a tartományoknál"
 
-#: desktop/org.gnome.Geary.gschema.xml:115
+#: desktop/net.donnybeelo.Convey.gschema.xml:115
 msgid "Images from these domains will be trusted"
 msgstr "Az ezekből a tartományokból származó képek megbízhatóak lesznek"
 
-#: desktop/org.gnome.Geary.gschema.xml:120
+#: desktop/net.donnybeelo.Convey.gschema.xml:120
 msgid "Undo sending email delay"
 msgstr "Levélküldési késleltetés visszavonása"
 
-#: desktop/org.gnome.Geary.gschema.xml:121
+#: desktop/net.donnybeelo.Convey.gschema.xml:121
 msgid ""
 "The number of seconds to wait before sending an email. Set to zero or less "
 "to disable."
@@ -248,51 +248,51 @@ msgstr ""
 "A levelek kiküldése előtti várakozás másodpercben. A letiltáshoz állítsa "
 "nullára vagy kevesebbre."
 
-#: desktop/org.gnome.Geary.gschema.xml:127
+#: desktop/net.donnybeelo.Convey.gschema.xml:127
 msgid "Brief notification display time"
 msgstr "Rövid értesítések megjelenítési ideje"
 
-#: desktop/org.gnome.Geary.gschema.xml:128
+#: desktop/net.donnybeelo.Convey.gschema.xml:128
 msgid ""
 "The length of time in seconds for which brief notifications should be "
 "displayed."
 msgstr "A rövid értesítések megjelenítési ideje másodpercben."
 
-#: desktop/org.gnome.Geary.gschema.xml:134
+#: desktop/net.donnybeelo.Convey.gschema.xml:134
 msgid "List of optional plugins"
 msgstr "Válaszható bővítmények listája"
 
-#: desktop/org.gnome.Geary.gschema.xml:135
+#: desktop/net.donnybeelo.Convey.gschema.xml:135
 msgid "Plugins listed here will be loaded on startup."
 msgstr "Az itt felsorolt bővítmények betöltésre kerülnek indításkor."
 
-#: desktop/org.gnome.Geary.gschema.xml:140
+#: desktop/net.donnybeelo.Convey.gschema.xml:140
 msgid "Whether we migrated the old settings"
 msgstr "A régi beállítások migrálva lettek-e"
 
-#: desktop/org.gnome.Geary.gschema.xml:141
+#: desktop/net.donnybeelo.Convey.gschema.xml:141
 msgid ""
-"False to check for the old “org.yorba.geary”-schema and copy its values."
+"False to check for the old “org.yorba.convey”-schema and copy its values."
 msgstr ""
-"Hamis a régi „org.yorba.geary” séma ellenőrzéséhez, és az értékeinek "
+"Hamis a régi „org.yorba.convey” séma ellenőrzéséhez, és az értékeinek "
 "másolásához."
 
 #. Translators: The development team's name
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:13
-msgid "Geary Development Team"
-msgstr "Geary fejlesztőcsapat"
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:13
+msgid "Convey Development Team"
+msgstr "Convey fejlesztőcsapat"
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:17
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:17
 msgid ""
-"Geary is an email application built around conversations, for the GNOME "
+"Convey is an email application built around conversations, for the GNOME "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"A Geary egy e-mail alkalmazás, amely a társalgások köré szerveződik, és a "
+"A Convey egy e-mail alkalmazás, amely a társalgások köré szerveződik, és a "
 "GNOME asztalhoz készült. Segítségével e-maileket olvashat, kereshet és "
 "küldhet egy lényegre törő és modern felületen."
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:22
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:22
 msgid ""
 "Conversations allow you to read a complete discussion without having to find "
 "and click from message to message."
@@ -300,45 +300,45 @@ msgstr ""
 "A társalgások segítségével teljes beszélgetéseket olvashat el anélkül, hogy "
 "egyesével végig kellene kattintania a leveleken."
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:26
-msgid "Geary’s features include:"
-msgstr "A Geary néhány funkciója:"
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:26
+msgid "Convey’s features include:"
+msgstr "A Convey néhány funkciója:"
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:28
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:28
 msgid "Quick email account setup"
 msgstr "Gyors e-mailfiók beállítás"
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:29
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:29
 msgid "Shows related messages together in conversations"
 msgstr "A kapcsolódó leveleket együtt jeleníti meg a beszélgetésekben"
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:30
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:30
 msgid "Fast, full text and keyword search"
 msgstr "Gyors, teljes szöveges és kulcsszavas keresés"
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:31
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:31
 msgid "Full-featured HTML and plain text message composer"
 msgstr "Teljes funkcionalitású HTML és egyszerű szöveges levélszerkesztő"
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:32
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:32
 msgid "Desktop notification of new mail"
 msgstr "Asztali értesítések új levél érkezésekor"
 
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:33
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:33
 msgid "Compatible with GMail, Yahoo! Mail, Outlook.com and other IMAP servers"
 msgstr ""
 "Kompatibilis a GMaillel, a Yahoo! Maillel, az Outlook.commal és más IMAP "
 "kiszolgálókkal"
 
 #. Translators: A screenshot description.
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:50
-msgid "Geary displaying a conversation"
-msgstr "A Geary egy beszélgetést jelenít meg"
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:50
+msgid "Convey displaying a conversation"
+msgstr "A Convey egy beszélgetést jelenít meg"
 
 #. Translators: A screenshot description.
-#: desktop/org.gnome.Geary.metainfo.xml.in.in:55
-msgid "Geary showing the rich text composer"
-msgstr "A Geary gazdag szövegszerkesztője"
+#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:55
+msgid "Convey showing the rich text composer"
+msgstr "A Convey gazdag szövegszerkesztője"
 
 #. Translators: In-app notification label, when
 #. the app had a problem pinning an otherwise
@@ -496,10 +496,10 @@ msgstr "Fiók eltávolítása: %s"
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:221
 msgid ""
-"This will remove it from Geary and delete locally cached email data from "
+"This will remove it from Convey and delete locally cached email data from "
 "your computer. Nothing will be deleted from your service provider."
 msgstr ""
-"Ez eltávolítja azt a Geary programból, és törli a helyileg gyorsítótárazott "
+"Ez eltávolítja azt a Convey programból, és törli a helyileg gyorsítótárazott "
 "e-mail adatokat a számítógépéről. Semmi sem lesz törölve a szolgáltatójától."
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:223
@@ -760,7 +760,7 @@ msgstr "A fiók nincs frissítve: %s"
 
 #. Translators: This label describes the program that
 #. created the account, e.g. an SSO service like GOA, or
-#. locally by Geary.
+#. locally by Convey.
 #: src/client/accounts/accounts-editor-servers-pane.vala:536
 msgid "Account source"
 msgstr "Fiók forrása"
@@ -829,8 +829,8 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "Copyright © 2016 Software Freedom Conservancy Inc."
 
 #: src/client/application/application-client.vala:20
-msgid "Copyright © 2016-2021 Geary Development Team."
-msgstr "Copyright © 2016-2021 A Geary fejlesztőcsapat."
+msgid "Copyright © 2016-2021 Convey Development Team."
+msgstr "Copyright © 2016-2021 A Convey fejlesztőcsapat."
 
 #. / Command line option
 #: src/client/application/application-client.vala:77
@@ -901,13 +901,13 @@ msgstr "A program verziójának megjelenítése"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:243
-msgid "Geary version"
-msgstr "Geary verzió"
+msgid "Convey version"
+msgstr "Convey verzió"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:245
-msgid "Geary revision"
-msgstr "Geary revízió"
+msgid "Convey revision"
+msgstr "Convey revízió"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:247
@@ -954,8 +954,8 @@ msgid "Installation prefix"
 msgstr "Telepítési előtag"
 
 #: src/client/application/application-client.vala:544
-msgid "Visit the Geary web site"
-msgstr "Keresse fel a Geary weboldalát"
+msgid "Visit the Convey web site"
+msgstr "Keresse fel a Convey weboldalát"
 
 #: src/client/application/application-client.vala:545
 #, c-format
@@ -1095,7 +1095,7 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-"Geary can rebuild the database and re-synchronize with the server or exit.\n"
+"Convey can rebuild the database and re-synchronize with the server or exit.\n"
 "\n"
 "Rebuilding the database will destroy all local email and its attachments. "
 "<b>The mail on the your server will not be affected.</b>"
@@ -1105,7 +1105,7 @@ msgstr ""
 "\n"
 "%s\n"
 "\n"
-"A Geary képes újjáépíteni az adatbázist és újra szinkronizálni a "
+"A Convey képes újjáépíteni az adatbázist és újra szinkronizálni a "
 "kiszolgálóval, vagy kilép.\n"
 "\n"
 "Az adatbázis újjáépítése törölni fogja az összes helyi levelet és azok "
@@ -1240,9 +1240,9 @@ msgid "Empty all email from your %s folder?"
 msgstr "Minden levelet kiürít a(z) %s mappából?"
 
 #: src/client/application/application-main-window.vala:1422
-msgid "This removes the email from Geary and your email server."
+msgid "This removes the email from Convey and your email server."
 msgstr ""
-"Ez eltávolítja a levelet a Geary programból és a levelezőkiszolgálóról."
+"Ez eltávolítja a levelet a Convey programból és a levelezőkiszolgálóról."
 
 #: src/client/application/application-main-window.vala:1423
 msgid "This cannot be undone."
@@ -1278,8 +1278,8 @@ msgid "%s (%d)"
 msgstr "%s (%d)"
 
 #: src/client/application/application-startup-manager.vala:78
-msgid "Geary wants to run in background"
-msgstr "A Geary a háttérben szeretne futni"
+msgid "Convey wants to run in background"
+msgstr "A Convey a háttérben szeretne futni"
 
 #. Translators: The first argument will be a
 #. description of the document type, the second will
@@ -1424,8 +1424,8 @@ msgstr "Zárt állapotban is _figyeljen az új levél érkezésére"
 
 #. / Translators: Preferences tooltip
 #: src/client/components/components-preferences-window.vala:162
-msgid "Geary will keep running after all windows are closed"
-msgstr "A Geary továbbra is futni fog az összes ablak bezárása után"
+msgid "Convey will keep running after all windows are closed"
+msgstr "A Convey továbbra is futni fog az összes ablak bezárása után"
 
 #. / Translators: Preferences label
 #: src/client/components/components-preferences-window.vala:172
@@ -1472,16 +1472,16 @@ msgstr "Fiókprobléma"
 #. problem. String substitution is the account name.
 #: src/client/components/components-problem-report-info-bar.vala:40
 #, c-format
-msgid "Geary has encountered a problem with %s."
-msgstr "A Geary problémát észlelt ezzel: %s."
+msgid "Convey has encountered a problem with %s."
+msgstr "A Convey problémát észlelt ezzel: %s."
 
 #. Translators: Info bar sub-title for a generic
 #. account problem. String substitution is the
 #. account name.
 #: src/client/components/components-problem-report-info-bar.vala:53
 #, c-format
-msgid "Geary encountered a problem checking mail for %s."
-msgstr "A Geary problémába ütközött a(z) %s fiók leveleinek ellenőrzésekor."
+msgid "Convey encountered a problem checking mail for %s."
+msgstr "A Convey problémába ütközött a(z) %s fiók leveleinek ellenőrzésekor."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:57
@@ -1493,8 +1493,8 @@ msgstr "Próbáljon meg újrakapcsolódni"
 #. account name
 #: src/client/components/components-problem-report-info-bar.vala:65
 #, c-format
-msgid "Geary encountered a problem sending email for %s."
-msgstr "A Geary problémába ütközött a(z) %s fiók leveleinek elküldésekor."
+msgid "Convey encountered a problem sending email for %s."
+msgstr "A Convey problémába ütközött a(z) %s fiók leveleinek elküldésekor."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:69
@@ -1504,8 +1504,8 @@ msgstr "Postázandó levelek elküldésének újrapróbálása"
 #. Translators: Info bar title for a generic application
 #. problem.
 #: src/client/components/components-problem-report-info-bar.vala:76
-msgid "Geary has encountered a problem"
-msgstr "A Geary problémát észlelt"
+msgid "Convey has encountered a problem"
+msgstr "A Convey problémát észlelt"
 
 #. Translators: Info bar sub-title for a generic
 #. application problem.
@@ -2050,22 +2050,22 @@ msgstr ""
 
 #: src/client/dialogs/certificate-warning-dialog.vala:56
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary not to access this "
+"Selecting “Don’t Trust This Server” will cause Convey not to access this "
 "server."
 msgstr ""
-"A „Nem bízom meg a kiszolgálóban” választása azt fogja okozni, hogy a Geary "
+"A „Nem bízom meg a kiszolgálóban” választása azt fogja okozni, hogy a Convey "
 "nem férhet hozzá ehhez a kiszolgálóhoz."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:58
-msgid "Geary will not add or update this email account."
-msgstr "A Geary nem fogja hozzáadni vagy frissíteni ezt az e-mail-fiókot."
+msgid "Convey will not add or update this email account."
+msgstr "A Convey nem fogja hozzáadni vagy frissíteni ezt az e-mail-fiókot."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:63
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary to stop accessing this "
+"Selecting “Don’t Trust This Server” will cause Convey to stop accessing this "
 "account."
 msgstr ""
-"A „Nem bízom meg a kiszolgálóban” választása azt fogja okozni, hogy a Geary "
+"A „Nem bízom meg a kiszolgálóban” választása azt fogja okozni, hogy a Convey "
 "leállítja a hozzáférést ehhez a fiókhoz."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:69
@@ -2118,8 +2118,8 @@ msgstr "Részletek"
 #. strings, and Glade doesn't support the "larger" size attribute. See this bug report for
 #. details: https://bugzilla.gnome.org/show_bug.cgi?id=679006
 #: src/client/dialogs/password-dialog.vala:16
-msgid "Geary requires your email password to continue"
-msgstr "A Geary az e-mail jelszavát igényli a folytatáshoz"
+msgid "Convey requires your email password to continue"
+msgstr "A Convey az e-mail jelszavát igényli a folytatáshoz"
 
 #: src/client/folder-list/folder-list-account-branch.vala:53
 msgid "Folders"
@@ -2530,7 +2530,7 @@ msgstr "---------- Továbbított levél -----------"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:605
 msgctxt "Search operator"
 msgid "attachment"
@@ -2543,7 +2543,7 @@ msgstr "melléklet"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:618
 msgctxt "Search operator"
 msgid "bcc"
@@ -2556,7 +2556,7 @@ msgstr "rejtett másolat"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:630
 msgctxt "Search operator"
 msgid "body"
@@ -2569,7 +2569,7 @@ msgstr "törzs"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:642
 msgctxt "Search operator"
 msgid "cc"
@@ -2582,7 +2582,7 @@ msgstr "másolat"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:654
 msgctxt "Search operator"
 msgid "from"
@@ -2595,7 +2595,7 @@ msgstr "feladó"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:668
 msgctxt "Search operator"
 msgid "subject"
@@ -2608,7 +2608,7 @@ msgstr "tárgy"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:680
 msgctxt "Search operator"
 msgid "to"
@@ -2621,7 +2621,7 @@ msgstr "címzett"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:691
 msgctxt "Search operator value - mail addressed to the user"
 msgid "me"
@@ -2634,7 +2634,7 @@ msgstr "én"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:704
 msgctxt "Search operator value - mail sent by the user"
 msgid "me"
@@ -2649,7 +2649,7 @@ msgstr "én"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:719
 msgctxt "Search operator"
 msgid "is"
@@ -2662,7 +2662,7 @@ msgstr "ilyen"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:729
 msgctxt "'is:' search operator value"
 msgid "unread"
@@ -2675,7 +2675,7 @@ msgstr "olvasatlan"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:739
 msgctxt "'is:' search operator value"
 msgid "read"
@@ -2688,7 +2688,7 @@ msgstr "olvasatlan"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:749
 msgctxt "'is:' search operator value"
 msgid "starred"
@@ -2869,8 +2869,8 @@ msgid "Settings"
 msgstr "Beállítások"
 
 #: ui/accounts_editor_edit_pane.ui:228
-msgid "Remove this account from Geary"
-msgstr "Fiók eltávolítása a Geary programból"
+msgid "Remove this account from Convey"
+msgstr "Fiók eltávolítása a Convey programból"
 
 #. This is a button in the account settings to show server settings.
 #: ui/accounts_editor_edit_pane.ui:247 ui/accounts_editor_servers_pane.ui:7
@@ -2886,8 +2886,8 @@ msgid "To get started, add an email provider above."
 msgstr "Kezdéshez adjon hozzá egy e-mail szolgáltatót fent."
 
 #: ui/accounts_editor_list_pane.ui:88
-msgid "Welcome to Geary"
-msgstr "Üdvözli a Geary"
+msgid "Welcome to Convey"
+msgstr "Üdvözli a Convey"
 
 #: ui/accounts_editor_servers_pane.ui:42
 msgid "Apply"
@@ -3239,8 +3239,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "Gyorsbille_ntyűk"
 
 #: ui/components-menu-application.ui:25
-msgid "_About Geary"
-msgstr "A Geary _névjegye"
+msgid "_About Convey"
+msgstr "A Convey _névjegye"
 
 #: ui/components-menu-conversation.ui:25
 msgid "Toggle as _Junk"

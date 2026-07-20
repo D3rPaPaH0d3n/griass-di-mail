@@ -15,7 +15,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-2.2.1]]
  */
 
-public class Geary.Imap.Tag : AtomParameter, Gee.Hashable<Geary.Imap.Tag> {
+public class Convey.Imap.Tag : AtomParameter, Gee.Hashable<Convey.Imap.Tag> {
     public const string UNTAGGED_VALUE = "*";
     public const string CONTINUATION_VALUE = "+";
     public const string UNASSIGNED_VALUE = "----";
@@ -102,7 +102,7 @@ public class Geary.Imap.Tag : AtomParameter, Gee.Hashable<Geary.Imap.Tag> {
         return Ascii.str_hash(ascii);
     }
 
-    public bool equal_to(Geary.Imap.Tag tag) {
+    public bool equal_to(Convey.Imap.Tag tag) {
         if (this == tag)
             return true;
 

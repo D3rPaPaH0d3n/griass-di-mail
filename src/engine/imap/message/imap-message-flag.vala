@@ -14,7 +14,7 @@
  * @see FetchedData
  */
 
-public class Geary.Imap.MessageFlag : Geary.Imap.Flag {
+public class Convey.Imap.MessageFlag : Convey.Imap.Flag {
     private static MessageFlag? _answered = null;
     public static MessageFlag ANSWERED { get {
         if (_answered == null)
@@ -100,35 +100,35 @@ public class Geary.Imap.MessageFlag : Geary.Imap.Flag {
 
     // Converts a list of email flags to add and remove to a list of message
     // flags to add and remove.
-    public static void from_email_flags(Geary.EmailFlags? email_flags_add,
-        Geary.EmailFlags? email_flags_remove, out Gee.List<MessageFlag> msg_flags_add,
+    public static void from_email_flags(Convey.EmailFlags? email_flags_add,
+        Convey.EmailFlags? email_flags_remove, out Gee.List<MessageFlag> msg_flags_add,
         out Gee.List<MessageFlag> msg_flags_remove) {
         msg_flags_add = new Gee.ArrayList<MessageFlag>();
         msg_flags_remove = new Gee.ArrayList<MessageFlag>();
 
         if (email_flags_add != null) {
-            if (email_flags_add.contains(Geary.EmailFlags.UNREAD))
+            if (email_flags_add.contains(Convey.EmailFlags.UNREAD))
                 msg_flags_remove.add(MessageFlag.SEEN);
-            if (email_flags_add.contains(Geary.EmailFlags.FLAGGED))
+            if (email_flags_add.contains(Convey.EmailFlags.FLAGGED))
                 msg_flags_add.add(MessageFlag.FLAGGED);
-            if (email_flags_add.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES))
+            if (email_flags_add.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES))
                 msg_flags_add.add(MessageFlag.LOAD_REMOTE_IMAGES);
-            if (email_flags_add.contains(Geary.EmailFlags.DRAFT))
+            if (email_flags_add.contains(Convey.EmailFlags.DRAFT))
                 msg_flags_add.add(MessageFlag.DRAFT);
-            if (email_flags_add.contains(Geary.EmailFlags.DELETED))
+            if (email_flags_add.contains(Convey.EmailFlags.DELETED))
                 msg_flags_add.add(MessageFlag.DELETED);
         }
 
         if (email_flags_remove != null) {
-            if (email_flags_remove.contains(Geary.EmailFlags.UNREAD))
+            if (email_flags_remove.contains(Convey.EmailFlags.UNREAD))
                 msg_flags_add.add(MessageFlag.SEEN);
-            if (email_flags_remove.contains(Geary.EmailFlags.FLAGGED))
+            if (email_flags_remove.contains(Convey.EmailFlags.FLAGGED))
                 msg_flags_remove.add(MessageFlag.FLAGGED);
-            if (email_flags_remove.contains(Geary.EmailFlags.LOAD_REMOTE_IMAGES))
+            if (email_flags_remove.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES))
                 msg_flags_remove.add(MessageFlag.LOAD_REMOTE_IMAGES);
-            if (email_flags_remove.contains(Geary.EmailFlags.DRAFT))
+            if (email_flags_remove.contains(Convey.EmailFlags.DRAFT))
                 msg_flags_remove.add(MessageFlag.DRAFT);
-            if (email_flags_remove.contains(Geary.EmailFlags.DELETED))
+            if (email_flags_remove.contains(Convey.EmailFlags.DELETED))
                 msg_flags_remove.add(MessageFlag.DELETED);
         }
     }

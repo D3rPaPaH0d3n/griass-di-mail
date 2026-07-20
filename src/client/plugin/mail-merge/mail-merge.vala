@@ -82,10 +82,10 @@ public class Plugin.MailMerge :
     public override async void activate(bool is_startup) throws GLib.Error {
         // Add localised first, so if we need to create a folder it
         // will be created localised.
-        Geary.iterate_array(LOC_NAMES.split("|")).map<string>(
+        Convey.iterate_array(LOC_NAMES.split("|")).map<string>(
             (name) => name.strip()
         ).add_all_to(this.folder_names);
-        Geary.iterate_array(UNLOC_NAMES.split("|")).map<string>(
+        Convey.iterate_array(UNLOC_NAMES.split("|")).map<string>(
             (name) => name.strip()
         ).add_all_to(this.folder_names);
 
@@ -190,14 +190,14 @@ public class Plugin.MailMerge :
                 );
 
                 Gee.Collection<Email> emails = yield this.email_store.get_email(
-                    Geary.Collection.single(id),
+                    Convey.Collection.single(id),
                     this.cancellable
                 );
                 if (!emails.is_empty) {
                     var account_context = this.client_plugins.to_client_account(
                         id.account
                     );
-                    var email = Geary.Collection.first(emails);
+                    var email = Convey.Collection.first(emails);
 
                     this.merge_folder = yield new global::MailMerge.Folder(
                         account_context.account,
@@ -408,8 +408,8 @@ public class Plugin.MailMerge :
         composer.insert_text(global::MailMerge.Processor.to_field(field));
     }
 
-    private async Geary.Email load_merge_email(Email plugin) throws GLib.Error {
-        Geary.Email? engine = this.client_plugins.to_engine_email(plugin);
+    private async Convey.Email load_merge_email(Email plugin) throws GLib.Error {
+        Convey.Email? engine = this.client_plugins.to_engine_email(plugin);
         if (engine != null &&
             !engine.fields.fulfills(global::MailMerge.Processor.REQUIRED_FIELDS)) {
             var account_context = this.client_plugins.to_client_account(
@@ -418,12 +418,12 @@ public class Plugin.MailMerge :
             engine = yield account_context.emails.fetch_email_async(
                 engine.id,
                 global::MailMerge.Processor.REQUIRED_FIELDS,
-                Geary.Folder.ListFlags.LOCAL_ONLY,
+                Convey.Folder.ListFlags.LOCAL_ONLY,
                 this.cancellable
             );
         }
         if (engine == null) {
-            throw new Geary.EngineError.NOT_FOUND("Plugin email not found");
+            throw new Convey.EngineError.NOT_FOUND("Plugin email not found");
         }
         return engine;
     }

@@ -16,7 +16,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.3]]
  */
 
-public class Geary.Imap.LiteralParameter : Geary.Imap.Parameter {
+public class Convey.Imap.LiteralParameter : Convey.Imap.Parameter {
 
 
     /** The value of the literal parameter. */

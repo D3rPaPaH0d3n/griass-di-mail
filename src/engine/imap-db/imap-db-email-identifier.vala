@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.ImapDB.EmailIdentifier : Geary.EmailIdentifier {
+private class Convey.ImapDB.EmailIdentifier : Convey.EmailIdentifier {
 
 
     private const string VARIANT_TYPE = "(y(xx))";
@@ -65,14 +65,14 @@ private class Geary.ImapDB.EmailIdentifier : Geary.EmailIdentifier {
     }
 
     /** {@inheritDoc} */
-    public override bool equal_to(Geary.EmailIdentifier other) {
+    public override bool equal_to(Convey.EmailIdentifier other) {
         return (
             this.get_type() == other.get_type() &&
             this.message_id == ((EmailIdentifier) other).message_id
         );
     }
 
-    public override int natural_sort_comparator(Geary.EmailIdentifier o) {
+    public override int natural_sort_comparator(Convey.EmailIdentifier o) {
         ImapDB.EmailIdentifier? other = o as ImapDB.EmailIdentifier;
         if (other == null)
             return 1;

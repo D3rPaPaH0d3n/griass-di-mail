@@ -11,7 +11,7 @@
  * See [[http://tools.ietf.org/html/rfc4616]]
  */
 
-public class Geary.Smtp.OAuth2Authenticator : Geary.Smtp.Authenticator {
+public class Convey.Smtp.OAuth2Authenticator : Convey.Smtp.Authenticator {
 
 
     private const string OAUTH2_RESP = "user=%s\001auth=Bearer %s\001\001";

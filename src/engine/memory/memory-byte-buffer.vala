@@ -8,7 +8,7 @@
  * Allows for a plain block of bytes to be represented as an {@link Buffer}.
  */
 
-public class Geary.Memory.ByteBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
+public class Convey.Memory.ByteBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
     /**
      * {@inheritDoc}
      */

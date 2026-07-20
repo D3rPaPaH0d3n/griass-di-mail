@@ -9,7 +9,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
 
     // Defines the ordering that special-use folders appear in the
     // folder list
-    private const Geary.Folder.SpecialUse[] SPECIAL_USE_ORDERING = {
+    private const Convey.Folder.SpecialUse[] SPECIAL_USE_ORDERING = {
         INBOX,
         SEARCH,
         FLAGGED,
@@ -26,13 +26,13 @@ public class FolderList.AccountBranch : Sidebar.Branch {
     };
 
 
-    public Geary.Account account { get; private set; }
+    public Convey.Account account { get; private set; }
     public SpecialGrouping user_folder_group { get; private set; }
-    public Gee.HashMap<Geary.FolderPath, FolderEntry> folder_entries { get; private set; }
+    public Gee.HashMap<Convey.FolderPath, FolderEntry> folder_entries { get; private set; }
 
     private string display_name = "";
 
-    public AccountBranch(Geary.Account account) {
+    public AccountBranch(Convey.Account account) {
         base(new Sidebar.Header(account.information.display_name),
              STARTUP_OPEN_GROUPING | STARTUP_EXPAND_TO_FIRST_CHILD,
              normal_folder_comparator,
@@ -45,7 +45,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         // folders)
         string name, icon_name;
         switch (account.information.service_provider) {
-        case Geary.ServiceProvider.GMAIL:
+        case Convey.ServiceProvider.GMAIL:
             name = _("Labels");
             icon_name = "tag-symbolic";
             break;
@@ -55,7 +55,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
             break;
         }
         user_folder_group = new SpecialGrouping(2, name, icon_name);
-        folder_entries = new Gee.HashMap<Geary.FolderPath, FolderEntry>();
+        folder_entries = new Gee.HashMap<Convey.FolderPath, FolderEntry>();
 
         this.display_name = account.information.display_name;
         account.information.changed.connect(on_information_changed);
@@ -95,8 +95,8 @@ public class FolderList.AccountBranch : Sidebar.Branch {
 
         FolderEntry entry_a = (FolderEntry) a;
         FolderEntry entry_b = (FolderEntry) b;
-        Geary.Folder.SpecialUse type_a = entry_a.folder.used_as;
-        Geary.Folder.SpecialUse type_b = entry_b.folder.used_as;
+        Convey.Folder.SpecialUse type_a = entry_a.folder.used_as;
+        Convey.Folder.SpecialUse type_b = entry_b.folder.used_as;
 
         if (type_a == type_b) return 0;
         if (type_a == INBOX) return -1;
@@ -124,14 +124,14 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         return a.get_sidebar_name().collate(b.get_sidebar_name());
     }
 
-    public FolderEntry? get_entry_for_path(Geary.FolderPath folder_path) {
+    public FolderEntry? get_entry_for_path(Convey.FolderPath folder_path) {
         return folder_entries.get(folder_path);
     }
 
     public void add_folder(Application.FolderContext context) {
         Sidebar.Entry? graft_point = null;
         FolderEntry folder_entry = new FolderEntry(context);
-        Geary.Folder.SpecialUse used_as = context.folder.used_as;
+        Convey.Folder.SpecialUse used_as = context.folder.used_as;
         if (used_as != NONE) {
             if (used_as == SEARCH)
                 return; // Don't show search folder under the account.
@@ -175,7 +175,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         }
     }
 
-    public void remove_folder(Geary.FolderPath path) {
+    public void remove_folder(Convey.FolderPath path) {
         Sidebar.Entry? entry = this.folder_entries.get(path);
         if (entry == null) {
             debug("Could not remove folder %s", path.to_string());

@@ -4,15 +4,15 @@
 
 desktop_output = []
 desktop_conf = configuration_data()
-desktop_conf.set('appid', geary_id)
+desktop_conf.set('appid', convey_id)
 
 desktop_file = i18n.merge_file(
   input: configure_file(
-    input: 'org.gnome.Geary.desktop.in.in',
-    output: 'org.gnome.Geary.desktop.in',
+    input: 'net.donnybeelo.Convey.desktop.in.in',
+    output: 'net.donnybeelo.Convey.desktop.in',
     configuration: desktop_conf
   ),
-  output: '@0@.desktop'.format(geary_id),
+  output: '@0@.desktop'.format(convey_id),
   type: 'desktop',
   po_dir: po_dir,
   install: true,
@@ -22,11 +22,11 @@ desktop_output += desktop_file
 
 autostart_file = i18n.merge_file(
   input: configure_file(
-    input: 'geary-autostart.desktop.in.in',
-    output: 'geary-autostart.desktop.in',
+    input: 'convey-autostart.desktop.in.in',
+    output: 'convey-autostart.desktop.in',
     configuration: desktop_conf
   ),
-  output: 'geary-autostart.desktop',
+  output: 'convey-autostart.desktop',
   type: 'desktop',
   po_dir: po_dir,
   install: true,
@@ -51,7 +51,7 @@ endforeach
 # Metainfo file
 #
 
-metainfo_file = 'org.gnome.Geary.metainfo.xml'
+metainfo_file = 'net.donnybeelo.Convey.metainfo.xml'
 
 metainfo_merged = i18n.merge_file(
   input: configure_file(
@@ -59,7 +59,7 @@ metainfo_merged = i18n.merge_file(
     output: metainfo_file + '.in',
     configuration: desktop_conf
   ),
-  output: '@0@.metainfo.xml'.format(geary_id),
+  output: '@0@.metainfo.xml'.format(convey_id),
   type: 'xml',
   po_dir: po_dir,
   install: true,
@@ -88,15 +88,15 @@ if get_option('contractor').enabled()
   # Description field. See merge req !50.
   msgfmt = find_program('msgfmt')
 
-  custom_target('geary-attach-contract',
-    input: 'geary-attach.contract.desktop.in',
-    output: 'geary-attach.contract',
+  custom_target('convey-attach-contract',
+    input: 'convey-attach.contract.desktop.in',
+    output: 'convey-attach.contract',
     command: [msgfmt, '--desktop', '--keyword=Description', '--template', '@INPUT@', '-d', po_dir, '-o', '@OUTPUT@'],
     install: true,
     install_dir: join_paths(data_dir, 'contractor')
   )
 
-  install_data('geary-attach',
+  install_data('convey-attach',
     install_dir: bin_dir,
   )
 endif
@@ -110,10 +110,10 @@ endif
 # schema is re-compiled if the source changes. This is not supported
 # by Meson but it works, so request for official support has been
 # added, see: https://github.com/mesonbuild/meson/issues/2770
-geary_compiled_schema = gnome.compile_schemas(
-  depend_files: files('org.gnome.Geary.gschema.xml'),
+convey_compiled_schema = gnome.compile_schemas(
+  depend_files: files('net.donnybeelo.Convey.gschema.xml'),
 )
-install_data('org.gnome.Geary.gschema.xml',
+install_data('net.donnybeelo.Convey.gschema.xml',
   install_dir: join_paths(data_dir, 'glib-2.0', 'schemas'),
 )
 
@@ -123,11 +123,11 @@ install_data('org.gnome.Geary.gschema.xml',
 
 service_conf = configuration_data()
 service_conf.set('bindir', bin_dir)
-service_conf.set('appid', geary_id)
+service_conf.set('appid', convey_id)
 
 configure_file(
-  input: 'org.gnome.Geary.service.in',
-  output: '@0@.service'.format(geary_id),
+  input: 'net.donnybeelo.Convey.service.in',
+  output: '@0@.service'.format(convey_id),
   configuration: service_conf,
   install: true,
   install_dir: dbus_services_dir

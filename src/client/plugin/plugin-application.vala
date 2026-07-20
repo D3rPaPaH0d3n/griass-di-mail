@@ -11,7 +11,7 @@
  * Plugins may obtain instances of this object from the {@link
  * PluginBase.plugin_application} property.
  */
-public interface Plugin.Application : Geary.BaseObject {
+public interface Plugin.Application : Convey.BaseObject {
 
 
     /**
@@ -122,8 +122,8 @@ public interface Plugin.Application : Geary.BaseObject {
      * Since displaying an error report causes visual and workflow
      * disruptions, and as such this method called with care and only
      * when necessary. For logging, use {@link GLib.debug} and related
-     * methods and these will appear in Geary's Inspector.
+     * methods and these will appear in Convey's Inspector.
      */
-    public abstract void report_problem(Geary.ProblemReport problem);
+    public abstract void report_problem(Convey.ProblemReport problem);
 
 }

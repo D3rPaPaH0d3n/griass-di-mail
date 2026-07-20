@@ -8,22 +8,22 @@
  * This branch is a top-level container for a search entry.
  */
 public class FolderList.SearchBranch : Sidebar.RootOnlyBranch {
-    public SearchBranch(Geary.App.SearchFolder folder, Geary.Engine engine) {
+    public SearchBranch(Convey.App.SearchFolder folder, Convey.Engine engine) {
         base(new SearchEntry(folder, engine));
     }
 
-    public Geary.App.SearchFolder get_search_folder() {
-        return (Geary.App.SearchFolder) ((SearchEntry) get_root()).folder;
+    public Convey.App.SearchFolder get_search_folder() {
+        return (Convey.App.SearchFolder) ((SearchEntry) get_root()).folder;
     }
 }
 
 public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
 
-    Geary.Engine engine;
+    Convey.Engine engine;
     private int account_count = 0;
 
-    public SearchEntry(Geary.App.SearchFolder folder,
-                       Geary.Engine engine) {
+    public SearchEntry(Convey.App.SearchFolder folder,
+                       Convey.Engine engine) {
         base(folder);
         this.engine = engine;
 
@@ -36,7 +36,7 @@ public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
         this.engine.account_available.connect(on_accounts_changed);
         this.engine.account_unavailable.connect(on_accounts_changed);
         folder.properties.notify[
-            Geary.FolderProperties.PROP_NAME_EMAIL_TOTAL
+            Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
         ].connect(on_email_total_changed);
     }
 
@@ -44,7 +44,7 @@ public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
         this.engine.account_available.disconnect(on_accounts_changed);
         this.engine.account_unavailable.disconnect(on_accounts_changed);
         folder.properties.notify[
-            Geary.FolderProperties.PROP_NAME_EMAIL_TOTAL
+            Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
         ].disconnect(on_email_total_changed);
     }
 
@@ -67,8 +67,8 @@ public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
         return "SearchEntry: " + folder.to_string();
     }
 
-    private void on_accounts_changed(Geary.Engine engine,
-                                     Geary.AccountInformation config) {
+    private void on_accounts_changed(Convey.Engine engine,
+                                     Convey.AccountInformation config) {
         entry_changed();
         try {
             this.account_count = engine.get_accounts().size;

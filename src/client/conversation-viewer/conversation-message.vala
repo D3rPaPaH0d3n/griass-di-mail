@@ -7,28 +7,28 @@
  */
 
 /**
- * A widget for displaying an {@link Geary.RFC822.Message}.
+ * A widget for displaying an {@link Convey.RFC822.Message}.
  *
- * This view corresponds to {@link Geary.RFC822.Message}, displaying
+ * This view corresponds to {@link Convey.RFC822.Message}, displaying
  * both the message's headers and body. Any attachments and sub
  * messages are handled by {@link ConversationEmail}, which typically
  * embeds at least one instance of this class.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/conversation-message.ui")]
-public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
+[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-message.ui")]
+public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
 
-    private const string FROM_CLASS = "geary-from";
-    private const string MATCH_CLASS = "geary-match";
-    private const string SPOOF_CLASS = "geary-spoofed";
-    private const string INTERNAL_ANCHOR_PREFIX = "geary:body#";
-    private const string REPLACED_CID_TEMPLATE = "replaced_%02u@geary";
-    private const string REPLACED_IMAGE_CLASS = "geary_replaced_inline_image";
+    private const string FROM_CLASS = "convey-from";
+    private const string MATCH_CLASS = "convey-match";
+    private const string SPOOF_CLASS = "convey-spoofed";
+    private const string INTERNAL_ANCHOR_PREFIX = "convey:body#";
+    private const string REPLACED_CID_TEMPLATE = "replaced_%02u@convey";
+    private const string REPLACED_IMAGE_CLASS = "convey_replaced_inline_image";
 
     private const string MAILTO_URI_PREFIX = "mailto:";
 
 
-    private const int MAX_PREVIEW_BYTES = Geary.Email.MAX_PREVIEW_BYTES;
+    private const int MAX_PREVIEW_BYTES = Convey.Email.MAX_PREVIEW_BYTES;
 
     private const int MAX_INLINE_IMAGE_MAJOR_DIM = 1024;
 
@@ -50,7 +50,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     private class ContactFlowBoxChild : Gtk.FlowBoxChild {
 
 
-        private const string PRIMARY_CLASS = "geary-primary";
+        private const string PRIMARY_CLASS = "convey-primary";
 
 
         public enum Type { FROM, OTHER; }
@@ -60,13 +60,13 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
 
         public Application.Contact contact { get; private set; }
 
-        public Geary.RFC822.MailboxAddress displayed { get; private set; }
-        public Geary.RFC822.MailboxAddress source { get; private set; }
+        public Convey.RFC822.MailboxAddress displayed { get; private set; }
+        public Convey.RFC822.MailboxAddress source { get; private set; }
 
         private string search_value;
 
         public ContactFlowBoxChild(Application.Contact contact,
-                                   Geary.RFC822.MailboxAddress source,
+                                   Convey.RFC822.MailboxAddress source,
                                    Type address_type = Type.OTHER) {
             this.contact = contact;
             this.source = source;
@@ -147,7 +147,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
                 // The contact's name can be trusted, so no need to
                 // display the email address
                 primary.set_text(this.contact.display_name);
-                this.displayed = new Geary.RFC822.MailboxAddress(
+                this.displayed = new Convey.RFC822.MailboxAddress(
                     this.contact.display_name, this.source.address
                 );
                 this.tooltip_text = this.source.address;
@@ -155,7 +155,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
                 // Display both the display name and the email address
                 // so that the user has the full information at hand
                 primary.set_text(this.contact.display_name);
-                this.displayed = new Geary.RFC822.MailboxAddress(
+                this.displayed = new Convey.RFC822.MailboxAddress(
                     this.contact.display_name, this.source.address
                 );
 
@@ -188,7 +188,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
      * A FlowBox that limits its contents to 12 items until a link is
      * clicked to expand it. Used for to, cc, and bcc fields.
      */
-    public class ContactList : Adw.Bin, Geary.BaseInterface {
+    public class ContactList : Adw.Bin, Convey.BaseInterface {
         /**
          * The number of results that will be displayed when not expanded.
          * Note this is actually one less than the cutoff, which is 12; we
@@ -297,7 +297,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     }
 
     /** Mailbox assumed to be the primary sender. */
-    internal Geary.RFC822.MailboxAddress? primary_originator {
+    internal Convey.RFC822.MailboxAddress? primary_originator {
         get; private set;
     }
 
@@ -325,7 +325,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     private ConversationWebView? web_view { get; private set; }
 
     // The message headers represented by this view
-    private Geary.EmailHeaderSet headers;
+    private Convey.EmailHeaderSet headers;
 
     private Application.Configuration config;
 
@@ -404,11 +404,11 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     // Timeouts for showing the progress bar and hiding it when
     // complete. The former is so that when loading cached images it
     // doesn't pop up and then go away immediately afterwards.
-    private Geary.TimeoutManager show_progress_timeout = null;
-    private Geary.TimeoutManager hide_progress_timeout = null;
+    private Convey.TimeoutManager show_progress_timeout = null;
+    private Convey.TimeoutManager hide_progress_timeout = null;
 
     // Timer for pulsing progress bar
-    private Geary.TimeoutManager progress_pulse;
+    private Convey.TimeoutManager progress_pulse;
 
 
     /** Fired when the user clicks a internal link in the email. */
@@ -419,7 +419,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
 
     /** Fired when the user saves an inline displayed image. */
     public signal void save_image(
-        string uri, string? alt_text, Geary.Memory.Buffer? buffer
+        string uri, string? alt_text, Convey.Memory.Buffer? buffer
     );
 
     /** Emitted when web_view has loaded a resource added to it. */
@@ -443,7 +443,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
      * the message, but does not attempt any possibly long-running
      * loading processes.
      */
-    public ConversationMessage.from_email(Geary.Email email,
+    public ConversationMessage.from_email(Convey.Email email,
                                           bool load_remote_resources,
                                           Application.ContactStore contacts,
                                           Application.Configuration config) {
@@ -463,7 +463,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
      * the message, but does not attempt any possibly long-running
      * loading processes.
      */
-    public ConversationMessage.from_message(Geary.RFC822.Message message,
+    public ConversationMessage.from_message(Convey.RFC822.Message message,
                                             bool load_remote_resources,
                                             Application.ContactStore contacts,
                                             Application.Configuration config) {
@@ -484,7 +484,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         content_loaded();
     }
 
-    private ConversationMessage(Geary.EmailHeaderSet headers,
+    private ConversationMessage(Convey.EmailHeaderSet headers,
                                 string? preview,
                                 bool load_remote_resources,
                                 Application.ContactStore contacts,
@@ -519,7 +519,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         // Context menu
 
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/org/gnome/Geary/conversation-message-menus.ui"
+            "/net/donnybeelo/Convey/conversation-message-menus.ui"
         );
         context_menu_link = (MenuModel) builder.get_object("context_menu_link");
         context_menu_email = (MenuModel) builder.get_object("context_menu_email");
@@ -547,12 +547,12 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
 
         this.compact_from.add_css_class(FROM_CLASS);
 
-        if (headers.subject != null && !Geary.String.is_empty(headers.subject.value)) {
+        if (headers.subject != null && !Convey.String.is_empty(headers.subject.value)) {
             this.compact_body.set_text(headers.subject.value);
         } else if (preview != null) {
             string clean_preview = preview;
             if (preview.length > MAX_PREVIEW_BYTES) {
-                clean_preview = Geary.String.safe_byte_substring(
+                clean_preview = Convey.String.safe_byte_substring(
                     preview, MAX_PREVIEW_BYTES
                 );
                 // Add an ellipsis in case the view is wider is wider than
@@ -572,14 +572,14 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         }
 
         this.body_container.set_has_tooltip(true); // Used to show link URLs
-        this.show_progress_timeout = new Geary.TimeoutManager.milliseconds(
+        this.show_progress_timeout = new Convey.TimeoutManager.milliseconds(
             Util.Gtk.SHOW_PROGRESS_TIMEOUT_MSEC, this.on_show_progress_timeout
         );
-        this.hide_progress_timeout = new Geary.TimeoutManager.milliseconds(
+        this.hide_progress_timeout = new Convey.TimeoutManager.milliseconds(
             Util.Gtk.HIDE_PROGRESS_TIMEOUT_MSEC, this.on_hide_progress_timeout
         );
 
-        this.progress_pulse = new Geary.TimeoutManager.milliseconds(
+        this.progress_pulse = new Convey.TimeoutManager.milliseconds(
             Util.Gtk.PROGRESS_PULSE_TIMEOUT_MSEC, this.body_progress.pulse
         );
         this.progress_pulse.repetition = FOREVER;
@@ -659,7 +659,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
      *
      * @see Components.WebView.add_internal_resources
      */
-    public void add_internal_resources(Gee.Map<string,Geary.Memory.Buffer> res) {
+    public void add_internal_resources(Gee.Map<string,Convey.Memory.Buffer> res) {
         if (this.web_view == null)
             initialize_web_view();
         web_view.add_internal_resources(res);
@@ -861,12 +861,12 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
                 yield format_originator_compact(cancellable)
             );
             if (this.headers.subject != null &&
-                !Geary.String.is_empty(this.headers.subject.value)) {
+                !Convey.String.is_empty(this.headers.subject.value)) {
                 this.compact_body.set_text(this.headers.subject.value);
             }
 
             // Full headers
-            Geary.EmailHeaderSet headers = this.headers;
+            Convey.EmailHeaderSet headers = this.headers;
             yield fill_originator_addresses(
                 headers.from,
                 headers.reply_to,
@@ -888,7 +888,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     /**
      * Starts loading the message body in the HTML view.
      */
-    public async void load_message_body(Geary.RFC822.Message message,
+    public async void load_message_body(Convey.RFC822.Message message,
                                         GLib.Cancellable load_cancelled)
         throws GLib.Error {
         if (load_cancelled.is_cancelled()) {
@@ -1025,12 +1025,12 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
 
     private async string format_originator_compact(GLib.Cancellable cancellable)
         throws GLib.Error {
-        Geary.RFC822.MailboxAddresses? from = this.headers.from;
+        Convey.RFC822.MailboxAddresses? from = this.headers.from;
         string text = "";
         if (from != null && from.size > 0) {
             int i = 0;
-            Gee.List<Geary.RFC822.MailboxAddress> list = from.get_all();
-            foreach (Geary.RFC822.MailboxAddress addr in list) {
+            Gee.List<Convey.RFC822.MailboxAddress> list = from.get_all();
+            foreach (Convey.RFC822.MailboxAddress addr in list) {
                 Application.Contact originator = yield this.contacts.load(
                     addr, cancellable
                 );
@@ -1048,14 +1048,14 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         return text;
     }
 
-    private async void fill_originator_addresses(Geary.RFC822.MailboxAddresses? from,
-                                                 Geary.RFC822.MailboxAddresses? reply_to,
-                                                 Geary.RFC822.MailboxAddress? sender,
+    private async void fill_originator_addresses(Convey.RFC822.MailboxAddresses? from,
+                                                 Convey.RFC822.MailboxAddresses? reply_to,
+                                                 Convey.RFC822.MailboxAddress? sender,
                                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         // Show any From header addresses
         if (from != null && from.size > 0) {
-            foreach (Geary.RFC822.MailboxAddress address in from) {
+            foreach (Convey.RFC822.MailboxAddress address in from) {
                 ContactFlowBoxChild child = new ContactFlowBoxChild(
                     yield this.contacts.load(address, cancellable),
                     address,
@@ -1090,7 +1090,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         // Show any Reply-To header addresses if present, but only if
         // each is not already in the From header.
         if (reply_to != null) {
-            foreach (Geary.RFC822.MailboxAddress address in reply_to) {
+            foreach (Convey.RFC822.MailboxAddress address in reply_to) {
                 if (from == null || !from.contains_normalized(address.address)) {
                     ContactFlowBoxChild child = new ContactFlowBoxChild(
                         yield this.contacts.load(address, cancellable),
@@ -1105,7 +1105,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     }
 
     private async void fill_header_addresses(ContactList contact_list,
-                                             Geary.RFC822.MailboxAddresses? addresses,
+                                             Convey.RFC822.MailboxAddresses? addresses,
                                              GLib.Cancellable? cancellable)
         throws GLib.Error {
 
@@ -1118,7 +1118,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
             return;
         }
 
-        foreach (Geary.RFC822.MailboxAddress address in addresses) {
+        foreach (Convey.RFC822.MailboxAddress address in addresses) {
             ContactFlowBoxChild child = new ContactFlowBoxChild(
                 yield this.contacts.load(address, cancellable),
                 address
@@ -1130,16 +1130,16 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
     }
 
     // This delegate is called from within
-    // Geary.RFC822.Message.get_body while assembling the plain or
+    // Convey.RFC822.Message.get_body while assembling the plain or
     // HTML document when a non-text MIME part is encountered within a
     // multipart/mixed container.  If this returns null, the MIME part
     // is dropped from the final returned document; otherwise, this
     // returns HTML that is placed into the document in the position
     // where the MIME part was found
-    private string? inline_image_replacer(Geary.RFC822.Part part) {
+    private string? inline_image_replacer(Convey.RFC822.Part part) {
         if (this.web_view == null)
             initialize_web_view();
-        Geary.Mime.ContentType content_type = part.content_type;
+        Convey.Mime.ContentType content_type = part.content_type;
         if (content_type.media_type != "image" ||
             !this.web_view.can_show_mime_type(content_type.to_string())) {
             debug("Not displaying %s inline: unsupported Content-Type",
@@ -1155,9 +1155,9 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         try {
             this.web_view.add_internal_resource(
                 id,
-                part.write_to_buffer(Geary.RFC822.Part.EncodingConversion.UTF8)
+                part.write_to_buffer(Convey.RFC822.Part.EncodingConversion.UTF8)
             );
-        } catch (Geary.RFC822.Error err) {
+        } catch (Convey.RFC822.Error err) {
             debug("Failed to get inline buffer: %s", err.message);
             return null;
         }
@@ -1166,7 +1166,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         // attribute value when displaying an inline image in an email
         // that did not specify a file name. E.g. <IMG ALT="Image" ...
         string UNKNOWN_FILENAME_ALT_TEXT = _("Image");
-        string clean_filename = Geary.HTML.escape_markup(
+        string clean_filename = Convey.HTML.escape_markup(
             part.get_clean_filename() ?? UNKNOWN_FILENAME_ALT_TEXT
         );
 
@@ -1174,7 +1174,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
             clean_filename,
             REPLACED_IMAGE_CLASS,
             Components.WebView.CID_URL_PREFIX,
-            Geary.HTML.escape_markup(id)
+            Convey.HTML.escape_markup(id)
         );
     }
 
@@ -1270,7 +1270,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         if (address_child != null) {
             address_child.set_state_flags(Gtk.StateFlags.ACTIVE, false);
 
-            Geary.RFC822.MailboxAddress address = address_child.displayed;
+            Convey.RFC822.MailboxAddress address = address_child.displayed;
 
             Gee.Map<string,GLib.Variant> values =
                 new Gee.HashMap<string,GLib.Variant>();
@@ -1388,7 +1388,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         string anchor_label = GLib.Uri.unescape_string(anchor_href) ?? _("(unknown)");
 
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/org/gnome/Geary/conversation-message-link-popover.ui"
+            "/net/donnybeelo/Convey/conversation-message-link-popover.ui"
         );
         var link_popover = builder.get_object("link_popover") as Gtk.Popover;
         var good_link = builder.get_object("good_link_label") as Gtk.Label;
@@ -1517,7 +1517,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
                         save_image(
                             uri,
                             alt_text,
-                            new Geary.Memory.ByteBuffer(data, data.length)
+                            new Convey.Memory.ByteBuffer(data, data.length)
                         );
                     } catch (GLib.Error err) {
                         debug(
@@ -1547,7 +1547,7 @@ public class ConversationMessage : Gtk.Box, Geary.BaseInterface {
         if (this.primary_contact != null) {
             var email_addresses = this.primary_contact.email_addresses;
             for (uint i = 0; i < email_addresses.get_n_items(); i++) {
-                var email = (Geary.RFC822.MailboxAddress) email_addresses.get_item(i);
+                var email = (Convey.RFC822.MailboxAddress) email_addresses.get_item(i);
                 this.config.add_images_trusted_domain(email.domain);
                 break;
             }

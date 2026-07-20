@@ -14,7 +14,7 @@
  * when the primary application instance is started.
  */
 internal class Application.Controller :
-    Geary.BaseObject, AccountInterface, Composer.ApplicationInterface {
+    Convey.BaseObject, AccountInterface, Composer.ApplicationInterface {
 
 
     private const uint MAX_AUTH_ATTEMPTS = 3;
@@ -22,28 +22,28 @@ internal class Application.Controller :
     private const uint CLEANUP_CHECK_AFTER_IDLE_BACKGROUND_MINUTES = 5;
 
     /** Determines if conversations can be trashed from the given folder. */
-    public static bool does_folder_support_trash(Geary.Folder? target) {
+    public static bool does_folder_support_trash(Convey.Folder? target) {
         return (
             target != null &&
             target.used_as != TRASH &&
             !target.properties.is_local_only &&
-            (target as Geary.FolderSupport.Move) != null
+            (target as Convey.FolderSupport.Move) != null
         );
     }
 
     /** Determines if folders should be added to main windows. */
-    private static bool should_add_folder(Gee.Collection<Geary.Folder>? all,
-                                          Geary.Folder folder) {
+    private static bool should_add_folder(Gee.Collection<Convey.Folder>? all,
+                                          Convey.Folder folder) {
         // if folder is openable, add it
-        if (folder.properties.is_openable != Geary.Trillian.FALSE)
+        if (folder.properties.is_openable != Convey.Trillian.FALSE)
             return true;
-        else if (folder.properties.has_children == Geary.Trillian.FALSE)
+        else if (folder.properties.has_children == Convey.Trillian.FALSE)
             return false;
 
         // if folder contains children, we must ensure that there is
         // at least one of the same type
-        Geary.Folder.SpecialUse type = folder.used_as;
-        foreach (Geary.Folder other in all) {
+        Convey.Folder.SpecialUse type = folder.used_as;
+        foreach (Convey.Folder other in all) {
             if (other.used_as == type && other.path.parent == folder.path)
                 return true;
         }
@@ -74,8 +74,8 @@ internal class Application.Controller :
     }
 
     // Primary collection of the application's open accounts
-    private Gee.Map<Geary.AccountInformation,AccountContext> accounts =
-        new Gee.HashMap<Geary.AccountInformation,AccountContext>();
+    private Gee.Map<Convey.AccountInformation,AccountContext> accounts =
+        new Gee.HashMap<Convey.AccountInformation,AccountContext>();
     private bool is_loading_accounts = true;
 
     // Cancelled if the controller is closed
@@ -92,7 +92,7 @@ internal class Application.Controller :
     private Gee.List<string?> pending_mailtos = new Gee.ArrayList<string>();
 
     // Timeout to do work in idle after all windows have been sent to the background
-    private Geary.TimeoutManager all_windows_backgrounded_timeout;
+    private Convey.TimeoutManager all_windows_backgrounded_timeout;
 
     private GLib.Cancellable? storage_cleanup_cancellable;
 
@@ -139,7 +139,7 @@ internal class Application.Controller :
         Accounts.SignatureWebView.load_resources();
 
         this.all_windows_backgrounded_timeout =
-            new Geary.TimeoutManager.seconds(CLEANUP_CHECK_AFTER_IDLE_BACKGROUND_MINUTES * 60, on_unfocused_idle);
+            new Convey.TimeoutManager.seconds(CLEANUP_CHECK_AFTER_IDLE_BACKGROUND_MINUTES * 60, on_unfocused_idle);
 
         this.folks = Folks.IndividualAggregator.dup();
         if (!this.folks.is_prepared) {
@@ -185,7 +185,7 @@ internal class Application.Controller :
         // above, so remove it if found. This can be pulled out post
         // v40.
         try {
-            yield Geary.Files.recursive_delete_async(
+            yield Convey.Files.recursive_delete_async(
                 config_dir.get_child("pinned-certs")
             );
         } catch (GLib.IOError.NOT_FOUND err) {
@@ -251,7 +251,7 @@ internal class Application.Controller :
         // Close any open composers up-front before anything else is
         // shut down so any pending operations have a chance to
         // complete.
-        var composer_barrier = new Geary.Nonblocking.CountingSemaphore(null);
+        var composer_barrier = new Convey.Nonblocking.CountingSemaphore(null);
         // Take a copy of the collection of composers since
         // closing any will cause the underlying collection to change.
         var composers = new Gee.LinkedList<Composer.Widget>();
@@ -282,7 +282,7 @@ internal class Application.Controller :
         // Release folder and conversations in main windows before
         // closing them so we know they are released before closing
         // the accounts
-        var window_barrier = new Geary.Nonblocking.CountingSemaphore(null);
+        var window_barrier = new Convey.Nonblocking.CountingSemaphore(null);
         foreach (MainWindow window in this.application.get_main_windows()) {
             window_barrier.acquire();
             window.select_folder.begin(
@@ -315,7 +315,7 @@ internal class Application.Controller :
         // explode if accounts are removed while iterating.
         var closing_accounts = new Gee.LinkedList<AccountContext>();
         closing_accounts.add_all(this.accounts.values);
-        var account_barrier = new Geary.Nonblocking.CountingSemaphore(null);
+        var account_barrier = new Convey.Nonblocking.CountingSemaphore(null);
         foreach (AccountContext context in closing_accounts) {
             account_barrier.acquire();
             this.close_account.begin(
@@ -340,7 +340,7 @@ internal class Application.Controller :
      * Opens a composer for writing a new, blank message.
      */
     public async Composer.Widget compose_blank(AccountContext send_context,
-                                               Geary.RFC822.MailboxAddress? to = null) {
+                                               Convey.RFC822.MailboxAddress? to = null) {
         MainWindow main = this.application.get_active_main_window();
         Composer.Widget composer = main.conversation_viewer.current_composer;
         if (composer == null ||
@@ -358,7 +358,7 @@ internal class Application.Controller :
         try {
             yield composer.load_empty_body(to);
         } catch (GLib.Error err) {
-            report_problem(new Geary.ProblemReport(err));
+            report_problem(new Convey.ProblemReport(err));
         }
         return composer;
     }
@@ -376,7 +376,7 @@ internal class Application.Controller :
      */
     public async Composer.Widget? compose_with_context(AccountContext send_context,
                                                        Composer.Widget.ContextType type,
-                                                       Geary.Email context,
+                                                       Convey.Email context,
                                                        string? quote) {
         MainWindow main = this.application.get_active_main_window();
         Composer.Widget? composer = null;
@@ -408,8 +408,8 @@ internal class Application.Controller :
                         existing.append_to_email(context, quote, type);
                         composer = existing;
                         break;
-                    } catch (Geary.EngineError error) {
-                        report_problem(new Geary.ProblemReport(error));
+                    } catch (Convey.EngineError error) {
+                        report_problem(new Convey.ProblemReport(error));
                     }
                 }
             }
@@ -437,7 +437,7 @@ internal class Application.Controller :
             try {
                 yield composer.load_context(type, context, quote);
             } catch (GLib.Error err) {
-                report_problem(new Geary.ProblemReport(err));
+                report_problem(new Convey.ProblemReport(err));
             }
         }
         return composer;
@@ -462,7 +462,7 @@ internal class Application.Controller :
                 try {
                     yield composer.load_mailto(mailto);
                 } catch (GLib.Error err) {
-                    report_problem(new Geary.ProblemReport(err));
+                    report_problem(new Convey.ProblemReport(err));
                 }
             }
         } else {
@@ -472,7 +472,7 @@ internal class Application.Controller :
     }
 
     /** Displays a problem report when an error has been encountered. */
-    public void report_problem(Geary.ProblemReport report) {
+    public void report_problem(Convey.ProblemReport report) {
         debug("Problem reported: %s", report.to_string());
 
         if (report.error == null ||
@@ -482,8 +482,8 @@ internal class Application.Controller :
             this.application.get_active_main_window().show_info_bar(info_bar);
         }
 
-        Geary.ServiceProblemReport? service_report =
-            report as Geary.ServiceProblemReport;
+        Convey.ServiceProblemReport? service_report =
+            report as Convey.ServiceProblemReport;
         if (service_report != null && service_report.service.protocol == SMTP) {
             this.application.send_error_notification(
                 /// Notification title.
@@ -504,29 +504,29 @@ internal class Application.Controller :
      * will remove the flag if not set on all conversations or else
      * add it.
      */
-    public async void mark_conversations(Geary.Folder location,
-                                         Gee.Collection<Geary.App.Conversation> conversations,
-                                         Geary.NamedFlag flag,
+    public async void mark_conversations(Convey.Folder location,
+                                         Gee.Collection<Convey.App.Conversation> conversations,
+                                         Convey.NamedFlag flag,
                                          bool prefer_adding)
         throws GLib.Error {
-        Geary.Iterable<Geary.App.Conversation> selecting =
-            Geary.traverse(conversations);
-        Geary.EmailFlags flags = new Geary.EmailFlags();
+        Convey.Iterable<Convey.App.Conversation> selecting =
+            Convey.traverse(conversations);
+        Convey.EmailFlags flags = new Convey.EmailFlags();
 
-        if (flag.equal_to(Geary.EmailFlags.UNREAD)) {
+        if (flag.equal_to(Convey.EmailFlags.UNREAD)) {
             selecting = selecting.filter(c => prefer_adding ^ c.is_unread());
-            flags.add(Geary.EmailFlags.UNREAD);
-        } else if (flag.equal_to(Geary.EmailFlags.FLAGGED)) {
+            flags.add(Convey.EmailFlags.UNREAD);
+        } else if (flag.equal_to(Convey.EmailFlags.FLAGGED)) {
             selecting = selecting.filter(c => prefer_adding ^ c.is_flagged());
-            flags.add(Geary.EmailFlags.FLAGGED);
+            flags.add(Convey.EmailFlags.FLAGGED);
         } else {
-            throw new Geary.EngineError.UNSUPPORTED(
+            throw new Convey.EngineError.UNSUPPORTED(
                 "Marking as %s is not supported", flag.to_string()
             );
         }
 
-        Gee.Collection<Geary.EmailIdentifier>? messages = null;
-        Gee.Collection<Geary.App.Conversation> selected =
+        Gee.Collection<Convey.EmailIdentifier>? messages = null;
+        Gee.Collection<Convey.App.Conversation> selected =
             selecting.to_linked_list();
 
         bool do_add = prefer_adding ^ selected.is_empty;
@@ -538,14 +538,14 @@ internal class Application.Controller :
             // Only apply to the latest in-folder message in
             // conversations that don't already have the flag, since
             // we don't want to flag every message in the conversation
-            messages = Geary.traverse(selected).map<Geary.EmailIdentifier>(
+            messages = Convey.traverse(selected).map<Convey.EmailIdentifier>(
                 c => c.get_latest_recv_email(IN_FOLDER_OUT_OF_FOLDER).id
             ).to_linked_list();
         } else {
             // Remove the flag from those that have it
-            messages = new Gee.LinkedList<Geary.EmailIdentifier>();
-            foreach (Geary.App.Conversation convo in selected) {
-                foreach (Geary.Email email in
+            messages = new Gee.LinkedList<Convey.EmailIdentifier>();
+            foreach (Convey.App.Conversation convo in selected) {
+                foreach (Convey.Email email in
                          convo.get_emails(RECV_DATE_DESCENDING)) {
                     if (email.email_flags != null &&
                         email.email_flags.contains(flag)) {
@@ -572,11 +572,11 @@ internal class Application.Controller :
      * rather than when working with whole conversations. In that
      * case, use {@link mark_conversations}.
      */
-    public async void mark_messages(Geary.Folder location,
-                                    Gee.Collection<Geary.App.Conversation> conversations,
-                                    Gee.Collection<Geary.EmailIdentifier> messages,
-                                    Geary.EmailFlags? to_add,
-                                    Geary.EmailFlags? to_remove)
+    public async void mark_messages(Convey.Folder location,
+                                    Gee.Collection<Convey.App.Conversation> conversations,
+                                    Gee.Collection<Convey.EmailIdentifier> messages,
+                                    Convey.EmailFlags? to_add,
+                                    Convey.EmailFlags? to_remove)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(location.account.information);
         if (context != null) {
@@ -606,9 +606,9 @@ internal class Application.Controller :
         }
     }
 
-    public async void move_conversations(Geary.FolderSupport.Move source,
-                                         Geary.Folder destination,
-                                         Gee.Collection<Geary.App.Conversation> conversations)
+    public async void move_conversations(Convey.FolderSupport.Move source,
+                                         Convey.Folder destination,
+                                         Gee.Collection<Convey.App.Conversation> conversations)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
@@ -640,14 +640,14 @@ internal class Application.Controller :
         }
     }
 
-    public async void move_conversations_special(Geary.Folder source,
-                                                 Geary.Folder.SpecialUse destination,
-                                                 Gee.Collection<Geary.App.Conversation> conversations)
+    public async void move_conversations_special(Convey.Folder source,
+                                                 Convey.Folder.SpecialUse destination,
+                                                 Gee.Collection<Convey.App.Conversation> conversations)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
             Command? command = null;
-            Gee.Collection<Geary.EmailIdentifier> messages =
+            Gee.Collection<Convey.EmailIdentifier> messages =
                 to_in_folder_email_ids(conversations);
             /// Translators: Label for in-app notification. String
             /// substitution is the name of the destination folder.
@@ -658,11 +658,11 @@ internal class Application.Controller :
             ).printf(Util.I18n.to_folder_display_name(source));
 
             if (destination == ARCHIVE) {
-                Geary.FolderSupport.Archive? archive_source = (
-                    source as Geary.FolderSupport.Archive
+                Convey.FolderSupport.Archive? archive_source = (
+                    source as Convey.FolderSupport.Archive
                 );
                 if (archive_source == null) {
-                    throw new Geary.EngineError.UNSUPPORTED(
+                    throw new Convey.EngineError.UNSUPPORTED(
                         "Folder does not support archiving: %s",
                         source.to_string()
                     );
@@ -680,20 +680,20 @@ internal class Application.Controller :
                     undone_tooltip
                 );
             } else {
-                Geary.FolderSupport.Move? move_source = (
-                    source as Geary.FolderSupport.Move
+                Convey.FolderSupport.Move? move_source = (
+                    source as Convey.FolderSupport.Move
                 );
                 if (move_source == null) {
-                    throw new Geary.EngineError.UNSUPPORTED(
+                    throw new Convey.EngineError.UNSUPPORTED(
                         "Folder does not support moving: %s",
                         source.to_string()
                     );
                 }
-                Geary.Folder? dest = source.account.get_special_folder(
+                Convey.Folder? dest = source.account.get_special_folder(
                     destination
                 );
                 if (dest == null) {
-                    throw new Geary.EngineError.NOT_FOUND(
+                    throw new Convey.EngineError.NOT_FOUND(
                         "No folder found for: %s", destination.to_string()
                     );
                 }
@@ -718,10 +718,10 @@ internal class Application.Controller :
         }
     }
 
-    public async void move_messages_special(Geary.Folder source,
-                                            Geary.Folder.SpecialUse destination,
-                                            Gee.Collection<Geary.App.Conversation> conversations,
-                                            Gee.Collection<Geary.EmailIdentifier> messages)
+    public async void move_messages_special(Convey.Folder source,
+                                            Convey.Folder.SpecialUse destination,
+                                            Gee.Collection<Convey.App.Conversation> conversations,
+                                            Gee.Collection<Convey.EmailIdentifier> messages)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
@@ -735,11 +735,11 @@ internal class Application.Controller :
             ).printf(Util.I18n.to_folder_display_name(source));
 
             if (destination == ARCHIVE) {
-                Geary.FolderSupport.Archive? archive_source = (
-                    source as Geary.FolderSupport.Archive
+                Convey.FolderSupport.Archive? archive_source = (
+                    source as Convey.FolderSupport.Archive
                 );
                 if (archive_source == null) {
-                    throw new Geary.EngineError.UNSUPPORTED(
+                    throw new Convey.EngineError.UNSUPPORTED(
                         "Folder does not support archiving: %s",
                         source.to_string()
                     );
@@ -757,21 +757,21 @@ internal class Application.Controller :
                     undone_tooltip
                 );
             } else {
-                Geary.FolderSupport.Move? move_source = (
-                    source as Geary.FolderSupport.Move
+                Convey.FolderSupport.Move? move_source = (
+                    source as Convey.FolderSupport.Move
                 );
                 if (move_source == null) {
-                    throw new Geary.EngineError.UNSUPPORTED(
+                    throw new Convey.EngineError.UNSUPPORTED(
                         "Folder does not support moving: %s",
                         source.to_string()
                     );
                 }
 
-                Geary.Folder? dest = source.account.get_special_folder(
+                Convey.Folder? dest = source.account.get_special_folder(
                     destination
                 );
                 if (dest == null) {
-                    throw new Geary.EngineError.NOT_FOUND(
+                    throw new Convey.EngineError.NOT_FOUND(
                         "No folder found for: %s", destination.to_string()
                     );
                 }
@@ -797,9 +797,9 @@ internal class Application.Controller :
         }
     }
 
-    public async void copy_conversations(Geary.FolderSupport.Copy source,
-                                         Geary.Folder destination,
-                                         Gee.Collection<Geary.App.Conversation> conversations)
+    public async void copy_conversations(Convey.FolderSupport.Copy source,
+                                         Convey.Folder destination,
+                                         Gee.Collection<Convey.App.Conversation> conversations)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
@@ -831,8 +831,8 @@ internal class Application.Controller :
         }
     }
 
-    public async void delete_conversations(Geary.FolderSupport.Remove target,
-                                           Gee.Collection<Geary.App.Conversation> conversations)
+    public async void delete_conversations(Convey.FolderSupport.Remove target,
+                                           Gee.Collection<Convey.App.Conversation> conversations)
         throws GLib.Error {
         var messages = target.properties.is_virtual
             ? to_all_email_ids(conversations)
@@ -840,9 +840,9 @@ internal class Application.Controller :
         yield delete_messages(target, conversations, messages);
     }
 
-    public async void delete_messages(Geary.FolderSupport.Remove target,
-                                      Gee.Collection<Geary.App.Conversation> conversations,
-                                      Gee.Collection<Geary.EmailIdentifier> messages)
+    public async void delete_messages(Convey.FolderSupport.Remove target,
+                                      Gee.Collection<Convey.App.Conversation> conversations,
+                                      Gee.Collection<Convey.EmailIdentifier> messages)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(target.account.information);
         if (context != null) {
@@ -856,15 +856,15 @@ internal class Application.Controller :
         }
     }
 
-    public async void empty_folder(Geary.Folder target)
+    public async void empty_folder(Convey.Folder target)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(target.account.information);
         if (context != null) {
-            Geary.FolderSupport.Empty? emptyable = (
-                target as Geary.FolderSupport.Empty
+            Convey.FolderSupport.Empty? emptyable = (
+                target as Convey.FolderSupport.Empty
             );
             if (emptyable == null) {
-                throw new Geary.EngineError.UNSUPPORTED(
+                throw new Convey.EngineError.UNSUPPORTED(
                     "Emptying folder not supported %s", target.path.to_string()
                 );
             }
@@ -873,7 +873,7 @@ internal class Application.Controller :
             command.executed.connect(
                 // Not quite accurate, but close enough
                 () => context.controller_stack.folders_removed(
-                    Geary.Collection.single(emptyable)
+                    Convey.Collection.single(emptyable)
                 )
             );
             yield context.commands.execute(command, context.cancellable);
@@ -881,7 +881,7 @@ internal class Application.Controller :
     }
 
     /** Returns a context for an account, if any. */
-    internal AccountContext? get_context_for_account(Geary.AccountInformation account) {
+    internal AccountContext? get_context_for_account(Convey.AccountInformation account) {
         return this.accounts.get(account);
     }
 
@@ -915,7 +915,7 @@ internal class Application.Controller :
                 context.cancellable
             );
         } catch (GLib.Error err) {
-            report_problem(new Geary.ProblemReport(err));
+            report_problem(new Convey.ProblemReport(err));
         }
     }
 
@@ -932,7 +932,7 @@ internal class Application.Controller :
                 context.cancellable
             );
         } catch (GLib.Error err) {
-            report_problem(new Geary.ProblemReport(err));
+            report_problem(new Convey.ProblemReport(err));
         }
     }
 
@@ -945,7 +945,7 @@ internal class Application.Controller :
                 context.cancellable
             );
         } catch (GLib.Error err) {
-            report_problem(new Geary.ProblemReport(err));
+            report_problem(new Convey.ProblemReport(err));
         }
     }
 
@@ -958,25 +958,25 @@ internal class Application.Controller :
         try {
             yield this.account_manager.expunge_accounts(this.controller_open);
         } catch (GLib.Error err) {
-            report_problem(new Geary.ProblemReport(err));
+            report_problem(new Convey.ProblemReport(err));
         }
     }
 
-    private void add_account(Geary.AccountInformation added) {
+    private void add_account(Convey.AccountInformation added) {
         try {
             this.application.engine.add_account(added);
-        } catch (Geary.EngineError.ALREADY_EXISTS err) {
+        } catch (Convey.EngineError.ALREADY_EXISTS err) {
             // all good
         } catch (GLib.Error err) {
-            report_problem(new Geary.AccountProblemReport(added, err));
+            report_problem(new Convey.AccountProblemReport(added, err));
         }
     }
 
-    private async void open_account(Geary.Account account) {
+    private async void open_account(Convey.Account account) {
         AccountContext context = new AccountContext(
             account,
-            new Geary.App.SearchFolder(account, account.local_folder_root),
-            new Geary.App.EmailStore(account),
+            new Convey.App.SearchFolder(account, account.local_folder_root),
+            new Convey.App.EmailStore(account),
             new Application.ContactStore(account, this.folks)
         );
         this.accounts.set(account.information, context);
@@ -993,15 +993,15 @@ internal class Application.Controller :
         account.folders_available_unavailable.connect(on_folders_available_unavailable);
         account.report_problem.connect(on_report_problem);
 
-        Geary.Smtp.ClientService? smtp = (
-            account.outgoing as Geary.Smtp.ClientService
+        Convey.Smtp.ClientService? smtp = (
+            account.outgoing as Convey.Smtp.ClientService
         );
         if (smtp != null) {
             smtp.email_sent.connect(on_sent);
         }
 
-        Geary.AccountSupport.QueueSend? queue_send = (
-            account as Geary.AccountSupport.QueueSend
+        Convey.AccountSupport.QueueSend? queue_send = (
+            account as Convey.AccountSupport.QueueSend
         );
         if (queue_send != null) {
             queue_send.email_sent.connect(on_graph_sent);
@@ -1020,13 +1020,13 @@ internal class Application.Controller :
             } catch (GLib.Error open_err) {
                 debug("Unable to open account %s: %s", account.to_string(), open_err.message);
 
-                if (open_err is Geary.EngineError.CORRUPT) {
+                if (open_err is Convey.EngineError.CORRUPT) {
                     retry = yield account_database_error_async(account);
                 }
 
                 if (!retry) {
                     report_problem(
-                        new Geary.AccountProblemReport(
+                        new Convey.AccountProblemReport(
                             account.information,
                             open_err
                         )
@@ -1041,25 +1041,25 @@ internal class Application.Controller :
         update_account_status();
     }
 
-    private async void remove_account(Geary.AccountInformation removed) {
+    private async void remove_account(Convey.AccountInformation removed) {
         yield close_account(removed, false);
         try {
             this.application.engine.remove_account(removed);
-        } catch (Geary.EngineError.NOT_FOUND err) {
+        } catch (Convey.EngineError.NOT_FOUND err) {
             // all good
         } catch (GLib.Error err) {
             report_problem(
-                new Geary.AccountProblemReport(removed, err)
+                new Convey.AccountProblemReport(removed, err)
             );
         }
     }
 
-    private async void close_account(Geary.AccountInformation config,
+    private async void close_account(Convey.AccountInformation config,
                                      bool is_shutdown) {
         AccountContext? context = this.accounts.get(config);
         if (context != null) {
             debug("Closing account: %s", context.account.information.id);
-            Geary.Account account = context.account;
+            Convey.Account account = context.account;
 
             account_unavailable(context, is_shutdown);
 
@@ -1081,15 +1081,15 @@ internal class Application.Controller :
 
             account.folders_available_unavailable.disconnect(on_folders_available_unavailable);
 
-            Geary.Smtp.ClientService? smtp = (
-                account.outgoing as Geary.Smtp.ClientService
+            Convey.Smtp.ClientService? smtp = (
+                account.outgoing as Convey.Smtp.ClientService
             );
             if (smtp != null) {
                 smtp.email_sent.disconnect(on_sent);
             }
 
-            Geary.AccountSupport.QueueSend? queue_send = (
-                account as Geary.AccountSupport.QueueSend
+            Convey.AccountSupport.QueueSend? queue_send = (
+                account as Convey.AccountSupport.QueueSend
             );
             if (queue_send != null) {
                 queue_send.email_sent.disconnect(on_graph_sent);
@@ -1105,7 +1105,7 @@ internal class Application.Controller :
             context.cancellable.cancel();
 
             // Explicitly close the inbox since we explicitly open it
-            Geary.Folder? inbox = context.inbox;
+            Convey.Folder? inbox = context.inbox;
             if (inbox != null) {
                 try {
                     yield inbox.close_async(null);
@@ -1129,14 +1129,14 @@ internal class Application.Controller :
         // Start off assuming all accounts are online and error free
         // (i.e. no status issues to indicate) and proceed until
         // proven incorrect.
-        Geary.Account.Status effective_status = ONLINE;
+        Convey.Account.Status effective_status = ONLINE;
         bool has_auth_error = false;
         bool has_cert_error = false;
-        Geary.Account? service_problem_source = null;
+        Convey.Account? service_problem_source = null;
         foreach (AccountContext context in this.accounts.values) {
-            Geary.Account.Status status = context.get_effective_status();
+            Convey.Account.Status status = context.get_effective_status();
             if (!status.is_online()) {
-                effective_status &= ~Geary.Account.Status.ONLINE;
+                effective_status &= ~Convey.Account.Status.ONLINE;
             }
             if (status.has_service_problem()) {
                 effective_status |= SERVICE_PROBLEM;
@@ -1170,10 +1170,10 @@ internal class Application.Controller :
     }
 
     private async void prompt_for_password(AccountContext context,
-                                           Geary.ServiceInformation service) {
-        Geary.AccountInformation account = context.account.information;
+                                           Convey.ServiceInformation service) {
+        Convey.AccountInformation account = context.account.information;
         bool is_incoming = (service == account.incoming);
-        Geary.Credentials credentials = is_incoming
+        Convey.Credentials credentials = is_incoming
             ? account.incoming.credentials
             : account.get_outgoing_credentials();
 
@@ -1194,7 +1194,7 @@ internal class Application.Controller :
                 // Bail out right away, but probably should be opening
                 // the GOA control panel.
                 handled = false;
-                report_problem(new Geary.AccountProblemReport(account, err));
+                report_problem(new Convey.AccountProblemReport(account, err));
             }
             context.authentication_prompting = false;
         } else {
@@ -1213,7 +1213,7 @@ internal class Application.Controller :
             if (password != null) {
                 // The update the credentials for the service that the
                 // credentials actually came from
-                Geary.ServiceInformation creds_service =
+                Convey.ServiceInformation creds_service =
                     (credentials == account.incoming.credentials)
                     ? account.incoming
                     : account.outgoing;
@@ -1243,7 +1243,7 @@ internal class Application.Controller :
                     // all good
                 } catch (GLib.Error err) {
                     report_problem(
-                        new Geary.ServiceProblemReport(account, service, err)
+                        new Convey.ServiceProblemReport(account, service, err)
                     );
                 }
 
@@ -1262,7 +1262,7 @@ internal class Application.Controller :
                 );
             } catch (GLib.Error err) {
                 report_problem(
-                    new Geary.ServiceProblemReport(account, service, err)
+                    new Convey.ServiceProblemReport(account, service, err)
                 );
             }
         } else {
@@ -1273,8 +1273,8 @@ internal class Application.Controller :
     }
 
     private async void prompt_untrusted_host(AccountContext context,
-                                             Geary.ServiceInformation service,
-                                             Geary.Endpoint endpoint,
+                                             Convey.ServiceInformation service,
+                                             Convey.Endpoint endpoint,
                                              GLib.TlsConnection cx) {
         if (this.application.config.revoke_certs) {
             // XXX
@@ -1299,7 +1299,7 @@ internal class Application.Controller :
             // since the cert may not have been saved
             context.tls_validation_failed = false;
             report_problem(
-                new Geary.ServiceProblemReport(
+                new Convey.ServiceProblemReport(
                     context.account.information,
                     service,
                     err
@@ -1312,15 +1312,15 @@ internal class Application.Controller :
     }
 
     // Returns true if the caller should try opening the account again
-    private async bool account_database_error_async(Geary.Account account) {
-        // give the user two options: reset the Account local store, or exit Geary.  A third
+    private async bool account_database_error_async(Convey.Account account) {
+        // give the user two options: reset the Account local store, or exit Convey.  A third
         // could be done to leave the Account in an unopened state, but we don't currently
         // have provisions for that.
         var dialog = new Adw.AlertDialog(
             _("Unable to open the database for %s").printf(account.information.id),
             null);
         dialog.format_body_markup(
-            _("There was an error opening the local mail database for this account. This is possibly due to corruption of the database file in this directory:\n\n%s\n\nGeary can rebuild the database and re-synchronize with the server or exit.\n\nRebuilding the database will destroy all local email and its attachments. <b>The mail on the your server will not be affected.</b>"),
+            _("There was an error opening the local mail database for this account. This is possibly due to corruption of the database file in this directory:\n\n%s\n\nConvey can rebuild the database and re-synchronize with the server or exit.\n\nRebuilding the database will destroy all local email and its attachments. <b>The mail on the your server will not be affected.</b>"),
             account.information.data_dir.get_path());
         dialog.add_response("exit", _("E_xit"));
         dialog.add_response("rebuild", _("_Rebuild"));
@@ -1348,9 +1348,9 @@ internal class Application.Controller :
     }
 
     private void on_folders_available_unavailable(
-        Geary.Account account,
-        Gee.BidirSortedSet<Geary.Folder>? available,
-        Gee.BidirSortedSet<Geary.Folder>? unavailable) {
+        Convey.Account account,
+        Gee.BidirSortedSet<Convey.Folder>? available,
+        Gee.BidirSortedSet<Convey.Folder>? unavailable) {
         var account_context = this.accounts.get(account.information);
 
         if (available != null && available.size > 0) {
@@ -1376,12 +1376,12 @@ internal class Application.Controller :
         }
 
         if (unavailable != null) {
-            Gee.BidirIterator<Geary.Folder> unavailable_iterator =
+            Gee.BidirIterator<Convey.Folder> unavailable_iterator =
                 unavailable.bidir_iterator();
             bool has_prev = unavailable_iterator.last();
             var removed_contexts = new Gee.LinkedList<FolderContext>();
             while (has_prev) {
-                Geary.Folder folder = unavailable_iterator.get();
+                Convey.Folder folder = unavailable_iterator.get();
 
                 if (folder.used_as == INBOX) {
                     account_context.inbox = null;
@@ -1404,8 +1404,8 @@ internal class Application.Controller :
     }
 
     /** Clears new message counts in notification plugin contexts. */
-    internal void clear_new_messages(Geary.Folder source,
-                                     Gee.Set<Geary.App.Conversation> visible) {
+    internal void clear_new_messages(Convey.Folder source,
+                                     Gee.Set<Convey.App.Conversation> visible) {
         foreach (MainWindow window in this.application.get_main_windows()) {
             window.folder_list.set_has_new(source, false);
         }
@@ -1416,8 +1416,8 @@ internal class Application.Controller :
     }
 
     /** Notifies plugins of new email being displayed. */
-    internal void email_loaded(Geary.AccountInformation account,
-                               Geary.Email loaded) {
+    internal void email_loaded(Convey.AccountInformation account,
+                               Convey.Email loaded) {
         foreach (EmailPluginContext plugin in
                  this.plugins.get_email_contexts()) {
             plugin.email_displayed(account, loaded);
@@ -1439,7 +1439,7 @@ internal class Application.Controller :
             foreach (AccountContext context in this.accounts.values) {
                 context.cancellable.cancelled.disconnect(this.storage_cleanup_cancellable.cancel);
 
-                Geary.Account account = context.account;
+                Convey.Account account = context.account;
                 account.last_storage_cleanup = null;
             }
             this.storage_cleanup_cancellable = null;
@@ -1495,7 +1495,7 @@ internal class Application.Controller :
         }
     }
 
-    private void on_graph_sent(Geary.AccountSupport.QueueSend account) {
+    private void on_graph_sent(Convey.AccountSupport.QueueSend account) {
         /// Translators: The label for an in-app notification.
         string message = _("Email sent");
         foreach (MainWindow window in this.application.get_main_windows()) {
@@ -1510,8 +1510,8 @@ internal class Application.Controller :
         }
     }
 
-    private void on_sent(Geary.Smtp.ClientService service,
-                         Geary.Email sent) {
+    private void on_sent(Convey.Smtp.ClientService service,
+                         Convey.Email sent) {
         /// Translators: The label for an in-app notification.
         string message = _("Email sent");
         var toast = new Adw.Toast(message);
@@ -1529,12 +1529,12 @@ internal class Application.Controller :
         }
     }
 
-    private Gee.Collection<Geary.EmailIdentifier>
-        to_in_folder_email_ids(Gee.Collection<Geary.App.Conversation> conversations) {
-        Gee.Collection<Geary.EmailIdentifier> messages =
-            new Gee.LinkedList<Geary.EmailIdentifier>();
-        foreach (Geary.App.Conversation conversation in conversations) {
-            foreach (Geary.Email email in
+    private Gee.Collection<Convey.EmailIdentifier>
+        to_in_folder_email_ids(Gee.Collection<Convey.App.Conversation> conversations) {
+        Gee.Collection<Convey.EmailIdentifier> messages =
+            new Gee.LinkedList<Convey.EmailIdentifier>();
+        foreach (Convey.App.Conversation conversation in conversations) {
+            foreach (Convey.Email email in
                      conversation.get_emails(RECV_DATE_ASCENDING, IN_FOLDER)) {
                 messages.add(email.id);
             }
@@ -1542,24 +1542,24 @@ internal class Application.Controller :
         return messages;
     }
 
-    private Gee.Collection<Geary.EmailIdentifier>
-        to_all_email_ids(Gee.Collection<Geary.App.Conversation> conversations) {
-        Gee.Collection<Geary.EmailIdentifier> messages =
-            new Gee.LinkedList<Geary.EmailIdentifier>();
-        foreach (Geary.App.Conversation conversation in conversations) {
-            foreach (Geary.Email email in conversation.get_emails(NONE)) {
+    private Gee.Collection<Convey.EmailIdentifier>
+        to_all_email_ids(Gee.Collection<Convey.App.Conversation> conversations) {
+        Gee.Collection<Convey.EmailIdentifier> messages =
+            new Gee.LinkedList<Convey.EmailIdentifier>();
+        foreach (Convey.App.Conversation conversation in conversations) {
+            foreach (Convey.Email email in conversation.get_emails(NONE)) {
                 messages.add(email.id);
             }
         }
         return messages;
     }
 
-    private void on_account_available(Geary.AccountInformation info) {
-        Geary.Account? account = null;
+    private void on_account_available(Convey.AccountInformation info) {
+        Convey.Account? account = null;
         try {
             account = this.application.engine.get_account(info);
         } catch (GLib.Error error) {
-            report_problem(new Geary.ProblemReport(error));
+            report_problem(new Convey.ProblemReport(error));
             warning(
                 "Error creating account %s instance: %s",
                 info.id,
@@ -1572,14 +1572,14 @@ internal class Application.Controller :
         }
     }
 
-    private void on_account_added(Geary.AccountInformation added,
+    private void on_account_added(Convey.AccountInformation added,
                                   Accounts.Manager.Status status) {
         if (status == Accounts.Manager.Status.ENABLED) {
             this.add_account(added);
         }
     }
 
-    private void on_account_status_changed(Geary.AccountInformation changed,
+    private void on_account_status_changed(Convey.AccountInformation changed,
                                            Accounts.Manager.Status status) {
         switch (status) {
         case Accounts.Manager.Status.ENABLED:
@@ -1597,26 +1597,26 @@ internal class Application.Controller :
         }
     }
 
-    private void on_account_removed(Geary.AccountInformation removed) {
+    private void on_account_removed(Convey.AccountInformation removed) {
         this.remove_account.begin(removed);
     }
 
-    private void on_report_problem(Geary.ProblemReport problem) {
+    private void on_report_problem(Convey.ProblemReport problem) {
         report_problem(problem);
     }
 
     private void on_retry_problem(Components.ProblemReportInfoBar info_bar) {
-        Geary.ServiceProblemReport? service_report =
-            info_bar.report as Geary.ServiceProblemReport;
+        Convey.ServiceProblemReport? service_report =
+            info_bar.report as Convey.ServiceProblemReport;
         if (service_report != null) {
             AccountContext? context = this.accounts.get(service_report.account);
             if (context != null && context.account.is_open()) {
                 switch (service_report.service.protocol) {
-                case Geary.Protocol.IMAP:
+                case Convey.Protocol.IMAP:
                     context.account.incoming.restart.begin(context.cancellable);
                     break;
 
-                case Geary.Protocol.SMTP:
+                case Convey.Protocol.SMTP:
                     context.account.outgoing.restart.begin(context.cancellable);
                     break;
                 }
@@ -1628,17 +1628,17 @@ internal class Application.Controller :
         update_account_status();
     }
 
-    private void on_authentication_failure(Geary.AccountInformation account,
-                                           Geary.ServiceInformation service) {
+    private void on_authentication_failure(Convey.AccountInformation account,
+                                           Convey.ServiceInformation service) {
         AccountContext? context = this.accounts.get(account);
         if (context != null && !is_currently_prompting()) {
             this.prompt_for_password.begin(context, service);
         }
     }
 
-    private void on_untrusted_host(Geary.AccountInformation account,
-                                   Geary.ServiceInformation service,
-                                   Geary.Endpoint endpoint,
+    private void on_untrusted_host(Convey.AccountInformation account,
+                                   Convey.ServiceInformation service,
+                                   Convey.Endpoint endpoint,
                                    TlsConnection cx) {
         AccountContext? context = this.accounts.get(account);
         if (context != null && !is_currently_prompting()) {
@@ -1646,15 +1646,15 @@ internal class Application.Controller :
         }
     }
 
-    private void on_retry_service_problem(Geary.ClientService.Status type) {
+    private void on_retry_service_problem(Convey.ClientService.Status type) {
         bool has_restarted = false;
         foreach (AccountContext context in this.accounts.values) {
-            Geary.Account account = context.account;
+            Convey.Account account = context.account;
             if (account.current_status.has_service_problem() &&
                 (account.incoming.current_status == type ||
                  account.outgoing.current_status == type)) {
 
-                Geary.ClientService service =
+                Convey.ClientService service =
                     (account.incoming.current_status == type)
                         ? account.incoming
                         : account.outgoing;
@@ -1712,12 +1712,12 @@ internal class Application.Controller :
         this.storage_cleanup_cancellable = new GLib.Cancellable();
 
         foreach (AccountContext context in this.accounts.values) {
-            Geary.Account account = context.account;
+            Convey.Account account = context.account;
             context.cancellable.cancelled.connect(this.storage_cleanup_cancellable.cancel);
             try {
                 yield account.cleanup_storage(this.storage_cleanup_cancellable);
             } catch (GLib.Error err) {
-                report_problem(new Geary.ProblemReport(err));
+                report_problem(new Convey.ProblemReport(err));
             }
             context.cancellable.cancelled.disconnect(this.storage_cleanup_cancellable.cancel);
             if (this.storage_cleanup_cancellable.is_cancelled())
@@ -1734,11 +1734,11 @@ internal class Application.ControllerCommandStack : CommandStack {
 
 
     private EmailCommand? last_executed = null;
-    private Geary.TimeoutManager last_executed_timeout;
+    private Convey.TimeoutManager last_executed_timeout;
 
 
     public ControllerCommandStack() {
-        this.last_executed_timeout = new Geary.TimeoutManager.milliseconds(
+        this.last_executed_timeout = new Convey.TimeoutManager.milliseconds(
             250,
             () => { this.last_executed = null; }
         );
@@ -1780,7 +1780,7 @@ internal class Application.ControllerCommandStack : CommandStack {
      * to un-recoverable changes, e.g. when the server notifies that a
      * folder has been removed.
      */
-    internal void folders_removed(Gee.Collection<Geary.Folder> removed) {
+    internal void folders_removed(Gee.Collection<Convey.Folder> removed) {
         Gee.Iterator<Command> commands = this.undo_stack.iterator();
         while (commands.next()) {
             EmailCommand? email = commands.get() as EmailCommand;
@@ -1803,8 +1803,8 @@ internal class Application.ControllerCommandStack : CommandStack {
      * removed as a result of some other client removing it, or the
      * message being deleted completely.
      */
-    internal void email_removed(Geary.Folder location,
-                                Gee.Collection<Geary.EmailIdentifier> targets) {
+    internal void email_removed(Convey.Folder location,
+                                Gee.Collection<Convey.EmailIdentifier> targets) {
         Gee.Iterator<Command> commands = this.undo_stack.iterator();
         while (commands.next()) {
             EmailCommand? email = commands.get() as EmailCommand;
@@ -1839,7 +1839,7 @@ public abstract class Application.EmailCommand : Command {
      * This is used by the main window to return to the folder where
      * the command was first carried out.
      */
-    public Geary.Folder location {
+    public Convey.Folder location {
         get; protected set;
     }
 
@@ -1849,7 +1849,7 @@ public abstract class Application.EmailCommand : Command {
      * This is used by the main window to return to the conversation where
      * the command was first carried out.
      */
-    public Gee.Collection<Geary.App.Conversation> conversations {
+    public Gee.Collection<Convey.App.Conversation> conversations {
         get; private set;
     }
 
@@ -1859,17 +1859,17 @@ public abstract class Application.EmailCommand : Command {
      * This is used by the main window to return to the conversation where
      * the command was first carried out.
      */
-    public Gee.Collection<Geary.EmailIdentifier> email {
+    public Gee.Collection<Convey.EmailIdentifier> email {
         get; private set;
     }
 
-    private Gee.Collection<Geary.App.Conversation> mutable_conversations;
-    private Gee.Collection<Geary.EmailIdentifier> mutable_email;
+    private Gee.Collection<Convey.App.Conversation> mutable_conversations;
+    private Gee.Collection<Convey.EmailIdentifier> mutable_email;
 
 
-    protected EmailCommand(Geary.Folder location,
-                           Gee.Collection<Geary.App.Conversation> conversations,
-                           Gee.Collection<Geary.EmailIdentifier> email) {
+    protected EmailCommand(Convey.Folder location,
+                           Gee.Collection<Convey.App.Conversation> conversations,
+                           Gee.Collection<Convey.EmailIdentifier> email) {
         this.location = location;
         this.conversations = conversations.read_only_view;
         this.email = email.read_only_view;
@@ -1914,7 +1914,7 @@ public abstract class Application.EmailCommand : Command {
      * longer valid and hence must be removed.
      */
     internal virtual StateChangePolicy folders_removed(
-        Gee.Collection<Geary.Folder> removed
+        Gee.Collection<Convey.Folder> removed
     ) {
         return (
             this.location in removed
@@ -1935,15 +1935,15 @@ public abstract class Application.EmailCommand : Command {
      * longer valid and hence must be removed.
      */
     internal virtual StateChangePolicy email_removed(
-        Geary.Folder location,
-        Gee.Collection<Geary.EmailIdentifier> targets
+        Convey.Folder location,
+        Gee.Collection<Convey.EmailIdentifier> targets
     ) {
         StateChangePolicy ret = IGNORE;
         if (this.location == location) {
             // Any removed email should have already been removed from
             // their conversations by the time we here, so just remove
             // any conversations that don't have any messages left.
-            Gee.Iterator<Geary.App.Conversation> conversations =
+            Gee.Iterator<Convey.App.Conversation> conversations =
                 this.mutable_conversations.iterator();
             while (conversations.next()) {
                 var conversation = conversations.get();
@@ -1983,17 +1983,17 @@ public interface Application.TrivialCommand : Command {
 private class Application.MarkEmailCommand : TrivialCommand, EmailCommand {
 
 
-    private Geary.App.EmailStore store;
-    private Geary.EmailFlags? to_add;
-    private Geary.EmailFlags? to_remove;
+    private Convey.App.EmailStore store;
+    private Convey.EmailFlags? to_add;
+    private Convey.EmailFlags? to_remove;
 
 
-    public MarkEmailCommand(Geary.Folder location,
-                            Gee.Collection<Geary.App.Conversation> conversations,
-                            Gee.Collection<Geary.EmailIdentifier> messages,
-                            Geary.App.EmailStore store,
-                            Geary.EmailFlags? to_add,
-                            Geary.EmailFlags? to_remove,
+    public MarkEmailCommand(Convey.Folder location,
+                            Gee.Collection<Convey.App.Conversation> conversations,
+                            Gee.Collection<Convey.EmailIdentifier> messages,
+                            Convey.App.EmailStore store,
+                            Convey.EmailFlags? to_add,
+                            Convey.EmailFlags? to_remove,
                             string? executed_label = null,
                             string? undone_label = null) {
         base(location, conversations, messages);
@@ -2049,12 +2049,12 @@ private abstract class Application.RevokableCommand : EmailCommand {
         get { return this.revokable != null && this.revokable.valid; }
     }
 
-    private Geary.Revokable? revokable = null;
+    private Convey.Revokable? revokable = null;
 
 
-    protected RevokableCommand(Geary.Folder location,
-                               Gee.Collection<Geary.App.Conversation> conversations,
-                               Gee.Collection<Geary.EmailIdentifier> email) {
+    protected RevokableCommand(Convey.Folder location,
+                               Gee.Collection<Convey.App.Conversation> conversations,
+                               Gee.Collection<Convey.EmailIdentifier> email) {
         base(location, conversations, email);
     }
 
@@ -2069,7 +2069,7 @@ private abstract class Application.RevokableCommand : EmailCommand {
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (this.revokable == null) {
-            throw new Geary.EngineError.UNSUPPORTED(
+            throw new Convey.EngineError.UNSUPPORTED(
                 "Cannot undo command, no revokable available"
             );
         }
@@ -2078,11 +2078,11 @@ private abstract class Application.RevokableCommand : EmailCommand {
         set_revokable(null);
     }
 
-    protected abstract async Geary.Revokable
+    protected abstract async Convey.Revokable
         execute_impl(GLib.Cancellable cancellable)
         throws GLib.Error;
 
-    private void set_revokable(Geary.Revokable? updated) {
+    private void set_revokable(Convey.Revokable? updated) {
         if (this.revokable != null) {
             this.revokable.committed.disconnect(on_revokable_committed);
         }
@@ -2094,7 +2094,7 @@ private abstract class Application.RevokableCommand : EmailCommand {
         }
     }
 
-    private void on_revokable_committed(Geary.Revokable? updated) {
+    private void on_revokable_committed(Convey.Revokable? updated) {
         set_revokable(updated);
     }
 
@@ -2104,14 +2104,14 @@ private abstract class Application.RevokableCommand : EmailCommand {
 private class Application.MoveEmailCommand : RevokableCommand {
 
 
-    private Geary.FolderSupport.Move source;
-    private Geary.Folder destination;
+    private Convey.FolderSupport.Move source;
+    private Convey.Folder destination;
 
 
-    public MoveEmailCommand(Geary.FolderSupport.Move source,
-                            Geary.Folder destination,
-                            Gee.Collection<Geary.App.Conversation> conversations,
-                            Gee.Collection<Geary.EmailIdentifier> messages,
+    public MoveEmailCommand(Convey.FolderSupport.Move source,
+                            Convey.Folder destination,
+                            Gee.Collection<Convey.App.Conversation> conversations,
+                            Gee.Collection<Convey.EmailIdentifier> messages,
                             string? executed_label = null,
                             string? undone_label = null) {
         base(source, conversations, messages);
@@ -2124,7 +2124,7 @@ private class Application.MoveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy folders_removed(
-        Gee.Collection<Geary.Folder> removed
+        Gee.Collection<Convey.Folder> removed
     ) {
         return (
             this.destination in removed
@@ -2134,8 +2134,8 @@ private class Application.MoveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy email_removed(
-        Geary.Folder location,
-        Gee.Collection<Geary.EmailIdentifier> targets
+        Convey.Folder location,
+        Gee.Collection<Convey.EmailIdentifier> targets
     ) {
         // With the current revokable mechanism we can't determine if
         // specific messages removed from the destination are
@@ -2148,13 +2148,13 @@ private class Application.MoveEmailCommand : RevokableCommand {
         );
     }
 
-    protected override async Geary.Revokable
+    protected override async Convey.Revokable
         execute_impl(GLib.Cancellable cancellable)
         throws GLib.Error {
         bool open = false;
         try {
             yield this.source.open_async(
-                Geary.Folder.OpenFlags.NO_DELAY, cancellable
+                Convey.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             return yield this.source.move_email_async(
@@ -2180,26 +2180,26 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
 
 
     /** {@inheritDoc} */
-    public Geary.Folder command_location {
+    public Convey.Folder command_location {
         get; protected set;
     }
 
     /** {@inheritDoc} */
-    public Gee.Collection<Geary.EmailIdentifier> command_conversations {
+    public Gee.Collection<Convey.EmailIdentifier> command_conversations {
         get; protected set;
     }
 
     /** {@inheritDoc} */
-    public Gee.Collection<Geary.EmailIdentifier> command_email {
+    public Gee.Collection<Convey.EmailIdentifier> command_email {
         get; protected set;
     }
 
-    private Geary.FolderSupport.Archive source;
+    private Convey.FolderSupport.Archive source;
 
 
-    public ArchiveEmailCommand(Geary.FolderSupport.Archive source,
-                               Gee.Collection<Geary.App.Conversation> conversations,
-                               Gee.Collection<Geary.EmailIdentifier> messages,
+    public ArchiveEmailCommand(Convey.FolderSupport.Archive source,
+                               Gee.Collection<Convey.App.Conversation> conversations,
+                               Gee.Collection<Convey.EmailIdentifier> messages,
                                string? executed_label = null,
                                string? undone_label = null) {
         base(source, conversations, messages);
@@ -2210,7 +2210,7 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy folders_removed(
-        Gee.Collection<Geary.Folder> removed
+        Gee.Collection<Convey.Folder> removed
     ) {
         EmailCommand.StateChangePolicy ret = base.folders_removed(removed);
         if (ret == IGNORE) {
@@ -2229,8 +2229,8 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy email_removed(
-        Geary.Folder location,
-        Gee.Collection<Geary.EmailIdentifier> targets
+        Convey.Folder location,
+        Gee.Collection<Convey.EmailIdentifier> targets
     ) {
         // With the current revokable mechanism we can't determine if
         // specific messages removed from the destination are
@@ -2243,13 +2243,13 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
         );
     }
 
-    protected override async Geary.Revokable
+    protected override async Convey.Revokable
         execute_impl(GLib.Cancellable cancellable)
         throws GLib.Error {
         bool open = false;
         try {
             yield this.source.open_async(
-                Geary.Folder.OpenFlags.NO_DELAY, cancellable
+                Convey.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             return yield this.source.archive_email_async(
@@ -2277,14 +2277,14 @@ private class Application.CopyEmailCommand : EmailCommand {
         get { return false; }
     }
 
-    private Geary.FolderSupport.Copy source;
-    private Geary.Folder destination;
+    private Convey.FolderSupport.Copy source;
+    private Convey.Folder destination;
 
 
-    public CopyEmailCommand(Geary.FolderSupport.Copy source,
-                            Geary.Folder destination,
-                            Gee.Collection<Geary.App.Conversation> conversations,
-                            Gee.Collection<Geary.EmailIdentifier> messages,
+    public CopyEmailCommand(Convey.FolderSupport.Copy source,
+                            Convey.Folder destination,
+                            Gee.Collection<Convey.App.Conversation> conversations,
+                            Gee.Collection<Convey.EmailIdentifier> messages,
                             string? executed_label = null,
                             string? undone_label = null) {
         base(source, conversations, messages);
@@ -2300,7 +2300,7 @@ private class Application.CopyEmailCommand : EmailCommand {
         bool open = false;
         try {
             yield this.source.open_async(
-                Geary.Folder.OpenFlags.NO_DELAY, cancellable
+                Convey.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             yield this.source.copy_email_async(
@@ -2319,13 +2319,13 @@ private class Application.CopyEmailCommand : EmailCommand {
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        throw new Geary.EngineError.UNSUPPORTED(
+        throw new Convey.EngineError.UNSUPPORTED(
             "Cannot undo copy, not yet supported"
         );
     }
 
     internal override EmailCommand.StateChangePolicy folders_removed(
-        Gee.Collection<Geary.Folder> removed
+        Gee.Collection<Convey.Folder> removed
     ) {
         return (
             this.destination in removed
@@ -2335,8 +2335,8 @@ private class Application.CopyEmailCommand : EmailCommand {
     }
 
     internal override EmailCommand.StateChangePolicy email_removed(
-        Geary.Folder location,
-        Gee.Collection<Geary.EmailIdentifier> targets
+        Convey.Folder location,
+        Gee.Collection<Convey.EmailIdentifier> targets
     ) {
         // With the current revokable mechanism we can't determine if
         // specific messages removed from the destination are
@@ -2359,12 +2359,12 @@ private class Application.DeleteEmailCommand : EmailCommand {
         get { return false; }
     }
 
-    private Geary.FolderSupport.Remove target;
+    private Convey.FolderSupport.Remove target;
 
 
-    public DeleteEmailCommand(Geary.FolderSupport.Remove target,
-                              Gee.Collection<Geary.App.Conversation> conversations,
-                              Gee.Collection<Geary.EmailIdentifier> email) {
+    public DeleteEmailCommand(Convey.FolderSupport.Remove target,
+                              Gee.Collection<Convey.App.Conversation> conversations,
+                              Gee.Collection<Convey.EmailIdentifier> email) {
         base(target, conversations, email);
         this.target = target;
     }
@@ -2374,7 +2374,7 @@ private class Application.DeleteEmailCommand : EmailCommand {
         bool open = false;
         try {
             yield this.target.open_async(
-                Geary.Folder.OpenFlags.NO_DELAY, cancellable
+                Convey.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             yield this.target.remove_email_async(this.email, cancellable);
@@ -2391,7 +2391,7 @@ private class Application.DeleteEmailCommand : EmailCommand {
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        throw new Geary.EngineError.UNSUPPORTED(
+        throw new Convey.EngineError.UNSUPPORTED(
             "Cannot undo emptying a folder: %s",
             this.target.path.to_string()
         );
@@ -2407,10 +2407,10 @@ private class Application.EmptyFolderCommand : Command {
         get { return false; }
     }
 
-    private Geary.FolderSupport.Empty target;
+    private Convey.FolderSupport.Empty target;
 
 
-    public EmptyFolderCommand(Geary.FolderSupport.Empty target) {
+    public EmptyFolderCommand(Convey.FolderSupport.Empty target) {
         this.target = target;
     }
 
@@ -2419,7 +2419,7 @@ private class Application.EmptyFolderCommand : Command {
         bool open = false;
         try {
             yield this.target.open_async(
-                Geary.Folder.OpenFlags.NO_DELAY, cancellable
+                Convey.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             yield this.target.empty_folder_async(cancellable);
@@ -2436,7 +2436,7 @@ private class Application.EmptyFolderCommand : Command {
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        throw new Geary.EngineError.UNSUPPORTED(
+        throw new Convey.EngineError.UNSUPPORTED(
             "Cannot undo emptying a folder: %s",
             this.target.path.to_string()
         );
@@ -2489,10 +2489,10 @@ private class Application.SendComposerCommand : ComposerCommand {
 
     private Client application;
     private AccountContext context;
-    private Geary.Smtp.ClientService? smtp;
-    private Geary.AccountSupport.QueueSend? queue_send;
-    private Geary.TimeoutManager commit_timer;
-    private Geary.EmailIdentifier? saved = null;
+    private Convey.Smtp.ClientService? smtp;
+    private Convey.AccountSupport.QueueSend? queue_send;
+    private Convey.TimeoutManager commit_timer;
+    private Convey.EmailIdentifier? saved = null;
     private string? saved_graph_message_id = null;
 
 
@@ -2502,11 +2502,11 @@ private class Application.SendComposerCommand : ComposerCommand {
         base(composer);
         this.application = application;
         this.context = context;
-        this.smtp = context.account.outgoing as Geary.Smtp.ClientService;
-        this.queue_send = context.account as Geary.AccountSupport.QueueSend;
+        this.smtp = context.account.outgoing as Convey.Smtp.ClientService;
+        this.queue_send = context.account as Convey.AccountSupport.QueueSend;
 
         int send_delay = this.application.config.undo_send_delay;
-        this.commit_timer = new Geary.TimeoutManager.seconds(
+        this.commit_timer = new Convey.TimeoutManager.seconds(
             send_delay > 0 ? send_delay : 0,
             on_commit_timeout
         );
@@ -2514,7 +2514,7 @@ private class Application.SendComposerCommand : ComposerCommand {
 
     public override async void execute(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Geary.ComposedEmail email = yield this.composer.to_composed_email();
+        Convey.ComposedEmail email = yield this.composer.to_composed_email();
         if (this.can_undo) {
             /// Translators: The label for an in-app notification. The
             /// string substitution is a list of recipients of the email.
@@ -2544,7 +2544,7 @@ private class Application.SendComposerCommand : ComposerCommand {
         this.commit_timer.reset();
         if (this.smtp != null) {
             yield this.smtp.outbox.remove_email_async(
-                Geary.Collection.single(this.saved),
+                Convey.Collection.single(this.saved),
                 cancellable
             );
             this.saved = null;
@@ -2583,7 +2583,7 @@ private class Application.SendComposerCommand : ComposerCommand {
             this.queue_send.queue_email.end(res);
         } catch (GLib.Error err) {
             this.application.controller.report_problem(
-                new Geary.ProblemReport(err)
+                new Convey.ProblemReport(err)
             );
         }
     }
@@ -2602,7 +2602,7 @@ private class Application.SaveComposerCommand : ComposerCommand {
 
     private Controller controller;
 
-    private Geary.TimeoutManager destroy_timer;
+    private Convey.TimeoutManager destroy_timer;
 
 
     public SaveComposerCommand(Controller controller,
@@ -2610,7 +2610,7 @@ private class Application.SaveComposerCommand : ComposerCommand {
         base(composer);
         this.controller = controller;
 
-        this.destroy_timer = new Geary.TimeoutManager.seconds(
+        this.destroy_timer = new Convey.TimeoutManager.seconds(
             DESTROY_TIMEOUT_SEC,
             on_destroy_timeout
         );
@@ -2656,7 +2656,7 @@ private class Application.DiscardComposerCommand : ComposerCommand {
 
     private Controller controller;
 
-    private Geary.TimeoutManager destroy_timer;
+    private Convey.TimeoutManager destroy_timer;
 
 
     public DiscardComposerCommand(Controller controller,
@@ -2664,7 +2664,7 @@ private class Application.DiscardComposerCommand : ComposerCommand {
         base(composer);
         this.controller = controller;
 
-        this.destroy_timer = new Geary.TimeoutManager.seconds(
+        this.destroy_timer = new Convey.TimeoutManager.seconds(
             DESTROY_TIMEOUT_SEC,
             on_destroy_timeout
         );

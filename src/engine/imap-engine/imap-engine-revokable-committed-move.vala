@@ -5,11 +5,11 @@
  */
 
 /**
- * A {@link Geary.Revokable} for moving email back to its source after committed with
+ * A {@link Convey.Revokable} for moving email back to its source after committed with
  * {@link RevokableMove}.
  */
 
-private class Geary.ImapEngine.RevokableCommittedMove : Revokable {
+private class Convey.ImapEngine.RevokableCommittedMove : Revokable {
     private GenericAccount account;
     private FolderPath source;
     private FolderPath destination;
@@ -40,7 +40,7 @@ private class Geary.ImapEngine.RevokableCommittedMove : Revokable {
 
             notify_revoked();
 
-            Geary.Folder target = this.account.get_folder(this.destination);
+            Convey.Folder target = this.account.get_folder(this.destination);
             this.account.update_folder(target);
         } finally {
             if (session != null) {

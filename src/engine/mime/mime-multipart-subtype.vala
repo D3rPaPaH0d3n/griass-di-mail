@@ -10,7 +10,7 @@
  * See [[https://tools.ietf.org/html/rfc2046#section-5.1]]
  */
 
-public enum Geary.Mime.MultipartSubtype {
+public enum Convey.Mime.MultipartSubtype {
     /**
      * Used as a placeholder for no or unknown multipart subtype.
      *

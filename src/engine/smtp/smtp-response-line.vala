@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Smtp.ResponseLine {
+public class Convey.Smtp.ResponseLine {
     public const char CONTINUED_CHAR = '-';
     public const char NOT_CONTINUED_CHAR = ' ';
 

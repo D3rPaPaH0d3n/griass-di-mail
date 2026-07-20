@@ -6,14 +6,14 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.App.ExternalAppendOperation : BatchOperation<EmailIdentifier> {
+private class Convey.App.ExternalAppendOperation : BatchOperation<EmailIdentifier> {
 
 
-    private Geary.Folder folder;
+    private Convey.Folder folder;
 
 
     public ExternalAppendOperation(ConversationMonitor monitor,
-                                   Geary.Folder folder,
+                                   Convey.Folder folder,
                                    Gee.Collection<EmailIdentifier> appended_ids) {
         base(monitor, appended_ids);
         this.folder = folder;
@@ -28,7 +28,7 @@ private class Geary.App.ExternalAppendOperation : BatchOperation<EmailIdentifier
                   this.folder.to_string());
 
             yield this.monitor.external_load_by_sparse_id(
-                this.folder, batch, Geary.Folder.ListFlags.NONE
+                this.folder, batch, Convey.Folder.ListFlags.NONE
             );
         }
     }

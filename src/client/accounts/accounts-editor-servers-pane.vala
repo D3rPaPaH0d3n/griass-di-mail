@@ -9,7 +9,7 @@
 /**
  * An account editor pane for editing server details for an account.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/accounts_editor_servers_pane.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_servers_pane.ui")]
 internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane {
 
 
@@ -17,7 +17,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     internal override weak Accounts.Editor editor { get; set; }
 
     /** {@inheritDoc} */
-    internal Geary.AccountInformation account { get ; protected set; }
+    internal Convey.AccountInformation account { get ; protected set; }
 
     /** {@inheritDoc} */
     internal Application.CommandStack commands {
@@ -35,7 +35,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         get; protected set; default = new GLib.Cancellable();
     }
 
-    private Geary.Engine engine;
+    private Convey.Engine engine;
 
     public Components.ValidatorGroup validators { get; construct set; }
 
@@ -59,7 +59,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     }
 
 
-    public EditorServersPane(Editor editor, Geary.AccountInformation account) {
+    public EditorServersPane(Editor editor, Convey.AccountInformation account) {
         this.editor = editor;
         this.account = account;
         this.engine = editor.application.engine;
@@ -123,15 +123,15 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
 
     private void fill_in_service_provider() {
         switch (this.account.service_provider) {
-        case Geary.ServiceProvider.GMAIL:
+        case Convey.ServiceProvider.GMAIL:
             this.service_provider_row.subtitle = _("Gmail");
             break;
 
-        case Geary.ServiceProvider.OUTLOOK:
+        case Convey.ServiceProvider.OUTLOOK:
             this.service_provider_row.subtitle = _("Outlook.com");
             break;
 
-        case Geary.ServiceProvider.OTHER:
+        case Convey.ServiceProvider.OTHER:
             this.service_provider_row.subtitle = this.account.service_label;
             break;
         }
@@ -152,7 +152,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         // settings
         bool is_valid = true;
         bool has_changed = false;
-        if (this.account.service_provider == Geary.ServiceProvider.OTHER &&
+        if (this.account.service_provider == Convey.ServiceProvider.OTHER &&
             !this.editor.accounts.is_goa_account(this.account)) {
             is_valid = yield validate(cancellable);
             if (is_valid) {
@@ -198,8 +198,8 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     private async bool validate(GLib.Cancellable? cancellable) {
         // Use a copy here so we can handle any prompting needed
         // (auth, certs) directly, rather than through the main window
-        Geary.AccountInformation local_account =
-            new Geary.AccountInformation.copy(this.account);
+        Convey.AccountInformation local_account =
+            new Convey.AccountInformation.copy(this.account);
         local_account.untrusted_host.connect(on_untrusted_host);
 
         string? message = null;
@@ -212,7 +212,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                 cancellable
             );
             imap_valid = true;
-        } catch (Geary.ImapError.UNAUTHENTICATED err) {
+        } catch (Convey.ImapError.UNAUTHENTICATED err) {
             debug("Error authenticating IMAP service: %s", err.message);
             // Translators: In-app notification label
             message = _("Check your receiving login and password");
@@ -224,7 +224,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
             // Nothing to do here, someone just cancelled
             debug("IMAP validation was cancelled: %s", err.message);
         } catch (GLib.Error err) {
-            Geary.ErrorContext context = new Geary.ErrorContext(err);
+            Convey.ErrorContext context = new Convey.ErrorContext(err);
             debug("Error validating IMAP service: %s",
                   context.format_full_error());
             // Translators: In-app notification label
@@ -242,13 +242,13 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                     cancellable
                 );
                 smtp_valid = true;
-            } catch (Geary.SmtpError.AUTHENTICATION_FAILED err) {
+            } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
                 debug("Error authenticating SMTP service: %s", err.message);
                 // There was an SMTP auth error, but IMAP already
                 // succeeded, so the user probably needs to
                 // specify custom creds here
                 //XXX GTK4
-                // this.outgoing_auth.value.source = Geary.Credentials.Requirement.CUSTOM;
+                // this.outgoing_auth.value.source = Convey.Credentials.Requirement.CUSTOM;
                 // Translators: In-app notification label
                 message = _("Check your sending login and password");
             } catch (GLib.TlsError.BAD_CERTIFICATE err) {
@@ -259,7 +259,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                 // Nothing to do here, someone just cancelled
                 debug("SMTP validation was cancelled: %s", err.message);
             } catch (GLib.Error err) {
-                Geary.ErrorContext context = new Geary.ErrorContext(err);
+                Convey.ErrorContext context = new Convey.ErrorContext(err);
                 debug("Error validating SMTP service: %s",
                       context.format_full_error());
                 // Translators: In-app notification label
@@ -285,8 +285,8 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         return is_valid;
     }
 
-    private async bool update_service(Geary.ServiceInformation existing,
-                                      Geary.ServiceInformation copy,
+    private async bool update_service(Convey.ServiceInformation existing,
+                                      Convey.ServiceInformation copy,
                                       GLib.Cancellable cancellable) {
         return true;
 #if 0
@@ -342,9 +342,9 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     //     }
     // }
 
-    private void on_untrusted_host(Geary.AccountInformation account,
-                                   Geary.ServiceInformation service,
-                                   Geary.Endpoint endpoint,
+    private void on_untrusted_host(Convey.AccountInformation account,
+                                   Convey.ServiceInformation service,
+                                   Convey.Endpoint endpoint,
                                    GLib.TlsConnection cx) {
         this.editor.prompt_pin_certificate.begin(
             account, service, endpoint, null,
@@ -389,7 +389,7 @@ private struct Accounts.InitialConfiguration {
 #if 0
 private class zccounts.SaveDraftsRow : Adw.SwitchRow {
 
-    public Geary.AccountInformation account { get; construct set; }
+    public Convey.AccountInformation account { get; construct set; }
 
     public bool value_changed {
         get { return this.initial_value != this.value.state; }
@@ -400,7 +400,7 @@ private class zccounts.SaveDraftsRow : Adw.SwitchRow {
     private GLib.Cancellable? cancellable;
 
 
-    public SaveDraftsRow(Geary.AccountInformation account,
+    public SaveDraftsRow(Convey.AccountInformation account,
                          Application.CommandStack commands,
                          GLib.Cancellable? cancellable) {
         Object(
@@ -447,7 +447,7 @@ private class Accounts.SaveSentRow :
     private GLib.Cancellable? cancellable;
 
 
-    public SaveSentRow(Geary.AccountInformation account,
+    public SaveSentRow(Convey.AccountInformation account,
                        Application.CommandStack commands,
                        GLib.Cancellable? cancellable) {
         Gtk.Switch value = new Gtk.Switch();
@@ -504,19 +504,19 @@ private class Accounts.ServiceHostRow :
     private GLib.Cancellable? cancellable;
 
 
-    public ServiceHostRow(Geary.AccountInformation account,
-                          Geary.ServiceInformation service,
+    public ServiceHostRow(Convey.AccountInformation account,
+                          Convey.ServiceInformation service,
                           Application.CommandStack commands,
                           GLib.Cancellable? cancellable) {
         string label = "";
         switch (service.protocol) {
-        case Geary.Protocol.IMAP:
+        case Convey.Protocol.IMAP:
             // Translators: This label describes the host name or IP
             // address and port used by an account's IMAP service.
             label = _("IMAP server");
             break;
 
-        case Geary.Protocol.SMTP:
+        case Convey.Protocol.SMTP:
             // Translators: This label describes the host name or IP
             // address and port used by an account's SMTP service.
             label = _("SMTP server");
@@ -539,7 +539,7 @@ private class Accounts.ServiceHostRow :
 
     public override void update() {
         string value = get_entry_text();
-        if (Geary.String.is_empty(value)) {
+        if (Convey.String.is_empty(value)) {
             value = _("None");
         }
         this.value.text = value;
@@ -569,7 +569,7 @@ private class Accounts.ServiceHostRow :
 
     private string? get_entry_text() {
         string? value = this.service.host ?? "";
-        if (!Geary.String.is_empty(value)) {
+        if (!Convey.String.is_empty(value)) {
             // Only show the port if it not the appropriate default port
             uint16 port = this.service.port;
             if (port != this.service.get_default_port()) {
@@ -590,8 +590,8 @@ private class Accounts.ServiceSecurityRow :
     private GLib.Cancellable? cancellable;
 
 
-    public ServiceSecurityRow(Geary.AccountInformation account,
-                              Geary.ServiceInformation service,
+    public ServiceSecurityRow(Convey.AccountInformation account,
+                              Convey.ServiceInformation service,
                               Application.CommandStack commands,
                               GLib.Cancellable? cancellable) {
         TlsComboBox value = new TlsComboBox();
@@ -622,8 +622,8 @@ private class Accounts.ServiceSecurityRow :
                 // Work out what the new port would be by copying the
                 // service and applying the new security param up
                 // front
-                Geary.ServiceInformation copy =
-                    new Geary.ServiceInformation.copy(this.service);
+                Convey.ServiceInformation copy =
+                    new Convey.ServiceInformation.copy(this.service);
                 copy.transport_security = this.value.method;
                 cmd = new Application.CommandSequence(
                     {cmd,
@@ -654,8 +654,8 @@ private class Accounts.ServiceLoginRow :
     private ServicePasswordRow? password_row;
 
 
-    public ServiceLoginRow(Geary.AccountInformation account,
-                           Geary.ServiceInformation service,
+    public ServiceLoginRow(Convey.AccountInformation account,
+                           Convey.ServiceInformation service,
                            Application.CommandStack commands,
                            GLib.Cancellable? cancellable,
                            ServicePasswordRow? password_row = null) {
@@ -695,10 +695,10 @@ private class Accounts.ServiceLoginRow :
     protected void commit() {
         if (this.service.credentials != null) {
             Application.Command cmd =
-                new Application.PropertyCommand<Geary.Credentials?>(
+                new Application.PropertyCommand<Convey.Credentials?>(
                     this.service,
                     "credentials",
-                    new Geary.Credentials(
+                    new Convey.Credentials(
                         this.service.credentials.supported_method,
                         this.value.text
                     )
@@ -724,11 +724,11 @@ private class Accounts.ServiceLoginRow :
         if (this.service.credentials != null) {
             string method = "%s";
             switch (this.service.credentials.supported_method) {
-            case Geary.Credentials.Method.PASSWORD:
+            case Convey.Credentials.Method.PASSWORD:
                 this.value.remove_css_class("dim-label");
                 break;
 
-            case Geary.Credentials.Method.OAUTH2:
+            case Convey.Credentials.Method.OAUTH2:
                 // Add a suffix for OAuth2 auth so people know they
                 // shouldn't expect to be prompted for a password
 
@@ -742,9 +742,9 @@ private class Accounts.ServiceLoginRow :
             }
 
             label = method.printf(this.service.credentials.user ?? "");
-        } else if (this.service.protocol == Geary.Protocol.SMTP &&
+        } else if (this.service.protocol == Convey.Protocol.SMTP &&
                    this.service.credentials_requirement ==
-                   Geary.Credentials.Requirement.USE_INCOMING) {
+                   Convey.Credentials.Requirement.USE_INCOMING) {
             label = _("Use receiving server login");
         } else {
             // Translators: Label used when no auth scheme is used
@@ -772,8 +772,8 @@ private class Accounts.ServicePasswordRow :
     private GLib.Cancellable? cancellable;
 
 
-    public ServicePasswordRow(Geary.AccountInformation account,
-                              Geary.ServiceInformation service,
+    public ServicePasswordRow(Convey.AccountInformation account,
+                              Convey.ServiceInformation service,
                               Application.CommandStack commands,
                               GLib.Cancellable? cancellable) {
         base(
@@ -807,7 +807,7 @@ private class Accounts.ServicePasswordRow :
     protected void commit() {
         if (this.service.credentials != null) {
             this.commands.execute.begin(
-                new Application.PropertyCommand<Geary.Credentials?>(
+                new Application.PropertyCommand<Convey.Credentials?>(
                     this.service,
                     "credentials",
                     this.service.credentials.copy_with_token(this.value.text)
@@ -832,12 +832,12 @@ private class Accounts.ServiceOutgoingAuthRow :
 
     private Application.CommandStack commands;
     private GLib.Cancellable? cancellable;
-    private Geary.ServiceInformation imap_service;
+    private Convey.ServiceInformation imap_service;
 
 
-    public ServiceOutgoingAuthRow(Geary.AccountInformation account,
-                                  Geary.ServiceInformation smtp_service,
-                                  Geary.ServiceInformation imap_service,
+    public ServiceOutgoingAuthRow(Convey.AccountInformation account,
+                                  Convey.ServiceInformation smtp_service,
+                                  Convey.ServiceInformation imap_service,
                                   Application.CommandStack commands,
                                   GLib.Cancellable? cancellable) {
         OutgoingAuthComboBox value = new OutgoingAuthComboBox();
@@ -859,15 +859,15 @@ private class Accounts.ServiceOutgoingAuthRow :
         if (this.service.credentials_requirement != this.value.source) {
             // Need to update the credentials given the new
             // requirements, too
-            Geary.Credentials? new_creds = null;
+            Convey.Credentials? new_creds = null;
             if (this.value.source == CUSTOM) {
-                new_creds = new Geary.Credentials(
-                    Geary.Credentials.Method.PASSWORD, ""
+                new_creds = new Convey.Credentials(
+                    Convey.Credentials.Method.PASSWORD, ""
                 );
             }
 
             Application.Command[] commands = {
-                new Application.PropertyCommand<Geary.Credentials?>(
+                new Application.PropertyCommand<Convey.Credentials?>(
                     this.service, "credentials", new_creds
                 ),
                 new Application.PropertyCommand<uint>(
@@ -883,8 +883,8 @@ private class Accounts.ServiceOutgoingAuthRow :
                 // Work out what the new port would be by copying the
                 // service and applying the new security param up
                 // front
-                Geary.ServiceInformation copy =
-                    new Geary.ServiceInformation.copy(this.service);
+                Convey.ServiceInformation copy =
+                    new Convey.ServiceInformation.copy(this.service);
                 copy.credentials_requirement = this.value.source;
                 commands += new Application.PropertyCommand<uint>(
                     this.service, "port", copy.get_default_port()

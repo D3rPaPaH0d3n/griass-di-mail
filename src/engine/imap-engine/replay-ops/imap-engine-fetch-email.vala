@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.FetchEmail : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.FetchEmail : Convey.ImapEngine.SendReplayOperation {
     public Email? email = null;
 
     private MinimalFolder engine;
@@ -50,7 +50,7 @@ private class Geary.ImapEngine.FetchEmail : Geary.ImapEngine.SendReplayOperation
         }
 
         bool local_only = flags.is_all_set(Folder.ListFlags.LOCAL_ONLY);
-        Geary.Email? email = null;
+        Convey.Email? email = null;
         try {
             email = yield engine.local_folder.fetch_email_async(
                 id,
@@ -58,7 +58,7 @@ private class Geary.ImapEngine.FetchEmail : Geary.ImapEngine.SendReplayOperation
                 ImapDB.Folder.ListFlags.PARTIAL_OK,
                 cancellable
             );
-        } catch (Geary.EngineError.NOT_FOUND err) {
+        } catch (Convey.EngineError.NOT_FOUND err) {
             if (local_only) {
                 throw err;
             }
@@ -109,20 +109,20 @@ private class Geary.ImapEngine.FetchEmail : Geary.ImapEngine.SendReplayOperation
 
         // fetch only the remaining fields from the remote folder (if only pulling partial information,
         // will merge at end of this method)
-        Gee.List<Geary.Email>? list = yield remote.list_email_async(
+        Gee.List<Convey.Email>? list = yield remote.list_email_async(
             new Imap.MessageSet.uid(uid), remaining_fields, cancellable);
         if (list == null || list.size != 1)
             throw new EngineError.NOT_FOUND("Unable to fetch %s in %s", id.to_string(), engine.to_string());
 
-        Gee.Map<Geary.Email, bool> created_or_merged =
+        Gee.Map<Convey.Email, bool> created_or_merged =
             yield this.engine.local_folder.create_or_merge_email_async(
                 list, true, this.engine.harvester, this.cancellable
             );
 
-        Geary.Email email = list[0];
+        Convey.Email email = list[0];
         if (created_or_merged.get(email)) {
-            Gee.Collection<Geary.EmailIdentifier> ids
-                = Geary.iterate<Geary.EmailIdentifier>(email.id).to_array_list();
+            Gee.Collection<Convey.EmailIdentifier> ids
+                = Convey.iterate<Convey.EmailIdentifier>(email.id).to_array_list();
             engine.replay_notify_email_inserted(ids);
             engine.replay_notify_email_locally_inserted(ids);
         }

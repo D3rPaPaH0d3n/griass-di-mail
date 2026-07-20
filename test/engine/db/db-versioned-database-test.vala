@@ -6,17 +6,17 @@
  */
 
 
-class Geary.Db.VersionedDatabaseTest : TestCase {
+class Convey.Db.VersionedDatabaseTest : TestCase {
 
 
     public VersionedDatabaseTest() {
-        base("Geary.Db.VersionedDatabaseTest");
+        base("Convey.Db.VersionedDatabaseTest");
         add_test("open_new", open_new);
     }
 
     public void open_new() throws Error {
         GLib.File tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("geary-db-database-test-XXXXXX")
+            GLib.DirUtils.make_tmp("convey-db-database-test-XXXXXX")
         );
 
         GLib.File sql1 = tmp_dir.get_child("version-001.sql");
@@ -34,11 +34,11 @@ class Geary.Db.VersionedDatabaseTest : TestCase {
         );
 
         db.open.begin(
-            Geary.Db.DatabaseFlags.CREATE_FILE, null, this.async_completion
+            Convey.Db.DatabaseFlags.CREATE_FILE, null, this.async_completion
         );
         db.open.end(async_result());
 
-        Geary.Db.Result result = db.query("SELECT * FROM TestTable;");
+        Convey.Db.Result result = db.query("SELECT * FROM TestTable;");
         assert_false(result.finished, "Row not inserted");
         assert_equal(result.string_for("col"), "value");
         assert_false(result.next(), "Multiple rows inserted");

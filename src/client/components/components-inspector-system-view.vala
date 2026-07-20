@@ -8,7 +8,7 @@
 /**
  * A view that displays system and library information.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-inspector-system-view.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-inspector-system-view.ui")]
 public class Components.InspectorSystemView : Gtk.Box {
 
 

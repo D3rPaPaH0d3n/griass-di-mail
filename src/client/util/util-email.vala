@@ -8,13 +8,13 @@
 
 namespace Util.Email {
 
-    public int compare_conversation_ascending(Geary.App.Conversation a,
-                                              Geary.App.Conversation b) {
-        Geary.Email? a_latest = a.get_latest_recv_email(
-            Geary.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
+    public int compare_conversation_ascending(Convey.App.Conversation a,
+                                              Convey.App.Conversation b) {
+        Convey.Email? a_latest = a.get_latest_recv_email(
+            Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
         );
-        Geary.Email? b_latest = b.get_latest_recv_email(
-            Geary.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
+        Convey.Email? b_latest = b.get_latest_recv_email(
+            Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
         );
 
         if (a_latest == null) {
@@ -26,11 +26,11 @@ namespace Util.Email {
         // use date-received so newly-arrived messages float to the
         // top, even if they're send date was earlier (think of
         // mailing lists that batch up forwarded mail)
-        return Geary.Email.compare_recv_date_ascending(a_latest, b_latest);
+        return Convey.Email.compare_recv_date_ascending(a_latest, b_latest);
     }
 
-    public int compare_conversation_descending(Geary.App.Conversation a,
-                                               Geary.App.Conversation b) {
+    public int compare_conversation_descending(Convey.App.Conversation a,
+                                               Convey.App.Conversation b) {
         return compare_conversation_ascending(b, a);
     }
 
@@ -39,13 +39,13 @@ namespace Util.Email {
      *
      * If the email has no subject, returns a localised placeholder.
      */
-    public string strip_subject_prefixes(Geary.EmailHeaderSet email) {
+    public string strip_subject_prefixes(Convey.EmailHeaderSet email) {
         string? cleaned = null;
         if (email.subject != null) {
             cleaned = email.subject.strip_prefixes();
         }
         return (
-            !Geary.String.is_empty_or_whitespace(cleaned)
+            !Convey.String.is_empty_or_whitespace(cleaned)
             ? cleaned
             // Translators: Label used when an email has a missing or
             // an empty subject
@@ -67,12 +67,12 @@ namespace Util.Email {
      * the Sender mailbox is used if present, else the first Reply-To
      * mailbox is used.
      */
-    public Geary.RFC822.MailboxAddress?
-        get_primary_originator(Geary.EmailHeaderSet email) {
-        Geary.RFC822.MailboxAddress? primary = null;
+    public Convey.RFC822.MailboxAddress?
+        get_primary_originator(Convey.EmailHeaderSet email) {
+        Convey.RFC822.MailboxAddress? primary = null;
         if (email.from != null && email.from.size > 0) {
             // We have a From address, so attempt to de-mangle it
-            Geary.RFC822.MailboxAddresses? from = email.from;
+            Convey.RFC822.MailboxAddresses? from = email.from;
 
             string from_name = "";
             if (from != null && from.size > 0) {
@@ -80,8 +80,8 @@ namespace Util.Email {
                 from_name = primary.name ?? "";
             }
 
-            Geary.RFC822.MailboxAddresses? reply_to = email.reply_to;
-            Geary.RFC822.MailboxAddress? primary_reply_to = null;
+            Convey.RFC822.MailboxAddresses? reply_to = email.reply_to;
+            Convey.RFC822.MailboxAddress? primary_reply_to = null;
             string reply_to_name = "";
             if (reply_to != null && reply_to.size > 0) {
                 primary_reply_to = reply_to[0];
@@ -99,7 +99,7 @@ namespace Util.Email {
                 // Mailman, GitLib, Discourse and others send the
                 // originator's name prefixing something starting with
                 // "via".
-                primary = new Geary.RFC822.MailboxAddress(
+                primary = new Convey.RFC822.MailboxAddress(
                     from_name.split(VIA, 2)[0], primary.address
                 );
             }
@@ -120,12 +120,12 @@ namespace Util.Email {
      *
      * @return a string containing at least the first mailbox
      * serialised by {@link
-     * Geary.RFC822.MailboxAddress.to_short_display}, if the list
+     * Convey.RFC822.MailboxAddress.to_short_display}, if the list
      * contains more mailboxes then an indication of how many
      * additional are present.
      */
-    public string to_short_recipient_display(Geary.EmailHeaderSet headers) {
-        Geary.RFC822.MailboxAddresses? mailboxes = null;
+    public string to_short_recipient_display(Convey.EmailHeaderSet headers) {
+        Convey.RFC822.MailboxAddresses? mailboxes = null;
         int total = 0;
         if (headers.to != null) {
             mailboxes = headers.to;
@@ -177,9 +177,9 @@ namespace Util.Email {
      * If html_format is true, the message will be quoted in HTML format.
      * Otherwise it will be in plain text.
      */
-    public string quote_email_for_reply(Geary.Email email,
+    public string quote_email_for_reply(Convey.Email email,
                                         string? quote,
-                                        Geary.RFC822.TextFormat format) {
+                                        Convey.RFC822.TextFormat format) {
         string quoted = "";
         if (email.body != null || quote != null) {
             /// GLib g_date_time_format format string for the date and
@@ -200,7 +200,7 @@ namespace Util.Email {
                 string QUOTED_LABEL = _("On %1$s, %2$s wrote:");
                 quoted += QUOTED_LABEL.printf(
                     email.date.value.format(date_format),
-                    Geary.RFC822.Utils.email_addresses_for_reply(
+                    Convey.RFC822.Utils.email_addresses_for_reply(
                         email.from, format
                     )
                 );
@@ -210,7 +210,7 @@ namespace Util.Email {
                 /// replaced by the original sender.
                 string QUOTED_LABEL = _("%s wrote:");
                 quoted += QUOTED_LABEL.printf(
-                    Geary.RFC822.Utils.email_addresses_for_reply(
+                    Convey.RFC822.Utils.email_addresses_for_reply(
                         email.from, format
                     )
                 );
@@ -244,7 +244,7 @@ namespace Util.Email {
      * If html_format is true, the message will be quoted in HTML format.
      * Otherwise it will be in plain text.
      */
-    public string quote_email_for_forward(Geary.Email email, string? quote, Geary.RFC822.TextFormat format) {
+    public string quote_email_for_forward(Convey.Email email, string? quote, Convey.RFC822.TextFormat format) {
         if (email.body == null && quote == null)
             return "";
 
@@ -252,8 +252,8 @@ namespace Util.Email {
 
         string quoted = _("---------- Forwarded message ----------");
         quoted += "\n";
-        string from_line = Geary.RFC822.Utils.email_addresses_for_reply(email.from, format);
-        if (!Geary.String.is_empty_or_whitespace(from_line)) {
+        string from_line = Convey.RFC822.Utils.email_addresses_for_reply(email.from, format);
+        if (!Convey.String.is_empty_or_whitespace(from_line)) {
             // Translators: Human-readable version of the RFC 822 From header
             quoted += HEADER_FORMAT.printf(_("From:"), from_line);
         }
@@ -261,13 +261,13 @@ namespace Util.Email {
         quoted += HEADER_FORMAT.printf(_("Subject:"), email.subject != null ? email.subject.to_string() : "");
         // Translators: Human-readable version of the RFC 822 Date header
         quoted += HEADER_FORMAT.printf(_("Date:"), email.date != null ? email.date.to_string() : "");
-        string to_line = Geary.RFC822.Utils.email_addresses_for_reply(email.to, format);
-        if (!Geary.String.is_empty_or_whitespace(to_line)) {
+        string to_line = Convey.RFC822.Utils.email_addresses_for_reply(email.to, format);
+        if (!Convey.String.is_empty_or_whitespace(to_line)) {
             // Translators: Human-readable version of the RFC 822 To header
             quoted += HEADER_FORMAT.printf(_("To:"), to_line);
         }
-        string cc_line = Geary.RFC822.Utils.email_addresses_for_reply(email.cc, format);
-        if (!Geary.String.is_empty_or_whitespace(cc_line)) {
+        string cc_line = Convey.RFC822.Utils.email_addresses_for_reply(email.cc, format);
+        if (!Convey.String.is_empty_or_whitespace(cc_line)) {
             // Translators: Human-readable version of the RFC 822 CC header
             quoted += HEADER_FORMAT.printf(_("Cc:"), cc_line);
         }
@@ -281,22 +281,22 @@ namespace Util.Email {
         return quoted;
     }
 
-    private string quote_body(Geary.Email email,
+    private string quote_body(Convey.Email email,
                               string? html_quote,
                               bool use_quotes,
-                              Geary.RFC822.TextFormat format)
+                              Convey.RFC822.TextFormat format)
         throws Error {
-        Geary.RFC822.Message? message = email.get_message();
+        Convey.RFC822.Message? message = email.get_message();
         string? body_text = null;
-        if (Geary.String.is_empty(html_quote)) {
+        if (Convey.String.is_empty(html_quote)) {
             switch (format) {
-                case Geary.RFC822.TextFormat.HTML:
+                case Convey.RFC822.TextFormat.HTML:
                     body_text = message.has_html_body()
                         ? message.get_html_body(null)
                         : message.get_plain_body(true, null);
                     break;
 
-                case Geary.RFC822.TextFormat.PLAIN:
+                case Convey.RFC822.TextFormat.PLAIN:
                     body_text = message.has_plain_body()
                         ? message.get_plain_body(true, null)
                         : message.get_html_body(null);
@@ -307,7 +307,7 @@ namespace Util.Email {
         }
 
         // Wrap the whole thing in a blockquote.
-        if (use_quotes && !Geary.String.is_empty(body_text))
+        if (use_quotes && !Convey.String.is_empty(body_text))
             body_text = "<blockquote type=\"cite\">%s</blockquote>".printf(body_text);
 
         return body_text;
@@ -319,16 +319,16 @@ namespace Util.Email {
 /**
  * Parses a human-entered email query string as a query expression.
  *
- * @see Geary.SearchQuery.Term
+ * @see Convey.SearchQuery.Term
  */
-public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
+public class Util.Email.SearchExpressionFactory : Convey.BaseObject {
 
 
     private const unichar OPERATOR_SEPARATOR = ':';
     private const string OPERATOR_TEMPLATE = "%s:%s";
 
 
-    private delegate Geary.SearchQuery.Term? OperatorFactory(
+    private delegate Convey.SearchQuery.Term? OperatorFactory(
         string value,
         bool is_quoted
     );
@@ -465,9 +465,9 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
     }
 
 
-    public Geary.SearchQuery.Strategy default_strategy { get; private set; }
+    public Convey.SearchQuery.Strategy default_strategy { get; private set; }
 
-    public Geary.AccountInformation account { get; private set; }
+    public Convey.AccountInformation account { get; private set; }
 
     // Maps of localised search operator names and values to their
     // internal forms
@@ -479,20 +479,20 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
     private Gee.Set<string> search_op_from_me = new Gee.HashSet<string>();
 
 
-    public SearchExpressionFactory(Geary.SearchQuery.Strategy default_strategy,
-                                   Geary.AccountInformation account) {
+    public SearchExpressionFactory(Convey.SearchQuery.Strategy default_strategy,
+                                   Convey.AccountInformation account) {
         this.default_strategy = default_strategy;
         this.account = account;
         construct_factories();
     }
 
     /** Constructs a search expression from the given query string. */
-    public Gee.List<Geary.SearchQuery.Term> parse_query(string query) {
-        var operands = new Gee.LinkedList<Geary.SearchQuery.Term>();
+    public Gee.List<Convey.SearchQuery.Term> parse_query(string query) {
+        var operands = new Gee.LinkedList<Convey.SearchQuery.Term>();
         var tokens = new Tokeniser(query);
         while (tokens.has_next) {
             if (tokens.is_at_word) {
-                Geary.SearchQuery.Term? op = null;
+                Convey.SearchQuery.Term? op = null;
                 var word = tokens.consume_word();
                 if (tokens.current_character == OPERATOR_SEPARATOR &&
                     tokens.has_next) {
@@ -514,9 +514,9 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         return operands;
     }
 
-    private Geary.SearchQuery.Term? new_extended_operator(string name,
+    private Convey.SearchQuery.Term? new_extended_operator(string name,
                                                           Tokeniser tokens) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
 
         // consume the ':'
         tokens.consume_char();
@@ -559,16 +559,16 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         return op;
     }
 
-    private inline Geary.SearchQuery.Strategy get_matching_strategy(bool is_quoted) {
+    private inline Convey.SearchQuery.Strategy get_matching_strategy(bool is_quoted) {
         return (
             is_quoted
-            ? Geary.SearchQuery.Strategy.EXACT
+            ? Convey.SearchQuery.Strategy.EXACT
             : this.default_strategy
         );
     }
 
     private Gee.List<string> get_account_addresses() {
-        Gee.List<Geary.RFC822.MailboxAddress>? mailboxes =
+        Gee.List<Convey.RFC822.MailboxAddress>? mailboxes =
             this.account.sender_mailboxes;
         var addresses = new Gee.LinkedList<string>();
         if (mailboxes != null) {
@@ -601,7 +601,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.text_operators.set(C_("Search operator", "attachment"),
                                 attachment_name);
 
@@ -614,7 +614,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.text_operators.set(C_("Search operator", "bcc"), bcc);
 
         FactoryContext body = new FactoryContext(this.new_text_body_operator);
@@ -626,7 +626,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.text_operators.set(C_("Search operator", "body"), body);
 
         FactoryContext cc = new FactoryContext(this.new_text_cc_operator);
@@ -638,7 +638,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.text_operators.set(C_("Search operator", "cc"), cc);
 
         FactoryContext from = new FactoryContext(this.new_text_from_operator);
@@ -650,7 +650,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.text_operators.set(C_("Search operator", "from"), from);
 
         FactoryContext subject = new FactoryContext(
@@ -664,7 +664,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.text_operators.set(C_("Search operator", "subject"), subject);
 
         FactoryContext to = new FactoryContext(this.new_text_to_operator);
@@ -676,7 +676,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.text_operators.set(C_("Search operator", "to"), to);
 
         /// Translators: Can be typed in the search box after "to:",
@@ -686,7 +686,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.search_op_to_me.add(
             C_("Search operator value - mail addressed to the user", "me")
         );
@@ -699,7 +699,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         this.search_op_from_me.add(
             C_("Search operator value - mail sent by the user", "me")
         );
@@ -715,7 +715,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         string bool_is_name = C_("Search operator", "is");
 
         /// Translators: Can be typed in the search box after "is:"
@@ -725,7 +725,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         string bool_is_unread_value = C_("'is:' search operator value", "unread");
 
         /// Translators: Can be typed in the search box after "is:"
@@ -735,7 +735,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         string bool_is_read_value = C_("'is:' search operator value", "read");
 
         /// Translators: Can be typed in the search box after "is:"
@@ -745,7 +745,7 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         /// The translated string must be a single word (use '-', '_'
         /// or similar to combine words into one), should be short,
         /// and also match the translation in "search.page" of the
-        /// Geary User Guide.
+        /// Convey User Guide.
         string bool_is_starred_value = C_("'is:' search operator value", "starred");
 
         FactoryContext is_unread = new FactoryContext(
@@ -779,127 +779,127 @@ public class Util.Email.SearchExpressionFactory : Geary.BaseObject {
         );
     }
 
-    private Geary.SearchQuery.Term? new_text_all_operator(
+    private Convey.SearchQuery.Term? new_text_all_operator(
         string value, bool is_quoted
     ) {
-        return new Geary.SearchQuery.EmailTextTerm(
+        return new Convey.SearchQuery.EmailTextTerm(
             ALL, get_matching_strategy(is_quoted), value
         );
     }
 
-    private Geary.SearchQuery.Term? new_text_attachment_name_operator(
+    private Convey.SearchQuery.Term? new_text_attachment_name_operator(
         string value, bool is_quoted
     ) {
-        return new Geary.SearchQuery.EmailTextTerm(
+        return new Convey.SearchQuery.EmailTextTerm(
             ATTACHMENT_NAME, get_matching_strategy(is_quoted), value
         );
     }
 
-    private Geary.SearchQuery.Term? new_text_bcc_operator(
+    private Convey.SearchQuery.Term? new_text_bcc_operator(
         string value, bool is_quoted
     ) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
         if (!is_quoted && value in this.search_op_to_me) {
-            op = new Geary.SearchQuery.EmailTextTerm.disjunction(
+            op = new Convey.SearchQuery.EmailTextTerm.disjunction(
                 BCC, EXACT, get_account_addresses()
             );
         } else {
-            op = new Geary.SearchQuery.EmailTextTerm(
+            op = new Convey.SearchQuery.EmailTextTerm(
                 BCC, EXACT, value
             );
         }
         return op;
     }
 
-    private Geary.SearchQuery.Term? new_text_body_operator(
+    private Convey.SearchQuery.Term? new_text_body_operator(
         string value, bool is_quoted
     ) {
-        return new Geary.SearchQuery.EmailTextTerm(
+        return new Convey.SearchQuery.EmailTextTerm(
             BODY, get_matching_strategy(is_quoted), value
         );
     }
 
-    private Geary.SearchQuery.Term? new_text_cc_operator(
+    private Convey.SearchQuery.Term? new_text_cc_operator(
         string value, bool is_quoted
     ) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
         if (!is_quoted && value in this.search_op_to_me) {
-            op = new Geary.SearchQuery.EmailTextTerm.disjunction(
+            op = new Convey.SearchQuery.EmailTextTerm.disjunction(
                 CC, EXACT, get_account_addresses()
             );
         } else {
-            op = new Geary.SearchQuery.EmailTextTerm(
+            op = new Convey.SearchQuery.EmailTextTerm(
                 CC, get_matching_strategy(is_quoted), value
             );
         }
         return op;
     }
 
-    private Geary.SearchQuery.Term? new_text_from_operator(
+    private Convey.SearchQuery.Term? new_text_from_operator(
         string value, bool is_quoted
     ) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
         if (!is_quoted && value in this.search_op_from_me) {
-            op = new Geary.SearchQuery.EmailTextTerm.disjunction(
+            op = new Convey.SearchQuery.EmailTextTerm.disjunction(
                 FROM, EXACT, get_account_addresses()
             );
         } else {
-            op = new Geary.SearchQuery.EmailTextTerm(FROM, EXACT, value);
+            op = new Convey.SearchQuery.EmailTextTerm(FROM, EXACT, value);
         }
         return op;
     }
 
-    private Geary.SearchQuery.Term? new_text_subject_operator(
+    private Convey.SearchQuery.Term? new_text_subject_operator(
         string value, bool is_quoted
     ) {
-        return new Geary.SearchQuery.EmailTextTerm(
+        return new Convey.SearchQuery.EmailTextTerm(
             SUBJECT, get_matching_strategy(is_quoted), value
         );
     }
 
-    private Geary.SearchQuery.Term? new_text_to_operator(
+    private Convey.SearchQuery.Term? new_text_to_operator(
         string value, bool is_quoted
     ) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
         if (!is_quoted && value in this.search_op_to_me) {
-            op = new Geary.SearchQuery.EmailTextTerm.disjunction(
+            op = new Convey.SearchQuery.EmailTextTerm.disjunction(
                 TO, EXACT, get_account_addresses()
             );
         } else {
-            op = new Geary.SearchQuery.EmailTextTerm(
+            op = new Convey.SearchQuery.EmailTextTerm(
                 TO, EXACT, value
             );
         }
         return op;
     }
 
-    private Geary.SearchQuery.Term? new_boolean_unread_operator(
+    private Convey.SearchQuery.Term? new_boolean_unread_operator(
         string value, bool is_quoted
     ) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
         if (!is_quoted) {
-            op = new Geary.SearchQuery.EmailFlagTerm(Geary.EmailFlags.UNREAD);
+            op = new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.UNREAD);
         }
         return op;
     }
 
-    private Geary.SearchQuery.Term? new_boolean_read_operator(
+    private Convey.SearchQuery.Term? new_boolean_read_operator(
         string value, bool is_quoted
     ) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
         if (!is_quoted) {
-            op = new Geary.SearchQuery.EmailFlagTerm(Geary.EmailFlags.UNREAD);
+            op = new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.UNREAD);
             op.is_negated = true;
         }
         return op;
     }
 
-    private Geary.SearchQuery.Term? new_boolean_starred_operator(
+    private Convey.SearchQuery.Term? new_boolean_starred_operator(
         string value, bool is_quoted
     ) {
-        Geary.SearchQuery.Term? op = null;
+        Convey.SearchQuery.Term? op = null;
         if (!is_quoted) {
-            op = new Geary.SearchQuery.EmailFlagTerm(Geary.EmailFlags.FLAGGED);
+            op = new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.FLAGGED);
         }
         return op;
     }

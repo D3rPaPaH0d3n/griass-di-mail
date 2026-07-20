@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.Collection {
+namespace Convey.Collection {
 
     public delegate uint8 ByteTransformer(uint8 b);
 

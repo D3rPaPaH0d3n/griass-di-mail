@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.RFC822.Utils.Test : TestCase {
+class Convey.RFC822.Utils.Test : TestCase {
 
     public Test() {
-        base("Geary.RFC822.Utils.Test");
+        base("Convey.RFC822.Utils.Test");
         add_test("to_preview_text", to_preview_text);
         add_test("best_encoding_default", best_encoding_default);
         add_test("best_encoding_long_line", best_encoding_long_line);
@@ -16,11 +16,11 @@ class Geary.RFC822.Utils.Test : TestCase {
     }
 
     public void to_preview_text() throws GLib.Error {
-        assert(Geary.RFC822.Utils.to_preview_text(PLAIN_BODY_ENCODED, Geary.RFC822.TextFormat.PLAIN) ==
+        assert(Convey.RFC822.Utils.to_preview_text(PLAIN_BODY_ENCODED, Convey.RFC822.TextFormat.PLAIN) ==
                PLAIN_BODY_EXPECTED);
-        assert(Geary.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, Geary.RFC822.TextFormat.HTML) ==
+        assert(Convey.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, Convey.RFC822.TextFormat.HTML) ==
                HTML_BODY_EXPECTED);
-        assert(Geary.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, Geary.RFC822.TextFormat.HTML) ==
+        assert(Convey.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, Convey.RFC822.TextFormat.HTML) ==
                HTML_BODY_EXPECTED);
     }
 

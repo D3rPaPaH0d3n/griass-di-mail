@@ -12,7 +12,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-5.1]]
  */
-public class Geary.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpecifier>, Gee.Comparable<MailboxSpecifier> {
+public class Convey.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpecifier>, Gee.Comparable<MailboxSpecifier> {
 
     /**
      * Canonical name used for the IMAP Inbox for an account.
@@ -65,7 +65,7 @@ public class Geary.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpeci
     public MailboxSpecifier.from_parameter(StringParameter param) {
         string? name = null;
         try {
-            name = Geary.ImapUtf7.imap_utf7_to_utf8(param.ascii);
+            name = Convey.ImapUtf7.imap_utf7_to_utf8(param.ascii);
         } catch (ConvertError err) {
             // Could no decode the name as IMAP modified UTF7, so per
             // https://imapwiki.org/ClientImplementation/MailboxList
@@ -81,7 +81,7 @@ public class Geary.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpeci
     }
 
     /**
-     * Returns true if the {@link Geary.FolderPath} points to the IMAP Inbox.
+     * Returns true if the {@link Convey.FolderPath} points to the IMAP Inbox.
      */
     public static bool folder_path_is_inbox(FolderPath path) {
         return path.is_top_level && is_inbox_name(path.name);
@@ -104,7 +104,7 @@ public class Geary.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpeci
     /**
      * Returns true if the string is the ''canonical'' name of the IMAP Inbox.
      *
-     * For sanity reasons, the Geary engine uses {@link CANONICAL_INBOX_NAME} as the "canonical"
+     * For sanity reasons, the Convey engine uses {@link CANONICAL_INBOX_NAME} as the "canonical"
      * IMAP Inbox name.  This verifies that the string is truly canonical, i.e. a case-sensitive
      * comparison is made.
      *
@@ -236,12 +236,12 @@ public class Geary.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpeci
     }
 
     public Parameter to_parameter() {
-        string encoded= Geary.ImapUtf7.utf8_to_imap_utf7(this.name);
+        string encoded= Convey.ImapUtf7.utf8_to_imap_utf7(this.name);
         Parameter? param = null;
         try {
             param = StringParameter.get_best_for(encoded);
         } catch (ImapError err) {
-            param = new LiteralParameter(new Geary.Memory.StringBuffer(encoded));
+            param = new LiteralParameter(new Convey.Memory.StringBuffer(encoded));
         }
         return param;
     }

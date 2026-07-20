@@ -10,7 +10,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-6.3.11]]
  */
-public class Geary.Imap.AppendCommand : Command {
+public class Convey.Imap.AppendCommand : Command {
 
     public const string NAME = "append";
 

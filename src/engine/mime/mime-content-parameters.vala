@@ -9,7 +9,7 @@
  *
  * This class is immutable.
  */
-public class Geary.Mime.ContentParameters : BaseObject {
+public class Convey.Mime.ContentParameters : BaseObject {
     public int size {
         get {
             return params.size;

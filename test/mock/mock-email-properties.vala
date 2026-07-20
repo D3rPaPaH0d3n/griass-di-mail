@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Mock.EmailProperties : Geary.EmailProperties {
+public class Mock.EmailProperties : Convey.EmailProperties {
 
 
     public EmailProperties(GLib.DateTime received) {

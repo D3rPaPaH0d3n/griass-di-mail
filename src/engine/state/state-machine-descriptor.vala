@@ -4,9 +4,9 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public delegate string Geary.State.StateEventToString(uint state_or_event);
+public delegate string Convey.State.StateEventToString(uint state_or_event);
 
-public class Geary.State.MachineDescriptor : BaseObject {
+public class Convey.State.MachineDescriptor : BaseObject {
     public string name { get; private set; }
     public uint start_state { get; private set; }
     public uint state_count { get; private set; }

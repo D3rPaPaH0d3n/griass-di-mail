@@ -14,7 +14,7 @@
  * representation of an email message, and contain no information
  * other than what RFC-822 and its successor RFC documents specify.
  */
-public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
+public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
 
     /**
@@ -209,7 +209,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
 
     public Message.from_buffer(Memory.Buffer full_email)
         throws Error {
-        this(new Geary.RFC822.Full(full_email));
+        this(new Convey.RFC822.Full(full_email));
     }
 
     public Message.from_parts(Header header, Text body)
@@ -226,7 +226,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         GMime.Parser parser = new GMime.Parser.with_stream(stream_cat);
-        var message = parser.construct_message(Geary.RFC822.get_parser_options());
+        var message = parser.construct_message(Convey.RFC822.get_parser_options());
         if (message == null) {
             throw new Error.INVALID("Unable to parse RFC 822 message");
         }
@@ -234,7 +234,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
         this.from_gmime_message(message);
     }
 
-    public async Message.from_composed_email(Geary.ComposedEmail email,
+    public async Message.from_composed_email(Convey.ComposedEmail email,
                                              string? message_id,
                                              GMime.EncodingConstraint constraint,
                                              GLib.Cancellable? cancellable)
@@ -296,27 +296,27 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
             // `RFC822.MessageIDList` to `RFC822.MailboxAddresses`.
             this.message.set_header(HEADER_IN_REPLY_TO,
                                     email.in_reply_to.to_rfc822_string(),
-                                    Geary.RFC822.get_charset());
+                                    Convey.RFC822.get_charset());
         }
 
         if (email.references != null) {
             this._references = email.references;
             this.message.set_header(HEADER_REFERENCES,
                                     email.references.to_rfc822_string(),
-                                    Geary.RFC822.get_charset());
+                                    Convey.RFC822.get_charset());
         }
 
         if (email.subject != null) {
             this._subject = email.subject;
             this.message.set_subject(email.subject.value,
-                                     Geary.RFC822.get_charset());
+                                     Convey.RFC822.get_charset());
         }
 
         // User-Agent
-        if (!Geary.String.is_empty(email.mailer)) {
+        if (!Convey.String.is_empty(email.mailer)) {
             this.mailer = email.mailer;
             this.message.set_header(HEADER_MAILER, email.mailer,
-                                    Geary.RFC822.get_charset());
+                                    Convey.RFC822.get_charset());
         }
 
         // Build the message's body mime parts
@@ -377,7 +377,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
                         inline_part = yield get_buffer_part(
                             email.cid_files[cid],
                             GLib.Path.get_basename(cid),
-                            Geary.Mime.DispositionType.INLINE,
+                            Convey.Mime.DispositionType.INLINE,
                             cancellable
                         );
                     } catch (GLib.Error err) {
@@ -400,7 +400,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
             // Then, treat parts that need to have Content Id
             // assigned.
             if (!inline_files.is_empty) {
-                const string CID_TEMPLATE = "inline_%02u@geary";
+                const string CID_TEMPLATE = "inline_%02u@convey";
                 uint cid_index = 0;
                 foreach (string name in inline_files.keys) {
                     string cid = "";
@@ -415,7 +415,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
                             inline_part = yield get_buffer_part(
                                 inline_files[name],
                                 GLib.Path.get_basename(name),
-                                Geary.Mime.DispositionType.INLINE,
+                                Convey.Mime.DispositionType.INLINE,
                                 cancellable
                             );
                         } catch (GLib.Error err) {
@@ -472,7 +472,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
             try {
                 attachment_part = yield get_file_part(
                     file,
-                    Geary.Mime.DispositionType.ATTACHMENT,
+                    Convey.Mime.DispositionType.ATTACHMENT,
                     cancellable
                 );
             } catch (GLib.Error err) {
@@ -498,7 +498,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
                                            string type) {
         GMime.Object? part = coalesce_parts(parts, "related");
         if (parts.size > 1) {
-            part.set_header("Type", type, Geary.RFC822.get_charset());
+            part.set_header("Type", type, Convey.RFC822.get_charset());
         }
         return part;
     }
@@ -517,7 +517,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
     }
 
     private async GMime.Part? get_file_part(File file,
-                                            Geary.Mime.DispositionType disposition,
+                                            Convey.Mime.DispositionType disposition,
                                             GLib.Cancellable? cancellable)
         throws GLib.Error {
         FileInfo file_info = yield file.query_info_async(
@@ -530,7 +530,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
         part.set_filename(file.get_basename());
 
         GMime.ContentType content_type = GMime.ContentType.parse(
-            Geary.RFC822.get_parser_options(),
+            Convey.RFC822.get_parser_options(),
             file_info.get_content_type()
         );
         part.set_content_type(content_type);
@@ -562,7 +562,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
      */
     private async GMime.Part? get_buffer_part(Memory.Buffer buffer,
                                               string basename,
-                                              Geary.Mime.DispositionType disposition,
+                                              Convey.Mime.DispositionType disposition,
                                               GLib.Cancellable? cancellable)
         throws GLib.Error {
         Mime.ContentType? mime_type = Mime.ContentType.guess_type(
@@ -577,7 +577,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         GMime.ContentType? content_type = GMime.ContentType.parse(
-            Geary.RFC822.get_parser_options(),
+            Convey.RFC822.get_parser_options(),
             mime_type.get_mime_type()
         );
 
@@ -634,7 +634,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         return (preview != null)
-            ? Geary.RFC822.Utils.to_preview_text(preview, format)
+            ? Convey.RFC822.Utils.to_preview_text(preview, format)
             : "";
     }
 
@@ -672,7 +672,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
             // GMime doesn't support writing content-only via the
             // public API, so suppress all headers in the message
             // instead.
-            GMime.FormatOptions options = Geary.RFC822.get_format_options().clone();
+            GMime.FormatOptions options = Convey.RFC822.get_format_options().clone();
             GMime.HeaderList headers = message.get_header_list();
             int count = headers.get_count();
             for (int i = 0; i < count; i++) {
@@ -916,7 +916,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         if (body != null && html)
-            body = Geary.HTML.html_to_text(body);
+            body = Convey.HTML.html_to_text(body);
 
         if (include_sub_messages) {
             foreach (Message sub_message in get_sub_messages()) {
@@ -1031,7 +1031,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
 
             if (requested_disposition == Mime.DispositionType.UNSPECIFIED || disposition == requested_disposition) {
                 GMime.Stream stream = new GMime.StreamMem();
-                message.write_to_stream(Geary.RFC822.get_format_options(), stream);
+                message.write_to_stream(Convey.RFC822.get_format_options(), stream);
                 GMime.DataWrapper data = new GMime.DataWrapper.with_stream(stream,
                     GMime.ContentEncoding.BINARY);  // Equivalent to no encoding
                 GMime.Part part = new GMime.Part.with_type("message", "rfc822");
@@ -1093,15 +1093,15 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
 
         GMime.Part part = new GMime.Part.with_type("text", "plain");
         part.set_filename(filename);
-        part.set_content_type(GMime.ContentType.parse(Geary.RFC822.get_parser_options(), GLib.ContentType.guess(filename, data, null)));
+        part.set_content_type(GMime.ContentType.parse(Convey.RFC822.get_parser_options(), GLib.ContentType.guess(filename, data, null)));
         part.set_content(new GMime.DataWrapper.with_stream(new GMime.StreamMem.with_buffer(data), GMime.ContentEncoding.BINARY));
         return part;
     }
 #endif
 
-    public Gee.List<Geary.RFC822.Message> get_sub_messages()
+    public Gee.List<Convey.RFC822.Message> get_sub_messages()
         throws Error {
-        Gee.List<Geary.RFC822.Message> messages = new Gee.ArrayList<Geary.RFC822.Message>();
+        Gee.List<Convey.RFC822.Message> messages = new Gee.ArrayList<Convey.RFC822.Message>();
         find_sub_messages(messages, message.get_mime_part());
         return messages;
     }
@@ -1147,7 +1147,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
             stream_filter.add(new GMime.FilterSmtpData());
         }
 
-        var format = Geary.RFC822.get_format_options();
+        var format = Convey.RFC822.get_format_options();
         if (RFC822FormatOptions.SMTP_FORMAT in options) {
             format = format.clone();
             format.add_hidden_header("Bcc");
@@ -1175,7 +1175,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
     }
 
     public string to_string() {
-        return message.to_string(Geary.RFC822.get_format_options());
+        return message.to_string(Convey.RFC822.get_format_options());
     }
 
     /**
@@ -1227,7 +1227,7 @@ public class Geary.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         GMime.ContentType complete_type = GMime.ContentType.parse(
-                                              Geary.RFC822.get_parser_options(),
+                                              Convey.RFC822.get_parser_options(),
                                               content_type
                                           );
         complete_type.set_parameter("charset", charset);

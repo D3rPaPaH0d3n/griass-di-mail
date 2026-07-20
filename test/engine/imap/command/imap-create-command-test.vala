@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.CreateCommandTest : TestCase {
+class Convey.Imap.CreateCommandTest : TestCase {
 
 
     public CreateCommandTest() {
-        base("Geary.Imap.CreateCommandTest");
+        base("Convey.Imap.CreateCommandTest");
         add_test("basic_create", basic_create);
         add_test("special_use", special_use);
     }

@@ -10,9 +10,9 @@ mailer_dependencies = [
   engine_dep,
 ]
 
-mailer = executable('geary-mailer',
+mailer = executable('convey-mailer',
   mailer_sources,
   dependencies: mailer_dependencies,
-  vala_args: geary_vala_args,
-  c_args: geary_c_args,
+  vala_args: convey_vala_args,
+  c_args: convey_c_args,
 )

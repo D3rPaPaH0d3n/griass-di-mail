@@ -4,14 +4,14 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.ReplayRemoval : Geary.ImapEngine.ReplayOperation {
+private class Convey.ImapEngine.ReplayRemoval : Convey.ImapEngine.ReplayOperation {
 
     private MinimalFolder owner;
     private int remote_count;
     private Imap.SequenceNumber position;
 
-    public signal void email_removed(Gee.Collection<Geary.EmailIdentifier> ids);
-    public signal void marked_email_removed(Gee.Collection<Geary.EmailIdentifier> ids);
+    public signal void email_removed(Gee.Collection<Convey.EmailIdentifier> ids);
+    public signal void marked_email_removed(Gee.Collection<Convey.EmailIdentifier> ids);
     public signal void email_count_changed(int count, Folder.CountChangeReason reason);
 
 
@@ -102,7 +102,7 @@ private class Geary.ImapEngine.ReplayRemoval : Geary.ImapEngine.ReplayOperation 
 
             // Notify queued replay operations that the email has been removed (by EmailIdentifier)
             this.owner.replay_queue.notify_remote_removed_ids(
-                Geary.iterate<ImapDB.EmailIdentifier>(owned_id).to_array_list());
+                Convey.iterate<ImapDB.EmailIdentifier>(owned_id).to_array_list());
         } else {
             debug("%s do_replay_removed_message: this.position=%lld unknown in local store "
                 + "(this.remote_count=%d local_position=%lld local_count=%d)",
@@ -131,7 +131,7 @@ private class Geary.ImapEngine.ReplayRemoval : Geary.ImapEngine.ReplayOperation 
         // notify of change ... use "marked-email-removed" for marked email to allow internal code
         // to be notified when a removed email is "really" removed
         if (owned_id != null) {
-            Gee.List<EmailIdentifier> removed = Geary.iterate<Geary.EmailIdentifier>(owned_id).to_array_list();
+            Gee.List<EmailIdentifier> removed = Convey.iterate<Convey.EmailIdentifier>(owned_id).to_array_list();
             if (!marked)
                 email_removed(removed);
             else

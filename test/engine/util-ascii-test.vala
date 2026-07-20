@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Ascii.Test : TestCase {
+class Convey.Ascii.Test : TestCase {
 
     public Test() {
-        base("Geary.Ascii.Test");
+        base("Convey.Ascii.Test");
         add_test("index_of", index_of);
         add_test("last_index_of", last_index_of);
     }

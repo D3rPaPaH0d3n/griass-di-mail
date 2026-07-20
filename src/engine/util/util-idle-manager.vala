@@ -14,7 +14,7 @@
  * Note this class is not thread safe and should only be invoked from
  * the main loop.
  */
-public class Geary.IdleManager : BaseObject {
+public class Convey.IdleManager : BaseObject {
 
 
     /** Specifies the priority the idle function should be given. */

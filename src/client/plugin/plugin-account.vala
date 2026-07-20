@@ -11,7 +11,7 @@
  * Instances of these may be obtained from their respective {@link
  * Folder} objects.
  */
-public interface Plugin.Account : Geary.BaseObject {
+public interface Plugin.Account : Convey.BaseObject {
 
 
     /** Returns the human-readable name of this account. */

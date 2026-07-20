@@ -30,13 +30,13 @@ public interface Plugin.EmailExtension : PluginBase {
  * Provides a context for email plugins.
  *
  * The context provides an interface for email plugins to interface
- * with the Geary client application. Plugins that implement the
+ * with the Convey client application. Plugins that implement the
  * {@link EmailExtension} interface will be given an instance of this
  * class.
  *
  * @see Plugin.EmailExtension.email
  */
-public interface Plugin.EmailContext : Geary.BaseObject {
+public interface Plugin.EmailContext : Convey.BaseObject {
 
 
     /**

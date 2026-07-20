@@ -30,7 +30,7 @@ public interface Plugin.NotificationExtension : PluginBase {
  * Provides a context for notification plugins.
  *
  * The context provides an interface for notification plugins to
- * interface with the Geary client application. Plugins that implement
+ * interface with the Convey client application. Plugins that implement
  * the {@link NotificationExtension} interface will be given an
  * instance of this class.
  *
@@ -43,7 +43,7 @@ public interface Plugin.NotificationExtension : PluginBase {
  *
  * @see Plugin.NotificationExtension.notifications
  */
-public interface Plugin.NotificationContext : Geary.BaseObject {
+public interface Plugin.NotificationContext : Convey.BaseObject {
 
 
     /**

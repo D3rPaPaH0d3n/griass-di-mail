@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.HTML.UtilTest : TestCase {
+class Convey.HTML.UtilTest : TestCase {
 
     public UtilTest() {
-        base("Geary.HTML.Util");
+        base("Convey.HTML.Util");
         add_test("preserve_whitespace", preserve_whitespace);
         add_test("smart_escape_div", smart_escape_div);
         add_test("smart_escape_no_closing_tag", smart_escape_no_closing_tag);

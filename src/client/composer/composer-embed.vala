@@ -19,7 +19,7 @@ public class Composer.Embed : Adw.Bin, Container {
 
 
     static construct {
-        set_css_name("geary-composer-embed");
+        set_css_name("convey-composer-embed");
     }
 
 
@@ -29,7 +29,7 @@ public class Composer.Embed : Adw.Bin, Container {
     }
 
     /** The email this composer was originally a reply to. */
-    public Geary.Email referred { get; private set; }
+    public Convey.Email referred { get; private set; }
 
     /** {@inheritDoc} */
     internal Widget composer { get; set; }
@@ -48,7 +48,7 @@ public class Composer.Embed : Adw.Bin, Container {
     public signal void vanished();
 
 
-    public Embed(Geary.Email referred,
+    public Embed(Convey.Email referred,
                  Widget composer) {
         this.referred = referred;
         this.composer = composer;
@@ -61,7 +61,7 @@ public class Composer.Embed : Adw.Bin, Container {
         }
         composer.set_mode(mode);
 
-        add_css_class("geary-composer-embed");
+        add_css_class("convey-composer-embed");
         this.halign = Gtk.Align.FILL;
         this.vexpand = true;
         this.vexpand_set = true;

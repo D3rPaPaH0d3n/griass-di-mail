@@ -17,7 +17,7 @@
  * Note the mailbox name is not represented since that may differ
  * based on the client session being used to connect to the server.
  */
-internal class Geary.Imap.Folder : Geary.BaseObject {
+internal class Convey.Imap.Folder : Convey.BaseObject {
 
     /** The full path to this folder. */
     public FolderPath path { get; private set; }

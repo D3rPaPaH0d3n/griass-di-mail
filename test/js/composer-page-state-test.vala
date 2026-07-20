@@ -8,13 +8,13 @@
 class Composer.PageStateTest : Components.WebViewTestCase<Composer.WebView> {
 
     public const string COMPLETE_BODY_TEMPLATE =
-        """<div id="geary-body" dir="auto">%s<div><br></div><div><br></div></div><div id="geary-signature" dir="auto"></div>""";
+        """<div id="convey-body" dir="auto">%s<div><br></div><div><br></div></div><div id="convey-signature" dir="auto"></div>""";
     public const string DIRTY_BODY_TEMPLATE =
         """
-<div id="geary-body" dir="auto" contenteditable="true">%s<div><br></div><div><br></div></div>
-<div id="geary-signature" class="geary-no-display" dir="auto" contenteditable="true"></div>
+<div id="convey-body" dir="auto" contenteditable="true">%s<div><br></div><div><br></div></div>
+<div id="convey-signature" class="convey-no-display" dir="auto" contenteditable="true"></div>
 """;
-    public const string CLEAN_BODY_TEMPLATE = """<div id="geary-body" dir="auto">%s<div><br></div><div><br></div></div>""";
+    public const string CLEAN_BODY_TEMPLATE = """<div id="convey-body" dir="auto">%s<div><br></div><div><br></div></div>""";
 
     public PageStateTest() {
         base("Composer.PageStateTest");
@@ -60,7 +60,7 @@ class Composer.PageStateTest : Components.WebViewTestCase<Composer.WebView> {
     }
 
     public void html_to_text_with_quote() throws Error {
-        unichar q_marker = Geary.RFC822.Utils.QUOTE_MARKER;
+        unichar q_marker = Convey.RFC822.Utils.QUOTE_MARKER;
         load_body_fixture("<p>pre</p> <blockquote><p>quote</p></blockquote> <p>post</p>");
         try {
             assert(
@@ -80,7 +80,7 @@ class Composer.PageStateTest : Components.WebViewTestCase<Composer.WebView> {
     }
 
     public void html_to_text_with_nested_quote() throws Error {
-        unichar q_marker = Geary.RFC822.Utils.QUOTE_MARKER;
+        unichar q_marker = Convey.RFC822.Utils.QUOTE_MARKER;
         load_body_fixture("<p>pre</p> <blockquote><p>quote1</p> <blockquote><p>quote2</p></blockquote></blockquote> <p>post</p>");
         try {
             assert(
@@ -160,7 +160,7 @@ class Composer.PageStateTest : Components.WebViewTestCase<Composer.WebView> {
         load_body_fixture("""<span id="test">some text</span>""");
         try {
             run_javascript(@"SelectionUtil.selectNode(document.getElementById('test'))");
-            run_javascript(@"geary.indentLine()");
+            run_javascript(@"convey.indentLine()");
             assert(
                 Util.JS.to_int32(
                     run_javascript(@"document.querySelectorAll('blockquote[type=cite]').length")
@@ -196,25 +196,25 @@ some text
         try {
             assert(
                 Util.JS.to_bool(
-                    run_javascript(@"geary.containsAttachmentKeyword(\"some\", \"subject text\");")
+                    run_javascript(@"convey.containsAttachmentKeyword(\"some\", \"subject text\");")
 
                 )
             );
             assert(
                 Util.JS.to_bool(
-                    run_javascript(@"geary.containsAttachmentKeyword(\"subject\", \"subject text\");")
+                    run_javascript(@"convey.containsAttachmentKeyword(\"subject\", \"subject text\");")
 
                 )
             );
             assert(
                 !Util.JS.to_bool(
-                    run_javascript(@"geary.containsAttachmentKeyword(\"innerquote\", \"subject text\");")
+                    run_javascript(@"convey.containsAttachmentKeyword(\"innerquote\", \"subject text\");")
 
                 )
             );
             assert(
                 !Util.JS.to_bool(
-                    run_javascript(@"geary.containsAttachmentKeyword(\"outerquote\", \"subject text\");")
+                    run_javascript(@"convey.containsAttachmentKeyword(\"outerquote\", \"subject text\");")
 
                 )
             );
@@ -257,7 +257,7 @@ unknown://example6.com
 I can send email through smtp.gmail.com:587 or through <a href="https://www.gmail.com/">https://www.gmail.com/</a>
 """;
 
-        run_javascript("geary.cleanContent();");
+        run_javascript("convey.cleanContent();");
         string result = Util.JS.to_string(
             run_javascript("window.document.body.innerHTML;")
 
@@ -270,7 +270,7 @@ I can send email through smtp.gmail.com:587 or through <a href="https://www.gmai
         load_body_fixture(html);
         try {
             string result = Util.JS.to_string(
-                run_javascript(@"window.geary.getHtml();")
+                run_javascript(@"window.convey.getHtml();")
             );
             assert(result == CLEAN_BODY_TEMPLATE.printf(html));
         } catch (Util.JS.Error err) {
@@ -287,7 +287,7 @@ I can send email through smtp.gmail.com:587 or through <a href="https://www.gmai
         try {
             assert(
                 Util.JS.to_string(
-                    run_javascript(@"window.geary.getText();")
+                    run_javascript(@"window.convey.getText();")
 
                 ) == "para\n\n\n\n"
             );

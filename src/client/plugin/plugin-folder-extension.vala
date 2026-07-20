@@ -30,13 +30,13 @@ public interface Plugin.FolderExtension : PluginBase {
  * Provides a context for folder plugins.
  *
  * The context provides an interface for folder plugins to interface
- * with the Geary client application. Plugins that implement the
+ * with the Convey client application. Plugins that implement the
  * {@link FolderExtension} interface will be given an instance of this
  * class.
  *
  * @see Plugin.FolderExtension.folders
  */
-public interface Plugin.FolderContext : Geary.BaseObject {
+public interface Plugin.FolderContext : Convey.BaseObject {
 
 
     /**

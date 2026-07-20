@@ -20,14 +20,14 @@ public class FolderList.FolderEntry :
         this.context = context;
         this.context.notify.connect(on_context_changed);
         this.has_new = false;
-        this.folder.properties.notify[Geary.FolderProperties.PROP_NAME_EMAIL_TOTAL].connect(on_counts_changed);
-        this.folder.properties.notify[Geary.FolderProperties.PROP_NAME_EMAIL_UNREAD].connect(on_counts_changed);
+        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL].connect(on_counts_changed);
+        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD].connect(on_counts_changed);
     }
 
     ~FolderEntry() {
         this.context.notify.disconnect(on_context_changed);
-        this.folder.properties.notify[Geary.FolderProperties.PROP_NAME_EMAIL_TOTAL].disconnect(on_counts_changed);
-        this.folder.properties.notify[Geary.FolderProperties.PROP_NAME_EMAIL_UNREAD].disconnect(on_counts_changed);
+        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL].disconnect(on_counts_changed);
+        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD].disconnect(on_counts_changed);
     }
 
     public override string get_sidebar_name() {

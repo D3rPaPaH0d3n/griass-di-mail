@@ -11,7 +11,7 @@
  * other work can proceed.
  */
 
-public class Geary.Nonblocking.Concurrent : BaseObject {
+public class Convey.Nonblocking.Concurrent : BaseObject {
     public const int DEFAULT_MAX_THREADS = 4;
 
     /**
@@ -48,7 +48,7 @@ public class Geary.Nonblocking.Concurrent : BaseObject {
 
             // now deal with cancellation
             if (cancellable != null && cancellable.is_cancelled())
-                throw new IOError.CANCELLED("Geary.Nonblocking.Concurrent cancelled");
+                throw new IOError.CANCELLED("Convey.Nonblocking.Concurrent cancelled");
         }
 
         // Called from a background thread
@@ -112,7 +112,7 @@ public class Geary.Nonblocking.Concurrent : BaseObject {
         } catch (ThreadError err) {
             init_err = err;
 
-            warning("Unable to create Geary.Nonblocking.Concurrent: %s", err.message);
+            warning("Unable to create Convey.Nonblocking.Concurrent: %s", err.message);
         }
     }
 

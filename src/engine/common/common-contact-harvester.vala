@@ -7,7 +7,7 @@
  */
 
 /** Denotes objects that extract contacts from email meages. */
-internal interface Geary.ContactHarvester : GLib.Object {
+internal interface Convey.ContactHarvester : GLib.Object {
 
     public abstract async void harvest_from_email(Gee.Collection<Email> messages,
                                                   GLib.Cancellable? cancellable)
@@ -16,7 +16,7 @@ internal interface Geary.ContactHarvester : GLib.Object {
 }
 
 /** Default harvester that saves contacts in the contact store. */
-internal class Geary.ContactHarvesterImpl : BaseObject, ContactHarvester {
+internal class Convey.ContactHarvesterImpl : BaseObject, ContactHarvester {
 
     private const Email.Field REQUIRED_FIELDS = ORIGINATORS | RECEIVERS;
 
@@ -117,7 +117,7 @@ internal class Geary.ContactHarvesterImpl : BaseObject, ContactHarvester {
             if (contact == null) {
                 contact = yield this.store.get_by_rfc822(address, cancellable);
                 if (contact == null) {
-                    contact = new Geary.Contact.from_rfc822_address(
+                    contact = new Convey.Contact.from_rfc822_address(
                         address, importance
                     );
                 }

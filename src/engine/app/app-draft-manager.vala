@@ -26,7 +26,7 @@
  * lifecycle of a single email being composed by the user.
  */
 
-public class Geary.App.DraftManager : BaseObject {
+public class Convey.App.DraftManager : BaseObject {
     public const string PROP_IS_OPEN = "is-open";
     public const string PROP_DRAFT_STATE = "draft-state";
     public const string PROP_CURRENT_DRAFT_ID = "current-draft-id";
@@ -93,9 +93,9 @@ public class Geary.App.DraftManager : BaseObject {
     public DraftState draft_state { get; private set; default = DraftState.NOT_STORED; }
 
     /**
-     * The {@link Geary.EmailIdentifier} of the last saved draft.
+     * The {@link Convey.EmailIdentifier} of the last saved draft.
      */
-    public Geary.EmailIdentifier? current_draft_id { get; private set; default = null; }
+    public Convey.EmailIdentifier? current_draft_id { get; private set; default = null; }
 
     /**
      * The version number of the most recently saved draft.
@@ -115,7 +115,7 @@ public class Geary.App.DraftManager : BaseObject {
     public int versions_dropped { get; private set; default = 0; }
 
     private Account account;
-    private Geary.EmailFlags flags = null;
+    private Convey.EmailFlags flags = null;
     private Folder drafts_folder;
     private FolderSupport.Create create_support;
     private FolderSupport.Remove remove_support;
@@ -127,7 +127,7 @@ public class Geary.App.DraftManager : BaseObject {
     /**
      * Fired when a draft is successfully saved.
      */
-    public signal void stored(Geary.RFC822.Message draft);
+    public signal void stored(Convey.RFC822.Message draft);
 
     /**
      * Fired when a draft is discarded.
@@ -140,7 +140,7 @@ public class Geary.App.DraftManager : BaseObject {
      * This occurs when a draft is scheduled for {@link update} while another draft is queued
      * to be pushed to the server.  The queued draft is dropped in favor of the new one.
      */
-    public signal void dropped(Geary.RFC822.Message draft);
+    public signal void dropped(Convey.RFC822.Message draft);
 
     /**
      * Fired when unable to save a draft but the {@link DraftManager} remains open.
@@ -149,7 +149,7 @@ public class Geary.App.DraftManager : BaseObject {
      * {@link fatal}.  It should not be assumed this signal firing means DraftManager is still
      * operational, but if fatal fires, it definitely is not operational.
      */
-    public virtual signal void draft_failed(Geary.RFC822.Message draft, Error err) {
+    public virtual signal void draft_failed(Convey.RFC822.Message draft, Error err) {
         debug("%s: Unable to create draft: %s", to_string(), err.message);
     }
 
@@ -164,7 +164,7 @@ public class Geary.App.DraftManager : BaseObject {
         debug("%s: Irrecoverable failure: %s", to_string(), err.message);
     }
 
-    protected virtual void notify_stored(Geary.RFC822.Message draft) {
+    protected virtual void notify_stored(Convey.RFC822.Message draft) {
         versions_saved++;
         stored(draft);
     }
@@ -300,7 +300,7 @@ public class Geary.App.DraftManager : BaseObject {
      * See {@link FolderSupport.Create.create_email_async} for more information on the flags and
      * date_received arguments.
      */
-    public async void update(Geary.RFC822.Message draft,
+    public async void update(Convey.RFC822.Message draft,
                              DateTime? date_received,
                              GLib.Cancellable? cancellable) throws GLib.Error {
         check_open();

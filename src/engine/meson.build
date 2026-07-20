@@ -1,46 +1,46 @@
-# Geary engine
+# Convey engine
 engine_vala_sources = files(
-  'api/geary.vala',
-  'api/geary-abstract-local-folder.vala',
-  'api/geary-account.vala',
-  'api/geary-account-backend.vala',
-  'api/geary-account-information.vala',
-  'api/geary-aggregated-folder-properties.vala',
-  'api/geary-attachment.vala',
-  'api/geary-base-object.vala',
-  'api/geary-client-service.vala',
-  'api/geary-composed-email.vala',
-  'api/geary-contact.vala',
-  'api/geary-contact-store.vala',
-  'api/geary-credentials.vala',
-  'api/geary-credentials-mediator.vala',
-  'api/geary-email-flags.vala',
-  'api/geary-email-header-set.vala',
-  'api/geary-email-identifier.vala',
-  'api/geary-email-properties.vala',
-  'api/geary-email.vala',
-  'api/geary-endpoint.vala',
-  'api/geary-engine-error.vala',
-  'api/geary-engine.vala',
-  'api/geary-folder.vala',
-  'api/geary-folder-path.vala',
-  'api/geary-folder-properties.vala',
-  'api/geary-account-support-queue-send.vala',
-  'api/geary-folder-supports-archive.vala',
-  'api/geary-folder-supports-copy.vala',
-  'api/geary-folder-supports-create.vala',
-  'api/geary-folder-supports-empty.vala',
-  'api/geary-folder-supports-mark.vala',
-  'api/geary-folder-supports-move.vala',
-  'api/geary-folder-supports-remove.vala',
-  'api/geary-named-flag.vala',
-  'api/geary-named-flags.vala',
-  'api/geary-problem-report.vala',
-  'api/geary-progress-monitor.vala',
-  'api/geary-revokable.vala',
-  'api/geary-search-query.vala',
-  'api/geary-service-information.vala',
-  'api/geary-service-provider.vala',
+  'api/convey.vala',
+  'api/convey-abstract-local-folder.vala',
+  'api/convey-account.vala',
+  'api/convey-account-backend.vala',
+  'api/convey-account-information.vala',
+  'api/convey-aggregated-folder-properties.vala',
+  'api/convey-attachment.vala',
+  'api/convey-base-object.vala',
+  'api/convey-client-service.vala',
+  'api/convey-composed-email.vala',
+  'api/convey-contact.vala',
+  'api/convey-contact-store.vala',
+  'api/convey-credentials.vala',
+  'api/convey-credentials-mediator.vala',
+  'api/convey-email-flags.vala',
+  'api/convey-email-header-set.vala',
+  'api/convey-email-identifier.vala',
+  'api/convey-email-properties.vala',
+  'api/convey-email.vala',
+  'api/convey-endpoint.vala',
+  'api/convey-engine-error.vala',
+  'api/convey-engine.vala',
+  'api/convey-folder.vala',
+  'api/convey-folder-path.vala',
+  'api/convey-folder-properties.vala',
+  'api/convey-account-support-queue-send.vala',
+  'api/convey-folder-supports-archive.vala',
+  'api/convey-folder-supports-copy.vala',
+  'api/convey-folder-supports-create.vala',
+  'api/convey-folder-supports-empty.vala',
+  'api/convey-folder-supports-mark.vala',
+  'api/convey-folder-supports-move.vala',
+  'api/convey-folder-supports-remove.vala',
+  'api/convey-named-flag.vala',
+  'api/convey-named-flags.vala',
+  'api/convey-problem-report.vala',
+  'api/convey-progress-monitor.vala',
+  'api/convey-revokable.vala',
+  'api/convey-search-query.vala',
+  'api/convey-service-information.vala',
+  'api/convey-service-provider.vala',
 
   'app/app-conversation.vala',
   'app/app-conversation-monitor.vala',
@@ -352,8 +352,8 @@ endif
 
 engine_build_dir = meson.current_build_dir()
 
-engine_c_args = geary_c_args
-engine_vala_args = geary_vala_args
+engine_c_args = convey_c_args
+engine_vala_args = convey_vala_args
 
 # Suppress SQLite loadable module init code
 engine_c_args += [
@@ -364,8 +364,8 @@ engine_c_args += [
 # https://github.com/mesonbuild/meson/issues/1781 for official
 # internal VAPI support.
 engine_vala_args += [
-  '--internal-header=@0@/geary-engine-internal.h'.format(engine_build_dir),
-  '--internal-vapi=@0@/geary-engine-internal.vapi'.format(engine_build_dir)
+  '--internal-header=@0@/convey-engine-internal.h'.format(engine_build_dir),
+  '--internal-vapi=@0@/convey-engine-internal.vapi'.format(engine_build_dir)
 ]
 
 if libunwind_dep.found()
@@ -387,7 +387,7 @@ if get_option('delayed_replay_queue')
   ]
 endif
 
-engine_lib = static_library('geary-engine',
+engine_lib = static_library('convey-engine',
   engine_sources,
   dependencies: engine_dependencies,
   vala_args: engine_vala_args,
@@ -400,14 +400,14 @@ engine_lib = static_library('geary-engine',
 engine_internal_header_fixup = custom_target(
   'engine_internal_header_fixup',
   output: [
-    'geary-engine-internal.h',
-    'geary-engine-internal.vapi',
+    'convey-engine-internal.h',
+    'convey-engine-internal.vapi',
   ],
   command: [
     find_program('sed'),
     '-ibak',
-    's/geary-engine.h/geary-engine-internal.h/g',
-    '@OUTDIR@/geary-engine-internal.vapi',
+    's/convey-engine.h/convey-engine-internal.h/g',
+    '@OUTDIR@/convey-engine-internal.vapi',
   ],
   depends: engine_lib
 )
@@ -424,7 +424,7 @@ engine_internal_dep = declare_dependency(
   # pull in the public header and we get duplicate symbol errors.
   link_args: [
     '-L' + engine_build_dir,
-    '-lgeary-engine'
+    '-lconvey-engine'
   ],
   include_directories: include_directories('.'),
   sources: engine_internal_header_fixup
@@ -432,7 +432,7 @@ engine_internal_dep = declare_dependency(
 
 # Compile a loadable library containing the custom tokeniser so SQLite
 # command line app can still be used.
-tokeniser_lib = shared_library('geary-tokeniser',
+tokeniser_lib = shared_library('convey-tokeniser',
   files('imap-db/imap-db-fts5-tokeniser.c'),
   dependencies: [ glib, icu_uc, sqlite ],
   c_args: [

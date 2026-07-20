@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-[GtkTemplate (ui = "/org/gnome/Geary/folder-popover-row.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/folder-popover-row.ui")]
 public class FolderPopoverRow : Gtk.ListBoxRow {
 
     [GtkChild] private unowned Gtk.Image image;

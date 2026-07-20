@@ -17,7 +17,7 @@
  *
  * This class is ''not'' thread safe.
  */
-public abstract class Geary.Imap.SessionObject : BaseObject, Logging.Source {
+public abstract class Convey.Imap.SessionObject : BaseObject, Logging.Source {
 
 
     /** Determines if this object has a valid session or not. */

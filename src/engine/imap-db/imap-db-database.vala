@@ -11,7 +11,7 @@ extern int sqlite3_register_fts5_tokeniser(Sqlite.Database db);
 extern int sqlite3_register_fts5_matches(Sqlite.Database db);
 extern int sqlite3_register_legacy_tokenizer(Sqlite.Database db);
 
-private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
+private class Convey.ImapDB.Database : Convey.Db.VersionedDatabase {
 
 
     /** SQLite UTF-8 case-insensitive, transliterating function name. */
@@ -47,7 +47,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
                                                 Sqlite.Value[] values) {
         string? text = values[0].to_text();
         if (text != null) {
-            context.result_text(Geary.Db.normalise_case_insensitive_query(text));
+            context.result_text(Convey.Db.normalise_case_insensitive_query(text));
         } else {
             context.result_value(values[0]);
         }
@@ -109,7 +109,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
      * the interval based recommendation should be bypassed.
      */
     public async void run_gc(GarbageCollectionOptions options,
-                             Gee.Collection<Geary.ClientService>? to_pause,
+                             Gee.Collection<Convey.ClientService>? to_pause,
                              GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (this.gc != null) {
@@ -296,7 +296,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
                     string encoded_name = select.nonnull_string_at(1);
 
                     try {
-                        string canonical_name = Geary.ImapUtf7.imap_utf7_to_utf8(encoded_name);
+                        string canonical_name = Convey.ImapUtf7.imap_utf7_to_utf8(encoded_name);
 
                         Db.Statement update = cx.prepare(
                             "UPDATE FolderTable SET name=? WHERE id=?"
@@ -310,7 +310,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
 
                     select.next();
                 }
-                return Geary.Db.TransactionOutcome.COMMIT;
+                return Convey.Db.TransactionOutcome.COMMIT;
             }, cancellable);
     }
 
@@ -360,17 +360,17 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
                     FROM MessageTable
                     WHERE (fields & ?) = ?
                     """);
-                stmt.bind_int(0, Geary.Email.REQUIRED_FOR_MESSAGE);
-                stmt.bind_int(1, Geary.Email.REQUIRED_FOR_MESSAGE);
+                stmt.bind_int(0, Convey.Email.REQUIRED_FOR_MESSAGE);
+                stmt.bind_int(1, Convey.Email.REQUIRED_FOR_MESSAGE);
                 Db.Result select = stmt.exec();
 
                 while (!select.finished) {
                     int64 id = select.rowid_at(0);
-                    Geary.Memory.Buffer header = select.string_buffer_at(1);
-                    Geary.Memory.Buffer body = select.string_buffer_at(2);
+                    Convey.Memory.Buffer header = select.string_buffer_at(1);
+                    Convey.Memory.Buffer body = select.string_buffer_at(2);
 
                     try {
-                        Geary.RFC822.Message message = new Geary.RFC822.Message.from_parts(
+                        Convey.RFC822.Message message = new Convey.RFC822.Message.from_parts(
                             new RFC822.Header(header), new RFC822.Text(body));
                         Mime.DispositionType target_disposition = Mime.DispositionType.UNSPECIFIED;
                         if (message.get_sub_messages().is_empty)
@@ -405,7 +405,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
         // When the MessageSearchTable is first touched,
         // SQLite seems to read the whole table into memory
         // (or an awful lot of data, either way).  This was
-        // causing slowness when Geary first started and
+        // causing slowness when Convey first started and
         // checked for any messages not yet in the search
         // table.  With the database's page_size set to 4096,
         // the reads seem to happen about 2 orders of
@@ -417,7 +417,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
 
         // NOTE: these can't be in the .sql file itself because
         // they must be back to back, outside of a transaction
-        Geary.Db.Connection cx = yield open_connection();
+        Convey.Db.Connection cx = yield open_connection();
         yield Nonblocking.Concurrent.global.schedule_async(() => {
                 cx.exec("""
                     PRAGMA page_size = 4096;
@@ -436,8 +436,8 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
                     FROM MessageTable
                 """);
 
-                Gee.HashMap<int64?, Geary.Email.Field> invalid_ids = new Gee.HashMap<
-                    int64?, Geary.Email.Field>();
+                Gee.HashMap<int64?, Convey.Email.Field> invalid_ids = new Gee.HashMap<
+                    int64?, Convey.Email.Field>();
 
                 Db.Result results = stmt.exec();
                 while (!results.finished) {
@@ -452,7 +452,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
                         debug("Invalid INTERNALDATE \"%s\" found at row %s in %s: %s",
                             internaldate != null ? internaldate : "(null)",
                             invalid_id.to_string(), this.path, err.message);
-                        invalid_ids.set(invalid_id, (Geary.Email.Field) results.int_at(2));
+                        invalid_ids.set(invalid_id, (Convey.Email.Field) results.int_at(2));
                     }
 
                     results.next();
@@ -469,7 +469,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
                 stmt.bind_null(3);
 
                 foreach (int64 invalid_id in invalid_ids.keys) {
-                    stmt.bind_int(0, invalid_ids.get(invalid_id).clear(Geary.Email.Field.PROPERTIES));
+                    stmt.bind_int(0, invalid_ids.get(invalid_id).clear(Convey.Email.Field.PROPERTIES));
                     stmt.bind_rowid(4, invalid_id);
 
                     stmt.exec();
@@ -513,8 +513,8 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
                     FROM MessageTable
                     WHERE (fields & ?) = ?
                     """);
-                stmt.bind_int(0, Geary.Email.REQUIRED_FOR_MESSAGE);
-                stmt.bind_int(1, Geary.Email.REQUIRED_FOR_MESSAGE);
+                stmt.bind_int(0, Convey.Email.REQUIRED_FOR_MESSAGE);
+                stmt.bind_int(1, Convey.Email.REQUIRED_FOR_MESSAGE);
 
                 Db.Result results = stmt.exec();
                 if (results.finished)
@@ -522,12 +522,12 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
 
                 do {
                     int64 message_id = results.rowid_at(0);
-                    Geary.Memory.Buffer header = results.string_buffer_at(1);
-                    Geary.Memory.Buffer body = results.string_buffer_at(2);
+                    Convey.Memory.Buffer header = results.string_buffer_at(1);
+                    Convey.Memory.Buffer body = results.string_buffer_at(2);
 
-                    Geary.RFC822.Message message;
+                    Convey.RFC822.Message message;
                     try {
-                        message = new Geary.RFC822.Message.from_parts(
+                        message = new Convey.RFC822.Message.from_parts(
                             new RFC822.Header(header), new RFC822.Text(body));
                     } catch (Error err) {
                         debug("Error decoding message: %s", err.message);
@@ -620,7 +620,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
 
         // SQLite might need more disk space than we have in /tmp
         // So use XDG_CACHE_DIR instead
-        string tmp_path = "%s/geary/database".printf(
+        string tmp_path = "%s/convey/database".printf(
                 GLib.Environment.get_user_cache_dir()
         );
         GLib.File tmp_directory = GLib.File.new_for_path(tmp_path);
@@ -654,7 +654,7 @@ private class Geary.ImapDB.Database : Geary.Db.VersionedDatabase {
         // boundaries.
         sqlite3_register_fts5_tokeniser(cx.db);
 
-        // Register custom `geary_matches()` FTS5 function that
+        // Register custom `convey_matches()` FTS5 function that
         // obtains matching tokens from FTS queries.
         sqlite3_register_fts5_matches(cx.db);
 

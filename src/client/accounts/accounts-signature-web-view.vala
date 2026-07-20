@@ -24,7 +24,7 @@ public class Accounts.SignatureWebView : Components.WebView {
     public SignatureWebView(Application.Configuration config) {
         base(config, null);
         this.user_content_manager.add_script(SignatureWebView.app_script);
-        add_css_class("geary-signature");
+        add_css_class("convey-signature");
     }
 
 }

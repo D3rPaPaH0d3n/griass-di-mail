@@ -65,7 +65,7 @@
                                 </property>
                                 <style>
                                   <class name="property"/>
-                                  <class name="geary-composer-from"/>
+                                  <class name="convey-composer-from"/>
                                 </style>
                               </object>
                             </child>
@@ -163,7 +163,7 @@
               <placeholder/>
             </child>
             <style>
-              <class name="geary-attachments-box"/>
+              <class name="convey-attachments-box"/>
             </style>
           </object>
         </child>

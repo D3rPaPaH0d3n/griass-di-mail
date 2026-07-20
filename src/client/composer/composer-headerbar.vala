@@ -5,7 +5,7 @@
  */
 
 //XXX GTK4 rename headerbar to header in files too
-[GtkTemplate (ui = "/org/gnome/Geary/composer-headerbar.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/composer-headerbar.ui")]
 public class Composer.Header : Adw.Bin {
 
 

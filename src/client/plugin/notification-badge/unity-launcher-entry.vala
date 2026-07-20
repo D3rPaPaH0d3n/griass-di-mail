@@ -10,14 +10,14 @@
  *
  * See https://wiki.ubuntu.com/Unity/LauncherAPI for documentation.
  */
-public class UnityLauncherEntry : Geary.BaseObject {
+public class UnityLauncherEntry : Convey.BaseObject {
 
 
     private const string DBUS_NAME = "com.canonical.Unity.LauncherEntry";
 
 
     [DBus (name = "com.canonical.Unity.LauncherEntry")]
-    private class Entry : Geary.BaseObject {
+    private class Entry : Convey.BaseObject {
 
 
         public signal void update (string app_uri,

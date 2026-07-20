@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Imap.ClientSessionTest : TestCase {
+class Convey.Imap.ClientSessionTest : TestCase {
 
     private const uint CONNECT_TIMEOUT = 2;
 
@@ -13,7 +13,7 @@ class Geary.Imap.ClientSessionTest : TestCase {
 
 
     public ClientSessionTest() {
-        base("Geary.Imap.ClientSessionTest");
+        base("Convey.Imap.ClientSessionTest");
         add_test("connect_disconnect", connect_disconnect);
         add_test("connect_with_capabilities", connect_with_capabilities);
         if (GLib.Test.slow()) {

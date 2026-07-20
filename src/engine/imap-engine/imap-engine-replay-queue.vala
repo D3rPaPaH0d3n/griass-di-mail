@@ -13,7 +13,7 @@
  * locally and from the server for a specific IMAP mailbox so as to
  * ensure the execution of the operations maintains consistent.
  */
-private class Geary.ImapEngine.ReplayQueue : BaseObject, Logging.Source {
+private class Convey.ImapEngine.ReplayQueue : BaseObject, Logging.Source {
 
 
     // Maximum number of times a retry-able operation should be
@@ -224,7 +224,7 @@ private class Geary.ImapEngine.ReplayQueue : BaseObject, Logging.Source {
      *
      * All unsolicited server data uses positional addressing, so it's possible for an EXISTS
      * (append) to arrive followed by one or more EXPUNGEs (removes), meaning that the first
-     * append's position has shifted downward.  Without a pause, Geary will immediately issue a
+     * append's position has shifted downward.  Without a pause, Convey will immediately issue a
      * FETCH on that position, which no longer exists on the server.
      *
      * There is no signal in IMAP for the server to say "no more notifications arriving", hence a

@@ -17,7 +17,7 @@
  * @see FetchedData
  * @see StoreCommand
  */
-public class Geary.Imap.FetchCommand : Command {
+public class Convey.Imap.FetchCommand : Command {
 
     public const string NAME = "fetch";
     public const string UID_NAME = "uid fetch";

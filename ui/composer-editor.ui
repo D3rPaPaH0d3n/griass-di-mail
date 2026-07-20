@@ -21,7 +21,7 @@
                     <property name="valign">end</property>
                     <property name="ellipsize">middle</property>
                     <style>
-                      <class name="geary-overlay"/>
+                      <class name="convey-overlay"/>
                     </style>
                   </object>
                 </child>

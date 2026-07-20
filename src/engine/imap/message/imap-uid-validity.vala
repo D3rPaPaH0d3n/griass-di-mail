@@ -12,7 +12,7 @@
  * @see UID
  */
 
-public class Geary.Imap.UIDValidity : Geary.MessageData.Int64MessageData, Geary.Imap.MessageData {
+public class Convey.Imap.UIDValidity : Convey.MessageData.Int64MessageData, Convey.Imap.MessageData {
     /**
      * Minimum valid value for a {@link UIDValidity}.
      *

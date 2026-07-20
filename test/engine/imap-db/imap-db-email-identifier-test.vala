@@ -5,11 +5,11 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Geary.ImapDB.EmailIdentifierTest : TestCase {
+public class Convey.ImapDB.EmailIdentifierTest : TestCase {
 
 
     public EmailIdentifierTest() {
-        base("Geary.ImapDB.EmailIdentifierTest");
+        base("Convey.ImapDB.EmailIdentifierTest");
         add_test("variant_representation", variant_representation);
     }
 

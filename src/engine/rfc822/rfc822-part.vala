@@ -13,7 +13,7 @@
  * MIME entity header field values that are useful to applications and
  * decoded forms of the entity body.
  */
-public class Geary.RFC822.Part : Object {
+public class Convey.RFC822.Part : Object {
 
 
     /** Specifies a character set encoding when writing text bodies. */
@@ -152,7 +152,7 @@ public class Geary.RFC822.Part : Object {
 
         write_to_stream(stream, conversion, format);
 
-        return new Geary.Memory.ByteBuffer.from_byte_array(byte_array);
+        return new Convey.Memory.ByteBuffer.from_byte_array(byte_array);
     }
 
     internal void write_to_stream(GMime.Stream destination,
@@ -179,13 +179,13 @@ public class Geary.RFC822.Part : Object {
             }
             if (conversion == UTF8 && !is_utf_8(charset)) {
                 GMime.FilterCharset? filter_charset = new GMime.FilterCharset(
-                    charset, Geary.RFC822.UTF8_CHARSET
+                    charset, Convey.RFC822.UTF8_CHARSET
                 );
                 if (filter_charset == null) {
                     // Source charset not supported, so assume
                     // US-ASCII
                     filter_charset = new GMime.FilterCharset(
-                        "US-ASCII", Geary.RFC822.UTF8_CHARSET
+                        "US-ASCII", Convey.RFC822.UTF8_CHARSET
                     );
                 }
                 filter.add(filter_charset);
@@ -206,7 +206,7 @@ public class Geary.RFC822.Part : Object {
 
             if (flowed) {
                 filter.add(
-                    new Geary.RFC822.FilterFlowed(
+                    new Convey.RFC822.FilterFlowed(
                         format == BodyFormatting.HTML, delsp
                     )
                 );
@@ -214,7 +214,7 @@ public class Geary.RFC822.Part : Object {
 
             if (format == BodyFormatting.HTML) {
                 if (!flowed) {
-                    filter.add(new Geary.RFC822.FilterPlain());
+                    filter.add(new Convey.RFC822.FilterPlain());
                 }
                 filter.add(
                     new GMime.FilterHTML(
@@ -223,7 +223,7 @@ public class Geary.RFC822.Part : Object {
                         0
                     )
                 );
-                filter.add(new Geary.RFC822.FilterBlockquotes());
+                filter.add(new Convey.RFC822.FilterBlockquotes());
             }
 
             if (wrapper.write_to_stream(filter) < 0)

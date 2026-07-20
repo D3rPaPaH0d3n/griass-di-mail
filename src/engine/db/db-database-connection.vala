@@ -9,7 +9,7 @@
 /**
  * A primary connection to the database.
  */
-public class Geary.Db.DatabaseConnection : Context, Connection {
+public class Convey.Db.DatabaseConnection : Context, Connection {
 
 
     /**

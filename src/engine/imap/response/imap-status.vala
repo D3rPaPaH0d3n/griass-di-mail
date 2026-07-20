@@ -10,7 +10,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.1]] for more information.
  */
 
-public enum Geary.Imap.Status {
+public enum Convey.Imap.Status {
     OK,
     NO,
     BAD,

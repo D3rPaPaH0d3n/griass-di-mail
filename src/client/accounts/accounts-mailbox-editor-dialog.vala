@@ -9,7 +9,7 @@
  * A simple dialog that allows adding/editing Mailboxes (e.g. when configuring
  * sender addresses).
  */
-[GtkTemplate (ui = "/org/gnome/Geary/accounts-mailbox-editor-dialog.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-mailbox-editor-dialog.ui")]
 internal class Accounts.MailboxEditorDialog : Adw.Dialog {
 
 
@@ -30,7 +30,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
 
 
     /** Fired if the user pressed "Add"/"Apply" with the new details */
-    public signal void apply(Geary.RFC822.MailboxAddress mailbox);
+    public signal void apply(Convey.RFC822.MailboxAddress mailbox);
 
     /** Fired if the user requested to remove the address */
     public signal void remove();
@@ -72,7 +72,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
         action_set_enabled("remove", false);
     }
 
-    public MailboxEditorDialog.for_existing(Geary.RFC822.MailboxAddress mailbox,
+    public MailboxEditorDialog.for_existing(Convey.RFC822.MailboxAddress mailbox,
                                             bool can_remove) {
         Object(
             display_name: mailbox.name ?? "",
@@ -118,7 +118,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
         }
 
         apply(
-            new Geary.RFC822.MailboxAddress(this.display_name, this.address)
+            new Convey.RFC822.MailboxAddress(this.display_name, this.address)
         );
     }
 

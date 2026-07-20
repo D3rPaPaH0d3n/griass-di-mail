@@ -9,7 +9,7 @@ class Integration.Smtp.ClientSession : TestCase {
 
 
     private Configuration config;
-    private Geary.Smtp.ClientSession? session;
+    private Convey.Smtp.ClientSession? session;
 
 
     public ClientSession(Configuration config) {
@@ -30,7 +30,7 @@ class Integration.Smtp.ClientSession : TestCase {
     }
 
     public override void set_up() {
-        this.session = new Geary.Smtp.ClientSession(
+        this.session = new Convey.Smtp.ClientSession(
             this.config.target
         );
     }
@@ -46,7 +46,7 @@ class Integration.Smtp.ClientSession : TestCase {
     }
 
     public void login_password_invalid() throws GLib.Error {
-        Geary.Credentials password_creds = new Geary.Credentials(
+        Convey.Credentials password_creds = new Convey.Credentials(
             PASSWORD,
             "automated-integration-test",
             "deliberately-invalid-password"
@@ -57,13 +57,13 @@ class Integration.Smtp.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Geary.SmtpError.AUTHENTICATION_FAILED err) {
+        } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
             // All good
         }
     }
 
     public void login_oauth2_invalid() throws GLib.Error {
-        Geary.Credentials oauth2_creds = new Geary.Credentials(
+        Convey.Credentials oauth2_creds = new Convey.Credentials(
             OAUTH2,
             "automated-integration-test",
             "deliberately-invalid-token"
@@ -74,7 +74,7 @@ class Integration.Smtp.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Geary.SmtpError.AUTHENTICATION_FAILED err) {
+        } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
             // All good
         }
     }
@@ -86,20 +86,20 @@ class Integration.Smtp.ClientSession : TestCase {
     public void send_basic_email() throws GLib.Error {
         do_connect();
 
-        Geary.RFC822.MailboxAddress return_path =
-            new Geary.RFC822.MailboxAddress(
+        Convey.RFC822.MailboxAddress return_path =
+            new Convey.RFC822.MailboxAddress(
                 null, this.config.credentials.user
             );
 
         this.new_message.begin(
             return_path,
-            new Geary.RFC822.MailboxAddress(
-                "Geary integration test",
+            new Convey.RFC822.MailboxAddress(
+                "Convey integration test",
                 this.config.credentials.user
             ),
             this.async_completion
         );
-        Geary.RFC822.Message message = new_message.end(async_result());
+        Convey.RFC822.Message message = new_message.end(async_result());
 
         this.session.send_email_async.begin(
             return_path,
@@ -117,20 +117,20 @@ class Integration.Smtp.ClientSession : TestCase {
         this.session.login_async.end(async_result());
     }
 
-    private async Geary.RFC822.Message new_message(Geary.RFC822.MailboxAddress from,
-                                                   Geary.RFC822.MailboxAddress to)
-        throws Geary.RFC822.Error {
-        Geary.ComposedEmail composed = new Geary.ComposedEmail(
+    private async Convey.RFC822.Message new_message(Convey.RFC822.MailboxAddress from,
+                                                   Convey.RFC822.MailboxAddress to)
+        throws Convey.RFC822.Error {
+        Convey.ComposedEmail composed = new Convey.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Geary.RFC822.MailboxAddresses.single(from)
+            new Convey.RFC822.MailboxAddresses.single(from)
         ).set_to(
-            new Geary.RFC822.MailboxAddresses.single(to)
+            new Convey.RFC822.MailboxAddresses.single(to)
         ).set_subject(
-            "Geary integration test subject"
+            "Convey integration test subject"
         );
-        composed.body_text = "Geary integration test message";
+        composed.body_text = "Convey integration test message";
 
-        return yield new Geary.RFC822.Message.from_composed_email(
+        return yield new Convey.RFC822.Message.from_composed_email(
             composed,
             GMime.utils_generate_message_id(from.domain),
             GMime.EncodingConstraint.7BIT,

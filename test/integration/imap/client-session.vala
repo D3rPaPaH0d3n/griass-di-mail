@@ -9,7 +9,7 @@ class Integration.Imap.ClientSession : TestCase {
 
 
     private Configuration config;
-    private Geary.Imap.ClientSession? session;
+    private Convey.Imap.ClientSession? session;
 
 
     public ClientSession(Configuration config) {
@@ -27,9 +27,9 @@ class Integration.Imap.ClientSession : TestCase {
     }
 
     public override void set_up() {
-        this.session = new Geary.Imap.ClientSession(
+        this.session = new Convey.Imap.ClientSession(
             this.config.target,
-            new Geary.Imap.Quirks()
+            new Convey.Imap.Quirks()
         );
     }
 
@@ -52,7 +52,7 @@ class Integration.Imap.ClientSession : TestCase {
     public void login_password_invalid() throws GLib.Error {
         do_connect();
 
-        Geary.Credentials password_creds = new Geary.Credentials(
+        Convey.Credentials password_creds = new Convey.Credentials(
             PASSWORD, "automated-integration-test", "password"
         );
         this.session.login_async.begin(
@@ -61,9 +61,9 @@ class Integration.Imap.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Geary.ImapError.UNAUTHENTICATED err) {
+        } catch (Convey.ImapError.UNAUTHENTICATED err) {
             // All good
-        } catch (Geary.ImapError.SERVER_ERROR err) {
+        } catch (Convey.ImapError.SERVER_ERROR err) {
             // Some servers (Y!) return AUTHORIZATIONFAILED response
             // code if the login (not password) is bad
             if (!("AUTHORIZATIONFAILED" in err.message)) {
@@ -75,7 +75,7 @@ class Integration.Imap.ClientSession : TestCase {
     public void login_oauth2_invalid() throws GLib.Error {
         do_connect();
 
-        Geary.Credentials oauth2_creds = new Geary.Credentials(
+        Convey.Credentials oauth2_creds = new Convey.Credentials(
             OAUTH2, "automated-integration-test", "password"
         );
         this.session.login_async.begin(
@@ -84,7 +84,7 @@ class Integration.Imap.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Geary.ImapError.UNAUTHENTICATED err) {
+        } catch (Convey.ImapError.UNAUTHENTICATED err) {
             // All good
         }
     }

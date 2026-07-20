@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Smtp.Greeting : Response {
+public class Convey.Smtp.Greeting : Response {
     public enum ServerFlavor {
         SMTP,
         ESMTP,

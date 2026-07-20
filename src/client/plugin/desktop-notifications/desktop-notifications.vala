@@ -26,7 +26,7 @@ public class Plugin.DesktopNotifications :
     TrustedExtension {
 
 
-    private const Geary.Folder.SpecialUse[] MONITORED_TYPES = {
+    private const Convey.Folder.SpecialUse[] MONITORED_TYPES = {
         INBOX, NONE
     };
 
@@ -98,7 +98,7 @@ public class Plugin.DesktopNotifications :
     ) throws GLib.Error {
         string title = to_notitication_title(folder.account, total);
         GLib.Icon? icon = null;
-        Geary.RFC822.MailboxAddress? originator = email.get_primary_originator();
+        Convey.RFC822.MailboxAddress? originator = email.get_primary_originator();
         if (originator != null) {
             ContactStore contacts =
                 yield this.notifications.get_contacts_for_folder(folder);
@@ -263,9 +263,9 @@ public class Plugin.DesktopNotifications :
             // generally
             bool notified = false;
             try {
-                Email? message = Geary.Collection.first(
+                Email? message = Convey.Collection.first(
                     yield this.email_store.get_email(
-                        Geary.Collection.single(Geary.Collection.first(added)),
+                        Convey.Collection.single(Convey.Collection.first(added)),
                         this.cancellable
                     )
                 );

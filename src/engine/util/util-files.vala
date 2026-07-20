@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.Files {
+namespace Convey.Files {
 
 // Number of files to delete in each step.
 private const int RECURSIVE_DELETE_BATCH_SIZE = 50;

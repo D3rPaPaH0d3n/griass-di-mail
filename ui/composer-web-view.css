@@ -24,19 +24,19 @@ body.plain a {
   cursor: text;
 }
 
-body > *.geary-no-display {
+body > *.convey-no-display {
   display: none !important;
 }
 
-body > div#geary-body {
+body > div#convey-body {
   margin: 0 !important;
   border: 0 !important;
   padding: 12px !important;
   outline: 0px !important;
 }
 
-body > div#geary-signature,
-body > div#geary-quote {
+body > div#convey-signature,
+body > div#convey-quote {
   margin: 0 6px !important;
   border: 0 !important;
   padding: 6px !important;
@@ -48,8 +48,8 @@ body > div:focus-within {
   caret-color: var(--fg-color);
 }
 
-body > div#geary-signature:focus-within,
-body > div#geary-quote:focus-within {
+body > div#convey-signature:focus-within,
+body > div#convey-quote:focus-within {
   outline: 1px dashed #ccc !important;
 }
 

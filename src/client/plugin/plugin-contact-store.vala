@@ -12,7 +12,7 @@
  * objects, for example {@link
  * NotificationContext.get_contacts_for_folder}.
  */
-public interface Plugin.ContactStore : Geary.BaseObject {
+public interface Plugin.ContactStore : Convey.BaseObject {
 
 
     /** Searches for contacts based on a specific string */
@@ -33,7 +33,7 @@ public interface Plugin.ContactStore : Geary.BaseObject {
      * non-persistent contact will be returned.
      */
     public abstract async global::Application.Contact load(
-        Geary.RFC822.MailboxAddress mailbox,
+        Convey.RFC822.MailboxAddress mailbox,
         GLib.Cancellable? cancellable
     ) throws GLib.Error;
 

@@ -9,7 +9,7 @@
 /**
  * A connection to the database for transactions.
  */
-internal class Geary.Db.TransactionConnection : BaseObject, Connection {
+internal class Convey.Db.TransactionConnection : BaseObject, Connection {
 
 
     /** {@inheritDoc} */

@@ -18,7 +18,7 @@
  *
  * @see Lock
  */
-public class Geary.Nonblocking.Semaphore : Geary.Nonblocking.Lock {
+public class Convey.Nonblocking.Semaphore : Convey.Nonblocking.Lock {
 
     /**
      * Constructs a new semaphore lock.
@@ -43,7 +43,7 @@ public class Geary.Nonblocking.Semaphore : Geary.Nonblocking.Lock {
  *
  * @see Lock
  */
-public class Geary.Nonblocking.Event : Geary.Nonblocking.Lock {
+public class Convey.Nonblocking.Event : Convey.Nonblocking.Lock {
 
     /**
      * Constructs a new event lock.
@@ -68,7 +68,7 @@ public class Geary.Nonblocking.Event : Geary.Nonblocking.Lock {
  *
  * @see Lock
  */
-public class Geary.Nonblocking.Spinlock : Geary.Nonblocking.Lock {
+public class Convey.Nonblocking.Spinlock : Convey.Nonblocking.Lock {
 
     /**
      * Constructs a new spin lock.

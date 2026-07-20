@@ -101,7 +101,7 @@ public class Components.Validator : GLib.Object {
     // Determines if the value has changed since last validation
     private bool target_changed = false;
 
-    private Geary.TimeoutManager ui_update_timer;
+    private Convey.TimeoutManager ui_update_timer;
 
 
     /** Fired when the validation state changes. */
@@ -118,7 +118,7 @@ public class Components.Validator : GLib.Object {
 
 
     construct {
-        this.ui_update_timer = new Geary.TimeoutManager.seconds(
+        this.ui_update_timer = new Convey.TimeoutManager.seconds(
             1, on_update_ui
         );
 
@@ -242,7 +242,7 @@ public class Components.Validator : GLib.Object {
     private void validate_entry(Trigger reason) {
         string value = this.target.get_text();
         Validity new_state = this.state;
-        if (Geary.String.is_empty_or_whitespace(value)) {
+        if (Convey.String.is_empty_or_whitespace(value)) {
             new_state = this.is_required ? Validity.EMPTY : Validity.VALID;
         } else {
             new_state = do_validate(value, reason);
@@ -434,7 +434,7 @@ public class Components.EmailValidator : Validator {
 
     protected override Validator.Validity do_validate(string value,
                                                       Validator.Trigger reason) {
-        return Geary.RFC822.MailboxAddress.is_valid_address(value)
+        return Convey.RFC822.MailboxAddress.is_valid_address(value)
             ? Validator.Validity.VALID : Validator.Validity.INVALID;
     }
 

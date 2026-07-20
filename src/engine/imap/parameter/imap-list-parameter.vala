@@ -10,7 +10,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.4]]
  */
 
-public class Geary.Imap.ListParameter : Geary.Imap.Parameter {
+public class Convey.Imap.ListParameter : Convey.Imap.Parameter {
     /**
      * The maximum length a literal parameter may be to be auto-converted to a StringParameter
      * in the StringParameter getters.
@@ -389,7 +389,7 @@ public class Geary.Imap.ListParameter : Geary.Imap.Parameter {
     public LiteralParameter get_as_empty_literal(int index) throws ImapError {
         LiteralParameter? param = get_as_nullable_literal(index);
 
-        return param ?? new LiteralParameter(Geary.Memory.EmptyBuffer.instance);
+        return param ?? new LiteralParameter(Convey.Memory.EmptyBuffer.instance);
     }
 
     /**

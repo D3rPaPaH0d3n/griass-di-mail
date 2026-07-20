@@ -7,7 +7,7 @@
 
 public class Mock.CredentialsMediator :
     GLib.Object,
-    Geary.CredentialsMediator,
+    Convey.CredentialsMediator,
     ValaUnit.TestAssertions,
     ValaUnit.MockObject {
 
@@ -16,8 +16,8 @@ public class Mock.CredentialsMediator :
         get; set; default = new Gee.LinkedList<ValaUnit.ExpectedCall>();
     }
 
-    public virtual async bool load_token(Geary.AccountInformation account,
-                                         Geary.ServiceInformation service,
+    public virtual async bool load_token(Convey.AccountInformation account,
+                                         Convey.ServiceInformation service,
                                          GLib.Cancellable? cancellable)
         throws GLib.Error {
         return object_call<bool>("load_token", { service, cancellable }, false);
@@ -31,8 +31,8 @@ public class Mock.CredentialsMediator :
      * are ignored).  Return false if the user tried to cancel the
      * interaction, or true if they tried to proceed.
      */
-    public virtual async bool prompt_token(Geary.AccountInformation account,
-                                           Geary.ServiceInformation service,
+    public virtual async bool prompt_token(Convey.AccountInformation account,
+                                           Convey.ServiceInformation service,
                                            GLib.Cancellable? cancellable)
         throws GLib.Error {
         return boolean_call(

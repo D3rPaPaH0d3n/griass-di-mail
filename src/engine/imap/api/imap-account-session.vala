@@ -10,18 +10,18 @@
  * An interface between the high-level engine API and the IMAP stack.
  *
  * Because of the complexities of the IMAP protocol, class takes
- * common operations that a Geary.Account implementation would need
- * (in particular, {@link Geary.ImapEngine.GenericAccount}) and makes
+ * common operations that a Convey.Account implementation would need
+ * (in particular, {@link Convey.ImapEngine.GenericAccount}) and makes
  * them into simple async calls.
  *
- * Geary.Imap.Account manages the {@link Imap.Folder} objects it
+ * Convey.Imap.Account manages the {@link Imap.Folder} objects it
  * returns, but only in the sense that it will not create new
  * instances repeatedly.  Otherwise, it does not refresh or update the
  * Imap.Folders themselves (such as update their {@link
  * Imap.StatusData} periodically). That's the responsibility of the
  * higher layers of the stack.
  */
-internal class Geary.Imap.AccountSession : Geary.Imap.SessionObject {
+internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
 
     private FolderRoot root;
     private Gee.HashMap<FolderPath,Imap.Folder> folders =
@@ -58,7 +58,7 @@ internal class Geary.Imap.AccountSession : Geary.Imap.SessionObject {
             prefix = prefix.substring(0, prefix.length - delim.length);
         }
 
-        return Geary.String.is_empty(prefix)
+        return Convey.String.is_empty(prefix)
             ? this.root
             : this.root.get_child(prefix);
     }
@@ -91,7 +91,7 @@ internal class Geary.Imap.AccountSession : Geary.Imap.SessionObject {
      * used to specify the type of the new folder.
      */
     public async void create_folder_async(FolderPath path,
-                                          Geary.Folder.SpecialUse? use,
+                                          Convey.Folder.SpecialUse? use,
                                           Cancellable? cancellable)
     throws Error {
         ClientSession session = get_session();
@@ -376,7 +376,7 @@ internal class Geary.Imap.AccountSession : Geary.Imap.SessionObject {
             filtered.set(information.mailbox.name, information);
         }
 
-        return Geary.traverse(filtered.values).to_array_list();
+        return Convey.traverse(filtered.values).to_array_list();
     }
 
     private async StatusData send_status_async(ClientSession session,
@@ -416,7 +416,7 @@ internal class Geary.Imap.AccountSession : Geary.Imap.SessionObject {
         Cancellable? cancellable) throws Error {
         Gee.Map<Command, StatusResponse> responses = yield send_multiple_async(
             session,
-            Geary.iterate<Command>(cmd).to_array_list(),
+            Convey.iterate<Command>(cmd).to_array_list(),
             list_results,
             status_results,
             cancellable
@@ -468,7 +468,7 @@ internal class Geary.Imap.AccountSession : Geary.Imap.SessionObject {
     }
 
     [NoReturn]
-    private void throw_not_found(Geary.FolderPath? path) throws EngineError {
+    private void throw_not_found(Convey.FolderPath? path) throws EngineError {
         throw new EngineError.NOT_FOUND(
             "Folder not found: %s",
             (path != null) ? path.to_string() : "[root]"

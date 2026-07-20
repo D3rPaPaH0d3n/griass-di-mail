@@ -10,10 +10,10 @@
 /**
  * A conversation list row displaying an email summary
  */
-[GtkTemplate (ui = "/org/gnome/Geary/conversation-list-row.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-list-row.ui")]
 internal class ConversationList.Row : Gtk.ListBoxRow {
 
-    private Gee.List<Geary.RFC822.MailboxAddress>? user_accounts  {
+    private Gee.List<Convey.RFC822.MailboxAddress>? user_accounts  {
         owned get {
             return conversation.base_folder.account.information.sender_mailboxes;
         }
@@ -29,17 +29,17 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     [GtkChild] unowned Gtk.CheckButton selected_button;
 
-    internal Geary.App.Conversation conversation;
+    internal Convey.App.Conversation conversation;
     private Application.Configuration config;
     private DateTime? recv_time;
 
     internal signal void toggle_flag(ConversationList.Row row,
-                                     Geary.NamedFlag flag);
+                                     Convey.NamedFlag flag);
     internal signal void toggle_selection(ConversationList.Row row,
                                           bool active);
 
     internal Row(Application.Configuration config,
-                 Geary.App.Conversation conversation,
+                 Convey.App.Conversation conversation,
                  bool selection_mode_enabled) {
         this.config = config;
         this.conversation = conversation;
@@ -57,15 +57,15 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
     }
 
     internal void update() {
-        Geary.Email? last_email = conversation.get_latest_recv_email(
-            Geary.App.Conversation.Location.ANYWHERE
+        Convey.Email? last_email = conversation.get_latest_recv_email(
+            Convey.App.Conversation.Location.ANYWHERE
         );
 
         if (last_email != null) {
             var text = Util.Email.strip_subject_prefixes(last_email);
             this.subject.set_text(text);
             this.preview.set_text(
-                Geary.String.reduce_whitespace(
+                Convey.String.reduce_whitespace(
                     last_email.get_preview_as_string()
                 )
             );
@@ -138,7 +138,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         this.state_flags_changed.connect(update_button);
     }
 
-    private void update_flags(Geary.Email? email) {
+    private void update_flags(Convey.Email? email) {
         if (conversation.is_unread()) {
             add_css_class("unread");
         } else {
@@ -154,12 +154,12 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     private string get_participants() {
         var participants = new Gee.ArrayList<Participant>();
-        var addresses = new Geary.RFC822.MailboxAddresses();
-        Gee.List<Geary.Email> emails = conversation.get_emails(
-                          Geary.App.Conversation.Ordering.RECV_DATE_ASCENDING);
+        var addresses = new Convey.RFC822.MailboxAddresses();
+        Gee.List<Convey.Email> emails = conversation.get_emails(
+                          Convey.App.Conversation.Ordering.RECV_DATE_ASCENDING);
         bool is_outgoing = conversation.base_folder.used_as.is_outgoing();
-        foreach (Geary.Email message in emails) {
-            Geary.RFC822.MailboxAddresses? addrs =
+        foreach (Convey.Email message in emails) {
+            Convey.RFC822.MailboxAddresses? addrs =
                 is_outgoing
                 ? message.to
                 : message.from;
@@ -168,7 +168,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
             }
         }
 
-        Gee.List<Geary.RFC822.MailboxAddress> list = Geary.traverse(
+        Gee.List<Convey.RFC822.MailboxAddress> list = Convey.traverse(
             addresses.get_all()
         ).filter((address) => {
             // In sent, we only want to show "Me"
@@ -182,7 +182,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
             return true;
         }).to_array_list();
 
-        foreach (Geary.RFC822.MailboxAddress address in list) {
+        foreach (Convey.RFC822.MailboxAddress address in list) {
             Participant participant_display = new Participant(address);
             int existing_index = participants.index_of(participant_display);
             if (existing_index < 0) {

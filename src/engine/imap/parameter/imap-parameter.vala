@@ -12,7 +12,7 @@
  * @see Deserializer
  */
 
-public abstract class Geary.Imap.Parameter : BaseObject {
+public abstract class Convey.Imap.Parameter : BaseObject {
     /**
      * Returns an appropriate {@link Parameter} for the string.
      *

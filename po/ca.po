@@ -1,5 +1,5 @@
-# po/geary.pot
-# PO message string template file for Geary email client
+# po/convey.pot
+# PO message string template file for Convey email client
 # Copyright 2016 Software Freedom Conservancy Inc.
 # This file is distributed under the GNU LGPL, version 2.1.
 #
@@ -11,12 +11,12 @@
 # Jordi Serratosa <jordis@softcatala.cat>, 2017.
 msgid ""
 msgstr ""
-"Project-Id-Version: geary-0.4.1\n"
+"Project-Id-Version: convey-0.4.1\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/geary/issues\n"
 "POT-Creation-Date: 2022-09-10 11:23+0000\n"
 "PO-Revision-Date: 2025-04-10 08:20+0200\n"
 "Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
-"Language-Team: Catalan (http://www.transifex.com/projects/p/geary/language/ca/)\n"
+"Language-Team: Catalan (http://www.transifex.com/projects/p/convey/language/ca/)\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,58 +24,58 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.3\n"
 
-#: desktop/geary-attach.contract.desktop.in:3
+#: desktop/convey-attach.contract.desktop.in:3
 msgid "Send by email"
 msgstr "Envia per correu electrònic"
 
-#: desktop/geary-attach.contract.desktop.in:6
-msgid "Send files using Geary"
-msgstr "Enviar fitxers a través de Geary"
+#: desktop/convey-attach.contract.desktop.in:6
+msgid "Send files using Convey"
+msgstr "Enviar fitxers a través de Convey"
 
 #. Translators: The application name
-#: desktop/geary-autostart.desktop.in.in:3
-#: desktop/org.gnome.Geary.appdata.xml.in.in:11
-#: desktop/org.gnome.Geary.desktop.in.in:3
+#: desktop/convey-autostart.desktop.in.in:3
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:11
+#: desktop/net.donnybeelo.Convey.desktop.in.in:3
 #: src/client/accounts/accounts-editor-servers-pane.vala:551
 #: src/client/application/application-main-window.vala:706
-msgid "Geary"
-msgstr "Geary"
+msgid "Convey"
+msgstr "Convey"
 
-#: desktop/geary-autostart.desktop.in.in:4
-#: desktop/org.gnome.Geary.desktop.in.in:4
+#: desktop/convey-autostart.desktop.in.in:4
+#: desktop/net.donnybeelo.Convey.desktop.in.in:4
 msgid "Email"
 msgstr "Correu electrònic"
 
 #. Translators: The application's summary / tagline
-#: desktop/geary-autostart.desktop.in.in:5
-#: desktop/org.gnome.Geary.appdata.xml.in.in:15
-#: desktop/org.gnome.Geary.desktop.in.in:5
+#: desktop/convey-autostart.desktop.in.in:5
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:15
+#: desktop/net.donnybeelo.Convey.desktop.in.in:5
 #: src/client/application/application-client.vala:33
 msgid "Send and receive email"
 msgstr "Envieu i rebeu correus electrònics"
 
 #. Translators: These are desktop search terms. Do not translate semicolons,
 #. end line with a semicolon.
-#: desktop/geary-autostart.desktop.in.in:7
+#: desktop/convey-autostart.desktop.in.in:7
 msgid "Email;E-mail;Mail;"
 msgstr "Email;Correu electrònic;Correu;"
 
 #. Translators: The development team's name
-#: desktop/org.gnome.Geary.appdata.xml.in.in:13
-msgid "Geary Development Team"
-msgstr "Equip de desenvolupament del Geary"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:13
+msgid "Convey Development Team"
+msgstr "Equip de desenvolupament del Convey"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:17
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:17
 msgid ""
-"Geary is an email application built around conversations, for the GNOME 3 "
+"Convey is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Geary és una aplicació de correu electrònic al voltant de les converses, per"
+"Convey és una aplicació de correu electrònic al voltant de les converses, per"
 " a l'escriptori GNOME 3. Permet llegir, trobar i enviar correu electrònic "
 "amb una interfície senzilla i moderna."
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:22
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:22
 msgid ""
 "Conversations allow you to read a complete discussion without having to find"
 " and click from message to message."
@@ -83,115 +83,115 @@ msgstr ""
 "Les converses us permeten llegir una conversa completa sense haver de buscar"
 " i fer clic de missatge en missatge."
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:26
-msgid "Geary’s features include:"
-msgstr "Les característiques de Geary inclouen:"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:26
+msgid "Convey’s features include:"
+msgstr "Les característiques de Convey inclouen:"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:28
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:28
 msgid "Quick email account setup"
 msgstr "Configuració ràpida de comptes de correu electrònic"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:29
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:29
 msgid "Shows related messages together in conversations"
 msgstr "Mostra missatges relacionats junts en converses"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:30
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:30
 msgid "Fast, full text and keyword search"
 msgstr "Ràpid, text complet i recerca per paraula clau"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:31
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:31
 msgid "Full-featured HTML and plain text message composer"
 msgstr "HTML amb totes les funcions i redacció de missatge de text"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:32
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:32
 msgid "Desktop notification of new mail"
 msgstr "Notificació a l'escriptori quan arribi correu nou"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:33
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:33
 msgid "Compatible with GMail, Yahoo! Mail, Outlook.com and other IMAP servers"
 msgstr ""
 "Compatible amb GMail, Yahoo! Mail, Outlook.com i d'altres servidors IMAP"
 
 #. Translators: A screenshot description.
-#: desktop/org.gnome.Geary.appdata.xml.in.in:50
-msgid "Geary displaying a conversation"
-msgstr "Geary mostrant una conversa"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:50
+msgid "Convey displaying a conversation"
+msgstr "Convey mostrant una conversa"
 
 #. Translators: A screenshot description.
-#: desktop/org.gnome.Geary.appdata.xml.in.in:55
-msgid "Geary showing the rich text composer"
-msgstr "Geary mostrant l'editor de text enriquit"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:55
+msgid "Convey showing the rich text composer"
+msgstr "Convey mostrant l'editor de text enriquit"
 
 #. Translators: These are desktop search terms. Do not translate semicolons,
 #. end line with a semicolon.
-#: desktop/org.gnome.Geary.desktop.in.in:7
+#: desktop/net.donnybeelo.Convey.desktop.in.in:7
 msgid "Mail;E-mail;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 msgstr "Mail;E-mail;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 
-#: desktop/org.gnome.Geary.desktop.in.in:24
+#: desktop/net.donnybeelo.Convey.desktop.in.in:24
 msgid "Compose Message"
 msgstr "Redacta un missatge"
 
-#: desktop/org.gnome.Geary.desktop.in.in:28
+#: desktop/net.donnybeelo.Convey.desktop.in.in:28
 msgid "New Window"
 msgstr "Finestra nova"
 
-#: desktop/org.gnome.Geary.gschema.xml:8
+#: desktop/net.donnybeelo.Convey.gschema.xml:8
 msgid "Maximize window"
 msgstr "Maximitza la finestra"
 
-#: desktop/org.gnome.Geary.gschema.xml:9
+#: desktop/net.donnybeelo.Convey.gschema.xml:9
 msgid "True if the application window is maximized, false otherwise."
 msgstr ""
 "Cert si la finestra d'aplicació està maximitzada, fals en cas contrari."
 
-#: desktop/org.gnome.Geary.gschema.xml:14
+#: desktop/net.donnybeelo.Convey.gschema.xml:14
 msgid "Width of window"
 msgstr "Amplada de la finestra"
 
-#: desktop/org.gnome.Geary.gschema.xml:15
+#: desktop/net.donnybeelo.Convey.gschema.xml:15
 msgid "The last recorded width of the application window."
 msgstr "La darrera amplada registrada de la finestra de l'aplicació."
 
-#: desktop/org.gnome.Geary.gschema.xml:20
+#: desktop/net.donnybeelo.Convey.gschema.xml:20
 msgid "Height of window"
 msgstr "Alçada de la finestra"
 
-#: desktop/org.gnome.Geary.gschema.xml:21
+#: desktop/net.donnybeelo.Convey.gschema.xml:21
 msgid "The last recorded height of the application window."
 msgstr "La darrera alçada registrada de la finestra de l'aplicació."
 
-#: desktop/org.gnome.Geary.gschema.xml:26
+#: desktop/net.donnybeelo.Convey.gschema.xml:26
 msgid "Show/hide formatting toolbar"
 msgstr "Mostra o amaga la barra de format"
 
-#: desktop/org.gnome.Geary.gschema.xml:27
+#: desktop/net.donnybeelo.Convey.gschema.xml:27
 msgid "True if the formatting toolbar in the composer is shown."
 msgstr "Cert si es mostra la barra d'eines de formatació a l'editor."
 
-#: desktop/org.gnome.Geary.gschema.xml:32
+#: desktop/net.donnybeelo.Convey.gschema.xml:32
 msgid "Autoselect next message"
 msgstr "Autoselecciona el missatge següent"
 
-#: desktop/org.gnome.Geary.gschema.xml:33
+#: desktop/net.donnybeelo.Convey.gschema.xml:33
 msgid "True if we should autoselect the next available conversation."
 msgstr ""
 "Cert si hem de seleccionar de forma automàtica la següent conversa "
 "disponible."
 
-#: desktop/org.gnome.Geary.gschema.xml:38
+#: desktop/net.donnybeelo.Convey.gschema.xml:38
 msgid "Display message previews"
 msgstr "Mostra la vista prèvia del missatge"
 
-#: desktop/org.gnome.Geary.gschema.xml:39
+#: desktop/net.donnybeelo.Convey.gschema.xml:39
 msgid "True if we should display a short preview of each message."
 msgstr "Cert si s'ha de mostrar una vista prèvia curta de cada missatge."
 
-#: desktop/org.gnome.Geary.gschema.xml:44
+#: desktop/net.donnybeelo.Convey.gschema.xml:44
 msgid "Use single key shortcuts"
 msgstr "Usa només les dreceres d'una tecla"
 
-#: desktop/org.gnome.Geary.gschema.xml:45
+#: desktop/net.donnybeelo.Convey.gschema.xml:45
 msgid ""
 "Enables shortcuts for email actions that do not require pressing <Ctrl> to "
 "emulate those used by Gmail."
@@ -199,11 +199,11 @@ msgstr ""
 "Habilita les dreceres per a les accions de correu electrònic que no "
 "requereixen prémer <Ctrl> per a emular les utilitzades per Gmail."
 
-#: desktop/org.gnome.Geary.gschema.xml:52
+#: desktop/net.donnybeelo.Convey.gschema.xml:52
 msgid "Languages that shall be used in the spell checker"
 msgstr "Idiomes que s'usaran en el corrector ortogràfic"
 
-#: desktop/org.gnome.Geary.gschema.xml:53
+#: desktop/net.donnybeelo.Convey.gschema.xml:53
 msgid ""
 "A list of POSIX locales, with the empty list disabling spell checking and "
 "the null list using desktop languages by default."
@@ -211,12 +211,12 @@ msgstr ""
 "Una llista de locales POSIX, amb la llista buida desactivant la verificació "
 "ortogràfica i la llista nul·la utilitzant llengües d'escriptori per defecte."
 
-#: desktop/org.gnome.Geary.gschema.xml:60
+#: desktop/net.donnybeelo.Convey.gschema.xml:60
 msgid "Languages that are displayed in the spell checker popover"
 msgstr ""
 "Idiomes que es mostraran a la finestra emergent del corrector ortogràfic"
 
-#: desktop/org.gnome.Geary.gschema.xml:61
+#: desktop/net.donnybeelo.Convey.gschema.xml:61
 msgid ""
 "List of languages that are always displayed in the popover of the spell "
 "checker."
@@ -224,71 +224,71 @@ msgstr ""
 "Llista d'idiomes que sempre es mostren a la finestra emergent del corrector "
 "ortogràfic."
 
-#: desktop/org.gnome.Geary.gschema.xml:66
+#: desktop/net.donnybeelo.Convey.gschema.xml:66
 msgid "Run application in background on logon and when closed"
 msgstr "Executa l'aplicació en segon pla en entrar i quan es tanqui"
 
-#: desktop/org.gnome.Geary.gschema.xml:67
+#: desktop/net.donnybeelo.Convey.gschema.xml:67
 msgid "True to run application in background."
 msgstr "Cert per a executar l'aplicació en segon pla."
 
-#: desktop/org.gnome.Geary.gschema.xml:72
+#: desktop/net.donnybeelo.Convey.gschema.xml:72
 msgid "Ask when opening an attachment"
 msgstr "Pregunteu quan obriu un fitxer adjunt"
 
-#: desktop/org.gnome.Geary.gschema.xml:73
+#: desktop/net.donnybeelo.Convey.gschema.xml:73
 msgid "True to ask when opening an attachment."
 msgstr "Cert per a preguntar quan s'obri un fitxer adjunt."
 
-#: desktop/org.gnome.Geary.gschema.xml:78
+#: desktop/net.donnybeelo.Convey.gschema.xml:78
 msgid "Whether to compose emails in HTML"
 msgstr "Si es vol redactar missatges de correu electrònic en HTML"
 
-#: desktop/org.gnome.Geary.gschema.xml:79
+#: desktop/net.donnybeelo.Convey.gschema.xml:79
 msgid "True to compose emails in HTML; false for plain text."
 msgstr ""
 "Cert si voleu redactar correus electrònics en HTML; fals si useu text pla."
 
-#: desktop/org.gnome.Geary.gschema.xml:84
+#: desktop/net.donnybeelo.Convey.gschema.xml:84
 msgid "Advisory strategy for full-text searching"
 msgstr "Estratègia d'assessorament per a la cerca de text complet"
 
-#: desktop/org.gnome.Geary.gschema.xml:85
+#: desktop/net.donnybeelo.Convey.gschema.xml:85
 msgid ""
 "Acceptable values are “exact”, “conservative”, “aggressive”, and “horizon”."
 msgstr ""
 "Són valors acceptables «exact», «conservative», «conservative», i «horizon»."
 
-#: desktop/org.gnome.Geary.gschema.xml:90
+#: desktop/net.donnybeelo.Convey.gschema.xml:90
 msgid "Zoom of conversation viewer"
 msgstr "Amplia/redueix el visor de la conversa"
 
-#: desktop/org.gnome.Geary.gschema.xml:91
+#: desktop/net.donnybeelo.Convey.gschema.xml:91
 msgid "The zoom to apply on the conservation view."
 msgstr ""
 "L'amplificació/reducció per a aplicar a la visualització de la conversa."
 
-#: desktop/org.gnome.Geary.gschema.xml:96
+#: desktop/net.donnybeelo.Convey.gschema.xml:96
 msgid "Size of detached composer window"
 msgstr "Mida de la finestra separada de l'editor"
 
-#: desktop/org.gnome.Geary.gschema.xml:97
+#: desktop/net.donnybeelo.Convey.gschema.xml:97
 msgid "The last recorded size of the detached composer window."
 msgstr "El darrer registre de la mida de la finestra separada de l'editor."
 
-#: desktop/org.gnome.Geary.gschema.xml:102
+#: desktop/net.donnybeelo.Convey.gschema.xml:102
 msgid "Allow images for these domains"
 msgstr "Permet imatges per a aquests dominis"
 
-#: desktop/org.gnome.Geary.gschema.xml:103
+#: desktop/net.donnybeelo.Convey.gschema.xml:103
 msgid "Images from these domains will be trusted"
 msgstr "Es confiarà en les imatges d'aquests dominis"
 
-#: desktop/org.gnome.Geary.gschema.xml:108
+#: desktop/net.donnybeelo.Convey.gschema.xml:108
 msgid "Undo sending email delay"
 msgstr "Retard per a desfer l'enviament del correu"
 
-#: desktop/org.gnome.Geary.gschema.xml:109
+#: desktop/net.donnybeelo.Convey.gschema.xml:109
 msgid ""
 "The number of seconds to wait before sending an email. Set to zero or less "
 "to disable."
@@ -296,34 +296,34 @@ msgstr ""
 "El nombre de segons a esperar abans d'enviar un correu electrònic. Establiu-"
 "ho a zero o menys per a inhabilitar-ho."
 
-#: desktop/org.gnome.Geary.gschema.xml:115
+#: desktop/net.donnybeelo.Convey.gschema.xml:115
 msgid "Brief notification display time"
 msgstr "Temps per a mostrar una notificació breu"
 
-#: desktop/org.gnome.Geary.gschema.xml:116
+#: desktop/net.donnybeelo.Convey.gschema.xml:116
 msgid ""
 "The length of time in seconds for which brief notifications should be "
 "displayed."
 msgstr ""
 "El temps en segons durant el qual s'han de mostrar les notificacions breus."
 
-#: desktop/org.gnome.Geary.gschema.xml:122
+#: desktop/net.donnybeelo.Convey.gschema.xml:122
 msgid "List of optional plugins"
 msgstr "Llista de connectors opcionals"
 
-#: desktop/org.gnome.Geary.gschema.xml:123
+#: desktop/net.donnybeelo.Convey.gschema.xml:123
 msgid "Plugins listed here will be loaded on startup."
 msgstr "Els connectors llistats aquí es carregaran a l'inici."
 
-#: desktop/org.gnome.Geary.gschema.xml:128
+#: desktop/net.donnybeelo.Convey.gschema.xml:128
 msgid "Whether we migrated the old settings"
 msgstr "Si hem de migrar els paràmetres antics"
 
-#: desktop/org.gnome.Geary.gschema.xml:129
+#: desktop/net.donnybeelo.Convey.gschema.xml:129
 msgid ""
-"False to check for the old “org.yorba.geary”-schema and copy its values."
+"False to check for the old “org.yorba.convey”-schema and copy its values."
 msgstr ""
-"Fals per a comprovar l'antic «org.yorba.geary» -schema i copiar els seus "
+"Fals per a comprovar l'antic «org.yorba.convey» -schema i copiar els seus "
 "valors."
 
 #. Translators: In-app notification label, when
@@ -483,10 +483,10 @@ msgstr "Elimina el compte: %s"
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:221
 msgid ""
-"This will remove it from Geary and delete locally cached email data from "
+"This will remove it from Convey and delete locally cached email data from "
 "your computer. Nothing will be deleted from your service provider."
 msgstr ""
-"L'eliminació d'un compte l'eliminarà del Geary i esborrarà les dades del "
+"L'eliminació d'un compte l'eliminarà del Convey i esborrarà les dades del "
 "correu a la memòria cau local de l'ordinador. No s'esborrarà res del vostre "
 "proveïdor de serveis."
 
@@ -753,7 +753,7 @@ msgstr "Compte no actualitzat: %s"
 
 #. Translators: This label describes the program that
 #. created the account, e.g. an SSO service like GOA, or
-#. locally by Geary.
+#. locally by Convey.
 #: src/client/accounts/accounts-editor-servers-pane.vala:536
 msgid "Account source"
 msgstr "Origen del compte"
@@ -822,12 +822,12 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "Copyright © 2016 Software Freedom Conservancy Inc."
 
 #: src/client/application/application-client.vala:35
-msgid "Copyright © 2016-2021 Geary Development Team."
-msgstr "Copyright © 2016-2021 L'equip de desenvolupament del Geary."
+msgid "Copyright © 2016-2021 Convey Development Team."
+msgstr "Copyright © 2016-2021 L'equip de desenvolupament del Convey."
 
 #: src/client/application/application-client.vala:37
-msgid "Visit the Geary web site"
-msgstr "Visiteu el lloc web del Geary"
+msgid "Visit the Convey web site"
+msgstr "Visiteu el lloc web del Convey"
 
 #. / Command line option
 #: src/client/application/application-client.vala:101
@@ -898,13 +898,13 @@ msgstr "Mostra la versió del programa"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:267
-msgid "Geary version"
-msgstr "Versió del Geary"
+msgid "Convey version"
+msgstr "Versió del Convey"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:269
-msgid "Geary revision"
-msgstr "Revisió del Geary"
+msgid "Convey revision"
+msgstr "Revisió del Convey"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:271
@@ -1087,7 +1087,7 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-"Geary can rebuild the database and re-synchronize with the server or exit.\n"
+"Convey can rebuild the database and re-synchronize with the server or exit.\n"
 "\n"
 "Rebuilding the database will destroy all local email and its attachments. <b>The mail on the your server will not be affected.</b>"
 msgstr ""
@@ -1095,7 +1095,7 @@ msgstr ""
 "\n"
 "%s\n"
 "\n"
-"Geary pot reconstruir la base de dades i tornar a sincronitzar amb el servidor o sortir.\n"
+"Convey pot reconstruir la base de dades i tornar a sincronitzar amb el servidor o sortir.\n"
 "\n"
 "La reconstrucció de la base de dades va destruir tot el correu local i els seus annexos. <b>El correu al servidor no es veurà afectat.</b>"
 
@@ -1238,9 +1238,9 @@ msgid "Empty all email from your %s folder?"
 msgstr "Buida tot el correu electrònic de la carpeta %s?"
 
 #: src/client/application/application-main-window.vala:1434
-msgid "This removes the email from Geary and your email server."
+msgid "This removes the email from Convey and your email server."
 msgstr ""
-"Això elimina el correu electrònic del Geary i del servidor de correu "
+"Això elimina el correu electrònic del Convey i del servidor de correu "
 "electrònic."
 
 #: src/client/application/application-main-window.vala:1435
@@ -1277,8 +1277,8 @@ msgid "%s (%d)"
 msgstr "%s (%d)"
 
 #: src/client/application/application-startup-manager.vala:78
-msgid "Geary wants to run in background"
-msgstr "Geary vol executar-se en segon pla"
+msgid "Convey wants to run in background"
+msgstr "Convey vol executar-se en segon pla"
 
 #. Translators: The first argument will be a
 #. description of the document type, the second will
@@ -1425,8 +1425,8 @@ msgstr "_Vigila si arriba correu nou quan s'ha tancat"
 
 #. / Translators: Preferences tooltip
 #: src/client/components/components-preferences-window.vala:161
-msgid "Geary will keep running after all windows are closed"
-msgstr "Geary continuarà funcionant després de tancar totes les finestres"
+msgid "Convey will keep running after all windows are closed"
+msgstr "Convey continuarà funcionant després de tancar totes les finestres"
 
 #. / Translators: Preferences label
 #: src/client/components/components-preferences-window.vala:171
@@ -1453,16 +1453,16 @@ msgstr "Problema al compte"
 #. problem. String substitution is the account name.
 #: src/client/components/components-problem-report-info-bar.vala:40
 #, c-format
-msgid "Geary has encountered a problem with %s."
-msgstr "El Geary ha tingut un problema amb %s."
+msgid "Convey has encountered a problem with %s."
+msgstr "El Convey ha tingut un problema amb %s."
 
 #. Translators: Info bar sub-title for a generic
 #. account problem. String substitution is the
 #. account name.
 #: src/client/components/components-problem-report-info-bar.vala:53
 #, c-format
-msgid "Geary encountered a problem checking mail for %s."
-msgstr "Geary ha trobat un problema en comprovar el correu per a %s."
+msgid "Convey encountered a problem checking mail for %s."
+msgstr "Convey ha trobat un problema en comprovar el correu per a %s."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:57
@@ -1474,8 +1474,8 @@ msgstr "Intenta connectar de nou"
 #. account name
 #: src/client/components/components-problem-report-info-bar.vala:65
 #, c-format
-msgid "Geary encountered a problem sending email for %s."
-msgstr "Geary ha trobat un problema en enviar el correu per a %s."
+msgid "Convey encountered a problem sending email for %s."
+msgstr "Convey ha trobat un problema en enviar el correu per a %s."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:69
@@ -1485,8 +1485,8 @@ msgstr "Intenteu enviar de nou els missatges de la cua"
 #. Translators: Info bar title for a generic application
 #. problem.
 #: src/client/components/components-problem-report-info-bar.vala:76
-msgid "Geary has encountered a problem"
-msgstr "El Geary ha tingut un problema"
+msgid "Convey has encountered a problem"
+msgstr "El Convey ha tingut un problema"
 
 #. Translators: Info bar sub-title for a generic
 #. application problem.
@@ -2046,22 +2046,22 @@ msgstr ""
 
 #: src/client/dialogs/certificate-warning-dialog.vala:56
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary not to access this "
+"Selecting “Don’t Trust This Server” will cause Convey not to access this "
 "server."
 msgstr ""
-"Seleccionant «No confieu en aquest servidor» farà que el Geary no pugui "
+"Seleccionant «No confieu en aquest servidor» farà que el Convey no pugui "
 "accedir a aquest servidor."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:58
-msgid "Geary will not add or update this email account."
-msgstr "Geary no afegirà o actualitzarà aquest compte de correu electrònic."
+msgid "Convey will not add or update this email account."
+msgstr "Convey no afegirà o actualitzarà aquest compte de correu electrònic."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:63
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary to stop accessing this "
+"Selecting “Don’t Trust This Server” will cause Convey to stop accessing this "
 "account."
 msgstr ""
-"Seleccionant «No confieu en aquest servidor» farà que el Geary aturi l'accés "
+"Seleccionant «No confieu en aquest servidor» farà que el Convey aturi l'accés "
 "a aquest compte."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:69
@@ -2116,9 +2116,9 @@ msgstr "Detalls"
 #. bug report for
 #. details: https://bugzilla.gnome.org/show_bug.cgi?id=679006
 #: src/client/dialogs/password-dialog.vala:16
-msgid "Geary requires your email password to continue"
+msgid "Convey requires your email password to continue"
 msgstr ""
-"El Geary requereix la contrasenya del correu electrònic per a continuar"
+"El Convey requereix la contrasenya del correu electrònic per a continuar"
 
 #. Translators: Label displaying total number of email
 #. messages in a folder. String substitution is the actual
@@ -2529,7 +2529,7 @@ msgstr "---------- Missatge reenviat ----------"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:605
 msgctxt "Search operator"
 msgid "attachment"
@@ -2542,7 +2542,7 @@ msgstr "fitxer adjunt"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:618
 msgctxt "Search operator"
 msgid "bcc"
@@ -2555,7 +2555,7 @@ msgstr "CCO"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:630
 msgctxt "Search operator"
 msgid "body"
@@ -2568,7 +2568,7 @@ msgstr "Cos"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:642
 msgctxt "Search operator"
 msgid "cc"
@@ -2581,7 +2581,7 @@ msgstr "Cc"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:654
 msgctxt "Search operator"
 msgid "from"
@@ -2594,7 +2594,7 @@ msgstr "de"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:668
 msgctxt "Search operator"
 msgid "subject"
@@ -2607,7 +2607,7 @@ msgstr "assumpte"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:680
 msgctxt "Search operator"
 msgid "to"
@@ -2620,7 +2620,7 @@ msgstr "per"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:691
 msgctxt "Search operator value - mail addressed to the user"
 msgid "me"
@@ -2633,7 +2633,7 @@ msgstr "jo"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:704
 msgctxt "Search operator value - mail sent by the user"
 msgid "me"
@@ -2648,7 +2648,7 @@ msgstr "jo"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:719
 msgctxt "Search operator"
 msgid "is"
@@ -2661,7 +2661,7 @@ msgstr "és"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:729
 msgctxt "'is:' search operator value"
 msgid "unread"
@@ -2674,7 +2674,7 @@ msgstr "no llegit"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:739
 msgctxt "'is:' search operator value"
 msgid "read"
@@ -2687,7 +2687,7 @@ msgstr "llegir"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:749
 msgctxt "'is:' search operator value"
 msgid "starred"
@@ -2872,8 +2872,8 @@ msgid "Server Settings"
 msgstr "Configuració del servidor"
 
 #: ui/accounts_editor_edit_pane.ui:242
-msgid "Remove this account from Geary"
-msgstr "Elimina el compte del Geary"
+msgid "Remove this account from Convey"
+msgstr "Elimina el compte del Convey"
 
 #: ui/accounts_editor_list_pane.ui:7
 msgid "Accounts"
@@ -2884,8 +2884,8 @@ msgid "To get started, select an email provider below."
 msgstr "Per a començar selecciona un proveïdor de correu a sota."
 
 #: ui/accounts_editor_list_pane.ui:86
-msgid "Welcome to Geary"
-msgstr "Us donem la benvinguda al Geary"
+msgid "Welcome to Convey"
+msgstr "Us donem la benvinguda al Convey"
 
 #: ui/accounts_editor_servers_pane.ui:42
 msgid "Apply"
@@ -3236,8 +3236,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "Dreceres de _teclat"
 
 #: ui/components-main-toolbar-menus.ui:47
-msgid "_About Geary"
-msgstr "_Quant a Geary"
+msgid "_About Convey"
+msgstr "_Quant a Convey"
 
 #: ui/conversation-contact-popover.ui:134
 msgid "New Conversation…"

@@ -17,7 +17,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-4.1]]
  */
-public class Geary.Imap.UnquotedStringParameter : Geary.Imap.StringParameter {
+public class Convey.Imap.UnquotedStringParameter : Convey.Imap.StringParameter {
 
     public UnquotedStringParameter(string ascii) {
         base (ascii);

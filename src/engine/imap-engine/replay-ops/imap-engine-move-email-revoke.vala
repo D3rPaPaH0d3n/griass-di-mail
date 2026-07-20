@@ -8,7 +8,7 @@
  * Revoked {@link RevokableMove}: Unmark emails as removed and update counts.
  */
 
-private class Geary.ImapEngine.MoveEmailRevoke : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.MoveEmailRevoke : Convey.ImapEngine.SendReplayOperation {
     private MinimalFolder engine;
     private Gee.List<ImapDB.EmailIdentifier> to_revoke = new Gee.ArrayList<ImapDB.EmailIdentifier>();
     private Cancellable? cancellable;
@@ -43,7 +43,7 @@ private class Geary.ImapEngine.MoveEmailRevoke : Geary.ImapEngine.SendReplayOper
 
         engine.replay_notify_email_inserted(revoked);
         engine.replay_notify_email_count_changed(count + revoked.size,
-            Geary.Folder.CountChangeReason.INSERTED);
+            Convey.Folder.CountChangeReason.INSERTED);
 
         return ReplayOperation.Status.COMPLETED;
     }

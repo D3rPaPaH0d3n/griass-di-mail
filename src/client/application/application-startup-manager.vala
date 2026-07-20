@@ -32,7 +32,7 @@ namespace portal {
 public class Application.StartupManager : GLib.Object {
 
     private const string AUTOSTART_FOLDER = "autostart";
-    private const string AUTOSTART_DESKTOP_FILE = "geary-autostart.desktop";
+    private const string AUTOSTART_DESKTOP_FILE = "convey-autostart.desktop";
     private const string BUS_NAME = "org.freedesktop.portal.Desktop";
     private const string OBJECT_PATH = "/org/freedesktop/portal/desktop";
 
@@ -69,13 +69,13 @@ public class Application.StartupManager : GLib.Object {
     private async void request_background(bool autostart) {
         try {
             GLib.DBusConnection bus = yield Bus.get(BusType.SESSION);
-            string[] cmdline = {"geary", "--gapplication-service"};
+            string[] cmdline = {"convey", "--gapplication-service"};
             var background = yield bus.get_proxy<portal.Background>(
                 BUS_NAME, OBJECT_PATH);
             var options = new GLib.HashTable<string, GLib.Variant>(
                 str_hash, str_equal);
             options.insert("reason", new GLib.Variant(
-                "s", _("Geary wants to run in background")));
+                "s", _("Convey wants to run in background")));
             options.insert("autostart", new GLib.Variant(
                 "b", autostart));
             options.insert("commandline", new GLib.Variant.strv(cmdline));

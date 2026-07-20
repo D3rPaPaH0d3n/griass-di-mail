@@ -5,7 +5,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.ImapUtf7 {
+namespace Convey.ImapUtf7 {
 
 /* This file was modified from Dovecot's LGPLv2.1-licensed implementation in
  * dovecot-2.1.15/src/lib-imap/imap-utf7.c.

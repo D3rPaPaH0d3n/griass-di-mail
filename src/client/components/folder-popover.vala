@@ -4,19 +4,19 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-[GtkTemplate (ui = "/org/gnome/Geary/folder-popover.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/folder-popover.ui")]
 public class FolderPopover : Gtk.Popover {
 
     [GtkChild] private unowned Gtk.SearchEntry search_entry;
     [GtkChild] private unowned Gtk.ListBox list_box;
     [GtkChild] private unowned Gtk.Switch move_switch;
 
-    public Geary.Account account {get; set;}
+    public Convey.Account account {get; set;}
 
     private int filtered_folder_count = 0;
 
-    public signal void copy_conversation(Geary.Folder folder);
-    public signal void move_conversation(Geary.Folder folder);
+    public signal void copy_conversation(Convey.Folder folder);
+    public signal void move_conversation(Convey.Folder folder);
 
     public FolderPopover(Application.Configuration config) {
         list_box.set_filter_func(row_filter);
@@ -30,7 +30,7 @@ public class FolderPopover : Gtk.Popover {
     }
 
     private void add_folder(Application.FolderContext context, Gee.HashMap<string,string> map) {
-        Geary.Folder folder = context.folder;
+        Convey.Folder folder = context.folder;
         // don't allow multiples and don't allow folders that can't be opened (that means they
         // support almost no operations and have no content)
         if (folder.properties.is_openable.is_impossible())
@@ -43,8 +43,8 @@ public class FolderPopover : Gtk.Popover {
 
         // Moving mails to Drafts folder not supported
         switch (folder.account.information.service_provider) {
-        case Geary.ServiceProvider.GMAIL:
-            if (folder.used_as == Geary.Folder.SpecialUse.DRAFTS)
+        case Convey.ServiceProvider.GMAIL:
+            if (folder.used_as == Convey.Folder.SpecialUse.DRAFTS)
                 return;
             break;
         default:
@@ -53,9 +53,9 @@ public class FolderPopover : Gtk.Popover {
 
         // Ignore special directories already having a dedicated button
         switch (folder.used_as) {
-        case Geary.Folder.SpecialUse.ARCHIVE:
-        case Geary.Folder.SpecialUse.TRASH:
-        case Geary.Folder.SpecialUse.JUNK:
+        case Convey.Folder.SpecialUse.ARCHIVE:
+        case Convey.Folder.SpecialUse.TRASH:
+        case Convey.Folder.SpecialUse.JUNK:
             return;
         default:
             break;
@@ -74,7 +74,7 @@ public class FolderPopover : Gtk.Popover {
         var map = new Gee.HashMap<string,string>();
         foreach (var folder in folders) {
             var context = new Application.FolderContext(folder);
-            if (folder.used_as == Geary.Folder.SpecialUse.NONE)
+            if (folder.used_as == Convey.Folder.SpecialUse.NONE)
                 continue;
             map.set(
                 folder.path.to_string().substring(1),
@@ -97,7 +97,7 @@ public class FolderPopover : Gtk.Popover {
     [GtkCallback]
     private void on_row_activated(Gtk.ListBoxRow? row) {
         if (row != null) {
-            Geary.Folder folder = row.get_data<Geary.Folder>("folder");
+            Convey.Folder folder = row.get_data<Convey.Folder>("folder");
             if (this.move_switch.active) {
                 move_conversation(folder);
             } else {
@@ -134,7 +134,7 @@ public class FolderPopover : Gtk.Popover {
     }
 
     private bool row_filter(Gtk.ListBoxRow row) {
-        Geary.Folder folder = row.get_data<Geary.Folder>("folder");
+        Convey.Folder folder = row.get_data<Convey.Folder>("folder");
         if (folder.path.to_string().down().contains(search_entry.text.down())) {
             filtered_folder_count++;
             return true;
@@ -143,13 +143,13 @@ public class FolderPopover : Gtk.Popover {
     }
 
     private int row_sort(Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
-        Geary.Folder folder1 = row1.get_data<Geary.Folder>("folder");
-        Geary.Folder folder2 = row2.get_data<Geary.Folder>("folder");
-        if (folder1.used_as != Geary.Folder.SpecialUse.NONE &&
-                folder2.used_as == Geary.Folder.SpecialUse.NONE)
+        Convey.Folder folder1 = row1.get_data<Convey.Folder>("folder");
+        Convey.Folder folder2 = row2.get_data<Convey.Folder>("folder");
+        if (folder1.used_as != Convey.Folder.SpecialUse.NONE &&
+                folder2.used_as == Convey.Folder.SpecialUse.NONE)
             return -1;
-        else if (folder1.used_as == Geary.Folder.SpecialUse.NONE &&
-                folder2.used_as != Geary.Folder.SpecialUse.NONE)
+        else if (folder1.used_as == Convey.Folder.SpecialUse.NONE &&
+                folder2.used_as != Convey.Folder.SpecialUse.NONE)
             return 1;
         else
             return folder1.path.compare_to(folder2.path);

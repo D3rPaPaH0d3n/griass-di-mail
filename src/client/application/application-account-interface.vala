@@ -54,7 +54,7 @@ internal interface Application.AccountInterface : GLib.Object {
     );
 
     /** Returns a context for an account, if any. */
-    internal abstract AccountContext? get_context_for_account(Geary.AccountInformation account);
+    internal abstract AccountContext? get_context_for_account(Convey.AccountInformation account);
 
     /** Returns a read-only collection of contexts each active account. */
     internal abstract Gee.Collection<AccountContext> get_account_contexts();

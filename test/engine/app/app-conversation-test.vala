@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.App.ConversationTest : TestCase {
+class Convey.App.ConversationTest : TestCase {
 
 
     Conversation? test = null;
@@ -14,7 +14,7 @@ class Geary.App.ConversationTest : TestCase {
 
 
     public ConversationTest() {
-        base("Geary.App.ConversationTest");
+        base("Convey.App.ConversationTest");
         add_test("add_basic", add_basic);
         add_test("add_duplicate", add_duplicate);
         add_test("add_multipath", add_multipath);
@@ -46,8 +46,8 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void add_basic() throws Error {
-        Geary.Email e1 = setup_email(1);
-        Geary.Email e2 = setup_email(2);
+        Convey.Email e1 = setup_email(1);
+        Convey.Email e2 = setup_email(2);
         uint appended = 0;
         this.test.appended.connect(() => {
                 appended++;
@@ -67,7 +67,7 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void add_duplicate() throws Error {
-        Geary.Email e1 = setup_email(1);
+        Convey.Email e1 = setup_email(1);
         uint appended = 0;
         this.test.appended.connect(() => {
                 appended++;
@@ -83,10 +83,10 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void add_multipath() throws Error {
-        Geary.Email e1 = setup_email(1);
+        Convey.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
-        Geary.Email e2 = setup_email(2);
+        Convey.Email e2 = setup_email(2);
         this.test.add(e2, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
@@ -106,10 +106,10 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void remove_basic() throws Error {
-        Geary.Email e1 = setup_email(1);
+        Convey.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
-        Geary.Email e2 = setup_email(2);
+        Convey.Email e2 = setup_email(2);
         this.test.add(e2, singleton(this.base_folder.path));
 
         uint trimmed = 0;
@@ -133,8 +133,8 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void remove_nonexistent() throws Error {
-        Geary.Email e1 = setup_email(1);
-        Geary.Email e2 = setup_email(2);
+        Convey.Email e1 = setup_email(1);
+        Convey.Email e2 = setup_email(2);
 
         uint trimmed = 0;
         this.test.trimmed.connect(() => {
@@ -153,11 +153,11 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void get_emails() throws GLib.Error {
-        Geary.Email e1 = setup_email(1);
+        Convey.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
-        Geary.Email e2 = setup_email(2);
+        Convey.Email e2 = setup_email(2);
         this.test.add(e2, singleton(other_path));
 
         assert_collection(
@@ -166,11 +166,11 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void get_emails_by_location() throws GLib.Error {
-        Geary.Email e1 = setup_email(1);
+        Convey.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
-        Geary.Email e2 = setup_email(2);
+        Convey.Email e2 = setup_email(2);
         this.test.add(e2, singleton(other_path));
 
         assert_collection(
@@ -185,11 +185,11 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void get_emails_blacklist() throws GLib.Error {
-        Geary.Email e1 = setup_email(1);
+        Convey.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
-        Geary.Email e2 = setup_email(2);
+        Convey.Email e2 = setup_email(2);
         this.test.add(e2, singleton(other_path));
 
         Gee.Collection<FolderPath> blacklist = new Gee.ArrayList<FolderPath>();
@@ -209,8 +209,8 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void get_emails_marked_for_deletion() throws GLib.Error {
-        Geary.Email e1 = setup_email(1);
-        e1.set_flags(new Geary.EmailFlags.with(Geary.EmailFlags.DELETED));
+        Convey.Email e1 = setup_email(1);
+        e1.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.DELETED));
         this.test.add(e1, singleton(this.base_folder.path));
 
         assert_collection(
@@ -220,7 +220,7 @@ class Geary.App.ConversationTest : TestCase {
     }
 
     public void count_email_in_folder() throws GLib.Error {
-        Geary.Email e1 = setup_email(1);
+        Convey.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         assert_equal<uint?>(
@@ -245,7 +245,7 @@ class Geary.App.ConversationTest : TestCase {
     private Email setup_email(int id) {
         Email email = new Email(new Mock.EmailIdentifer(id));
         DateTime now = new DateTime.now_local();
-        Geary.RFC822.MessageID mid = new Geary.RFC822.MessageID(
+        Convey.RFC822.MessageID mid = new Convey.RFC822.MessageID(
             "test%d@localhost".printf(id)
         );
         email.set_full_references(mid, null, null);

@@ -4,15 +4,15 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.ReplayAppend : Geary.ImapEngine.ReplayOperation {
+private class Convey.ImapEngine.ReplayAppend : Convey.ImapEngine.ReplayOperation {
 
     private MinimalFolder owner;
     private int remote_count;
     private Gee.List<Imap.SequenceNumber> positions;
     private Cancellable? cancellable;
 
-    public signal void email_appended(Gee.Collection<Geary.EmailIdentifier> ids);
-    public signal void email_locally_appended(Gee.Collection<Geary.EmailIdentifier> ids);
+    public signal void email_appended(Gee.Collection<Convey.EmailIdentifier> ids);
+    public signal void email_locally_appended(Gee.Collection<Convey.EmailIdentifier> ids);
     public signal void email_count_changed(int count, Folder.CountChangeReason reason);
 
 
@@ -79,11 +79,11 @@ private class Geary.ImapEngine.ReplayAppend : Geary.ImapEngine.ReplayOperation {
         debug("%s do_replay_appended_message: this.remote_count=%d this.positions=%s",
             to_string(), this.remote_count, positions_builder.str);
 
-        Gee.HashSet<Geary.EmailIdentifier> created = new Gee.HashSet<Geary.EmailIdentifier>();
-        Gee.HashSet<Geary.EmailIdentifier> appended = new Gee.HashSet<Geary.EmailIdentifier>();
+        Gee.HashSet<Convey.EmailIdentifier> created = new Gee.HashSet<Convey.EmailIdentifier>();
+        Gee.HashSet<Convey.EmailIdentifier> appended = new Gee.HashSet<Convey.EmailIdentifier>();
         Gee.List<Imap.MessageSet> msg_sets = Imap.MessageSet.sparse(this.positions);
         foreach (Imap.MessageSet msg_set in msg_sets) {
-            Gee.List<Geary.Email>? list = yield remote.list_email_async(
+            Gee.List<Convey.Email>? list = yield remote.list_email_async(
                 msg_set, ImapDB.Folder.REQUIRED_FIELDS, this.cancellable
             );
             if (list != null && list.size > 0) {
@@ -92,11 +92,11 @@ private class Geary.ImapEngine.ReplayAppend : Geary.ImapEngine.ReplayOperation {
 
                 // need to report both if it was created (not known before) and appended (which
                 // could mean created or simply a known email associated with this folder)
-                Gee.Map<Geary.Email, bool> created_or_merged =
+                Gee.Map<Convey.Email, bool> created_or_merged =
                     yield this.owner.local_folder.create_or_merge_email_async(
                         list, true, this.owner.harvester, this.cancellable
                     );
-                foreach (Geary.Email email in created_or_merged.keys) {
+                foreach (Convey.Email email in created_or_merged.keys) {
                     // true means created
                     if (created_or_merged.get(email)) {
                         debug("%s do_replay_appended_message: appended email ID %s added",

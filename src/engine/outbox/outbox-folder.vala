@@ -9,15 +9,15 @@
 /**
  * A folder for storing outgoing mail.
  */
-public class Geary.Outbox.Folder :
-    Geary.AbstractLocalFolder,
-    Geary.FolderSupport.Create,
-    Geary.FolderSupport.Mark,
-    Geary.FolderSupport.Remove {
+public class Convey.Outbox.Folder :
+    Convey.AbstractLocalFolder,
+    Convey.FolderSupport.Create,
+    Convey.FolderSupport.Mark,
+    Convey.FolderSupport.Remove {
 
 
     /** The canonical name of the outbox folder. */
-    public const string MAGIC_BASENAME = "$GearyOutbox$";
+    public const string MAGIC_BASENAME = "$ConveyOutbox$";
 
 
     private class OutboxRow {
@@ -46,7 +46,7 @@ public class Geary.Outbox.Folder :
     public override Account account { get { return this._account; } }
 
     /** {@inheritDoc} */
-    public override Geary.FolderProperties properties {
+    public override Convey.FolderProperties properties {
         get { return _properties; }
     }
 
@@ -68,7 +68,7 @@ public class Geary.Outbox.Folder :
      *
      * This is always {@link Folder.SpecialUse.OUTBOX}
      */
-    public override Geary.Folder.SpecialUse used_as {
+    public override Convey.Folder.SpecialUse used_as {
         get {
             return OUTBOX;
         }
@@ -87,7 +87,7 @@ public class Geary.Outbox.Folder :
         this.local = local;
     }
 
-    public override async bool open_async(Geary.Folder.OpenFlags open_flags,
+    public override async bool open_async(Convey.Folder.OpenFlags open_flags,
                                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         bool opened = yield base.open_async(open_flags, cancellable);
@@ -106,9 +106,9 @@ public class Geary.Outbox.Folder :
         return closed;
     }
 
-    public virtual async Geary.EmailIdentifier?
+    public virtual async Convey.EmailIdentifier?
         create_email_async(RFC822.Message rfc822,
-                           Geary.EmailFlags? flags,
+                           Convey.EmailFlags? flags,
                            GLib.DateTime? date_received,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
@@ -148,16 +148,16 @@ public class Geary.Outbox.Folder :
     }
 
     public virtual async void
-        mark_email_async(Gee.Collection<Geary.EmailIdentifier> to_mark,
+        mark_email_async(Gee.Collection<Convey.EmailIdentifier> to_mark,
                          EmailFlags? flags_to_add,
                          EmailFlags? flags_to_remove,
                          GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
-        Gee.Map<Geary.EmailIdentifier,EmailFlags> changed =
-            new Gee.HashMap<Geary.EmailIdentifier,EmailFlags>();
+        Gee.Map<Convey.EmailIdentifier,EmailFlags> changed =
+            new Gee.HashMap<Convey.EmailIdentifier,EmailFlags>();
 
-        foreach (Geary.EmailIdentifier id in to_mark) {
+        foreach (Convey.EmailIdentifier id in to_mark) {
             EmailIdentifier? outbox_id = id as EmailIdentifier;
             if (outbox_id != null) {
                 yield db.exec_transaction_async(Db.TransactionType.WR, (cx) => {
@@ -173,15 +173,15 @@ public class Geary.Outbox.Folder :
     }
 
     public virtual async void
-        remove_email_async(Gee.Collection<Geary.EmailIdentifier> email_ids,
+        remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
 
-        Gee.List<Geary.EmailIdentifier> removed = new Gee.ArrayList<Geary.EmailIdentifier>();
+        Gee.List<Convey.EmailIdentifier> removed = new Gee.ArrayList<Convey.EmailIdentifier>();
         int final_count = 0;
         yield db.exec_transaction_async(Db.TransactionType.WR, (cx) => {
-            foreach (Geary.EmailIdentifier id in email_ids) {
+            foreach (Convey.EmailIdentifier id in email_ids) {
                 // ignore anything not belonging to the outbox, but also don't report it as removed
                 // either
                 EmailIdentifier? outbox_id = id as EmailIdentifier;
@@ -190,7 +190,7 @@ public class Geary.Outbox.Folder :
 
                 // Even though we discard the new value here, this check must
                 // occur before any insert/delete on the table, to ensure we
-                // never reuse an ordering value while Geary is running.
+                // never reuse an ordering value while Convey is running.
                 do_get_next_ordering(cx, cancellable);
 
                 if (do_remove_email(cx, outbox_id, cancellable))
@@ -211,16 +211,16 @@ public class Geary.Outbox.Folder :
     }
 
     /** {@inheritDoc} */
-    public override async Gee.Collection<Geary.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Geary.EmailIdentifier> ids,
+    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
+        Gee.Collection<Convey.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
         check_open();
-        var contains = new Gee.HashSet<Geary.EmailIdentifier>();
+        var contains = new Gee.HashSet<Convey.EmailIdentifier>();
         yield db.exec_transaction_async(
             RO,
             (cx, cancellable) => {
-                foreach (Geary.EmailIdentifier id in ids) {
+                foreach (Convey.EmailIdentifier id in ids) {
                     var outbox_id = id as EmailIdentifier;
                     if (outbox_id != null) {
                         var row = do_fetch_row_by_ordering(
@@ -239,10 +239,10 @@ public class Geary.Outbox.Folder :
     }
 
     public override async Gee.List<Email>?
-        list_email_by_id_async(Geary.EmailIdentifier? _initial_id,
+        list_email_by_id_async(Convey.EmailIdentifier? _initial_id,
                                int count,
-                               Geary.Email.Field required_fields,
-                               Geary.Folder.ListFlags flags,
+                               Convey.Email.Field required_fields,
+                               Convey.Folder.ListFlags flags,
                                GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
@@ -263,7 +263,7 @@ public class Geary.Outbox.Folder :
             select = select + ", message, sent";
         }
 
-        Gee.List<Geary.Email>? list = null;
+        Gee.List<Convey.Email>? list = null;
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
             string dir = flags.is_newest_to_oldest() ? "DESC" : "ASC";
 
@@ -293,7 +293,7 @@ public class Geary.Outbox.Folder :
             if (results.finished)
                 return Db.TransactionOutcome.DONE;
 
-            list = new Gee.ArrayList<Geary.Email>();
+            list = new Gee.ArrayList<Convey.Email>();
             int position = -1;
             do {
                 int64 ordering = results.int64_at(1);
@@ -325,17 +325,17 @@ public class Geary.Outbox.Folder :
         return list;
     }
 
-    public override async Gee.List<Geary.Email>?
-        list_email_by_sparse_id_async(Gee.Collection<Geary.EmailIdentifier> ids,
-                                      Geary.Email.Field required_fields,
-                                      Geary.Folder.ListFlags flags,
+    public override async Gee.List<Convey.Email>?
+        list_email_by_sparse_id_async(Gee.Collection<Convey.EmailIdentifier> ids,
+                                      Convey.Email.Field required_fields,
+                                      Convey.Folder.ListFlags flags,
                                       GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
 
-        Gee.List<Geary.Email> list = new Gee.ArrayList<Geary.Email>();
+        Gee.List<Convey.Email> list = new Gee.ArrayList<Convey.Email>();
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
-            foreach (Geary.EmailIdentifier id in ids) {
+            foreach (Convey.EmailIdentifier id in ids) {
                 EmailIdentifier? outbox_id = id as EmailIdentifier;
                 if (outbox_id == null)
                     throw new EngineError.BAD_PARAMETERS("%s is not outbox EmailIdentifier", id.to_string());
@@ -354,9 +354,9 @@ public class Geary.Outbox.Folder :
     }
 
     public override async Email
-        fetch_email_async(Geary.EmailIdentifier id,
-                          Geary.Email.Field required_fields,
-                          Geary.Folder.ListFlags flags,
+        fetch_email_async(Convey.EmailIdentifier id,
+                          Convey.Email.Field required_fields,
+                          Convey.Folder.ListFlags flags,
                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
@@ -384,24 +384,24 @@ public class Geary.Outbox.Folder :
     }
 
     // Utility for getting an email object back from an outbox row.
-    private Geary.Email row_to_email(OutboxRow row) throws Error {
-        Geary.Email? email = null;
+    private Convey.Email row_to_email(OutboxRow row) throws Error {
+        Convey.Email? email = null;
 
         // If the row doesn't contain any message, just the id will do
         if (row.message == null) {
             email = new Email(row.outbox_id);
         } else {
             RFC822.Message message = new RFC822.Message.from_buffer(row.message);
-            email = new Geary.Email.from_message(row.outbox_id, message);
+            email = new Convey.Email.from_message(row.outbox_id, message);
 
             // TODO: Determine message's total size (header + body) to
             // store in Properties.
             email.set_email_properties(
                 new EmailProperties(new DateTime.now_local(), -1)
             );
-            Geary.EmailFlags flags = new Geary.EmailFlags();
+            Convey.EmailFlags flags = new Convey.EmailFlags();
             if (row.sent)
-                flags.add(Geary.EmailFlags.OUTBOX_SENT);
+                flags.add(Convey.EmailFlags.OUTBOX_SENT);
             email.set_flags(flags);
         }
 

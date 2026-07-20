@@ -21,11 +21,11 @@
  * and {@link completed_upgrade} to be notified of the upgrade process
  * starting and finishing.
  */
-public class Geary.Db.VersionedDatabase : Geary.Db.Database {
+public class Convey.Db.VersionedDatabase : Convey.Db.Database {
 
 
-    private static Geary.Nonblocking.Mutex upgrade_mutex =
-        new Geary.Nonblocking.Mutex();
+    private static Convey.Nonblocking.Mutex upgrade_mutex =
+        new Convey.Nonblocking.Mutex();
 
 
     public File schema_dir { get; private set; }
@@ -140,7 +140,7 @@ public class Geary.Db.VersionedDatabase : Geary.Db.Database {
 
             // Since these upgrades run in a background thread,
             // there's a possibility they can run in parallel.  That
-            // leads to Geary absolutely taking over the machine, with
+            // leads to Convey absolutely taking over the machine, with
             // potentially several threads all doing heavy database
             // manipulation at once.  So, we wrap this bit in a mutex
             // lock so that only one database is updating at once.  It

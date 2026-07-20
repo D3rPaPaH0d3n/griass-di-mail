@@ -37,7 +37,7 @@
  * @see FetchDataSpecifier
  */
 
-public class Geary.Imap.FetchBodyDataSpecifier : BaseObject, Gee.Hashable<FetchBodyDataSpecifier> {
+public class Convey.Imap.FetchBodyDataSpecifier : BaseObject, Gee.Hashable<FetchBodyDataSpecifier> {
     /**
      * Specifies which section (or partial section) is being requested with this identifier.
      */
@@ -308,7 +308,7 @@ public class Geary.Imap.FetchBodyDataSpecifier : BaseObject, Gee.Hashable<FetchB
     public static FetchBodyDataSpecifier deserialize_response(StringParameter stringp) throws ImapError {
         // * case-insensitive
         // * leading/trailing whitespace stripped
-        // * Remove quoting (some servers return field names quoted, some don't, Geary never uses them
+        // * Remove quoting (some servers return field names quoted, some don't, Convey never uses them
         //   when requesting)
         string strd = stringp.as_lower().replace("\"", "").strip();
 

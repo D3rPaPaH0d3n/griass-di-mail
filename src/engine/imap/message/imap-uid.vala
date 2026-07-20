@@ -12,8 +12,8 @@
  * @see SequenceNumber
  */
 
-public class Geary.Imap.UID : Geary.MessageData.Int64MessageData, Geary.Imap.MessageData,
-    Gee.Comparable<Geary.Imap.UID> {
+public class Convey.Imap.UID : Convey.MessageData.Int64MessageData, Convey.Imap.MessageData,
+    Gee.Comparable<Convey.Imap.UID> {
     /**
      * Minimum valid value for a {@link UID}.
      */
@@ -96,7 +96,7 @@ public class Geary.Imap.UID : Geary.MessageData.Int64MessageData, Geary.Imap.Mes
         return clamped ? new UID((value - 1).clamp(MIN, MAX)) : new UID(value - 1);
     }
 
-    public virtual int compare_to(Geary.Imap.UID other) {
+    public virtual int compare_to(Convey.Imap.UID other) {
         return (int) (value - other.value).clamp(-1, 1);
     }
 

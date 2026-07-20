@@ -4,14 +4,14 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.ListEmailByID : Geary.ImapEngine.AbstractListEmail {
+private class Convey.ImapEngine.ListEmailByID : Convey.ImapEngine.AbstractListEmail {
     private ImapDB.EmailIdentifier? initial_id;
     private int count;
     private int fulfilled_count = 0;
     private Imap.UID? initial_uid = null;
 
     public ListEmailByID(MinimalFolder owner, ImapDB.EmailIdentifier? initial_id, int count,
-        Geary.Email.Field required_fields, Folder.ListFlags flags, Cancellable? cancellable) {
+        Convey.Email.Field required_fields, Folder.ListFlags flags, Cancellable? cancellable) {
         base ("ListEmailByID", owner, required_fields, flags, cancellable);
 
         this.initial_id = initial_id;
@@ -42,7 +42,7 @@ private class Geary.ImapEngine.ListEmailByID : Geary.ImapEngine.AbstractListEmai
             ImapDB.Folder.ListFlags.from_folder_flags(flags) |
             ImapDB.Folder.ListFlags.PARTIAL_OK
         );
-        Gee.List<Geary.Email>? list =
+        Gee.List<Convey.Email>? list =
             yield owner.local_folder.list_email_by_id_async(
                 initial_id,
                 count,
@@ -52,9 +52,9 @@ private class Geary.ImapEngine.ListEmailByID : Geary.ImapEngine.AbstractListEmai
             );
 
         // Break out unfulfilled email from fulfilled ones
-        Gee.ArrayList<Geary.Email> fulfilled = new Gee.ArrayList<Geary.Email>();
+        Gee.ArrayList<Convey.Email> fulfilled = new Gee.ArrayList<Convey.Email>();
         if (list != null) {
-            foreach (Geary.Email email in list) {
+            foreach (Convey.Email email in list) {
                 if (email.fields.fulfills(required_fields)) {
                     fulfilled.add(email);
                 } else {

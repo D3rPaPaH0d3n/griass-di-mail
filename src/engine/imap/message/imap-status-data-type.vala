@@ -11,7 +11,7 @@
  *
  * @see StatusData
  */
-public enum Geary.Imap.StatusDataType {
+public enum Convey.Imap.StatusDataType {
     MESSAGES,
     RECENT,
     UIDNEXT,

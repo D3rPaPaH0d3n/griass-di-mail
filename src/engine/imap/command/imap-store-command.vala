@@ -13,7 +13,7 @@
  * @see FetchCommand
  * @see FetchedData
  */
-public class Geary.Imap.StoreCommand : Command {
+public class Convey.Imap.StoreCommand : Command {
 
     public const string NAME = "STORE";
     public const string UID_NAME = "UID STORE";

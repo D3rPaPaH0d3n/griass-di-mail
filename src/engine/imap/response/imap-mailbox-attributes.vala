@@ -11,7 +11,7 @@
  * @see MailboxInformation
  */
 
-public class Geary.Imap.MailboxAttributes : Geary.Imap.Flags {
+public class Convey.Imap.MailboxAttributes : Convey.Imap.Flags {
     /**
      * True if the mailbox should not be accessed via SELECT, EXAMINE, or STATUS, i.e. is a
      * "no-select" mailbox.
@@ -58,9 +58,9 @@ public class Geary.Imap.MailboxAttributes : Geary.Imap.Flags {
      * Returns the special use specified for the mailbox.
      *
      * If no special use is set, returns {@link
-     * Geary.Folder.SpecialUse.NONE}.
+     * Convey.Folder.SpecialUse.NONE}.
      */
-    public Geary.Folder.SpecialUse get_special_use() {
+    public Convey.Folder.SpecialUse get_special_use() {
         if (contains(MailboxAttribute.SPECIAL_FOLDER_ALL))
             return ALL_MAIL;
 

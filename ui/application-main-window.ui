@@ -6,7 +6,7 @@
     <signal name="unmap" handler="on_unmap"/>
 
     <style>
-      <class name="geary-main-window"/>
+      <class name="convey-main-window"/>
     </style>
 
 
@@ -243,7 +243,7 @@
                                       <property name="vexpand">True</property>
                                       <property name="hscrollbar_policy">never</property>
                                       <style>
-                                        <class name="geary-folder"/>
+                                        <class name="convey-folder"/>
                                       </style>
                                   </object>
                                 </property>
@@ -365,7 +365,7 @@
               </object>
             </child>
             <style>
-              <class name="geary-main-layout"/>
+              <class name="convey-main-layout"/>
             </style>
           </object>
         </child>
@@ -423,7 +423,7 @@
         <attribute name="accel">F1</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">_About Geary</attribute>
+        <attribute name="label" translatable="yes">_About Convey</attribute>
         <attribute name="action">app.about</attribute>
       </item>
     </section>

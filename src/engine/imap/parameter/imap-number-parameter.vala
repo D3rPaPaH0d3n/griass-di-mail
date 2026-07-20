@@ -11,7 +11,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.2]]
  */
 
-public class Geary.Imap.NumberParameter : UnquotedStringParameter {
+public class Convey.Imap.NumberParameter : UnquotedStringParameter {
     public NumberParameter(int num) {
         base (num.to_string());
     }

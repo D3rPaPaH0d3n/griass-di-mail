@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-[GtkTemplate (ui = "/org/gnome/Geary/components-preferences-dialog.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-preferences-dialog.ui")]
 public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     [GtkChild] private unowned Adw.SwitchRow autoselect_row;

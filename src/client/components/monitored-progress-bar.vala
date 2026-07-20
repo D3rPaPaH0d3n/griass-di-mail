@@ -5,10 +5,10 @@
  */
 
 /**
- * Adapts a progress bar to automatically display progress of a Geary.ProgressMonitor.
+ * Adapts a progress bar to automatically display progress of a Convey.ProgressMonitor.
  */
 public class MonitoredProgressBar : Adw.Bin {
-    private Geary.ProgressMonitor? monitor = null;
+    private Convey.ProgressMonitor? monitor = null;
 
     private Gtk.ProgressBar progress_bar;
 
@@ -17,7 +17,7 @@ public class MonitoredProgressBar : Adw.Bin {
         this.child = this.progress_bar;
     }
 
-    public void set_progress_monitor(Geary.ProgressMonitor monitor) {
+    public void set_progress_monitor(Convey.ProgressMonitor monitor) {
         this.monitor = monitor;
         monitor.start.connect(on_start);
         monitor.finish.connect(on_finish);
@@ -30,7 +30,7 @@ public class MonitoredProgressBar : Adw.Bin {
         this.progress_bar.fraction = 0.0;
     }
 
-    private void on_update(double total_progress, double change, Geary.ProgressMonitor monitor) {
+    private void on_update(double total_progress, double change, Convey.ProgressMonitor monitor) {
         this.progress_bar.fraction = total_progress;
     }
 

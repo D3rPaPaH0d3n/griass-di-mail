@@ -24,7 +24,7 @@ namespace Util.Contact {
         // Contact domain trusted
         } else {
             for (uint i = 0; i < email_addresses.get_n_items(); i++) {
-                var email = (Geary.RFC822.MailboxAddress) email_addresses.get_item(i);
+                var email = (Convey.RFC822.MailboxAddress) email_addresses.get_item(i);
                 if (email.domain in domains) {
                     return true;
                 }

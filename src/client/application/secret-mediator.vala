@@ -6,7 +6,7 @@
  */
 
 /** LibSecret password adapter. */
-public class SecretMediator : Geary.CredentialsMediator, Object {
+public class SecretMediator : Convey.CredentialsMediator, Object {
 
     private const string ATTR_LOGIN = "login";
     private const string ATTR_HOST = "host";
@@ -51,8 +51,8 @@ public class SecretMediator : Geary.CredentialsMediator, Object {
         }
     }
 
-    public virtual async bool load_token(Geary.AccountInformation account,
-                                         Geary.ServiceInformation service,
+    public virtual async bool load_token(Convey.AccountInformation account,
+                                         Convey.ServiceInformation service,
                                          Cancellable? cancellable)
         throws GLib.Error {
         bool loaded = false;
@@ -81,8 +81,8 @@ public class SecretMediator : Geary.CredentialsMediator, Object {
         return loaded;
     }
 
-    public async void update_token(Geary.AccountInformation account,
-                                   Geary.ServiceInformation service,
+    public async void update_token(Convey.AccountInformation account,
+                                   Convey.ServiceInformation service,
                                    Cancellable? cancellable)
         throws GLib.Error {
         if (service.credentials != null) {
@@ -90,8 +90,8 @@ public class SecretMediator : Geary.CredentialsMediator, Object {
         }
     }
 
-    public async void clear_token(Geary.AccountInformation account,
-                                  Geary.ServiceInformation service,
+    public async void clear_token(Convey.AccountInformation account,
+                                  Convey.ServiceInformation service,
                                   Cancellable? cancellable)
         throws Error {
         if (service.credentials != null) {
@@ -147,7 +147,7 @@ public class SecretMediator : Geary.CredentialsMediator, Object {
         }
     }
 
-    private async void do_store(Geary.ServiceInformation service,
+    private async void do_store(Convey.ServiceInformation service,
                                 string password,
                                 Cancellable? cancellable)
         throws Error {
@@ -155,13 +155,13 @@ public class SecretMediator : Geary.CredentialsMediator, Object {
             SecretMediator.schema,
             new_attrs(service),
             Secret.COLLECTION_DEFAULT,
-            "Geary %s password".printf(to_proto_value(service.protocol)),
+            "Convey %s password".printf(to_proto_value(service.protocol)),
             password,
             cancellable
         );
     }
 
-    private HashTable<string,string> new_attrs(Geary.ServiceInformation service) {
+    private HashTable<string,string> new_attrs(Convey.ServiceInformation service) {
         HashTable<string,string> table = new HashTable<string,string>(
             str_hash, str_equal
         );
@@ -171,11 +171,11 @@ public class SecretMediator : Geary.CredentialsMediator, Object {
         return table;
     }
 
-    private inline string to_proto_value(Geary.Protocol protocol) {
+    private inline string to_proto_value(Convey.Protocol protocol) {
         return protocol.to_value().ascii_up();
     }
 
-    private async string? migrate_old_password(Geary.ServiceInformation service,
+    private async string? migrate_old_password(Convey.ServiceInformation service,
                                                GLib.Cancellable? cancellable)
         throws GLib.Error {
         // <= 0.11
@@ -201,12 +201,12 @@ public class SecretMediator : Geary.CredentialsMediator, Object {
         return password;
     }
 
-    private string get_legacy_user(Geary.ServiceInformation service, string user) {
+    private string get_legacy_user(Convey.ServiceInformation service, string user) {
         switch (service.protocol) {
-        case Geary.Protocol.IMAP:
-            return "org.yorba.geary imap_username:" + user;
-        case Geary.Protocol.SMTP:
-            return "org.yorba.geary smtp_username:" + user;
+        case Convey.Protocol.IMAP:
+            return "org.yorba.convey imap_username:" + user;
+        case Convey.Protocol.SMTP:
+            return "org.yorba.convey smtp_username:" + user;
         default:
             warning("Unknown service type");
             return "";

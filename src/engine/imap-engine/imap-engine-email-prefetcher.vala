@@ -9,7 +9,7 @@
 /**
  * Ensures all email in a folder's vector has been downloaded.
  */
-private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
+private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
 
 
     public const int PREFETCH_DELAY_SEC = 1;
@@ -19,12 +19,12 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
     // don't need re-fetching, and PARTIAL_OK so that messages
     // that don't have properties (i.e. are essentially blank)
     // are still found and filled in.
-    private const Geary.Email.Field PREPARE_FIELDS = PROPERTIES;
+    private const Convey.Email.Field PREPARE_FIELDS = PROPERTIES;
     private const ImapDB.Folder.ListFlags PREPARE_FLAGS = (
         ONLY_INCOMPLETE | PARTIAL_OK
     );
 
-    private const Geary.Email.Field PREFETCH_FIELDS = Geary.Email.Field.ALL;
+    private const Convey.Email.Field PREFETCH_FIELDS = Convey.Email.Field.ALL;
     private const int PREFETCH_CHUNK_BYTES = 512 * 1024;
 
     public Nonblocking.CountingSemaphore active_sem { get; private set;
@@ -32,7 +32,7 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
 
     private weak ImapEngine.MinimalFolder folder;
     private Nonblocking.Mutex mutex = new Nonblocking.Mutex();
-    private Gee.TreeSet<Geary.Email> prefetch_emails = new Gee.TreeSet<Geary.Email>(
+    private Gee.TreeSet<Convey.Email> prefetch_emails = new Gee.TreeSet<Convey.Email>(
         Email.compare_recv_date_descending);
     private TimeoutManager prefetch_timer;
     private Cancellable? cancellable = null;
@@ -76,13 +76,13 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
         this.cancellable = null;
     }
 
-    private void on_local_expansion(Gee.Collection<Geary.EmailIdentifier> ids) {
+    private void on_local_expansion(Gee.Collection<Convey.EmailIdentifier> ids) {
         // acquire here since .begin() only schedules for later
         active_sem.acquire();
         do_prepare_new_async.begin(ids);
     }
 
-    private void schedule_prefetch(Gee.Collection<Geary.Email>? emails) {
+    private void schedule_prefetch(Gee.Collection<Convey.Email>? emails) {
         if (emails != null && emails.size > 0) {
             this.prefetch_emails.add_all(emails);
 
@@ -96,7 +96,7 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
     }
 
     private async void do_prepare_all_local_async() {
-        Gee.List<Geary.Email>? list = null;
+        Gee.List<Convey.Email>? list = null;
         try {
             list = yield this.folder.local_folder.list_email_by_id_async(
                 null, int.MAX,
@@ -117,8 +117,8 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
         this.active_sem.blind_notify();
     }
 
-    private async void do_prepare_new_async(Gee.Collection<Geary.EmailIdentifier> ids) {
-        Gee.List<Geary.Email>? list = null;
+    private async void do_prepare_new_async(Gee.Collection<Convey.EmailIdentifier> ids) {
+        Gee.List<Convey.Email>? list = null;
         try {
             list = yield this.folder.local_folder.list_email_by_sparse_id_async(
                 (Gee.Collection<ImapDB.EmailIdentifier>) ids,
@@ -163,8 +163,8 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
 
     private async void do_prefetch_batch_async() throws Error {
         // snarf up all requested Emails for this round
-        Gee.TreeSet<Geary.Email> emails = prefetch_emails;
-        prefetch_emails = new Gee.TreeSet<Geary.Email>(Email.compare_recv_date_descending);
+        Gee.TreeSet<Convey.Email> emails = prefetch_emails;
+        prefetch_emails = new Gee.TreeSet<Convey.Email>(Email.compare_recv_date_descending);
 
         if (emails.size == 0)
             return;
@@ -187,7 +187,7 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
 
         while (emails.size > 0) {
             // dequeue emails by date received, newest to oldest
-            Geary.Email email = emails.first();
+            Convey.Email email = emails.first();
 
             if (email.properties == null) {
                 // There's no properties, so there's no idea how large
@@ -239,7 +239,7 @@ private class Geary.ImapEngine.EmailPrefetcher : Geary.BaseObject {
     }
 
     // Return true to continue, false to stop prefetching (cancelled or not open)
-    private async bool do_prefetch_email_async(Gee.Collection<Geary.EmailIdentifier> ids, int64 chunk_bytes) {
+    private async bool do_prefetch_email_async(Gee.Collection<Convey.EmailIdentifier> ids, int64 chunk_bytes) {
         debug("do_prefetch_email_async: %s prefetching %d emails (%sb)", folder.to_string(),
             ids.size, chunk_bytes.to_string());
 

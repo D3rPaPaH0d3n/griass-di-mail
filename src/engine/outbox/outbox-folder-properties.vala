@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.Outbox.FolderProperties : Geary.FolderProperties {
+private class Convey.Outbox.FolderProperties : Convey.FolderProperties {
 
     public FolderProperties(int total, int unread) {
         base(

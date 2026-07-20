@@ -15,7 +15,7 @@
  * thread pool, as well as allowing multiple connections to be opened
  * for fully concurrent access.
  */
-public class Geary.Db.Database : Context {
+public class Convey.Db.Database : Context {
 
 
     /** The path passed to SQLite to open a transient database. */
@@ -110,7 +110,7 @@ public class Geary.Db.Database : Context {
         this.flags = flags;
 
         if (this.file != null && (flags & DatabaseFlags.CREATE_DIRECTORY) != 0) {
-            yield Geary.Files.make_directory_with_parents(this.file.get_parent());
+            yield Convey.Files.make_directory_with_parents(this.file.get_parent());
         }
 
         if (threadsafe()) {
@@ -124,7 +124,7 @@ public class Geary.Db.Database : Context {
 
         if ((flags & DatabaseFlags.CHECK_CORRUPTION) != 0 &&
             this.file != null &&
-            yield Geary.Files.query_exists_async(this.file, cancellable)) {
+            yield Convey.Files.query_exists_async(this.file, cancellable)) {
             yield Nonblocking.Concurrent.global.schedule_async(() => {
                     check_for_corruption(flags, cancellable);
                 }, cancellable);

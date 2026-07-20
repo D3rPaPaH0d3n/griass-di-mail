@@ -13,7 +13,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7]] for more information.
  */
 
-public abstract class Geary.Imap.ServerResponse : RootParameters {
+public abstract class Convey.Imap.ServerResponse : RootParameters {
 
 
     public Tag tag { get; private set; }

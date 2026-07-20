@@ -8,7 +8,7 @@
 /**
  * Thrown when an error occurs communicating with a SMTP server.
  */
-public errordomain Geary.SmtpError {
+public errordomain Convey.SmtpError {
 
     /** The client already has a connection to the server. */
     ALREADY_CONNECTED,

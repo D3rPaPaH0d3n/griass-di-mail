@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-namespace Geary.ImapEngine {
+namespace Convey.ImapEngine {
 
     /**
      * Determines if retrying an operation might succeed or not.

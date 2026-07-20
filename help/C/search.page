@@ -9,19 +9,19 @@
     </info>
 	<title>Search</title>
 	
-	<p>Geary supports a per-account full text search.  To start a search, select a folder associated
+	<p>Convey supports a per-account full text search.  To start a search, select a folder associated
 	with the account you'd like to search against.  Then click the search box in the toolbar (or
 	press <keyseq><key>Ctrl</key><key>S</key></keyseq>) and start typing.  Results will appear after a brief delay.</p>
 	
 	<p>The full text search includes email text, email addresses (to, from, and cc), subject lines and
 	attachment filenames.</p>
 	
-	<p>Keywords that match your search are highlighted in the message view.  Geary will match different
+	<p>Keywords that match your search are highlighted in the message view.  Convey will match different
 	forms of the same word, for example searching for "walk" will also match "walking" and "walked."</p>
 	
 	<section id="search-operators">
 	<title>Search operators</title>
-	<p>Geary supports the following operators to limit the scope of searches:</p>
+	<p>Convey supports the following operators to limit the scope of searches:</p>
 	<table frame="all" rules="rows">
 	<tr>
 		<td><p><input>attachment:<var>filename</var></input></p></td>

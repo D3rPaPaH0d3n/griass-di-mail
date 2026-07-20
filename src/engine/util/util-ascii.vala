@@ -13,7 +13,7 @@
  * Turkish, where translating between upper-case and lower-case `i` is
  * not necessarily preserved.
  */
-namespace Geary.Ascii {
+namespace Convey.Ascii {
 
 public int index_of(string str, char ch) {
     // Use a pointer and explicit null check, since testing against

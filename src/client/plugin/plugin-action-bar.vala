@@ -19,7 +19,7 @@
  * {@link Application.register_action} or locally for a specific UI
  * element, for example using {@link Composer.register_action}.
  */
-public class Plugin.ActionBar : Geary.BaseObject {
+public class Plugin.ActionBar : Convey.BaseObject {
 
 
     /**

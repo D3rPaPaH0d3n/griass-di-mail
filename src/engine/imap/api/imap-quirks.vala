@@ -8,7 +8,7 @@
 /**
  * A set of quirks for a specific IMAP service.
  */
-public class Geary.Imap.Quirks : BaseObject {
+public class Convey.Imap.Quirks : BaseObject {
 
 
     /**

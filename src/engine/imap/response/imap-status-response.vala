@@ -13,7 +13,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.1]] for more information.
  */
 
-public class Geary.Imap.StatusResponse : ServerResponse {
+public class Convey.Imap.StatusResponse : ServerResponse {
     /**
      * Returns true if this {@link StatusResponse} represents the completion of a {@link Command}.
      *

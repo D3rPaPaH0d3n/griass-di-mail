@@ -18,7 +18,7 @@
  * Note this class is not thread safe and should only be invoked from
  * the main loop.
  */
-public class Geary.ConnectivityManager : BaseObject {
+public class Convey.ConnectivityManager : BaseObject {
 
     private const uint CHECK_QUIESCENCE = 60 * 1000;
     private const uint CHECK_SOON = 1000;
@@ -29,7 +29,7 @@ public class Geary.ConnectivityManager : BaseObject {
 
     /** Determines if the managed endpoint is currently reachable. */
     public Trillian is_reachable {
-        get; private set; default = Geary.Trillian.UNKNOWN;
+        get; private set; default = Convey.Trillian.UNKNOWN;
     }
 
     /**
@@ -39,7 +39,7 @@ public class Geary.ConnectivityManager : BaseObject {
      * will become impossible if a fatal error is reported.
      */
     public Trillian is_valid {
-        get; private set; default = Geary.Trillian.UNKNOWN;
+        get; private set; default = Convey.Trillian.UNKNOWN;
     }
 
     private NetworkMonitor monitor;
@@ -118,7 +118,7 @@ public class Geary.ConnectivityManager : BaseObject {
             }
         } catch (GLib.DBusError err) {
             // Running under Flatpak can cause a DBus error if the
-            // portal is malfunctioning (e.g. Geary #97 & #82 and
+            // portal is malfunctioning (e.g. Convey #97 & #82 and
             // xdg-desktop-portal #208). We must treat this as
             // reachable so we make a connection attempt, otherwise it
             // will never happen.

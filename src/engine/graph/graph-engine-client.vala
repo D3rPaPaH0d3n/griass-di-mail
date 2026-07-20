@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.Graph.Client : Geary.BaseObject {
+internal class Convey.Graph.Client : Convey.BaseObject {
 
     public const string DEFAULT_BASE_URI = "https://graph.microsoft.com/v1.0";
     private const uint REQUEST_TIMEOUT_SEC = 30;
@@ -14,13 +14,13 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     private const uint MAX_RETRY_AFTER_SEC = 60;
 
 
-    internal class Message : Geary.BaseObject {
+    internal class Message : Convey.BaseObject {
         public string id = "";
         public string conversation_id = "";
-        public Geary.RFC822.MailboxAddresses? from = null;
-        public Geary.RFC822.MailboxAddresses? to = null;
-        public Geary.RFC822.MailboxAddresses? cc = null;
-        public Geary.RFC822.MailboxAddresses? bcc = null;
+        public Convey.RFC822.MailboxAddresses? from = null;
+        public Convey.RFC822.MailboxAddresses? to = null;
+        public Convey.RFC822.MailboxAddresses? cc = null;
+        public Convey.RFC822.MailboxAddresses? bcc = null;
         public string subject = "";
         public string internet_message_id = "";
         public string body_preview = "";
@@ -36,14 +36,14 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             new Gee.HashMap<string,string>();
     }
 
-    internal class MailFolder : Geary.BaseObject {
+    internal class MailFolder : Convey.BaseObject {
         public string id = "";
         public string display_name = "";
         public string well_known_name = "";
         public bool is_hidden = false;
     }
 
-    internal class DeltaResult : Geary.BaseObject {
+    internal class DeltaResult : Convey.BaseObject {
         // Graph message IDs that were created or updated; fetch full
         // messages for these, delta entries don't carry reliable properties
         public Gee.Set<string> changed_ids = new Gee.HashSet<string>();
@@ -60,12 +60,12 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
 
-    private Geary.AccountInformation account;
+    private Convey.AccountInformation account;
     private Soup.Session session;
     internal string base_uri { get; set; default = DEFAULT_BASE_URI; }
 
 
-    public Client(Geary.AccountInformation account,
+    public Client(Convey.AccountInformation account,
                   string? base_uri = null) {
         this.account = account;
         this.session = new Soup.Session();
@@ -144,13 +144,13 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                             stop_at_unix = 0;
                         }
                         break;
-                    } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
+                    } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
                         // Not all tenants/API versions support every field
                         // in this query; try the next, simpler one.
                     }
                 }
                 if (root == null) {
-                    throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                    throw new Convey.EngineError.SERVER_UNAVAILABLE(
                         "Graph request failed (%s)",
                         path
                     );
@@ -228,7 +228,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         return parse_message(root, true);
     }
 
-    public async Geary.Memory.Buffer fetch_message_rfc822(
+    public async Convey.Memory.Buffer fetch_message_rfc822(
         string message_id,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
@@ -243,7 +243,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             "message/rfc822",
             GLib.Priority.HIGH
         );
-        return new Geary.Memory.ByteBuffer(
+        return new Convey.Memory.ByteBuffer(
             body.get_data(),
             (size_t) body.get_size()
         );
@@ -295,7 +295,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             Json.Object root;
             try {
                 root = yield request_json_url(url, cancellable);
-            } catch (Geary.Graph.HttpError.GONE err) {
+            } catch (Convey.Graph.HttpError.GONE err) {
                 // The cursor expired; caller must restart with a fresh
                 // baseline sync.
                 result.resync_required = true;
@@ -366,7 +366,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
      */
     public async string create_message_in_folder(
         string folder_id,
-        Geary.RFC822.Message rfc822,
+        Convey.RFC822.Message rfc822,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         string encoded = GLib.Base64.encode(
@@ -384,7 +384,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         );
         string? id = get_string_member(result, "id");
         if (String.is_empty(id)) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            throw new Convey.EngineError.SERVER_UNAVAILABLE(
                 "Graph: create_message_in_folder returned no message id"
             );
         }
@@ -399,15 +399,15 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
     public async string create_message_in_outbox(
-        Geary.ComposedEmail composed,
+        Convey.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         string domain = this.account.primary_mailbox.domain;
         if (!composed.from.is_empty) {
             domain = composed.from[0].domain;
         }
-        Geary.RFC822.Message rfc822 =
-            yield new Geary.RFC822.Message.from_composed_email(
+        Convey.RFC822.Message rfc822 =
+            yield new Convey.RFC822.Message.from_composed_email(
                 composed,
                 GMime.utils_generate_message_id(domain),
                 GMime.EncodingConstraint.8BIT,
@@ -428,7 +428,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         );
         string? id = get_string_member(result, "id");
         if (String.is_empty(id)) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            throw new Convey.EngineError.SERVER_UNAVAILABLE(
                 "Graph: create_message_in_outbox returned no message id"
             );
         }
@@ -453,7 +453,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         yield request_no_content("POST", path, null, cancellable);
     }
 
-    public async void send_composed_email(Geary.ComposedEmail composed,
+    public async void send_composed_email(Convey.ComposedEmail composed,
                                           bool save_to_sent_items,
                                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
@@ -593,13 +593,13 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     cancellable
                 );
                 break;
-            } catch (Geary.Graph.HttpError.BAD_REQUEST err) {
+            } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
                 continue;
             }
         }
 
         if (root == null) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            throw new Convey.EngineError.SERVER_UNAVAILABLE(
                 "Graph: all list_mail_folders queries failed"
             );
         }
@@ -728,9 +728,9 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         while (true) {
             yield this.account.load_incoming_credentials(cancellable);
 
-            Geary.Credentials? credentials = this.account.incoming.credentials;
+            Convey.Credentials? credentials = this.account.incoming.credentials;
             if (credentials == null || String.is_empty(credentials.token)) {
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                throw new Convey.EngineError.SERVER_UNAVAILABLE(
                     "No Graph OAuth token available"
                 );
             }
@@ -763,7 +763,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     timeout_retries++;
                     continue;
                 }
-                throw new Geary.EngineError.SERVER_UNAVAILABLE(
+                throw new Convey.EngineError.SERVER_UNAVAILABLE(
                     "Graph request timed out (%s)",
                     uri
                 );
@@ -782,7 +782,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                     ),
                     MAX_RETRY_AFTER_SEC
                 );
-                yield Geary.Scheduler.sleep_async(wait_sec);
+                yield Convey.Scheduler.sleep_async(wait_sec);
                 continue;
             }
 
@@ -808,17 +808,17 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         );
         switch (status) {
         case 400:
-            return new Geary.Graph.HttpError.BAD_REQUEST(message);
+            return new Convey.Graph.HttpError.BAD_REQUEST(message);
         case 401:
-            return new Geary.Graph.HttpError.UNAUTHORIZED(message);
+            return new Convey.Graph.HttpError.UNAUTHORIZED(message);
         case 404:
-            return new Geary.Graph.HttpError.NOT_FOUND(message);
+            return new Convey.Graph.HttpError.NOT_FOUND(message);
         case 410:
-            return new Geary.Graph.HttpError.GONE(message);
+            return new Convey.Graph.HttpError.GONE(message);
         case 429:
-            return new Geary.Graph.HttpError.TOO_MANY_REQUESTS(message);
+            return new Convey.Graph.HttpError.TOO_MANY_REQUESTS(message);
         default:
-            return new Geary.Graph.HttpError.SERVER(message);
+            return new Convey.Graph.HttpError.SERVER(message);
         }
     }
 
@@ -831,7 +831,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
                 (ssize_t) body.get_size()
             );
         } catch (GLib.Error err) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            throw new Convey.EngineError.SERVER_UNAVAILABLE(
                 "Graph response decode failed (%s): %s",
                 uri,
                 err.message
@@ -839,7 +839,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         }
         Json.Node root = parser.get_root();
         if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            throw new Convey.EngineError.SERVER_UNAVAILABLE(
                 "Invalid Graph response payload"
             );
         }
@@ -856,7 +856,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
             );
             return new Soup.Message.from_uri(method, uri);
         } catch (GLib.UriError err) {
-            throw new Geary.EngineError.SERVER_UNAVAILABLE(
+            throw new Convey.EngineError.SERVER_UNAVAILABLE(
                 "Invalid Graph request URI (%s): %s",
                 uri_string,
                 err.message
@@ -897,41 +897,41 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         return parsed;
     }
 
-    private static Geary.RFC822.MailboxAddresses? parse_address_member(Json.Object object,
+    private static Convey.RFC822.MailboxAddresses? parse_address_member(Json.Object object,
                                                                         string key) {
-        Geary.RFC822.MailboxAddress? mailbox = null;
+        Convey.RFC822.MailboxAddress? mailbox = null;
         if (object.has_member(key) &&
             object.get_member(key).get_node_type() == Json.NodeType.OBJECT) {
             Json.Object wrapper = object.get_object_member(key);
             mailbox = parse_email_address_wrapper(wrapper);
         }
-        return mailbox == null ? null : new Geary.RFC822.MailboxAddresses.single(mailbox);
+        return mailbox == null ? null : new Convey.RFC822.MailboxAddresses.single(mailbox);
     }
 
-    private static Geary.RFC822.MailboxAddresses? parse_addresses_member(Json.Object object,
+    private static Convey.RFC822.MailboxAddresses? parse_addresses_member(Json.Object object,
                                                                           string key) {
         if (!object.has_member(key) ||
             object.get_member(key).get_node_type() != Json.NodeType.ARRAY) {
             return null;
         }
         Json.Array values = object.get_array_member(key);
-        Gee.ArrayList<Geary.RFC822.MailboxAddress> addresses =
-            new Gee.ArrayList<Geary.RFC822.MailboxAddress>();
+        Gee.ArrayList<Convey.RFC822.MailboxAddress> addresses =
+            new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
         for (uint i = 0; i < values.get_length(); i++) {
             Json.Node value = values.get_element(i);
             if (value.get_node_type() != Json.NodeType.OBJECT) {
                 continue;
             }
-            Geary.RFC822.MailboxAddress? mailbox =
+            Convey.RFC822.MailboxAddress? mailbox =
                 parse_email_address_wrapper(values.get_object_element(i));
             if (mailbox != null) {
                 addresses.add(mailbox);
             }
         }
-        return addresses.is_empty ? null : new Geary.RFC822.MailboxAddresses(addresses);
+        return addresses.is_empty ? null : new Convey.RFC822.MailboxAddresses(addresses);
     }
 
-    private static Geary.RFC822.MailboxAddress? parse_email_address_wrapper(Json.Object wrapper) {
+    private static Convey.RFC822.MailboxAddress? parse_email_address_wrapper(Json.Object wrapper) {
         if (!wrapper.has_member("emailAddress") ||
             wrapper.get_member("emailAddress").get_node_type() != Json.NodeType.OBJECT) {
             return null;
@@ -941,7 +941,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         if (String.is_empty(address)) {
             return null;
         }
-        return new Geary.RFC822.MailboxAddress(get_string_member(email, "name"), address);
+        return new Convey.RFC822.MailboxAddress(get_string_member(email, "name"), address);
     }
 
     private static Gee.HashMap<string,string> parse_internet_message_headers(
@@ -1039,19 +1039,19 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         return generator.to_data(null);
     }
 
-    private Geary.ComposedEmail message_to_composed_email(Geary.RFC822.Message message) {
+    private Convey.ComposedEmail message_to_composed_email(Convey.RFC822.Message message) {
         GLib.DateTime date = message.date != null
             ? message.date.value
             : new GLib.DateTime.now_local();
-        Geary.RFC822.MailboxAddresses from = (
+        Convey.RFC822.MailboxAddresses from = (
             message.from != null && !message.from.is_empty
             ? message.from
-            : new Geary.RFC822.MailboxAddresses.single(
+            : new Convey.RFC822.MailboxAddresses.single(
                 this.account.primary_mailbox
             )
         );
 
-        Geary.ComposedEmail composed = new Geary.ComposedEmail(date, from);
+        Convey.ComposedEmail composed = new Convey.ComposedEmail(date, from);
         if (message.to != null) {
             composed.set_to(message.to);
         }
@@ -1077,7 +1077,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     }
 
     private async void patch_message_recipients(string message_id,
-                                                Geary.ComposedEmail composed,
+                                                Convey.ComposedEmail composed,
                                                 GLib.Cancellable? cancellable)
         throws GLib.Error {
         Json.Builder builder = new Json.Builder();
@@ -1122,14 +1122,14 @@ internal class Geary.Graph.Client : Geary.BaseObject {
     private static bool append_mailbox_addresses_to_builder(
         Json.Builder builder,
         string name,
-        Geary.RFC822.MailboxAddresses? addresses
+        Convey.RFC822.MailboxAddresses? addresses
     ) {
         if (addresses == null || addresses.size == 0) {
             return false;
         }
-        Gee.ArrayList<Geary.RFC822.MailboxAddress> valid_addresses =
-            new Gee.ArrayList<Geary.RFC822.MailboxAddress>();
-        foreach (Geary.RFC822.MailboxAddress address in addresses) {
+        Gee.ArrayList<Convey.RFC822.MailboxAddress> valid_addresses =
+            new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        foreach (Convey.RFC822.MailboxAddress address in addresses) {
             if (!String.is_empty(address.address)) {
                 valid_addresses.add(address);
             }
@@ -1139,7 +1139,7 @@ internal class Geary.Graph.Client : Geary.BaseObject {
         }
         builder.set_member_name(name);
         builder.begin_array();
-        foreach (Geary.RFC822.MailboxAddress address in valid_addresses) {
+        foreach (Convey.RFC822.MailboxAddress address in valid_addresses) {
             builder.begin_object();
             builder.set_member_name("emailAddress");
             builder.begin_object();

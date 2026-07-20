@@ -251,7 +251,7 @@ Signing certificate...
 ok 10 /client/Application.CertificateManagerTest/database_disk_certificate_pinning_without_gcr
 # End of Application.CertificateManagerTest tests
 # Start of Application.ClientTest tests
-/usr/local/bin/geary: 46.0
+/usr/local/bin/convey: 46.0
 ok 11 /client/Application.ClientTest/paths_when_installed
 # End of Application.ClientTest tests
 # Start of ConfigurationTest tests
@@ -682,7 +682,7 @@ ok 20 /client/Composer.WebViewTest/get_html
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:55.0143 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:55.0143 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:55.0148 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 ok 21 /client/Composer.WebViewTest/get_html_for_draft
 # libenchant-DEBUG: broker.vala:193: reading ordering file /usr/share/enchant-2/enchant.ordering
@@ -766,7 +766,7 @@ ok 21 /client/Composer.WebViewTest/get_html_for_draft
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:55.0276 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:55.0276 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:55.0282 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:55.0370 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-46e3eda0-2b80-4cba-89e7-dfc63587e0c6: The connection is closed
 ok 22 /client/Composer.WebViewTest/get_text
@@ -851,7 +851,7 @@ ok 22 /client/Composer.WebViewTest/get_text
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:55.0408 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:55.0408 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:55.0414 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:55.0503 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-ace55f7a-7a4c-4312-8002-e4a20b95416e: The connection is closed
 ok 23 /client/Composer.WebViewTest/get_text_with_quote
@@ -936,7 +936,7 @@ ok 23 /client/Composer.WebViewTest/get_text_with_quote
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:55.0542 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:55.0542 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:55.0548 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 ok 24 /client/Composer.WebViewTest/get_text_with_nested_quote
 # libenchant-DEBUG: broker.vala:193: reading ordering file /usr/share/enchant-2/enchant.ordering
@@ -1020,7 +1020,7 @@ ok 24 /client/Composer.WebViewTest/get_text_with_nested_quote
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:55.0676 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:55.0676 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:55.0681 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 ok 25 /client/Composer.WebViewTest/get_text_with_long_line
 # libenchant-DEBUG: broker.vala:193: reading ordering file /usr/share/enchant-2/enchant.ordering
@@ -1104,7 +1104,7 @@ ok 25 /client/Composer.WebViewTest/get_text_with_long_line
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:55.0810 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:55.0810 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:55.0816 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:55.0907 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-2944633d-c0e6-4b5c-b38b-763ebd465ccd: The connection is closed
 ok 26 /client/Composer.WebViewTest/get_text_with_long_quote
@@ -1189,7 +1189,7 @@ ok 26 /client/Composer.WebViewTest/get_text_with_long_quote
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:55.0946 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:55.0946 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:55.0951 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:56.0044 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-22bb86dd-2b9d-4a0f-b505-854023ac04f9: The connection is closed
 ok 27 /client/Composer.WebViewTest/get_text_with_nbsp
@@ -1274,7 +1274,7 @@ ok 27 /client/Composer.WebViewTest/get_text_with_nbsp
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:56.0083 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:56.0083 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:56.0088 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:56.0179 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-99eaf7ae-a376-46e9-8d38-4e656be1bf97: The connection is closed
 ok 28 /client/Composer.WebViewTest/get_text_with_named_link
@@ -1359,7 +1359,7 @@ ok 28 /client/Composer.WebViewTest/get_text_with_named_link
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:56.0216 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:56.0216 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:56.0221 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:56.0310 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-d6fcd4a1-d8b2-456e-8c96-45fe97bf2743: The connection is closed
 ok 29 /client/Composer.WebViewTest/get_text_with_url_link
@@ -1444,7 +1444,7 @@ ok 29 /client/Composer.WebViewTest/get_text_with_url_link
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:56.0349 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:56.0349 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:56.0354 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:56.0446 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-d8786bbf-f9de-4f57-a483-08d6fb86a9c3: The connection is closed
 ok 30 /client/Composer.WebViewTest/get_text_with_surrounding_nbsps
@@ -1529,7 +1529,7 @@ ok 30 /client/Composer.WebViewTest/get_text_with_surrounding_nbsps
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:56.0486 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:56.0486 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:56.0491 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:56.0580 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-d9f27158-071d-41eb-9982-00f2c0437c95: The connection is closed
 ok 31 /client/Composer.WebViewTest/update_signature
@@ -4711,7 +4711,7 @@ ok 43 /client/Composer.WidgetTest/load_context_forward
 # libenchant-DEBUG: broker.vala:362: priority 1
 # libenchant-DEBUG: broker.vala:359: tag en_US
 # libenchant-DEBUG: broker.vala:362: priority 1
- [deb] 19:20:56.0619 geary:web-process-extension.vala:21: Initialising...
+ [deb] 19:20:56.0619 convey:web-process-extension.vala:21: Initialising...
  [deb] 19:20:56.0625 GLib-GIO:_g_io_module_get_default: Found default implementation portal (GPowerProfileMonitorPortal) for ‘gio-power-profile-monitor’
 *[wrn] 19:20:57.0655 GLib-GIO:Error releasing name org.webkit.app-de41a8b182796724a697a0ae568984c172a6ec6683b5a497c15c294b577940c3.Sandboxed.WebProcess-a836d167-90ad-4db0-8292-18ce2b139bd3: The connection is closed
 ok 44 /client/Composer.WidgetTest/to_composed_email

@@ -8,7 +8,7 @@
 /**
  * Display contact information and supported actions for a contact.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/conversation-contact-popover.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-contact-popover.ui")]
 public class Conversation.ContactPopover : Gtk.Popover {
 
 
@@ -37,7 +37,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
 
     public Application.Contact contact { get; private set; }
 
-    public Geary.RFC822.MailboxAddress mailbox { get; private set; }
+    public Convey.RFC822.MailboxAddress mailbox { get; private set; }
 
     private GLib.Cancellable load_cancellable = new GLib.Cancellable();
 
@@ -76,7 +76,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
 
     public ContactPopover(Gtk.Widget relative_to,
                           Application.Contact contact,
-                          Geary.RFC822.MailboxAddress mailbox,
+                          Convey.RFC822.MailboxAddress mailbox,
                           Application.Configuration config) {
 
         set_parent(relative_to);
@@ -155,7 +155,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
             this.deceptive_pane.show();
             this.contact_pane.hide();
 
-            this.forged_email_label.label = Geary.String.reduce_whitespace(
+            this.forged_email_label.label = Convey.String.reduce_whitespace(
                 this.mailbox.name
             );
             this.actual_email_label.label = this.mailbox.address;
@@ -207,7 +207,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
             if (!enabled) {
                 var email_addresses = this.contact.email_addresses;
                 for (uint i = 0; i < email_addresses.get_n_items(); i++) {
-                    var email = (Geary.RFC822.MailboxAddress) email_addresses.get_item(i);
+                    var email = (Convey.RFC822.MailboxAddress) email_addresses.get_item(i);
                     this.config.remove_images_trusted_domain(email.domain);
                 }
             }

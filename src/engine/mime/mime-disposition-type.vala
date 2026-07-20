@@ -17,7 +17,7 @@
  * See [[https://tools.ietf.org/html/rfc2183#section-2]]
  */
 
-public enum Geary.Mime.DispositionType {
+public enum Convey.Mime.DispositionType {
     UNSPECIFIED = -1,
     ATTACHMENT = 0,
     INLINE = 1;

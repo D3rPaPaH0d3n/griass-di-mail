@@ -14,7 +14,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-6.3.4]]
  */
-public class Geary.Imap.DeleteCommand : Command {
+public class Convey.Imap.DeleteCommand : Command {
 
     public const string NAME = "DELETE";
 

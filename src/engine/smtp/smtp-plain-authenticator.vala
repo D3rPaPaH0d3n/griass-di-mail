@@ -10,7 +10,7 @@
  * See [[http://tools.ietf.org/html/rfc4616]]
  */
 
-public class Geary.Smtp.PlainAuthenticator : Geary.Smtp.Authenticator {
+public class Convey.Smtp.PlainAuthenticator : Convey.Smtp.Authenticator {
     private static uint8[] nul = { '\0' };
 
     public PlainAuthenticator(Credentials credentials) {

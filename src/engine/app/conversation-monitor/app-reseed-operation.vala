@@ -14,7 +14,7 @@
  * or the required fields passed to its constructor, causing these
  * fields to be downloaded from the remote.
  */
-private class Geary.App.ReseedOperation : ConversationOperation {
+private class Convey.App.ReseedOperation : ConversationOperation {
 
 
     public ReseedOperation(ConversationMonitor monitor) {

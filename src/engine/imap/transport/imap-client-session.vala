@@ -24,7 +24,7 @@
  * sending a {@link LoginCommand}. Other commands can be sent via
  * {@link send_command_async} and {@link send_multiple_commands_async}.
  */
-public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
+public class Convey.Imap.ClientSession : BaseObject, Logging.Source {
 
     /**
      * Maximum keep-alive interval required to maintain a session.
@@ -227,8 +227,8 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
         return ((Event) event).to_string();
     }
 
-    private static Geary.State.MachineDescriptor machine_desc = new Geary.State.MachineDescriptor(
-        "Geary.Imap.ClientSession", State.NOT_CONNECTED, State.COUNT, Event.COUNT,
+    private static Convey.State.MachineDescriptor machine_desc = new Convey.State.MachineDescriptor(
+        "Convey.Imap.ClientSession", State.NOT_CONNECTED, State.COUNT, Event.COUNT,
         state_to_string, event_to_string);
 
 
@@ -360,7 +360,7 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
     private Gee.List<Namespace> shared_namespaces = new Gee.ArrayList<Namespace>();
 
     private Endpoint imap_endpoint;
-    private Geary.State.Machine fsm;
+    private Convey.State.Machine fsm;
     private ClientConnection? cx = null;
 
     private uint keepalive_id = 0;
@@ -409,127 +409,127 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
         this.imap_endpoint = imap_endpoint;
         this.quirks = quirks;
 
-        Geary.State.Mapping[] mappings = {
-            new Geary.State.Mapping(State.NOT_CONNECTED, Event.CONNECT, on_connect),
-            new Geary.State.Mapping(State.NOT_CONNECTED, Event.LOGIN, on_early_command),
-            new Geary.State.Mapping(State.NOT_CONNECTED, Event.SEND_CMD, on_early_command),
-            new Geary.State.Mapping(State.NOT_CONNECTED, Event.SELECT, on_early_command),
-            new Geary.State.Mapping(State.NOT_CONNECTED, Event.CLOSE_MAILBOX, on_early_command),
-            new Geary.State.Mapping(State.NOT_CONNECTED, Event.LOGOUT, on_early_command),
-            new Geary.State.Mapping(State.NOT_CONNECTED, Event.DISCONNECT, Geary.State.nop),
+        Convey.State.Mapping[] mappings = {
+            new Convey.State.Mapping(State.NOT_CONNECTED, Event.CONNECT, on_connect),
+            new Convey.State.Mapping(State.NOT_CONNECTED, Event.LOGIN, on_early_command),
+            new Convey.State.Mapping(State.NOT_CONNECTED, Event.SEND_CMD, on_early_command),
+            new Convey.State.Mapping(State.NOT_CONNECTED, Event.SELECT, on_early_command),
+            new Convey.State.Mapping(State.NOT_CONNECTED, Event.CLOSE_MAILBOX, on_early_command),
+            new Convey.State.Mapping(State.NOT_CONNECTED, Event.LOGOUT, on_early_command),
+            new Convey.State.Mapping(State.NOT_CONNECTED, Event.DISCONNECT, Convey.State.nop),
 
-            new Geary.State.Mapping(State.CONNECTING, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.CONNECTING, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.CONNECTING, Event.LOGIN, on_early_command),
-            new Geary.State.Mapping(State.CONNECTING, Event.SEND_CMD, on_early_command),
-            new Geary.State.Mapping(State.CONNECTING, Event.SELECT, on_early_command),
-            new Geary.State.Mapping(State.CONNECTING, Event.CLOSE_MAILBOX, on_early_command),
-            new Geary.State.Mapping(State.CONNECTING, Event.LOGOUT, on_early_command),
-            new Geary.State.Mapping(State.CONNECTING, Event.CONNECTED, on_connected),
-            new Geary.State.Mapping(State.CONNECTING, Event.RECV_STATUS, on_connecting_recv_status),
-            new Geary.State.Mapping(State.CONNECTING, Event.RECV_COMPLETION, on_dropped_response),
-            new Geary.State.Mapping(State.CONNECTING, Event.SEND_ERROR, on_connecting_send_recv_error),
-            new Geary.State.Mapping(State.CONNECTING, Event.RECV_ERROR, on_connecting_send_recv_error),
-            new Geary.State.Mapping(State.CONNECTING, Event.TIMEOUT, on_connecting_timeout),
+            new Convey.State.Mapping(State.CONNECTING, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.CONNECTING, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.CONNECTING, Event.LOGIN, on_early_command),
+            new Convey.State.Mapping(State.CONNECTING, Event.SEND_CMD, on_early_command),
+            new Convey.State.Mapping(State.CONNECTING, Event.SELECT, on_early_command),
+            new Convey.State.Mapping(State.CONNECTING, Event.CLOSE_MAILBOX, on_early_command),
+            new Convey.State.Mapping(State.CONNECTING, Event.LOGOUT, on_early_command),
+            new Convey.State.Mapping(State.CONNECTING, Event.CONNECTED, on_connected),
+            new Convey.State.Mapping(State.CONNECTING, Event.RECV_STATUS, on_connecting_recv_status),
+            new Convey.State.Mapping(State.CONNECTING, Event.RECV_COMPLETION, on_dropped_response),
+            new Convey.State.Mapping(State.CONNECTING, Event.SEND_ERROR, on_connecting_send_recv_error),
+            new Convey.State.Mapping(State.CONNECTING, Event.RECV_ERROR, on_connecting_send_recv_error),
+            new Convey.State.Mapping(State.CONNECTING, Event.TIMEOUT, on_connecting_timeout),
 
-            new Geary.State.Mapping(State.NOAUTH, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.NOAUTH, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.NOAUTH, Event.LOGIN, on_login),
-            new Geary.State.Mapping(State.NOAUTH, Event.SEND_CMD, on_send_command),
-            new Geary.State.Mapping(State.NOAUTH, Event.SELECT, on_unauthenticated),
-            new Geary.State.Mapping(State.NOAUTH, Event.CLOSE_MAILBOX, on_unauthenticated),
-            new Geary.State.Mapping(State.NOAUTH, Event.LOGOUT, on_logout),
-            new Geary.State.Mapping(State.NOAUTH, Event.RECV_STATUS, on_recv_status),
-            new Geary.State.Mapping(State.NOAUTH, Event.RECV_COMPLETION, on_recv_status),
-            new Geary.State.Mapping(State.NOAUTH, Event.SEND_ERROR, on_send_error),
-            new Geary.State.Mapping(State.NOAUTH, Event.RECV_ERROR, on_recv_error),
+            new Convey.State.Mapping(State.NOAUTH, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.NOAUTH, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.NOAUTH, Event.LOGIN, on_login),
+            new Convey.State.Mapping(State.NOAUTH, Event.SEND_CMD, on_send_command),
+            new Convey.State.Mapping(State.NOAUTH, Event.SELECT, on_unauthenticated),
+            new Convey.State.Mapping(State.NOAUTH, Event.CLOSE_MAILBOX, on_unauthenticated),
+            new Convey.State.Mapping(State.NOAUTH, Event.LOGOUT, on_logout),
+            new Convey.State.Mapping(State.NOAUTH, Event.RECV_STATUS, on_recv_status),
+            new Convey.State.Mapping(State.NOAUTH, Event.RECV_COMPLETION, on_recv_status),
+            new Convey.State.Mapping(State.NOAUTH, Event.SEND_ERROR, on_send_error),
+            new Convey.State.Mapping(State.NOAUTH, Event.RECV_ERROR, on_recv_error),
 
-            new Geary.State.Mapping(State.AUTHORIZING, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.LOGIN, on_logging_in),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.SEND_CMD, on_unauthenticated),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.SELECT, on_unauthenticated),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.CLOSE_MAILBOX, on_unauthenticated),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.LOGOUT, on_logout),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.RECV_STATUS, on_recv_status),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.RECV_COMPLETION, on_login_recv_completion),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.SEND_ERROR, on_send_error),
-            new Geary.State.Mapping(State.AUTHORIZING, Event.RECV_ERROR, on_recv_error),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.LOGIN, on_logging_in),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.SEND_CMD, on_unauthenticated),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.SELECT, on_unauthenticated),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.CLOSE_MAILBOX, on_unauthenticated),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.LOGOUT, on_logout),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.RECV_STATUS, on_recv_status),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.RECV_COMPLETION, on_login_recv_completion),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.SEND_ERROR, on_send_error),
+            new Convey.State.Mapping(State.AUTHORIZING, Event.RECV_ERROR, on_recv_error),
 
-            new Geary.State.Mapping(State.AUTHORIZED, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.LOGIN, on_already_logged_in),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.SEND_CMD, on_send_command),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.SELECT, on_select),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.CLOSE_MAILBOX, on_not_selected),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.LOGOUT, on_logout),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.RECV_STATUS, on_recv_status),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.RECV_COMPLETION, on_recv_status),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.SEND_ERROR, on_send_error),
-            new Geary.State.Mapping(State.AUTHORIZED, Event.RECV_ERROR, on_recv_error),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.LOGIN, on_already_logged_in),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.SEND_CMD, on_send_command),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.SELECT, on_select),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.CLOSE_MAILBOX, on_not_selected),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.LOGOUT, on_logout),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.RECV_STATUS, on_recv_status),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.RECV_COMPLETION, on_recv_status),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.SEND_ERROR, on_send_error),
+            new Convey.State.Mapping(State.AUTHORIZED, Event.RECV_ERROR, on_recv_error),
 
-            new Geary.State.Mapping(State.SELECTING, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.SELECTING, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.SELECTING, Event.LOGIN, on_already_logged_in),
-            new Geary.State.Mapping(State.SELECTING, Event.SEND_CMD, on_send_command),
-            new Geary.State.Mapping(State.SELECTING, Event.SELECT, on_select),
-            new Geary.State.Mapping(State.SELECTING, Event.CLOSE_MAILBOX, on_close_mailbox),
-            new Geary.State.Mapping(State.SELECTING, Event.LOGOUT, on_logout),
-            new Geary.State.Mapping(State.SELECTING, Event.RECV_STATUS, on_recv_status),
-            new Geary.State.Mapping(State.SELECTING, Event.RECV_COMPLETION, on_selecting_recv_completion),
-            new Geary.State.Mapping(State.SELECTING, Event.SEND_ERROR, on_send_error),
-            new Geary.State.Mapping(State.SELECTING, Event.RECV_ERROR, on_recv_error),
+            new Convey.State.Mapping(State.SELECTING, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.SELECTING, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.SELECTING, Event.LOGIN, on_already_logged_in),
+            new Convey.State.Mapping(State.SELECTING, Event.SEND_CMD, on_send_command),
+            new Convey.State.Mapping(State.SELECTING, Event.SELECT, on_select),
+            new Convey.State.Mapping(State.SELECTING, Event.CLOSE_MAILBOX, on_close_mailbox),
+            new Convey.State.Mapping(State.SELECTING, Event.LOGOUT, on_logout),
+            new Convey.State.Mapping(State.SELECTING, Event.RECV_STATUS, on_recv_status),
+            new Convey.State.Mapping(State.SELECTING, Event.RECV_COMPLETION, on_selecting_recv_completion),
+            new Convey.State.Mapping(State.SELECTING, Event.SEND_ERROR, on_send_error),
+            new Convey.State.Mapping(State.SELECTING, Event.RECV_ERROR, on_recv_error),
 
-            new Geary.State.Mapping(State.SELECTED, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.SELECTED, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.SELECTED, Event.LOGIN, on_already_logged_in),
-            new Geary.State.Mapping(State.SELECTED, Event.SEND_CMD, on_send_command),
-            new Geary.State.Mapping(State.SELECTED, Event.SELECT, on_select),
-            new Geary.State.Mapping(State.SELECTED, Event.CLOSE_MAILBOX, on_close_mailbox),
-            new Geary.State.Mapping(State.SELECTED, Event.LOGOUT, on_logout),
-            new Geary.State.Mapping(State.SELECTED, Event.RECV_STATUS, on_recv_status),
-            new Geary.State.Mapping(State.SELECTED, Event.RECV_COMPLETION, on_recv_status),
-            new Geary.State.Mapping(State.SELECTED, Event.SEND_ERROR, on_send_error),
-            new Geary.State.Mapping(State.SELECTED, Event.RECV_ERROR, on_recv_error),
+            new Convey.State.Mapping(State.SELECTED, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.SELECTED, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.SELECTED, Event.LOGIN, on_already_logged_in),
+            new Convey.State.Mapping(State.SELECTED, Event.SEND_CMD, on_send_command),
+            new Convey.State.Mapping(State.SELECTED, Event.SELECT, on_select),
+            new Convey.State.Mapping(State.SELECTED, Event.CLOSE_MAILBOX, on_close_mailbox),
+            new Convey.State.Mapping(State.SELECTED, Event.LOGOUT, on_logout),
+            new Convey.State.Mapping(State.SELECTED, Event.RECV_STATUS, on_recv_status),
+            new Convey.State.Mapping(State.SELECTED, Event.RECV_COMPLETION, on_recv_status),
+            new Convey.State.Mapping(State.SELECTED, Event.SEND_ERROR, on_send_error),
+            new Convey.State.Mapping(State.SELECTED, Event.RECV_ERROR, on_recv_error),
 
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.LOGIN, on_already_logged_in),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.SEND_CMD, on_send_command),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.SELECT, on_select),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.CLOSE_MAILBOX, on_not_selected),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.LOGOUT, on_logout),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.RECV_STATUS, on_recv_status),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.RECV_COMPLETION, on_closing_recv_completion),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.SEND_ERROR, on_send_error),
-            new Geary.State.Mapping(State.CLOSING_MAILBOX, Event.RECV_ERROR, on_recv_error),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.LOGIN, on_already_logged_in),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.SEND_CMD, on_send_command),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.SELECT, on_select),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.CLOSE_MAILBOX, on_not_selected),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.LOGOUT, on_logout),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.RECV_STATUS, on_recv_status),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.RECV_COMPLETION, on_closing_recv_completion),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.SEND_ERROR, on_send_error),
+            new Convey.State.Mapping(State.CLOSING_MAILBOX, Event.RECV_ERROR, on_recv_error),
 
-            new Geary.State.Mapping(State.LOGOUT, Event.CONNECT, on_already_connected),
-            new Geary.State.Mapping(State.LOGOUT, Event.DISCONNECT, on_disconnect),
-            new Geary.State.Mapping(State.LOGOUT, Event.LOGIN, on_already_logged_in),
-            new Geary.State.Mapping(State.LOGOUT, Event.SEND_CMD, on_late_command),
-            new Geary.State.Mapping(State.LOGOUT, Event.SELECT, on_late_command),
-            new Geary.State.Mapping(State.LOGOUT, Event.CLOSE_MAILBOX, on_late_command),
-            new Geary.State.Mapping(State.LOGOUT, Event.LOGOUT, on_late_command),
-            new Geary.State.Mapping(State.LOGOUT, Event.RECV_STATUS, on_logging_out_recv_status),
-            new Geary.State.Mapping(State.LOGOUT, Event.RECV_COMPLETION, on_logging_out_recv_completion),
-            new Geary.State.Mapping(State.LOGOUT, Event.RECV_ERROR, on_recv_error),
-            new Geary.State.Mapping(State.LOGOUT, Event.SEND_ERROR, on_send_error),
+            new Convey.State.Mapping(State.LOGOUT, Event.CONNECT, on_already_connected),
+            new Convey.State.Mapping(State.LOGOUT, Event.DISCONNECT, on_disconnect),
+            new Convey.State.Mapping(State.LOGOUT, Event.LOGIN, on_already_logged_in),
+            new Convey.State.Mapping(State.LOGOUT, Event.SEND_CMD, on_late_command),
+            new Convey.State.Mapping(State.LOGOUT, Event.SELECT, on_late_command),
+            new Convey.State.Mapping(State.LOGOUT, Event.CLOSE_MAILBOX, on_late_command),
+            new Convey.State.Mapping(State.LOGOUT, Event.LOGOUT, on_late_command),
+            new Convey.State.Mapping(State.LOGOUT, Event.RECV_STATUS, on_logging_out_recv_status),
+            new Convey.State.Mapping(State.LOGOUT, Event.RECV_COMPLETION, on_logging_out_recv_completion),
+            new Convey.State.Mapping(State.LOGOUT, Event.RECV_ERROR, on_recv_error),
+            new Convey.State.Mapping(State.LOGOUT, Event.SEND_ERROR, on_send_error),
 
-            new Geary.State.Mapping(State.CLOSED, Event.CONNECT, on_late_command),
-            new Geary.State.Mapping(State.CLOSED, Event.DISCONNECT, Geary.State.nop),
-            new Geary.State.Mapping(State.CLOSED, Event.LOGIN, on_late_command),
-            new Geary.State.Mapping(State.CLOSED, Event.SEND_CMD, on_late_command),
-            new Geary.State.Mapping(State.CLOSED, Event.SELECT, on_late_command),
-            new Geary.State.Mapping(State.CLOSED, Event.CLOSE_MAILBOX, on_late_command),
-            new Geary.State.Mapping(State.CLOSED, Event.LOGOUT, on_late_command),
-            new Geary.State.Mapping(State.CLOSED, Event.RECV_STATUS, on_dropped_response),
-            new Geary.State.Mapping(State.CLOSED, Event.RECV_COMPLETION, on_dropped_response),
-            new Geary.State.Mapping(State.CLOSED, Event.SEND_ERROR, Geary.State.nop),
-            new Geary.State.Mapping(State.CLOSED, Event.RECV_ERROR, Geary.State.nop),
+            new Convey.State.Mapping(State.CLOSED, Event.CONNECT, on_late_command),
+            new Convey.State.Mapping(State.CLOSED, Event.DISCONNECT, Convey.State.nop),
+            new Convey.State.Mapping(State.CLOSED, Event.LOGIN, on_late_command),
+            new Convey.State.Mapping(State.CLOSED, Event.SEND_CMD, on_late_command),
+            new Convey.State.Mapping(State.CLOSED, Event.SELECT, on_late_command),
+            new Convey.State.Mapping(State.CLOSED, Event.CLOSE_MAILBOX, on_late_command),
+            new Convey.State.Mapping(State.CLOSED, Event.LOGOUT, on_late_command),
+            new Convey.State.Mapping(State.CLOSED, Event.RECV_STATUS, on_dropped_response),
+            new Convey.State.Mapping(State.CLOSED, Event.RECV_COMPLETION, on_dropped_response),
+            new Convey.State.Mapping(State.CLOSED, Event.SEND_ERROR, Convey.State.nop),
+            new Convey.State.Mapping(State.CLOSED, Event.RECV_ERROR, Convey.State.nop),
         };
 
-        this.fsm = new Geary.State.Machine(
+        this.fsm = new Convey.State.Machine(
             machine_desc,
             mappings,
             on_ignored_transition
@@ -913,12 +913,12 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
      *
      * @see initiate_session_async
      */
-    public async StatusResponse login_async(Geary.Credentials credentials,
+    public async StatusResponse login_async(Convey.Credentials credentials,
                                             GLib.Cancellable? cancellable)
         throws GLib.Error {
         Command? cmd = null;
         switch (credentials.supported_method) {
-        case Geary.Credentials.Method.PASSWORD:
+        case Convey.Credentials.Method.PASSWORD:
             cmd = new LoginCommand(
                 credentials.user,
                 credentials.token,
@@ -926,7 +926,7 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
             );
             break;
 
-        case Geary.Credentials.Method.OAUTH2:
+        case Convey.Credentials.Method.OAUTH2:
             if (!capabilities.has_setting(Capabilities.AUTH,
                                           Capabilities.AUTH_XOAUTH2)) {
                 throw new ImapError.UNAUTHENTICATED(
@@ -962,7 +962,7 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
         assert(params.proceed);
 
         StatusResponse response = yield submit_command(cmd);
-        if (credentials.supported_method == Geary.Credentials.Method.OAUTH2 &&
+        if (credentials.supported_method == Convey.Credentials.Method.OAUTH2 &&
             response.status == Status.BAD &&
             capabilities.has_capability(Capabilities.SASL_IR)) {
             // Some servers advertise SASL-IR but reject XOAUTH2 when
@@ -1024,7 +1024,7 @@ public class Geary.Imap.ClientSession : BaseObject, Logging.Source {
      * {@link Capabilities} are also retrieved automatically at the right time to ensure the best
      * results are available with {@link capabilities}.
      */
-    public async void initiate_session_async(Geary.Credentials credentials,
+    public async void initiate_session_async(Convey.Credentials credentials,
                                              GLib.Cancellable? cancellable)
         throws GLib.Error {
         // If no capabilities available, get them now

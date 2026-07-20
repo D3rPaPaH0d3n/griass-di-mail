@@ -5,10 +5,10 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-class Geary.Inet.Test : TestCase {
+class Convey.Inet.Test : TestCase {
 
     public Test() {
-        base("Geary.Inet.Test");
+        base("Convey.Inet.Test");
         add_test("is_valid_display_host_dns", is_valid_display_host_dns);
         add_test("is_valid_display_host_ipv4", is_valid_display_host_ipv4);
         add_test("is_valid_display_host_ipv6", is_valid_display_host_ipv6);

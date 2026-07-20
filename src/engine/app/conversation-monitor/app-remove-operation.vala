@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-private class Geary.App.RemoveOperation : BatchOperation<EmailIdentifier> {
+private class Convey.App.RemoveOperation : BatchOperation<EmailIdentifier> {
 
 
     private Folder source_folder;
@@ -27,7 +27,7 @@ private class Geary.App.RemoveOperation : BatchOperation<EmailIdentifier> {
 
         Gee.Set<Conversation> removed = new Gee.HashSet<Conversation>();
         Gee.MultiMap<Conversation,Email> trimmed =
-            new Gee.HashMultiMap<Conversation, Geary.Email>();
+            new Gee.HashMultiMap<Conversation, Convey.Email>();
         this.monitor.conversations.remove_all_emails_by_identifier(
             source_folder.path,
             batch,

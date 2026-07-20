@@ -10,7 +10,7 @@
  * See [[https://tools.ietf.org/html/rfc2183]]
  */
 
-public class Geary.Mime.ContentDisposition : Geary.BaseObject {
+public class Convey.Mime.ContentDisposition : Convey.BaseObject {
     /**
      * Filename parameter name.
      *

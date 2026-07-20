@@ -8,7 +8,7 @@
 
 
 /**
- * Manages email account lifecycle for Geary.
+ * Manages email account lifecycle for Convey.
  *
  * This class is responsible for creating, loading, saving and
  * removing accounts and their persisted data (configuration,
@@ -24,8 +24,8 @@
 public class Accounts.Manager : GLib.Object {
 
 
-    /** The name of the Geary configuration file. */
-    public const string SETTINGS_FILENAME = "geary.ini";
+    /** The name of the Convey configuration file. */
+    public const string SETTINGS_FILENAME = "convey.ini";
 
     private const string LOCAL_ID_PREFIX = "account_";
     private const string LOCAL_ID_FORMAT = "account_%02u";
@@ -57,14 +57,14 @@ public class Accounts.Manager : GLib.Object {
         REMOVED;
 
         public static Status for_value(string value)
-        throws Geary.EngineError {
-            return Geary.ObjectUtils.from_enum_nick<Status>(
+        throws Convey.EngineError {
+            return Convey.ObjectUtils.from_enum_nick<Status>(
                 typeof(Status), value.ascii_down()
             );
         }
 
         public string to_value() {
-            return Geary.ObjectUtils.to_enum_nick<Status>(
+            return Convey.ObjectUtils.to_enum_nick<Status>(
                 typeof(Status), this
             );
         }
@@ -76,7 +76,7 @@ public class Accounts.Manager : GLib.Object {
 
 
         /** The account represented by this object. */
-        public Geary.AccountInformation account { get; private set; }
+        public Convey.AccountInformation account { get; private set; }
 
         /** Determines the account's overall state. */
         public Status status {
@@ -99,7 +99,7 @@ public class Accounts.Manager : GLib.Object {
         public bool available { get; set; default = true; }
 
 
-        internal AccountState(Geary.AccountInformation account) {
+        internal AccountState(Convey.AccountInformation account) {
             this.account = account;
         }
 
@@ -119,29 +119,29 @@ public class Accounts.Manager : GLib.Object {
     private Gee.Map<string,AccountState> accounts =
         new Gee.HashMap<string,AccountState>();
 
-    private Gee.LinkedList<Geary.AccountInformation> removed =
-        new Gee.LinkedList<Geary.AccountInformation>();
+    private Gee.LinkedList<Convey.AccountInformation> removed =
+        new Gee.LinkedList<Convey.AccountInformation>();
 
 
-    private Geary.CredentialsMediator local_mediator;
+    private Convey.CredentialsMediator local_mediator;
     private Goa.Client? goa_service = null;
 
 
     /** Fired when a new account is created. */
-    public signal void account_added(Geary.AccountInformation added, Status status);
+    public signal void account_added(Convey.AccountInformation added, Status status);
 
     /** Fired when an existing account's state has changed. */
-    public signal void account_status_changed(Geary.AccountInformation changed,
+    public signal void account_status_changed(Convey.AccountInformation changed,
                                               Status new_status);
 
     /** Fired when an account is deleted. */
-    public signal void account_removed(Geary.AccountInformation removed);
+    public signal void account_removed(Convey.AccountInformation removed);
 
     /** Emitted to notify an account problem has occurred. */
-    public signal void report_problem(Geary.ProblemReport problem);
+    public signal void report_problem(Convey.ProblemReport problem);
 
 
-    public Manager(Geary.CredentialsMediator local_mediator,
+    public Manager(Convey.CredentialsMediator local_mediator,
                    GLib.File config_dir,
                    GLib.File data_dir) {
         this.local_mediator = local_mediator;
@@ -158,22 +158,22 @@ public class Accounts.Manager : GLib.Object {
     }
 
     /** Returns the account with the given id. */
-    public Geary.AccountInformation? get_account(string id) {
+    public Convey.AccountInformation? get_account(string id) {
         AccountState? state = this.accounts.get(id);
         return (state != null) ? state.account : null;
     }
 
     /** Returns the status for the given account. */
-    public Status get_status(Geary.AccountInformation account) {
+    public Status get_status(Convey.AccountInformation account) {
         AccountState? state = this.accounts.get(account.id);
         return (state != null) ? state.status : Status.UNAVAILABLE;
     }
 
     /** Returns a read-only iterable of all currently known accounts. */
-    public Geary.Iterable<Geary.AccountInformation> iterable() {
-        return Geary.traverse<AccountState>(
+    public Convey.Iterable<Convey.AccountInformation> iterable() {
+        return Convey.traverse<AccountState>(
             this.accounts.values
-        ).map<Geary.AccountInformation>(
+        ).map<Convey.AccountInformation>(
             ((state) => { return state.account; })
         );
     }
@@ -183,7 +183,7 @@ public class Accounts.Manager : GLib.Object {
      */
     public string? get_account_name() {
         string? name = Environment.get_real_name();
-        if (Geary.String.is_empty(name) || name == "Unknown") {
+        if (Convey.String.is_empty(name) || name == "Unknown") {
             name = null;
         }
         return name;
@@ -192,12 +192,12 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Returns a new account, not yet stored on disk.
      */
-    public async Geary.AccountInformation
-        new_orphan_account(Geary.ServiceProvider provider,
-                           Geary.RFC822.MailboxAddress primary_mailbox,
+    public async Convey.AccountInformation
+        new_orphan_account(Convey.ServiceProvider provider,
+                           Convey.RFC822.MailboxAddress primary_mailbox,
                            GLib.Cancellable? cancellable) {
         string id = yield next_id(cancellable);
-        return new Geary.AccountInformation(
+        return new Convey.AccountInformation(
             id, provider, this.local_mediator, primary_mailbox
         );
     }
@@ -205,7 +205,7 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Creates new account's disk and credential storage as needed.
      */
-    public async void create_account(Geary.AccountInformation account,
+    public async void create_account(Convey.AccountInformation account,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
         yield create_account_dirs(account, cancellable);
@@ -248,7 +248,7 @@ public class Accounts.Manager : GLib.Object {
                 if (file.get_file_type() == FileType.DIRECTORY) {
                     string id = file.get_name();
                     try {
-                        Geary.AccountInformation info = yield load_account(
+                        Convey.AccountInformation info = yield load_account(
                             id, cancellable
                         );
                         set_enabled(info, true);
@@ -260,7 +260,7 @@ public class Accounts.Manager : GLib.Object {
                         // load_account.
                     } catch (GLib.Error err) {
                         debug("Error loading account %s", id);
-                        report_problem(new Geary.ProblemReport(err));
+                        report_problem(new Convey.ProblemReport(err));
                     }
                 }
             }
@@ -276,7 +276,7 @@ public class Accounts.Manager : GLib.Object {
             GLib.List<Goa.Object> list = this.goa_service.get_accounts();
             for (int i=0; i < list.length() && !cancellable.is_cancelled(); i++) {
                 Goa.Object account = list.nth_data(i);
-                string id = to_geary_id(account);
+                string id = to_convey_id(account);
                 if (!this.accounts.has_key(id)) {
                     yield this.create_goa_account(account, cancellable);
                 }
@@ -290,7 +290,7 @@ public class Accounts.Manager : GLib.Object {
      * This keeps the account in the known set, but marks it as being
      * unavailable.
      */
-    public void disable_account(Geary.AccountInformation account) {
+    public void disable_account(Convey.AccountInformation account) {
         if (this.accounts.has_key(account.id)) {
             set_available(account, false);
         }
@@ -305,7 +305,7 @@ public class Accounts.Manager : GLib.Object {
      * and until then the account can be re-added using {@link
      * restore_account}.
      */
-    public async void remove_account(Geary.AccountInformation account,
+    public async void remove_account(Convey.AccountInformation account,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.accounts.unset(account.id);
@@ -323,7 +323,7 @@ public class Accounts.Manager : GLib.Object {
      * long as {@link expunge_accounts} has not been called since
      * he account was removed.
      */
-    public async void restore_account(Geary.AccountInformation account,
+    public async void restore_account(Convey.AccountInformation account,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (this.removed.remove(account)) {
@@ -345,7 +345,7 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Saves an account's configuration data to disk.
      */
-    public async void save_account(Geary.AccountInformation info,
+    public async void save_account(Convey.AccountInformation info,
                                    GLib.Cancellable? cancellable)
         throws GLib.Error {
         // Ensure only one async task is saving an info at once, since
@@ -368,9 +368,9 @@ public class Accounts.Manager : GLib.Object {
     }
 
     /** Updates a local account service's credentials. */
-    public async void update_local_credentials(Geary.AccountInformation account,
-                                               Geary.ServiceInformation old_service,
-                                               Geary.ServiceInformation new_service,
+    public async void update_local_credentials(Convey.AccountInformation account,
+                                               Convey.ServiceInformation old_service,
+                                               Convey.ServiceInformation new_service,
                                                GLib.Cancellable? cancellable)
         throws GLib.Error {
         SecretMediator? mediator = account.mediator as SecretMediator;
@@ -391,7 +391,7 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Determines if an account is a GOA account or not.
      */
-    public bool is_goa_account(Geary.AccountInformation account) {
+    public bool is_goa_account(Convey.AccountInformation account) {
         return (account.mediator is GoaMediator);
     }
 
@@ -401,15 +401,15 @@ public class Accounts.Manager : GLib.Object {
      * Throws an error if it was not possible to open GNOME Settings,
      * or if the given type is not supported for by GOA.
      */
-    public async void add_goa_account(Geary.ServiceProvider type,
+    public async void add_goa_account(Convey.ServiceProvider type,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         switch (type) {
-        case Geary.ServiceProvider.GMAIL:
+        case Convey.ServiceProvider.GMAIL:
             yield open_goa_settings("add", "google", cancellable);
             break;
 
-        case Geary.ServiceProvider.OUTLOOK:
+        case Convey.ServiceProvider.OUTLOOK:
             yield open_goa_settings("add", "windows_live", cancellable);
             break;
 
@@ -424,7 +424,7 @@ public class Accounts.Manager : GLib.Object {
      * Throws an error if it was not possible to open GNOME Settings,
      * or if the given account is not backed by GOA.
      */
-    public async void show_goa_account(Geary.AccountInformation account,
+    public async void show_goa_account(Convey.AccountInformation account,
                                        GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (!is_goa_account(account)) {
@@ -458,9 +458,9 @@ public class Accounts.Manager : GLib.Object {
         // Check for existing directories that might conflict
         string id = LOCAL_ID_FORMAT.printf(next_id);
         try {
-            while ((yield Geary.Files.query_exists_async(
+            while ((yield Convey.Files.query_exists_async(
                         this.config_dir.get_child(id), cancellable)) ||
-                   (yield Geary.Files.query_exists_async(
+                   (yield Convey.Files.query_exists_async(
                        this.data_dir.get_child(id), cancellable))) {
                 next_id++;
                 id = LOCAL_ID_FORMAT.printf(next_id);
@@ -479,13 +479,13 @@ public class Accounts.Manager : GLib.Object {
      * Throws an error if the config file was not found, could not be
      * parsed, or doesn't have all required fields.
      */
-    private async Geary.AccountInformation
+    private async Convey.AccountInformation
         load_account(string id, GLib.Cancellable? cancellable)
         throws ConfigError {
         GLib.File config_dir = this.config_dir.get_child(id);
         GLib.File data_dir = this.data_dir.get_child(id);
 
-        Geary.ConfigFile config = new Geary.ConfigFile(
+        Convey.ConfigFile config = new Convey.ConfigFile(
             config_dir.get_child(SETTINGS_FILENAME)
         );
 
@@ -497,7 +497,7 @@ public class Accounts.Manager : GLib.Object {
             throw new ConfigError.IO(err.message);
         }
 
-        Geary.ConfigFile.Group metadata_config =
+        Convey.ConfigFile.Group metadata_config =
             config.get_group(GROUP_METADATA);
         int version = metadata_config.get_int(METADATA_VERSION, 0);
         Status status = Status.ENABLED;
@@ -506,7 +506,7 @@ public class Accounts.Manager : GLib.Object {
                 metadata_config.get_string(
                     METADATA_STATUS, status.to_value()
                 ));
-        } catch (Geary.EngineError err) {
+        } catch (Convey.EngineError err) {
             throw new ConfigError.SYNTAX("%s: Invalid status value", id);
         }
 
@@ -523,8 +523,8 @@ public class Accounts.Manager : GLib.Object {
 
         Goa.Object? goa_handle = null;
         GoaMediator? goa_mediator = null;
-        Geary.ServiceProvider? default_provider = null;
-        Geary.CredentialsMediator mediator = this.local_mediator;
+        Convey.ServiceProvider? default_provider = null;
+        Convey.CredentialsMediator mediator = this.local_mediator;
 
         if (is_goa) {
             if (this.goa_service == null) {
@@ -546,7 +546,7 @@ public class Accounts.Manager : GLib.Object {
                 // Use the default mediator since we can't create a
                 // GOA equiv, but set a dummy default provider so we
                 // don't get an error loading the config
-                default_provider = Geary.ServiceProvider.OTHER;
+                default_provider = Convey.ServiceProvider.OTHER;
             }
         }
 
@@ -569,7 +569,7 @@ public class Accounts.Manager : GLib.Object {
             );
         }
 
-        Geary.AccountInformation? account = null;
+        Convey.AccountInformation? account = null;
         try {
             account = accounts.load(
                 config,
@@ -609,7 +609,7 @@ public class Accounts.Manager : GLib.Object {
 
             if (!is_valid_goa_account(goa_handle)) {
                 // If we get here, the GOA account's mail service used
-                // to exist (we just loaded Geary's config for it) but
+                // to exist (we just loaded Convey's config for it) but
                 // no longer does. This indicates the mail service has
                 // been disabled, so set it as disabled.
                 set_available(account, false);
@@ -629,7 +629,7 @@ public class Accounts.Manager : GLib.Object {
         return account;
     }
 
-    private async void save_account_locked(Geary.AccountInformation account,
+    private async void save_account_locked(Convey.AccountInformation account,
                                            GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (account.config_dir == null) {
@@ -638,7 +638,7 @@ public class Accounts.Manager : GLib.Object {
             );
         }
 
-        Geary.ConfigFile config = new Geary.ConfigFile(
+        Convey.ConfigFile config = new Convey.ConfigFile(
             account.config_dir.get_child(SETTINGS_FILENAME)
         );
 
@@ -650,7 +650,7 @@ public class Accounts.Manager : GLib.Object {
             debug("Could not load existing config file: %s", err.message);
         }
 
-        Geary.ConfigFile.Group metadata_config =
+        Convey.ConfigFile.Group metadata_config =
             config.get_group(GROUP_METADATA);
         metadata_config.set_int(
             METADATA_VERSION, CONFIG_VERSION
@@ -677,7 +677,7 @@ public class Accounts.Manager : GLib.Object {
         yield config.save(cancellable);
     }
 
-    private async void delete_account(Geary.AccountInformation info,
+    private async void delete_account(Convey.AccountInformation info,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         // If it's a local account, try clearing the passwords. Keep
@@ -699,7 +699,7 @@ public class Accounts.Manager : GLib.Object {
         }
 
         if (info.data_dir != null) {
-            yield Geary.Files.recursive_delete_async(
+            yield Convey.Files.recursive_delete_async(
                 info.data_dir, GLib.Priority.LOW, cancellable
             );
         }
@@ -707,13 +707,13 @@ public class Accounts.Manager : GLib.Object {
         // Delete config last so if there are any errors above, it
         // will be re-tried at next startup.
         if (info.config_dir != null) {
-            yield Geary.Files.recursive_delete_async(
+            yield Convey.Files.recursive_delete_async(
                 info.config_dir, GLib.Priority.LOW, cancellable
             );
         }
     }
 
-    private inline AccountState lookup_state(Geary.AccountInformation account) {
+    private inline AccountState lookup_state(Convey.AccountInformation account) {
         AccountState? state = this.accounts.get(account.id);
         if (state == null) {
             state = new AccountState(account);
@@ -722,7 +722,7 @@ public class Accounts.Manager : GLib.Object {
         return state;
     }
 
-    private bool set_enabled(Geary.AccountInformation account, bool is_enabled) {
+    private bool set_enabled(Convey.AccountInformation account, bool is_enabled) {
         bool was_added = !this.accounts.has_key(account.id);
         AccountState state = lookup_state(account);
         Status existing_status = state.status;
@@ -740,7 +740,7 @@ public class Accounts.Manager : GLib.Object {
         return ret;
     }
 
-    private bool set_available(Geary.AccountInformation account, bool is_available) {
+    private bool set_available(Convey.AccountInformation account, bool is_available) {
         bool was_added = !this.accounts.has_key(account.id);
         AccountState state = lookup_state(account);
         Status existing_status = state.status;
@@ -758,19 +758,19 @@ public class Accounts.Manager : GLib.Object {
         return ret;
     }
 
-    private async void create_account_dirs(Geary.AccountInformation info,
+    private async void create_account_dirs(Convey.AccountInformation info,
                                           Cancellable? cancellable)
         throws GLib.Error {
         GLib.File config = this.config_dir.get_child(info.id);
         GLib.File data = this.data_dir.get_child(info.id);
 
-        yield Geary.Files.make_directory_with_parents(config, cancellable);
-        yield Geary.Files.make_directory_with_parents(data, cancellable);
+        yield Convey.Files.make_directory_with_parents(config, cancellable);
+        yield Convey.Files.make_directory_with_parents(data, cancellable);
 
         info.set_account_directories(config, data);
     }
 
-    private inline string to_geary_id(Goa.Object account) {
+    private inline string to_convey_id(Goa.Object account) {
         return GOA_ID_PREFIX + account.get_account().id;
     }
 
@@ -791,13 +791,13 @@ public class Accounts.Manager : GLib.Object {
             handle.get_oauth2_based() != null ||
             handle.get_password_based() != null
         );
-        bool has_identity = !Geary.String.is_empty_or_whitespace(
+        bool has_identity = !Convey.String.is_empty_or_whitespace(
             account.presentation_identity
         );
         if (mail != null) {
             bool has_mail_endpoints = (
-                !Geary.String.is_empty(mail.imap_host) &&
-                !Geary.String.is_empty(mail.smtp_host)
+                !Convey.String.is_empty(mail.imap_host) &&
+                !Convey.String.is_empty(mail.smtp_host)
             );
             if (has_mail_endpoints) {
                 return (
@@ -830,7 +830,7 @@ public class Accounts.Manager : GLib.Object {
                 ? mail.email_address
                 : goa_account.presentation_identity
             );
-            if (Geary.String.is_empty_or_whitespace(mailbox)) {
+            if (Convey.String.is_empty_or_whitespace(mailbox)) {
                 debug(
                     "Ignoring GOA %s account %s, mailbox identity missing",
                     goa_account.provider_type,
@@ -839,20 +839,20 @@ public class Accounts.Manager : GLib.Object {
                 return;
             }
             string? name = (mail != null) ? mail.name : null;
-            if (Geary.String.is_empty_or_whitespace(name)) {
+            if (Convey.String.is_empty_or_whitespace(name)) {
                 name = get_account_name();
             }
 
             GoaMediator mediator = new GoaMediator(account);
-            Geary.AccountInformation info = new Geary.AccountInformation(
-                to_geary_id(account),
+            Convey.AccountInformation info = new Convey.AccountInformation(
+                to_convey_id(account),
                 mediator.get_service_provider(),
                 mediator,
-                new Geary.RFC822.MailboxAddress(name, mailbox)
+                new Convey.RFC822.MailboxAddress(name, mailbox)
             );
 
             info.account_backend = mediator.get_account_backend();
-            info.ordinal = Geary.AccountInformation.next_ordinal++;
+            info.ordinal = Convey.AccountInformation.next_ordinal++;
             info.service_label = mediator.get_service_label();
             info.label = goa_account.presentation_identity;
 
@@ -861,7 +861,7 @@ public class Accounts.Manager : GLib.Object {
                 yield save_account(info, cancellable);
                 yield mediator.update(info, cancellable);
             } catch (GLib.Error err) {
-                report_problem(new Geary.ProblemReport(err));
+                report_problem(new Convey.ProblemReport(err));
             }
 
             set_enabled(info, true);
@@ -874,7 +874,7 @@ public class Accounts.Manager : GLib.Object {
         }
     }
 
-    private async void update_goa_account(Geary.AccountInformation account,
+    private async void update_goa_account(Convey.AccountInformation account,
                                           bool is_available,
                                           GLib.Cancellable? cancellable) {
         GoaMediator mediator = (GoaMediator) account.mediator;
@@ -889,7 +889,7 @@ public class Accounts.Manager : GLib.Object {
                 yield account.load_incoming_credentials(cancellable);
             }
         } catch (GLib.Error err) {
-            report_problem(new Geary.AccountProblemReport(account, err));
+            report_problem(new Convey.AccountProblemReport(account, err));
         }
 
         set_available(account, is_available);
@@ -957,7 +957,7 @@ public class Accounts.Manager : GLib.Object {
 
     private void on_goa_account_changed(Goa.Object account) {
         debug("GOA account changed: %s", account.get_account().id);
-        AccountState? state = this.accounts.get(to_geary_id(account));
+        AccountState? state = this.accounts.get(to_convey_id(account));
         // XXX get a cancellable to these
         if (state != null) {
             // We already know about this account, so check that it is
@@ -979,7 +979,7 @@ public class Accounts.Manager : GLib.Object {
 
     private void on_goa_account_removed(Goa.Object account) {
         debug("GOA account removed: %s", account.get_account().id);
-        AccountState? state = this.accounts.get(to_geary_id(account));
+        AccountState? state = this.accounts.get(to_convey_id(account));
         if (state != null) {
             // Just disabled it for now in case the GOA daemon as just
             // shutting down.
@@ -987,14 +987,14 @@ public class Accounts.Manager : GLib.Object {
         }
     }
 
-    private void on_account_changed(Geary.AccountInformation account) {
+    private void on_account_changed(Convey.AccountInformation account) {
         this.save_account.begin(
             account, null,
             (obj, res) => {
                 try {
                     this.save_account.end(res);
                 } catch (GLib.Error err) {
-                    report_problem(new Geary.AccountProblemReport(account, err));
+                    report_problem(new Convey.AccountProblemReport(account, err));
                 }
             }
         );
@@ -1006,17 +1006,17 @@ public class Accounts.Manager : GLib.Object {
 public interface Accounts.AccountConfig : GLib.Object {
 
     /** Loads a supported account from a config file. */
-    public abstract Geary.AccountInformation
-        load(Geary.ConfigFile config,
+    public abstract Convey.AccountInformation
+        load(Convey.ConfigFile config,
              string id,
-             Geary.CredentialsMediator mediator,
-             Geary.ServiceProvider? default_provider,
+             Convey.CredentialsMediator mediator,
+             Convey.ServiceProvider? default_provider,
              string? default_name)
         throws ConfigError, GLib.KeyFileError;
 
     /** Saves an account to a config file. */
-    public abstract void save(Geary.AccountInformation account,
-                              Geary.ConfigFile config);
+    public abstract void save(Convey.AccountInformation account,
+                              Convey.ConfigFile config);
 
 }
 
@@ -1025,15 +1025,15 @@ public interface Accounts.AccountConfig : GLib.Object {
 public interface Accounts.ServiceConfig : GLib.Object {
 
     /** Loads a service from a config file. */
-    public abstract void load(Geary.ConfigFile config,
-                              Geary.AccountInformation account,
-                              Geary.ServiceInformation service)
+    public abstract void load(Convey.ConfigFile config,
+                              Convey.AccountInformation account,
+                              Convey.ServiceInformation service)
         throws ConfigError, GLib.KeyFileError;
 
     /** Saves a service to a config file. */
-    public abstract void save(Geary.AccountInformation account,
-                              Geary.ServiceInformation service,
-                              Geary.ConfigFile config);
+    public abstract void save(Convey.AccountInformation account,
+                              Convey.ServiceInformation service,
+                              Convey.ConfigFile config);
 
 }
 
@@ -1081,24 +1081,24 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         this.is_managed = is_managed;
     }
 
-    public  Geary.AccountInformation load(Geary.ConfigFile config,
+    public  Convey.AccountInformation load(Convey.ConfigFile config,
                                           string id,
-                                          Geary.CredentialsMediator mediator,
-                                          Geary.ServiceProvider? default_provider,
+                                          Convey.CredentialsMediator mediator,
+                                          Convey.ServiceProvider? default_provider,
                                           string? default_name)
         throws ConfigError, GLib.KeyFileError {
-        Geary.ConfigFile.Group account_config =
+        Convey.ConfigFile.Group account_config =
             config.get_group(GROUP_ACCOUNT);
 
-        Gee.List<Geary.RFC822.MailboxAddress> senders =
-            new Gee.LinkedList<Geary.RFC822.MailboxAddress>();
+        Gee.List<Convey.RFC822.MailboxAddress> senders =
+            new Gee.LinkedList<Convey.RFC822.MailboxAddress>();
         foreach (string sender in
                  account_config.get_required_string_list(ACCOUNT_SENDERS)) {
             try {
                 senders.add(
-                    new Geary.RFC822.MailboxAddress.from_rfc822_string(sender)
+                    new Convey.RFC822.MailboxAddress.from_rfc822_string(sender)
                 );
-            } catch (Geary.RFC822.Error err) {
+            } catch (Convey.RFC822.Error err) {
                 throw new ConfigError.SYNTAX(
                     "%s: Invalid sender address: %s", id, sender
                 );
@@ -1109,27 +1109,27 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
             throw new ConfigError.SYNTAX("%s: No sender addresses found", id);
         }
 
-        Geary.ServiceProvider provider = (
+        Convey.ServiceProvider provider = (
             default_provider != null
             ? default_provider
-            : account_config.parse_required_value<Geary.ServiceProvider>(
+            : account_config.parse_required_value<Convey.ServiceProvider>(
                 ACCOUNT_PROVIDER,
                 (value) => {
                     try {
-                        return Geary.ServiceProvider.for_value(value);
-                    } catch (Geary.EngineError err) {
+                        return Convey.ServiceProvider.for_value(value);
+                    } catch (Convey.EngineError err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
                 }
             )
         );
 
-        Geary.AccountInformation account = new Geary.AccountInformation(
+        Convey.AccountInformation account = new Convey.AccountInformation(
             id, provider, mediator, senders.remove_at(0)
         );
 
         account.ordinal = account_config.get_int(
-            ACCOUNT_ORDINAL, Geary.AccountInformation.next_ordinal++
+            ACCOUNT_ORDINAL, Convey.AccountInformation.next_ordinal++
         );
         account.label = account_config.get_string(
             ACCOUNT_LABEL, account.label
@@ -1149,11 +1149,11 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         account.signature = account_config.get_string(
             ACCOUNT_SIG, account.signature
         );
-        foreach (Geary.RFC822.MailboxAddress sender in senders) {
+        foreach (Convey.RFC822.MailboxAddress sender in senders) {
             account.append_sender(sender);
         }
 
-        Geary.ConfigFile.Group folder_config =
+        Convey.ConfigFile.Group folder_config =
             config.get_group(GROUP_FOLDERS);
         account.set_folder_steps_for_use(
             ARCHIVE, folder_config.get_string_list(FOLDER_ARCHIVE)
@@ -1183,9 +1183,9 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
     }
 
     /** Saves an account to a config file. */
-    public void save(Geary.AccountInformation account,
-                     Geary.ConfigFile config) {
-        Geary.ConfigFile.Group account_config =
+    public void save(Convey.AccountInformation account,
+                     Convey.ConfigFile config) {
+        Convey.ConfigFile.Group account_config =
             config.get_group(GROUP_ACCOUNT);
         account_config.set_int(ACCOUNT_ORDINAL, account.ordinal);
         account_config.set_string(ACCOUNT_LABEL, account.label);
@@ -1196,7 +1196,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         account_config.set_string(ACCOUNT_SIG, account.signature);
         account_config.set_string_list(
             ACCOUNT_SENDERS,
-            Geary.traverse(account.sender_mailboxes)
+            Convey.traverse(account.sender_mailboxes)
             .map<string>((sender) => sender.to_rfc822_string())
             .to_array_list()
         );
@@ -1207,7 +1207,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
             );
         }
 
-        Geary.ConfigFile.Group folder_config =
+        Convey.ConfigFile.Group folder_config =
             config.get_group(GROUP_FOLDERS);
         save_folder(
             folder_config,
@@ -1236,7 +1236,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         );
     }
 
-    private inline void save_folder(Geary.ConfigFile.Group config,
+    private inline void save_folder(Convey.ConfigFile.Group config,
                                     string key,
                                     Gee.List<string>? steps) {
         if (steps != null) {
@@ -1274,43 +1274,43 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
     private const string USE_EMAIL_SIGNATURE_KEY = "use_email_signature";
 
 
-    public Geary.AccountInformation load(Geary.ConfigFile config_file,
+    public Convey.AccountInformation load(Convey.ConfigFile config_file,
                                          string id,
-                                         Geary.CredentialsMediator mediator,
-                                         Geary.ServiceProvider? default_provider,
+                                         Convey.CredentialsMediator mediator,
+                                         Convey.ServiceProvider? default_provider,
                                          string? default_name)
         throws ConfigError, GLib.KeyFileError {
-        Geary.ConfigFile.Group config = config_file.get_group(GROUP);
+        Convey.ConfigFile.Group config = config_file.get_group(GROUP);
 
         string primary_email = config.get_required_string(PRIMARY_EMAIL_KEY);
         string real_name = config.get_string(REAL_NAME_KEY, default_name);
 
-        Geary.ServiceProvider provider = (
+        Convey.ServiceProvider provider = (
             default_provider != null
             ? default_provider
-            : config.parse_required_value<Geary.ServiceProvider>(
+            : config.parse_required_value<Convey.ServiceProvider>(
                 SERVICE_PROVIDER_KEY,
                 (value) => {
                     try {
-                        return Geary.ServiceProvider.for_value(value);
-                    } catch (Geary.EngineError err) {
+                        return Convey.ServiceProvider.for_value(value);
+                    } catch (Convey.EngineError err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
                 }
             )
         );
 
-        Geary.AccountInformation info = new Geary.AccountInformation(
+        Convey.AccountInformation info = new Convey.AccountInformation(
             id, provider, mediator,
-            new Geary.RFC822.MailboxAddress(real_name, primary_email)
+            new Convey.RFC822.MailboxAddress(real_name, primary_email)
         );
 
         info.ordinal = config.get_int(ORDINAL_KEY, info.ordinal);
-        if (info.ordinal >= Geary.AccountInformation.next_ordinal) {
-            Geary.AccountInformation.next_ordinal = info.ordinal + 1;
+        if (info.ordinal >= Convey.AccountInformation.next_ordinal) {
+            Convey.AccountInformation.next_ordinal = info.ordinal + 1;
         }
 
-        info.append_sender(new Geary.RFC822.MailboxAddress(
+        info.append_sender(new Convey.RFC822.MailboxAddress(
             config.get_string(REAL_NAME_KEY), primary_email
         ));
 
@@ -1322,11 +1322,11 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
         );
         foreach (string alt_email in alt_email_list) {
             try {
-                var mailboxes = new Geary.RFC822.MailboxAddresses.from_rfc822_string(alt_email);
-                foreach (Geary.RFC822.MailboxAddress mailbox in mailboxes.get_all()) {
+                var mailboxes = new Convey.RFC822.MailboxAddresses.from_rfc822_string(alt_email);
+                foreach (Convey.RFC822.MailboxAddress mailbox in mailboxes.get_all()) {
                     info.append_sender(mailbox);
                 }
-            } catch (Geary.RFC822.Error error) {
+            } catch (Convey.RFC822.Error error) {
                 throw new ConfigError.SYNTAX(
                     "Invalid alternate email: %s", error.message
                 );
@@ -1367,10 +1367,10 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
         return info;
     }
 
-    public void save(Geary.AccountInformation info,
-                     Geary.ConfigFile config_file) {
+    public void save(Convey.AccountInformation info,
+                     Convey.ConfigFile config_file) {
 
-        Geary.ConfigFile.Group config = config_file.get_group(GROUP);
+        Convey.ConfigFile.Group config = config_file.get_group(GROUP);
 
         config.set_string(REAL_NAME_KEY, info.primary_mailbox.name ?? "");
         config.set_string(PRIMARY_EMAIL_KEY, info.primary_mailbox.address);
@@ -1382,13 +1382,13 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
         config.set_bool(USE_EMAIL_SIGNATURE_KEY, info.use_signature);
         config.set_string(EMAIL_SIGNATURE_KEY, info.signature);
         if (info.has_sender_aliases) {
-            Gee.List<Geary.RFC822.MailboxAddress> alts = info.sender_mailboxes;
+            Gee.List<Convey.RFC822.MailboxAddress> alts = info.sender_mailboxes;
             // Don't include the primary in the list
             alts.remove_at(0);
 
             config.set_string_list(
                 ALTERNATE_EMAILS_KEY,
-                Geary.traverse(alts)
+                Convey.traverse(alts)
                 .map<string>((alt) => alt.to_rfc822_string())
                 .to_array_list()
             );
@@ -1447,18 +1447,18 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
 
 
     /** Loads a supported service from a config file. */
-    public void load(Geary.ConfigFile config,
-                     Geary.AccountInformation account,
-                     Geary.ServiceInformation service)
+    public void load(Convey.ConfigFile config,
+                     Convey.AccountInformation account,
+                     Convey.ServiceInformation service)
         throws ConfigError, GLib.KeyFileError {
-        Geary.ConfigFile.Group service_config = config.get_group(
+        Convey.ConfigFile.Group service_config = config.get_group(
             service.protocol == IMAP ? GROUP_INCOMING : GROUP_OUTGOING
         );
 
         string? login = service_config.get_string(LOGIN, null);
         if (login != null) {
-            service.credentials = new Geary.Credentials(
-                Geary.Credentials.Method.PASSWORD, login
+            service.credentials = new Convey.Credentials(
+                Convey.Credentials.Method.PASSWORD, login
             );
         }
         service.remember_password = service_config.get_bool(
@@ -1466,16 +1466,16 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
         );
 
 
-        if (account.service_provider == Geary.ServiceProvider.OTHER) {
+        if (account.service_provider == Convey.ServiceProvider.OTHER) {
             service.host = service_config.get_required_string(HOST);
             service.port = (uint16) service_config.get_int(PORT, service.port);
 
             service.transport_security = service_config.parse_required_value
-            <Geary.TlsNegotiationMethod>(
+            <Convey.TlsNegotiationMethod>(
                 SECURITY,
                 (value) => {
                     try {
-                        return Geary.TlsNegotiationMethod.for_value(value);
+                        return Convey.TlsNegotiationMethod.for_value(value);
                     } catch (GLib.Error err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
@@ -1483,11 +1483,11 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
             );
 
             service.credentials_requirement = service_config.parse_required_value
-            <Geary.Credentials.Requirement>(
+            <Convey.Credentials.Requirement>(
                 CREDENTIALS,
                 (value) => {
                     try {
-                        return Geary.Credentials.Requirement.for_value(value);
+                        return Convey.Credentials.Requirement.for_value(value);
                     } catch (GLib.Error err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
@@ -1501,10 +1501,10 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
     }
 
     /** Saves an service to a config file. */
-    public void save(Geary.AccountInformation account,
-                     Geary.ServiceInformation service,
-                     Geary.ConfigFile config) {
-        Geary.ConfigFile.Group service_config = config.get_group(
+    public void save(Convey.AccountInformation account,
+                     Convey.ServiceInformation service,
+                     Convey.ConfigFile config) {
+        Convey.ConfigFile.Group service_config = config.get_group(
             service.protocol == IMAP ? GROUP_INCOMING : GROUP_OUTGOING
         );
 
@@ -1513,7 +1513,7 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
         }
         service_config.set_bool(REMEMBER_PASSWORD, service.remember_password);
 
-        if (account.service_provider == Geary.ServiceProvider.OTHER) {
+        if (account.service_provider == Convey.ServiceProvider.OTHER) {
             service_config.set_string(HOST, service.host);
             service_config.set_int(PORT, service.port);
             service_config.set_string(
@@ -1547,49 +1547,49 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
 
 
     /** Loads a supported service from a config file. */
-    public void load(Geary.ConfigFile config,
-                     Geary.AccountInformation account,
-                     Geary.ServiceInformation service)
+    public void load(Convey.ConfigFile config,
+                     Convey.AccountInformation account,
+                     Convey.ServiceInformation service)
         throws ConfigError, GLib.KeyFileError {
-        Geary.ConfigFile.Group service_config =
+        Convey.ConfigFile.Group service_config =
             config.get_group(AccountConfigLegacy.GROUP);
 
-        string prefix = service.protocol == Geary.Protocol.IMAP
+        string prefix = service.protocol == Convey.Protocol.IMAP
             ? "imap_" :  "smtp_";
 
         string? login = service_config.get_string(
             prefix + USERNAME, account.primary_mailbox.address
         );
         if (login != null) {
-            service.credentials = new Geary.Credentials(
-                Geary.Credentials.Method.PASSWORD, login
+            service.credentials = new Convey.Credentials(
+                Convey.Credentials.Method.PASSWORD, login
             );
         }
         service.remember_password = service_config.get_bool(
             prefix + REMEMBER_PASSWORD, service.remember_password
         );
 
-        if (account.service_provider == Geary.ServiceProvider.OTHER) {
+        if (account.service_provider == Convey.ServiceProvider.OTHER) {
             service.host = service_config.get_string(prefix + HOST, service.host);
             service.port = (uint16) service_config.get_int(
                 prefix + PORT, service.port
             );
 
             bool use_tls = service_config.get_bool(
-                prefix + SSL, service.protocol == Geary.Protocol.IMAP
+                prefix + SSL, service.protocol == Convey.Protocol.IMAP
             );
             bool use_starttls = service_config.get_bool(
                 prefix + STARTTLS, true
             );
             if (use_tls) {
-                service.transport_security = Geary.TlsNegotiationMethod.TRANSPORT;
+                service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
             } else if (use_starttls) {
-                service.transport_security = Geary.TlsNegotiationMethod.START_TLS;
+                service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
             } else {
-                service.transport_security = Geary.TlsNegotiationMethod.NONE;
+                service.transport_security = Convey.TlsNegotiationMethod.NONE;
             }
 
-            if (service.protocol == Geary.Protocol.SMTP) {
+            if (service.protocol == Convey.Protocol.SMTP) {
                 bool use_imap = service_config.get_bool(
                     SMTP_USE_IMAP_CREDENTIALS, service.credentials != null
                 );
@@ -1598,23 +1598,23 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
                 );
                 if (use_imap) {
                     service.credentials_requirement =
-                        Geary.Credentials.Requirement.USE_INCOMING;
+                        Convey.Credentials.Requirement.USE_INCOMING;
                 } else if (!no_auth) {
                     service.credentials_requirement =
-                        Geary.Credentials.Requirement.CUSTOM;
+                        Convey.Credentials.Requirement.CUSTOM;
                 } else {
                     service.credentials_requirement =
-                        Geary.Credentials.Requirement.NONE;
+                        Convey.Credentials.Requirement.NONE;
                 }
             }
         }
     }
 
     /** Saves an service to a config file. */
-    public void save(Geary.AccountInformation account,
-                     Geary.ServiceInformation service,
-                     Geary.ConfigFile config) {
-        Geary.ConfigFile.Group service_config =
+    public void save(Convey.AccountInformation account,
+                     Convey.ServiceInformation service,
+                     Convey.ConfigFile config) {
+        Convey.ConfigFile.Group service_config =
             config.get_group(AccountConfigLegacy.GROUP);
 
         string prefix = service.protocol.to_value().ascii_down() + "_";
@@ -1628,7 +1628,7 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
             prefix + REMEMBER_PASSWORD, service.remember_password
         );
 
-        if (account.service_provider == Geary.ServiceProvider.OTHER) {
+        if (account.service_provider == Convey.ServiceProvider.OTHER) {
             service_config.set_string(prefix + HOST, service.host);
             service_config.set_int(prefix + PORT, service.port);
 
@@ -1649,7 +1649,7 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
                 break;
             }
 
-            if (service.protocol == Geary.Protocol.SMTP) {
+            if (service.protocol == Convey.Protocol.SMTP) {
                 switch (service.credentials_requirement) {
                 case NONE:
                     service_config.set_bool(SMTP_USE_IMAP_CREDENTIALS, false);

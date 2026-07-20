@@ -6,47 +6,47 @@
  */
 
 /**
- * Initialises GearyWebExtension for WebKit web processes.
+ * Initialises ConveyWebExtension for WebKit web processes.
  */
 public void webkit_web_process_extension_initialize_with_user_data(WebKit.WebProcessExtension extension,
                                                                    Variant data) {
     bool logging_enabled = data.get_boolean();
 
-    Geary.Logging.init();
+    Convey.Logging.init();
     if (logging_enabled) {
-        GLib.Log.set_writer_func(Geary.Logging.default_log_writer);
-        Geary.Logging.log_to(GLib.stdout);
+        GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
+        Convey.Logging.log_to(GLib.stdout);
     }
 
     debug("Initialising...");
 
     // Ref it so it doesn't get free'ed right away
-    GearyWebExtension instance = new GearyWebExtension(extension);
+    ConveyWebExtension instance = new ConveyWebExtension(extension);
     instance.ref();
 }
 
 /**
- * A WebProcessExtension that manages Geary-specific behaviours in web processes.
+ * A WebProcessExtension that manages Convey-specific behaviours in web processes.
  */
-public class GearyWebExtension : Object {
+public class ConveyWebExtension : Object {
 
-    private const string PAGE_STATE_OBJECT_NAME = "geary";
+    private const string PAGE_STATE_OBJECT_NAME = "convey";
 
     // Keep these in sync with Components.WebView
     private const string MESSAGE_EXCEPTION = "__exception__";
     private const string MESSAGE_ENABLE_REMOTE_LOAD = "__enable_remote_load__";
     private const string MESSAGE_RETURN_VALUE = "__return__";
 
-    private const string[] ALLOWED_SCHEMES = { "cid", "geary", "data", "blob" };
+    private const string[] ALLOWED_SCHEMES = { "cid", "convey", "data", "blob" };
 
-    private const string EXTENSION_CLASS_VAR = "_GearyWebExtension";
+    private const string EXTENSION_CLASS_VAR = "_ConveyWebExtension";
     private const string EXTENSION_CLASS_SEND = "send";
     private const string EXTENSION_CLASS_ALLOW_REMOTE_LOAD = "allowRemoteResourceLoad";
 
     private WebKit.WebProcessExtension extension;
 
 
-    public GearyWebExtension(WebKit.WebProcessExtension extension) {
+    public ConveyWebExtension(WebKit.WebProcessExtension extension) {
         this.extension = extension;
         extension.page_created.connect(on_page_created);
         WebKit.ScriptWorld.get_default().window_object_cleared.connect(on_window_object_cleared);
@@ -60,7 +60,7 @@ public class GearyWebExtension : Object {
         debug("Console: [%s] %s %s:%u: %s",
               message.get_level().to_string().substring("WEBKIT_CONSOLE_MESSAGE_LEVEL_".length),
               message.get_source().to_string().substring("WEBKIT_CONSOLE_MESSAGE_SOURCE_".length),
-              Geary.String.is_empty(source) ? "unknown" : source,
+              Convey.String.is_empty(source) ? "unknown" : source,
               message.get_line(),
               message.get_text()
         );

@@ -85,14 +85,14 @@ PageState.prototype = {
             return;
         }
         if (enabled) {
-            document.body.setAttribute("data-geary-theme", "dark");
+            document.body.setAttribute("data-convey-theme", "dark");
             DarkReader.auto({
                 // Defaults is too dark. These colors are better fitting into Adwaita style.
                 darkSchemeBackgroundColor: "#2a2d30",
                 darkSchemeTextColor: "#eaeaea",
             });
         } else {
-            document.body.removeAttribute("data-geary-theme");
+            document.body.removeAttribute("data-convey-theme");
             DarkReader.disable();
         }
     },
@@ -203,6 +203,6 @@ let MessageSender = function(name) {
         // Since typeof(arguments) == 'object', convert to an array so
         // that Components.WebView.MessageCallback callbacks get
         // arrays or tuples rather than dicts as arguments
-        _GearyWebExtension.send(name, Array.from(arguments));
+        _ConveyWebExtension.send(name, Array.from(arguments));
     };
 };

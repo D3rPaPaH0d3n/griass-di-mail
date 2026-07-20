@@ -17,7 +17,7 @@
  *
  * @see MailboxInformation
  */
-public class Geary.Imap.ListCommand : Command {
+public class Convey.Imap.ListCommand : Command {
 
 
     public const string NAME = "LIST";

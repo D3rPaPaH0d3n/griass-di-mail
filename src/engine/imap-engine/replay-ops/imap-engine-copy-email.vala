@@ -4,16 +4,16 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-private class Geary.ImapEngine.CopyEmail : Geary.ImapEngine.SendReplayOperation {
+private class Convey.ImapEngine.CopyEmail : Convey.ImapEngine.SendReplayOperation {
     public Gee.Set<Imap.UID> destination_uids = new Gee.HashSet<Imap.UID>();
 
     private MinimalFolder engine;
     private Gee.HashSet<ImapDB.EmailIdentifier> to_copy = new Gee.HashSet<ImapDB.EmailIdentifier>();
-    private Geary.FolderPath destination;
+    private Convey.FolderPath destination;
     private Cancellable? cancellable;
 
     public CopyEmail(MinimalFolder engine, Gee.List<ImapDB.EmailIdentifier> to_copy,
-        Geary.FolderPath destination, Cancellable? cancellable = null) {
+        Convey.FolderPath destination, Cancellable? cancellable = null) {
         base("CopyEmail", OnError.RETRY);
 
         this.engine = engine;

@@ -7,24 +7,24 @@
  */
 
 /**
- * A widget for editing a {@link Geary.ServiceInformation} object.
+ * A widget for editing a {@link Convey.ServiceInformation} object.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/accounts-service-information-widget.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-service-information-widget.ui")]
 internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
 
-    public Geary.ServiceInformation service {
+    public Convey.ServiceInformation service {
         get { return this._service; }
         set {
             this._service = value;
-            this.service_mutable = new Geary.ServiceInformation.copy(value);
+            this.service_mutable = new Convey.ServiceInformation.copy(value);
             update_details();
             value.notify.connect((obj, pspec) => { update_details(); });
         }
     }
-    private Geary.ServiceInformation _service;
+    private Convey.ServiceInformation _service;
 
     // A copy of the original that can be without breaking the original
-    public Geary.ServiceInformation service_mutable { get ; private set; }
+    public Convey.ServiceInformation service_mutable { get ; private set; }
 
     public Components.ValidatorGroup validators { get; construct set; }
 
@@ -56,11 +56,11 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         update_auth(this.service_mutable);
     }
 
-    private void update_host_row(Adw.EntryRow row, Geary.ServiceInformation service) {
+    private void update_host_row(Adw.EntryRow row, Convey.ServiceInformation service) {
         row.title = host_label_for_protocol(service.protocol);
 
         row.text = service.host ?? "";
-        if (!Geary.String.is_empty(service.host)) {
+        if (!Convey.String.is_empty(service.host)) {
             // Only show the port if it not the appropriate default port
             uint16 port = service.port;
             if (port != service.get_default_port()) {
@@ -69,14 +69,14 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         }
     }
 
-    private string host_label_for_protocol(Geary.Protocol protocol) {
+    private string host_label_for_protocol(Convey.Protocol protocol) {
         switch (protocol) {
-        case Geary.Protocol.IMAP:
+        case Convey.Protocol.IMAP:
             // Translators: This label describes the host name or IP
             // address and port used by an account's IMAP service.
             return _("IMAP Server");
 
-        case Geary.Protocol.SMTP:
+        case Convey.Protocol.SMTP:
             // Translators: This label describes the host name or IP
             // address and port used by an account's SMTP service.
             return _("SMTP Server");
@@ -86,7 +86,7 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
     }
 
     private void update_login_name_row(Adw.EntryRow row,
-                                       Geary.ServiceInformation service) {
+                                       Convey.ServiceInformation service) {
         // Translators: Label used when no auth scheme is used
         // by an account's IMAP or SMTP service.
         row.text = _("None");
@@ -94,11 +94,11 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         // If we have credentials, we can do better
         if (service.credentials != null) {
             switch (service.credentials.supported_method) {
-            case Geary.Credentials.Method.PASSWORD:
+            case Convey.Credentials.Method.PASSWORD:
                 row.text = service.credentials.user;
                 break;
 
-            case Geary.Credentials.Method.OAUTH2:
+            case Convey.Credentials.Method.OAUTH2:
                 // Add a suffix for OAuth2 auth so people know they
                 // shouldn't expect to be prompted for a password
 
@@ -111,15 +111,15 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         }
 
         // If we rely on the credentials of the incoming server, notify the user of that
-        if (service.protocol == Geary.Protocol.SMTP &&
+        if (service.protocol == Convey.Protocol.SMTP &&
                    service.credentials_requirement ==
-                   Geary.Credentials.Requirement.USE_INCOMING) {
+                   Convey.Credentials.Requirement.USE_INCOMING) {
             row.text = _("Use receiving server login");
         }
     }
 
     private void update_password_row(Adw.PasswordEntryRow row,
-                                     Geary.ServiceInformation service) {
+                                     Convey.ServiceInformation service) {
         if (service.credentials != null) {
             row.text = service.credentials.token ?? "";
         } else {
@@ -136,15 +136,15 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
     private void on_host_row_changed(Gtk.Editable editable) {
     }
 
-    private void update_auth(Geary.ServiceInformation service) {
-        bool is_smtp = (service.protocol == Geary.Protocol.SMTP);
+    private void update_auth(Convey.ServiceInformation service) {
+        bool is_smtp = (service.protocol == Convey.Protocol.SMTP);
         this.credentials_requirement_row.visible = is_smtp;
 
         if (is_smtp) {
             this.credentials_requirement_row.selected = service.credentials_requirement;
 
             bool needs_login =
-                (service.credentials_requirement == Geary.Credentials.Requirement.CUSTOM);
+                (service.credentials_requirement == Convey.Credentials.Requirement.CUSTOM);
             this.login_name_row.visible = needs_login;
             this.password_row.visible = needs_login;
         }
@@ -155,7 +155,7 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
 
     [GtkCallback]
     private static string outgoing_auth_to_string(Adw.EnumListItem item,
-                                                  Geary.Credentials.Requirement requirement) {
+                                                  Convey.Credentials.Requirement requirement) {
         return requirement.to_string();
     }
 

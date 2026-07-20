@@ -10,17 +10,17 @@
  * Represents in folder conversations list.
  *
  */
-[GtkTemplate (ui = "/org/gnome/Geary/conversation-list-view.ui")]
-public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
+[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-list-view.ui")]
+public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
     /**
      * The fields that must be available on any ConversationMonitor
      * passed to ConversationList.View
      */
-    public const Geary.Email.Field REQUIRED_FIELDS = (
-        Geary.Email.Field.ENVELOPE |
-        Geary.Email.Field.FLAGS |
-        Geary.Email.Field.PROPERTIES
+    public const Convey.Email.Field REQUIRED_FIELDS = (
+        Convey.Email.Field.ENVELOPE |
+        Convey.Email.Field.FLAGS |
+        Convey.Email.Field.PROPERTIES
     );
 
     [CCode(notify = false)]
@@ -37,8 +37,8 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
         }
     }
 
-    public Gee.Set<Geary.App.Conversation> selected {
-        get; set; default = new Gee.HashSet<Geary.App.Conversation>();
+    public Gee.Set<Convey.App.Conversation> selected {
+        get; set; default = new Gee.HashSet<Convey.App.Conversation>();
     }
 
     private Application.Configuration config;
@@ -138,7 +138,7 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     /**
      * Set the conversation monitor which the listview is displaying
      */
-    public void set_monitor(Geary.App.ConversationMonitor? monitor) {
+    public void set_monitor(Convey.App.ConversationMonitor? monitor) {
         if (this.model != null) {
             this.model.conversations_loaded.disconnect(on_conversations_loaded);
             this.model.conversations_removed.disconnect(on_conversations_removed);
@@ -200,7 +200,7 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     }
 
     private Gtk.Widget row_factory(Object convo_obj) {
-        var convo = (Geary.App.Conversation) convo_obj;
+        var convo = (Convey.App.Conversation) convo_obj;
         var row = new Row(config, convo, this.selection_mode_enabled);
         row.toggle_flag.connect(on_toggle_flags);
         row.toggle_selection.connect(on_toggle_selection);
@@ -338,19 +338,19 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     /**
      * Emitted when one or more conversations are selected
      */
-    public signal void conversations_selected(Gee.Set<Geary.App.Conversation> selected);
+    public signal void conversations_selected(Gee.Set<Convey.App.Conversation> selected);
 
     /**
      * Emitted when one conversation is activated
      */
-    public signal void conversation_activated(Geary.App.Conversation activated,
+    public signal void conversation_activated(Convey.App.Conversation activated,
                                               uint button);
 
     /**
      * Gets the conversations represented by the current selection in the ListBox
      */
-    public Gee.Set<Geary.App.Conversation> get_selected_conversations() {
-        var selected = new Gee.HashSet<Geary.App.Conversation>();
+    public Gee.Set<Convey.App.Conversation> get_selected_conversations() {
+        var selected = new Gee.HashSet<Convey.App.Conversation>();
 
         foreach (var row in this.list.get_selected_rows()) {
             selected.add(((Row) row).conversation);
@@ -363,11 +363,11 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
      *
      * If a conversation is not present in the ListBox, it is ignored.
      */
-    public void select_conversations(Gee.Collection<Geary.App.Conversation> selection) {
+    public void select_conversations(Gee.Collection<Convey.App.Conversation> selection) {
         int i = 0;
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {
-            Geary.App.Conversation conversation = row.conversation;
+            Convey.App.Conversation conversation = row.conversation;
             if (selection.contains(conversation)) {
                 this.list.select_row(row);
             }
@@ -382,7 +382,7 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
      * If more than one selected, activate the first one
      */
     public void activate_selected() {
-        Gee.Set<Geary.App.Conversation> conversations = get_selected_conversations();
+        Gee.Set<Convey.App.Conversation> conversations = get_selected_conversations();
         if (!conversations.is_empty) {
             conversation_activated(conversations.to_array()[0], 1);
         }
@@ -403,12 +403,12 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
         this.list.unselect_all();
     }
 
-    private bool selection_changed(Gee.Set<Geary.App.Conversation> selection) {
+    private bool selection_changed(Gee.Set<Convey.App.Conversation> selection) {
         bool changed = this.selected.size != selection.size;
         if (changed) {
             return true;
         }
-        foreach (Geary.App.Conversation conversation in selection) {
+        foreach (Convey.App.Conversation conversation in selection) {
             if (!this.selected.contains(conversation)) {
                 changed = true;
             }
@@ -435,15 +435,15 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     /**
      * Emitted when the user expresses intent to update the flags on a set of conversations
      */
-    public signal void mark_conversations(Gee.Collection<Geary.App.Conversation> conversations,
-                                          Geary.NamedFlag flag);
+    public signal void mark_conversations(Gee.Collection<Convey.App.Conversation> conversations,
+                                          Convey.NamedFlag flag);
 
 
-    private void on_toggle_flags(ConversationList.Row row, Geary.NamedFlag flag) {
+    private void on_toggle_flags(ConversationList.Row row, Convey.NamedFlag flag) {
         if (row.is_selected()) {
             mark_conversations(this.selected, flag);
         } else {
-            mark_conversations(Geary.Collection.single(row.conversation), flag);
+            mark_conversations(Convey.Collection.single(row.conversation), flag);
         }
     }
 
@@ -489,8 +489,8 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     /**
      * The set of all conversations currently displayed in the viewport
      */
-    public Gee.Set<Geary.App.Conversation> visible_conversations {get; private set; default = new Gee.HashSet<Geary.App.Conversation>(); }
-    private Geary.Scheduler.Scheduled? scheduled_visible_update;
+    public Gee.Set<Convey.App.Conversation> visible_conversations {get; private set; default = new Gee.HashSet<Convey.App.Conversation>(); }
+    private Convey.Scheduler.Scheduled? scheduled_visible_update;
 
     /**
      * Called on scroll to update the set of visible conversations
@@ -500,8 +500,8 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
             scheduled_visible_update.cancel();
         }
 
-        scheduled_visible_update = Geary.Scheduler.after_msec(VISIBILITY_UPDATE_DELAY_MS, () => {
-            var visible = new Gee.HashSet<Geary.App.Conversation>();
+        scheduled_visible_update = Convey.Scheduler.after_msec(VISIBILITY_UPDATE_DELAY_MS, () => {
+            var visible = new Gee.HashSet<Convey.App.Conversation>();
             Gtk.ListBoxRow? first = this.list.get_row_at_y((int) this.scrolled_window.vadjustment.value);
 
             if (first == null) {
@@ -518,7 +518,7 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
 
             for (uint i = start_index; i < end_index; i++) {
                 visible_conversations.add(
-                    this.model.get_item(i) as Geary.App.Conversation
+                    this.model.get_item(i) as Convey.App.Conversation
                 );
             }
 
@@ -605,7 +605,7 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
     /*
      * Update conversation row
      */
-    private void on_conversation_updated(Geary.App.Conversation convo) {
+    private void on_conversation_updated(Convey.App.Conversation convo) {
         int i = 0;
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {
@@ -691,7 +691,7 @@ public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
         // The dragged conversations are the list's selection; the
         // content is just a marker the folder list recognises.
         var marker = GLib.Value(typeof(string));
-        marker.set_string("application/x-geary-mail");
+        marker.set_string("application/x-convey-mail");
         return new Gdk.ContentProvider.for_value(marker);
     }
 

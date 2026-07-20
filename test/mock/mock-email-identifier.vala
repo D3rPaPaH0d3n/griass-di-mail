@@ -5,7 +5,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Mock.EmailIdentifer : Geary.EmailIdentifier {
+public class Mock.EmailIdentifer : Convey.EmailIdentifier {
 
 
     private int id;
@@ -19,7 +19,7 @@ public class Mock.EmailIdentifer : Geary.EmailIdentifier {
         return GLib.int_hash(this.id);
     }
 
-    public override bool equal_to(Geary.EmailIdentifier other) {
+    public override bool equal_to(Convey.EmailIdentifier other) {
         return (
             this.get_type() == other.get_type() &&
             this.id == ((EmailIdentifer) other).id
@@ -38,7 +38,7 @@ public class Mock.EmailIdentifer : Geary.EmailIdentifier {
         return new GLib.Variant.int32(id);
     }
 
-    public override int natural_sort_comparator(Geary.EmailIdentifier other) {
+    public override int natural_sort_comparator(Convey.EmailIdentifier other) {
         EmailIdentifer? other_mock = other as EmailIdentifer;
         return (other_mock == null) ? 1 : this.id - other_mock.id;
     }

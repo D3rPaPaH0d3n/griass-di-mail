@@ -8,7 +8,7 @@
 /**
  * A standard info bar widget with status message and description.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/components-info-bar.ui")]
+[GtkTemplate (ui = "/net/donnybeelo/Convey/components-info-bar.ui")]
 public class Components.InfoBar : Gtk.Box {
     public signal void response(int response_id);
     /**
@@ -83,7 +83,7 @@ public class Components.InfoBar : Gtk.Box {
         attrs.change(Pango.attr_weight_new(BOLD));
         this.status.attributes = attrs;
 
-        if (!Geary.String.is_empty_or_whitespace(description)) {
+        if (!Convey.String.is_empty_or_whitespace(description)) {
             // There is both a status and a description, so they
             // should be vertical-aligned next to each other in the
             // centre

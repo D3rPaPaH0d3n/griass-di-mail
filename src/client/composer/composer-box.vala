@@ -15,7 +15,7 @@
 public class Composer.Box : Gtk.Frame, Composer.Container {
 
     static construct {
-        set_css_name("geary-composer-box");
+        set_css_name("convey-composer-box");
     }
 
 
@@ -41,7 +41,7 @@ public class Composer.Box : Gtk.Frame, Composer.Container {
         this.headerbar = headerbar;
         this.headerbar.set_conversation_header(composer.header.headerbar);
 
-        add_css_class("geary-composer-box");
+        add_css_class("convey-composer-box");
         this.halign = Gtk.Align.FILL;
         this.vexpand = true;
         this.vexpand_set = true;

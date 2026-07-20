@@ -13,8 +13,8 @@
 /**
  * A widget for editing the body of an email message.
  */
-[GtkTemplate (ui = "/org/gnome/Geary/composer-editor.ui")]
-public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
+[GtkTemplate (ui = "/net/donnybeelo/Convey/composer-editor.ui")]
+public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
 
     private const string ACTION_BOLD = "bold";
     private const string ACTION_COLOR = "color";
@@ -82,7 +82,7 @@ public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
 
 
     static construct {
-        set_css_name("geary-composer-editor");
+        set_css_name("convey-composer-editor");
     }
 
     public static void add_accelerators(Application.Client application) {
@@ -115,9 +115,9 @@ public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
     private string? cursor_url = null;
 
     // Timeout for showing the slow image paste pulsing bar
-    private Geary.TimeoutManager show_background_work_timeout = null;
+    private Convey.TimeoutManager show_background_work_timeout = null;
     // Timer for pulsing progress bar
-    private Geary.TimeoutManager background_work_pulse;
+    private Convey.TimeoutManager background_work_pulse;
 
     private Menu context_menu_model;
     private Menu context_menu_rich_text;
@@ -159,7 +159,7 @@ public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
         this.config = config;
 
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/org/gnome/Geary/composer-editor-menus.ui"
+            "/net/donnybeelo/Convey/composer-editor-menus.ui"
         );
         this.context_menu_model = (Menu) builder.get_object("context_menu_model");
         this.context_menu_rich_text = (Menu) builder.get_object("context_menu_rich_text");
@@ -225,10 +225,10 @@ public class Composer.Editor : Gtk.Grid, Geary.BaseInterface {
             config.set_spell_check_languages(active_langs);
         });
 
-        this.show_background_work_timeout = new Geary.TimeoutManager.milliseconds(
+        this.show_background_work_timeout = new Convey.TimeoutManager.milliseconds(
             Util.Gtk.SHOW_PROGRESS_TIMEOUT_MSEC, this.on_background_work_timeout
         );
-        this.background_work_pulse = new Geary.TimeoutManager.milliseconds(
+        this.background_work_pulse = new Convey.TimeoutManager.milliseconds(
             Util.Gtk.PROGRESS_PULSE_TIMEOUT_MSEC, this.background_progress.pulse
         );
         this.background_work_pulse.repetition = FOREVER;

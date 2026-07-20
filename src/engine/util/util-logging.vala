@@ -25,11 +25,11 @@
  * should implement the {@link Source} interface so they can provide
  * logging context and a custom logging sub-domain (if needed).
  */
-namespace Geary.Logging {
+namespace Convey.Logging {
 
 
     /** The logging domain for the engine. */
-    public const string DOMAIN = "Geary";
+    public const string DOMAIN = "Convey";
 
     /** Specifies the default number of log records retained. */
     public const uint DEFAULT_MAX_LOG_BUFFER_LENGTH = 4096;
@@ -129,7 +129,7 @@ namespace Geary.Logging {
     /**
      * Clears all log records.
      *
-     * Since log records hold references to Geary engine objects, it may
+     * Since log records hold references to Convey engine objects, it may
      * be desirable to clear the records prior to shutdown so that the
      * objects can be destroyed.
      */
@@ -371,7 +371,7 @@ namespace Geary.Logging {
  * is the logging source parent of a Bar object, log calls made by Bar
  * will automatically be decorated with Foo.
  */
-public interface Geary.Logging.Source : GLib.Object {
+public interface Convey.Logging.Source : GLib.Object {
 
 
     /**
@@ -458,7 +458,7 @@ public interface Geary.Logging.Source : GLib.Object {
         }
 
         public inline void append_source(Source value) {
-            this.append("GEARY_LOGGING_SOURCE", value);
+            this.append("CONVEY_LOGGING_SOURCE", value);
         }
 
         public GLib.LogField[] to_array() {
@@ -578,7 +578,7 @@ public interface Geary.Logging.Source : GLib.Object {
  */
 // This a class rather than a struct so we get pass-by-reference
 // semantics for it, and make its members private
-public class Geary.Logging.State {
+public class Convey.Logging.State {
 
 
     public Source source { get; private set; }
@@ -621,7 +621,7 @@ public class Geary.Logging.State {
  * this by calling {@link get_earliest_record} and then {get_next},
  * and can be notified of new records via {@link set_log_listener}.
  */
-public class Geary.Logging.Record : GLib.Object {
+public class Convey.Logging.Record : GLib.Object {
 
 
     /** The GLib domain of the log message, if any. */
@@ -681,7 +681,7 @@ public class Geary.Logging.Record : GLib.Object {
         int state_count = 0;
         foreach (GLib.LogField field in fields) {
             switch (field.key) {
-            case "GEARY_LOGGING_SOURCE":
+            case "CONVEY_LOGGING_SOURCE":
                 var state = ((Source) field.value).to_logging_state();
                 GLib.Type type = state.source.get_type();
                 if (state_count == 0) {

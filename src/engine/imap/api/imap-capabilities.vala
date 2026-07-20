@@ -6,7 +6,7 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Geary.Imap.Capabilities : Geary.GenericCapabilities {
+public class Convey.Imap.Capabilities : Convey.GenericCapabilities {
 
 
     public const string AUTH = "AUTH";

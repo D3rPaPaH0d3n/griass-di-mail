@@ -9,7 +9,7 @@
 /**
  * IMAP protocol utility functions.
  */
-namespace Geary.Imap.DataFormat {
+namespace Convey.Imap.DataFormat {
 
     // RFC 3501 §9:
     //

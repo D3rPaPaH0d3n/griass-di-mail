@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.Smtp.Capabilities : Geary.GenericCapabilities {
+public class Convey.Smtp.Capabilities : Convey.GenericCapabilities {
 
     public const string STARTTLS = "starttls";
     public const string AUTH = "auth";

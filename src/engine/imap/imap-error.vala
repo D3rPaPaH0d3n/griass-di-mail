@@ -5,11 +5,11 @@
  */
 
 /**
- * Possible Errors thrown by various components in the {@link Geary.Imap} namespace.
+ * Possible Errors thrown by various components in the {@link Convey.Imap} namespace.
  *
  */
 
-public errordomain Geary.ImapError {
+public errordomain Convey.ImapError {
     /**
      * Indicates a basic parsing error, syntactic in nature.
      */

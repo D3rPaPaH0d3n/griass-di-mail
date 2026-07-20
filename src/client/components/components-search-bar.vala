@@ -22,13 +22,13 @@ public class SearchBar : Adw.Bin {
     }
 
     private Components.EntryUndo search_undo;
-    private Geary.Account? current_account = null;
-    private Geary.Engine engine;
+    private Convey.Account? current_account = null;
+    private Convey.Engine engine;
 
     public signal void search_text_changed(string search_text);
 
 
-    public SearchBar(Geary.Engine engine) {
+    public SearchBar(Convey.Engine engine) {
         var bar = new Gtk.SearchBar();
         this.search_bar = bar;
         this.child = bar;
@@ -63,7 +63,7 @@ public class SearchBar : Adw.Bin {
         return this.entry.grab_focus();
     }
 
-    public void set_account(Geary.Account? account) {
+    public void set_account(Convey.Account? account) {
         if (current_account != null) {
             current_account.information.changed.disconnect(
                 on_information_changed

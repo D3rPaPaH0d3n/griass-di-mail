@@ -8,9 +8,9 @@
 /**
  * Namespace component in a response for a NAMESPACE command.
  *
- * @see Geary.Imap.NamespaceCommand
+ * @see Convey.Imap.NamespaceCommand
  */
-public class Geary.Imap.Namespace : BaseObject {
+public class Convey.Imap.Namespace : BaseObject {
 
 
     public string prefix { get; private set; }

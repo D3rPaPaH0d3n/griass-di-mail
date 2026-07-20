@@ -22,7 +22,7 @@
  * and() and or() can be mixed in a single SearchCriteria.
  */
 
-public class Geary.Imap.SearchCriteria : ListParameter {
+public class Convey.Imap.SearchCriteria : ListParameter {
     public SearchCriteria(SearchCriterion? first = null) {
         if (first != null)
             add_all(first.to_parameters());

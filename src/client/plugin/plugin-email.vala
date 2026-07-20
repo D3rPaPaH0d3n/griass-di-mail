@@ -11,8 +11,8 @@
  * Instances of these may be obtained from {@link EmailStore}.
  */
 public interface Plugin.Email :
-    Geary.BaseObject,
-    Geary.EmailHeaderSet {
+    Convey.BaseObject,
+    Convey.EmailHeaderSet {
 
 
     /** Defines the formats that email body text can be loaded as. */
@@ -28,7 +28,7 @@ public interface Plugin.Email :
     public abstract EmailIdentifier identifier { get; }
 
     /** Returns the set of mutable flags for the email. */
-    public abstract Geary.EmailFlags flags { get; }
+    public abstract Convey.EmailFlags flags { get; }
 
     /**
      * Returns the email's primary originator.
@@ -38,7 +38,7 @@ public interface Plugin.Email :
      *
      * @see Util.Email.get_primary_originator
      */
-    public abstract Geary.RFC822.MailboxAddress? get_primary_originator();
+    public abstract Convey.RFC822.MailboxAddress? get_primary_originator();
 
     /**
      * Load the text of the email body as the given type.
@@ -77,7 +77,7 @@ public interface Plugin.Email :
  * An object representing an email's identifier.
  */
 public interface Plugin.EmailIdentifier :
-    Geary.BaseObject, Gee.Hashable<EmailIdentifier> {
+    Convey.BaseObject, Gee.Hashable<EmailIdentifier> {
 
 
     /** Returns the account that the email belongs to. */

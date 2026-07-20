@@ -7,7 +7,7 @@
  */
 
 /** A client connection to a SMTP service. */
-public class Geary.Smtp.ClientSession : BaseObject, Logging.Source {
+public class Convey.Smtp.ClientSession : BaseObject, Logging.Source {
 
     /** {@inheritDoc} */
     public override string logging_domain {
@@ -30,7 +30,7 @@ public class Geary.Smtp.ClientSession : BaseObject, Logging.Source {
     public virtual signal void disconnected() {
     }
 
-    public ClientSession(Geary.Endpoint endpoint) {
+    public ClientSession(Convey.Endpoint endpoint) {
         this.cx = new ClientConnection(endpoint);
         this.cx.set_logging_parent(this);
     }
@@ -180,8 +180,8 @@ public class Geary.Smtp.ClientSession : BaseObject, Logging.Source {
         return response;
     }
 
-    public async void send_email_async(Geary.RFC822.MailboxAddress reverse_path,
-                                       Geary.RFC822.Message email,
+    public async void send_email_async(Convey.RFC822.MailboxAddress reverse_path,
+                                       Convey.RFC822.Message email,
                                        Cancellable? cancellable = null)
         throws GLib.Error {
         if (!cx.is_connected())

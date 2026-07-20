@@ -17,8 +17,8 @@
  * occurs the error will be suppressed and it will be re-attempted
  * once, to allow for the network dropping out mid-execution.
  */
-internal class Geary.ImapEngine.AccountProcessor :
-    Geary.BaseObject, Logging.Source {
+internal class Convey.ImapEngine.AccountProcessor :
+    Convey.BaseObject, Logging.Source {
 
 
     // Retry ops after network failures at least once before giving up

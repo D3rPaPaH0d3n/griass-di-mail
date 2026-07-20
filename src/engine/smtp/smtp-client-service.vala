@@ -12,7 +12,7 @@
  * This class maintains a queue of email messages to be delivered, and
  * opens SMTP connections to deliver queued messages as needed.
  */
-public class Geary.Smtp.ClientService : Geary.ClientService {
+public class Convey.Smtp.ClientService : Convey.ClientService {
 
 
     /** The GLib logging domain used for SMTP sub-system logging. */
@@ -54,10 +54,10 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
     private Cancellable? queue_cancellable = null;
 
     /** Emitted when the manager has sent an email. */
-    public signal void email_sent(Geary.Email email);
+    public signal void email_sent(Convey.Email email);
 
     /** Emitted when an error occurred sending an email. */
-    public signal void report_problem(Geary.ProblemReport problem);
+    public signal void report_problem(Convey.ProblemReport problem);
 
 
     public ClientService(AccountInformation account,
@@ -99,7 +99,7 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
      * This is a convenience method that calls {@link save_email} then
      * {@link queue_email} with the resulting id.
      */
-    public async void send_email(Geary.ComposedEmail composed,
+    public async void send_email(Convey.ComposedEmail composed,
                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         queue_email(yield save_email(composed, cancellable));
@@ -115,7 +115,7 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
      *
      * @see send_email
      */
-    public async EmailIdentifier save_email(Geary.ComposedEmail composed,
+    public async EmailIdentifier save_email(Convey.ComposedEmail composed,
                                             GLib.Cancellable? cancellable)
         throws GLib.Error {
         debug("Saving composed email: %s", email_subject(composed));
@@ -141,8 +141,8 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
         var domain = from != null && !from.is_empty
             ? from[0].domain
             : this.account.primary_mailbox.domain;
-        Geary.RFC822.Message rfc822 =
-            yield new Geary.RFC822.Message.from_composed_email(
+        Convey.RFC822.Message rfc822 =
+            yield new Convey.RFC822.Message.from_composed_email(
                 composed,
                 GMime.utils_generate_message_id(domain),
                 constraint,
@@ -284,8 +284,8 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
             // cancellable here - if it's been sent we want to try to
             // update the sent flag anyway
             debug("Outbox postie: Marking %s as sent", email.id.to_string());
-            Geary.EmailFlags flags = new Geary.EmailFlags();
-            flags.add(Geary.EmailFlags.OUTBOX_SENT);
+            Convey.EmailFlags flags = new Convey.EmailFlags();
+            flags.add(Convey.EmailFlags.OUTBOX_SENT);
             yield this.outbox.mark_email_async(
                 Collection.single(email.id), flags, null, null
             );
@@ -315,14 +315,14 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
         yield this.outbox.remove_email_async(Collection.single(email.id), null);
     }
 
-    private async void send_email_internal(Geary.RFC822.Message rfc822, Cancellable? cancellable)
+    private async void send_email_internal(Convey.RFC822.Message rfc822, Cancellable? cancellable)
         throws Error {
         Credentials? login = this.account.get_outgoing_credentials();
         if (login != null && !login.is_complete()) {
             throw new SmtpError.AUTHENTICATION_FAILED("Token not loaded");
         }
 
-        Smtp.ClientSession smtp = new Geary.Smtp.ClientSession(this.remote);
+        Smtp.ClientSession smtp = new Convey.Smtp.ClientSession(this.remote);
         smtp.set_logging_parent(this);
         sending_monitor.notify_start();
 
@@ -382,14 +382,14 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
             throw smtp_err;
     }
 
-    private async void save_sent_mail(Geary.Email message,
+    private async void save_sent_mail(Convey.Email message,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Geary.FolderSupport.Create? create = (
+        Convey.FolderSupport.Create? create = (
             yield this.owner.get_required_special_folder_async(
                 SENT, cancellable
             )
-        ) as Geary.FolderSupport.Create;
+        ) as Convey.FolderSupport.Create;
         if (create == null) {
             throw new EngineError.UNSUPPORTED(
                 "Save sent mail enabled, but no writable sent mail folder"
@@ -414,10 +414,10 @@ public class Geary.Smtp.ClientService : Geary.ClientService {
         }
     }
 
-    private async void sync_sent_mail(Geary.Email message,
+    private async void sync_sent_mail(Convey.Email message,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Geary.Folder sent = this.owner.get_special_folder(SENT);
+        Convey.Folder sent = this.owner.get_special_folder(SENT);
         if (sent != null) {
             bool open = false;
             try {

@@ -28,7 +28,7 @@
                 <property name="activate_on_single_click">True</property>
                 <signal name="row_activated" handler="on_row_activated" swapped="no"/>
                 <style>
-                  <class name="geary-folder-popover-list"/>
+                  <class name="convey-folder-popover-list"/>
                 </style>
               </object>
             </child>

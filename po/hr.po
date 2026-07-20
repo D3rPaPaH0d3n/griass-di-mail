@@ -1,5 +1,5 @@
-# po/geary.pot
-# PO message string template file for Geary email client
+# po/convey.pot
+# PO message string template file for Convey email client
 # Copyright 2016 Software Freedom Conservancy Inc.
 # This file is distributed under the GNU LGPL, version 2.1.
 #
@@ -9,12 +9,12 @@
 # zladuric <zladuric@gmail.com>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: geary-0.4.1\n"
+"Project-Id-Version: convey-0.4.1\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/geary/issues\n"
 "POT-Creation-Date: 2022-09-20 18:49+0000\n"
 "PO-Revision-Date: 2022-09-20 21:27+0200\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
-"Language-Team: Croatian (http://www.transifex.com/projects/p/geary/language/"
+"Language-Team: Croatian (http://www.transifex.com/projects/p/convey/language/"
 "hr/)\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
@@ -24,57 +24,57 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Poedit 3.1.1\n"
 
-#: desktop/geary-attach.contract.desktop.in:3
+#: desktop/convey-attach.contract.desktop.in:3
 msgid "Send by email"
 msgstr "Pošalji putem e-pošte"
 
-#: desktop/geary-attach.contract.desktop.in:6
-msgid "Send files using Geary"
-msgstr "Pošalji datoteke koristeći Geary"
+#: desktop/convey-attach.contract.desktop.in:6
+msgid "Send files using Convey"
+msgstr "Pošalji datoteke koristeći Convey"
 
 #. Translators: The application name
-#: desktop/geary-autostart.desktop.in.in:3
-#: desktop/org.gnome.Geary.appdata.xml.in.in:11
-#: desktop/org.gnome.Geary.desktop.in.in:3
+#: desktop/convey-autostart.desktop.in.in:3
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:11
+#: desktop/net.donnybeelo.Convey.desktop.in.in:3
 #: src/client/accounts/accounts-editor-servers-pane.vala:551
 #: src/client/application/application-main-window.vala:706
-msgid "Geary"
-msgstr "Geary"
+msgid "Convey"
+msgstr "Convey"
 
-#: desktop/geary-autostart.desktop.in.in:4
-#: desktop/org.gnome.Geary.desktop.in.in:4
+#: desktop/convey-autostart.desktop.in.in:4
+#: desktop/net.donnybeelo.Convey.desktop.in.in:4
 msgid "Email"
 msgstr "E-pošta"
 
 #. Translators: The application's summary / tagline
-#: desktop/geary-autostart.desktop.in.in:5
-#: desktop/org.gnome.Geary.appdata.xml.in.in:15
-#: desktop/org.gnome.Geary.desktop.in.in:5
+#: desktop/convey-autostart.desktop.in.in:5
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:15
+#: desktop/net.donnybeelo.Convey.desktop.in.in:5
 #: src/client/application/application-client.vala:33
 msgid "Send and receive email"
 msgstr "Primi i pošalji e-poštu"
 
 #. Translators: These are desktop search terms. Do not translate semicolons, end line with a semicolon.
-#: desktop/geary-autostart.desktop.in.in:7
+#: desktop/convey-autostart.desktop.in.in:7
 msgid "Email;E-mail;Mail;"
 msgstr "Epošta;E-pošta;Pošta;"
 
 #. Translators: The development team's name
-#: desktop/org.gnome.Geary.appdata.xml.in.in:13
-msgid "Geary Development Team"
-msgstr "Geary razvojni tim"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:13
+msgid "Convey Development Team"
+msgstr "Convey razvojni tim"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:17
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:17
 msgid ""
-"Geary is an email application built around conversations, for the GNOME 3 "
+"Convey is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Geary je aplikacija e-pošte izgrađena oko razgovora, za GNOME 3 radno "
+"Convey je aplikacija e-pošte izgrađena oko razgovora, za GNOME 3 radno "
 "okruženje. Omogućuje vam čitanje, pronalazak i slanje e-pošte iz "
 "jednostavnog, modernog sučelja."
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:22
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:22
 msgid ""
 "Conversations allow you to read a complete discussion without having to find "
 "and click from message to message."
@@ -82,112 +82,112 @@ msgstr ""
 "Razgovori vam omogućuju čitanje potpune rasprave bez potrebe za "
 "pronalaženjem i klikanjem iz poruke u poruku."
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:26
-msgid "Geary’s features include:"
-msgstr "Gearyjeve značajke uključuju:"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:26
+msgid "Convey’s features include:"
+msgstr "Conveyjeve značajke uključuju:"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:28
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:28
 msgid "Quick email account setup"
 msgstr "Brzo podešavanje računa e-pošte"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:29
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:29
 msgid "Shows related messages together in conversations"
 msgstr "Prikazuje povezane poruke zajedno u razgovoru"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:30
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:30
 msgid "Fast, full text and keyword search"
 msgstr "Brza pretraga po potpunom tekstu i ključnoj riječi"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:31
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:31
 msgid "Full-featured HTML and plain text message composer"
 msgstr "Potpuno funkcionalan sastavljač poruke u HTML-u i običnom tekstu"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:32
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:32
 msgid "Desktop notification of new mail"
 msgstr "Obavijest radnog okruženja o novoj pošti"
 
-#: desktop/org.gnome.Geary.appdata.xml.in.in:33
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:33
 msgid "Compatible with GMail, Yahoo! Mail, Outlook.com and other IMAP servers"
 msgstr ""
 "Kompatibilno s GMailom, Yahoo! Mailom, Outlook.com i ostalim IMAP "
 "poslužiteljima"
 
 #. Translators: A screenshot description.
-#: desktop/org.gnome.Geary.appdata.xml.in.in:50
-msgid "Geary displaying a conversation"
-msgstr "Geary prikazuje razgovor"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:50
+msgid "Convey displaying a conversation"
+msgstr "Convey prikazuje razgovor"
 
 #. Translators: A screenshot description.
-#: desktop/org.gnome.Geary.appdata.xml.in.in:55
-msgid "Geary showing the rich text composer"
-msgstr "Geary prikazuje sastavljača obogaćenog tekstom"
+#: desktop/net.donnybeelo.Convey.appdata.xml.in.in:55
+msgid "Convey showing the rich text composer"
+msgstr "Convey prikazuje sastavljača obogaćenog tekstom"
 
 #. Translators: These are desktop search terms. Do not translate semicolons, end line with a semicolon.
-#: desktop/org.gnome.Geary.desktop.in.in:7
+#: desktop/net.donnybeelo.Convey.desktop.in.in:7
 msgid "Mail;E-mail;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 msgstr "Pošta;E-pošta;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 
-#: desktop/org.gnome.Geary.desktop.in.in:24
+#: desktop/net.donnybeelo.Convey.desktop.in.in:24
 msgid "Compose Message"
 msgstr "Sastavljanje poruke"
 
-#: desktop/org.gnome.Geary.desktop.in.in:28
+#: desktop/net.donnybeelo.Convey.desktop.in.in:28
 msgid "New Window"
 msgstr "Novi prozor"
 
-#: desktop/org.gnome.Geary.gschema.xml:8
+#: desktop/net.donnybeelo.Convey.gschema.xml:8
 msgid "Maximize window"
 msgstr "Uvećaj prozor"
 
-#: desktop/org.gnome.Geary.gschema.xml:9
+#: desktop/net.donnybeelo.Convey.gschema.xml:9
 msgid "True if the application window is maximized, false otherwise."
 msgstr "Ako je odabrana istina, prozor je uvećan, laž prozor je smanjen."
 
-#: desktop/org.gnome.Geary.gschema.xml:14
+#: desktop/net.donnybeelo.Convey.gschema.xml:14
 msgid "Width of window"
 msgstr "Širina prozora"
 
-#: desktop/org.gnome.Geary.gschema.xml:15
+#: desktop/net.donnybeelo.Convey.gschema.xml:15
 msgid "The last recorded width of the application window."
 msgstr "Posljednje spremljena širina prozora aplikacije."
 
-#: desktop/org.gnome.Geary.gschema.xml:20
+#: desktop/net.donnybeelo.Convey.gschema.xml:20
 msgid "Height of window"
 msgstr "Visina prozora"
 
-#: desktop/org.gnome.Geary.gschema.xml:21
+#: desktop/net.donnybeelo.Convey.gschema.xml:21
 msgid "The last recorded height of the application window."
 msgstr "Posljednje spremljena visina prozora aplikacije."
 
-#: desktop/org.gnome.Geary.gschema.xml:26
+#: desktop/net.donnybeelo.Convey.gschema.xml:26
 msgid "Show/hide formatting toolbar"
 msgstr "Prikaži/Sakrij oblikovanje alatne traku"
 
-#: desktop/org.gnome.Geary.gschema.xml:27
+#: desktop/net.donnybeelo.Convey.gschema.xml:27
 msgid "True if the formatting toolbar in the composer is shown."
 msgstr "Istina ako je oblikovanje alatne trake u sastavljaču prikazano."
 
-#: desktop/org.gnome.Geary.gschema.xml:32
+#: desktop/net.donnybeelo.Convey.gschema.xml:32
 msgid "Autoselect next message"
 msgstr "Automatski odaberi sljedeću poruku"
 
-#: desktop/org.gnome.Geary.gschema.xml:33
+#: desktop/net.donnybeelo.Convey.gschema.xml:33
 msgid "True if we should autoselect the next available conversation."
 msgstr "Istina ako se treba automatski odabrati sljedeći dostupan razgovor."
 
-#: desktop/org.gnome.Geary.gschema.xml:38
+#: desktop/net.donnybeelo.Convey.gschema.xml:38
 msgid "Display message previews"
 msgstr "Prikaži pregled razgovora"
 
-#: desktop/org.gnome.Geary.gschema.xml:39
+#: desktop/net.donnybeelo.Convey.gschema.xml:39
 msgid "True if we should display a short preview of each message."
 msgstr "Istina ako se treba prikazati kratki pregled svake poruke."
 
-#: desktop/org.gnome.Geary.gschema.xml:44
+#: desktop/net.donnybeelo.Convey.gschema.xml:44
 msgid "Use single key shortcuts"
 msgstr "Koristi prečace jednom tipkom"
 
-#: desktop/org.gnome.Geary.gschema.xml:45
+#: desktop/net.donnybeelo.Convey.gschema.xml:45
 msgid ""
 "Enables shortcuts for email actions that do not require pressing <Ctrl> to "
 "emulate those used by Gmail."
@@ -195,11 +195,11 @@ msgstr ""
 "Omogućuje prečace za radnje e-pošte tako da se ne zahtijeva pritisak na "
 "<Ctrl> tipku za emuliranje onih koje zahtijeva Gmail."
 
-#: desktop/org.gnome.Geary.gschema.xml:52
+#: desktop/net.donnybeelo.Convey.gschema.xml:52
 msgid "Languages that shall be used in the spell checker"
 msgstr "Jezici koji bi se trebali koristiti pri provjeri pravopisa"
 
-#: desktop/org.gnome.Geary.gschema.xml:53
+#: desktop/net.donnybeelo.Convey.gschema.xml:53
 msgid ""
 "A list of POSIX locales, with the empty list disabling spell checking and "
 "the null list using desktop languages by default."
@@ -207,83 +207,83 @@ msgstr ""
 "Popis POSIX lokalizacija, prazan popis onemogućuje provjeru pravopisa i "
 "koristi se jezik radnog okruženja po zadanome."
 
-#: desktop/org.gnome.Geary.gschema.xml:60
+#: desktop/net.donnybeelo.Convey.gschema.xml:60
 msgid "Languages that are displayed in the spell checker popover"
 msgstr "Jezici koji se prikazuju u skočnome prozoru provjere pravopisa"
 
-#: desktop/org.gnome.Geary.gschema.xml:61
+#: desktop/net.donnybeelo.Convey.gschema.xml:61
 msgid ""
 "List of languages that are always displayed in the popover of the spell "
 "checker."
 msgstr ""
 "Popis jezika koji su uvijek prikazuju u skočnome prozoru provjere pravopisa."
 
-#: desktop/org.gnome.Geary.gschema.xml:66
+#: desktop/net.donnybeelo.Convey.gschema.xml:66
 msgid "Run application in background on logon and when closed"
 msgstr "Pokreni aplikaciju u pozadini pri prijavi i pri zatvaranju"
 
-#: desktop/org.gnome.Geary.gschema.xml:67
+#: desktop/net.donnybeelo.Convey.gschema.xml:67
 msgid "True to run application in background."
 msgstr "Istina za pokretanje aplikacije u pozadini."
 
-#: desktop/org.gnome.Geary.gschema.xml:72
+#: desktop/net.donnybeelo.Convey.gschema.xml:72
 msgid "Ask when opening an attachment"
 msgstr "Upitaj pri otvaranju privitka"
 
-#: desktop/org.gnome.Geary.gschema.xml:73
+#: desktop/net.donnybeelo.Convey.gschema.xml:73
 msgid "True to ask when opening an attachment."
 msgstr "Istina za upit pri otvaranju privitka."
 
-#: desktop/org.gnome.Geary.gschema.xml:78
+#: desktop/net.donnybeelo.Convey.gschema.xml:78
 msgid "Whether to compose emails in HTML"
 msgstr "Treba li sastaviti e-poštu u HTML obliku"
 
-#: desktop/org.gnome.Geary.gschema.xml:79
+#: desktop/net.donnybeelo.Convey.gschema.xml:79
 msgid "True to compose emails in HTML; false for plain text."
 msgstr ""
 "Istina za sastavljanje e-pošte u HTML obliku, laž za sastavljanje u običnome "
 "tekstu."
 
-#: desktop/org.gnome.Geary.gschema.xml:84
+#: desktop/net.donnybeelo.Convey.gschema.xml:84
 msgid "Advisory strategy for full-text searching"
 msgstr "Savjetodavna strategija za pretraživanje potpunog teksta"
 
-#: desktop/org.gnome.Geary.gschema.xml:85
+#: desktop/net.donnybeelo.Convey.gschema.xml:85
 msgid ""
 "Acceptable values are “exact”, “conservative”, “aggressive”, and “horizon”."
 msgstr ""
 "Prihvatljive vrijednosti su “exact”, “conservative”, “aggressive”, i "
 "“horizon”."
 
-#: desktop/org.gnome.Geary.gschema.xml:90
+#: desktop/net.donnybeelo.Convey.gschema.xml:90
 msgid "Zoom of conversation viewer"
 msgstr "Uvećanje pogleda razgovora"
 
-#: desktop/org.gnome.Geary.gschema.xml:91
+#: desktop/net.donnybeelo.Convey.gschema.xml:91
 msgid "The zoom to apply on the conservation view."
 msgstr "Primijenjeno uvećanje pogleda razgovora."
 
-#: desktop/org.gnome.Geary.gschema.xml:96
+#: desktop/net.donnybeelo.Convey.gschema.xml:96
 msgid "Size of detached composer window"
 msgstr "Veličina odvojenog prozora sastavljača"
 
-#: desktop/org.gnome.Geary.gschema.xml:97
+#: desktop/net.donnybeelo.Convey.gschema.xml:97
 msgid "The last recorded size of the detached composer window."
 msgstr "Posljednja spremljena veličina odvojenog prozora sastavljača."
 
-#: desktop/org.gnome.Geary.gschema.xml:102
+#: desktop/net.donnybeelo.Convey.gschema.xml:102
 msgid "Allow images for these domains"
 msgstr "Dopusti slike za ove domene"
 
-#: desktop/org.gnome.Geary.gschema.xml:103
+#: desktop/net.donnybeelo.Convey.gschema.xml:103
 msgid "Images from these domains will be trusted"
 msgstr "Slike s ovih domena biti će pouzdane"
 
-#: desktop/org.gnome.Geary.gschema.xml:108
+#: desktop/net.donnybeelo.Convey.gschema.xml:108
 msgid "Undo sending email delay"
 msgstr "Odgoda slanja e-pošte"
 
-#: desktop/org.gnome.Geary.gschema.xml:109
+#: desktop/net.donnybeelo.Convey.gschema.xml:109
 msgid ""
 "The number of seconds to wait before sending an email. Set to zero or less "
 "to disable."
@@ -291,33 +291,33 @@ msgstr ""
 "Broj sekundi za čekanje prije slanja e-pošte. Postavi na nulu ili manje za "
 "onemogućavanje."
 
-#: desktop/org.gnome.Geary.gschema.xml:115
+#: desktop/net.donnybeelo.Convey.gschema.xml:115
 msgid "Brief notification display time"
 msgstr "Vrijeme prikaza poruka sastanka"
 
-#: desktop/org.gnome.Geary.gschema.xml:116
+#: desktop/net.donnybeelo.Convey.gschema.xml:116
 msgid ""
 "The length of time in seconds for which brief notifications should be "
 "displayed."
 msgstr "Trajanje u sekundama, vremena prikaza poruka sastanka."
 
-#: desktop/org.gnome.Geary.gschema.xml:122
+#: desktop/net.donnybeelo.Convey.gschema.xml:122
 msgid "List of optional plugins"
 msgstr "Popis neobaveznih priključaka"
 
-#: desktop/org.gnome.Geary.gschema.xml:123
+#: desktop/net.donnybeelo.Convey.gschema.xml:123
 msgid "Plugins listed here will be loaded on startup."
 msgstr "Priključci prikazani ovdje biti će učitani pri pokretanju."
 
-#: desktop/org.gnome.Geary.gschema.xml:128
+#: desktop/net.donnybeelo.Convey.gschema.xml:128
 msgid "Whether we migrated the old settings"
 msgstr "Trebamo li prenijeti stare postavke"
 
-#: desktop/org.gnome.Geary.gschema.xml:129
+#: desktop/net.donnybeelo.Convey.gschema.xml:129
 msgid ""
-"False to check for the old “org.yorba.geary”-schema and copy its values."
+"False to check for the old “org.yorba.convey”-schema and copy its values."
 msgstr ""
-"Laž za provjeru starih “org.yorba.geary”-shema i kopiranja njenih "
+"Laž za provjeru starih “org.yorba.convey”-shema i kopiranja njenih "
 "vrijednosti."
 
 #. Translators: In-app notification label, when
@@ -477,10 +477,10 @@ msgstr "Ukloni račun: %s"
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:221
 msgid ""
-"This will remove it from Geary and delete locally cached email data from "
+"This will remove it from Convey and delete locally cached email data from "
 "your computer. Nothing will be deleted from your service provider."
 msgstr ""
-"To će ga ukloniti iz Gearya i obrisati lokalno spremljene podatke e-pošte s "
+"To će ga ukloniti iz Conveya i obrisati lokalno spremljene podatke e-pošte s "
 "vašeg računala. Ništa neće biti obrisano iz poslužitelja vaših pružatelja "
 "usluge e-pošte."
 
@@ -748,7 +748,7 @@ msgstr "Račun nije nadopunjen: %s"
 
 #. Translators: This label describes the program that
 #. created the account, e.g. an SSO service like GOA, or
-#. locally by Geary.
+#. locally by Convey.
 #: src/client/accounts/accounts-editor-servers-pane.vala:536
 msgid "Account source"
 msgstr "Izvor računa"
@@ -815,12 +815,12 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "Autorsko pravo © 2016 Software Freedom Conservancy Inc."
 
 #: src/client/application/application-client.vala:35
-msgid "Copyright © 2016-2021 Geary Development Team."
-msgstr "Autorsko pravo © 2016-2021 Geary razvojni tim."
+msgid "Copyright © 2016-2021 Convey Development Team."
+msgstr "Autorsko pravo © 2016-2021 Convey razvojni tim."
 
 #: src/client/application/application-client.vala:37
-msgid "Visit the Geary web site"
-msgstr "Posjetite Geary web stranicu"
+msgid "Visit the Convey web site"
+msgstr "Posjetite Convey web stranicu"
 
 #. / Command line option
 #: src/client/application/application-client.vala:101
@@ -891,13 +891,13 @@ msgstr "Prikaži inačicu programa"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:267
-msgid "Geary version"
-msgstr "Geary inačica"
+msgid "Convey version"
+msgstr "Convey inačica"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:269
-msgid "Geary revision"
-msgstr "Geary revizija"
+msgid "Convey revision"
+msgstr "Convey revizija"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:271
@@ -1092,7 +1092,7 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-"Geary can rebuild the database and re-synchronize with the server or exit.\n"
+"Convey can rebuild the database and re-synchronize with the server or exit.\n"
 "\n"
 "Rebuilding the database will destroy all local email and its attachments. "
 "<b>The mail on the your server will not be affected.</b>"
@@ -1103,7 +1103,7 @@ msgstr ""
 "\n"
 "%s\n"
 "\n"
-"Geary može ponovno izgraditi bazu podataka i uskladiti je s poslužiteljem "
+"Convey može ponovno izgraditi bazu podataka i uskladiti je s poslužiteljem "
 "pri izlazu.\n"
 "\n"
 "Ponovna izgradnja baze podataka uništiti će sve lokalne poruke e-pošte i "
@@ -1244,8 +1244,8 @@ msgid "Empty all email from your %s folder?"
 msgstr "Želite li isprazniti svu e-poštu iz vaše %s mape?"
 
 #: src/client/application/application-main-window.vala:1446
-msgid "This removes the email from Geary and your email server."
-msgstr "Ovo uklanja e-poštu iz Gearya i vaših poslužitelja e-pošte."
+msgid "This removes the email from Convey and your email server."
+msgstr "Ovo uklanja e-poštu iz Conveya i vaših poslužitelja e-pošte."
 
 #: src/client/application/application-main-window.vala:1447
 msgid "This cannot be undone."
@@ -1283,8 +1283,8 @@ msgid "%s (%d)"
 msgstr "%s (%d)"
 
 #: src/client/application/application-startup-manager.vala:78
-msgid "Geary wants to run in background"
-msgstr "Geary se želi pokrenuti u pozadini"
+msgid "Convey wants to run in background"
+msgstr "Convey se želi pokrenuti u pozadini"
 
 #. Translators: The first argument will be a
 #. description of the document type, the second will
@@ -1443,8 +1443,8 @@ msgstr "_Nadgledaj novu e-poštu kada se zatvori"
 
 #. / Translators: Preferences tooltip
 #: src/client/components/components-preferences-window.vala:161
-msgid "Geary will keep running after all windows are closed"
-msgstr "Geary će nastaviti biti pokrenut nakon što se svi prozori zatvore"
+msgid "Convey will keep running after all windows are closed"
+msgstr "Convey će nastaviti biti pokrenut nakon što se svi prozori zatvore"
 
 #. / Translators: Preferences label
 #: src/client/components/components-preferences-window.vala:171
@@ -1471,16 +1471,16 @@ msgstr "Problem s računom"
 #. problem. String substitution is the account name.
 #: src/client/components/components-problem-report-info-bar.vala:40
 #, c-format
-msgid "Geary has encountered a problem with %s."
-msgstr "Geary je naišao na problem s %s."
+msgid "Convey has encountered a problem with %s."
+msgstr "Convey je naišao na problem s %s."
 
 #. Translators: Info bar sub-title for a generic
 #. account problem. String substitution is the
 #. account name.
 #: src/client/components/components-problem-report-info-bar.vala:53
 #, c-format
-msgid "Geary encountered a problem checking mail for %s."
-msgstr "Geary je naišao na problem pri provjeri e-pošte na %s."
+msgid "Convey encountered a problem checking mail for %s."
+msgstr "Convey je naišao na problem pri provjeri e-pošte na %s."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:57
@@ -1492,8 +1492,8 @@ msgstr "Pokušajte se ponovno povezati"
 #. account name
 #: src/client/components/components-problem-report-info-bar.vala:65
 #, c-format
-msgid "Geary encountered a problem sending email for %s."
-msgstr "Geary je naišao na problem pri slanju e-pošte na %s."
+msgid "Convey encountered a problem sending email for %s."
+msgstr "Convey je naišao na problem pri slanju e-pošte na %s."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:69
@@ -1503,8 +1503,8 @@ msgstr "Pokušaj ponovno poslati poruke na čekanju"
 #. Translators: Info bar title for a generic application
 #. problem.
 #: src/client/components/components-problem-report-info-bar.vala:76
-msgid "Geary has encountered a problem"
-msgstr "Geary je naišao na problem"
+msgid "Convey has encountered a problem"
+msgstr "Convey je naišao na problem"
 
 #. Translators: Info bar sub-title for a generic
 #. application problem.
@@ -2058,19 +2058,19 @@ msgstr ""
 
 #: src/client/dialogs/certificate-warning-dialog.vala:56
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary not to access this "
+"Selecting “Don’t Trust This Server” will cause Convey not to access this "
 "server."
 msgstr ""
 "Odabirom \"Ne vjeruj ovom poslužitelju\" može prouzrokovati uskraćivanje "
 "pristupa ovom poslužitelju."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:58
-msgid "Geary will not add or update this email account."
-msgstr "Geary neće dodati ili nadopuniti ovaj račun e-pošte."
+msgid "Convey will not add or update this email account."
+msgstr "Convey neće dodati ili nadopuniti ovaj račun e-pošte."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:63
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Geary to stop accessing this "
+"Selecting “Don’t Trust This Server” will cause Convey to stop accessing this "
 "account."
 msgstr ""
 "Odabirom \"Ne vjeruj ovom poslužitelju\" može prouzrokovati zaustavljanje "
@@ -2126,8 +2126,8 @@ msgstr "Pojediosti"
 #. strings, and Glade doesn't support the "larger" size attribute. See this bug report for
 #. details: https://bugzilla.gnome.org/show_bug.cgi?id=679006
 #: src/client/dialogs/password-dialog.vala:16
-msgid "Geary requires your email password to continue"
-msgstr "Geary zahtijeva vašu lozinku e-pošte za nastavak"
+msgid "Convey requires your email password to continue"
+msgstr "Convey zahtijeva vašu lozinku e-pošte za nastavak"
 
 #: src/client/folder-list/folder-list-account-branch.vala:53
 msgid "Folders"
@@ -2542,7 +2542,7 @@ msgstr "---------- Proslijeđena poruka ----------"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:605
 msgctxt "Search operator"
 msgid "attachment"
@@ -2555,7 +2555,7 @@ msgstr "privitak"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:618
 msgctxt "Search operator"
 msgid "bcc"
@@ -2568,7 +2568,7 @@ msgstr "prima-tajnu-kopiju"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:630
 msgctxt "Search operator"
 msgid "body"
@@ -2581,7 +2581,7 @@ msgstr "sadržaj"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:642
 msgctxt "Search operator"
 msgid "cc"
@@ -2594,7 +2594,7 @@ msgstr "prima-kopiju"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:654
 msgctxt "Search operator"
 msgid "from"
@@ -2607,7 +2607,7 @@ msgstr "šalje"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:668
 msgctxt "Search operator"
 msgid "subject"
@@ -2620,7 +2620,7 @@ msgstr "predmet"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:680
 msgctxt "Search operator"
 msgid "to"
@@ -2633,7 +2633,7 @@ msgstr "za"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:691
 msgctxt "Search operator value - mail addressed to the user"
 msgid "me"
@@ -2646,7 +2646,7 @@ msgstr "mene"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:704
 msgctxt "Search operator value - mail sent by the user"
 msgid "me"
@@ -2661,7 +2661,7 @@ msgstr "mene"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:719
 msgctxt "Search operator"
 msgid "is"
@@ -2674,7 +2674,7 @@ msgstr "je"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:729
 msgctxt "'is:' search operator value"
 msgid "unread"
@@ -2687,7 +2687,7 @@ msgstr "nepročitano"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:739
 msgctxt "'is:' search operator value"
 msgid "read"
@@ -2700,7 +2700,7 @@ msgstr "pročitano"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Geary User Guide.
+#. / Convey User Guide.
 #: src/client/util/util-email.vala:749
 msgctxt "'is:' search operator value"
 msgid "starred"
@@ -2878,8 +2878,8 @@ msgid "Server Settings"
 msgstr "Postavke poslužitelja"
 
 #: ui/accounts_editor_edit_pane.ui:242
-msgid "Remove this account from Geary"
-msgstr "Ukloni ovaj račun iz Gearya"
+msgid "Remove this account from Convey"
+msgstr "Ukloni ovaj račun iz Conveya"
 
 #: ui/accounts_editor_list_pane.ui:7
 msgid "Accounts"
@@ -2890,8 +2890,8 @@ msgid "To get started, select an email provider below."
 msgstr "Kako bi započeli, odaberite račun ispod."
 
 #: ui/accounts_editor_list_pane.ui:86
-msgid "Welcome to Geary"
-msgstr "Dobrodošli u Geary"
+msgid "Welcome to Convey"
+msgstr "Dobrodošli u Convey"
 
 #: ui/accounts_editor_servers_pane.ui:42
 msgid "Apply"
@@ -3240,8 +3240,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "_Prečaci tipkovnice"
 
 #: ui/components-main-toolbar-menus.ui:47
-msgid "_About Geary"
-msgstr "_O Gearyu"
+msgid "_About Convey"
+msgstr "_O Conveyu"
 
 #: ui/conversation-contact-popover.ui:134
 msgid "New Conversation…"
@@ -3991,8 +3991,8 @@ msgstr "_Ovjera"
 #~ msgid "        &#8226; Connection error.\n"
 #~ msgstr "        &#8226; Greška spajanja.\n"
 
-#~ msgid "        &#8226; Email address already added to Geary.\n"
-#~ msgstr "        &#8226; Adresa e-pošte je već dodana u Geary.\n"
+#~ msgid "        &#8226; Email address already added to Convey.\n"
+#~ msgstr "        &#8226; Adresa e-pošte je već dodana u Convey.\n"
 
 #~ msgid "        &#8226; IMAP connection error.\n"
 #~ msgstr "        &#8226; Greška IMAP spajanja.\n"
@@ -4122,16 +4122,16 @@ msgstr "_Ovjera"
 
 #~ msgid ""
 #~ "The version number of the local mail database is formatted for a newer "
-#~ "version of Geary. Unfortunately, the database cannot be \"rolled back\" "
-#~ "to work with this version of Geary.\n"
+#~ "version of Convey. Unfortunately, the database cannot be \"rolled back\" "
+#~ "to work with this version of Convey.\n"
 #~ "\n"
-#~ "Please install the latest version of Geary and try again."
+#~ "Please install the latest version of Convey and try again."
 #~ msgstr ""
 #~ "Broj verzije lokalne baze podataka e-pošte je formatiran za noviju "
-#~ "inačicu Gearyija. Na žalost, bazu podataka nije moguće \"vratiti natrag\" "
-#~ "za rad sa ovom inačicom Gearyija.\n"
+#~ "inačicu Conveyija. Na žalost, bazu podataka nije moguće \"vratiti natrag\" "
+#~ "za rad sa ovom inačicom Conveyija.\n"
 #~ "\n"
-#~ "Molimo instalirajte najnoviju inačicu Gearyija i pokušajte ponovo."
+#~ "Molimo instalirajte najnoviju inačicu Conveyija i pokušajte ponovo."
 
 #~ msgid "Unrecognized command line option \"%s\"\n"
 #~ msgstr "Nepoznata opcija komandne linije \"%s\"\n"

@@ -5,16 +5,16 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-public class Mock.FolderPoperties : Geary.FolderProperties {
+public class Mock.FolderPoperties : Convey.FolderProperties {
 
 
     public FolderPoperties() {
         base(
             0,
             0,
-            Geary.Trillian.UNKNOWN,
-            Geary.Trillian.UNKNOWN,
-            Geary.Trillian.UNKNOWN,
+            Convey.Trillian.UNKNOWN,
+            Convey.Trillian.UNKNOWN,
+            Convey.Trillian.UNKNOWN,
             false,
             false,
             false

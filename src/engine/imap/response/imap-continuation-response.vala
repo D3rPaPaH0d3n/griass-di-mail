@@ -14,7 +14,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.5]] for more information.
  */
 
-public class Geary.Imap.ContinuationResponse : ServerResponse {
+public class Convey.Imap.ContinuationResponse : ServerResponse {
 
 
     private ContinuationResponse(Quirks quirks) {

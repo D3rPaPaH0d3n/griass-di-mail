@@ -18,7 +18,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.5]]
  */
 
-public class Geary.Imap.NilParameter : Geary.Imap.Parameter {
+public class Convey.Imap.NilParameter : Convey.Imap.Parameter {
     public const string VALUE = "NIL";
 
     private static NilParameter? _instance = null;

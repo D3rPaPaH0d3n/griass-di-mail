@@ -5,8 +5,8 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-internal class Geary.MockContactHarvester :
-    Geary.BaseObject,
+internal class Convey.MockContactHarvester :
+    Convey.BaseObject,
     ContactHarvester {
 
     public async void harvest_from_email(Gee.Collection<Email> messages,

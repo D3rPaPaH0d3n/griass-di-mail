@@ -4,7 +4,7 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Geary.App.Conversation : BaseObject {
+public class Convey.App.Conversation : BaseObject {
     /**
      * Specify the ordering of {@link Email} returned by various accessors.
      *
@@ -44,10 +44,10 @@ public class Geary.App.Conversation : BaseObject {
     public Folder base_folder { get; private set; }
 
     /** Cache of paths associated with each email */
-    internal Gee.HashMultiMap<Geary.EmailIdentifier,Geary.FolderPath> path_map {
+    internal Gee.HashMultiMap<Convey.EmailIdentifier,Convey.FolderPath> path_map {
         get;
         private set;
-        default = new Gee.HashMultiMap< Geary.EmailIdentifier,Geary.FolderPath>();
+        default = new Gee.HashMultiMap< Convey.EmailIdentifier,Convey.FolderPath>();
     }
 
     private Gee.HashMultiSet<RFC822.MessageID> message_ids = new Gee.HashMultiSet<RFC822.MessageID>();
@@ -59,34 +59,34 @@ public class Geary.App.Conversation : BaseObject {
     // this isn't ideal but the cost of adding an email to multiple sorted sets once versus
     // the number of times they're accessed makes it worth it
     private Gee.SortedSet<Email> sent_date_ascending = new Gee.TreeSet<Email>(
-        Geary.Email.compare_sent_date_ascending);
+        Convey.Email.compare_sent_date_ascending);
     private Gee.SortedSet<Email> sent_date_descending = new Gee.TreeSet<Email>(
-        Geary.Email.compare_sent_date_descending);
+        Convey.Email.compare_sent_date_descending);
     private Gee.SortedSet<Email> recv_date_ascending = new Gee.TreeSet<Email>(
-        Geary.Email.compare_recv_date_ascending);
+        Convey.Email.compare_recv_date_ascending);
     private Gee.SortedSet<Email> recv_date_descending = new Gee.TreeSet<Email>(
-        Geary.Email.compare_recv_date_descending);
+        Convey.Email.compare_recv_date_descending);
 
     /**
      * Fired when email has been added to this conversation.
      */
-    public signal void appended(Geary.Email email);
+    public signal void appended(Convey.Email email);
 
     /**
      * Fired when email has been trimmed from this conversation.
      */
-    public signal void trimmed(Geary.Email email);
+    public signal void trimmed(Convey.Email email);
 
     /**
      * Fired when the flags of an email in this conversation have changed.
      */
-    public signal void email_flags_changed(Geary.Email email);
+    public signal void email_flags_changed(Convey.Email email);
 
 
     /**
      * Constructs a conversation relative to the given base folder.
      */
-    internal Conversation(Geary.Folder base_folder) {
+    internal Conversation(Convey.Folder base_folder) {
         this.convnum = Conversation.next_convnum++;
         this.base_folder = base_folder;
     }
@@ -103,7 +103,7 @@ public class Geary.App.Conversation : BaseObject {
      */
     public uint get_count_in_folder(FolderPath path) {
         uint count = 0;
-        foreach (Geary.EmailIdentifier id in this.path_map.get_keys()) {
+        foreach (Convey.EmailIdentifier id in this.path_map.get_keys()) {
             if (path in this.path_map.get(id)) {
                 count++;
             }
@@ -115,21 +115,21 @@ public class Geary.App.Conversation : BaseObject {
      * Returns true if *any* message in the conversation is unread.
      */
     public bool is_unread() {
-        return has_flag(Geary.EmailFlags.UNREAD);
+        return has_flag(Convey.EmailFlags.UNREAD);
     }
 
     /**
      * Returns true if any message in the conversation is not unread.
      */
     public bool has_any_read_message() {
-        return is_missing_flag(Geary.EmailFlags.UNREAD);
+        return is_missing_flag(Convey.EmailFlags.UNREAD);
     }
 
     /**
      * Returns true if *any* message in the conversation is flagged.
      */
     public bool is_flagged() {
-        return has_flag(Geary.EmailFlags.FLAGGED);
+        return has_flag(Convey.EmailFlags.FLAGGED);
     }
 
     /**
@@ -274,16 +274,16 @@ public class Geary.App.Conversation : BaseObject {
     /**
      * Determines if the given id is in the conversation's base folder.
      */
-    public bool is_in_base_folder(Geary.EmailIdentifier id) {
-        Gee.Collection<Geary.FolderPath>? paths = this.path_map.get(id);
+    public bool is_in_base_folder(Convey.EmailIdentifier id) {
+        Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(id);
         return (paths != null && paths.contains(this.base_folder.path));
     }
 
     /**
      * Determines if the given id is in the conversation's base folder.
      */
-    public uint get_folder_count(Geary.EmailIdentifier id) {
-        Gee.Collection<Geary.FolderPath>? paths = this.path_map.get(id);
+    public uint get_folder_count(Convey.EmailIdentifier id) {
+        Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(id);
         uint count = 0;
         if (paths != null) {
             count = paths.size;
@@ -301,14 +301,14 @@ public class Geary.App.Conversation : BaseObject {
     /**
      * Returns the email associated with the EmailIdentifier, if it exists.
      */
-    public Geary.Email? get_email_by_id(EmailIdentifier id) {
+    public Convey.Email? get_email_by_id(EmailIdentifier id) {
         return emails.get(id);
     }
 
     /**
      * Returns all EmailIdentifiers in the conversation, unsorted.
      */
-    public Gee.Collection<Geary.EmailIdentifier> get_email_ids() {
+    public Gee.Collection<Convey.EmailIdentifier> get_email_ids() {
         return emails.keys;
     }
 
@@ -338,11 +338,11 @@ public class Geary.App.Conversation : BaseObject {
      * Returns if the email was added, else false if already present
      * and only `known_paths` were merged.
      */
-    internal bool add(Email email, Gee.Collection<Geary.FolderPath> known_paths) {
+    internal bool add(Email email, Gee.Collection<Convey.FolderPath> known_paths) {
         // Add the known paths to the path map regardless of whether
         // the email is already in the conversation or not, so that it
         // remains complete
-        foreach (Geary.FolderPath path in known_paths)
+        foreach (Convey.FolderPath path in known_paths)
             this.path_map.set(email.id, path);
 
         bool added = false;
@@ -406,16 +406,16 @@ public class Geary.App.Conversation : BaseObject {
     /**
      * Removes the target path from the known set for the given id.
      */
-    internal void remove_path(Geary.EmailIdentifier id, FolderPath path) {
+    internal void remove_path(Convey.EmailIdentifier id, FolderPath path) {
         this.path_map.remove(id, path);
     }
 
-    private Geary.Email?
+    private Convey.Email?
         get_single_email(Ordering ordering, Location location,
-                         Gee.Collection<Geary.FolderPath>? blacklist = null) {
+                         Gee.Collection<Convey.FolderPath>? blacklist = null) {
         // note that the location-ordering preferences are treated as
         // ANYWHERE by get_emails()
-        Gee.Collection<Geary.Email> all = get_emails(
+        Gee.Collection<Convey.Email> all = get_emails(
             ordering, location, blacklist
         );
         if (all.size == 0) {
@@ -431,13 +431,13 @@ public class Geary.App.Conversation : BaseObject {
                 return traverse<Email>(all).first();
 
             case Location.IN_FOLDER_OUT_OF_FOLDER:
-                Geary.Email? found = traverse<Email>(all)
+                Convey.Email? found = traverse<Email>(all)
                     .first_matching((email) => is_in_base_folder(email.id));
 
                 return found ?? traverse<Email>(all).first();
 
             case Location.OUT_OF_FOLDER_IN_FOLDER:
-                Geary.Email? found = traverse<Email>(all)
+                Convey.Email? found = traverse<Email>(all)
                     .first_matching((email) => !is_in_base_folder(email.id));
 
                 return found ?? traverse<Email>(all).first();
@@ -447,8 +447,8 @@ public class Geary.App.Conversation : BaseObject {
         }
     }
 
-    private bool check_flag(Geary.NamedFlag flag, bool contains) {
-        foreach (Geary.Email email in get_emails(Ordering.NONE)) {
+    private bool check_flag(Convey.NamedFlag flag, bool contains) {
+        foreach (Convey.Email email in get_emails(Ordering.NONE)) {
             if (email.email_flags != null && email.email_flags.contains(flag) == contains)
                 return true;
         }
@@ -456,11 +456,11 @@ public class Geary.App.Conversation : BaseObject {
         return false;
     }
 
-    private bool has_flag(Geary.NamedFlag flag) {
+    private bool has_flag(Convey.NamedFlag flag) {
         return check_flag(flag, true);
     }
 
-    private bool is_missing_flag(Geary.NamedFlag flag) {
+    private bool is_missing_flag(Convey.NamedFlag flag) {
         return check_flag(flag, false);
     }
 

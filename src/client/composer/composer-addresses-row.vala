@@ -12,7 +12,7 @@
  *
  *XXX we need to put an EntryUndo back here
  */
-public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
+public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
 
     /**
      * The list of email addresses.
@@ -21,7 +21,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
      *
      * Manually setting this property will override any text that was there before.
      */
-    public Geary.RFC822.MailboxAddresses addresses {
+    public Convey.RFC822.MailboxAddresses addresses {
         get { return this._addresses; }
         set {
             this._addresses = value;
@@ -29,7 +29,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
             this.text = value.to_full_display();
         }
     }
-    private Geary.RFC822.MailboxAddresses _addresses = new Geary.RFC822.MailboxAddresses();
+    private Convey.RFC822.MailboxAddresses _addresses = new Convey.RFC822.MailboxAddresses();
 
     /** Determines if the entry contains only valid email addresses (and is not empty) */
     public bool is_valid { get; private set; default = false; }
@@ -90,7 +90,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
 
     private void validate_addresses() {
         bool is_valid = !this._addresses.is_empty;
-        foreach (Geary.RFC822.MailboxAddress address in this.addresses) {
+        foreach (Convey.RFC822.MailboxAddress address in this.addresses) {
             if (!address.is_valid()) {
                 is_valid = false;
                 return;
@@ -164,16 +164,16 @@ public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
     }
 
     private void update_validity() {
-        if (Geary.String.is_empty_or_whitespace(text)) {
-            this._addresses = new Geary.RFC822.MailboxAddresses();
+        if (Convey.String.is_empty_or_whitespace(text)) {
+            this._addresses = new Convey.RFC822.MailboxAddresses();
             this.is_valid = false;
         } else {
             try {
                 this._addresses =
-                    new Geary.RFC822.MailboxAddresses.from_rfc822_string(text);
+                    new Convey.RFC822.MailboxAddresses.from_rfc822_string(text);
                 this.is_valid = true;
-            } catch (Geary.RFC822.Error err) {
-                this._addresses = new Geary.RFC822.MailboxAddresses();
+            } catch (Convey.RFC822.Error err) {
+                this._addresses = new Convey.RFC822.MailboxAddresses();
                 this.is_valid = false;
             }
         }
@@ -198,11 +198,11 @@ public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
     }
 
     private void on_address_suggestion_selected(AddressSuggestionPopover popover,
-                                                Geary.RFC822.MailboxAddress address) {
+                                                Convey.RFC822.MailboxAddress address) {
         insert_address_at_cursor(address);
     }
 
-    private void insert_address_at_cursor(Geary.RFC822.MailboxAddress mailbox) {
+    private void insert_address_at_cursor(Convey.RFC822.MailboxAddress mailbox) {
         // Take care to do a delete then an insert here so that
         // Component.EntryUndo can combine the two into a single
         // undoable command.
@@ -261,10 +261,10 @@ public class Composer.AddressesRow : Adw.EntryRow, Geary.BaseInterface {
  */
 public class ContactAddressItem : GLib.Object {
     public Application.Contact contact { get; construct set; }
-    public Geary.RFC822.MailboxAddress address { get; construct set; }
+    public Convey.RFC822.MailboxAddress address { get; construct set; }
 
     public ContactAddressItem(Application.Contact contact,
-                              Geary.RFC822.MailboxAddress address) {
+                              Convey.RFC822.MailboxAddress address) {
         Object(contact: contact, address: address);
     }
 }
@@ -272,8 +272,8 @@ public class ContactAddressItem : GLib.Object {
 public class AddressSuggestionPopover : Gtk.Popover {
 
     // Minimum visibility for the contact to appear in autocompletion.
-    private const Geary.Contact.Importance VISIBILITY_THRESHOLD =
-        Geary.Contact.Importance.RECEIVED_FROM;
+    private const Convey.Contact.Importance VISIBILITY_THRESHOLD =
+        Convey.Contact.Importance.RECEIVED_FROM;
 
     public Application.ContactStore contacts { get; construct set; }
 
@@ -283,7 +283,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
     /**
      * Fired when the user has selected an address suggestion
      */
-    public signal void selected_address(Geary.RFC822.MailboxAddress address);
+    public signal void selected_address(Convey.RFC822.MailboxAddress address);
 
     construct {
         var factory = new Gtk.SignalListItemFactory();
@@ -369,7 +369,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
             }
             foreach (Application.Contact contact in results) {
                 for (uint i = 0; i < contact.email_addresses.get_n_items(); i++) {
-                    var addr = (Geary.RFC822.MailboxAddress) contact.email_addresses.get_item(i);
+                    var addr = (Convey.RFC822.MailboxAddress) contact.email_addresses.get_item(i);
                     model.append(new ContactAddressItem(contact, addr));
                 }
             }
@@ -442,7 +442,7 @@ private class AddressSuggestionRow : Gtk.Box {
         }
 
         //XXX GTK4
-        if (Geary.String.is_empty(contact_addr.contact.display_name)) {
+        if (Convey.String.is_empty(contact_addr.contact.display_name)) {
             this.avatar.text = null;
             this.name_label.label = "";
             this.name_label.visible = false;

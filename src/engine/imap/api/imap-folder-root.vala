@@ -15,7 +15,7 @@
  * this class ensure certain requirements are held throughout the
  * library.
  */
-public class Geary.Imap.FolderRoot : Geary.FolderRoot {
+public class Convey.Imap.FolderRoot : Convey.FolderRoot {
 
 
    /**

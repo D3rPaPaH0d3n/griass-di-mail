@@ -5,7 +5,7 @@
  */
 
 
-public class Geary.Db.Statement : Context {
+public class Convey.Db.Statement : Context {
 
 
     public string sql { get; private set; }
@@ -103,7 +103,7 @@ public class Geary.Db.Statement : Context {
     public int get_column_index(string name) {
         // prepare column map only if names requested
         if (column_map == null) {
-            column_map = new Gee.HashMap<string, int>(Geary.String.stri_hash, Geary.String.stri_equal);
+            column_map = new Gee.HashMap<string, int>(Convey.String.stri_hash, Convey.String.stri_equal);
 
             int cols = stmt.column_count();
             for (int ctr = 0; ctr < cols; ctr++) {

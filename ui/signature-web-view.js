@@ -9,4 +9,4 @@
  * Application logic for SignatureWebView.
  */
 
-var geary = new PageState();
+var convey = new PageState();
