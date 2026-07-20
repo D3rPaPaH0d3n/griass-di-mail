@@ -41,10 +41,8 @@
   <url type="translate">https://gitlab.gnome.org/GNOME/geary/-/wikis/Translating</url>
   <url type="donation">https://gnome.org/donate</url>
 
-  <!--
-    Screenshots: capture Convey's own UI and commit the PNGs (e.g. under
-    desktop/screenshots/), then reference them via the repo raw URL and
-    uncomment. Pin to a tag rather than HEAD so store listings stay stable.
+  <!-- Screenshots reference the repo raw URL. Once a release is tagged,
+       replace HEAD with the tag so store listings stay stable. -->
   <screenshots>
     <screenshot type="default">
       <image>https://gitlab.gnome.org/donnybeelo/geary/-/raw/HEAD/desktop/screenshots/main-window.png</image>
@@ -58,7 +56,6 @@
       <image>https://gitlab.gnome.org/donnybeelo/geary/-/raw/HEAD/desktop/screenshots/composer.png</image>
     </screenshot>
   </screenshots>
-  -->
 
   <project_group>GNOME</project_group>
 
