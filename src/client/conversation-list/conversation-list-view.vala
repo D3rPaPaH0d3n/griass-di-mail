@@ -11,7 +11,8 @@
  *
  */
 [GtkTemplate (ui = "/org/gnome/Geary/conversation-list-view.ui")]
-public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
+public class ConversationList.View : Adw.Bin, Geary.BaseInterface {
+
     /**
      * The fields that must be available on any ConversationMonitor
      * passed to ConversationList.View
@@ -42,10 +43,10 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
 
     private Application.Configuration config;
 
-    private Gtk.GestureMultiPress press_gesture;
     private Gtk.GestureLongPress long_press_gesture;
-    private Gtk.EventControllerKey key_event_controller;
     private Gdk.ModifierType last_modifier_type;
+
+    [GtkChild] public unowned Gtk.ScrolledWindow scrolled_window;
 
     [GtkChild] private unowned Gtk.ListBox list;
 
@@ -64,14 +65,10 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
 
         this.list.set_header_func(header_func);
 
-        this.vadjustment.value_changed.connect(maybe_load_more);
-        this.vadjustment.value_changed.connect(update_visible_conversations);
+        this.scrolled_window.vadjustment.value_changed.connect(maybe_load_more);
+        this.scrolled_window.vadjustment.value_changed.connect(update_visible_conversations);
 
-        this.press_gesture = new Gtk.GestureMultiPress(this.list);
-        this.press_gesture.set_button(0);
-        this.press_gesture.released.connect(on_press_gesture_released);
-
-        this.long_press_gesture = new Gtk.GestureLongPress(this.list);
+        this.long_press_gesture = new Gtk.GestureLongPress();
         this.long_press_gesture.propagation_phase = CAPTURE;
         this.long_press_gesture.pressed.connect((n_press, x, y) => {
             Row? row = (Row) this.list.get_row_at_y((int) y);
@@ -80,14 +77,14 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
                 this.selection_mode_enabled = true;
             }
         });
+        this.list.add_controller(this.long_press_gesture);
 
-        this.key_event_controller = new Gtk.EventControllerKey(this.list);
-        this.key_event_controller.key_pressed.connect(on_key_event_controller_key_pressed);
-
-        Gtk.drag_source_set(this.list, Gdk.ModifierType.BUTTON1_MASK, FolderList.Tree.TARGET_ENTRY_LIST,
-            Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
-        this.list.drag_begin.connect(on_drag_begin);
-        this.list.drag_end.connect(on_drag_end);
+        var drag_source = new Gtk.DragSource();
+        drag_source.actions = Gdk.DragAction.COPY | Gdk.DragAction.MOVE;
+        drag_source.prepare.connect(on_drag_prepare);
+        drag_source.drag_begin.connect(on_drag_begin);
+        drag_source.drag_end.connect(on_drag_end);
+        this.list.add_controller(drag_source);
     }
 
     static construct {
@@ -99,9 +96,16 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
     // -------
     private void header_func(Gtk.ListBoxRow row, Gtk.ListBoxRow? before) {
         if (before != null) {
-            var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-            sep.show();
-            row.set_header(sep);
+            if (row.get_header() == null) {
+                var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
+                sep.add_css_class("conversation-list-separator");
+                sep.show();
+                row.set_header(sep);
+            }
+        } else {
+            // First row: drop any separator left over from when it wasn't
+            // first (e.g. after the previous top row was deleted).
+            row.set_header(null);
         }
     }
 
@@ -113,10 +117,13 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
      * automatically but instead it must be externally scheduled
      */
     public void refresh_times() {
-        this.list.foreach((child) => {
-            var row = (Row) child;
+        int i = 0;
+        Row? row = this.list.get_row_at_index(0) as Row;
+        while (row != null) {
             row.refresh_time();
-        });
+            i++;
+            row = this.list.get_row_at_index(i) as Row;
+        }
     }
 
     // -------------------
@@ -143,6 +150,10 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
         } else {
             this.model = new Model(monitor);
             this.list.bind_model(this.model, row_factory);
+            // bind_model doesn't re-run the header func for neighbours when
+            // items change, so a deleted top row leaves the new top row with a
+            // stale separator above it. Re-invalidate on every change.
+            this.model.items_changed.connect(() => this.list.invalidate_headers());
             this.model.conversations_loaded.connect(on_conversations_loaded);
             this.model.conversations_removed.connect(on_conversations_removed);
             this.model.conversation_updated.connect(on_conversation_updated);
@@ -156,6 +167,17 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
         if (model != null) {
             model.load_more(request);
         }
+    }
+
+    private Adw.Animation? scroll_animation = null;
+
+    /** Scrolls the conversation list back to the top. */
+    public void scroll_to_top() {
+        this.scroll_animation = Util.Gtk.animate_adjustment(
+            this,
+            this.scrolled_window.vadjustment,
+            this.scrolled_window.vadjustment.lower
+        );
     }
 
     public void scroll(Gtk.ScrollType scroll_type) {
@@ -204,7 +226,7 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
 
     private Gtk.Popover construct_popover(Row row, uint selection_size) {
         GLib.Menu context_menu_model = new GLib.Menu();
-        var main = get_toplevel() as Application.MainWindow;
+        var main = get_root() as Application.MainWindow;
 
         if (main != null) {
             if (!main.is_shift_down) {
@@ -303,13 +325,8 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
         );
         context_menu_model.append_section(null, actions_section);
 
-        // Use a popover rather than a regular context menu since
-        // the latter grabs the event queue, so the MainWindow
-        // will not receive events if the user releases Shift,
-        // making the trash/delete header bar state wrong.
-        Gtk.Popover context_menu = new Gtk.Popover.from_model(
-            row, context_menu_model
-        );
+        var context_menu = new Gtk.PopoverMenu.from_model(context_menu_model);
+        context_menu.set_parent(row);
 
         return context_menu;
     }
@@ -347,13 +364,16 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
      * If a conversation is not present in the ListBox, it is ignored.
      */
     public void select_conversations(Gee.Collection<Geary.App.Conversation> selection) {
-        this.list.foreach((child) => {
-            var row = (Row) child;
+        int i = 0;
+        Row? row = this.list.get_row_at_index(0) as Row;
+        while (row != null) {
             Geary.App.Conversation conversation = row.conversation;
             if (selection.contains(conversation)) {
                 this.list.select_row(row);
             }
-        });
+            i++;
+            row = this.list.get_row_at_index(i) as Row;
+        }
     }
 
     /**
@@ -466,9 +486,9 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
      */
     private int VISIBILITY_UPDATE_DELAY_MS = 1000;
 
-	/**
-	 * The set of all conversations currently displayed in the viewport
-	 */
+    /**
+     * The set of all conversations currently displayed in the viewport
+     */
     public Gee.Set<Geary.App.Conversation> visible_conversations {get; private set; default = new Gee.HashSet<Geary.App.Conversation>(); }
     private Geary.Scheduler.Scheduled? scheduled_visible_update;
 
@@ -482,7 +502,7 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
 
         scheduled_visible_update = Geary.Scheduler.after_msec(VISIBILITY_UPDATE_DELAY_MS, () => {
             var visible = new Gee.HashSet<Geary.App.Conversation>();
-            Gtk.ListBoxRow? first = this.list.get_row_at_y((int) this.vadjustment.value);
+            Gtk.ListBoxRow? first = this.list.get_row_at_y((int) this.scrolled_window.vadjustment.value);
 
             if (first == null) {
                 this.visible_conversations = visible;
@@ -492,7 +512,7 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
             uint start_index = ((uint) first.get_index());
             uint end_index = uint.min(
                 // Assume that all messages are the same height
-                start_index + (uint) (this.vadjustment.page_size / first.get_allocated_height()),
+                start_index + (uint) (this.scrolled_window.vadjustment.page_size / first.get_height()),
                 this.model.get_n_items()
             );
 
@@ -571,9 +591,14 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
         } else if (this.selection_mode_enabled) {
             this.selection_mode_enabled = false;
         // Set next conversation
-        } else if (this.config.autoselect &&
-                   this.list.get_selected_rows().length() == 0) {
-            restore_row();
+        } else if (this.config.autoselect) {
+            if (this.list.get_selected_rows().length() == 0) {
+                restore_row();
+            } else {
+                // Removal didn't affect the selection; drop the stale
+                // restore row so it doesn't swallow later selections
+                this.to_restore_row = null;
+            }
         }
     }
 
@@ -581,29 +606,34 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
      * Update conversation row
      */
     private void on_conversation_updated(Geary.App.Conversation convo) {
-        this.list.foreach((child) => {
-            var row = (Row) child;
+        int i = 0;
+        Row? row = this.list.get_row_at_index(0) as Row;
+        while (row != null) {
             if (convo == row.conversation) {
                 row.update();
             }
-        });
+
+            i++;
+            row = this.list.get_row_at_index(i) as Row;
+        }
     }
 
     // ----------
     // Gestures
     // ----------
 
-    private void on_press_gesture_released(int n_press, double x, double y) {
+    [GtkCallback]
+    private void on_press_gesture_released(Gtk.GestureClick click_gesture, int n_press, double x, double y) {
         var row = (Row) this.list.get_row_at_y((int) y);
 
         if (row == null)
             return;
 
-        var button = this.press_gesture.get_current_button();
-        if (button == 1) {
-            Gdk.EventSequence sequence = this.press_gesture.get_current_sequence();
-            Gdk.Event event = this.press_gesture.get_last_event(sequence);
-            event.get_state(out this.last_modifier_type);
+        var button = click_gesture.get_current_button();
+        if (button == Gdk.BUTTON_PRIMARY) {
+            Gdk.EventSequence sequence = click_gesture.get_current_sequence();
+            Gdk.Event event = click_gesture.get_last_event(sequence);
+            this.last_modifier_type = event.get_modifier_state();
             if (!this.selection_mode_enabled) {
                 if ((this.last_modifier_type & Gdk.ModifierType.SHIFT_MASK) ==
                         Gdk.ModifierType.SHIFT_MASK ||
@@ -614,19 +644,19 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
                     conversation_activated(((Row) row).conversation, 1);
                 }
             }
-        } else if (button == 2) {
+        } else if (button == Gdk.BUTTON_MIDDLE) {
             conversation_activated(row.conversation, 2);
-        } else if (button == 3) {
-            var rect = Gdk.Rectangle();
-            row.translate_coordinates(this.list, 0, 0, out rect.x, out rect.y);
-            rect.x = (int) x;
-            rect.y = (int) y - rect.y;
-            rect.width = rect.height = 0;
+        } else if (button == Gdk.BUTTON_SECONDARY) {
+            Graphene.Point p = { (float) x, (float) y };
+            Graphene.Point p_row;
+            this.list.compute_point(row, p, out p_row);
+            Gdk.Rectangle rect = { (int) p_row.x, (int) p_row.y, 0, 0 };
             context_menu(row, rect);
         }
     }
 
-    private bool on_key_event_controller_key_pressed(uint keyval, uint keycode, Gdk.ModifierType modifier_type) {
+    [GtkCallback]
+    private bool on_key_pressed(uint keyval, uint keycode, Gdk.ModifierType modifier_type) {
         switch (keyval) {
         case Gdk.Key.Up:
         case Gdk.Key.Down:
@@ -646,46 +676,55 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
     }
 
 
-	/**
-	 * Widgets used as drag icons have to be explicitly destroyed after the drag
-	 * so we track the widget as a private member
-	 */
+    /**
+     * Widgets used as drag icons have to be explicitly destroyed after the drag
+     * so we track the widget as a private member
+     */
     private Row? drag_widget = null;
 
-    private void on_drag_begin(Gdk.DragContext ctx) {
-        int screen_x, screen_y;
-        Gdk.ModifierType _modifier;
+    private Gdk.ContentProvider? on_drag_prepare(Gtk.DragSource drag_source,
+                                                 double x, double y) {
+        this.drag_widget = this.list.get_row_at_y((int) y) as Row;
+        if (this.drag_widget == null) {
+            return null;
+        }
+        // The dragged conversations are the list's selection; the
+        // content is just a marker the folder list recognises.
+        var marker = GLib.Value(typeof(string));
+        marker.set_string("application/x-geary-mail");
+        return new Gdk.ContentProvider.for_value(marker);
+    }
 
-        this.get_window().get_device_position(ctx.get_device(), out screen_x, out screen_y, out _modifier);
-
-        Row? row = this.list.get_row_at_y(screen_y + (int) this.vadjustment.value) as Row?;
+    private void on_drag_begin(Gtk.DragSource drag_source, Gdk.Drag drag) {
+        Row? row = this.drag_widget;
         if (row != null) {
-            // If the user has a selection but drags starting from an unselected
-            // row, we need to set the selection to that row
+            // If the user has a selection but drags starting from an
+            // unselected row, we need to set the selection to that row
             if (!row.is_selected()) {
                 this.list.unselect_all();
                 this.list.select_row(row);
             }
 
-            this.drag_widget = new Row(this.config, row.conversation, false);
-            this.drag_widget.width_request = row.get_allocated_width();
-            this.drag_widget.get_style_context().add_class("drag-n-drop");
-            this.drag_widget.visible = true;
-
-            int hot_x, hot_y;
-            this.translate_coordinates(row, screen_x, screen_y, out hot_x, out hot_y);
-            Gtk.drag_set_icon_widget(ctx, this.drag_widget, hot_x, hot_y);
+            drag_source.set_icon(new Gtk.WidgetPaintable(row), 16, 16);
         }
     }
 
-    private void on_drag_end(Gdk.DragContext ctx) {
-        if (this.drag_widget != null) {
-            this.drag_widget.destroy();
-            this.drag_widget = null;
-        }
+    private void on_drag_end(Gtk.DragSource drag_source, Gdk.Drag drag, bool delete_data) {
+        this.drag_widget = null;
     }
 
     private void on_selected_rows_changed() {
+        // When the focused row is removed, GTK moves focus (and with it
+        // the selection) to the row above. Ignore that transient
+        // selection so it isn't opened and marked read; restore_row()
+        // will activate the intended row shortly.
+        if (this.to_restore_row != null && !this.selection_mode_enabled) {
+            var row = this.list.get_selected_row();
+            if (row != null && row != this.to_restore_row) {
+                return;
+            }
+        }
+
         var selected = get_selected_conversations();
 
         if (!selection_changed(selected)) {
@@ -706,10 +745,13 @@ public class ConversationList.View : Gtk.ScrolledWindow, Geary.BaseInterface {
     }
 
     private void on_selection_mode_changed() {
-        this.list.foreach((child) => {
-            var row = (Row) child;
+        int i = 0;
+        Row? row = this.list.get_row_at_index(0) as Row;
+        while (row != null) {
             row.set_selection_enabled(this.selection_mode_enabled);
-        });
+            i++;
+            row = this.list.get_row_at_index(i) as Row;
+        }
 
         if (this.selection_mode_enabled) {
             this.to_restore_row = this.list.get_selected_row();

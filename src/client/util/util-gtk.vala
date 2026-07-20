@@ -84,11 +84,32 @@ namespace Util.Gtk {
      * space added by the CSS margin property, if any.
      */
     public inline int get_border_box_height(global::Gtk.Widget widget) {
-        global::Gtk.StyleContext style = widget.get_style_context();
-        global::Gtk.StateFlags flags = style.get_state();
-        global::Gtk.Border margin = style.get_margin(flags);
+        // In GTK4 a widget's allocated height already excludes the CSS
+        // margin (it lives outside the widget's allocation), so the
+        // border-box height is simply the allocated height.
+        return widget.get_height();
+    }
 
-        return widget.get_allocated_height() - margin.top - margin.bottom;
+    /**
+     * Smoothly animates an adjustment to a target value.
+     *
+     * Returns the running animation; the caller should keep a
+     * reference to it (e.g. in a field) so it isn't finalised before
+     * it completes. Assigning a new one over the old cancels it.
+     */
+    public global::Adw.TimedAnimation animate_adjustment(
+        global::Gtk.Widget widget,
+        global::Gtk.Adjustment adjustment,
+        double to) {
+        var target = new global::Adw.CallbackAnimationTarget((value) => {
+            adjustment.value = value;
+        });
+        var animation = new global::Adw.TimedAnimation(
+            widget, adjustment.value, to, 250, target
+        );
+        animation.easing = EASE_OUT_CUBIC;
+        animation.play();
+        return animation;
     }
 
     /**
@@ -216,15 +237,6 @@ namespace Util.Gtk {
             new_url = url.substring(0,40) + "…" + url.substring(-40);
         }
         return new_url;
-    }
-
-    public Gdk.RGBA rgba(double red, double green, double blue, double alpha) {
-        return Gdk.RGBA() {
-            red = red,
-            green = green,
-            blue = blue,
-            alpha = alpha
-        };
     }
 
     /* Connect this to Gtk.Widget.query_tooltip signal, will only show tooltip if label ellipsized */

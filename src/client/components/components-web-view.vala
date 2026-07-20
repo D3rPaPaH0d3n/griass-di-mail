@@ -48,23 +48,6 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
     private const string USER_CSS_LEGACY = "user-message.css";
 
 
-
-    // Workaround WK binding ctor not accepting any args
-    private class WebsiteDataManager : WebKit.WebsiteDataManager {
-
-        public WebsiteDataManager(string base_cache_directory) {
-            // Use the cache dir for both cache and data since a)
-            // emails shouldn't be storing data anyway, and b) so WK
-            // doesn't use the default, shared data dir.
-            Object(
-                base_cache_directory: base_cache_directory,
-                base_data_directory: base_cache_directory
-            );
-        }
-
-    }
-
-
     private static WebKit.WebContext? default_context = null;
 
     private static GenericArray<WebKit.UserStyleSheet> styles = null;
@@ -76,16 +59,12 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
      * Initialises WebKit.WebContext for use by the client.
      */
     public static void init_web_context(Application.Configuration config,
-                                        File web_extension_dir,
-                                        File cache_dir,
-                                        bool sandboxed=true) {
-        WebsiteDataManager data_manager = new WebsiteDataManager(cache_dir.get_path());
-        WebKit.WebContext context = new WebKit.WebContext.with_website_data_manager(data_manager);
-        // Enable WebProcess sandboxing
-        if (sandboxed) {
-            context.add_path_to_sandbox(web_extension_dir.get_path(), true);
-            context.set_sandbox_enabled(true);
-        }
+                                        File web_extension_dir) {
+        WebKit.WebContext context = new WebKit.WebContext();
+
+        // Configure WebProcess sandboxing
+        context.add_path_to_sandbox(web_extension_dir.get_path(), true);
+
         // Use the doc browser model so that we get some caching of
         // resources between email body loads.
         context.set_cache_model(WebKit.CacheModel.DOCUMENT_BROWSER);
@@ -102,11 +81,11 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
                     view.handle_internal_request(req);
                 }
             });
-        context.initialize_web_extensions.connect((context) => {
-                context.set_web_extensions_directory(
+        context.initialize_web_process_extensions.connect((context) => {
+                context.set_web_process_extensions_directory(
                     web_extension_dir.get_path()
                 );
-                context.set_web_extensions_initialization_user_data(
+                context.set_web_process_extensions_initialization_user_data(
                     new Variant.boolean(config.enable_debug)
                 );
             });
@@ -196,6 +175,7 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
     }
 
     private static inline uint to_wk2_font_size(Pango.FontDescription font) {
+        // XXX GTK4 I have no idea what to do here
         double size = font.get_size();
         if (!font.get_size_is_absolute()) {
             size = size / Pango.SCALE;
@@ -307,6 +287,9 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
 
     private double webkit_reported_height = 0;
 
+    // Accumulated smooth-scroll delta for Ctrl+scroll zoom stepping
+    private double zoom_scroll_delta = 0;
+
 
     /**
      * Emitted when the view's content has finished loaded.
@@ -333,6 +316,7 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
 
 
     protected WebView(Application.Configuration config,
+                      GLib.File? cache_dir = null,
                       WebKit.UserContentManager? custom_manager = null,
                       WebView? related = null) {
         WebKit.Settings setts = new WebKit.Settings();
@@ -347,11 +331,13 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
         setts.enable_media_stream = false;
         setts.enable_offline_web_application_cache = false;
         setts.enable_page_cache = false;
-#if WEBKIT_PLUGINS_SUPPORTED
-        setts.enable_plugins = false;
-#endif
+        // Let WebKit use the GPU. Software rendering scrolls poorly,
+        // especially under fractional scaling where each message's
+        // surface is rescaled on the CPU every frame. If many-message
+        // threads exhaust VRAM on low-end GPUs, gate this behind a
+        // setting instead of forcing NEVER.
         setts.hardware_acceleration_policy =
-            WebKit.HardwareAccelerationPolicy.NEVER;
+            WebKit.HardwareAccelerationPolicy.ALWAYS;
         setts.javascript_can_access_clipboard = true;
 
         WebKit.UserContentManager content_manager =
@@ -364,10 +350,23 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
             WebView.styles.foreach(style => content_manager.add_style_sheet(style));
         }
 
+        // Use cache dir for both cache & data since a) emails shouldn't be
+        // storing data anyway, and b) so WK doesn't use the default, shared datadir
+        WebKit.NetworkSession nw_session;
+        if (cache_dir != null) {
+            nw_session = new WebKit.NetworkSession(
+                cache_dir.get_path(),
+                cache_dir.get_path()
+            );
+        } else {
+            nw_session = new WebKit.NetworkSession.ephemeral();
+        }
+
         Object(
             settings: setts,
             user_content_manager: content_manager,
-            web_context: WebView.default_context
+            web_context: WebView.default_context,
+            network_session: nw_session
         );
         base_ref();
         init(config);
@@ -396,9 +395,9 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
         base_unref();
     }
 
-    public override void destroy() {
+    public override void dispose() {
         this.message_handlers.clear();
-        base.destroy();
+        base.dispose();
     }
 
     /**
@@ -500,18 +499,22 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
     }
 
     public void zoom_in() {
-        double new_zoom = this.zoom_level += (this.zoom_level * ZOOM_FACTOR);
-        if (new_zoom > ZOOM_MAX) {
-            new_zoom = ZOOM_MAX;
+        double new_zoom = double.min(
+            this.zoom_level + this.zoom_level * ZOOM_FACTOR, ZOOM_MAX
+        );
+        if (new_zoom == this.zoom_level) {
+            return;
         }
         this.zoom_level = new_zoom;
         notify_property("preferred-height");
     }
 
     public void zoom_out() {
-        double new_zoom = this.zoom_level -= (this.zoom_level * ZOOM_FACTOR);
-        if (new_zoom < ZOOM_MIN) {
-            new_zoom = ZOOM_MIN;
+        double new_zoom = double.max(
+            this.zoom_level - this.zoom_level * ZOOM_FACTOR, ZOOM_MIN
+        );
+        if (new_zoom == this.zoom_level) {
+            return;
         }
         this.zoom_level = new_zoom;
         notify_property("preferred-height");
@@ -655,14 +658,24 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
                 update_unset_html_colors.begin();
             });
 
-        // Manage zoom level, ensure it's sane
-        config.bind(Application.Configuration.CONVERSATION_VIEWER_ZOOM_KEY, this, "zoom_level");
+        // Load the persisted zoom once, then only write changes back.
+        // A bidirectional binding would slave every open message view
+        // to a single value, so zooming one message would reflow them
+        // all at once (a noticeable stall on large threads). New views
+        // still open at the last-used zoom via the initial read.
+        this.zoom_level = config.conversation_viewer_zoom;
         if (this.zoom_level < ZOOM_MIN) {
             this.zoom_level = ZOOM_MIN;
         } else if (this.zoom_level > ZOOM_MAX) {
             this.zoom_level = ZOOM_MAX;
         }
-        this.scroll_event.connect(on_scroll_event);
+        config.bind(
+            Application.Configuration.CONVERSATION_VIEWER_ZOOM_KEY,
+            this, "zoom_level", GLib.SettingsBindFlags.SET
+        );
+        var scroll_controller = new Gtk.EventControllerScroll(Gtk.EventControllerScrollFlags.VERTICAL);
+        scroll_controller.scroll.connect(on_scroll_event);
+        add_controller(scroll_controller);
 
         // Watch desktop font settings
         Settings system_settings = config.gnome_interface;
@@ -808,23 +821,35 @@ public abstract class Components.WebView : WebKit.WebView, Geary.BaseInterface {
         return Gdk.EVENT_STOP;
     }
 
-    private bool on_scroll_event(Gdk.EventScroll event) {
-        if ((event.state & Gdk.ModifierType.CONTROL_MASK) != 0) {
-            double dir = 0;
-            if (event.direction == Gdk.ScrollDirection.UP)
-                dir = -1;
-            else if (event.direction == Gdk.ScrollDirection.DOWN)
-                dir = 1;
-            else if (event.direction == Gdk.ScrollDirection.SMOOTH)
-                dir = event.delta_y;
-
-            if (dir < 0) {
+    private bool on_scroll_event(Gtk.EventControllerScroll scroll_controller, double dx, double dy) {
+        var event = (Gdk.ScrollEvent) scroll_controller.get_current_event();
+        if (Gdk.ModifierType.CONTROL_MASK in event.get_modifier_state()) {
+            if (event.get_direction() == Gdk.ScrollDirection.UP) {
                 zoom_in();
                 return true;
-            } else if (dir > 0) {
+            } else if (event.get_direction() == Gdk.ScrollDirection.DOWN) {
                 zoom_out();
                 return true;
+            } else if (event.get_direction() == Gdk.ScrollDirection.SMOOTH) {
+                // Touchpads emit many tiny deltas per gesture. Zooming
+                // on each one floods WebKit with reflows and feels
+                // laggy, so accumulate and zoom in discrete steps
+                // (one per wheel-notch worth of scrolling).
+                double delta_x, delta_y;
+                event.get_deltas(out delta_x, out delta_y);
+                this.zoom_scroll_delta += delta_y;
+                while (this.zoom_scroll_delta <= -1.0) {
+                    zoom_in();
+                    this.zoom_scroll_delta += 1.0;
+                }
+                while (this.zoom_scroll_delta >= 1.0) {
+                    zoom_out();
+                    this.zoom_scroll_delta -= 1.0;
+                }
+                return true;
             }
+        } else {
+            this.zoom_scroll_delta = 0;
         }
         return false;
     }

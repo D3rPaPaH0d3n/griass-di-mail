@@ -30,28 +30,38 @@ geary-conversation-list revealer {
   padding-left: 18px;
 }
 
-.geary-info-bar-stack > border {
-  border-width: 0;
-  border-left-width: 0;
-  border-right-width: 0;
+.geary-info-bar-stack {
+  border: none;
+  border-radius: 0;
 }
-
-infobar flowboxchild {
-  padding: 0px;
-}
-
-revealer components-conversation-actions {
-  border: solid @borders;
-  border-top-width: 1px;
-  padding: 6px;
-}
-
 
 /* Conversation List */
+
+/* Blend with the window background instead of Adwaita's darker
+ * view background, which is too contrasty between the panes. */
+conversation-list list {
+  background-color: transparent;
+}
+
+@keyframes conversation-row-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 row.conversation-list {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   padding-right: 0.5em;
+  /* Fade rows in as they appear (folder switch, new mail). GTK skips
+     this automatically when animations are disabled. */
+  animation: conversation-row-fade-in 0.25s;
+}
+
+/* Row divider (Gtk.Separator set as row header): inset from the edges
+ * rather than spanning the full width. */
+separator.conversation-list-separator {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 row.conversation-list.drag-n-drop {
@@ -60,8 +70,11 @@ row.conversation-list.drag-n-drop {
   box-shadow: none;
 }
 
-row.conversation-list label {
-  margin-bottom: .4em;
+/* Scope to the row's own content box: context menu popovers are
+ * widget children of the row, so a bare `label` rule would leak
+ * into the menu items. */
+row.conversation-list > box label {
+  margin-bottom: 0.4em;
 }
 
 row.conversation-list .details {
@@ -101,11 +114,11 @@ row.conversation-list .count-badge {
   margin-top: 4px;
   min-width: 1.5em;
   border-radius: 1em;
-  font-size: .8em;
+  font-size: 0.8em;
   font-weight: bold;
 }
 
-row.conversation-list check  {
+row.conversation-list check {
   border-radius: 50%;
   padding: 2px;
   margin: 6px;
@@ -114,9 +127,9 @@ row.conversation-list check  {
 /* FolderPopover */
 
 .geary-folder-popover-list {
-    border: 1px solid @borders;
-    border-radius: 3px;
-    padding: 0px;
+  border: 1px solid @borders;
+  border-radius: 3px;
+  padding: 0px;
 }
 
 row.geary-folder-popover-list-row {
@@ -135,11 +148,16 @@ row.geary-folder-popover-list-row > label {
 /* ConversationListBox */
 
 .conversation-listbox {
-  padding: 0px 12px;
+  margin: 12px;
+  /* Sit on the window background rather than the darker view
+   * background so the cards don't float on a black well. */
+  background-color: transparent;
 }
 
+/* Each message is its own card, separated from its neighbours. */
 .conversation-listbox > row {
   padding: 0;
+  margin-bottom: 6px;
 }
 
 .conversation-listbox *.geary-matched *.geary-match {
@@ -148,64 +166,26 @@ row.geary-folder-popover-list-row > label {
 }
 
 .conversation-listbox > row.geary-loading {
-  border-top-width: 0px;
   padding: 6px;
-  border-top-left-radius: 0px;
-  -gtk-outline-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  -gtk-outline-top-right-radius: 0px;
 }
 
-.conversation-listbox.content > row:first-child:not(.geary-loading) {
-  margin-top: 12px;
-  transition: 0;
-}
-
-.conversation-listbox.content > row:last-child {
-  margin-bottom: 12px;
-}
-
-.conversation-listbox.content > row:last-child,
-.conversation-listbox.content > row.geary-expanded-previous-sibling,
-.conversation-listbox.content > row.geary-expanded {
-  border-width: 1px;
-}
-
-.geary-expanded:not(:first-child), .geary-expanded + row {
-  border-top-left-radius: 8px;
-  -gtk-outline-top-left-radius: 7px;
-  border-top-right-radius: 8px;
-  -gtk-outline-top-right-radius: 7px;
-  margin-top: 6px;
-}
-
-.geary-expanded,
-.geary-expanded-previous-sibling {
-  border-bottom-left-radius: 8px;
-  -gtk-outline-bottom-left-radius: 7px;
-  border-bottom-right-radius: 8px;
-  -gtk-outline-bottom-right-radius: 7px;
-  margin-bottom: 6px
-}
-
-/* Update this to match any change in above radius value */
+/* Update this to match the card radius */
 .geary-message-body {
   margin: 2px;
 }
 
 /* ConversationEmail */
 
-.geary-unread grid.geary-message-summary {
+.geary-unread .geary-message-summary {
   border-color: @theme_selected_bg_color;
   transition: border 0.25s;
 }
 
-.geary-expanded > .geary_email grid.geary-message-summary,
-.geary-expanded + row > .geary_email grid.geary-message-summary {
-  border-top-left-radius: 8px;
-  -gtk-outline-top-left-radius: 7px;
-  border-top-right-radius: 8px;
-  -gtk-outline-top-right-radius: 7px;
+/* Round the summary's top corners so it doesn't poke out of the
+ * row's card rounding */
+.conversation-listbox > row .geary-message-summary {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 /* ConversationMessage */
@@ -227,7 +207,7 @@ row.geary-folder-popover-list-row > label {
   color: @theme_text_color;
 }
 
-grid.geary-message-summary {
+.geary-message-summary {
   border-top: 4px solid transparent;
   padding: 12px;
   padding-top: 8px;
@@ -280,7 +260,7 @@ grid.geary-message-summary {
 }
 
 .geary-submessages .geary-message {
-  background-image: linear-gradient(rgba(0,0,0,0.2), @bg_color 6px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), @bg_color 6px);
 }
 
 .geary-message .geary-placeholder-pane {
@@ -333,19 +313,28 @@ geary-composer-editor > frame > border {
   border-bottom-width: 0;
 }
 
+geary-composer-editor frame {
+  border-radius: 0;
+}
+
+/* From row: an AdwComboRow with the stock .property class (dim
+ * title, full-size subtitle). AdwEntryRow renders its floating
+ * caption with .subtitle typography (font-size: smaller), so match
+ * that exactly. Scope to the label: the box around both labels also
+ * carries a "title" class, and shrinking that shrinks everything. */
+row.geary-composer-from box.title > label.title {
+  font-size: smaller;
+}
+
 geary-composer-embed headerbar {
-  border-top-left-radius: 8px;
-  -gtk-outline-top-left-radius: 7px;
-  border-top-right-radius: 8px;
-  -gtk-outline-top-right-radius: 7px;
-}
-
-geary-composer-widget-header-row {
-  margin: 0 6px 6px 6px;
-}
-
-geary-composer-widget-header-row label {
-  margin: 0 6px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  /* Adwaita headerbars carry 1px inset side-border lines and -1px
+   * side margins for split view separators; inside the composer card
+   * they show up as stray light edges. Keep only the bottom shade. */
+  box-shadow: inset 0 -1px var(--headerbar-shade-color);
+  margin-left: 0;
+  margin-right: 0;
 }
 
 geary-composer-widget .geary-attachments-box > box > box {
@@ -355,11 +344,6 @@ geary-composer-widget .geary-attachments-box > box > box {
 geary-composer-widget .geary-attachments-box > box > box > label {
   margin: 0px 4px;
 }
-
-geary-composer-widget-header-row label {
-
-}
-
 
 /* AttachmentPane  */
 
@@ -455,11 +439,12 @@ row.geary-settings > grid > grid.geary-drag-handle image:dir(rtl) {
   padding-left: 6px;
 }
 
-frame.geary-settings.geary-signature {
+.geary-settings .geary-signature {
   min-height: 5em;
+  padding: 0.2em;
 }
 
-buttonbox.geary-settings  {
+buttonbox.geary-settings {
   margin-top: 36px;
 }
 
@@ -472,32 +457,78 @@ popover.geary-editor > grid > button.geary-setting-remove {
 }
 
 dialog.geary-remove-confirm .dialog-vbox {
-    margin: 12px;
+  margin: 12px;
 }
 
 dialog.geary-remove-confirm .dialog-action-box {
-    margin: 6px;
+  margin: 6px;
 }
 
 /* FolderList.Tree */
 
-treeview.sidebar {
+listview.navigation-sidebar {
   border: none;
+  background: transparent;
 }
 
-treeview.sidebar .cell {
+/* min-height: 0 keeps the row height driven purely by its content's
+ * padding rather than libadwaita's taller default navigation-sidebar row
+ * height. */
+listview.navigation-sidebar > row {
+  padding: 0;
+  min-height: 0;
+}
+
+/* Match the padding the old GtkTreeView cells had: 9px vertical, 6px on
+ * the far side, flush on the leading edge. Lives on the row's content
+ * widget (not the row container above) so that clicking anywhere in this
+ * padding still lands on a widget carrying the row's data. */
+listview.navigation-sidebar .sidebar-row-content {
   padding: 9px 6px;
 }
-treeview.sidebar .cell:dir(ltr) {
-  padding-left: 0px;
+listview.navigation-sidebar .sidebar-row-content:dir(ltr) {
+  padding-left: 0;
 }
-treeview.sidebar .cell:dir(rtl) {
-  padding-right: 0px;
+listview.navigation-sidebar .sidebar-row-content:dir(rtl) {
+  padding-right: 0;
 }
 
-treeview.sidebar:drop(active).after,
-treeview.sidebar:drop(active).before,
-treeview.sidebar:drop(active).into {
+listview.navigation-sidebar > row:hover {
+  background-color: color-mix(in srgb, currentColor 7%, transparent);
+}
+
+/* Pressed state: clearly darker while the left button is held down. */
+listview.navigation-sidebar > row:active {
+  background-color: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+listview.navigation-sidebar > row:selected {
+  background-color: color-mix(in srgb, @accent_bg_color 25%, transparent);
+}
+
+listview.navigation-sidebar > row:selected:hover {
+  background-color: color-mix(in srgb, @accent_bg_color 32%, transparent);
+}
+
+/* Pressed state on the already-selected row: darker still than the
+ * selected/selected:hover backgrounds so the press is visible. */
+listview.navigation-sidebar > row:selected:active {
+  background-color: color-mix(in srgb, @accent_bg_color 50%, transparent);
+}
+
+/* Unread/count badge at the end of a sidebar row */
+listview.navigation-sidebar .sidebar-count {
+  min-width: 1.2em;
+  margin-left: 6px;
+  padding: 0 4px;
+  border-radius: 1em;
+  background: alpha(currentColor, 0.15);
+  font-feature-settings: "tnum" 1;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+listview.navigation-sidebar:drop(active) > row:drop(active) {
   border-top: 1px solid @borders;
   border-bottom: 1px solid @borders;
 }

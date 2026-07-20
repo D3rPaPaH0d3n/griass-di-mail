@@ -52,10 +52,10 @@ public interface Sidebar.DestroyableEntry : Sidebar.Entry {
 public interface Sidebar.InternalDropTargetEntry : Sidebar.Entry {
     // Returns true if drop was successful
     public abstract bool internal_drop_received(Sidebar.Tree parent,
-                                                Gdk.DragContext context,
-                                                Gtk.SelectionData data);
+                                                Gdk.DragAction action);
 }
 
 public interface Sidebar.InternalDragSourceEntry : Sidebar.Entry {
-    public abstract void prepare_selection_data(Gtk.SelectionData data);
+    //XXX GTK4: is this even used?
+    // public abstract void prepare_selection_data(Gtk.SelectionData data);
 }

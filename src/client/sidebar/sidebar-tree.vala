@@ -4,78 +4,96 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-public class Sidebar.Tree : Gtk.TreeView {
+/**
+ * A navigation sidebar backed by {@link Gtk.ListView} and
+ * {@link Gtk.TreeListModel}.
+ *
+ * The domain model is provided by {@link Sidebar.Branch} and
+ * {@link Sidebar.Entry}; this widget mirrors each grafted branch into a
+ * tree of {@link Node}s (each holding an ordered child list store) which
+ * the tree list model presents lazily.
+ */
+public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     public const int ICON_SIZE = 16;
 
-    // Only one ExternalDropHandler can be registered with the Tree; it's responsible for completing
-    // the "drag-data-received" signal properly.
-    public delegate void ExternalDropHandler(Gdk.DragContext context, Sidebar.Entry? entry,
-        Gtk.SelectionData data, uint info, uint time);
+    // Only one ExternalDropHandler can be registered with the Tree; it's
+    // responsible for completing an external drag.
+    public delegate void ExternalDropHandler(Gtk.DropTarget context, Sidebar.Entry? entry);
 
-    private class EntryWrapper : Object {
+    // A node in the sidebar's tree model, mirroring one Sidebar.Entry.
+    private class Node : GLib.Object {
         public Sidebar.Entry entry;
-        public Gtk.TreeRowReference row;
+        public weak Node? parent;
+        public int root_position = 0; // only meaningful for root nodes
+        public GLib.ListStore children = new GLib.ListStore(typeof(Node));
 
-        public EntryWrapper(Gtk.TreeModel model, Sidebar.Entry entry, Gtk.TreePath path) {
+        // Row widgets, non-null only while the node's row is realised.
+        public weak Gtk.TreeExpander? expander_widget = null;
+        public weak Gtk.Image? icon_widget = null;
+        public weak Gtk.Label? name_widget = null;
+        public weak Gtk.Label? count_widget = null;
+        public ulong children_handler = 0;
+
+        public Node(Sidebar.Entry entry, Node? parent) {
             this.entry = entry;
-            this.row = new Gtk.TreeRowReference(model, path);
-        }
-
-        public Gtk.TreePath get_path() {
-            return row.get_path();
-        }
-
-        public Gtk.TreeIter get_iter() {
-            Gtk.TreeIter iter;
-            bool valid = row.get_model().get_iter(out iter, get_path());
-            assert(valid);
-
-            return iter;
+            this.parent = parent;
         }
     }
 
-    private class RootWrapper : EntryWrapper {
-        public int root_position;
+    // GtkListView is a final class and can't be subclassed, so the tree
+    // wraps one and forwards scrolling to it via Gtk.Scrollable. Created
+    // inline so it exists before any construct-time property setter runs.
+    private Gtk.ListView list_view = new Gtk.ListView(null, null);
+    private GLib.ListStore roots = new GLib.ListStore(typeof(Node));
+    private Gtk.TreeListModel tree_model;
+    private Gtk.SingleSelection selection;
 
-        public RootWrapper(Gtk.TreeModel model, Sidebar.Entry entry, Gtk.TreePath path, int root_position) {
-            base (model, entry, path);
-
-            this.root_position = root_position;
-        }
+    // Gtk.Scrollable: forward everything to the inner list view.
+    public Gtk.Adjustment hadjustment {
+        get { return this.list_view.hadjustment; }
+        set construct { if (this.list_view != null) this.list_view.hadjustment = value; }
+    }
+    public Gtk.Adjustment vadjustment {
+        get { return this.list_view.vadjustment; }
+        set construct { if (this.list_view != null) this.list_view.vadjustment = value; }
+    }
+    public Gtk.ScrollablePolicy hscroll_policy {
+        get { return this.list_view.hscroll_policy; }
+        set { this.list_view.hscroll_policy = value; }
+    }
+    public Gtk.ScrollablePolicy vscroll_policy {
+        get { return this.list_view.vscroll_policy; }
+        set { this.list_view.vscroll_policy = value; }
     }
 
-    private enum Columns {
-        NAME,
-        TOOLTIP,
-        WRAPPER,
-        ICON,
-        COUNTER,
-        N_COLUMNS
+    public bool get_border(out Gtk.Border border) {
+        return this.list_view.get_border(out border);
     }
 
-    private Gtk.TreeStore store = new Gtk.TreeStore(Columns.N_COLUMNS,
-        typeof (string),            // NAME
-        typeof (string?),           // TOOLTIP
-        typeof (EntryWrapper),      // WRAPPER
-        typeof (string?),           // ICON
-        typeof (int)                // COUNTER
-    );
+    private Gee.HashMap<Sidebar.Entry, Node> node_map =
+        new Gee.HashMap<Sidebar.Entry, Node>();
+    private Gee.HashMap<Sidebar.Branch, int> branches =
+        new Gee.HashMap<Sidebar.Branch, int>();
 
-    private Gtk.IconTheme? icon_theme;
-    private Gtk.TreeViewColumn text_column;
-    private Gtk.CellRendererText text_renderer;
-    private unowned ExternalDropHandler drop_handler;
-    private Gtk.Entry? text_entry = null;
-    private Gee.HashMap<Sidebar.Entry, EntryWrapper> entry_map =
-        new Gee.HashMap<Sidebar.Entry, EntryWrapper>();
-    private Gee.HashMap<Sidebar.Branch, int> branches = new Gee.HashMap<Sidebar.Branch, int>();
     private int editing_disabled = 0;
     private bool mask_entry_selected_signal = false;
-    private weak EntryWrapper? selected_wrapper = null;
-    private Gtk.Menu? default_context_menu = null;
-    private bool is_internal_drag_in_progress = false;
-    private Sidebar.Entry? internal_drag_source_entry = null;
-    private Gtk.TreeRowReference? old_path_ref = null;
+    private bool updating_selection = false;
+    private uint last_selected_position = Gtk.INVALID_LIST_POSITION;
+    // The logically selected entry. Persists across expand/collapse: it
+    // identifies the actual selected Sidebar.Entry, independent of which
+    // GTK list index (if any) currently represents it visually.
+    private weak Node? selected_node = null;
+    private Gtk.PopoverMenu? default_context_menu = null;
+
+    // Set while sync_visual_selection() is repointing the GTK selection
+    // index at a stand-in row (e.g. a collapsed ancestor); on_selection_changed
+    // must not treat that as a new user selection.
+    private bool syncing_visual_selection = false;
+
+    // GtkListView's single-click-activate selects on hover, which we don't
+    // want; instead single-click activation is driven from a click gesture.
+    private bool click_selecting = false;
+    private bool activated_this_click = false;
 
     public signal void entry_selected(Sidebar.SelectableEntry selectable);
 
@@ -89,197 +107,180 @@ public class Sidebar.Tree : Gtk.TreeView {
 
     public signal void branch_shown(Sidebar.Branch branch, bool shown);
 
-    public Tree(Gtk.TargetEntry[] target_entries, Gdk.DragAction actions,
-        ExternalDropHandler drop_handler, Gtk.IconTheme? theme = null) {
-        set_model(store);
-        icon_theme = theme;
-        get_style_context().add_class("sidebar");
+    static construct {
+        set_layout_manager_type(typeof(Gtk.BinLayout));
+    }
 
-        text_column = new Gtk.TreeViewColumn();
-        text_column.set_expand(true);
-        Gtk.CellRendererPixbuf icon_renderer = new Gtk.CellRendererPixbuf();
-        text_column.pack_start(icon_renderer, false);
-        text_column.add_attribute(icon_renderer, "icon_name", Columns.ICON);
-        text_column.set_cell_data_func(icon_renderer, icon_renderer_function);
-        text_renderer = new Gtk.CellRendererText();
-        text_renderer.ellipsize = Pango.EllipsizeMode.END;
-        text_renderer.editing_canceled.connect(on_editing_canceled);
-        text_renderer.editing_started.connect(on_editing_started);
-        text_column.pack_start(text_renderer, true);
-        text_column.add_attribute(text_renderer, "markup", Columns.NAME);
-        append_column(text_column);
+    public Tree(Gdk.ContentFormats formats, Gdk.DragAction actions, Gtk.IconTheme? theme = null) {
+        this.tree_model = new Gtk.TreeListModel(
+            this.roots, false, false, (item) => ((Node) item).children
+        );
+        this.selection = new Gtk.SingleSelection(this.tree_model) {
+            autoselect = false,
+            can_unselect = true
+        };
 
-        // Count column.
-        Gtk.TreeViewColumn end_column = new Gtk.TreeViewColumn();
-        SidebarCountCellRenderer unread_renderer = new SidebarCountCellRenderer();
-        end_column.set_cell_data_func(unread_renderer, counter_renderer_function);
-        end_column.pack_start(unread_renderer, false);
-        end_column.add_attribute(unread_renderer, "counter", Columns.COUNTER);
-        append_column(end_column);
+        var factory = new Gtk.SignalListItemFactory();
+        factory.setup.connect(on_setup_row);
+        factory.bind.connect(on_bind_row);
+        factory.unbind.connect(on_unbind_row);
 
-        set_headers_visible(false);
-        set_enable_search(false);
-        set_reorderable(false);
-        set_enable_tree_lines(false);
-        set_grid_lines(Gtk.TreeViewGridLines.NONE);
-        set_tooltip_column(Columns.TOOLTIP);
+        this.list_view.set_model(this.selection);
+        this.list_view.set_factory(factory);
+        this.list_view.add_css_class("navigation-sidebar");
+        this.list_view.single_click_activate = false;
+        this.list_view.set_parent(this);
 
-        Gtk.TreeSelection selection = get_selection();
-        selection.set_mode(Gtk.SelectionMode.BROWSE);
-        selection.set_select_function(on_selection);
+        this.selection.selection_changed.connect(on_selection_changed);
+        this.list_view.activate.connect(on_row_activated);
+        // Expanding/collapsing a row changes which rows are visible, which
+        // may hide or reveal the current selection's own row; keep the
+        // GTK selection index pointed at the right stand-in row whenever
+        // that happens.
+        this.tree_model.items_changed.connect(() => sync_visual_selection());
 
-        // It Would Be Nice if the target entries and actions were gleaned by querying each
-        // Sidebar.Entry as it was added, but that's a tad too complicated for our needs
-        // currently
-        enable_model_drag_dest(target_entries, actions);
+        // Accepts conversation drags from the conversation list, which
+        // provide a string marker; the actual conversations moved are
+        // the main window's current selection.
+        var drop_target = new Gtk.DropTarget(
+            typeof(string), Gdk.DragAction.COPY | Gdk.DragAction.MOVE
+        );
+        drop_target.drop.connect(on_drop_target_drop);
+        this.list_view.add_controller(drop_target);
 
-        // Drag source removed as per http://redmine.yorba.org/issues/4701
-        //
-        // Reason: this isn't working correctly (Sidebar.InternalDragSourceEntry should be
-        // the trigger for enable dragging, but that doesn't work anymore).  It looks like
-        // the entire mechanism shifted somehow under GTK 3; see Gtk.TreeDragSource and
-        // Gtk.TreeDragDest for more information on how Sidebar should implement this
-        // properly
+        var key_controller = new Gtk.EventControllerKey();
+        key_controller.key_pressed.connect(on_key_pressed);
+        this.list_view.add_controller(key_controller);
 
-        this.drop_handler = drop_handler;
+        var click_gesture = new Gtk.GestureClick() {
+            button = Gdk.BUTTON_SECONDARY
+        };
+        click_gesture.pressed.connect(on_secondary_press);
+        this.list_view.add_controller(click_gesture);
 
-        popup_menu.connect(on_context_menu_keypress);
-
-        drag_begin.connect(on_drag_begin);
-        drag_end.connect(on_drag_end);
-        drag_motion.connect(on_drag_motion);
+        // Drives single-click activation without GtkListView's
+        // select-on-hover behaviour. Runs in the capture phase so the flag
+        // is set before the list view updates the selection.
+        var primary_gesture = new Gtk.GestureClick() {
+            button = Gdk.BUTTON_PRIMARY,
+            propagation_phase = Gtk.PropagationPhase.CAPTURE
+        };
+        primary_gesture.pressed.connect(on_primary_pressed);
+        primary_gesture.released.connect(on_primary_released);
+        this.list_view.add_controller(primary_gesture);
     }
 
     ~Tree() {
-        text_renderer.editing_canceled.disconnect(on_editing_canceled);
-        text_renderer.editing_started.disconnect(on_editing_started);
+        if (this.list_view != null)
+            this.list_view.unparent();
     }
 
-    public void icon_renderer_function(Gtk.CellLayout layout, Gtk.CellRenderer renderer, Gtk.TreeModel model, Gtk.TreeIter iter) {
-        EntryWrapper? wrapper = get_wrapper_at_iter(iter);
-        if (wrapper == null) {
-            return;
-        }
-        renderer.visible = !(wrapper.entry is Sidebar.Header);
+    public override bool grab_focus() {
+        return this.list_view.grab_focus();
     }
 
-    public void counter_renderer_function(Gtk.CellLayout layout, Gtk.CellRenderer renderer, Gtk.TreeModel model, Gtk.TreeIter iter) {
-        EntryWrapper? wrapper = get_wrapper_at_iter(iter);
-        if (wrapper == null) {
-            return;
-        }
-        var counter_renderer = renderer as SidebarCountCellRenderer;
-        renderer.visible = counter_renderer != null && counter_renderer.counter > 0;
+    //
+    // Row factory
+    //
+
+    private void on_setup_row(GLib.Object object) {
+        var list_item = (Gtk.ListItem) object;
+        var icon = new Gtk.Image();
+        var name = new Gtk.Label(null) {
+            use_markup = true,
+            ellipsize = Pango.EllipsizeMode.END,
+            xalign = 0,
+            hexpand = true
+        };
+        var count = new Gtk.Label(null) {
+            halign = Gtk.Align.CENTER
+        };
+        count.add_css_class("sidebar-count");
+        var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 6) {
+            // The row's visual padding lives here (see CSS) rather than on
+            // the list item's row container, so a click anywhere in that
+            // padding still lands on box and resolves to this row's node.
+            hexpand = true,
+            vexpand = true
+        };
+        box.add_css_class("sidebar-row-content");
+        box.append(icon);
+        box.append(name);
+        box.append(count);
+        var expander = new Gtk.TreeExpander() {
+            child = box,
+            hexpand = true,
+            vexpand = true
+        };
+        list_item.child = expander;
     }
 
-    private void on_drag_begin(Gdk.DragContext ctx) {
-        is_internal_drag_in_progress = true;
+    private void on_bind_row(GLib.Object object) {
+        var list_item = (Gtk.ListItem) object;
+        var row = (Gtk.TreeListRow) list_item.get_item();
+        var node = (Node) row.get_item();
+        var expander = (Gtk.TreeExpander) list_item.child;
+        expander.set_list_row(row);
+
+        var box = (Gtk.Box) expander.child;
+        var icon = (Gtk.Image) box.get_first_child();
+        var name = (Gtk.Label) icon.get_next_sibling();
+        var count = (Gtk.Label) name.get_next_sibling();
+
+        box.set_data("sidebar-node", node);
+        node.expander_widget = expander;
+        node.icon_widget = icon;
+        node.name_widget = name;
+        node.count_widget = count;
+        node.children_handler = node.children.items_changed.connect(() => {
+            if (node.expander_widget != null)
+                node.expander_widget.hide_expander =
+                    (node.children.get_n_items() == 0);
+        });
+
+        refresh_row(node);
     }
 
-    private void on_drag_end(Gdk.DragContext ctx) {
-        is_internal_drag_in_progress = false;
-        internal_drag_source_entry = null;
-    }
+    private void on_unbind_row(GLib.Object object) {
+        var list_item = (Gtk.ListItem) object;
+        var expander = (Gtk.TreeExpander) list_item.child;
+        expander.set_list_row(null);
 
-    private bool on_drag_motion (Gdk.DragContext context, int x, int y, uint time_) {
-        if (is_internal_drag_in_progress && internal_drag_source_entry == null) {
-            Gtk.TreePath? path;
-            Gtk.TreeViewDropPosition position;
-            get_dest_row_at_pos(x, y, out path, out position);
-
-            if (path != null) {
-                EntryWrapper wrapper = get_wrapper_at_path(path);
-                if (wrapper != null)
-                    internal_drag_source_entry = wrapper.entry;
+        var box = (Gtk.Box) expander.child;
+        var node = box.get_data<Node?>("sidebar-node");
+        if (node != null) {
+            if (node.children_handler != 0) {
+                node.children.disconnect(node.children_handler);
+                node.children_handler = 0;
             }
+            node.expander_widget = null;
+            node.icon_widget = null;
+            node.name_widget = null;
+            node.count_widget = null;
         }
-
-        return false;
+        box.set_data<Node?>("sidebar-node", null);
     }
 
-    private bool has_wrapper(Sidebar.Entry entry) {
-        return entry_map.has_key(entry);
-    }
+    private void refresh_row(Node node) {
+        if (node.expander_widget == null)
+            return; // not currently realised
 
-    private EntryWrapper? get_wrapper(Sidebar.Entry entry) {
-        EntryWrapper? wrapper = entry_map.get(entry);
-        if (wrapper == null)
-            debug("Entry %s not found in sidebar", entry.to_string());
+        Sidebar.Entry entry = node.entry;
+        node.expander_widget.hide_expander = (node.children.get_n_items() == 0);
 
-        return wrapper;
-    }
+        string? icon = entry.get_sidebar_icon();
+        node.icon_widget.visible = !(entry is Sidebar.Header) && icon != null;
+        node.icon_widget.icon_name = icon;
 
-    private EntryWrapper? get_wrapper_at_iter(Gtk.TreeIter iter) {
-        Value val;
-        store.get_value(iter, Columns.WRAPPER, out val);
+        node.name_widget.label = get_name_for_entry(entry);
 
-        EntryWrapper? wrapper = (EntryWrapper?) val;
-        if (wrapper == null)
-            message("No entry found in sidebar at %s", store.get_path(iter).to_string());
+        int count = entry.get_count();
+        node.count_widget.visible = count > 0;
+        node.count_widget.label = count > 0 ? count.to_string() : "";
 
-        return wrapper;
-    }
-
-    private EntryWrapper? get_wrapper_at_path(Gtk.TreePath path) {
-        Gtk.TreeIter iter;
-        if (!store.get_iter(out iter, path)) {
-            message("No entry found in sidebar at %s", path.to_string());
-
-            return null;
-        }
-
-        return get_wrapper_at_iter(iter);
-    }
-
-    public void set_default_context_menu(Gtk.Menu context_menu) {
-        default_context_menu = context_menu;
-    }
-
-    // Note that this method will result in the "entry-selected" signal to fire if mask_signal
-    // is set to false.
-    public bool place_cursor(Sidebar.Entry entry, bool mask_signal) {
-        if (!expand_to_entry(entry))
-            return false;
-
-        EntryWrapper? wrapper = get_wrapper(entry);
-        if (wrapper == null)
-            return false;
-
-        get_selection().select_path(wrapper.get_path());
-
-        mask_entry_selected_signal = mask_signal;
-        set_cursor(wrapper.get_path(), null, false);
-        mask_entry_selected_signal = false;
-
-        return scroll_to_entry(entry);
-    }
-
-    public bool is_selected(Sidebar.Entry entry) {
-        EntryWrapper? wrapper = get_wrapper(entry);
-
-        // Even though get_selection() does not report its return type as nullable, it can be null
-        // if the window has been destroyed.
-        Gtk.TreeSelection selection = get_selection();
-        if (selection == null)
-            return false;
-
-        return (wrapper != null) ? selection.path_is_selected(wrapper.get_path()) : false;
-    }
-
-    public bool is_any_selected() {
-        return get_selection().count_selected_rows() != 0;
-    }
-
-    private Gtk.TreePath? get_selected_path() {
-        Gtk.TreeModel model;
-        Gtk.TreeSelection? selection = get_selection();
-        if (selection == null){
-            return null;
-        }
-        GLib.List<Gtk.TreePath> rows = selection.get_selected_rows(out model);
-        assert(rows.length() == 0 || rows.length() == 1);
-
-        return rows.length() != 0 ? rows.nth_data(0) : null;
+        string? tooltip = entry.get_sidebar_tooltip();
+        node.expander_widget.tooltip_markup =
+            tooltip != null ? Geary.HTML.escape_markup(tooltip) : null;
     }
 
     private string get_name_for_entry(Sidebar.Entry entry) {
@@ -292,106 +293,300 @@ public class Sidebar.Tree : Gtk.TreeView {
         return name;
     }
 
+    //
+    // Selection and activation
+    //
+
     public virtual bool accept_cursor_changed() {
         return true;
     }
 
-    public override void row_activated(Gtk.TreePath path, Gtk.TreeViewColumn column) {
-      if (column != text_column)
-        return;
-
-      EntryWrapper? wrapper = get_wrapper_at_path(path);
-      if (wrapper != null) {
-          Sidebar.SelectableEntry? selectable = wrapper.entry as Sidebar.SelectableEntry;
-          if (selectable != null)
-              entry_activated(selectable);
-          else
-              toggle_branch_expansion (path);
-      }
+    private Node? node_at(uint position) {
+        if (position == Gtk.INVALID_LIST_POSITION)
+            return null;
+        var row = this.tree_model.get_row(position);
+        return (row != null) ? row.get_item() as Node : null;
     }
 
-    public override void cursor_changed() {
-        Gtk.TreePath? path = get_selected_path();
-        if (path == null) {
-            if (base.cursor_changed != null)
-                base.cursor_changed();
+    private void on_row_activated(uint position) {
+        Node? node = node_at(position);
+        if (node == null)
             return;
+
+        Sidebar.SelectableEntry? selectable = node.entry as Sidebar.SelectableEntry;
+        if (selectable != null) {
+            entry_activated(selectable);
+        } else {
+            var row = this.tree_model.get_row(position);
+            if (row != null)
+                row.set_expanded(!row.get_expanded());
         }
+    }
 
-        EntryWrapper? wrapper = get_wrapper_at_path(path);
+    private void on_selection_changed(uint position, uint n_items) {
+        if (this.updating_selection || this.syncing_visual_selection)
+            return;
 
-        if (selected_wrapper != wrapper) {
-            EntryWrapper old_wrapper = selected_wrapper;
-            selected_wrapper = wrapper;
+        uint pos = this.selection.selected;
+        Node? node = node_at(pos);
 
-            if (editing_disabled == 0 && wrapper != null && wrapper.entry is Sidebar.RenameableEntry)
-                text_renderer.editable = ((Sidebar.RenameableEntry) wrapper.entry).is_user_renameable();
+        if (node != null && node.entry is Sidebar.SelectableEntry) {
+            var selectable = (Sidebar.SelectableEntry) node.entry;
+            this.selected_node = node;
+            if (!this.mask_entry_selected_signal) {
+                if (accept_cursor_changed()) {
+                    this.last_selected_position = pos;
+                    entry_selected(selectable);
+                    // A single click both selects and activates (activation
+                    // drives e.g. narrow-mode navigation to the content pane).
+                    if (this.click_selecting) {
+                        entry_activated(selectable);
+                        this.activated_this_click = true;
+                    }
+                } else {
+                    // Not allowed to switch away right now; revert.
+                    restore_selection();
+                }
+            } else {
+                this.last_selected_position = pos;
+            }
+        } else if (pos != Gtk.INVALID_LIST_POSITION) {
+            // Headers and groupings are not selectable.
+            restore_selection();
+        } else {
+            this.selected_node = null;
+        }
+    }
 
-            if (wrapper != null && !mask_entry_selected_signal) {
-                Sidebar.SelectableEntry? selectable = wrapper.entry as Sidebar.SelectableEntry;
-                if (selectable != null) {
-                    if (accept_cursor_changed()) {
-                        entry_selected(selectable);
-                    } else {
-                        place_cursor(old_wrapper.entry, true);
+    // Ensures the GTK list's actual selected index (and hence its native
+    // :selected row styling) points at something reasonable for the
+    // current logical selection: the selected entry's own row if visible,
+    // otherwise the nearest collapsed ancestor hiding it. Idempotent, and
+    // safe to call whenever the set of visible rows changes.
+    private void sync_visual_selection() {
+        uint target = Gtk.INVALID_LIST_POSITION;
+
+        Node? node = this.selected_node;
+        if (node != null) {
+            target = position_of(node);
+            if (target == Gtk.INVALID_LIST_POSITION) {
+                // Hidden by a collapsed ancestor; walk from the root down
+                // toward the selection looking for the first collapsed
+                // ancestor -- that's the row hiding it, so represent the
+                // selection there instead.
+                var chain = new Gee.ArrayList<Node>();
+                for (Node? n = node.parent; n != null; n = n.parent)
+                    chain.insert(0, n);
+
+                foreach (Node ancestor in chain) {
+                    uint apos = position_of(ancestor);
+                    if (apos == Gtk.INVALID_LIST_POSITION)
+                        break; // ancestor itself not visible; shouldn't happen
+
+                    var row = this.tree_model.get_row(apos);
+                    if (row != null && !row.get_expanded()) {
+                        target = apos;
+                        break;
                     }
                 }
             }
         }
 
-        if (base.cursor_changed != null)
-            base.cursor_changed();
+        // Keep last_selected_position (what restore_selection() reverts a
+        // rejected click to) in sync with whatever row is currently
+        // standing in for the selection -- otherwise clicking some other,
+        // unrelated non-selectable row would revert the visible selection
+        // to a stale, since-hidden position instead of this one.
+        this.last_selected_position = target;
+
+        if (this.selection.selected == target)
+            return;
+
+        this.syncing_visual_selection = true;
+        this.selection.selected = target;
+        this.syncing_visual_selection = false;
     }
 
-    public void disable_editing() {
-        if (editing_disabled++ == 0)
-            text_renderer.editable = false;
+    private void restore_selection() {
+        this.updating_selection = true;
+        this.selection.selected = this.last_selected_position;
+        this.updating_selection = false;
     }
 
-    public void enable_editing() {
-        Gtk.TreePath? path = get_selected_path();
-        if (path != null && editing_disabled > 0 && --editing_disabled == 0) {
-            EntryWrapper? wrapper = get_wrapper_at_path(path);
-            if (wrapper != null && (wrapper.entry is Sidebar.RenameableEntry))
-                text_renderer.editable = ((Sidebar.RenameableEntry) wrapper.entry).
-                    is_user_renameable();
+    // Note that this method will result in the "entry-selected" signal to
+    // fire if mask_signal is set to false.
+    public bool place_cursor(Sidebar.Entry entry, bool mask_signal) {
+        Node? node = node_map.get(entry);
+        if (node == null)
+            return false;
+
+        expand_ancestors(node);
+
+        uint pos = position_of(node);
+        if (pos == Gtk.INVALID_LIST_POSITION)
+            return false;
+
+        this.mask_entry_selected_signal = mask_signal;
+        this.selection.selected = pos;
+        this.mask_entry_selected_signal = false;
+
+        this.last_selected_position = pos;
+        this.selected_node = node;
+
+        this.list_view.scroll_to(pos, Gtk.ListScrollFlags.NONE, null);
+        if (pos == 0) {
+            // scroll_to only guarantees the item is visible, not that it's
+            // flush with the top edge; force that explicitly for the top
+            // item (e.g. selecting the top folder on startup).
+            var vadj = this.list_view.vadjustment;
+            if (vadj != null)
+                vadj.value = vadj.lower;
+        }
+        return true;
+    }
+
+    public bool is_selected(Sidebar.Entry entry) {
+        // Compare against the logical selection, not the GTK list's raw
+        // selected index: that index may currently point at a collapsed
+        // ancestor standing in for a hidden selection (see
+        // sync_visual_selection), not at entry's own row.
+        return this.selected_node != null && this.selected_node.entry == entry;
+    }
+
+    public bool is_any_selected() {
+        return this.selected_node != null;
+    }
+
+    public void clear_selection() {
+        this.updating_selection = true;
+        this.selection.selected = Gtk.INVALID_LIST_POSITION;
+        this.updating_selection = false;
+        this.selected_node = null;
+        this.last_selected_position = Gtk.INVALID_LIST_POSITION;
+    }
+
+    // Single-click activation is handled by the primary click gesture, not
+    // GtkListView's single-click-activate (which would select on hover).
+    public void set_activate_on_single_click(bool single) {
+        this.list_view.single_click_activate = false;
+    }
+
+    private void on_primary_pressed(int n_press, double x, double y) {
+        this.click_selecting = true;
+        this.activated_this_click = false;
+    }
+
+    private void on_primary_released(int n_press, double x, double y) {
+        if (this.click_selecting && !this.activated_this_click) {
+            Node? node = node_at_position(x, y);
+            if (node != null && node.entry is Sidebar.SelectableEntry &&
+                this.selected_node == node) {
+                // Re-click on the already-selected entry: the selection
+                // didn't change so on_selection_changed didn't fire; re-emit
+                // so the view can respond (e.g. scroll back to the top).
+                var selectable = (Sidebar.SelectableEntry) node.entry;
+                entry_selected(selectable);
+                entry_activated(selectable);
+            } else if (node != null && !(node.entry is Sidebar.SelectableEntry)) {
+                // Clicking a header/grouping row toggles its expansion.
+                uint pos = position_of(node);
+                if (pos != Gtk.INVALID_LIST_POSITION) {
+                    var row = this.tree_model.get_row(pos);
+                    if (row != null)
+                        row.set_expanded(!row.get_expanded());
+                }
+            }
+        }
+        this.click_selecting = false;
+    }
+
+    //
+    // Expansion and scrolling
+    //
+
+    private uint position_of(Node node) {
+        uint n = this.tree_model.get_n_items();
+        for (uint i = 0; i < n; i++) {
+            var row = this.tree_model.get_row(i);
+            if (row != null && row.get_item() == node)
+                return i;
+        }
+        return Gtk.INVALID_LIST_POSITION;
+    }
+
+    // Expands every ancestor of node so that node itself becomes visible.
+    private void expand_ancestors(Node node) {
+        var chain = new Gee.ArrayList<Node>();
+        for (Node? n = node.parent; n != null; n = n.parent)
+            chain.insert(0, n);
+
+        foreach (Node ancestor in chain) {
+            uint pos = position_of(ancestor);
+            if (pos != Gtk.INVALID_LIST_POSITION) {
+                var row = this.tree_model.get_row(pos);
+                if (row != null)
+                    row.set_expanded(true);
+            }
         }
     }
 
-    private void toggle_branch_expansion(Gtk.TreePath path) {
-        if (is_row_expanded(path))
-            collapse_row(path);
-        else
-            expand_row(path, false);
-    }
-
     public bool expand_to_entry(Sidebar.Entry entry) {
-        EntryWrapper? wrapper = get_wrapper(entry);
-        if (wrapper == null)
+        Node? node = node_map.get(entry);
+        if (node == null)
             return false;
 
-        expand_to_path(wrapper.get_path());
+        expand_ancestors(node);
 
+        uint pos = position_of(node);
+        if (pos != Gtk.INVALID_LIST_POSITION) {
+            var row = this.tree_model.get_row(pos);
+            if (row != null)
+                row.set_expanded(true);
+        }
         return true;
     }
 
     public void expand_to_first_child(Sidebar.Entry entry) {
-        EntryWrapper? wrapper = get_wrapper(entry);
-        if (wrapper == null)
+        Node? node = node_map.get(entry);
+        if (node == null)
             return;
 
-        Gtk.TreePath path = wrapper.get_path();
+        expand_ancestors(node);
 
-        Gtk.TreeIter iter;
-        while (store.get_iter(out iter, path)) {
-            if (!store.iter_has_child(iter))
+        for (Node? cur = node; cur != null && cur.children.get_n_items() > 0;) {
+            uint pos = position_of(cur);
+            if (pos == Gtk.INVALID_LIST_POSITION)
                 break;
-
-            path.down();
+            var row = this.tree_model.get_row(pos);
+            if (row == null)
+                break;
+            row.set_expanded(true);
+            cur = (Node) cur.children.get_item(0);
         }
-
-        expand_to_path(path);
     }
+
+    public bool scroll_to_entry(Sidebar.Entry entry) {
+        Node? node = node_map.get(entry);
+        if (node == null)
+            return false;
+
+        uint pos = position_of(node);
+        if (pos == Gtk.INVALID_LIST_POSITION)
+            return false;
+
+        this.list_view.scroll_to(pos, Gtk.ListScrollFlags.NONE, null);
+        return true;
+    }
+
+    public void scroll_to_top() {
+        var vadj = this.list_view.vadjustment;
+        if (vadj != null)
+            vadj.value = vadj.lower;
+    }
+
+    //
+    // Branch bookkeeping
+    //
 
     public bool has_branch(Sidebar.Branch branch) {
         return branches.has_key(branch);
@@ -429,114 +624,10 @@ public class Sidebar.Tree : Gtk.TreeView {
         return int.MIN;
     }
 
-    // This is used to associate a known branch with the TreeView.
-    private void associate_branch(Sidebar.Branch branch) {
-        assert(branches.has_key(branch));
-
-        int position = branches.get(branch);
-
-        Gtk.TreeIter? insertion_iter = null;
-
-        // search current roots for insertion point
-        Gtk.TreeIter iter;
-        bool found = store.get_iter_first(out iter);
-        while (found) {
-            RootWrapper? root_wrapper = get_wrapper_at_iter(iter) as RootWrapper;
-            assert(root_wrapper != null);
-
-            if (position < root_wrapper.root_position) {
-                store.insert_before(out insertion_iter, null, iter);
-
-                break;
-            }
-
-            found = store.iter_next(ref iter);
-        }
-
-        // if not found, append
-        if (insertion_iter == null)
-            store.append(out insertion_iter, null);
-
-        associate_wrapper(insertion_iter,
-            new RootWrapper(store, branch.get_root(), store.get_path(insertion_iter), position));
-
-        // mirror the branch's initial contents from below the root down, let the signals handle
-        // future work
-        associate_children(branch, branch.get_root(), insertion_iter);
-    }
-
-    private void associate_children(Sidebar.Branch branch, Sidebar.Entry parent,
-        Gtk.TreeIter parent_iter) {
-        Gee.List<Sidebar.Entry>? children = branch.get_children(parent);
-        if (children == null)
-            return;
-
-        foreach (Sidebar.Entry child in children) {
-            Gtk.TreeIter append_iter;
-            store.append(out append_iter, parent_iter);
-
-            associate_entry(append_iter, child);
-            associate_children(branch, child, append_iter);
-        }
-    }
-
-    private void associate_entry(Gtk.TreeIter assoc_iter, Sidebar.Entry entry) {
-        associate_wrapper(assoc_iter, new EntryWrapper(store, entry, store.get_path(assoc_iter)));
-    }
-
-    private void associate_wrapper(Gtk.TreeIter assoc_iter, EntryWrapper wrapper) {
-        Sidebar.Entry entry = wrapper.entry;
-
-        assert(!entry_map.has_key(entry));
-        entry_map.set(entry, wrapper);
-
-        store.set(
-            assoc_iter,
-            Columns.WRAPPER, wrapper,
-            Columns.ICON, entry.get_sidebar_icon(),
-            Columns.NAME, get_name_for_entry(entry),
-            Columns.TOOLTIP, entry.get_sidebar_tooltip() != null ?
-                Geary.HTML.escape_markup(entry.get_sidebar_tooltip()) : null,
-            Columns.COUNTER, entry.get_count()
-        );
-        entry.entry_changed.connect(on_entry_changed);
-        entry.grafted(this);
-    }
-
-    private EntryWrapper reparent_wrapper(Gtk.TreeIter new_iter, EntryWrapper current_wrapper) {
-        Sidebar.Entry entry = current_wrapper.entry;
-
-        bool removed = entry_map.unset(entry);
-        assert(removed);
-
-        var new_wrapper = new EntryWrapper(store, entry, store.get_path(new_iter));
-        this.entry_map.set(entry, new_wrapper);
-        this.store.set(
-            new_iter,
-            Columns.WRAPPER, new_wrapper,
-            Columns.ICON, entry.get_sidebar_icon(),
-            Columns.NAME, get_name_for_entry(entry),
-            Columns.TOOLTIP, entry.get_sidebar_tooltip() != null ?
-                Geary.HTML.escape_markup(entry.get_sidebar_tooltip()) : null,
-            Columns.COUNTER, entry.get_count()
-        );
-        return new_wrapper;
-    }
-
-    protected void prune_all() {
-        while (branches.keys.size > 0) {
-            Gee.Iterator<Sidebar.Branch> iterator = branches.keys.iterator();
-            if (!iterator.next())
-                break;
-
-            prune(iterator.get());
-        }
-    }
-
     public void prune(Sidebar.Branch branch) {
         assert(branches.has_key(branch));
 
-        if (has_wrapper(branch.get_root()))
+        if (node_map.has_key(branch.get_root()))
             disassociate_branch(branch);
 
         branch.entry_added.disconnect(on_branch_entry_added);
@@ -552,151 +643,182 @@ public class Sidebar.Tree : Gtk.TreeView {
         branch_removed(branch);
     }
 
-    private void disassociate_branch(Sidebar.Branch branch) {
-        RootWrapper? root_wrapper = get_wrapper(branch.get_root()) as RootWrapper;
-        assert(root_wrapper != null);
+    protected void prune_all() {
+        while (branches.keys.size > 0) {
+            Gee.Iterator<Sidebar.Branch> iterator = branches.keys.iterator();
+            if (!iterator.next())
+                break;
 
-        disassociate_wrapper_and_signal(root_wrapper, false);
-    }
-
-    // A wrapper for disassociate_wrapper() (?!?) that fires the "selected-entry-removed" signal if
-    // condition exists
-    private void disassociate_wrapper_and_signal(EntryWrapper wrapper, bool only_children) {
-        bool selected = is_selected(wrapper.entry);
-
-        disassociate_wrapper(wrapper, only_children);
-
-        if (selected) {
-            Sidebar.SelectableEntry? selectable = wrapper.entry as Sidebar.SelectableEntry;
-            assert(selectable != null);
-
-            selected_entry_removed(selectable);
+            prune(iterator.get());
         }
     }
 
-    private void disassociate_wrapper(EntryWrapper wrapper, bool only_children) {
-        Gee.ArrayList<EntryWrapper> children = new Gee.ArrayList<EntryWrapper>();
+    private void associate_branch(Sidebar.Branch branch) {
+        assert(branches.has_key(branch));
 
-        Gtk.TreeIter child_iter;
-        bool found = store.iter_children(out child_iter, wrapper.get_iter());
-        while (found) {
-            EntryWrapper? child_wrapper = get_wrapper_at_iter(child_iter);
-            assert(child_wrapper != null);
+        int position = branches.get(branch);
 
-            children.add(child_wrapper);
+        var root_node = new Node(branch.get_root(), null);
+        root_node.root_position = position;
 
-            found = store.iter_next(ref child_iter);
+        // Insert before the first existing root with a greater position.
+        uint index = this.roots.get_n_items();
+        for (uint i = 0; i < this.roots.get_n_items(); i++) {
+            var existing = (Node) this.roots.get_item(i);
+            if (position < existing.root_position) {
+                index = i;
+                break;
+            }
         }
+        this.roots.insert(index, root_node);
+        register_node(root_node);
 
-        foreach (EntryWrapper child_wrapper in children)
-            disassociate_wrapper(child_wrapper, false);
+        associate_children(branch, branch.get_root(), root_node);
+    }
 
-        if (only_children)
+    private void associate_children(Sidebar.Branch branch, Sidebar.Entry parent,
+                                    Node parent_node) {
+        Gee.List<Sidebar.Entry>? children = branch.get_children(parent);
+        if (children == null)
             return;
 
-        Gtk.TreeIter iter = wrapper.get_iter();
-        store.remove(ref iter);
+        foreach (Sidebar.Entry child in children) {
+            var child_node = new Node(child, parent_node);
+            parent_node.children.append(child_node);
+            register_node(child_node);
+            associate_children(branch, child, child_node);
+        }
+    }
 
-        if (selected_wrapper == wrapper)
-            selected_wrapper = null;
+    private void register_node(Node node) {
+        assert(!node_map.has_key(node.entry));
+        node_map.set(node.entry, node);
 
-        Sidebar.Entry entry = wrapper.entry;
+        node.entry.entry_changed.connect(on_entry_changed);
+        node.entry.grafted(this);
+    }
+
+    private void disassociate_branch(Sidebar.Branch branch) {
+        Node? root_node = node_map.get(branch.get_root());
+        if (root_node != null)
+            unregister_subtree(root_node, true);
+    }
+
+    // Removes node (optionally detaching it from its parent store) along
+    // with its whole subtree, firing selected-entry-removed if the
+    // currently-selected entry is pruned.
+    private void unregister_subtree(Node node, bool remove_from_parent) {
+        bool selected = is_selected(node.entry);
+
+        while (node.children.get_n_items() > 0) {
+            var child = (Node) node.children.get_item(0);
+            unregister_subtree(child, false);
+            node.children.remove(0);
+        }
+
+        if (remove_from_parent) {
+            GLib.ListStore parent_store =
+                (node.parent != null) ? node.parent.children : this.roots;
+            uint index;
+            if (parent_store.find(node, out index))
+                parent_store.remove(index);
+        }
+
+        if (this.selected_node == node)
+            this.selected_node = null;
+
+        Sidebar.Entry entry = node.entry;
         entry.pruned(this);
         entry.entry_changed.disconnect(on_entry_changed);
+        node_map.unset(entry);
 
-        this.entry_map.unset(entry);
+        if (selected) {
+            Sidebar.SelectableEntry? selectable = entry as Sidebar.SelectableEntry;
+            if (selectable != null)
+                selected_entry_removed(selectable);
+        }
     }
+
+    //
+    // Branch signal handlers
+    //
 
     private void on_branch_entry_added(Sidebar.Branch branch, Sidebar.Entry entry) {
         Sidebar.Entry? parent = branch.get_parent(entry);
         assert(parent != null);
 
-        EntryWrapper? parent_wrapper = get_wrapper(parent);
-        assert(parent_wrapper != null);
+        Node? parent_node = node_map.get(parent);
+        assert(parent_node != null);
 
-        Gtk.TreeIter insertion_iter;
+        var node = new Node(entry, parent_node);
+
+        uint index = parent_node.children.get_n_items();
         Sidebar.Entry? next = branch.get_next_sibling(entry);
         if (next != null) {
-            EntryWrapper next_wrapper = get_wrapper(next);
-
-            // insert before the next sibling in this branch level
-            store.insert_before(out insertion_iter, parent_wrapper.get_iter(), next_wrapper.get_iter());
-        } else {
-            // append to the bottom of this branch level
-            store.append(out insertion_iter, parent_wrapper.get_iter());
+            Node? next_node = node_map.get(next);
+            uint next_index = 0;
+            if (next_node != null && parent_node.children.find(next_node, out next_index))
+                index = next_index;
         }
+        parent_node.children.insert(index, node);
+        register_node(node);
+        associate_children(branch, entry, node);
 
-        associate_entry(insertion_iter, entry);
-        associate_children(branch, entry, insertion_iter);
-
-        if (branch.is_auto_open_on_new_child() || parent is Grouping) {
+        if (branch.is_auto_open_on_new_child() || parent is Sidebar.Grouping)
             expand_to_entry(entry);
-        }
     }
 
     private void on_branch_entry_removed(Sidebar.Branch branch, Sidebar.Entry entry) {
-        EntryWrapper? wrapper = get_wrapper(entry);
-        if (wrapper != null) {
-            assert(!(wrapper is RootWrapper));
-            disassociate_wrapper_and_signal(wrapper, false);
-        }
+        Node? node = node_map.get(entry);
+        if (node != null)
+            unregister_subtree(node, true);
     }
 
     private void on_branch_entry_moved(Sidebar.Branch branch, Sidebar.Entry entry) {
-        EntryWrapper? wrapper = get_wrapper(entry);
-        assert(wrapper != null);
-        assert(!(wrapper is RootWrapper));
+        Node? node = node_map.get(entry);
+        assert(node != null);
 
-        // null means entry is now at the top of the sibling list
-        Gtk.TreeIter? prev_iter = null;
+        GLib.ListStore parent_store =
+            (node.parent != null) ? node.parent.children : this.roots;
+
         Sidebar.Entry? prev = branch.get_previous_sibling(entry);
-        if (prev != null) {
-            EntryWrapper? prev_wrapper = get_wrapper(prev);
-            assert(prev_wrapper != null);
-
-            prev_iter = prev_wrapper.get_iter();
-        }
-
-        Gtk.TreeIter entry_iter = wrapper.get_iter();
-        store.move_after(ref entry_iter, prev_iter);
+        Node? prev_node = (prev != null) ? node_map.get(prev) : null;
+        reposition(parent_store, node, prev_node);
     }
 
     private void on_branch_entry_reparented(Sidebar.Branch branch, Sidebar.Entry entry,
-        Sidebar.Entry old_parent) {
-        EntryWrapper? wrapper = get_wrapper(entry);
-        assert(wrapper != null);
-        assert(!(wrapper is RootWrapper));
+                                            Sidebar.Entry old_parent) {
+        Node? node = node_map.get(entry);
+        assert(node != null);
 
-        bool selected = (get_current_path().compare(wrapper.get_path()) == 0);
+        bool was_selected = is_selected(entry);
 
-        // remove from current position in tree
-        Gtk.TreeIter iter = wrapper.get_iter();
-        store.remove(ref iter);
+        // Detach from the current parent store.
+        GLib.ListStore old_store =
+            (node.parent != null) ? node.parent.children : this.roots;
+        uint old_index;
+        if (old_store.find(node, out old_index))
+            old_store.remove(old_index);
 
         Sidebar.Entry? parent = branch.get_parent(entry);
         assert(parent != null);
+        Node? parent_node = node_map.get(parent);
+        assert(parent_node != null);
+        node.parent = parent_node;
 
-        EntryWrapper? parent_wrapper = get_wrapper(parent);
-        assert(parent_wrapper != null);
-
-        // null means entry is now at the top of the sibling list
-        Gtk.TreeIter? prev_iter = null;
         Sidebar.Entry? prev = branch.get_previous_sibling(entry);
-        if (prev != null) {
-            EntryWrapper? prev_wrapper = get_wrapper(prev);
-            assert(prev_wrapper != null);
-
-            prev_iter = prev_wrapper.get_iter();
+        Node? prev_node = (prev != null) ? node_map.get(prev) : null;
+        uint index = 0;
+        if (prev_node != null) {
+            uint prev_index;
+            if (parent_node.children.find(prev_node, out prev_index))
+                index = prev_index + 1;
         }
+        parent_node.children.insert(index, node);
 
-        Gtk.TreeIter new_iter;
-        store.insert_after(out new_iter, parent_wrapper.get_iter(), prev_iter);
-
-        EntryWrapper new_wrapper = reparent_wrapper(new_iter, wrapper);
-
-        if (selected) {
-            expand_to_entry(new_wrapper.entry);
-            place_cursor(new_wrapper.entry, false);
+        if (was_selected) {
+            expand_to_entry(entry);
+            place_cursor(entry, false);
         }
     }
 
@@ -705,14 +827,17 @@ public class Sidebar.Tree : Gtk.TreeView {
         if (children == null)
             return;
 
-        // This works by moving the entries to the bottom of the tree's list in the order they
-        // are presented in the Sidebar.Branch list.
-        foreach (Sidebar.Entry child in children) {
-            EntryWrapper? child_wrapper = get_wrapper(child);
-            assert(child_wrapper != null);
+        Node? parent_node = node_map.get(entry);
+        if (parent_node == null)
+            return;
 
-            Gtk.TreeIter child_iter = child_wrapper.get_iter();
-            store.move_before(ref child_iter, null);
+        Node? after = null;
+        foreach (Sidebar.Entry child in children) {
+            Node? child_node = node_map.get(child);
+            if (child_node == null)
+                continue;
+            reposition(parent_node.children, child_node, after);
+            after = child_node;
         }
     }
 
@@ -726,155 +851,48 @@ public class Sidebar.Tree : Gtk.TreeView {
     }
 
     private void on_entry_changed(Sidebar.Entry entry) {
-        var wrapper = get_wrapper(entry);
-        if (wrapper != null) {
-            var tooltip = entry.get_sidebar_tooltip();
-            if (tooltip != null) {
-                tooltip = Geary.HTML.escape_markup(tooltip);
-            }
-            store.set(
-                wrapper.get_iter(),
-                Columns.ICON, entry.get_sidebar_icon(),
-                Columns.NAME, get_name_for_entry(entry),
-                Columns.TOOLTIP, tooltip,
-                Columns.COUNTER, entry.get_count()
-            );
+        Node? node = node_map.get(entry);
+        if (node != null)
+            refresh_row(node);
+    }
+
+    // Moves node so it immediately follows "after" (or to the head of the
+    // store when after is null), within the given store.
+    private void reposition(GLib.ListStore store, Node node, Node? after) {
+        uint current;
+        if (!store.find(node, out current))
+            return;
+        store.remove(current);
+
+        uint index = 0;
+        if (after != null) {
+            uint after_index;
+            if (store.find(after, out after_index))
+                index = after_index + 1;
         }
+        store.insert(index, node);
     }
 
-    private bool on_selection(Gtk.TreeSelection selection, Gtk.TreeModel model, Gtk.TreePath path,
-        bool path_currently_selected) {
-        // only allow selection if a page is selectable
-        EntryWrapper? wrapper = get_wrapper_at_path(path);
+    //
+    // Editing (inline rename)
+    //
 
-        return (wrapper != null) ? (wrapper.entry is Sidebar.SelectableEntry) : false;
+    public void set_default_context_menu(Gtk.PopoverMenu context_menu) {
+        this.default_context_menu = context_menu;
     }
 
-    private Gtk.TreePath? get_path_from_event(Gdk.EventButton event) {
-        int x, y;
-        Gdk.ModifierType mask;
-        event.window.get_device_position(
-            event.get_seat().get_pointer(),
-            out x, out y, out mask
-        );
-
-        int cell_x, cell_y;
-        Gtk.TreePath path;
-        return get_path_at_pos(x, y, out path, null, out cell_x, out cell_y) ? path : null;
+    public void disable_editing() {
+        this.editing_disabled++;
     }
 
-    private Gtk.TreePath? get_current_path() {
-        Gtk.TreeModel model;
-        GLib.List<Gtk.TreePath> rows = get_selection().get_selected_rows(out model);
-        assert(rows.length() == 0 || rows.length() == 1);
-
-        return rows.length() != 0 ? rows.nth_data(0) : null;
-    }
-
-    private bool on_context_menu_keypress() {
-        GLib.List<Gtk.TreePath> rows = get_selection().get_selected_rows(null);
-        if (rows == null)
-            return false;
-
-        Gtk.TreePath? path = rows.data;
-        if (path == null)
-            return false;
-
-        scroll_to_cell(path, null, false, 0, 0);
-
-        return popup_context_menu(path);
-    }
-
-    private bool popup_context_menu(Gtk.TreePath path, Gdk.EventButton? event = null) {
-        EntryWrapper? wrapper = get_wrapper_at_path(path);
-        if (wrapper == null)
-            return false;
-
-        Sidebar.Contextable? contextable = wrapper.entry as Sidebar.Contextable;
-        if (contextable == null)
-            return false;
-
-        Gtk.Menu? context_menu = contextable.get_sidebar_context_menu(event);
-        if (context_menu == null)
-            return false;
-
-        context_menu.popup_at_pointer(event);
-        return true;
-    }
-
-    private bool popup_default_context_menu(Gdk.EventButton event) {
-        if (default_context_menu != null)
-            default_context_menu.popup_at_pointer(event);
-        return true;
-    }
-
-    public override bool button_press_event(Gdk.EventButton event) {
-        Gtk.TreePath? path = get_path_from_event(event);
-
-        if (event.button == 3 && event.type == Gdk.EventType.BUTTON_PRESS) {
-            // single right click
-            if (path != null)
-                popup_context_menu(path, event);
-            else
-                popup_default_context_menu(event);
-        } else if (event.button == 1 && event.type == Gdk.EventType.BUTTON_PRESS) {
-            if (path == null) {
-                old_path_ref = null;
-                return base.button_press_event(event);
-            }
-
-            EntryWrapper? wrapper = get_wrapper_at_path(path);
-
-            if (wrapper == null) {
-                old_path_ref = null;
-                return base.button_press_event(event);
-            }
-
-            // Is this a click on an already-highlighted tree item?
-            if ((old_path_ref != null) && (old_path_ref.get_path() != null)
-                && (old_path_ref.get_path().compare(path) == 0)) {
-                // yes, don't allow single-click editing, but
-                // pass the event on for dragging.
-                text_renderer.editable = false;
-                return base.button_press_event(event);
-            }
-
-            // Got click on different tree item, make sure it is editable
-            // if it needs to be.
-            if (wrapper.entry is Sidebar.RenameableEntry &&
-                ((Sidebar.RenameableEntry) wrapper.entry).is_user_renameable()) {
-                text_renderer.editable = true;
-            }
-
-            // Remember what tree item is highlighted for next time.
-            old_path_ref = new Gtk.TreeRowReference(store, path);
-        }
-
-        return base.button_press_event(event);
-    }
-
-    public override bool key_press_event(Gdk.EventKey event) {
-        bool handled = false;
-        switch (Gdk.keyval_name(event.keyval)) {
-            case "F2":
-                handled = rename_in_place();
-                break;
-
-            case "Delete":
-                Gtk.TreePath? path = get_current_path();
-                handled = (path != null) ? destroy_path(path) : false;
-                break;
-        }
-        if (!handled) {
-            handled = base.key_press_event(event);
-        }
-        return handled;
+    public void enable_editing() {
+        if (this.editing_disabled > 0)
+            this.editing_disabled--;
     }
 
     public bool rename_entry_in_place(Sidebar.Entry entry) {
         if (!expand_to_entry(entry))
             return false;
-
         if (!place_cursor(entry, false))
             return false;
 
@@ -882,193 +900,117 @@ public class Sidebar.Tree : Gtk.TreeView {
     }
 
     private bool rename_in_place() {
-        Gtk.TreePath? cursor_path;
-        Gtk.TreeViewColumn? cursor_column;
-        get_cursor(out cursor_path, out cursor_column);
-
-        if (can_rename_path(cursor_path)) {
-            set_cursor(cursor_path, cursor_column, true);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool scroll_to_entry(Sidebar.Entry entry) {
-        EntryWrapper? wrapper = get_wrapper(entry);
-        if (wrapper == null)
+        if (this.editing_disabled > 0)
             return false;
 
-        scroll_to_cell(wrapper.get_path(), null, false, 0, 0);
+        Node? node = this.selected_node;
+        if (node == null || node.name_widget == null)
+            return false;
+
+        Sidebar.RenameableEntry? renameable = node.entry as Sidebar.RenameableEntry;
+        if (renameable == null || !renameable.is_user_renameable())
+            return false;
+        if (node.entry is Sidebar.Grouping)
+            return false;
+
+        Gtk.Label label = node.name_widget;
+        var box = label.get_parent() as Gtk.Box;
+        if (box == null)
+            return false;
+
+        var editor = new Gtk.Text() {
+            text = node.entry.get_sidebar_name(),
+            hexpand = true
+        };
+        label.visible = false;
+        box.insert_child_after(editor, label);
+        editor.grab_focus();
+
+        editor.activate.connect(() => {
+            renameable.rename(editor.text);
+            finish_rename(editor, label);
+        });
+        var focus = new Gtk.EventControllerFocus();
+        focus.leave.connect(() => finish_rename(editor, label));
+        editor.add_controller(focus);
 
         return true;
     }
 
-    public override void drag_data_get(Gdk.DragContext context, Gtk.SelectionData selection_data,
-        uint info, uint time) {
-        InternalDragSourceEntry? drag_source = null;
+    private void finish_rename(Gtk.Text editor, Gtk.Label label) {
+        var box = editor.get_parent() as Gtk.Box;
+        if (box != null)
+            box.remove(editor);
+        label.visible = true;
+    }
 
-        if (internal_drag_source_entry != null) {
-            Sidebar.SelectableEntry selectable =
-                internal_drag_source_entry as Sidebar.SelectableEntry;
-            if (selectable == null) {
-                drag_source = internal_drag_source_entry as InternalDragSourceEntry;
+    //
+    // Input
+    //
+
+    private bool on_key_pressed(uint keyval, uint keycode, Gdk.ModifierType state) {
+        switch (Gdk.keyval_name(keyval)) {
+            case "F2":
+                return rename_in_place();
+
+            case "Delete":
+                Node? node = this.selected_node;
+                if (node != null) {
+                    Sidebar.DestroyableEntry? destroyable =
+                        node.entry as Sidebar.DestroyableEntry;
+                    if (destroyable != null) {
+                        destroyable.destroy_source();
+                        return true;
+                    }
+                }
+                return false;
+        }
+        return false;
+    }
+
+    private void on_secondary_press(int n_press, double x, double y) {
+        if (this.default_context_menu == null)
+            return;
+
+        // Per-entry context menus (Sidebar.Contextable) are not yet ported
+        // to GTK4; fall back to the default menu.
+        Gdk.Rectangle rect = { (int) x, (int) y, 1, 1 };
+        this.default_context_menu.set_pointing_to(rect);
+        this.default_context_menu.popup();
+    }
+
+    private Node? node_at_position(double x, double y) {
+        Gtk.Widget? picked = this.list_view.pick(x, y, Gtk.PickFlags.DEFAULT);
+        for (Gtk.Widget? w = picked; w != null && w != this; w = w.get_parent()) {
+            var box = w as Gtk.Box;
+            if (box != null) {
+                Node? node = box.get_data<Node?>("sidebar-node");
+                if (node != null)
+                    return node;
             }
         }
-
-        if (drag_source == null) {
-            Gtk.TreePath? selected_path = get_selected_path();
-            if (selected_path == null)
-                return;
-
-            EntryWrapper? wrapper = get_wrapper_at_path(selected_path);
-            if (wrapper == null)
-                return;
-
-            drag_source = wrapper.entry as InternalDragSourceEntry;
-            if (drag_source == null)
-                return;
-        }
-
-        drag_source.prepare_selection_data(selection_data);
+        return null;
     }
 
-    public override void drag_data_received(Gdk.DragContext context, int x, int y,
-        Gtk.SelectionData selection_data, uint info, uint time) {
-
-        Gtk.TreePath path;
-        Gtk.TreeViewDropPosition pos;
-        if (!get_dest_row_at_pos(x, y, out path, out pos)) {
-            // If an external drop, hand it off to the handler
-            if (Gtk.drag_get_source_widget(context) == null)
-                drop_handler(context, null, selection_data, info, time);
-            else
-                Gtk.drag_finish(context, false, false, time);
-
-            return;
+    private bool on_drop_target_drop(Gtk.DropTarget drop_target,
+                                     GLib.Value value,
+                                     double x, double y) {
+        if (!value.holds(typeof(string)) ||
+            value.get_string() != "application/x-geary-mail") {
+            return false;
         }
 
-        // Note that a drop outside a sidebar entry is legal if an external drop.
-        EntryWrapper? wrapper = get_wrapper_at_path(path);
-
-        // If an external drop, hand it off to the handler
-        if (Gtk.drag_get_source_widget(context) == null) {
-            drop_handler(context, (wrapper != null) ? wrapper.entry : null, selection_data,
-                info, time);
-
-            return;
-        }
-
-        // An internal drop only applies to DropTargetEntry's
-        if (wrapper == null) {
-            Gtk.drag_finish(context, false, false, time);
-
-            return;
-        }
-
-        Sidebar.InternalDropTargetEntry? targetable = wrapper.entry as Sidebar.InternalDropTargetEntry;
-        if (targetable == null) {
-            Gtk.drag_finish(context, false, false, time);
-
-            return;
-        }
-
-        bool success = targetable.internal_drop_received(
-            this, context, selection_data
-        );
-        Gtk.drag_finish(context, success, false, time);
-    }
-
-    public override bool drag_motion(Gdk.DragContext context, int x, int y, uint time) {
-        // call the base signal to get rows with children to spring open
-        base.drag_motion(context, x, y, time);
-
-        Gtk.TreePath path;
-        Gtk.TreeViewDropPosition pos;
-        bool has_dest = get_dest_row_at_pos(x, y, out path, out pos);
-
-        // we don't want to insert between rows, only select the rows themselves
-        if (!has_dest || pos == Gtk.TreeViewDropPosition.BEFORE)
-            set_drag_dest_row(path, Gtk.TreeViewDropPosition.INTO_OR_BEFORE);
-        else if (pos == Gtk.TreeViewDropPosition.AFTER)
-            set_drag_dest_row(path, Gtk.TreeViewDropPosition.INTO_OR_AFTER);
-
-        Gdk.drag_status(context, context.get_suggested_action(), time);
-
-        return has_dest;
-    }
-
-    // Returns true if path is renameable, and selects the path as well.
-    private bool can_rename_path(Gtk.TreePath path) {
-        if (editing_disabled > 0)
+        Node? node = node_at_position(x, y);
+        Sidebar.InternalDropTargetEntry? entry = (node != null)
+            ? node.entry as Sidebar.InternalDropTargetEntry : null;
+        if (entry == null)
             return false;
 
-        EntryWrapper? wrapper = get_wrapper_at_path(path);
-        if (wrapper == null)
-            return false;
-
-        Sidebar.RenameableEntry? renameable = wrapper.entry as Sidebar.RenameableEntry;
-        if (renameable == null)
-            return false;
-
-        if (wrapper.entry is Sidebar.Grouping)
-            return false;
-
-        get_selection().select_path(path);
-
-        return true;
-    }
-
-    private bool destroy_path(Gtk.TreePath path) {
-        EntryWrapper? wrapper = get_wrapper_at_path(path);
-        if (wrapper == null)
-            return false;
-
-        Sidebar.DestroyableEntry? destroyable = wrapper.entry as Sidebar.DestroyableEntry;
-        if (destroyable == null)
-            return false;
-
-        destroyable.destroy_source();
-
-        return true;
-    }
-
-    private void on_editing_started(Gtk.CellEditable editable, string path) {
-        if (editable is Gtk.Entry) {
-            text_entry = (Gtk.Entry) editable;
-            text_entry.editing_done.connect(on_editing_done);
-            text_entry.focus_out_event.connect(on_editing_focus_out);
-            text_entry.editable = true;
-        }
-    }
-
-    private void on_editing_canceled() {
-        text_entry.editable = false;
-
-        text_entry.editing_done.disconnect(on_editing_done);
-        text_entry.focus_out_event.disconnect(on_editing_focus_out);
-    }
-
-    private void on_editing_done() {
-        text_entry.editable = false;
-
-        EntryWrapper? wrapper = get_wrapper_at_path(get_current_path());
-        if (wrapper != null) {
-            Sidebar.RenameableEntry? renameable = wrapper.entry as Sidebar.RenameableEntry;
-            if (renameable != null)
-                renameable.rename(text_entry.get_text());
-        }
-
-        text_entry.editing_done.disconnect(on_editing_done);
-        text_entry.focus_out_event.disconnect(on_editing_focus_out);
-    }
-
-    private bool on_editing_focus_out(Gdk.EventFocus event) {
-        // We'll return false here, in case other parts of the app
-        // want to know if the button press event that caused
-        // us to lose focus have been fully handled.
-        return false;
+        Gdk.Drop? drop = drop_target.get_current_drop();
+        Gdk.DragAction possible = (drop != null)
+            ? drop.actions : Gdk.DragAction.MOVE;
+        Gdk.DragAction action = ((possible & Gdk.DragAction.MOVE) != 0)
+            ? Gdk.DragAction.MOVE : Gdk.DragAction.COPY;
+        return entry.internal_drop_received(this, action);
     }
 }
-

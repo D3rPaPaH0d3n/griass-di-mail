@@ -21,7 +21,7 @@ internal class Application.DatabaseManager : Geary.BaseObject {
 
     private weak Application.Client application;
 
-    private Gtk.Dialog? dialog = null;
+    private Gtk.Window? dialog = null;
     private Gee.Set<GLib.Cancellable> cancellables =
         new Gee.HashSet<GLib.Cancellable>();
 
@@ -63,33 +63,26 @@ internal class Application.DatabaseManager : Geary.BaseObject {
             window.sensitive = false;
         }
 
-        var spinner = new Gtk.Spinner();
-        spinner.set_size_request(45, 45);
-        spinner.start();
-
-        var grid = new Gtk.Grid();
-        grid.orientation = VERTICAL;
-        grid.add(spinner);
+        var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 6);
+        box.append(new Adw.Spinner());
         /// Translators: Label for account database upgrade dialog
-        grid.add(new Gtk.Label(_("Account update in progress")));
-        grid.show_all();
+        box.append(new Gtk.Label(_("Account update in progress")));
 
-        this.dialog = new Gtk.Dialog.with_buttons(
+        this.dialog = new Gtk.Window() {
             /// Translators: Window title for account database upgrade
             /// dialog
-            _("Account update"),
-            this.application.get_active_main_window(),
-            MODAL
-        );
-        this.dialog.get_style_context().add_class("geary-upgrade");
-        this.dialog.get_content_area().add(grid);
-        this.dialog.deletable = false;
-        this.dialog.delete_event.connect(this.on_delete_event);
-        this.dialog.close.connect(this.on_close);
-        this.dialog.show();
+            title = _("Account update"),
+            transient_for = this.application.get_active_main_window(),
+            modal = true,
+            deletable = false
+        };
+        this.dialog.add_css_class("geary-upgrade");
+        this.dialog.set_child(box);
+        this.dialog.close_request.connect(on_close_request);
+        this.dialog.present();
     }
 
-    private bool on_delete_event() {
+    private bool on_close_request() {
         // Don't allow window to close until we're finished.
         return !this.monitor.is_in_progress;
     }

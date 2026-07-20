@@ -198,7 +198,7 @@ test_integration_bin = executable('test-integration',
     gio,
     gmime,
     vala_unit_dep,
-    webkit2gtk,
+    webkitgtk,
   ],
   vala_args: geary_vala_args,
   c_args: geary_c_args,
@@ -212,7 +212,10 @@ test(
 test(
   'client-tests',
   test_client_bin,
-  depends: [ client_lib, web_process ]
+  depends: [ client_lib, web_process ],
+  # Avoid fatal warnings from Folks backends (e.g. telepathy) that
+  # aren't available in the test environment.
+  env: [ 'FOLKS_BACKENDS_ALLOWED=key-file', 'FOLKS_PRIMARY_STORE=key-file' ]
 )
 test(
   'js-tests',

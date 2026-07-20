@@ -13,7 +13,7 @@
  * Widget.PresentationMode.INLINE} or {@link
  * Widget.PresentationMode.INLINE_COMPACT} mode.
  */
-public class Composer.Embed : Gtk.EventBox, Container {
+public class Composer.Embed : Adw.Bin, Container {
 
     private const int MIN_EDITOR_HEIGHT = 200;
 
@@ -25,7 +25,7 @@ public class Composer.Embed : Gtk.EventBox, Container {
 
     /** {@inheritDoc} */
     public Gtk.ApplicationWindow? top_window {
-        get { return get_toplevel() as Gtk.ApplicationWindow; }
+        get { return get_root() as Gtk.ApplicationWindow; }
     }
 
     /** The email this composer was originally a reply to. */
@@ -40,6 +40,8 @@ public class Composer.Embed : Gtk.EventBox, Container {
     private int64 last_outer_time = 0;
     private bool chain_to_outer = false;
     private uint32 last_body_event_time = 0;
+
+    private Gtk.EventControllerScroll? body_scroll = null;
 
 
     /** Emitted when the container is closed. */
@@ -59,41 +61,51 @@ public class Composer.Embed : Gtk.EventBox, Container {
         }
         composer.set_mode(mode);
 
-        get_style_context().add_class("geary-composer-embed");
+        add_css_class("geary-composer-embed");
         this.halign = Gtk.Align.FILL;
         this.vexpand = true;
         this.vexpand_set = true;
 
-        add(composer);
+        this.child = composer;
         realize.connect(on_realize);
-        show();
     }
 
     /** {@inheritDoc} */
     public void close() {
+        if (this.body_scroll != null) {
+            this.composer.editor.body.remove_controller(this.body_scroll);
+            this.body_scroll = null;
+        }
         vanished();
 
-        this.composer.free_header();
-        remove(this.composer);
-        destroy();
+        this.child = null;
     }
 
     private void on_realize() {
+        if (this.body_scroll != null) {
+            return;
+        }
+
         // Intercept scroll over the editor body *before* WebKit does (it
         // consumes scroll events and won't propagate them at its edges).
         // By default let WebKit scroll the body, so it stays contained;
         // but if a gesture *starts* with the body already at the edge
         // we're pushing against, drive the conversation behind instead
         // and keep doing so for the rest of that gesture.
-        this.composer.editor.body.scroll_event.connect(on_body_scroll);
+        var body_scroll = new Gtk.EventControllerScroll(VERTICAL);
+        body_scroll.propagation_phase = CAPTURE;
+        body_scroll.scroll.connect(on_body_scroll);
+        this.composer.editor.body.add_controller(body_scroll);
+        this.body_scroll = body_scroll;
 
         // Backstop: if WebKit propagates a scroll event at the body's
         // edge, swallow it here so an inner gesture can't chain into the
         // conversation part-way through. Events from elsewhere in the
         // composer (header buttons, from/to fields) fall through to
         // scroll the conversation normally.
-        add_events(Gdk.EventMask.SCROLL_MASK | Gdk.EventMask.SMOOTH_SCROLL_MASK);
-        scroll_event.connect(on_embed_scroll);
+        var embed_scroll = new Gtk.EventControllerScroll(VERTICAL);
+        embed_scroll.scroll.connect(on_embed_scroll);
+        add_controller(embed_scroll);
 
         // Note when the conversation itself is scrolling, so a gesture
         // begun on the conversation isn't hijacked by the body when the
@@ -108,23 +120,17 @@ public class Composer.Embed : Gtk.EventBox, Container {
         }
     }
 
-    private bool on_embed_scroll(Gdk.EventScroll event) {
-        // Same event object as one on_body_scroll just saw => it bubbled
-        // up from the body at its edge, so contain it. Anything else
+    private bool on_embed_scroll(Gtk.EventControllerScroll ctrl,
+                                 double dx, double dy) {
+        // Same event as one on_body_scroll just saw => it bubbled up
+        // from the body at its edge, so contain it. Anything else
         // originated over the header, so let it scroll the conversation.
-        return (event.time == this.last_body_event_time)
-            ? Gdk.EVENT_STOP : Gdk.EVENT_PROPAGATE;
+        return (ctrl.get_current_event_time() == this.last_body_event_time);
     }
 
-    private bool on_body_scroll(Gdk.EventScroll event) {
-        this.last_body_event_time = event.time;
-        double dy = 0;
-        switch (event.direction) {
-        case Gdk.ScrollDirection.UP:     dy = -1; break;
-        case Gdk.ScrollDirection.DOWN:   dy = 1; break;
-        case Gdk.ScrollDirection.SMOOTH: dy = event.delta_y; break;
-        default: break;
-        }
+    private bool on_body_scroll(Gtk.EventControllerScroll ctrl,
+                                double dx, double dy) {
+        this.last_body_event_time = ctrl.get_current_event_time();
         if (dy == 0) {
             return Gdk.EVENT_PROPAGATE;
         }
@@ -148,7 +154,12 @@ public class Composer.Embed : Gtk.EventBox, Container {
                 get_ancestor(typeof(Gtk.ScrolledWindow)) as Gtk.ScrolledWindow
             );
             if (scroller != null) {
-                scroller.scroll_event(event);
+                Gtk.Adjustment adj = scroller.get_vadjustment();
+                // Match GtkScrolledWindow's smooth-scroll step.
+                double unit = Math.pow(adj.page_size, 2.0 / 3.0);
+                double delta = (ctrl.get_unit() == Gdk.ScrollUnit.SURFACE)
+                    ? dy : dy * unit;
+                adj.value = adj.value + delta;
             }
             // Consume it so WebKit doesn't also scroll the body.
             return Gdk.EVENT_STOP;
