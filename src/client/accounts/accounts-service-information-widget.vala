@@ -136,6 +136,53 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
     private void on_host_row_changed(Gtk.Editable editable) {
     }
 
+    /**
+     * Reads the current UI field values back into {@link service_mutable}.
+     *
+     * The row widgets are display-only; call this before using
+     * service_mutable (e.g. before validating or saving) so it reflects
+     * what the user actually entered.
+     */
+    public void update_service_from_ui() {
+        if (this.service_mutable == null) {
+            return;
+        }
+
+        string host_text = this.host_row.get_text().strip();
+        if (host_text != "") {
+            try {
+                var addr = GLib.NetworkAddress.parse(
+                    host_text, this.service_mutable.get_default_port()
+                );
+                this.service_mutable.host = addr.hostname;
+                this.service_mutable.port = (uint16) addr.port;
+            } catch (GLib.Error err) {
+                // Leave the previous value; the validator flags bad input.
+            }
+        }
+
+        this.service_mutable.transport_security = this.security_row.method;
+
+        if (this.service_mutable.protocol == Convey.Protocol.SMTP) {
+            this.service_mutable.credentials_requirement =
+                (Convey.Credentials.Requirement) this.credentials_requirement_row.selected;
+            // When the outgoing service reuses the incoming login there
+            // are no separate credentials to collect here.
+            if (this.service_mutable.credentials_requirement ==
+                    Convey.Credentials.Requirement.USE_INCOMING) {
+                return;
+            }
+        }
+
+        string user = this.login_name_row.get_text().strip();
+        string token = this.password_row.get_text();
+        if (user != "" && user != _("None")) {
+            this.service_mutable.credentials = new Convey.Credentials(
+                Convey.Credentials.Method.PASSWORD, user, token
+            );
+        }
+    }
+
     private void update_auth(Convey.ServiceInformation service) {
         bool is_smtp = (service.protocol == Convey.Protocol.SMTP);
         this.credentials_requirement_row.visible = is_smtp;

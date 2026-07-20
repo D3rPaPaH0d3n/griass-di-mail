@@ -78,8 +78,17 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         this.receiving_service_widget.service = new_imap_service();
         this.sending_service_widget.service = new_smtp_service();
 
-        // XXX we need to make sure the validators for the service are wired up too
-        // this.smtp_auth.value.changed.connect(on_smtp_auth_changed);
+        // The validator group declared under the "validators" property
+        // in the .ui does not survive GtkBuilder template construction
+        // (the property is null at runtime), so build it here and wire
+        // the email field to it. The Next button becomes sensitive once
+        // a valid email address has been entered.
+        this.validators = new Components.ValidatorGroup();
+        this.validators.add_validator(this.email_validator);
+        this.validators.changed.connect((v) => check_validation());
+        this.validators.activated.connect((v) => on_activated());
+
+        check_validation();
     }
 
     private async void validate_account(GLib.Cancellable? cancellable) {
@@ -98,6 +107,11 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                 ),
                 cancellable
             );
+
+        // The service widgets are display-only; pull the entered field
+        // values into their service objects before validating.
+        this.receiving_service_widget.update_service_from_ui();
+        this.sending_service_widget.update_service_from_ui();
 
         account.incoming = this.receiving_service_widget.service_mutable;
         account.outgoing = this.sending_service_widget.service_mutable;
@@ -249,30 +263,15 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     }
 
     private void check_validation() {
-#if 0
-        bool server_settings_visible = this.stack.get_visible_child_name() == "server_settings";
-        bool controls_valid = true;
-        Gtk.ListBox[] list_boxes;
-        if (server_settings_visible) {
-            list_boxes = new Gtk.ListBox[] {
-                this.details_list, this.receiving_list, this.sending_list
-            };
-        } else {
-            list_boxes = new Gtk.ListBox[] { this.details_list };
-        }
-        foreach (Gtk.ListBox list_box in list_boxes) {
-            for (int i = 0; true; i++) {
-                unowned var validatable = list_box.get_row_at_index(i) as AddPaneRow;
-                if (validatable == null)
-                    break;
-                if (!validatable.validator.is_valid) {
-                    controls_valid = false;
-                }
-            }
-        }
+        // On the server settings page the Create button stays enabled;
+        // validate_account() performs the real connection check and
+        // reports failures in-line. On the initial user settings page,
+        // gate Next on a non-empty name and a valid email address.
+        bool controls_valid =
+            this.stack.get_visible_child_name() == "server_settings"
+            || this.validators.is_valid();
         this.action_button.set_sensitive(controls_valid);
         this.controls_valid = controls_valid;
-#endif
     }
 
     private void update_operation_ui(bool is_running) {
@@ -291,8 +290,8 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     private void switch_to_server_settings() {
         this.stack.set_visible_child_name("server_settings");
         this.action_button.set_label(_("_Create"));
-        this.action_button.set_sensitive(false);
         this.action_button.add_css_class("suggested-action");
+        check_validation();
     }
 
     private void set_server_settings_from_autoconfig(AutoConfig auto_config,

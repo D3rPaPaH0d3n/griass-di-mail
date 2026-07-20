@@ -34,7 +34,7 @@ public class Components.ValidatorGroup : GLib.Object, GLib.ListModel, Gtk.Builda
 
     public bool is_valid() {
         foreach (unowned var validator in this.validators) {
-            if (validator.is_valid)
+            if (!validator.is_valid)
                 return false;
         }
 
