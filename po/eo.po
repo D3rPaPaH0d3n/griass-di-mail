@@ -72,7 +72,7 @@ msgstr "net.donnybeelo.Convey"
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.appdata.xml.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr ""
 
 #: desktop/net.donnybeelo.Convey.appdata.xml.in:17
@@ -459,7 +459,7 @@ msgid "Copyright 2016 Software Freedom Conservancy Inc."
 msgstr ""
 
 #: src/client/application/convey-application.vala:23
-msgid "Copyright 2016-2017 Convey Development Team."
+msgid "Copyright 2016-2017 Geary Development Team."
 msgstr ""
 
 #: src/client/application/convey-application.vala:25

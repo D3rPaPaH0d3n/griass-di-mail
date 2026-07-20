@@ -55,7 +55,7 @@ msgstr "Электронная пошта;E-mail;Mail;"
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.appdata.xml.in.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr "Каманда распрацоўкі Convey"
 
 #: desktop/net.donnybeelo.Convey.appdata.xml.in.in:17
@@ -741,8 +741,8 @@ msgid "Copyright 2016 Software Freedom Conservancy Inc."
 msgstr "Аўтарскія правы © 2016 Software Freedom Conservancy Inc."
 
 #: src/client/application/application-client.vala:35
-msgid "Copyright 2016-2020 Convey Development Team."
-msgstr "Аўтарскія правы © 2016-2020 Convey Development Team."
+msgid "Copyright 2016-2020 Geary Development Team."
+msgstr "Аўтарскія правы © 2016-2020 Geary Development Team."
 
 #: src/client/application/application-client.vala:37
 msgid "Visit the Convey web site"

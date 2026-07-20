@@ -272,7 +272,7 @@ msgstr "设置为 false 则检查旧的“org.yorba.convey”架构并复制它�
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr "Convey 开发团队"
 
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:17
@@ -814,7 +814,7 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "版权所有 © 2016 软件自由保护组织。"
 
 #: src/client/application/application-client.vala:20
-msgid "Copyright © 2016-2021 Convey Development Team."
+msgid "Copyright © 2016-2021 Geary Development Team."
 msgstr "版权所有 © 2016-2021 Convey 开发团队。"
 
 #. / Command line option

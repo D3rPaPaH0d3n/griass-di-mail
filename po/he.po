@@ -65,7 +65,7 @@ msgstr "דוא״ל;דואר אלקטרוני;דואר;מייל;אימייל;אי
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.appdata.xml.in.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr "צוות פיתוח Convey"
 
 #: desktop/net.donnybeelo.Convey.appdata.xml.in.in:17
@@ -816,7 +816,7 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "כל הזכויות שמורות 2016 © למוסד לחופש התכנה בע״מ."
 
 #: src/client/application/application-client.vala:35
-msgid "Copyright © 2016-2021 Convey Development Team."
+msgid "Copyright © 2016-2021 Geary Development Team."
 msgstr "כל הזכויות שמורות © 2016-2021 צוות פיתוח Convey."
 
 #: src/client/application/application-client.vala:37

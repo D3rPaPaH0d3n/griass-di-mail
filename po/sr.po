@@ -276,7 +276,7 @@ msgstr ""
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr "Развојни тим Герија"
 
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:17
@@ -823,7 +823,7 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "Ауторска права © 2016 Software Freedom Conservancy Inc."
 
 #: src/client/application/application-client.vala:20
-msgid "Copyright © 2016-2021 Convey Development Team."
+msgid "Copyright © 2016-2021 Geary Development Team."
 msgstr "Ауторска права © 2016-2020 Развојни тим Герија."
 
 #. / Command line option

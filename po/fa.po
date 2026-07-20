@@ -263,7 +263,7 @@ msgstr "نادرست برای بررسی طرحوارهٔ قدیمی org.yorba.c
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr "گروه توسعهٔ گیری"
 
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:17
@@ -805,7 +805,7 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "حق رونوشت © ۲۰۱۶ شرکت حفاظت از آزادی نرم‌افزار."
 
 #: src/client/application/application-client.vala:35
-msgid "Copyright © 2016-2021 Convey Development Team."
+msgid "Copyright © 2016-2021 Geary Development Team."
 msgstr "حق رونوشت © ۲۰۱۶-۲۰۲۱ گروه توسعهٔ گیری."
 
 #: src/client/application/application-client.vala:37

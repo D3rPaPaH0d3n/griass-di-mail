@@ -243,7 +243,7 @@ msgstr "Ескі “org.yorba.convey” схемасын тексеріп, он�
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr "Convey әзірлеушілер тобы"
 
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:17
@@ -761,8 +761,8 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "Copyright © 2016 Software Freedom Conservancy Inc."
 
 #: src/client/application/application-client.vala:20
-msgid "Copyright © 2016-2021 Convey Development Team."
-msgstr "Copyright © 2016-2021 Convey Development Team."
+msgid "Copyright © 2016-2021 Geary Development Team."
+msgstr "Copyright © 2016-2021 Geary Development Team."
 
 #. / Command line option
 #: src/client/application/application-client.vala:77

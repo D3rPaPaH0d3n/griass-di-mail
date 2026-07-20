@@ -17,7 +17,7 @@ public class Application.Client : Adw.Application {
     public const string SCHEMA_ID = "net.donnybeelo.Convey";
     public const string DESCRIPTION = _("Send and receive email");
     public const string COPYRIGHT_1 = _("Copyright © 2016 Software Freedom Conservancy Inc.");
-    public const string COPYRIGHT_2 = _("Copyright © 2016-2021 Convey Development Team.");
+    public const string COPYRIGHT_2 = _("Copyright © 2016-2021 Geary Development Team.");
 
     // keep these in sync with meson_options.txt
     public const string PROFILE_RELEASE = "release";

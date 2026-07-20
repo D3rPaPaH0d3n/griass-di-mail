@@ -61,7 +61,7 @@ msgstr "Epošta;E-pošta;Pošta;"
 
 #. Translators: The development team's name
 #: desktop/net.donnybeelo.Convey.appdata.xml.in.in:13
-msgid "Convey Development Team"
+msgid "Geary Development Team"
 msgstr "Convey razvojni tim"
 
 #: desktop/net.donnybeelo.Convey.appdata.xml.in.in:17
@@ -815,7 +815,7 @@ msgid "Copyright © 2016 Software Freedom Conservancy Inc."
 msgstr "Autorsko pravo © 2016 Software Freedom Conservancy Inc."
 
 #: src/client/application/application-client.vala:35
-msgid "Copyright © 2016-2021 Convey Development Team."
+msgid "Copyright © 2016-2021 Geary Development Team."
 msgstr "Autorsko pravo © 2016-2021 Convey razvojni tim."
 
 #: src/client/application/application-client.vala:37

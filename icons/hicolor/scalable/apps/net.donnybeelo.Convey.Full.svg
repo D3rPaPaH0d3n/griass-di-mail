@@ -62,9 +62,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.5464925"
-     inkscape:cx="-105.72311"
-     inkscape:cy="1.6165613"
+     inkscape:zoom="1.763968"
+     inkscape:cx="-67.744993"
+     inkscape:cy="5.3855852"
      inkscape:window-width="2048"
      inkscape:window-height="1211"
      inkscape:window-x="0"
@@ -104,16 +104,17 @@
        offset="0.1"
        stop-color="#cd9907"
        id="stop4"
-       style="stop-color:#f8cd08;stop-opacity:1;" />
+       style="stop-color:#ffa70d;stop-opacity:1;" />
     <stop
        offset="0.89999998"
        stop-color="#cd9907"
        id="stop5"
-       style="stop-color:#f8cd08;stop-opacity:1;" />
+       style="stop-color:#ffa70d;stop-opacity:1;" />
     <stop
        offset="1"
        stop-color="#8c6705"
-       id="stop6" />
+       id="stop6"
+       style="stop-color:#8d6007;stop-opacity:1;" />
   </linearGradient>
   <path
      d="M 10.897321,106.21028 H 116.54018 c 6.01786,0 10.89286,4.875 10.89286,10.89286 v 0.004 c 0,6.01786 -4.875,10.89286 -10.89286,10.89286 H 10.897321 C 4.879464,128.00046 0,123.12546 0,117.1076 v -0.004 c 0,-6.01832 4.879464,-10.89332 10.897321,-10.89332 z m 0,0"
