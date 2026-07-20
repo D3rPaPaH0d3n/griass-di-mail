@@ -44,10 +44,12 @@ internal class Accounts.AutoConfig {
     private static string AUTOCONFIG_BASE_URI = "https://autoconfig.thunderbird.net/v1.1/";
     private static string AUTOCONFIG_PATH = "/mail/config-v1.1.xml";
 
-    private unowned GLib.Cancellable cancellable;
+    private GLib.Cancellable cancellable;
+    private Soup.Session session;
 
     internal AutoConfig(GLib.Cancellable auto_config_cancellable) {
         cancellable = auto_config_cancellable;
+        session = new Soup.Session();
     }
 
     public async AutoConfigValues get_config(string hostname)
@@ -70,11 +72,13 @@ internal class Accounts.AutoConfig {
     private async AutoConfigValues get_config_for_uri(string uri)
             throws AutoConfigError {
         GLib.InputStream stream;
-        var session = new Soup.Session();
         var msg = new Soup.Message("GET", uri);
+        if (msg == null) {
+            throw new AutoConfigError.ERROR("Invalid URI: " + uri);
+        }
 
         try {
-            stream = yield session.send_async(
+            stream = yield this.session.send_async(
                 msg, Priority.DEFAULT, this.cancellable
             );
         } catch (GLib.Error err) {

@@ -412,12 +412,14 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         string hostname = email.split("@")[1];
 
         // Do not update entries if changed by user
-        if (imap_service.credentials.user == this.last_valid_email) {
+        if (imap_service.credentials == null ||
+            imap_service.credentials.user == this.last_valid_email) {
             imap_service.credentials = new Convey.Credentials(
                 Convey.Credentials.Method.PASSWORD, email
             );
         }
-        if (smtp_service.credentials.user == this.last_valid_email) {
+        if (smtp_service.credentials == null ||
+            smtp_service.credentials.user == this.last_valid_email) {
             smtp_service.credentials = new Convey.Credentials(
                 Convey.Credentials.Method.PASSWORD, email
             );
