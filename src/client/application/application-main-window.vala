@@ -1559,12 +1559,19 @@ public class Application.MainWindow :
     }
 
     private void on_conversations_selected(Gee.Set<Convey.App.Conversation> selected) {
+        // The conversation viewer is shown next to the list unless the
+        // inner split view is collapsed, in which case it is a separate
+        // page reached by activating a row. Only defer loading to
+        // activation when the viewer is actually a separate page --
+        // keying off outer_view (the folder list) here would wrongly
+        // defer at intermediate widths where the viewer is visible.
+        bool viewer_is_separate_page = this.inner_view.collapsed;
         bool folded = this.outer_view.collapsed;
 
-        // If folded, selection handled by activate
-        if (selected.size > 1 || !folded) {
+        // If the viewer is a separate page, selection is handled by activate
+        if (selected.size > 1 || !viewer_is_separate_page) {
             select_conversations.begin(selected, Gee.Collection.empty(), true);
-        } else if (folded) {
+        } else if (viewer_is_separate_page) {
             switch(selected.size) {
             case 0:
                 update_conversation_actions(NONE);

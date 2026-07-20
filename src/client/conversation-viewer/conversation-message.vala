@@ -1283,6 +1283,10 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
                 this.config
             );
             popover.set_position(Gtk.PositionType.BOTTOM);
+            // Drop the arrow so halign actually left-aligns the popover
+            // under the address (with an arrow it stays centred).
+            popover.set_has_arrow(false);
+            popover.set_halign(Gtk.Align.START);
             popover.load_remote_resources_changed.connect((enabled) => {
                     if (this.primary_contact.equal_to(address_child.contact) &&
                         enabled) {
