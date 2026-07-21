@@ -77,6 +77,38 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
         // We can't use the default autohide behavior since it grabs focus,
         // which we don't want (as the user should be able to continue typing).
         popover.autohide = false;
+
+        // Since the popover never takes focus, drive its selection from
+        // the entry's key events (arrow keys to move, Enter to accept).
+        var key_controller = new Gtk.EventControllerKey();
+        key_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
+        key_controller.key_pressed.connect(on_completion_key_pressed);
+        add_controller(key_controller);
+    }
+
+    private bool on_completion_key_pressed(Gtk.EventControllerKey controller,
+                                           uint keyval,
+                                           uint keycode,
+                                           Gdk.ModifierType state) {
+        if (!this.popover.has_suggestions()) {
+            return Gdk.EVENT_PROPAGATE;
+        }
+        switch (keyval) {
+        case Gdk.Key.Down:
+            this.popover.move_selection(1);
+            return Gdk.EVENT_STOP;
+        case Gdk.Key.Up:
+            this.popover.move_selection(-1);
+            return Gdk.EVENT_STOP;
+        case Gdk.Key.Return:
+        case Gdk.Key.KP_Enter:
+            this.popover.activate_selected();
+            return Gdk.EVENT_STOP;
+        case Gdk.Key.Escape:
+            this.popover.popdown();
+            return Gdk.EVENT_STOP;
+        }
+        return Gdk.EVENT_PROPAGATE;
     }
 
     public AddressesRow(string title) {
@@ -184,12 +216,30 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
         notify_property("is-empty");
     }
 
+    private GLib.Cancellable? search_cancellable = null;
+    private bool inserting_suggestion = false;
+
+    // Cancels any in-flight completion search so a slower earlier query
+    // can't repopulate the list with stale results after a later one.
+    private void cancel_search() {
+        if (this.search_cancellable != null) {
+            this.search_cancellable.cancel();
+            this.search_cancellable = null;
+        }
+    }
+
     private void update_search_filter(string old_value, string new_value) {
-        if (this.contacts == null)
+        // Don't kick off a new search for the text we just inserted from
+        // a selected suggestion, or the list would immediately reopen.
+        if (this.contacts == null || this.inserting_suggestion)
             return;
 
+        cancel_search();
+
         if (new_value.length > 0) {
-            this.popover.search_contacts.begin(new_value, null, (obj, res) => {
+            var cancellable = new GLib.Cancellable();
+            this.search_cancellable = cancellable;
+            this.popover.search_contacts.begin(new_value, cancellable, (obj, res) => {
                 this.popover.search_contacts.end(res);
             });
         } else {
@@ -199,7 +249,14 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
 
     private void on_address_suggestion_selected(AddressSuggestionPopover popover,
                                                 Convey.RFC822.MailboxAddress address) {
+        this.inserting_suggestion = true;
         insert_address_at_cursor(address);
+        this.inserting_suggestion = false;
+
+        // Close the list so it doesn't reopen matching what we inserted.
+        cancel_search();
+        this.popover.clear_suggestions();
+        this.popover.popdown();
     }
 
     private void insert_address_at_cursor(Convey.RFC822.MailboxAddress mailbox) {
@@ -279,6 +336,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
 
     private GLib.ListStore model;
     private Gtk.SingleSelection selection;
+    private unowned Gtk.ListView listview;
 
     /**
      * Fired when the user has selected an address suggestion
@@ -321,6 +379,8 @@ public class AddressSuggestionPopover : Gtk.Popover {
         listview.single_click_activate = true;
         listview.tab_behavior = Gtk.ListTabBehavior.ITEM;
         listview.activate.connect(on_activate);
+        listview.add_css_class("contact-completion");
+        this.listview = listview;
 
         var sw = new Gtk.ScrolledWindow();
         sw.hscrollbar_policy = Gtk.PolicyType.NEVER;
@@ -336,6 +396,15 @@ public class AddressSuggestionPopover : Gtk.Popover {
         // Create the row widget
         var row = new AddressSuggestionRow();
         item.child = row;
+
+        // Moving the mouse onto a row selects it, so the keyboard
+        // selection and the mouse hover share a single highlight and
+        // whichever was used last wins.
+        var motion = new Gtk.EventControllerMotion();
+        motion.enter.connect((x, y) => {
+            this.selection.selected = item.get_position();
+        });
+        row.add_controller(motion);
     }
 
     private void on_bind_item(Object object) {
@@ -354,6 +423,29 @@ public class AddressSuggestionPopover : Gtk.Popover {
 
         popdown();
         selected_address(contact_addr.address);
+    }
+
+    /** Whether the popover is currently showing suggestions. */
+    public bool has_suggestions() {
+        return this.get_visible() && this.model.get_n_items() > 0;
+    }
+
+    /** Moves the selection by the given offset (e.g. +1/-1). */
+    public void move_selection(int delta) {
+        uint n = this.model.get_n_items();
+        if (n == 0) {
+            return;
+        }
+        uint sel = this.selection.selected;
+        int next = (sel == Gtk.INVALID_LIST_POSITION) ? 0 : (int) sel + delta;
+        next = next.clamp(0, (int) n - 1);
+        this.selection.selected = (uint) next;
+        this.listview.scroll_to((uint) next, Gtk.ListScrollFlags.NONE, null);
+    }
+
+    /** Activates the currently selected suggestion. */
+    public void activate_selected() {
+        on_activate(this.listview, this.selection.selected);
     }
 
     public void clear_suggestions() {
@@ -393,9 +485,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
 
 private class AddressSuggestionRow : Gtk.Box {
 
-    private unowned Adw.Avatar avatar;
-    private unowned Gtk.Label name_label;
-    private unowned Gtk.Label address_label;
+    private unowned Gtk.Label label;
 
     public ContactAddressItem? contact_address {
         get { return this._contact_address; }
@@ -414,57 +504,36 @@ private class AddressSuggestionRow : Gtk.Box {
         this.spacing = 6;
         this.margin_top = 3;
         this.margin_bottom = 3;
-        this.margin_start = 3;
-        this.margin_end = 3;
+        this.margin_start = 6;
+        this.margin_end = 6;
 
         add_css_class("contact-address-list-row");
-
-        var avatar = new Adw.Avatar(32, null, true);
-        append(avatar);
-        this.avatar = avatar;
-
-        var names_vbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 3);
-        append(names_vbox);
 
         var label = new Gtk.Label("");
         label.ellipsize = Pango.EllipsizeMode.END;
         label.valign = Gtk.Align.CENTER;
         label.halign = Gtk.Align.START;
         label.xalign = 0;
-        label.width_chars = 24;
-        names_vbox.append(label);
-        this.name_label = label;
-
-        label = new Gtk.Label("");
-        label.ellipsize = Pango.EllipsizeMode.END;
-        label.valign = Gtk.Align.CENTER;
-        label.halign = Gtk.Align.START;
-        label.xalign = 0;
-        label.width_chars = 24;
-        names_vbox.append(label);
-        this.address_label = label;
+        append(label);
+        this.label = label;
     }
 
     private void update(ContactAddressItem contact_addr) {
         this._contact_address = contact_addr;
 
         if (contact_addr == null) {
-            this.avatar.text = null;
-            this.name_label.label = "";
-            this.address_label.label = "";
+            this.label.label = "";
             return;
         }
 
-        //XXX GTK4
-        if (Convey.String.is_empty(contact_addr.contact.display_name)) {
-            this.avatar.text = null;
-            this.name_label.label = "";
-            this.name_label.visible = false;
+        // Show the suggestion in the same "Name <email>" form it will
+        // take once inserted into the field.
+        string address = contact_addr.address.address;
+        string name = contact_addr.contact.display_name;
+        if (Convey.String.is_empty(name)) {
+            this.label.label = address;
         } else {
-            this.avatar.text = contact_addr.contact.display_name;
-            this.name_label.label = contact_addr.contact.display_name;
-            this.name_label.visible = true;
+            this.label.label = "%s <%s>".printf(name, address);
         }
-        this.address_label.label = contact_addr.address.address;
     }
 }

@@ -559,3 +559,14 @@ dialog.convey-upgrade label {
   padding-left: 4px;
   padding-right: 4px;
 }
+
+/* Recipient address completion dropdown. Only the selected row is
+ * highlighted; selection follows either the keyboard or the mouse, so
+ * there is always exactly one highlighted row. */
+listview.contact-completion > row {
+  border-radius: 6px;
+}
+
+listview.contact-completion > row:selected {
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
