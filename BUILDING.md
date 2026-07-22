@@ -66,8 +66,9 @@ Dependencies
 
 Building Convey requires the following major libraries and tools:
 
- * GTK 3
- * WebKitGTK (Specifically the API 4.1 variant)
+ * GTK 4
+ * libadwaita 1
+ * WebKitGTK (the GTK 4 / API 6.0 variant)
  * SQLite 3
  * Vala
 
@@ -89,13 +90,12 @@ Install them by running this command:
 
 ```
 sudo dnf install meson vala desktop-file-utils enchant2-devel \
-    folks-devel gcr3-devel glib2-devel gmime30-devel \
-    gnome-online-accounts-devel gspell-devel gsound-devel \
-    gtk3-devel iso-codes-devel itstool json-glib-devel \
-    libgee-devel libhandy1-devel \
-    libpeas-devel libsecret-devel libicu-devel libstemmer-devel \
-    libunwind-devel libxml2-devel libytnef-devel sqlite-devel \
-    webkitgtk4.1-devel
+    folks-devel gcr-devel glib2-devel gmime30-devel \
+    gnome-online-accounts-devel libspelling-devel gsound-devel \
+    gtk4-devel libadwaita-devel iso-codes-devel itstool json-glib-devel \
+    libgee-devel libpeas-devel libsecret-devel libicu-devel \
+    libstemmer-devel libunwind-devel libxml2-devel libytnef-devel \
+    sqlite-devel webkitgtk6.0-devel
 ```
 
 Installing dependencies on Ubuntu/Debian
@@ -107,11 +107,11 @@ Install them by running this command:
 sudo apt-get install meson build-essential valac \
     desktop-file-utils iso-codes gettext itstool \
     libenchant-2-dev libfolks-dev \
-    libgcr-3-dev libgee-0.8-dev libglib2.0-dev libgmime-3.0-dev \
-    libgoa-1.0-dev libgspell-1-dev libgsound-dev libgtk-3-dev \
-    libjson-glib-dev libhandy-1-dev libicu-dev libpeas-dev \
+    libgcr-4-dev libgee-0.8-dev libglib2.0-dev libgmime-3.0-dev \
+    libgoa-1.0-dev libspelling-1-dev libgsound-dev libgtk-4-dev \
+    libjson-glib-dev libadwaita-1-dev libicu-dev libpeas-2-dev \
     libsecret-1-dev libsqlite3-dev libstemmer-dev libunwind-dev \
-    libwebkit2gtk-4.1-dev libxml2-dev libytnef0-dev
+    libwebkitgtk-6.0-dev libxml2-dev libytnef0-dev
 ```
 
 And for Ubuntu Messaging Menu integration:
