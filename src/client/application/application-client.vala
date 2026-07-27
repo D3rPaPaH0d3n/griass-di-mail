@@ -825,11 +825,9 @@ public class Application.Client : Adw.Application {
      * Any open composers with unsaved or un-savable changes will be
      * prompted about and if cancelled, will cancel shut-down here.
      */
-    public new void quit() {
-        //XXX GTK4 this is now async, need to figure out how to do this
-        // if (this.controller == null ||
-        //     this.controller.check_open_composers()) {
-        if (this.controller == null) {
+    public async new void quit() {
+        if (this.controller == null ||
+            yield this.controller.check_open_composers()) {
             this.last_active_main_window = null;
             base.quit();
         }
@@ -967,7 +965,7 @@ public class Application.Client : Adw.Application {
         }
 
         if (open_failed) {
-            quit();
+            yield quit();
         }
 
         if (first_run) {
@@ -975,7 +973,7 @@ public class Application.Client : Adw.Application {
             if (!this.engine.has_accounts) {
                 // No accounts were added after showing the accounts
                 // editor, so nothing else to do but exit.
-                quit();
+                yield quit();
             }
         }
     }
@@ -1003,7 +1001,7 @@ public class Application.Client : Adw.Application {
     private int handle_general_options(GLib.ApplicationCommandLine command_line) {
         GLib.VariantDict options = command_line.get_options_dict();
         if (options.contains(OPTION_QUIT)) {
-            quit();
+            this.quit.begin();
             return 0;
         }
 
@@ -1176,7 +1174,7 @@ public class Application.Client : Adw.Application {
     }
 
     private void on_activate_quit() {
-        quit();
+        this.quit.begin();
     }
 
     private void on_activate_show_email(GLib.SimpleAction action,
@@ -1254,7 +1252,7 @@ public class Application.Client : Adw.Application {
         // application, manually work out if the application should
         // quit here.
         if (!this.is_background_service && get_windows().length() == 0) {
-            quit();
+            this.quit.begin();
         }
     }
 
