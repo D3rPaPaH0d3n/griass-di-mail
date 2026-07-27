@@ -227,7 +227,6 @@ public class Application.MainWindow :
     [GtkChild] private unowned Adw.NavigationSplitView outer_view;
     [GtkChild] private unowned Adw.NavigationSplitView inner_view;
 
-    [GtkChild] private unowned Adw.NavigationPage folder_list_page;
     [GtkChild] private unowned Gtk.ScrolledWindow folder_list_scrolled;
 
     [GtkChild] private unowned Adw.NavigationPage conversation_list_page;

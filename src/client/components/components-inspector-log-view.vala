@@ -99,8 +99,6 @@ public class Components.InspectorLogView : Gtk.Box {
 
     [GtkChild] private unowned Gtk.ScrolledWindow logs_scroller;
 
-    [GtkChild] private unowned Gtk.ListView logs_view;
-
     [GtkChild] private unowned Gtk.MultiSelection selection;
 
     [GtkChild] private unowned GLib.ListStore logs_store;

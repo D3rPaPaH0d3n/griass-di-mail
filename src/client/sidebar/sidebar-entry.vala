@@ -54,8 +54,3 @@ public interface Sidebar.InternalDropTargetEntry : Sidebar.Entry {
     public abstract bool internal_drop_received(Sidebar.Tree parent,
                                                 Gdk.DragAction action);
 }
-
-public interface Sidebar.InternalDragSourceEntry : Sidebar.Entry {
-    //XXX GTK4: is this even used?
-    // public abstract void prepare_selection_data(Gtk.SelectionData data);
-}

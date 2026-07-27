@@ -326,7 +326,6 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     [GtkChild] private unowned Adw.Bin editor_bin;
 
     [GtkChild] private unowned Gtk.Box email_headers;
-    [GtkChild] private unowned Gtk.ListBox filled_headers;
     [GtkChild] private unowned Gtk.ToggleButton show_extended_headers;
 
     private bool extended_headers_shown = false;

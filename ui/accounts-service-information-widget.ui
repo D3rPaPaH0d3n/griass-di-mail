@@ -2,9 +2,7 @@
 <interface>
   <template class="AccountsServiceInformationWidget" parent="AdwPreferencesGroup">
     <child>
-      <object class="AdwEntryRow" id="host_row">
-        <signal name="changed" handler="on_host_row_changed"/>
-      </object>
+      <object class="AdwEntryRow" id="host_row"></object>
     </child>
     <child>
       <object class="AccountsTlsComboRow" id="security_row">
@@ -41,10 +39,8 @@
 
     <property name="validators">
       <object class="ComponentsValidatorGroup">
-        <signal name="changed" handler="on_validators_changed"/>
-        <signal name="activated" handler="on_validators_activated"/>
         <child>
-          <object class="ComponentsNetworkAddressValidator">
+          <object class="ComponentsNetworkAddressValidator" id="host_validator">
             <property name="target">host_row</property>
           </object>
         </child>

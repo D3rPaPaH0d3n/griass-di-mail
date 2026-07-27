@@ -6,6 +6,9 @@
 
     <child>
       <object class="GtkEventControllerKey">
+        <!-- Capture phase, so Escape can cancel a running operation
+             before AdwNavigationView pops the pane out from under it -->
+        <property name="propagation-phase">capture</property>
         <signal name="key-pressed" handler="on_key_pressed"/>
       </object>
     </child>

@@ -62,6 +62,7 @@ public class Accounts.Editor : Adw.Dialog {
 
         this.edit_actions.add_action_entries(EDIT_ACTIONS, this);
         insert_action_group(Action.Edit.GROUP_NAME, this.edit_actions);
+        Action.Edit.bind_undo_shortcuts(this);
 
         this.editor_list_pane = new EditorListPane(this);
         push_pane(this.editor_list_pane);
@@ -73,7 +74,6 @@ public class Accounts.Editor : Adw.Dialog {
     private bool on_key_pressed(uint keyval, uint keycode, Gdk.ModifierType mod_state) {
         bool ret = Gdk.EVENT_PROPAGATE;
 
-        // XXX GTK4 - we'll need to disable the esc behavio in adwnavigationview and then do it manually here
         // Allow the user to use Esc, Back and Alt+arrow keys to
         // navigate between panes. If a pane is executing a long
         // running operation, only allow Esc and use it to cancel the
@@ -266,12 +266,22 @@ internal interface Accounts.AccountPane : EditorPane {
         this.account.changed.disconnect(on_account_changed);
     }
 
+    /**
+     * Called when the displayed account changes.
+     *
+     * Implementations should refresh any widgets showing account
+     * properties, so undo and redo are reflected in the UI.
+     */
+    protected virtual void account_changed() {
+        // No-op by default
+    }
+
     private void on_account_changed() {
         update_header();
+        account_changed();
     }
 
     private inline void update_header() {
-        // XXX GTK4 - this was subtitle before, will need to make the title subtitle
         this.title = this.account.display_name;
     }
 

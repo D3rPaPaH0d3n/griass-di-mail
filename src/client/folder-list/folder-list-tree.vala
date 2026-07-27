@@ -25,22 +25,11 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
 
     public Tree() {
-        //XXX GTK4 need to set up proper GdkContentFormats here
-        base(new Gdk.ContentFormats({ "application/x-convey-mail" }),
-             Gdk.DragAction.COPY | Gdk.DragAction.MOVE);
+        base();
         base_ref();
         set_activate_on_single_click(true);
         entry_selected.connect(on_entry_selected);
         entry_activated.connect(on_entry_activated);
-
-        // GtkTreeView binds Ctrl+N to "move cursor to next".  Not so interested in that, so we'll
-        // remove it.
-        //XXX GTK4
-#if 0
-        unowned Gtk.BindingSet? binding_set = Gtk.BindingSet.find("GtkTreeView");
-        assert(binding_set != null);
-        Gtk.BindingEntry.remove(binding_set, Gdk.Key.N, Gdk.ModifierType.CONTROL_MASK);
-#endif
 
         this.visible = true;
     }
@@ -60,7 +49,14 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             minimum = 180;
             natural = 300;
         } else {
-            //XXX GTK4 - I have no idea what to put here
+            // Height is whatever the list view needs; the sidebar
+            // imposes no minimum of its own.
+            Gtk.Widget? child = get_first_child();
+            if (child != null) {
+                child.measure(
+                    orientation, for_size, out minimum, out natural, null, null
+                );
+            }
         }
 
         minimum_baseline = natural_baseline = -1;
@@ -225,24 +221,8 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         folder_selected(null);
     }
 
-    // XXX GTK4 I'm not sur eif this is needed still?
-#if 0
-    public override bool drag_motion(Gdk.DragContext context, int x, int y, uint time) {
-        // Run the base version first.
-        bool ret = base.drag_motion(context, x, y, time);
-
-        // Update the cursor for copy or move.
-        Gdk.ModifierType mask;
-        double[] axes = new double[2];
-        context.get_device().get_state(context.get_dest_window(), axes, out mask);
-        if ((mask & Gdk.ModifierType.CONTROL_MASK) != 0) {
-            Gdk.drag_status(context, Gdk.DragAction.COPY, time);
-        } else {
-            Gdk.drag_status(context, Gdk.DragAction.MOVE, time);
-        }
-        return ret;
-    }
-#endif
+    // Ctrl-for-copy is negotiated by GtkDropTarget in GTK4; see
+    // Sidebar.Tree.on_drop_target_drop.
 
     public void set_search(Convey.Engine engine,
                            Convey.App.SearchFolder search_folder) {

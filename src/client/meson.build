@@ -39,7 +39,6 @@ client_vala_sources = files(
   'accounts/accounts-editor-add-pane.vala',
   'accounts/accounts-editor-edit-pane.vala',
   'accounts/accounts-editor-list-pane.vala',
-  'accounts/accounts-editor-row.vala',
   'accounts/accounts-editor-servers-pane.vala',
   'accounts/accounts-mailbox-editor-dialog.vala',
   'accounts/accounts-service-information-widget.vala',

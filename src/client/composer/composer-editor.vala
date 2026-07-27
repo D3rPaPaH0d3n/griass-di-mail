@@ -214,6 +214,7 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
             config.formatting_toolbar_visible
         );
         insert_action_group(Action.Edit.GROUP_NAME, this.actions);
+        Action.Edit.bind_undo_shortcuts(this);
         get_action(Action.Edit.UNDO).set_enabled(false);
         get_action(Action.Edit.REDO).set_enabled(false);
         update_cursor_actions();

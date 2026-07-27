@@ -119,6 +119,7 @@ public class Components.EntryUndo : Convey.BaseObject {
 
         this.target = target;
         this.target.insert_action_group(Action.Edit.GROUP_NAME, this.edit_actions);
+        Action.Edit.bind_undo_shortcuts(this.target as Gtk.Widget);
         this.target.insert_text.connect(on_inserted);
         this.target.delete_text.connect(on_deleted);
 

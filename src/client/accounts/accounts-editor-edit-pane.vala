@@ -31,7 +31,6 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     /** {@inheritDoc} */
     protected override weak Accounts.Editor editor { get; set; }
 
-    [GtkChild] private unowned Adw.HeaderBar header;
 
     [GtkChild] private unowned Adw.EntryRow display_name_row;
 
@@ -100,6 +99,18 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
             !this.editor.accounts.is_goa_account(account)
         );
 
+        update_prefetch_period();
+        this.email_prefetch_row.notify["selected"].connect(
+            on_prefetch_period_changed
+        );
+
+        // Commit the account name when the row loses focus, rather
+        // than on every keystroke, so the undo stack gets one entry
+        // per edit.
+        var name_focus = new Gtk.EventControllerFocus();
+        name_focus.leave.connect(commit_display_name);
+        this.display_name_row.add_controller(name_focus);
+
         connect_account_signals();
         connect_command_signals();
     }
@@ -109,8 +120,79 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         disconnect_command_signals();
     }
 
+    /** {@inheritDoc} */
+    protected override void account_changed() {
+        update_prefetch_period();
+        // Don't yank the text out from under someone who is typing
+        if (!this.display_name_row.has_focus) {
+            update_display_name();
+        }
+    }
+
     private void update_display_name() {
-        this.display_name_row.text = this.account.display_name;
+        // Show the fallback address as a placeholder rather than as
+        // text, so an unset label doesn't look like a user-set one.
+        this.display_name_row.text = this.account.label;
+        Gtk.Editable? editable = this.display_name_row.get_delegate();
+        if (editable != null) {
+            ((Gtk.Text) editable).placeholder_text =
+                this.account.primary_mailbox.address;
+        }
+    }
+
+    private void commit_display_name() {
+        string value = this.display_name_row.text.strip();
+        if (value == this.account.label) {
+            return;
+        }
+        this.commands.execute.begin(
+            new Application.PropertyCommand<string?>(
+                this.account,
+                "label",
+                value,
+                // Translators: Tooltip used to undo changing the name
+                // of an account. The string substitution is the old
+                // name of the account.
+                _("Change account name back to “%s”").printf(
+                    this.account.display_name
+                )
+            ),
+            this.op_cancellable
+        );
+    }
+
+    private void update_prefetch_period() {
+        var model = (Adw.EnumListModel) this.email_prefetch_row.model;
+        uint position = model.find_position(
+            this.account.prefetch_period_days
+        );
+        if (position != Gtk.INVALID_LIST_POSITION &&
+            this.email_prefetch_row.selected != position) {
+            this.email_prefetch_row.selected = position;
+        }
+    }
+
+    private void on_prefetch_period_changed() {
+        var item = this.email_prefetch_row.selected_item as Adw.EnumListItem;
+        if (item == null || item.value == this.account.prefetch_period_days) {
+            return;
+        }
+        this.commands.execute.begin(
+            new Application.PropertyCommand<int>(
+                this.account,
+                "prefetch-period-days",
+                item.value,
+                // Translators: Tooltip for undoing a change to the
+                // length of time that past email should be downloaded
+                // for an account. The string substitution is the
+                // duration, e.g. "1 month back".
+                _("Change download period back to: %s").printf(
+                    ((PrefetchPeriod) this.account.prefetch_period_days)
+                        .to_string()
+                )
+            ),
+            this.op_cancellable
+        );
     }
 
     internal string? get_default_name() {
@@ -125,9 +207,8 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
 
     internal MailboxRow new_mailbox_row(Convey.RFC822.MailboxAddress sender) {
         MailboxRow row = new MailboxRow(this.account, sender, this);
-        //XXX GTK4
-        // row.move_to.connect(on_sender_row_moved);
-        // row.dropped.connect(on_sender_row_dropped);
+        row.move_to.connect(on_sender_row_moved);
+        row.dropped.connect(on_sender_row_dropped);
         return row;
     }
 
@@ -146,10 +227,10 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         this.account.changed();
     }
 
-    private void on_sender_row_moved(EditorRow source, int new_position) {
+    private void on_sender_row_moved(MailboxRow source, int new_position) {
         this.commands.execute.begin(
             new ReorderMailboxCommand(
-                (MailboxRow) source,
+                source,
                 new_position,
                 this.account,
                 this.senders_list
@@ -158,10 +239,10 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         );
     }
 
-    private void on_sender_row_dropped(EditorRow source, EditorRow target) {
+    private void on_sender_row_dropped(MailboxRow source, MailboxRow target) {
         this.commands.execute.begin(
             new ReorderMailboxCommand(
-                (MailboxRow) source,
+                source,
                 target.get_index(),
                 this.account,
                 this.senders_list
@@ -260,81 +341,6 @@ public enum Accounts.PrefetchPeriod {
     }
 }
 
-private class Accounts.DisplayNameRow : AccountRow<EditorEditPane,Gtk.Entry> {
-
-
-    private Components.EntryUndo value_undo;
-    private Application.CommandStack commands;
-    private GLib.Cancellable? cancellable;
-
-
-    public DisplayNameRow(Convey.AccountInformation account,
-                          Application.CommandStack commands,
-                          GLib.Cancellable? cancellable) {
-        base(
-            account,
-            // Translators: Label in the account editor for the user's
-            // custom name for an account.
-            _("Account name"),
-            new Gtk.Entry()
-        );
-        this.activatable = false;
-        this.commands = commands;
-        this.cancellable = cancellable;
-
-        update();
-
-        // Hook up after updating the value so the default value isn't
-        // undoable
-        this.value_undo = new Components.EntryUndo(this.value);
-
-        var focus_controller = new Gtk.EventControllerFocus();
-        focus_controller.leave.connect(on_focus_out);
-        this.value.add_controller(focus_controller);
-    }
-
-    public override void update() {
-        this.value.placeholder_text = this.account.primary_mailbox.address;
-        // Only update if changed to avoid adding more undo edits
-        if (this.value.text != this.account.display_name) {
-            this.value.text = this.account.display_name;
-        }
-    }
-
-    private void commit() {
-        string value = this.value.text.strip();
-        if (value == "") {
-            value = this.account.primary_mailbox.address;
-            this.value.text = this.account.primary_mailbox.address;
-        }
-
-        if (value != this.account.display_name) {
-            this.commands.execute.begin(
-                new Application.PropertyCommand<string?>(
-                    this.account,
-                    "label",
-                    value,
-                    // Translators: Tooltip used to undo changing
-                    // the name of an account. The string
-                    // substitution is the old name of the
-                    // account.
-                    _("Change account name back to “%s”")
-                ),
-                this.cancellable
-            );
-        }
-
-        if (Convey.String.is_empty(value)) {
-        }
-    }
-
-    private void on_focus_out() {
-        commit();
-    }
-
-}
-
-
 private class Accounts.MailboxRow : Adw.ActionRow {
 
     public Convey.AccountInformation account { get; construct set; }
@@ -342,6 +348,13 @@ private class Accounts.MailboxRow : Adw.ActionRow {
     public Convey.RFC822.MailboxAddress mailbox { get; construct set; }
 
     public unowned Accounts.EditorEditPane pane { get; construct set; }
+
+    private Gtk.Image drag_handle;
+    private bool drag_picked_up = false;
+
+
+    public signal void move_to(int new_position);
+    public signal void dropped(MailboxRow target);
 
 
     public MailboxRow(Convey.AccountInformation account,
@@ -354,11 +367,137 @@ private class Accounts.MailboxRow : Adw.ActionRow {
             activatable: true
         );
 
-        //XXX GTK4 do this again
-        // enable_drag();
-
-        //XXX GTK4 also on notify
+        enable_drag();
         update();
+    }
+
+    /** Adds a drag handle to the row and enables drag signals. */
+    private void enable_drag() {
+        this.drag_handle = new Gtk.Image.from_icon_name(
+            "list-drag-handle-symbolic"
+        );
+        this.drag_handle.valign = Gtk.Align.CENTER;
+        // Translators: Tooltip for dragging list items
+        this.drag_handle.set_tooltip_text(_("Drag to move this item"));
+        this.drag_handle.add_css_class("convey-drag-handle");
+        add_suffix(this.drag_handle);
+
+        var drag_source = new Gtk.DragSource();
+        drag_source.actions = Gdk.DragAction.MOVE;
+        drag_source.prepare.connect(on_drag_prepare);
+        drag_source.drag_begin.connect(on_drag_begin);
+        drag_source.drag_end.connect(on_drag_end);
+        this.drag_handle.add_controller(drag_source);
+
+        // Accept drops anywhere on the row, not just on the handle,
+        // so there's a target big enough to actually hit.
+        var drop_target = new Gtk.DropTarget(
+            typeof(int), Gdk.DragAction.MOVE
+        );
+        drop_target.enter.connect(on_drop_enter);
+        drop_target.leave.connect(on_drop_leave);
+        drop_target.drop.connect(on_drop);
+        add_controller(drop_target);
+
+        add_css_class("convey-draggable");
+
+        var key_controller = new Gtk.EventControllerKey();
+        key_controller.key_pressed.connect(on_key_pressed);
+        add_controller(key_controller);
+    }
+
+    private Gdk.ContentProvider on_drag_prepare(Gtk.DragSource source,
+                                                double x,
+                                                double y) {
+        var val = GLib.Value(typeof(int));
+        val.set_int(get_index());
+        return new Gdk.ContentProvider.for_value(val);
+    }
+
+    private void on_drag_begin(Gtk.DragSource source, Gdk.Drag drag) {
+        var paintable = new Gtk.WidgetPaintable(this);
+        source.set_icon(paintable, 0, 0);
+        add_css_class("convey-drag-source");
+        this.drag_picked_up = true;
+    }
+
+    private void on_drag_end(Gtk.DragSource source,
+                             Gdk.Drag drag,
+                             bool delete_data) {
+        remove_css_class("convey-drag-source");
+        this.drag_picked_up = false;
+    }
+
+    private Gdk.DragAction on_drop_enter(Gtk.DropTarget target,
+                                         double x,
+                                         double y) {
+        // Don't highlight the row that was picked up
+        if (!this.drag_picked_up) {
+            var parent = get_parent() as Gtk.ListBox;
+            if (parent != null) {
+                parent.drag_highlight_row(this);
+            }
+        }
+        return Gdk.DragAction.MOVE;
+    }
+
+    private void on_drop_leave(Gtk.DropTarget target) {
+        if (!this.drag_picked_up) {
+            var parent = get_parent() as Gtk.ListBox;
+            if (parent != null) {
+                parent.drag_unhighlight_row();
+            }
+        }
+    }
+
+    private bool on_drop(Gtk.DropTarget target,
+                         GLib.Value val,
+                         double x,
+                         double y) {
+        if (!val.holds(typeof(int))) {
+            return false;
+        }
+
+        var parent = get_parent() as Gtk.ListBox;
+        if (parent == null) {
+            return false;
+        }
+
+        var source = parent.get_row_at_index(val.get_int()) as MailboxRow;
+        if (source == null || source == this) {
+            return false;
+        }
+
+        source.dropped(this);
+        return true;
+    }
+
+    // Ctrl+Up/Down moves the row, for people who can't or won't drag.
+    private bool on_key_pressed(Gtk.EventControllerKey controller,
+                                uint keyval,
+                                uint keycode,
+                                Gdk.ModifierType state) {
+        if (state != Gdk.ModifierType.CONTROL_MASK) {
+            return Gdk.EVENT_PROPAGATE;
+        }
+
+        var parent = get_parent() as Gtk.ListBox;
+        if (parent == null) {
+            return Gdk.EVENT_PROPAGATE;
+        }
+
+        int index = get_index();
+        if (keyval == Gdk.Key.Up && index > 0) {
+            move_to(index - 1);
+            return Gdk.EVENT_STOP;
+        }
+        if (keyval == Gdk.Key.Down &&
+            parent.get_row_at_index(index + 1) != null) {
+            move_to(index + 1);
+            return Gdk.EVENT_STOP;
+        }
+
+        return Gdk.EVENT_PROPAGATE;
     }
 
     public override void activate() {
@@ -617,122 +756,5 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
         this.account.changed();
     }
 
-}
-
-
-private class Accounts.EmailPrefetchRow :
-    AccountRow<EditorEditPane,Gtk.DropDown> {
-
-
-    private const int[] PERIODS = { 14, 30, 90, 180, 365, 720, 1461, -1 };
-
-
-    public EmailPrefetchRow(EditorEditPane pane) {
-        base(
-            pane.account,
-            // Translators: This label describes the account
-            // preference for the length of time (weeks, months or
-            // years) that past email should be downloaded.
-            _("Download mail"),
-            new Gtk.DropDown(null, null)
-        );
-        set_activatable(false);
-
-        // Populate the model
-        var store = new GLib.ListStore(typeof(ComboItem));
-        foreach (int duration in PERIODS) {
-            store.append(new ComboItem(duration, get_label(duration)));
-        }
-        this.value.model = store;
-        this.value.expression =
-            new Gtk.PropertyExpression(typeof(ComboItem), null, "label");
-
-        // Update before connecting to the changed signal to avoid
-        // getting a spurious command.
-        update();
-
-        this.value.notify["selected"].connect(() => {
-                var item = this.value.selected_item as ComboItem;
-                if (item == null) {
-                    return;
-                }
-                pane.commands.execute.begin(
-                    new Application.PropertyCommand<int>(
-                        this.account,
-                        "prefetch-period-days",
-                        item.id,
-                        // Translators: Tooltip for undoing a change
-                        // to the length of time that past email
-                        // should be downloaded for an account. The
-                        // string substitution is the duration,
-                        // e.g. "1 month back".
-                        _("Change download period back to: %s").printf(
-                            get_label(this.account.prefetch_period_days)
-                        )
-                    ),
-                    pane.op_cancellable
-                );
-            });
-    }
-
-    public override void update() {
-        var store = (GLib.ListStore) this.value.model;
-        for (uint i = 0; i < store.get_n_items(); i++) {
-            if (((ComboItem) store.get_item(i)).id ==
-                    this.account.prefetch_period_days) {
-                if (this.value.selected != i) {
-                    this.value.selected = i;
-                }
-                break;
-            }
-        }
-    }
-
-    private string get_label(int duration) {
-        string label = "";
-        switch (duration) {
-        case -1:
-            label = _("Everything");
-            break;
-
-        case 14:
-            label = _("2 weeks back");
-            break;
-
-        case 30:
-            label = _("1 month back");
-            break;
-
-        case 90:
-            label = _("3 months back");
-            break;
-
-        case 180:
-            label = _("6 months back");
-            break;
-
-        case 365:
-            label = _("1 year back");
-            break;
-
-        case 720:
-            label = _("2 years back");
-            break;
-
-        case 1461:
-            label = _("4 years back");
-            break;
-
-        default:
-            label = GLib.ngettext(
-                "%d day back",
-                "%d days back",
-                duration
-            ).printf(duration);
-            break;
-        }
-
-        return label;
-    }
 
 }

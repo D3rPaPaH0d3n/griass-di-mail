@@ -71,6 +71,38 @@ namespace Action {
             return GROUP_NAME + "." + action_name;
         }
 
+        /**
+         * Binds Undo and Redo locally to a widget's own edit actions.
+         *
+         * GtkApplication accelerators are activated on the window, so
+         * `edt.undo` always resolves against the window's action group,
+         * no matter what has focus. Any widget that installs its own
+         * edit action group therefore needs a local shortcut controller
+         * to get first refusal on Ctrl+Z, otherwise the accelerator
+         * falls through to whatever the window does.
+         */
+        public void bind_undo_shortcuts(Gtk.Widget? widget) {
+            if (widget == null) {
+                return;
+            }
+
+            var controller = new Gtk.ShortcutController();
+            controller.scope = Gtk.ShortcutScope.LOCAL;
+            controller.add_shortcut(
+                new Gtk.Shortcut(
+                    Gtk.ShortcutTrigger.parse_string("<Ctrl>z"),
+                    new Gtk.NamedAction(prefix(UNDO))
+                )
+            );
+            controller.add_shortcut(
+                new Gtk.Shortcut(
+                    Gtk.ShortcutTrigger.parse_string("<Ctrl><Shift>z"),
+                    new Gtk.NamedAction(prefix(REDO))
+                )
+            );
+            widget.add_controller(controller);
+        }
+
     }
 
 }

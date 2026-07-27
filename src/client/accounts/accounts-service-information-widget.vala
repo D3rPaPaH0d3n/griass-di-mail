@@ -33,6 +33,7 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
     [GtkChild] private unowned Adw.ComboRow credentials_requirement_row;
     [GtkChild] private unowned Adw.EntryRow login_name_row;
     [GtkChild] private unowned Adw.PasswordEntryRow password_row;
+    [GtkChild] private unowned Components.NetworkAddressValidator host_validator;
 
 
     static construct {
@@ -50,7 +51,37 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         update_details();
     }
 
+    /**
+     * Switches the outgoing service to its own login credentials.
+     *
+     * Used when SMTP auth fails but IMAP succeeded, so the user
+     * probably needs to enter separate credentials here.
+     */
+    public void require_custom_credentials() {
+        if (this.service_mutable.protocol != Convey.Protocol.SMTP) {
+            return;
+        }
+        this.service_mutable.credentials_requirement =
+            Convey.Credentials.Requirement.CUSTOM;
+        update_auth(this.service_mutable);
+    }
+
+    /**
+     * Sets whether the host and transport security rows are shown.
+     *
+     * These are hidden when the values were discovered by autoconfig,
+     * since there is nothing useful for the user to change.
+     */
+    public void set_server_details_visible(bool visible) {
+        this.host_row.visible = visible;
+        this.security_row.visible = visible;
+    }
+
     private void update_details() {
+        // So "imap.example.com" with no port validates against the
+        // right default rather than port 0.
+        this.host_validator.default_port =
+            this.service_mutable.get_default_port();
         update_host_row(this.host_row, this.service_mutable);
         this.security_row.method = this.service_mutable.transport_security;
         update_auth(this.service_mutable);
@@ -132,10 +163,6 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
             row.visible = false;
     }
 
-    [GtkCallback]
-    private void on_host_row_changed(Gtk.Editable editable) {
-    }
-
     /**
      * Reads the current UI field values back into {@link service_mutable}.
      *
@@ -204,17 +231,5 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
     private static string outgoing_auth_to_string(Adw.EnumListItem item,
                                                   Convey.Credentials.Requirement requirement) {
         return requirement.to_string();
-    }
-
-    [GtkCallback]
-    private void on_validators_changed(Components.ValidatorGroup validators,
-                                       Components.Validator validator) {
-        //XXX what do we do here?
-    }
-
-    [GtkCallback]
-    private void on_validators_activated(Components.ValidatorGroup validators,
-                                         Components.Validator validator) {
-        //XXX what do we do here?
     }
 }

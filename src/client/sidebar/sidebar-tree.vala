@@ -111,7 +111,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         set_layout_manager_type(typeof(Gtk.BinLayout));
     }
 
-    public Tree(Gdk.ContentFormats formats, Gdk.DragAction actions, Gtk.IconTheme? theme = null) {
+    public Tree() {
         this.tree_model = new Gtk.TreeListModel(
             this.roots, false, false, (item) => ((Node) item).children
         );
@@ -972,8 +972,6 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         if (this.default_context_menu == null)
             return;
 
-        // Per-entry context menus (Sidebar.Contextable) are not yet ported
-        // to GTK4; fall back to the default menu.
         Gdk.Rectangle rect = { (int) x, (int) y, 1, 1 };
         this.default_context_menu.set_pointing_to(rect);
         this.default_context_menu.popup();

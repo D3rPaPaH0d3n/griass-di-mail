@@ -31,11 +31,9 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     private Convey.Engine engine;
 
 
-    [GtkChild] private unowned Adw.HeaderBar header;
 
     [GtkChild] private unowned Gtk.Stack stack;
 
-    [GtkChild] private unowned Adw.PreferencesGroup details_list;
     [GtkChild] private unowned Adw.EntryRow name_row;
     [GtkChild] private unowned Adw.EntryRow email_row;
     [GtkChild] private unowned Components.Validator email_validator;
@@ -49,7 +47,8 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     private string last_valid_email = "";
     private string last_valid_hostname = "";
 
-    //XXX if this is set, we shuld hide the IMAP/SMTP hostnames/auth
+    // When set, the server rows are hidden; see
+    // set_server_settings_from_autoconfig.
     private bool did_auto_config { get; private set; default = false; }
     private GLib.Cancellable auto_config_cancellable = new GLib.Cancellable();
 
@@ -73,7 +72,6 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         this.engine = editor.application.engine;
 
         this.name_row.text = this.accounts.get_account_name();
-        //XXX GTK4 make sure it's validated immediately
 
         this.receiving_service_widget.service = new_imap_service();
         this.sending_service_widget.service = new_smtp_service();
@@ -143,8 +141,9 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                 Convey.ErrorContext context = new Convey.ErrorContext(err);
                 debug("Error validating IMAP service: %s",
                       context.format_full_error());
-                //XXX GTK4 not sure how to design a nice API for this
-                // this.imap_tls.show();
+                // Reveal the server rows so the user can correct
+                // whatever autoconfig guessed wrong.
+                this.receiving_service_widget.set_server_details_visible(true);
                 to_focus = this.receiving_service_widget;
                 // Translators: In-app notification label
                 message = _("Check your receiving server details");
@@ -165,9 +164,8 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                     // There was an SMTP auth error, but IMAP already
                     // succeeded, so the user probably needs to
                     // specify custom creds here
-                    this.receiving_service_widget.service.credentials_requirement =
-                        Convey.Credentials.Requirement.CUSTOM;
-                    to_focus = this.receiving_service_widget;
+                    this.sending_service_widget.require_custom_credentials();
+                    to_focus = this.sending_service_widget;
                     // Translators: In-app notification label
                     message = _("Check your sending login and password");
                 } catch (GLib.TlsError.BAD_CERTIFICATE err) {
@@ -310,11 +308,10 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         smtp_service.port = (uint16) uint.parse(auto_config_values.smtp_port);
         smtp_service.transport_security = auto_config_values.smtp_tls_method;
 
-        //XXX GTK4 hide servr rows
-        // this.imap_hostname.hide();
-        // this.smtp_hostname.hide();
-        // this.imap_tls.hide();
-        // this.smtp_tls.hide();
+        // Autoconfig found the servers, so there's nothing useful for
+        // the user to change here.
+        this.receiving_service_widget.set_server_details_visible(false);
+        this.sending_service_widget.set_server_details_visible(false);
 
         switch (auto_config_values.id) {
         case "googlemail.com":
@@ -337,9 +334,10 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         string last_imap_hostname = "";
         string last_smtp_hostname = "";
 
-        // XXX GTK4 show these again if an autoconf happened
-        // this.imap_hostname.show();
-        // this.smtp_hostname.show();
+        // Guessing from the hostname, so the user needs to be able to
+        // correct us.
+        this.receiving_service_widget.set_server_details_visible(true);
+        this.sending_service_widget.set_server_details_visible(true);
 
         if (this.last_valid_hostname != "") {
             last_imap_hostname = "imap." + this.last_valid_hostname;
@@ -383,10 +381,8 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     private void on_validated(Components.ValidatorGroup validators,
                               Components.Validator validator) {
         check_validation();
-        //XXX GTK4 we somehow lost the Validator.Trigger here
-        // if (this.controls_valid && reason == Components.Validator.Trigger.ACTIVATED) {
-        //     this.action_button.clicked();
-        // }
+        // Activating (Enter) is handled by on_activated, wired to the
+        // validator group's "activated" signal.
     }
 
     [GtkCallback]

@@ -52,7 +52,6 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         }
     }
 
-    [GtkChild] private unowned Adw.HeaderBar header;
 
     [GtkChild] private unowned Gtk.Grid welcome_panel;
 

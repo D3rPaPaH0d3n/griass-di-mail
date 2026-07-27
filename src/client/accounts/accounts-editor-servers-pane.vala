@@ -37,8 +37,6 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
 
     private Convey.Engine engine;
 
-    public Components.ValidatorGroup validators { get; construct set; }
-
 
     [GtkChild] private unowned Adw.ActionRow account_provider_row;
     [GtkChild] private unowned Adw.ActionRow service_provider_row;
@@ -251,8 +249,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                 // There was an SMTP auth error, but IMAP already
                 // succeeded, so the user probably needs to
                 // specify custom creds here
-                //XXX GTK4
-                // this.outgoing_auth.value.source = Convey.Credentials.Requirement.CUSTOM;
+                this.sending_service_widget.require_custom_credentials();
                 // Translators: In-app notification label
                 message = _("Check your sending login and password");
             } catch (GLib.TlsError.BAD_CERTIFICATE err) {
@@ -329,19 +326,10 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         this.sensitive = !is_running;
     }
 
-    // [GtkCallback]
-    // private void on_validators_changed(Components.ValidatorGroup validators,
-    //                                    Components.Validator validator) {
-    //     action_set_enabled("apply", validators.is_valid());
-    // }
-
-    // [GtkCallback]
-    // private void on_validators_activated(Components.ValidatorGroup validators,
-    //                                     Components.Validator validator) {
-    //     if (validators.is_valid()) {
-    //         activate_action("apply", null);
-    //     }
-    // }
+    // Apply is deliberately not gated on the field validators: host
+    // validation does a DNS lookup, so gating would lock people out
+    // when offline or behind split DNS. The validators show inline
+    // feedback and apply() re-enables the button after a failure.
 
     private void on_untrusted_host(Convey.AccountInformation account,
                                    Convey.ServiceInformation service,
