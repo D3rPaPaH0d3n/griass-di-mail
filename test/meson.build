@@ -209,21 +209,25 @@ test(
   test_engine_bin,
   depends: [ engine_lib ]
 )
-
-# TEMPORARY (CI diagnostics): client-tests and js-tests are run under gdb via
-# the Flatpak manifest's test-commands instead, to capture a backtrace for the
-# SIGSEGV that only happens inside the CI sandbox. Restore these before merging.
-#test(
-#  'client-tests',
-#  test_client_bin,
-#  depends: [ client_lib, web_process ],
-#  # Avoid fatal warnings from Folks backends (e.g. telepathy) that
-#  # aren't available in the test environment.
-#  env: [ 'FOLKS_BACKENDS_ALLOWED=key-file', 'FOLKS_PRIMARY_STORE=key-file' ]
-#)
-#test(
-#  'js-tests',
-#  test_js_bin,
-#  depends: [ client_lib, web_process ]
-#)
-alias_target('test-binaries', test_client_bin, test_js_bin)
+test(
+  'client-tests',
+  test_client_bin,
+  depends: [ client_lib, web_process ],
+  # Avoid fatal warnings from Folks backends (e.g. telepathy) that
+  # aren't available in the test environment.
+  #
+  # GTK_IM_MODULE: without a running ibus daemon the ibus IM module
+  # recurses (text view init -> IM context -> new text view -> ...)
+  # until the stack overflows, so pin a self-contained input method.
+  env: [
+    'FOLKS_BACKENDS_ALLOWED=key-file',
+    'FOLKS_PRIMARY_STORE=key-file',
+    'GTK_IM_MODULE=gtk-im-context-simple'
+  ]
+)
+test(
+  'js-tests',
+  test_js_bin,
+  depends: [ client_lib, web_process ],
+  env: [ 'GTK_IM_MODULE=gtk-im-context-simple' ]
+)
