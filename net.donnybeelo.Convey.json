@@ -304,7 +304,8 @@
                     "--socket=wayland",
                     "--device=dri",
                     "--socket=pulseaudio",
-                    "--share=network"
+                    "--share=network",
+                    "--env=WEBKIT_DISABLE_DMABUF_RENDERER=1"
                 ]
             },
             "config-opts": [
