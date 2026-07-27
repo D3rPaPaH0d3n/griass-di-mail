@@ -32,6 +32,7 @@ class Composer.PageStateTest : Components.WebViewTestCase<Composer.WebView> {
         // Depends contains_keywords and html_to_text_with_blacklist
         add_test("contains_attachment_keywords", contains_attachment_keywords);
         add_test("replace_non_breaking_space", replace_non_breaking_space);
+        add_test("command_stack_after_edit", command_stack_after_edit);
 
         try {
             WebView.load_resources();
@@ -403,6 +404,44 @@ I can send email through smtp.gmail.com:587 or through <a href="https://www.gmai
                 Util.JS.to_string(
                     run_javascript(@"ComposerPageState.replaceNonBreakingSpace($(multiple_nbsp));")
                 ) == "a b c");
+        } catch (Util.JS.Error err) {
+            print("Util.JS.Error: %s\n", err.message);
+            assert_not_reached();
+        } catch (Error err) {
+            print("WKError: %s\n", err.message);
+            assert_not_reached();
+        }
+    }
+
+    /**
+     * The composer reports an empty body via queryCommandEnabled("undo"),
+     * and Composer.WebView derives is_empty (and hence whether a draft is
+     * worth saving) from it. If this regresses, drafts silently stop being
+     * saved for anyone who only types in the body.
+     */
+    public void command_stack_after_edit() throws Error {
+        load_body_fixture("<p>para</p>");
+        try {
+            assert_false(
+                Util.JS.to_bool(
+                    run_javascript("document.queryCommandEnabled('undo');")
+                ),
+                "undo should not be enabled before any edit"
+            );
+
+            run_javascript("""
+                let body = document.getElementById('convey-body');
+                body.focus();
+                window.getSelection().selectAllChildren(body);
+                document.execCommand('insertText', false, 'typed');
+            """);
+
+            assert_true(
+                Util.JS.to_bool(
+                    run_javascript("document.queryCommandEnabled('undo');")
+                ),
+                "undo must be enabled after an edit, or is_empty stays true"
+            );
         } catch (Util.JS.Error err) {
             print("Util.JS.Error: %s\n", err.message);
             assert_not_reached();

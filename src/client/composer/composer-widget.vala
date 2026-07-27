@@ -194,6 +194,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private const string DRAFT_SAVED_TEXT = _("Saved");
     private const string DRAFT_SAVING_TEXT = _("Saving");
     private const string DRAFT_ERROR_TEXT = _("Error saving");
+    // Translators: Shown in the composer when the account's server
+    // cannot store drafts at all, so none will be saved.
+    private const string DRAFT_UNSUPPORTED_TEXT = _("Drafts not supported");
     private const string BACKSPACE_TEXT = _("Press Backspace to delete quote");
 
     private const string URI_LIST_MIME_TYPE = "text/uri-list";
@@ -1581,10 +1584,15 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             opened = true;
             debug("Draft manager opened");
         } catch (Convey.EngineError.UNSUPPORTED err) {
-            debug(
+            // Tell the user rather than silently never saving. This
+            // happens when the drafts folder can't store mail or the
+            // IMAP server has no UIDPLUS, so we can't identify the
+            // draft we just created in order to replace it later.
+            warning(
                 "Drafts folder unsupported, no drafts will be saved: %s",
                 err.message
             );
+            this.draft_status_text = DRAFT_UNSUPPORTED_TEXT;
         } catch (GLib.Error err) {
             this.header.show_save_and_close = false;
             throw err;
@@ -1675,7 +1683,11 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         if (this.should_save) {
             this.draft_timer.start();
         }
-        this.draft_status_text = "";
+        if (this.can_save) {
+            // Keep a "not supported" notice on screen; there is no
+            // draft manager to replace it with a real status.
+            this.draft_status_text = "";
+        }
         // can_save depends on the value of this, so reset it after
         // the if test above
         this.is_draft_saved = false;
