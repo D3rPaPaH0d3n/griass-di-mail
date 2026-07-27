@@ -391,7 +391,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         drag_widget.append(drag_row);
         drag_widget.drag_highlight_row(drag_row);
 
-        var drag_icon = (Gtk.DragIcon) Gtk.DragIcon.get_for_drag(drag);
+        var drag_icon = new Gtk.DragIcon.get_for_drag(drag);
         drag_icon.child = drag_widget;
         drag.set_hotspot((int) this.drag_x, (int) this.drag_y);
 

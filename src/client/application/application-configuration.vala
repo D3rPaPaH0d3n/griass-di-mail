@@ -250,7 +250,7 @@ public class Application.Configuration : Convey.BaseObject {
             SPELL_CHECK_LANGUAGES
         ).get_maybe();
         string[] langs = (value != null)
-            ? value.get_strv()
+            ? value.dup_strv()
             : Util.I18n.get_user_preferred_languages();
         return langs;
     }
