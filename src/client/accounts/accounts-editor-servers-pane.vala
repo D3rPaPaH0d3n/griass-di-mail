@@ -77,6 +77,12 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         this.save_drafts_row.active = account.save_drafts;
         this.save_sent_row.active = account.save_sent;
 
+        // ponytail: the switch rows aren't on the command stack, so
+        // just enable Apply directly rather than wrapping them in
+        // undoable commands
+        this.save_drafts_row.notify["active"].connect(enable_apply);
+        this.save_sent_row.notify["active"].connect(enable_apply);
+
         // XXX GMail and Outlook auto-save sent mail so don't include save sent
         // option, but we shouldn't be hard-coding visible rows like this
         this.save_sent_row.visible = (account.service_provider == OTHER);
@@ -134,6 +140,10 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
             this.service_provider_row.subtitle = this.account.service_label;
             break;
         }
+    }
+
+    private void enable_apply() {
+        this.apply_button.sensitive = true;
     }
 
     /** {@inheritDoc} */
@@ -355,10 +365,5 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         this.save.begin(this.op_cancellable);
     }
 
-}
-
-private struct Accounts.InitialConfiguration {
-    bool save_drafts;
-    bool save_sent;
 }
 
