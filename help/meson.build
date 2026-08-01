@@ -15,7 +15,7 @@ convey_help_pages = [
 ]
 
 convey_help_media = [
-  'figures/convey.svg'
+  'figures/net.donnybeelo.Convey.svg'
 ]
 
 gnome.yelp(meson.project_name(),
