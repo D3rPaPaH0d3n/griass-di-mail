@@ -14,6 +14,32 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs60">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath7">
+      <rect
+         style="display:inline;fill:#f6f5f4;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
+         id="rect7"
+         width="88.005341"
+         height="54.179703"
+         x="-37.03381"
+         y="294.88559"
+         rx="2.0228727"
+         ry="2.0228727" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath6">
+      <rect
+         style="display:inline;fill:#f6f5f4;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
+         id="rect6"
+         width="88.005341"
+         height="54.179703"
+         x="-37.03381"
+         y="294.88559"
+         rx="2.0228727"
+         ry="2.0228727" />
+    </clipPath>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4"
@@ -40,6 +66,38 @@
          offset="1"
          id="stop8-9" />
     </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient15"
+       id="linearGradient22"
+       gradientUnits="userSpaceOnUse"
+       x1="17.535204"
+       y1="273.20343"
+       x2="27.068169"
+       y2="273.20343"
+       gradientTransform="translate(-128.05261,-546.38546)" />
+    <linearGradient
+       id="linearGradient15"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#363636;stop-opacity:1;"
+         offset="0"
+         id="stop15" />
+      <stop
+         style="stop-color:#9a9a9a;stop-opacity:1;"
+         offset="1"
+         id="stop16" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient15"
+       id="linearGradient27"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-0.05379984,0.00525049)"
+       x1="17.535204"
+       y1="273.20343"
+       x2="27.068169"
+       y2="273.20343" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2"
@@ -134,10 +192,10 @@
     </linearGradient>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath7">
+       id="clipPath7-9">
       <rect
          style="display:inline;fill:#f6f5f4;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
-         id="rect7"
+         id="rect7-3"
          width="88.005341"
          height="54.179703"
          x="-37.03381"
@@ -147,10 +205,10 @@
     </clipPath>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath6">
+       id="clipPath6-7">
       <rect
          style="display:inline;fill:#f6f5f4;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
-         id="rect6"
+         id="rect6-4"
          width="88.005341"
          height="54.179703"
          x="-37.03381"
@@ -161,7 +219,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient13"
-       id="linearGradient60"
+       id="linearGradient8"
        gradientUnits="userSpaceOnUse"
        x1="110.46582"
        y1="268.43628"
@@ -170,7 +228,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient20"
-       id="linearGradient61"
+       id="linearGradient9"
        gradientUnits="userSpaceOnUse"
        x1="17.533928"
        y1="273.47113"
@@ -186,9 +244,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="7.5078125"
-     inkscape:cx="64"
-     inkscape:cy="64"
+     inkscape:zoom="2.7235305"
+     inkscape:cx="20.377962"
+     inkscape:cy="69.578806"
      inkscape:window-width="2048"
      inkscape:window-height="1211"
      inkscape:window-x="0"
@@ -501,11 +559,10 @@
        id="rect41" />
   </clipPath>
   <g
-     inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="convey"
      style="display:inline;enable-background:new"
-     transform="translate(0.00151903,-172.03488)">
+     transform="translate(-9.891145e-4,-172.0013)">
     <g
        id="g3"
        inkscape:label="belt"
@@ -519,6 +576,30 @@
          y="268.43631"
          ry="9.5342255"
          inkscape:label="belt inside" />
+      <g
+         id="g31"
+         inkscape:label="wheel depth">
+        <rect
+           style="display:inline;fill:url(#linearGradient22);fill-opacity:1;stroke:none;stroke-width:37.7953;stroke-linecap:round;enable-background:new"
+           id="rect3-5"
+           width="19.068451"
+           height="9.5342255"
+           x="-120.05292"
+           y="-277.94916"
+           ry="0"
+           rx="0"
+           transform="rotate(-179.98891)" />
+        <rect
+           style="display:inline;fill:url(#linearGradient27);fill-opacity:1;stroke:none;stroke-width:37.7953;stroke-linecap:round;enable-background:new"
+           id="rect3-5-3"
+           width="19.068451"
+           height="9.5342255"
+           x="7.9458928"
+           y="268.44156"
+           ry="0"
+           rx="0"
+           transform="rotate(-0.01109131,-0.00461442,4.2276111)" />
+      </g>
       <path
          id="rect2"
          style="display:inline;fill:url(#linearGradient3);stroke:none;stroke-width:17.9117;enable-background:new"
@@ -589,13 +670,13 @@
          id="g2"
          inkscape:label="left wheel">
         <circle
-           style="display:inline;fill:url(#linearGradient60);fill-opacity:1;stroke:none;stroke-width:20;enable-background:new"
+           style="display:inline;fill:url(#linearGradient8);fill-opacity:1;stroke:none;stroke-width:20;enable-background:new"
            id="path4"
            cx="17.533928"
            cy="277.97052"
            r="9.5342255" />
         <circle
-           style="fill:url(#linearGradient61);stroke-width:20"
+           style="fill:url(#linearGradient9);stroke-width:20"
            id="path1"
            cx="17.533928"
            cy="277.97052"
@@ -619,7 +700,6 @@
       </g>
     </g>
     <g
-       inkscape:groupmode="layer"
        id="layer6"
        inkscape:label="envelope"
        style="display:inline;enable-background:new"
@@ -638,13 +718,13 @@
          d="m -36.344682,295.38512 30.5783152,34.56816 c 7.8361162,7.9054 17.5159528,7.99887 25.4267308,0.0181 l 30.607912,-34.59852"
          id="path10"
          sodipodi:nodetypes="cccc"
-         clip-path="url(#clipPath7)" />
+         clip-path="url(#clipPath7-9)" />
       <path
          style="display:inline;fill:none;stroke:#000000;stroke-width:3.08033;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.315355;enable-background:new"
          d="m -36.51312,348.39996 25.618133,-24.24451 5.1286234,5.83409 c 7.836112,7.90542 17.5159436,7.96259 25.4267206,-0.0181 2e-6,0 5.177555,-5.85257 5.17756,-5.85257 l 25.65488,24.23316"
          id="path10-6"
          sodipodi:nodetypes="cccscc"
-         clip-path="url(#clipPath6)" />
+         clip-path="url(#clipPath6-7)" />
     </g>
   </g>
   <g
