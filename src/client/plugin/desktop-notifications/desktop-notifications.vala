@@ -136,12 +136,41 @@ public class Plugin.DesktopNotifications :
         if (icon != null) {
             var icon_stream = yield ((LoadableIcon) icon).load_async(32, null);
             var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(icon_stream, 32, 32, false);
-            texture = Gdk.Texture.for_pixbuf(pixbuf);
+            texture = round_texture(Gdk.Texture.for_pixbuf(pixbuf));
         } else {
             texture = generate_fallback_avatar(title);
         }
 
         issue_arrived_notification(title, body, texture, folder, email.identifier);
+    }
+
+    // Clip the contact photo to a circle, matching the shape of the
+    // Adw.Avatar fallback
+    private Gdk.Texture round_texture(Gdk.Texture square) {
+        int size = square.get_width();
+        Gsk.Renderer renderer = new Gsk.CairoRenderer();
+        try {
+            renderer.realize(null);
+        } catch (GLib.Error error) {
+            warning("Couldn't realize Cairo renderer: %s", error.message);
+            return square;
+        }
+
+        var bounds = Graphene.Rect() {
+            origin = Graphene.Point() { x = 0, y = 0 },
+            size = Graphene.Size() { width = size, height = size }
+        };
+        var circle = Gsk.RoundedRect();
+        circle.init_from_rect(bounds, size / 2.0f);
+
+        var snapshot = new Gtk.Snapshot();
+        snapshot.push_rounded_clip(circle);
+        snapshot.append_texture(square, bounds);
+        snapshot.pop();
+
+        Gdk.Texture rounded = renderer.render_texture(snapshot.to_node(), null);
+        renderer.unrealize();
+        return rounded;
     }
 
     private Gdk.Texture generate_fallback_avatar(string title) {
