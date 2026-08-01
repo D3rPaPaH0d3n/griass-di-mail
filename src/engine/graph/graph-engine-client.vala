@@ -126,6 +126,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         Gee.ArrayList<Message> messages = new Gee.ArrayList<Message>();
         string? next_url = null;
         bool done = false;
+        bool ordered = true;
         int pages = 0;
         int max_pages = 1000;
 
@@ -140,8 +141,9 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                         if (q > 0) {
                             // Fallback queries carry no $orderby, so results
                             // aren't guaranteed newest-first and the early
-                            // stop below could skip genuinely new mail.
+                            // stops below could truncate the listing.
                             stop_at_unix = 0;
+                            ordered = false;
                         }
                         break;
                     } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
@@ -173,6 +175,11 @@ internal class Convey.Graph.Client : Convey.BaseObject {
 
                     if (has_cutoff && parsed.received_at != null &&
                         parsed.received_at.to_unix() < cutoff_unix) {
+                        if (!ordered) {
+                            // Unordered results: skip the old one, don't
+                            // assume everything after it is older too.
+                            continue;
+                        }
                         done = true;
                         break;
                     }
