@@ -84,7 +84,21 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
         key_controller.set_propagation_phase(Gtk.PropagationPhase.CAPTURE);
         key_controller.key_pressed.connect(on_completion_key_pressed);
         add_controller(key_controller);
+
+        // Only suggest while the entry has the focus, since the popover
+        // doesn't autohide and would otherwise stay up.
+        var focus_controller = new Gtk.EventControllerFocus();
+        focus_controller.enter.connect(() => { this.entry_focused = true; });
+        focus_controller.leave.connect(() => {
+            this.entry_focused = false;
+            cancel_search();
+            this.popover.clear_suggestions();
+            this.popover.popdown();
+        });
+        add_controller(focus_controller);
     }
+
+    private bool entry_focused = false;
 
     private bool on_completion_key_pressed(Gtk.EventControllerKey controller,
                                            uint keyval,
@@ -236,7 +250,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
 
         cancel_search();
 
-        if (new_value.length > 0) {
+        if (new_value.length > 0 && this.entry_focused) {
             var cancellable = new GLib.Cancellable();
             this.search_cancellable = cancellable;
             this.popover.search_contacts.begin(new_value, cancellable, (obj, res) => {
