@@ -33,10 +33,16 @@ body {
 
 }
 
+/* Render messages against a light user-agent scheme whatever the desktop is
+ * set to, so default link colours, form controls and the canvas stay light.
+ * The dark override below opts back in when the preference is enabled. */
+html, body {
+  color-scheme: light;
+}
+
 /* Only paint over the message's own colours when the "override the original
  * colors" preference is on; the attribute is set by setUnsetHtmlColors(). */
 body[data-convey-theme] {
-  color-scheme: light;
   color: var(--fg-color);
   background-color: var(--bg-color);
 }
