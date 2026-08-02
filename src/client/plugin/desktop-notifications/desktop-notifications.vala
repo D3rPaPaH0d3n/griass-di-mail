@@ -216,7 +216,7 @@ public class Plugin.DesktopNotifications :
 
         // Same mix as style.css, against the same theme colours, so the
         // notification and the message list agree
-        Gdk.RGBA bg = mix(hue, theme_color("view_bg_color", "#ffffff"), 0.22);
+        Gdk.RGBA bg = mix(hue, theme_color("view_bg_color", "#ffffff"), 0.32);
         Gdk.RGBA text = mix(hue, theme_color("window_fg_color", "#000000"), 0.58);
 
         var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size);
@@ -225,6 +225,13 @@ public class Plugin.DesktopNotifications :
         cr.arc(size / 2.0, size / 2.0, size / 2.0, 0, 2 * Math.PI);
         cr.set_source_rgb(bg.red, bg.green, bg.blue);
         cr.fill();
+
+        // Ring, so the muted hues stay visible against the notification
+        double ring = size / 48.0;
+        cr.arc(size / 2.0, size / 2.0, (size - ring) / 2.0, 0, 2 * Math.PI);
+        cr.set_source_rgba(text.red, text.green, text.blue, 0.45);
+        cr.set_line_width(ring);
+        cr.stroke();
 
         string initials = avatar_initials(title);
         if (initials != "") {
