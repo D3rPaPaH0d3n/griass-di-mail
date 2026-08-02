@@ -573,9 +573,11 @@ listview.contact-completion > row:selected {
 
 /* Avatars. Flat tints of Adwaita's own avatar hues instead of the stock
  * gradients: mixing against the view/foreground colours keeps them legible
- * in both light and dark. The ring keeps the muted hues from disappearing
- * into a card background. Kept in sync with the notification plugin, which
- * draws the same thing by hand. */
+ * in both light and dark. The edge keeps the muted hues from disappearing
+ * into a card background; it's part of the background gradient because an
+ * inset box-shadow or border leaves visible seams where GTK joins the four
+ * corner arcs. Kept in sync with the notification plugin, which draws the
+ * same thing by hand. */
 
 avatar {
   background-image: none;
@@ -584,97 +586,125 @@ avatar {
 avatar.color1 {
   background-color: color-mix(in srgb, #337fdc 32%, @view_bg_color);
   color: color-mix(in srgb, #337fdc 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #337fdc 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #337fdc 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color2 {
   background-color: color-mix(in srgb, #0f9ac8 32%, @view_bg_color);
   color: color-mix(in srgb, #0f9ac8 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #0f9ac8 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #0f9ac8 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color3 {
   background-color: color-mix(in srgb, #29ae74 32%, @view_bg_color);
   color: color-mix(in srgb, #29ae74 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #29ae74 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #29ae74 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color4 {
   background-color: color-mix(in srgb, #6ab85b 32%, @view_bg_color);
   color: color-mix(in srgb, #6ab85b 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #6ab85b 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #6ab85b 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color5 {
   background-color: color-mix(in srgb, #d29d09 32%, @view_bg_color);
   color: color-mix(in srgb, #d29d09 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #d29d09 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #d29d09 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color6 {
   background-color: color-mix(in srgb, #d68400 32%, @view_bg_color);
   color: color-mix(in srgb, #d68400 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #d68400 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #d68400 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color7 {
   background-color: color-mix(in srgb, #ed5b00 32%, @view_bg_color);
   color: color-mix(in srgb, #ed5b00 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #ed5b00 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #ed5b00 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color8 {
   background-color: color-mix(in srgb, #e62d42 32%, @view_bg_color);
   color: color-mix(in srgb, #e62d42 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #e62d42 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #e62d42 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color9 {
   background-color: color-mix(in srgb, #e33b6a 32%, @view_bg_color);
   color: color-mix(in srgb, #e33b6a 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #e33b6a 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #e33b6a 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color10 {
   background-color: color-mix(in srgb, #9945b5 32%, @view_bg_color);
   color: color-mix(in srgb, #9945b5 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #9945b5 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #9945b5 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color11 {
   background-color: color-mix(in srgb, #7a59ca 32%, @view_bg_color);
   color: color-mix(in srgb, #7a59ca 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #7a59ca 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #7a59ca 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color12 {
   background-color: color-mix(in srgb, #b08952 32%, @view_bg_color);
   color: color-mix(in srgb, #b08952 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #b08952 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #b08952 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color13 {
   background-color: color-mix(in srgb, #785336 32%, @view_bg_color);
   color: color-mix(in srgb, #785336 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #785336 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #785336 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
 
 avatar.color14 {
   background-color: color-mix(in srgb, #6e6d71 32%, @view_bg_color);
   color: color-mix(in srgb, #6e6d71 58%, @window_fg_color);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb,
-    color-mix(in srgb, #6e6d71 58%, @window_fg_color) 45%, transparent);
+  background-image: radial-gradient(circle closest-side,
+    transparent 0%, transparent 95%,
+    color-mix(in srgb, color-mix(in srgb, #6e6d71 58%, @window_fg_color) 45%,
+      transparent) 96%);
 }
