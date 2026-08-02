@@ -369,6 +369,9 @@ private class Accounts.MailboxRow : Adw.ActionRow {
 
         enable_drag();
         update();
+
+        // The edit dialog and undo both swap the mailbox out from under us
+        this.notify["mailbox"].connect(() => update());
     }
 
     /** Adds a drag handle to the row and enables drag signals. */
