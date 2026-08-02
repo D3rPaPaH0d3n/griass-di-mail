@@ -176,25 +176,13 @@ public class Plugin.DesktopNotifications :
         return rounded;
     }
 
-    // Adw.Avatar's palette, as "gradient-top gradient-bottom text". Neither
-    // Adw.Avatar.draw_to_texture() nor snapshotting the widget works here,
-    // since both need the avatar to live inside a window, so the same look
-    // is drawn by hand instead.
-    private const string[] AVATAR_COLORS = {
-        "#83b6ec #337fdc #cfe1f5",
-        "#7ad9f1 #0f9ac8 #caeaf2",
-        "#8de6b1 #29ae74 #cef8d8",
-        "#b5e98a #6ab85b #e6f9d7",
-        "#f8e359 #d29d09 #f9f4e1",
-        "#ffcb62 #d68400 #ffead1",
-        "#ffa95a #ed5b00 #ffe5c5",
-        "#f78773 #e62d42 #f8d2ce",
-        "#e973ab #e33b6a #fac7de",
-        "#cb78d4 #9945b5 #e7c2e8",
-        "#9e91e8 #7a59ca #d5d2f5",
-        "#e3cf9c #b08952 #f2eade",
-        "#be916d #785336 #e5d6ca",
-        "#c0bfbc #6e6d71 #d8d7d3"
+    // Adwaita's avatar hues. Adw.Avatar can't be rendered here (it needs
+    // to live inside a window), so the flat tint from style.css is drawn by
+    // hand with the same mix; keep the two in step.
+    private const string[] AVATAR_HUES = {
+        "#337fdc", "#0f9ac8", "#29ae74", "#6ab85b", "#d29d09", "#d68400",
+        "#ed5b00", "#e62d42", "#e33b6a", "#9945b5", "#7a59ca", "#b08952",
+        "#785336", "#6e6d71"
     };
 
     // Notification icons are shown at 48px, so render that at whatever the
@@ -223,21 +211,21 @@ public class Plugin.DesktopNotifications :
         int size = avatar_size();
 
         // Adw.Avatar picks its colour the same way
-        string[] colors =
-            AVATAR_COLORS[title.hash() % AVATAR_COLORS.length].split(" ");
-        Gdk.RGBA top = Gdk.RGBA(), bottom = Gdk.RGBA(), text = Gdk.RGBA();
-        top.parse(colors[0]);
-        bottom.parse(colors[1]);
-        text.parse(colors[2]);
+        Gdk.RGBA hue = Gdk.RGBA();
+        hue.parse(AVATAR_HUES[title.hash() % AVATAR_HUES.length]);
+
+        bool dark = Adw.StyleManager.get_default().dark;
+        Gdk.RGBA view_bg = Gdk.RGBA(), view_fg = Gdk.RGBA();
+        view_bg.parse(dark ? "#1e1e1e" : "#ffffff");
+        view_fg.parse(dark ? "#ffffff" : "#000000");
+        Gdk.RGBA bg = mix(hue, view_bg, 0.22);
+        Gdk.RGBA text = mix(hue, view_fg, 0.58);
 
         var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size);
         var cr = new Cairo.Context(surface);
 
-        var gradient = new Cairo.Pattern.linear(0, 0, 0, size);
-        gradient.add_color_stop_rgb(0, top.red, top.green, top.blue);
-        gradient.add_color_stop_rgb(1, bottom.red, bottom.green, bottom.blue);
         cr.arc(size / 2.0, size / 2.0, size / 2.0, 0, 2 * Math.PI);
-        cr.set_source(gradient);
+        cr.set_source_rgb(bg.red, bg.green, bg.blue);
         cr.fill();
 
         string initials = avatar_initials(title);
@@ -263,6 +251,15 @@ public class Plugin.DesktopNotifications :
             size, size, Gdk.MemoryFormat.B8G8R8A8_PREMULTIPLIED,
             new GLib.Bytes(data), surface.get_stride()
         );
+    }
+
+    private Gdk.RGBA mix(Gdk.RGBA a, Gdk.RGBA b, double amount) {
+        return Gdk.RGBA() {
+            red = (float) (a.red * amount + b.red * (1 - amount)),
+            green = (float) (a.green * amount + b.green * (1 - amount)),
+            blue = (float) (a.blue * amount + b.blue * (1 - amount)),
+            alpha = 1
+        };
     }
 
     // The font the rest of the UI is drawn in, so the initials match

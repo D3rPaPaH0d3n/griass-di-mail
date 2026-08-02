@@ -570,3 +570,82 @@ listview.contact-completion > row {
 listview.contact-completion > row:selected {
   background-color: color-mix(in srgb, currentColor 8%, transparent);
 }
+
+/* Avatars. Flat tints of Adwaita's own avatar hues instead of the stock
+ * gradients: mixing against the view/foreground colours keeps them legible
+ * in both light and dark. Kept in sync with the notification plugin, which
+ * draws the same thing by hand. */
+
+avatar {
+  background-image: none;
+}
+
+avatar.color1 {
+  background-color: color-mix(in srgb, #337fdc 22%, @view_bg_color);
+  color: color-mix(in srgb, #337fdc 58%, @window_fg_color);
+}
+
+avatar.color2 {
+  background-color: color-mix(in srgb, #0f9ac8 22%, @view_bg_color);
+  color: color-mix(in srgb, #0f9ac8 58%, @window_fg_color);
+}
+
+avatar.color3 {
+  background-color: color-mix(in srgb, #29ae74 22%, @view_bg_color);
+  color: color-mix(in srgb, #29ae74 58%, @window_fg_color);
+}
+
+avatar.color4 {
+  background-color: color-mix(in srgb, #6ab85b 22%, @view_bg_color);
+  color: color-mix(in srgb, #6ab85b 58%, @window_fg_color);
+}
+
+avatar.color5 {
+  background-color: color-mix(in srgb, #d29d09 22%, @view_bg_color);
+  color: color-mix(in srgb, #d29d09 58%, @window_fg_color);
+}
+
+avatar.color6 {
+  background-color: color-mix(in srgb, #d68400 22%, @view_bg_color);
+  color: color-mix(in srgb, #d68400 58%, @window_fg_color);
+}
+
+avatar.color7 {
+  background-color: color-mix(in srgb, #ed5b00 22%, @view_bg_color);
+  color: color-mix(in srgb, #ed5b00 58%, @window_fg_color);
+}
+
+avatar.color8 {
+  background-color: color-mix(in srgb, #e62d42 22%, @view_bg_color);
+  color: color-mix(in srgb, #e62d42 58%, @window_fg_color);
+}
+
+avatar.color9 {
+  background-color: color-mix(in srgb, #e33b6a 22%, @view_bg_color);
+  color: color-mix(in srgb, #e33b6a 58%, @window_fg_color);
+}
+
+avatar.color10 {
+  background-color: color-mix(in srgb, #9945b5 22%, @view_bg_color);
+  color: color-mix(in srgb, #9945b5 58%, @window_fg_color);
+}
+
+avatar.color11 {
+  background-color: color-mix(in srgb, #7a59ca 22%, @view_bg_color);
+  color: color-mix(in srgb, #7a59ca 58%, @window_fg_color);
+}
+
+avatar.color12 {
+  background-color: color-mix(in srgb, #b08952 22%, @view_bg_color);
+  color: color-mix(in srgb, #b08952 58%, @window_fg_color);
+}
+
+avatar.color13 {
+  background-color: color-mix(in srgb, #785336 22%, @view_bg_color);
+  color: color-mix(in srgb, #785336 58%, @window_fg_color);
+}
+
+avatar.color14 {
+  background-color: color-mix(in srgb, #6e6d71 22%, @view_bg_color);
+  color: color-mix(in srgb, #6e6d71 58%, @window_fg_color);
+}
