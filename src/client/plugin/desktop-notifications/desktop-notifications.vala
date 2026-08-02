@@ -134,8 +134,11 @@ public class Plugin.DesktopNotifications :
 
         Gdk.Texture texture;
         if (icon != null) {
-            var icon_stream = yield ((LoadableIcon) icon).load_async(32, null);
-            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(icon_stream, 32, 32, false);
+            int size = avatar_size();
+            var icon_stream = yield ((LoadableIcon) icon).load_async(size, null);
+            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(
+                icon_stream, size, size, false
+            );
             texture = round_texture(Gdk.Texture.for_pixbuf(pixbuf));
         } else {
             texture = generate_fallback_avatar(title);
@@ -194,8 +197,30 @@ public class Plugin.DesktopNotifications :
         "#c0bfbc #6e6d71 #d8d7d3"
     };
 
+    // Notification icons are shown at 48px, so render that at whatever the
+    // sharpest attached monitor scales it to
+    private const int AVATAR_LOGICAL_SIZE = 48;
+
+    private int avatar_size() {
+        double scale = 1;
+        Gdk.Display? display = Gdk.Display.get_default();
+        if (display != null) {
+            var monitors = display.get_monitors();
+            for (uint i = 0; i < monitors.get_n_items(); i++) {
+                var monitor = (Gdk.Monitor) monitors.get_item(i);
+                // Under fractional scaling the shell still composites at
+                // the (larger) integer factor, so take whichever is bigger
+                scale = double.max(
+                    scale,
+                    double.max(monitor.get_scale(), monitor.get_scale_factor())
+                );
+            }
+        }
+        return (int) Math.ceil(AVATAR_LOGICAL_SIZE * scale);
+    }
+
     private Gdk.Texture generate_fallback_avatar(string title) {
-        const int SIZE = 32;
+        int size = avatar_size();
 
         // Adw.Avatar picks its colour the same way
         string[] colors =
@@ -205,13 +230,13 @@ public class Plugin.DesktopNotifications :
         bottom.parse(colors[1]);
         text.parse(colors[2]);
 
-        var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, SIZE, SIZE);
+        var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size);
         var cr = new Cairo.Context(surface);
 
-        var gradient = new Cairo.Pattern.linear(0, 0, 0, SIZE);
+        var gradient = new Cairo.Pattern.linear(0, 0, 0, size);
         gradient.add_color_stop_rgb(0, top.red, top.green, top.blue);
         gradient.add_color_stop_rgb(1, bottom.red, bottom.green, bottom.blue);
-        cr.arc(SIZE / 2.0, SIZE / 2.0, SIZE / 2.0, 0, 2 * Math.PI);
+        cr.arc(size / 2.0, size / 2.0, size / 2.0, 0, 2 * Math.PI);
         cr.set_source(gradient);
         cr.fill();
 
@@ -221,21 +246,21 @@ public class Plugin.DesktopNotifications :
             cr.select_font_face(
                 ui_font_family(), Cairo.FontSlant.NORMAL, Cairo.FontWeight.BOLD
             );
-            cr.set_font_size(SIZE * 0.4);
+            cr.set_font_size(size * 0.4);
             Cairo.TextExtents extents;
             cr.text_extents(initials, out extents);
             cr.move_to(
-                SIZE / 2.0 - extents.width / 2 - extents.x_bearing,
-                SIZE / 2.0 - extents.height / 2 - extents.y_bearing
+                size / 2.0 - extents.width / 2 - extents.x_bearing,
+                size / 2.0 - extents.height / 2 - extents.y_bearing
             );
             cr.show_text(initials);
         }
         surface.flush();
 
         unowned uint8[] data = surface.get_data();
-        data.length = surface.get_stride() * SIZE;
+        data.length = surface.get_stride() * size;
         return new Gdk.MemoryTexture(
-            SIZE, SIZE, Gdk.MemoryFormat.B8G8R8A8_PREMULTIPLIED,
+            size, size, Gdk.MemoryFormat.B8G8R8A8_PREMULTIPLIED,
             new GLib.Bytes(data), surface.get_stride()
         );
     }
