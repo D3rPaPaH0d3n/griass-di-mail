@@ -214,12 +214,10 @@ public class Plugin.DesktopNotifications :
         Gdk.RGBA hue = Gdk.RGBA();
         hue.parse(AVATAR_HUES[title.hash() % AVATAR_HUES.length]);
 
-        bool dark = Adw.StyleManager.get_default().dark;
-        Gdk.RGBA view_bg = Gdk.RGBA(), view_fg = Gdk.RGBA();
-        view_bg.parse(dark ? "#1e1e1e" : "#ffffff");
-        view_fg.parse(dark ? "#ffffff" : "#000000");
-        Gdk.RGBA bg = mix(hue, view_bg, 0.22);
-        Gdk.RGBA text = mix(hue, view_fg, 0.58);
+        // Same mix as style.css, against the same theme colours, so the
+        // notification and the message list agree
+        Gdk.RGBA bg = mix(hue, theme_color("view_bg_color", "#ffffff"), 0.22);
+        Gdk.RGBA text = mix(hue, theme_color("window_fg_color", "#000000"), 0.58);
 
         var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size);
         var cr = new Cairo.Context(surface);
@@ -251,6 +249,16 @@ public class Plugin.DesktopNotifications :
             size, size, Gdk.MemoryFormat.B8G8R8A8_PREMULTIPLIED,
             new GLib.Bytes(data), surface.get_stride()
         );
+    }
+
+    private Gdk.RGBA theme_color(string name, string fallback) {
+        Gdk.RGBA color = Gdk.RGBA();
+        // lookup_color is deprecated, but nothing else resolves libadwaita's
+        // named colours without a rendered widget
+        if (!new Gtk.Label(null).get_style_context().lookup_color(name, out color)) {
+            color.parse(fallback);
+        }
+        return color;
     }
 
     private Gdk.RGBA mix(Gdk.RGBA a, Gdk.RGBA b, double amount) {
