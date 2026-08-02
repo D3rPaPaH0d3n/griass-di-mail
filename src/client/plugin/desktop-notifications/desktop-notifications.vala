@@ -173,32 +173,91 @@ public class Plugin.DesktopNotifications :
         return rounded;
     }
 
+    // Adw.Avatar's palette, as "gradient-top gradient-bottom text". Neither
+    // Adw.Avatar.draw_to_texture() nor snapshotting the widget works here,
+    // since both need the avatar to live inside a window, so the same look
+    // is drawn by hand instead.
+    private const string[] AVATAR_COLORS = {
+        "#83b6ec #337fdc #cfe1f5",
+        "#7ad9f1 #0f9ac8 #caeaf2",
+        "#8de6b1 #29ae74 #cef8d8",
+        "#b5e98a #6ab85b #e6f9d7",
+        "#f8e359 #d29d09 #f9f4e1",
+        "#ffcb62 #d68400 #ffead1",
+        "#ffa95a #ed5b00 #ffe5c5",
+        "#f78773 #e62d42 #f8d2ce",
+        "#e973ab #e33b6a #fac7de",
+        "#cb78d4 #9945b5 #e7c2e8",
+        "#9e91e8 #7a59ca #d5d2f5",
+        "#e3cf9c #b08952 #f2eade",
+        "#be916d #785336 #e5d6ca",
+        "#c0bfbc #6e6d71 #d8d7d3"
+    };
+
     private Gdk.Texture generate_fallback_avatar(string title) {
-        Gsk.Renderer renderer = new Gsk.VulkanRenderer();
-        try {
-            renderer.realize(null);
-        } catch (GLib.Error error) {
-            warning("Couldn't realize vulkan renderer: %s", error.message);
-            renderer = new Gsk.CairoRenderer();
-            try {
-                renderer.realize(null);
-            } catch (GLib.Error error) {
-                warning("Couldn't realize Cairo renderer: %s", error.message);
+        const int SIZE = 32;
+
+        // Adw.Avatar picks its colour the same way
+        string[] colors =
+            AVATAR_COLORS[title.hash() % AVATAR_COLORS.length].split(" ");
+        Gdk.RGBA top = Gdk.RGBA(), bottom = Gdk.RGBA(), text = Gdk.RGBA();
+        top.parse(colors[0]);
+        bottom.parse(colors[1]);
+        text.parse(colors[2]);
+
+        var surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, SIZE, SIZE);
+        var cr = new Cairo.Context(surface);
+
+        var gradient = new Cairo.Pattern.linear(0, 0, 0, SIZE);
+        gradient.add_color_stop_rgb(0, top.red, top.green, top.blue);
+        gradient.add_color_stop_rgb(1, bottom.red, bottom.green, bottom.blue);
+        cr.arc(SIZE / 2.0, SIZE / 2.0, SIZE / 2.0, 0, 2 * Math.PI);
+        cr.set_source(gradient);
+        cr.fill();
+
+        string initials = avatar_initials(title);
+        if (initials != "") {
+            cr.set_source_rgb(text.red, text.green, text.blue);
+            // ponytail: fontconfig resolves this to the system UI font
+            cr.select_font_face(
+                "sans-serif", Cairo.FontSlant.NORMAL, Cairo.FontWeight.BOLD
+            );
+            cr.set_font_size(SIZE * 0.4);
+            Cairo.TextExtents extents;
+            cr.text_extents(initials, out extents);
+            cr.move_to(
+                SIZE / 2.0 - extents.width / 2 - extents.x_bearing,
+                SIZE / 2.0 - extents.height / 2 - extents.y_bearing
+            );
+            cr.show_text(initials);
+        }
+        surface.flush();
+
+        unowned uint8[] data = surface.get_data();
+        data.length = surface.get_stride() * SIZE;
+        return new Gdk.MemoryTexture(
+            SIZE, SIZE, Gdk.MemoryFormat.B8G8R8A8_PREMULTIPLIED,
+            new GLib.Bytes(data), surface.get_stride()
+        );
+    }
+
+    // First and last word's initial, as Adw.Avatar does
+    private string avatar_initials(string title) {
+        var words = new Gee.ArrayList<string>();
+        foreach (string word in title.strip().split(" ")) {
+            if (word != "") {
+                words.add(word);
             }
         }
-
-        var avatar = new Adw.Avatar(32, title, true);
-        var paintable = new Gtk.WidgetPaintable(avatar);
-
-        // Ideally we could use Adw.Avatar.draw_to_texture(),
-        // but that unfortunately relies on a Gtk.Native existing already
-        var snapshot = new Gtk.Snapshot();
-        paintable.snapshot(snapshot, 32, 32);
-        Gsk.RenderNode node = snapshot.to_node();
-        Gdk.Texture texture = renderer.render_texture(node, null);
-
-        renderer.unrealize();
-        return texture;
+        if (words.is_empty) {
+            return "";
+        }
+        var initials = new GLib.StringBuilder();
+        initials.append_unichar(words[0].get_char().toupper());
+        if (words.size > 1) {
+            initials.append_unichar(words[words.size - 1].get_char().toupper());
+        }
+        return initials.str;
     }
 
     private void notify_general(Folder folder, int total, int added) {
