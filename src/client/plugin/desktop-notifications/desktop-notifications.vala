@@ -218,9 +218,8 @@ public class Plugin.DesktopNotifications :
         string initials = avatar_initials(title);
         if (initials != "") {
             cr.set_source_rgb(text.red, text.green, text.blue);
-            // ponytail: fontconfig resolves this to the system UI font
             cr.select_font_face(
-                "sans-serif", Cairo.FontSlant.NORMAL, Cairo.FontWeight.BOLD
+                ui_font_family(), Cairo.FontSlant.NORMAL, Cairo.FontWeight.BOLD
             );
             cr.set_font_size(SIZE * 0.4);
             Cairo.TextExtents extents;
@@ -239,6 +238,20 @@ public class Plugin.DesktopNotifications :
             SIZE, SIZE, Gdk.MemoryFormat.B8G8R8A8_PREMULTIPLIED,
             new GLib.Bytes(data), surface.get_stride()
         );
+    }
+
+    // The font the rest of the UI is drawn in, so the initials match
+    private string ui_font_family() {
+        Gtk.Settings? settings = Gtk.Settings.get_default();
+        if (settings != null && settings.gtk_font_name != null) {
+            string? family = Pango.FontDescription.from_string(
+                settings.gtk_font_name
+            ).get_family();
+            if (family != null) {
+                return family;
+            }
+        }
+        return "sans-serif";
     }
 
     // First and last word's initial, as Adw.Avatar does
