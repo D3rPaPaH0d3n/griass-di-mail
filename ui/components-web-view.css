@@ -31,9 +31,12 @@ body {
   /* Gitlab message main color is too dark, override with brighter color */
   --darkreader-text-3a383f: #eae8ef;
 
-  /* Keep email content in the light scheme unless we explicitly enable dark overrides. */
-  color-scheme: light;
+}
 
+/* Only paint over the message's own colours when the "override the original
+ * colors" preference is on; the attribute is set by setUnsetHtmlColors(). */
+body[data-convey-theme] {
+  color-scheme: light;
   color: var(--fg-color);
   background-color: var(--bg-color);
 }

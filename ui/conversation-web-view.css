@@ -45,16 +45,21 @@ table {
   font-size: inherit;
 }
 
-a {
-  color: #08c;
-}
-
 hr {
-  background-color: #999;
   height: 1px;
   border: 0;
   margin-top: 15px;
   margin-bottom: 15px;
+}
+
+/* Recolouring the message's own elements is part of the colour override,
+ * so it follows the same preference. */
+body[data-convey-theme] a {
+  color: #08c;
+}
+
+body[data-convey-theme] hr {
+  background-color: #999;
 }
 
 blockquote {
