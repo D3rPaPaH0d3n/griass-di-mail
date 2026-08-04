@@ -390,12 +390,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         drag_widget.append(drag_row);
         drag_widget.drag_highlight_row(drag_row);
 
-#if VALA_0_58
-        // Vala 0.58 binds gtk_drag_icon_get_for_drag as a creation method
         var drag_icon = new Gtk.DragIcon.get_for_drag(drag);
-#else
-        var drag_icon = (Gtk.DragIcon) Gtk.DragIcon.get_for_drag(drag);
-#endif
         drag_icon.child = drag_widget;
         drag.set_hotspot((int) this.drag_x, (int) this.drag_y);
 
