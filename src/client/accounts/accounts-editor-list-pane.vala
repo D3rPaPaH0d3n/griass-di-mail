@@ -255,6 +255,13 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 }
 
 
+// bound by hand because vala <= 0.56.18 binds this as a static
+// method and >= 0.56.19 as a creation method, so no call syntax builds on
+// both. Drop this once the vala minimum is >= 0.56.19.
+[CCode (cname = "gtk_drag_icon_get_for_drag")]
+private extern unowned Gtk.Widget gtk_drag_icon_get_for_drag(Gdk.Drag drag);
+
+
 [GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-editor-account-list-row.ui")]
 private class Accounts.AccountListRow : Adw.ActionRow {
 
@@ -390,7 +397,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         drag_widget.append(drag_row);
         drag_widget.drag_highlight_row(drag_row);
 
-        var drag_icon = new Gtk.DragIcon.get_for_drag(drag);
+        var drag_icon = (Gtk.DragIcon) gtk_drag_icon_get_for_drag(drag);
         drag_icon.child = drag_widget;
         drag.set_hotspot((int) this.drag_x, (int) this.drag_y);
 
