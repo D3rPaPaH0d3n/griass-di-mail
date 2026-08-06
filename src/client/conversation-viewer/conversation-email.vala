@@ -296,6 +296,12 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             this.config
         );
         this.primary_message.summary.append(this.actions);
+        // Build the menu when it is about to be shown. Not via
+        // GtkMenuButton::activate: that is an action signal, emitted to
+        // *cause* the popup, so it never fires for a pointer click.
+        this.email_menubutton.set_create_popup_func(
+            (button) => update_email_menu()
+        );
         connect_message_view_signals(this.primary_message);
 
         // Wire up the rest of the UI
@@ -405,9 +411,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         this.is_collapsed = false;
         update_email_state();
         this.attachments_button.set_sensitive(true);
-        // Needs at least some menu set otherwise it won't be enabled,
-        // also has the side effect of making it sensitive
-        this.email_menubutton.set_menu_model(new GLib.Menu());
+        this.email_menubutton.set_sensitive(true);
 
         // Set targets to enable the actions
         GLib.Variant email_target = email.id.to_variant();
@@ -739,73 +743,70 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     }
 
     private void update_email_menu() {
-        if (this.email_menubutton.active) {
-            bool in_base_folder = this.conversation.is_in_base_folder(
-                this.email.id
-            );
-            bool supports_trash = (
-                in_base_folder &&
-                Application.Controller.does_folder_support_trash(
-                    this.conversation.base_folder
-                )
-            );
-            bool supports_delete = (
-                in_base_folder &&
-                this.conversation.base_folder is Convey.FolderSupport.Remove
-            );
-            bool is_shift_down = false;
-            var main = get_root() as Application.MainWindow;
-            if (main != null) {
-                is_shift_down = main.is_shift_down;
+        bool in_base_folder = this.conversation.is_in_base_folder(
+            this.email.id
+        );
+        bool supports_trash = (
+            in_base_folder &&
+            Application.Controller.does_folder_support_trash(
+                this.conversation.base_folder
+            )
+        );
+        bool supports_delete = (
+            in_base_folder &&
+            this.conversation.base_folder is Convey.FolderSupport.Remove
+        );
+        bool is_shift_down = false;
+        var main = get_root() as Application.MainWindow;
+        if (main != null) {
+            is_shift_down = main.is_shift_down;
 
-                if (!this.shift_handler_installed) {
-                    this.shift_handler_installed = true;
-                    main.notify["is-shift-down"].connect(on_shift_changed);
-                }
+            if (!this.shift_handler_installed) {
+                this.shift_handler_installed = true;
+                main.notify["is-shift-down"].connect(on_shift_changed);
             }
-
-            string[] blacklist = {};
-            if (this.is_unread) {
-                blacklist += (
-                    ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
-                    ConversationListBox.ACTION_MARK_UNREAD
-                );
-                blacklist += (
-                    ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
-                    ConversationListBox.ACTION_MARK_UNREAD_DOWN
-                );
-            } else {
-                blacklist += (
-                    ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
-                    ConversationListBox.ACTION_MARK_READ
-                );
-            }
-
-            bool show_trash = !is_shift_down && supports_trash;
-            bool show_delete = !show_trash && supports_delete;
-            GLib.Variant email_target = email.id.to_variant();
-            GLib.Menu new_model = Util.Gtk.construct_menu(
-                email_menu_template,
-                (menu, submenu, action, item) => {
-                    bool accept = true;
-                    if (submenu == email_menu_trash_section && !show_trash) {
-                        accept = false;
-                    }
-                    if (submenu == email_menu_delete_section && !show_delete) {
-                        accept = false;
-                    }
-                    if (action != null && !(action in blacklist)) {
-                        item.set_action_and_target_value(
-                            action, email_target
-                        );
-                    }
-                    return accept;
-                }
-            );
-
-            this.email_menubutton.menu_model = new_model;
-            this.email_menubutton.popover.grab_focus();
         }
+
+        string[] blacklist = {};
+        if (this.is_unread) {
+            blacklist += (
+                ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
+                ConversationListBox.ACTION_MARK_UNREAD
+            );
+            blacklist += (
+                ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
+                ConversationListBox.ACTION_MARK_UNREAD_DOWN
+            );
+        } else {
+            blacklist += (
+                ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
+                ConversationListBox.ACTION_MARK_READ
+            );
+        }
+
+        bool show_trash = !is_shift_down && supports_trash;
+        bool show_delete = !show_trash && supports_delete;
+        GLib.Variant email_target = email.id.to_variant();
+        GLib.Menu new_model = Util.Gtk.construct_menu(
+            email_menu_template,
+            (menu, submenu, action, item) => {
+                bool accept = true;
+                if (submenu == email_menu_trash_section && !show_trash) {
+                    accept = false;
+                }
+                if (submenu == email_menu_delete_section && !show_delete) {
+                    accept = false;
+                }
+                if (action != null && !(action in blacklist)) {
+                    item.set_action_and_target_value(
+                        action, email_target
+                    );
+                }
+                return accept;
+            }
+        );
+
+        this.email_menubutton.menu_model = new_model;
     }
 
 
@@ -856,13 +857,10 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         activate_action_variant(action_name, this.email.id.to_variant());
     }
 
-    [GtkCallback]
-    private void on_email_menu(Gtk.MenuButton email_menubutton) {
-        update_email_menu();
-    }
-
     private void on_shift_changed() {
-        update_email_menu();
+        if (this.email_menubutton.active) {
+            update_email_menu();
+        }
     }
 
     private void on_body_loading_timeout() {
