@@ -1536,7 +1536,13 @@ internal class Application.Controller :
         foreach (Convey.App.Conversation conversation in conversations) {
             foreach (Convey.Email email in
                      conversation.get_emails(RECV_DATE_ASCENDING, IN_FOLDER)) {
-                messages.add(email.id);
+                // A message shown once may be several copies in this
+                // folder; all of them are in scope, none elsewhere
+                messages.add_all(
+                    conversation.get_ids_in_folder(
+                        email.id, conversation.base_folder.path
+                    )
+                );
             }
         }
         return messages;

@@ -56,6 +56,17 @@ public class Convey.App.Conversation : BaseObject {
 
     private Gee.HashMap<EmailIdentifier, Email> emails = new Gee.HashMap<EmailIdentifier, Email>();
 
+    // Copying a message to another folder produces a second, separate
+    // message on the server, which the conversation would otherwise
+    // show twice. Only the first copy of each Message-ID is held in
+    // `emails`; the rest are folded away here and presented as one.
+    private Gee.HashMap<RFC822.MessageID,EmailIdentifier> primary_ids =
+        new Gee.HashMap<RFC822.MessageID,EmailIdentifier>();
+    private Gee.HashMap<EmailIdentifier,Email> folded =
+        new Gee.HashMap<EmailIdentifier,Email>();
+    private Gee.HashMap<EmailIdentifier,EmailIdentifier> copy_of =
+        new Gee.HashMap<EmailIdentifier,EmailIdentifier>();
+
     // this isn't ideal but the cost of adding an email to multiple sorted sets once versus
     // the number of times they're accessed makes it worth it
     private Gee.SortedSet<Email> sent_date_ascending = new Gee.TreeSet<Email>(
@@ -103,8 +114,8 @@ public class Convey.App.Conversation : BaseObject {
      */
     public uint get_count_in_folder(FolderPath path) {
         uint count = 0;
-        foreach (Convey.EmailIdentifier id in this.path_map.get_keys()) {
-            if (path in this.path_map.get(id)) {
+        foreach (Convey.EmailIdentifier id in this.emails.keys) {
+            if (is_in_folder(id, path)) {
                 count++;
             }
         }
@@ -275,34 +286,91 @@ public class Convey.App.Conversation : BaseObject {
      * Determines if the given id is in the conversation's base folder.
      */
     public bool is_in_base_folder(Convey.EmailIdentifier id) {
-        Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(id);
-        return (paths != null && paths.contains(this.base_folder.path));
+        return is_in_folder(id, this.base_folder.path);
     }
 
     /**
-     * Determines if the given id is in the conversation's base folder.
+     * Determines if the message with the given id is in the given folder.
+     *
+     * Any folded-away copy of the message counts, since they are all
+     * presented as the same message.
+     */
+    public bool is_in_folder(Convey.EmailIdentifier id, FolderPath path) {
+        foreach (var candidate in with_copies(id)) {
+            Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(candidate);
+            if (paths != null && paths.contains(path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the number of folders the message with the given id is in.
      */
     public uint get_folder_count(Convey.EmailIdentifier id) {
-        Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(id);
-        uint count = 0;
-        if (paths != null) {
-            count = paths.size;
+        var paths = new Gee.HashSet<Convey.FolderPath>();
+        foreach (var candidate in with_copies(id)) {
+            Gee.Collection<Convey.FolderPath>? in_folder = this.path_map.get(candidate);
+            if (in_folder != null) {
+                paths.add_all(in_folder);
+            }
         }
-        return count;
+        return paths.size;
+    }
+
+    /**
+     * Returns every identifier for the given message in the given folder.
+     *
+     * Copying a message leaves several distinct copies of it on the
+     * server, so acting on "the message in this folder" means acting on
+     * all of them — and on none of the copies living elsewhere.
+     */
+    public Gee.Collection<Convey.EmailIdentifier>
+        get_ids_in_folder(Convey.EmailIdentifier id, FolderPath path) {
+        var ids = new Gee.ArrayList<Convey.EmailIdentifier>();
+        foreach (var candidate in with_copies(id)) {
+            Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(candidate);
+            if (paths != null && paths.contains(path)) {
+                ids.add(candidate);
+            }
+        }
+        return ids;
+    }
+
+    // The given id plus any copies of the same message folded into it.
+    private Gee.Collection<Convey.EmailIdentifier>
+        with_copies(Convey.EmailIdentifier id) {
+        var ids = new Gee.ArrayList<Convey.EmailIdentifier>();
+        ids.add(id);
+        foreach (var entry in this.copy_of.entries) {
+            if (entry.value.equal_to(id)) {
+                ids.add(entry.key);
+            }
+        }
+        return ids;
     }
 
     /**
      * Determines if an email with the give id exists in the conversation.
      */
     public bool contains_email_by_id(EmailIdentifier id) {
-        return emails.has_key(id);
+        return emails.has_key(id) || this.folded.has_key(id);
     }
 
     /**
      * Returns the email associated with the EmailIdentifier, if it exists.
      */
     public Convey.Email? get_email_by_id(EmailIdentifier id) {
-        return emails.get(id);
+        Convey.Email? email = emails.get(id);
+        // A copy resolves to the message it was folded into
+        if (email == null) {
+            EmailIdentifier? primary = this.copy_of.get(id);
+            if (primary != null) {
+                email = emails.get(primary);
+            }
+        }
+        return email;
     }
 
     /**
@@ -345,6 +413,23 @@ public class Convey.App.Conversation : BaseObject {
         foreach (Convey.FolderPath path in known_paths)
             this.path_map.set(email.id, path);
 
+        if (this.emails.has_key(email.id) || this.folded.has_key(email.id))
+            return false;
+
+        // Fold copies of a message already here into the one on show
+        RFC822.MessageID? message_id = email.message_id;
+        if (message_id != null) {
+            EmailIdentifier? primary = this.primary_ids.get(message_id);
+            if (primary != null) {
+                // Accepted into the conversation, but shown as part of
+                // the copy already here rather than as its own message
+                this.folded.set(email.id, email);
+                this.copy_of.set(email.id, primary);
+                return true;
+            }
+            this.primary_ids.set(message_id, email.id);
+        }
+
         bool added = false;
         if (!emails.has_key(email.id)) {
             this.emails.set(email.id, email);
@@ -371,6 +456,19 @@ public class Convey.App.Conversation : BaseObject {
      */
     internal Gee.Set<RFC822.MessageID>? remove(Email email) {
         Gee.Set<RFC822.MessageID>? removed_ids = null;
+
+        // A folded copy going away leaves the message itself on show
+        if (this.folded.unset(email.id)) {
+            this.copy_of.unset(email.id);
+            this.path_map.remove_all(email.id);
+            return null;
+        }
+
+        // If the copy on show is the one going away, another stands in
+        // for it rather than the message vanishing from the thread
+        if (this.emails.has_key(email.id) && promote_copy(email)) {
+            return null;
+        }
 
         if (emails.unset(email.id)) {
             this.sent_date_ascending.remove(email);
@@ -408,6 +506,50 @@ public class Convey.App.Conversation : BaseObject {
      */
     internal void remove_path(Convey.EmailIdentifier id, FolderPath path) {
         this.path_map.remove(id, path);
+    }
+
+    // Puts one of the folded copies of the given email on show in its
+    // place. Returns false if there were none.
+    private bool promote_copy(Email email) {
+        Email? replacement = null;
+        var others = new Gee.ArrayList<Convey.EmailIdentifier>();
+        foreach (var entry in this.copy_of.entries) {
+            if (!entry.value.equal_to(email.id)) {
+                continue;
+            }
+            if (replacement == null) {
+                replacement = this.folded.get(entry.key);
+            } else {
+                others.add(entry.key);
+            }
+        }
+        if (replacement == null) {
+            return false;
+        }
+
+        this.folded.unset(replacement.id);
+        this.copy_of.unset(replacement.id);
+        foreach (var other in others) {
+            this.copy_of.set(other, replacement.id);
+        }
+
+        this.emails.unset(email.id);
+        this.emails.set(replacement.id, replacement);
+        this.sent_date_ascending.remove(email);
+        this.sent_date_ascending.add(replacement);
+        this.sent_date_descending.remove(email);
+        this.sent_date_descending.add(replacement);
+        this.recv_date_ascending.remove(email);
+        this.recv_date_ascending.add(replacement);
+        this.recv_date_descending.remove(email);
+        this.recv_date_descending.add(replacement);
+        this.path_map.remove_all(email.id);
+
+        RFC822.MessageID? message_id = email.message_id;
+        if (message_id != null) {
+            this.primary_ids.set(message_id, replacement.id);
+        }
+        return true;
     }
 
     private Convey.Email?
