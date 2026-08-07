@@ -102,18 +102,19 @@ public class FolderList.FolderEntry :
 
     public bool internal_drop_received(Sidebar.Tree parent,
                                        Gdk.DragAction action) {
-        var handled = false;
         var folders = parent as FolderList.Tree;
-        if (folders != null) {
-            if ((action & Gdk.DragAction.MOVE) != 0) {
-                folders.move_conversation(folder);
-                handled = true;
-            } else if ((action & Gdk.DragAction.COPY) != 0) {
-                folders.copy_conversation(folder);
-                handled = true;
-            }
-        }
-        return handled;
+        if (folders == null)
+            return false;
+
+        // Nowhere to move mail that is already here
+        if (!Application.FolderContext.is_user_destination(this.folder) ||
+            this.folder == folders.selected)
+            return false;
+
+        // Dragging always moves; copying is offered in the folder
+        // picker instead, where it can be chosen deliberately.
+        folders.move_conversation(this.folder);
+        return true;
     }
 
     public override int get_count() {

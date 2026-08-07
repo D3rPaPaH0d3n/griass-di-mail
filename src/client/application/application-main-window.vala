@@ -190,6 +190,11 @@ public class Application.MainWindow :
     // Widget descendants
     public FolderList.Tree folder_list { get; private set; default = new FolderList.Tree(); }
     public SearchBar search_bar { get; private set; }
+
+    // Same menu, worded for folders and for labels; which model the
+    // context menu uses depends on the account under the pointer.
+    private GLib.Menu folder_menu;
+    private GLib.Menu label_menu;
     public ConversationList.View conversation_list_view  { get; private set; }
     public ConversationViewer conversation_viewer { get; private set; }
 
@@ -587,6 +592,9 @@ public class Application.MainWindow :
 
             select_account(to_select != null ? to_select.account : null);
             this.selected_folder = to_select;
+            foreach (var actions in this.folder_conversation_actions) {
+                actions.source_folder = to_select;
+            }
 
             // Ensure that the folder is selected in the UI if
             // this was called by something other than the
@@ -1203,9 +1211,8 @@ public class Application.MainWindow :
         };
 
         foreach (var actions in this.folder_conversation_actions) {
-            var popover = actions.copy_move_popover;
-            popover.copy_conversation.connect(on_copy_conversation);
-            popover.move_conversation.connect(on_move_conversation);
+            actions.copy_popover.copy_conversation.connect(on_copy_conversation);
+            actions.move_popover.move_conversation.connect(on_move_conversation);
         }
     }
 
@@ -1228,23 +1235,15 @@ public class Application.MainWindow :
     //
 
     private void setup_folder_context_menu() {
-        var menu = new GLib.Menu();
-        // Translators: Folder list context menu item for creating a
-        // new folder
-        menu.append(_("_New Folder…"), "win." + ACTION_FOLDER_NEW);
-        // Translators: Folder list context menu item for renaming a
-        // folder
-        menu.append(_("_Rename Folder…"), "win." + ACTION_FOLDER_RENAME);
-        // Translators: Folder list context menu item for deleting a
-        // folder
-        menu.append(_("_Delete Folder"), "win." + ACTION_FOLDER_DELETE);
+        this.folder_menu = new_folder_menu_model(false);
+        this.label_menu = new_folder_menu_model(true);
 
-        var popover = new Gtk.PopoverMenu.from_model(menu) {
+        var popover = new Gtk.PopoverMenu.from_model(this.folder_menu) {
             has_arrow = false,
             halign = START
         };
         popover.set_parent(this.folder_list);
-        this.folder_list.set_default_context_menu(popover);
+        this.folder_list.default_context_menu = popover;
 
         // The Inboxes section spans accounts, so there is no single
         // folder to manage there — offer the accounts editor instead.
@@ -1262,6 +1261,29 @@ public class Application.MainWindow :
         this.folder_list.context_menu_requested.connect(
             on_folder_context_menu_requested
         );
+    }
+
+    private GLib.Menu new_folder_menu_model(bool labels) {
+        var menu = new GLib.Menu();
+        menu.append(
+            // Translators: Folder list context menu item for creating
+            // a new folder, and the label equivalent
+            labels ? _("_New Label…") : _("_New Folder…"),
+            "win." + ACTION_FOLDER_NEW
+        );
+        menu.append(
+            // Translators: Folder list context menu item for renaming
+            // a folder, and the label equivalent
+            labels ? _("_Rename Label…") : _("_Rename Folder…"),
+            "win." + ACTION_FOLDER_RENAME
+        );
+        menu.append(
+            // Translators: Folder list context menu item for deleting
+            // a folder, and the label equivalent
+            labels ? _("_Delete Label") : _("_Delete Folder"),
+            "win." + ACTION_FOLDER_DELETE
+        );
+        return menu;
     }
 
     /** The folder the folder list's context menu was invoked on, if any. */
@@ -1285,6 +1307,13 @@ public class Application.MainWindow :
     }
 
     private void on_folder_context_menu_requested(Sidebar.Entry? entry) {
+        Convey.Account? account = get_context_account();
+        if (account != null) {
+            this.folder_list.default_context_menu.menu_model = (
+                Util.I18n.uses_labels(account) ? this.label_menu : this.folder_menu
+            );
+        }
+
         Convey.Folder? folder = get_context_folder();
         bool is_user_folder = (folder != null && folder.used_as == NONE);
 
@@ -1332,10 +1361,12 @@ public class Application.MainWindow :
     }
 
     private async void create_folder(Convey.Account account) {
+        bool labels = Util.I18n.uses_labels(account);
         var entry = new Gtk.Entry() { activates_default = true };
         var dialog = new Adw.AlertDialog(
-            // Translators: Title of the new folder dialog
-            _("New Folder"),
+            // Translators: Title of the new folder dialog, and the
+            // label equivalent
+            labels ? _("New Label") : _("New Folder"),
             null
         );
         dialog.extra_child = entry;
@@ -1357,6 +1388,14 @@ public class Application.MainWindow :
         var pending = this.folder_list.add_pending_folder(account, name);
         try {
             yield account.create_personal_folder(name, NONE, null);
+            add_toast(new Adw.Toast(
+                // Translators: Toast shown once a folder has been
+                // created on the server, and the label equivalent.
+                // Substitution is the folder name.
+                (labels
+                 ? _("Created label “%s”")
+                 : _("Created folder “%s”")).printf(name)
+            ));
         } catch (GLib.Error err) {
             handle_error(account.information, err);
         } finally {
@@ -1367,9 +1406,21 @@ public class Application.MainWindow :
     }
 
     private async void rename_folder(Convey.Folder folder, string new_name) {
+        bool labels = Util.I18n.uses_labels(folder.account);
+        string old_name = folder.path.name;
         this.folder_list.set_folder_busy(folder, true);
         try {
             yield folder.account.rename_folder(folder, new_name, null);
+            add_toast(new Adw.Toast(
+                // Translators: Toast shown once a folder has been
+                // renamed on the server, and the label equivalent.
+                // Substitutions are the old and new names.
+                (labels
+                 ? _("Renamed label “%s” to “%s”")
+                 : _("Renamed folder “%s” to “%s”")).printf(
+                     old_name, new_name
+                 )
+            ));
         } catch (GLib.Error err) {
             handle_error(folder.account.information, err);
         } finally {
@@ -1378,11 +1429,16 @@ public class Application.MainWindow :
     }
 
     private async void delete_folder(Convey.Folder folder) {
+        bool labels = Util.I18n.uses_labels(folder.account);
         var dialog = new Adw.AlertDialog(
-            // Translators: Title of the delete folder confirmation,
-            // substitution is the folder name
-            _("Delete folder “%s”?").printf(folder.path.name),
-            _("This removes the folder and all email in it from Convey and your email server.") +
+            // Translators: Title of the delete folder confirmation and
+            // the label equivalent, substitution is the folder name
+            (labels
+             ? _("Delete label “%s”?")
+             : _("Delete folder “%s”?")).printf(folder.path.name),
+            (labels
+             ? _("This removes the label and all email in it from Convey and your email server.")
+             : _("This removes the folder and all email in it from Convey and your email server.")) +
             "  <b>" + _("This cannot be undone.") + "</b>"
         );
         dialog.body_use_markup = true;
@@ -1397,9 +1453,18 @@ public class Application.MainWindow :
             return;
         }
 
+        string name = folder.path.name;
         this.folder_list.set_folder_busy(folder, true);
         try {
             yield folder.account.delete_folder(folder, null);
+            add_toast(new Adw.Toast(
+                // Translators: Toast shown once a folder has been
+                // deleted from the server, and the label equivalent.
+                // Substitution is the folder name.
+                (labels
+                 ? _("Deleted label “%s”")
+                 : _("Deleted folder “%s”")).printf(name)
+            ));
         } catch (GLib.Error err) {
             handle_error(folder.account.information, err);
         } finally {

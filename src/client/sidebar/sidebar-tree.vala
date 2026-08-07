@@ -92,7 +92,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // identifies the actual selected Sidebar.Entry, independent of which
     // GTK list index (if any) currently represents it visually.
     private weak Node? selected_node = null;
-    private Gtk.PopoverMenu? default_context_menu = null;
+    /** Menu shown on secondary click, unless a subclass overrides it. */
+    public Gtk.PopoverMenu? default_context_menu { get; set; default = null; }
 
     private Node? context_node = null;
 
@@ -554,7 +555,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
     private void on_primary_released(int n_press, double x, double y) {
         if (this.click_selecting && !this.activated_this_click) {
-            Node? node = node_at_position(x, y);
+            Node? node = node_at_position(y);
             if (node != null && node.entry is Sidebar.SelectableEntry &&
                 this.selected_node == node) {
                 // Re-click on the already-selected entry: the selection
@@ -977,10 +978,6 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // Editing (inline rename)
     //
 
-    public void set_default_context_menu(Gtk.PopoverMenu context_menu) {
-        this.default_context_menu = context_menu;
-    }
-
     public void disable_editing() {
         this.editing_disabled++;
     }
@@ -1075,28 +1072,68 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     }
 
     private void on_secondary_press(int n_press, double x, double y) {
-        this.context_node = node_at_position(x, y);
+        // Blank space past the end of a row, or below the last one,
+        // belongs to whatever row starts above it
+        this.context_node = node_at_position(y, true);
+
+        // Emitted first so handlers can swap in the menu they want
+        context_menu_requested(this.context_entry);
 
         Gtk.PopoverMenu? menu = get_context_menu(this.context_entry);
         if (menu == null)
             return;
-
-        context_menu_requested(this.context_entry);
 
         Gdk.Rectangle rect = { (int) x, (int) y, 1, 1 };
         menu.set_pointing_to(rect);
         menu.popup();
     }
 
-    private Node? node_at_position(double x, double y) {
-        Gtk.Widget? picked = this.list_view.pick(x, y, Gtk.PickFlags.DEFAULT);
-        for (Gtk.Widget? w = picked; w != null && w != this; w = w.get_parent()) {
-            var box = w as Gtk.Box;
-            if (box != null) {
-                Node? node = box.get_data<Node?>("sidebar-node");
-                if (node != null)
-                    return node;
-            }
+    /**
+     * The node whose row is at the given vertical position.
+     *
+     * Resolved by row rather than by picking the widget under the
+     * pointer: a row's content box needn't span its full width, so a
+     * click to the right of the label lands on the row container. If
+     * `nearest` is set, a position past the end of the rows resolves to
+     * the last row starting above it rather than to null.
+     */
+    private Node? node_at_position(double y, bool nearest = false) {
+        Node? found = null;
+        for (Gtk.Widget? row = this.list_view.get_first_child();
+             row != null;
+             row = row.get_next_sibling()) {
+            Graphene.Rect bounds;
+            if (!row.compute_bounds(this.list_view, out bounds))
+                continue;
+            if (bounds.origin.y > y)
+                continue;
+
+            Node? node = node_in_row(row);
+            if (node == null)
+                continue;
+
+            if (y < bounds.origin.y + bounds.size.height)
+                return node;
+            if (nearest)
+                found = node;
+        }
+        return found;
+    }
+
+    private Node? node_in_row(Gtk.Widget widget) {
+        var box = widget as Gtk.Box;
+        if (box != null) {
+            Node? node = box.get_data<Node?>("sidebar-node");
+            if (node != null)
+                return node;
+        }
+
+        for (Gtk.Widget? child = widget.get_first_child();
+             child != null;
+             child = child.get_next_sibling()) {
+            Node? node = node_in_row(child);
+            if (node != null)
+                return node;
         }
         return null;
     }
@@ -1109,7 +1146,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             return false;
         }
 
-        Node? node = node_at_position(x, y);
+        Node? node = node_at_position(y);
         Sidebar.InternalDropTargetEntry? entry = (node != null)
             ? node.entry as Sidebar.InternalDropTargetEntry : null;
         if (entry == null)

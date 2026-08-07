@@ -34,21 +34,6 @@
             </child>
           </object>
         </child>
-        <child>
-          <object class="GtkBox">
-            <child>
-              <object class="GtkLabel">
-                <property name="hexpand">True</property>
-                <property name="halign">start</property>
-                <property name="label">Move message to folder</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkSwitch" id="move_switch">
-              </object>
-            </child>
-          </object>
-        </child>
       </object>
     </child>
   </template>

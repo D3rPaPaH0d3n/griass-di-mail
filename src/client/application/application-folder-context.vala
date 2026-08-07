@@ -23,6 +23,26 @@ public class Application.FolderContext : Convey.BaseObject,
         TOTAL;
     }
 
+    /**
+     * Determines if the user may file mail into the given folder.
+     *
+     * User folders are always fair game. Of the special-use folders,
+     * only the ones a message can plausibly belong in are: the rest
+     * are maintained by the account itself.
+     */
+    public static bool is_user_destination(Convey.Folder folder) {
+        switch (folder.used_as) {
+        case NONE:
+        case INBOX:
+        case TRASH:
+        case JUNK:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
     /** The account for this context. */
     public Convey.Folder folder { get; private set; }
 

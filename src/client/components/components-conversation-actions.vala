@@ -34,14 +34,24 @@ public class Components.ConversationActions : Gtk.Box {
 
     public bool pack_justified { get; construct; }
 
-    public FolderPopover copy_move_popover {
+    public FolderPopover copy_popover {
         get {
             unowned var popover = this.copy_message_button.popover as FolderPopover;
             return popover;
         }
     }
 
+    public FolderPopover move_popover {
+        get {
+            unowned var popover = this.move_message_button.popover as FolderPopover;
+            return popover;
+        }
+    }
+
     public int selected_conversations { get; set; }
+
+    /** The folder the selected conversations are currently in. */
+    public Convey.Folder? source_folder { get; set; }
 
     private Convey.Account _account;
     public Convey.Account account {
@@ -58,6 +68,7 @@ public class Components.ConversationActions : Gtk.Box {
 
     [GtkChild] private unowned Gtk.MenuButton mark_message_button { get; }
     [GtkChild] private unowned Gtk.MenuButton copy_message_button { get;  }
+    [GtkChild] private unowned Gtk.MenuButton move_message_button { get;  }
 
     [GtkChild] private unowned Gtk.Box action_buttons;
     [GtkChild] private unowned Gtk.Button archive_button;
@@ -95,15 +106,29 @@ public class Components.ConversationActions : Gtk.Box {
     }
 
     public void init(Application.Configuration config) {
-        this.copy_message_button.popover = new FolderPopover(config);
+        this.copy_message_button.popover = new FolderPopover(false);
+        this.move_message_button.popover = new FolderPopover(true);
         this.bind_property(
             "account", this.copy_message_button.popover,
-            "account", BindingFlags.DEFAULT
+            "account", BindingFlags.SYNC_CREATE
+        );
+        this.bind_property(
+            "account", this.move_message_button.popover,
+            "account", BindingFlags.SYNC_CREATE
+        );
+        this.bind_property(
+            "source-folder", this.copy_message_button.popover,
+            "source", BindingFlags.SYNC_CREATE
+        );
+        this.bind_property(
+            "source-folder", this.move_message_button.popover,
+            "source", BindingFlags.SYNC_CREATE
         );
     }
 
     public void set_copy_sensitive(bool is_sensitive) {
         this.copy_message_button.sensitive = is_sensitive;
+        this.move_message_button.sensitive = is_sensitive;
     }
 
     public void set_mark_sensitive(bool is_sensitive) {
@@ -140,26 +165,17 @@ public class Components.ConversationActions : Gtk.Box {
             this.selected_conversations
             );
 
-        if (this.account != null) {
-            switch (this.account.information.service_provider) {
-            case Convey.ServiceProvider.GMAIL:
-                this.copy_message_button.tooltip_text = ngettext(
-                    "Add label to conversation",
-                    "Add label to conversations",
-                    this.selected_conversations
-                    );
-                this.copy_message_button.icon_name = "tag-symbolic";
-                break;
-            default:
-                this.copy_message_button.tooltip_text = ngettext(
-                    "Copy conversation",
-                    "Copy conversations",
-                    this.selected_conversations
-                    );
-                this.copy_message_button.icon_name = "folder-symbolic";
-                break;
-            }
-        }
+        this.copy_message_button.tooltip_text = ngettext(
+            "Copy conversation to a folder",
+            "Copy conversations to a folder",
+            this.selected_conversations
+            );
+
+        this.move_message_button.tooltip_text = ngettext(
+            "Move conversation to a folder",
+            "Move conversations to a folder",
+            this.selected_conversations
+            );
 
         if (this.show_trash_button) {
             this.trash_delete_button.action_name = Action.Window.prefix(

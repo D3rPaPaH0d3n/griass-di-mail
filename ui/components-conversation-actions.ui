@@ -45,7 +45,14 @@
           <object class="GtkMenuButton" id="copy_message_button">
             <property name="focus_on_click">False</property>
             <property name="receives_default">False</property>
-            <property name="icon_name">folder-symbolic</property>
+            <property name="icon_name">edit-copy-symbolic</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="move_message_button">
+            <property name="focus_on_click">False</property>
+            <property name="receives_default">False</property>
+            <property name="icon_name">go-jump-symbolic</property>
           </object>
         </child>
         <child>

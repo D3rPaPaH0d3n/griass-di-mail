@@ -11,22 +11,27 @@ public class FolderPopoverRow : Gtk.ListBoxRow {
     [GtkChild] private unowned Gtk.Label label;
 
     public FolderPopoverRow(Application.FolderContext context, Gee.HashMap<string,string> map) {
-        string[] as_array = context.folder.path.as_array();
+        string[] parts = context.folder.path.as_array();
 
-        if (map.has_key(as_array[0])) {
-            as_array[0] = map[as_array[0]];
+        if (parts.length > 0 && map.has_key(parts[0])) {
+            parts[0] = map[parts[0]];
         }
 
-        var i = 0;
-        foreach (string name in as_array) {
-            as_array[i] = GLib.Markup.escape_text(name);
-            i += 1;
+        for (int i = 0; i < parts.length; i++) {
+            // The leaf is shown under the name the rest of the UI uses
+            parts[i] = GLib.Markup.escape_text(
+                (i == parts.length - 1) ? context.display_name : parts[i]
+            );
         }
 
         this.set_data("folder", context.folder);
         this.image.icon_name = context.icon_name;
 
-        this.label.set_markup(string.joinv("<span alpha='30%'> / </span>", as_array));
+        this.label.set_markup(
+            parts.length > 0
+            ? string.joinv("<span alpha='30%'> / </span>", parts)
+            : GLib.Markup.escape_text(context.display_name)
+        );
         this.label.query_tooltip.connect(Util.Gtk.query_tooltip_label);
     }
 }

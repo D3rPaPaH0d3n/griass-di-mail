@@ -9,16 +9,21 @@ public class FolderPopover : Gtk.Popover {
 
     [GtkChild] private unowned Gtk.SearchEntry search_entry;
     [GtkChild] private unowned Gtk.ListBox list_box;
-    [GtkChild] private unowned Gtk.Switch move_switch;
+    /** Whether picking a folder moves the conversation or copies it. */
+    public bool moves { get; construct; }
 
     public Convey.Account account {get; set;}
+
+    /** The folder the conversations are currently in, if known. */
+    public Convey.Folder? source {get; set;}
 
     private int filtered_folder_count = 0;
 
     public signal void copy_conversation(Convey.Folder folder);
     public signal void move_conversation(Convey.Folder folder);
 
-    public FolderPopover(Application.Configuration config) {
+    public FolderPopover(bool moves) {
+        Object(moves: moves);
         list_box.set_filter_func(row_filter);
         list_box.set_sort_func(row_sort);
         this.show.connect(() => search_entry.grab_focus());
@@ -26,7 +31,6 @@ public class FolderPopover : Gtk.Popover {
             search_entry.set_text("");
             invalidate_filter();
         });
-        config.bind("move-messages-on-tag", this.move_switch, "active");
     }
 
     private void add_folder(Application.FolderContext context, Gee.HashMap<string,string> map) {
@@ -41,25 +45,15 @@ public class FolderPopover : Gtk.Popover {
         if (folder.properties.is_local_only || folder.properties.is_virtual)
             return;
 
-        // Moving mails to Drafts folder not supported
-        switch (folder.account.information.service_provider) {
-        case Convey.ServiceProvider.GMAIL:
-            if (folder.used_as == Convey.Folder.SpecialUse.DRAFTS)
-                return;
-            break;
-        default:
-            break;
-        }
-
-        // Ignore special directories already having a dedicated button
-        switch (folder.used_as) {
-        case Convey.Folder.SpecialUse.ARCHIVE:
-        case Convey.Folder.SpecialUse.TRASH:
-        case Convey.Folder.SpecialUse.JUNK:
+        if (!Application.FolderContext.is_user_destination(folder))
             return;
-        default:
-            break;
-        }
+
+        // Nowhere to move to if the mail is already here, though it can
+        // still be copied
+        if (this.moves &&
+            this.source != null &&
+            folder.path.equal_to(this.source.path))
+            return;
 
         var row = new FolderPopoverRow(context, map);
         list_box.append(row);
@@ -68,6 +62,11 @@ public class FolderPopover : Gtk.Popover {
 
     [GtkCallback]
     private void on_map(Gtk.Widget widget) {
+        if (this.account == null) {
+            warning("Folder popover mapped with no account set");
+            return;
+        }
+
         var folders = this.account.list_folders();
         // Build map between path and display name for
         // special directories
@@ -89,16 +88,19 @@ public class FolderPopover : Gtk.Popover {
 
     [GtkCallback]
     private void on_unmap(Gtk.Widget widget) {
-        unowned var row = this.list_box.get_row_at_index(0);
-        while (row != null)
+        // Re-read each time: remove() invalidates the previous row
+        for (var row = this.list_box.get_row_at_index(0);
+             row != null;
+             row = this.list_box.get_row_at_index(0)) {
             this.list_box.remove(row);
+        }
     }
 
     [GtkCallback]
     private void on_row_activated(Gtk.ListBoxRow? row) {
         if (row != null) {
             Convey.Folder folder = row.get_data<Convey.Folder>("folder");
-            if (this.move_switch.active) {
+            if (this.moves) {
                 move_conversation(folder);
             } else {
                 copy_conversation(folder);
