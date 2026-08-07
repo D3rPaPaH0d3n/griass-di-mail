@@ -32,6 +32,10 @@ public class FolderList.AccountBranch : Sidebar.Branch {
 
     private string display_name = "";
 
+    // Set while a "creating folder" placeholder is being swapped out for
+    // the real entry; the group must survive being momentarily empty.
+    private bool pruning_placeholder = false;
+
     public AccountBranch(Convey.Account account) {
         base(new Sidebar.Header(account.information.display_name),
              STARTUP_OPEN_GROUPING | STARTUP_EXPAND_TO_FIRST_CHILD,
@@ -128,6 +132,20 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         return folder_entries.get(folder_path);
     }
 
+    /** Shows a placeholder row in the user folder group. */
+    public void add_pending_folder(PendingFolderEntry entry) {
+        if (!has_entry(user_folder_group)) {
+            graft(get_root(), user_folder_group);
+        }
+        graft(user_folder_group, entry);
+    }
+
+    public void remove_pending_folder(PendingFolderEntry entry) {
+        if (has_entry(entry)) {
+            prune(entry);
+        }
+    }
+
     public void add_folder(Application.FolderContext context) {
         Sidebar.Entry? graft_point = null;
         FolderEntry folder_entry = new FolderEntry(context);
@@ -159,8 +177,20 @@ public class FolderList.AccountBranch : Sidebar.Branch {
             Sidebar.Entry? twin = find_first_child(graft_point, (e) => {
                 return e.get_sidebar_name() == folder_entry.get_sidebar_name();
             });
-            if (twin != null)
+            if (twin is PendingFolderEntry) {
+                // The folder was created from here and its placeholder
+                // is still showing. Children are held in a set sorted by
+                // name, so the real entry can't be grafted until the
+                // same-named placeholder is gone.
+                // Swap the two in one go: fading one out while the
+                // other fades in would show the folder twice.
+                this.pruning_placeholder = true;
+                this.suppress_animation = true;
+                prune(twin);
+                this.pruning_placeholder = false;
+            } else if (twin != null) {
                 graft_point = null;
+            }
         }
 
         if (graft_point != null) {
@@ -173,6 +203,8 @@ public class FolderList.AccountBranch : Sidebar.Branch {
                 used_as.to_string()
             );
         }
+
+        this.suppress_animation = false;
     }
 
     public void remove_folder(Convey.FolderPath path) {
@@ -195,6 +227,9 @@ public class FolderList.AccountBranch : Sidebar.Branch {
     }
 
     private void check_user_folders(Sidebar.Entry entry) {
+        if (this.pruning_placeholder)
+            return;
+
         if (entry != user_folder_group) {
             // remove "Labels" entry if there are no more user entries
             if (has_entry(user_folder_group) && (get_child_count(user_folder_group) == 0)) {

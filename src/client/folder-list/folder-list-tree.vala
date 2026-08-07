@@ -15,6 +15,8 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     public signal void folder_activated(Convey.Folder? folder);
     public signal void copy_conversation(Convey.Folder folder);
     public signal void move_conversation(Convey.Folder folder);
+    public signal void folder_rename(Convey.Folder folder, string new_name);
+    public signal void folder_delete(Convey.Folder folder);
 
     public Convey.Folder? selected { get ; private set; default = null; }
 
@@ -22,6 +24,10 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         = new Gee.HashMap<Convey.Account, AccountBranch>();
     private InboxesBranch inboxes_branch = new InboxesBranch();
     private SearchBranch? search_branch = null;
+    private Gtk.PopoverMenu? inboxes_context_menu = null;
+    private uint startup_scroll_timeout = 0;
+    private bool startup_scroll_done = false;
+    private Gtk.Adjustment? pinned_vadjustment = null;
 
 
     public Tree() {
@@ -30,11 +36,39 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         set_activate_on_single_click(true);
         entry_selected.connect(on_entry_selected);
         entry_activated.connect(on_entry_activated);
+        this.notify["vadjustment"].connect(update_startup_pin);
+
+        // Any deliberate poke at the sidebar ends the startup scroll pin.
+        var scroll = new Gtk.EventControllerScroll(
+            Gtk.EventControllerScrollFlags.BOTH_AXES
+        ) { propagation_phase = Gtk.PropagationPhase.CAPTURE };
+        scroll.scroll.connect((dx, dy) => {
+            release_startup_pin();
+            return false;
+        });
+        add_controller(scroll);
+
+        var poke = new Gtk.GestureClick() {
+            button = 0,
+            propagation_phase = Gtk.PropagationPhase.CAPTURE
+        };
+        poke.pressed.connect((n, x, y) => release_startup_pin());
+        add_controller(poke);
+
+        var keys = new Gtk.EventControllerKey() {
+            propagation_phase = Gtk.PropagationPhase.CAPTURE
+        };
+        keys.key_pressed.connect((kv, kc, state) => {
+            release_startup_pin();
+            return false;
+        });
+        add_controller(keys);
 
         this.visible = true;
     }
 
     ~Tree() {
+        release_startup_pin();
         base_unref();
     }
 
@@ -77,6 +111,84 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         }
     }
 
+    /** Dims a folder's row and spins it while the folder is changing. */
+    public void set_folder_busy(Convey.Folder folder, bool busy) {
+        FolderEntry? entry = get_folder_entry(folder);
+        if (entry != null) {
+            entry.set_busy(busy);
+        }
+
+        if (folder.used_as == INBOX && has_branch(this.inboxes_branch)) {
+            var inbox = this.inboxes_branch.get_entry_for_account(folder.account);
+            if (inbox != null) {
+                inbox.set_busy(busy);
+            }
+        }
+    }
+
+    /**
+     * Shows a placeholder row for a folder that is being created.
+     *
+     * Returns the placeholder, to be handed back to {@link
+     * remove_pending_folder} once the real folder exists or the
+     * attempt has failed.
+     */
+    public PendingFolderEntry? add_pending_folder(Convey.Account account,
+                                                  string name) {
+        var branch = this.account_branches.get(account);
+        if (branch == null) {
+            return null;
+        }
+        var entry = new PendingFolderEntry(name);
+        branch.add_pending_folder(entry);
+        return entry;
+    }
+
+    public void remove_pending_folder(Convey.Account account,
+                                      PendingFolderEntry entry) {
+        var branch = this.account_branches.get(account);
+        if (branch != null) {
+            branch.remove_pending_folder(entry);
+        }
+    }
+
+    /** Returns the account whose branch contains this entry, if any. */
+    public Convey.Account? get_account_for_entry(Sidebar.Entry entry) {
+        foreach (var branch in this.account_branches.values) {
+            if (branch.has_entry(entry)) {
+                return branch.account;
+            }
+        }
+        return null;
+    }
+
+    /** Menu shown for the Inboxes section, which has no folders to manage. */
+    public void set_inboxes_context_menu(Gtk.PopoverMenu menu) {
+        this.inboxes_context_menu = menu;
+    }
+
+    protected override Gtk.PopoverMenu? get_context_menu(Sidebar.Entry? entry) {
+        if (entry == null) {
+            return null;
+        }
+        if (is_inboxes_entry(entry)) {
+            return this.inboxes_context_menu;
+        }
+        // Anything outside an account branch (eg. search) has no
+        // folders to manage
+        return (get_account_for_entry(entry) != null)
+            ? base.get_context_menu(entry)
+            : null;
+    }
+
+    private bool is_inboxes_entry(Sidebar.Entry entry) {
+        return (
+            entry is InboxFolderEntry ||
+            (has_branch(this.inboxes_branch) &&
+             this.inboxes_branch.get_root() == entry)
+        );
+    }
+
     private FolderEntry? get_folder_entry(Convey.Folder folder) {
         AccountBranch? account_branch = account_branches.get(folder.account);
         return (account_branch == null ? null :
@@ -115,7 +227,6 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     public void add_folder(Application.FolderContext context) {
         Convey.Folder folder = context.folder;
         Convey.Account account = folder.account;
-        bool had_folder = (get_folder_entry(folder) != null);
 
         if (!account_branches.has_key(account)) {
             this.account_branches.set(account, new AccountBranch(account));
@@ -133,8 +244,62 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
         account_branch.add_folder(context);
 
-        if (!had_folder && get_folder_entry(folder) != null)
+        queue_startup_scroll();
+    }
+
+    // Folders trickle in for seconds after launch, and the startup
+    // folder selection scrolls itself into view once its account
+    // finishes opening, leaving the list part-way down. Hold it at the
+    // top until the user actually touches the sidebar.
+    //
+    // ponytail: a flat 3s cap rather than tracking when every account
+    // has finished loading. Released for good on first interaction.
+    private void queue_startup_scroll() {
+        if (this.startup_scroll_done || this.startup_scroll_timeout != 0)
+            return;
+
+        update_startup_pin();
+        this.startup_scroll_timeout = GLib.Timeout.add(3000, () => {
+            this.startup_scroll_timeout = 0;
             scroll_to_top();
+            release_startup_pin();
+            return GLib.Source.REMOVE;
+        });
+    }
+
+    private void release_startup_pin() {
+        if (this.startup_scroll_timeout != 0) {
+            GLib.Source.remove(this.startup_scroll_timeout);
+            this.startup_scroll_timeout = 0;
+        }
+        this.startup_scroll_done = true;
+        update_startup_pin();
+    }
+
+    private void update_startup_pin() {
+        Gtk.Adjustment? wanted = null;
+        if (!this.startup_scroll_done)
+            wanted = this.vadjustment;
+
+        if (this.pinned_vadjustment == wanted)
+            return;
+
+        if (this.pinned_vadjustment != null) {
+            this.pinned_vadjustment.changed.disconnect(on_pinned_scroll);
+            this.pinned_vadjustment.value_changed.disconnect(on_pinned_scroll);
+        }
+        this.pinned_vadjustment = wanted;
+        if (this.pinned_vadjustment != null) {
+            this.pinned_vadjustment.changed.connect(on_pinned_scroll);
+            this.pinned_vadjustment.value_changed.connect(on_pinned_scroll);
+            on_pinned_scroll();
+        }
+    }
+
+    private void on_pinned_scroll() {
+        var adj = this.pinned_vadjustment;
+        if (adj != null && adj.value != adj.lower)
+            adj.value = adj.lower;
     }
 
     public void remove_folder(Application.FolderContext context) {

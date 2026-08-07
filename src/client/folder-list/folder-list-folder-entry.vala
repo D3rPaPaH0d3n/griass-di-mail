@@ -8,7 +8,9 @@
 public class FolderList.FolderEntry :
     FolderList.AbstractFolderEntry,
     Sidebar.InternalDropTargetEntry,
-    Sidebar.EmphasizableEntry {
+    Sidebar.EmphasizableEntry,
+    Sidebar.RenameableEntry,
+    Sidebar.DestroyableEntry {
 
 
     private Application.FolderContext context;
@@ -78,6 +80,24 @@ public class FolderList.FolderEntry :
 
         this.has_new = has_new;
         entry_changed();
+    }
+
+    /** Only plain user folders can be renamed or deleted. */
+    public bool is_user_renameable() {
+        return this.folder.used_as == NONE;
+    }
+
+    public void rename(string new_name) {
+        var name = new_name.strip();
+        if (this.tree != null && name != "" && name != get_sidebar_name()) {
+            this.tree.folder_rename(this.folder, name);
+        }
+    }
+
+    public void destroy_source() {
+        if (this.tree != null && is_user_renameable()) {
+            this.tree.folder_delete(this.folder);
+        }
     }
 
     public bool internal_drop_received(Sidebar.Tree parent,

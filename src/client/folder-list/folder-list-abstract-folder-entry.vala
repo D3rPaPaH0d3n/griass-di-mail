@@ -12,8 +12,33 @@
 public abstract class FolderList.AbstractFolderEntry : Convey.BaseObject, Sidebar.Entry, Sidebar.SelectableEntry {
     public Convey.Folder folder { get; private set; }
 
+    /** The tree this entry is grafted onto, if any. */
+    protected weak FolderList.Tree? tree = null;
+
     protected AbstractFolderEntry(Convey.Folder folder) {
         this.folder = folder;
+    }
+
+    private bool busy = false;
+
+    /** Dims the row and shows a spinner while the folder is changing. */
+    public void set_busy(bool busy) {
+        if (this.busy != busy) {
+            this.busy = busy;
+            entry_changed();
+        }
+    }
+
+    public override bool is_busy() {
+        return this.busy;
+    }
+
+    internal override void grafted(Sidebar.Tree tree) {
+        this.tree = tree as FolderList.Tree;
+    }
+
+    internal override void pruned(Sidebar.Tree tree) {
+        this.tree = null;
     }
 
     public abstract string get_sidebar_name();

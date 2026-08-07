@@ -26,6 +26,9 @@ public class Application.MainWindow :
     public const string ACTION_REPLY_CONVERSATION = "reply-conversation";
     public const string ACTION_SEARCH = "search";
     public const string ACTION_SELECT_INBOX = "select-inbox";
+    public const string ACTION_FOLDER_NEW = "folder-new";
+    public const string ACTION_FOLDER_RENAME = "folder-rename";
+    public const string ACTION_FOLDER_DELETE = "folder-delete";
     public const string ACTION_SHOW_COPY_MENU = "show-copy-menu";
     public const string ACTION_TOGGLE_JUNK = "toggle-conversation-junk";
     public const string ACTION_TRASH_CONVERSATION = "trash-conversation";
@@ -45,6 +48,11 @@ public class Application.MainWindow :
         { ACTION_FIND_IN_CONVERSATION, on_find_in_conversation_action },
         { ACTION_SEARCH, on_search_activated },
         { ACTION_SELECT_INBOX, on_select_inbox, "i" },
+
+        // Folder actions
+        { ACTION_FOLDER_NEW, on_folder_new },
+        { ACTION_FOLDER_RENAME, on_folder_rename },
+        { ACTION_FOLDER_DELETE, on_folder_delete },
 
         // Message actions
         { ACTION_REPLY_CONVERSATION, on_reply_conversation },
@@ -1121,7 +1129,10 @@ public class Application.MainWindow :
         this.folder_list.move_conversation.connect(on_move_conversation);
         this.folder_list.copy_conversation.connect(on_copy_conversation);
         this.folder_list.folder_activated.connect(on_folder_activated);
+        this.folder_list.folder_rename.connect(on_folder_rename_requested);
+        this.folder_list.folder_delete.connect(on_folder_delete_requested);
         this.folder_list_scrolled.child = this.folder_list;
+        setup_folder_context_menu();
 
         // Conversation list
         this.conversation_list_box.append(this.conversation_list_info_bars);
@@ -1210,6 +1221,190 @@ public class Application.MainWindow :
     [GtkCallback]
     private void on_key_released(uint keyval, uint keycode, Gdk.ModifierType state) {
         check_shift_event(keyval, false);
+    }
+
+    //
+    // Folder management
+    //
+
+    private void setup_folder_context_menu() {
+        var menu = new GLib.Menu();
+        // Translators: Folder list context menu item for creating a
+        // new folder
+        menu.append(_("_New Folder…"), "win." + ACTION_FOLDER_NEW);
+        // Translators: Folder list context menu item for renaming a
+        // folder
+        menu.append(_("_Rename Folder…"), "win." + ACTION_FOLDER_RENAME);
+        // Translators: Folder list context menu item for deleting a
+        // folder
+        menu.append(_("_Delete Folder"), "win." + ACTION_FOLDER_DELETE);
+
+        var popover = new Gtk.PopoverMenu.from_model(menu) {
+            has_arrow = false,
+            halign = START
+        };
+        popover.set_parent(this.folder_list);
+        this.folder_list.set_default_context_menu(popover);
+
+        // The Inboxes section spans accounts, so there is no single
+        // folder to manage there — offer the accounts editor instead.
+        var inboxes_menu = new GLib.Menu();
+        // Translators: Folder list context menu item opening the
+        // accounts editor
+        inboxes_menu.append(_("_Manage Accounts…"), "app.accounts");
+        var inboxes_popover = new Gtk.PopoverMenu.from_model(inboxes_menu) {
+            has_arrow = false,
+            halign = START
+        };
+        inboxes_popover.set_parent(this.folder_list);
+        this.folder_list.set_inboxes_context_menu(inboxes_popover);
+
+        this.folder_list.context_menu_requested.connect(
+            on_folder_context_menu_requested
+        );
+    }
+
+    /** The folder the folder list's context menu was invoked on, if any. */
+    private Convey.Folder? get_context_folder() {
+        var entry = (
+            this.folder_list.context_entry as FolderList.AbstractFolderEntry
+        );
+        return (entry != null) ? entry.folder : null;
+    }
+
+    /** The account to create new folders in, if any. */
+    private Convey.Account? get_context_account() {
+        Convey.Folder? folder = get_context_folder();
+        if (folder != null) {
+            return folder.account;
+        }
+        var entry = this.folder_list.context_entry;
+        return (entry != null)
+            ? this.folder_list.get_account_for_entry(entry)
+            : null;
+    }
+
+    private void on_folder_context_menu_requested(Sidebar.Entry? entry) {
+        Convey.Folder? folder = get_context_folder();
+        bool is_user_folder = (folder != null && folder.used_as == NONE);
+
+        ((GLib.SimpleAction) lookup_action(ACTION_FOLDER_NEW)).set_enabled(
+            get_context_account() != null
+        );
+        ((GLib.SimpleAction) lookup_action(ACTION_FOLDER_RENAME)).set_enabled(
+            is_user_folder
+        );
+        ((GLib.SimpleAction) lookup_action(ACTION_FOLDER_DELETE)).set_enabled(
+            is_user_folder
+        );
+    }
+
+    private void on_folder_new() {
+        Convey.Account? account = get_context_account();
+        if (account != null) {
+            create_folder.begin(account);
+        }
+    }
+
+    private void on_folder_rename() {
+        var entry = this.folder_list.context_entry;
+        if (entry != null) {
+            // Falls back to the inline editor, which calls back in
+            // via on_folder_rename_requested
+            this.folder_list.rename_entry_in_place(entry);
+        }
+    }
+
+    private void on_folder_delete() {
+        Convey.Folder? folder = get_context_folder();
+        if (folder != null) {
+            delete_folder.begin(folder);
+        }
+    }
+
+    private void on_folder_rename_requested(Convey.Folder folder,
+                                            string new_name) {
+        rename_folder.begin(folder, new_name);
+    }
+
+    private void on_folder_delete_requested(Convey.Folder folder) {
+        delete_folder.begin(folder);
+    }
+
+    private async void create_folder(Convey.Account account) {
+        var entry = new Gtk.Entry() { activates_default = true };
+        var dialog = new Adw.AlertDialog(
+            // Translators: Title of the new folder dialog
+            _("New Folder"),
+            null
+        );
+        dialog.extra_child = entry;
+        dialog.focus_widget = entry;
+        dialog.add_response("cancel", _("_Cancel"));
+        dialog.add_response("create", _("_Create"));
+        dialog.default_response = "create";
+        dialog.close_response = "cancel";
+        dialog.set_response_appearance("create", Adw.ResponseAppearance.SUGGESTED);
+
+        string response = yield dialog.choose(this, null);
+        string name = entry.text.strip();
+        if (response != "create" || name == "") {
+            return;
+        }
+
+        // Show the folder straight away, dimmed and spinning, so the
+        // round trip to the server isn't silent
+        var pending = this.folder_list.add_pending_folder(account, name);
+        try {
+            yield account.create_personal_folder(name, NONE, null);
+        } catch (GLib.Error err) {
+            handle_error(account.information, err);
+        } finally {
+            if (pending != null) {
+                this.folder_list.remove_pending_folder(account, pending);
+            }
+        }
+    }
+
+    private async void rename_folder(Convey.Folder folder, string new_name) {
+        this.folder_list.set_folder_busy(folder, true);
+        try {
+            yield folder.account.rename_folder(folder, new_name, null);
+        } catch (GLib.Error err) {
+            handle_error(folder.account.information, err);
+        } finally {
+            this.folder_list.set_folder_busy(folder, false);
+        }
+    }
+
+    private async void delete_folder(Convey.Folder folder) {
+        var dialog = new Adw.AlertDialog(
+            // Translators: Title of the delete folder confirmation,
+            // substitution is the folder name
+            _("Delete folder “%s”?").printf(folder.path.name),
+            _("This removes the folder and all email in it from Convey and your email server.") +
+            "  <b>" + _("This cannot be undone.") + "</b>"
+        );
+        dialog.body_use_markup = true;
+        dialog.add_response("cancel", _("_Cancel"));
+        dialog.add_response("delete", _("_Delete"));
+        // Delete is the default, as in Files; Esc still cancels
+        dialog.default_response = "delete";
+        dialog.close_response = "cancel";
+        dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE);
+
+        if ((yield dialog.choose(this, null)) != "delete") {
+            return;
+        }
+
+        this.folder_list.set_folder_busy(folder, true);
+        try {
+            yield folder.account.delete_folder(folder, null);
+        } catch (GLib.Error err) {
+            handle_error(folder.account.information, err);
+        } finally {
+            this.folder_list.set_folder_busy(folder, false);
+        }
     }
 
     internal async bool prompt_empty_folder(Convey.Folder.SpecialUse type) {
