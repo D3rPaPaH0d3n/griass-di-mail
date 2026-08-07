@@ -1169,7 +1169,10 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             this.cancellable
         );
 
-        if (!this.cancellable.is_cancelled()) {
+        // Re-check for an existing row: the fetch above yields, so a
+        // second append signal for the same email can get this far too.
+        if (!this.cancellable.is_cancelled() &&
+            !this.email_rows.has_key(id)) {
             EmailRow row = add_email(full_email);
             yield row.view.load_contacts();
             if (is_interesting(full_email)) {
