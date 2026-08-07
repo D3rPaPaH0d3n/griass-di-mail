@@ -11,6 +11,13 @@
  */
 namespace Util.I18n {
 
+    /** Determines if an account presents its user folders as labels. */
+    public bool uses_labels(Convey.Account account) {
+        return (
+            account.information.service_provider == Convey.ServiceProvider.GMAIL
+        );
+    }
+
     private GLib.HashTable<string, string> language_names = null;
     private GLib.HashTable<string, string> country_names = null;
 

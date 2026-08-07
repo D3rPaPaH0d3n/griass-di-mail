@@ -13,8 +13,11 @@ public class FolderList.PendingFolderEntry : Convey.BaseObject, Sidebar.Entry {
 
     public string name { get; private set; }
 
-    public PendingFolderEntry(string name) {
+    private bool labels;
+
+    public PendingFolderEntry(string name, bool labels) {
         this.name = name;
+        this.labels = labels;
     }
 
     public string get_sidebar_name() {
@@ -22,12 +25,13 @@ public class FolderList.PendingFolderEntry : Convey.BaseObject, Sidebar.Entry {
     }
 
     public string? get_sidebar_tooltip() {
-        // Translators: Tooltip for a folder that is being created
-        return _("Creating folder…");
+        // Translators: Tooltip for a folder that is being created, and
+        // the label equivalent
+        return this.labels ? _("Creating label…") : _("Creating folder…");
     }
 
     public string? get_sidebar_icon() {
-        return "folder-symbolic";
+        return this.labels ? "tag-symbolic" : "folder-symbolic";
     }
 
     public int get_count() {

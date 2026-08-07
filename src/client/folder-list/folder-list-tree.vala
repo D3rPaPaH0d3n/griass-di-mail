@@ -139,7 +139,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         if (branch == null) {
             return null;
         }
-        var entry = new PendingFolderEntry(name);
+        var entry = new PendingFolderEntry(name, Util.I18n.uses_labels(account));
         branch.add_pending_folder(entry);
         return entry;
     }

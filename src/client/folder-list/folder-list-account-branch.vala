@@ -48,15 +48,12 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         // folders created by people (as opposed to special-use
         // folders)
         string name, icon_name;
-        switch (account.information.service_provider) {
-        case Convey.ServiceProvider.GMAIL:
+        if (Util.I18n.uses_labels(account)) {
             name = _("Labels");
             icon_name = "tag-symbolic";
-            break;
-        default:
+        } else {
             name = _("Folders");
             icon_name = "folder-symbolic";
-            break;
         }
         user_folder_group = new SpecialGrouping(2, name, icon_name);
         folder_entries = new Gee.HashMap<Convey.FolderPath, FolderEntry>();
