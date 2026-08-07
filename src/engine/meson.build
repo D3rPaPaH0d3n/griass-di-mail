@@ -131,6 +131,7 @@ engine_vala_sources = files(
   'imap/command/imap-message-set.vala',
   'imap/command/imap-namespace-command.vala',
   'imap/command/imap-noop-command.vala',
+  'imap/command/imap-rename-command.vala',
   'imap/command/imap-search-command.vala',
   'imap/command/imap-search-criteria.vala',
   'imap/command/imap-search-criterion.vala',

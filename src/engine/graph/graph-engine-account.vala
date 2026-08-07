@@ -350,6 +350,67 @@ internal class Convey.Graph.Account : Convey.Account,
         return folder;
     }
 
+    public override async void delete_folder(Convey.Folder folder,
+                                             GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        Convey.Graph.Folder target = check_folder_is_mutable(folder);
+        yield this.client.delete_mail_folder(target.graph_folder_id, cancellable);
+        remove_folder(target.path);
+    }
+
+    public override async Convey.Folder rename_folder(Convey.Folder folder,
+                                                      string new_name,
+                                                      GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        Convey.Graph.Folder target = check_folder_is_mutable(folder);
+        Convey.FolderPath path = this.remote_folder_root.get_child(new_name);
+        if (this.remote_folders.has_key(path)) {
+            throw new Convey.EngineError.ALREADY_EXISTS(
+                "Folder already exists: %s", path.to_string()
+            );
+        }
+
+        Convey.Graph.Client.MailFolder renamed = yield this.client.rename_mail_folder(
+            target.graph_folder_id, new_name, cancellable
+        );
+
+        remove_folder(target.path);
+        Convey.Graph.Folder created = add_folder(
+            renamed.display_name,
+            renamed.id,
+            Convey.Folder.SpecialUse.NONE
+        );
+        notify_folders_available_unavailable(
+            sort_by_path(Collection.single(created)),
+            null
+        );
+        notify_folders_created(sort_by_path(Collection.single(created)));
+        return created;
+    }
+
+    /**
+     * Returns the folder unless it is special-use or not ours.
+     */
+    private Convey.Graph.Folder check_folder_is_mutable(Convey.Folder folder)
+        throws GLib.Error {
+        if (!this.is_account_open) {
+            throw new Convey.EngineError.OPEN_REQUIRED("Account not open");
+        }
+        Convey.Graph.Folder? target =
+            this.remote_folders.get(folder.path) as Convey.Graph.Folder;
+        if (target == null || target != folder) {
+            throw new Convey.EngineError.NOT_FOUND(
+                "Not a remote folder for this account: %s", folder.path.to_string()
+            );
+        }
+        if (target.used_as != Convey.Folder.SpecialUse.NONE) {
+            throw new Convey.EngineError.UNSUPPORTED(
+                "Cannot modify special folder: %s", folder.path.to_string()
+            );
+        }
+        return target;
+    }
+
     public override void register_local_folder(Convey.Folder local)
         throws GLib.Error {
         Convey.FolderPath path = local.path;

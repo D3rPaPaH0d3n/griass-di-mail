@@ -55,6 +55,7 @@ int main(string[] args) {
     engine.add_suite(new Convey.Imap.DataFormatTest().steal_suite());
 
     engine.add_suite(new Convey.Imap.CreateCommandTest().steal_suite());
+    engine.add_suite(new Convey.Imap.RenameCommandTest().steal_suite());
     engine.add_suite(new Convey.Imap.FetchCommandTest().steal_suite());
     engine.add_suite(new Convey.Imap.FetchDataDecoderTest().steal_suite());
     engine.add_suite(new Convey.Imap.ListParameterTest().steal_suite());

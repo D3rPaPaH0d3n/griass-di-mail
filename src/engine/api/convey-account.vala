@@ -435,6 +435,29 @@ public abstract class Convey.Account : BaseObject, Logging.Source {
     ) throws GLib.Error;
 
     /**
+     * Deletes a folder from the account and from the remote server.
+     *
+     * Only folders with no special use and no children may be
+     * deleted; anything else throws {@link EngineError.UNSUPPORTED}.
+     */
+    public abstract async void delete_folder(
+        Folder folder,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error;
+
+    /**
+     * Renames a folder, returning the folder under its new name.
+     *
+     * The new name is a leaf name, not a path: the folder keeps its
+     * parent. Only folders with no special use may be renamed.
+     */
+    public abstract async Folder rename_folder(
+        Folder folder,
+        string new_name,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error;
+
+    /**
      * Registers a local folder with the account.
      *
      * The registering a local folder will cause the account will hook

@@ -116,6 +116,54 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
     }
 
     /**
+     * Deletes an existing folder on the remote server.
+     */
+    public async void delete_folder_async(FolderPath path,
+                                          Cancellable? cancellable)
+    throws Error {
+        ClientSession session = get_session();
+        MailboxSpecifier mailbox = session.get_mailbox_for_path(path);
+        StatusResponse response = yield send_command_async(
+            session, new DeleteCommand(mailbox, cancellable), null, null, cancellable
+        );
+
+        if (response.status != Status.OK) {
+            throw new ImapError.SERVER_ERROR(
+                "Server reports error deleting folder %s: %s",
+                mailbox.to_string(), response.to_string()
+            );
+        }
+
+        this.folders.unset(path);
+    }
+
+    /**
+     * Renames an existing folder on the remote server.
+     */
+    public async void rename_folder_async(FolderPath from,
+                                          FolderPath to,
+                                          Cancellable? cancellable)
+    throws Error {
+        ClientSession session = get_session();
+        MailboxSpecifier from_mailbox = session.get_mailbox_for_path(from);
+        MailboxSpecifier to_mailbox = session.get_mailbox_for_path(to);
+        StatusResponse response = yield send_command_async(
+            session,
+            new RenameCommand(from_mailbox, to_mailbox, cancellable),
+            null, null, cancellable
+        );
+
+        if (response.status != Status.OK) {
+            throw new ImapError.SERVER_ERROR(
+                "Server reports error renaming folder %s: %s",
+                from_mailbox.to_string(), response.to_string()
+            );
+        }
+
+        this.folders.unset(from);
+    }
+
+    /**
      * Returns a single folder, from the account's cache or fetched fresh.
      *
      * If the folder has previously been retrieved, that is returned

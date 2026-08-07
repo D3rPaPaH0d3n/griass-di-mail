@@ -578,6 +578,40 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         return folder;
     }
 
+    public async void delete_mail_folder(string folder_id,
+                                         GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        string path = "/me/mailFolders/%s".printf(
+            GLib.Uri.escape_string(folder_id, null, false)
+        );
+        yield request_no_content("DELETE", path, null, cancellable);
+    }
+
+    public async MailFolder rename_mail_folder(string folder_id,
+                                               string display_name,
+                                               GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        Json.Builder builder = new Json.Builder();
+        builder.begin_object();
+        builder.set_member_name("displayName");
+        builder.add_string_value(display_name);
+        builder.end_object();
+        string path = "/me/mailFolders/%s".printf(
+            GLib.Uri.escape_string(folder_id, null, false)
+        );
+        Json.Object root = yield request_json(
+            "PATCH",
+            path,
+            null,
+            cancellable,
+            to_json(builder)
+        );
+        MailFolder folder = new MailFolder();
+        folder.id = get_string_member(root, "id") ?? folder_id;
+        folder.display_name = get_string_member(root, "displayName") ?? display_name;
+        return folder;
+    }
+
     public async Gee.List<MailFolder> list_mail_folders(
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {

@@ -530,6 +530,104 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
     }
 
     /** {@inheritDoc} */
+    public override async void delete_folder(Folder folder,
+                                             GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        check_open();
+        check_folder_is_mutable(folder);
+
+        var remote = yield claim_account_session(cancellable);
+        try {
+            yield remote.delete_folder_async(folder.path, cancellable);
+        } finally {
+            release_account_session(remote);
+        }
+
+        remove_folders(Collection.single(folder));
+        try {
+            yield this.local.delete_folder_async(folder.path, cancellable);
+        } catch (GLib.Error err) {
+            debug("Unable to locally delete folder %s: %s",
+                  folder.path.to_string(), err.message);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public override async Folder rename_folder(Folder folder,
+                                               string new_name,
+                                               GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        check_open();
+        check_folder_is_mutable(folder);
+
+        FolderPath? parent = folder.path.parent;
+        if (parent == null) {
+            throw new EngineError.UNSUPPORTED(
+                "Cannot rename the folder root: %s", folder.path.to_string()
+            );
+        }
+        FolderPath path = parent.get_child(new_name);
+        if (this.remote_folders.has_key(path)) {
+            throw new EngineError.ALREADY_EXISTS(
+                "Folder already exists: %s", path.to_string()
+            );
+        }
+
+        var remote = yield claim_account_session(cancellable);
+        Imap.Folder? remote_folder = null;
+        try {
+            yield remote.rename_folder_async(folder.path, path, cancellable);
+            remote_folder = yield remote.fetch_folder_async(path, cancellable);
+        } finally {
+            release_account_session(remote);
+        }
+
+        // The rename is already done on the server, so from here on
+        // just resync the local state to match.
+        remove_folders(Collection.single(folder));
+        try {
+            yield this.local.delete_folder_async(folder.path, cancellable);
+        } catch (GLib.Error err) {
+            debug("Unable to locally delete renamed folder %s: %s",
+                  folder.path.to_string(), err.message);
+        }
+
+        ImapDB.Folder local_folder = yield this.local.clone_folder_async(
+            remote_folder, cancellable
+        );
+        add_folders(Collection.single(local_folder), false);
+        return this.remote_folders.get(path);
+    }
+
+    /**
+     * Throws unless the folder is a user folder this account owns.
+     */
+    private void check_folder_is_mutable(Folder folder) throws GLib.Error {
+        if (folder.account != this) {
+            throw new EngineError.NOT_FOUND(
+                "Folder is not owned by this account: %s", folder.path.to_string()
+            );
+        }
+        if (folder.used_as != NONE) {
+            throw new EngineError.UNSUPPORTED(
+                "Cannot modify special folder: %s", folder.path.to_string()
+            );
+        }
+        if (!this.remote_folders.has_key(folder.path)) {
+            throw new EngineError.NOT_FOUND(
+                "Not a remote folder: %s", folder.path.to_string()
+            );
+        }
+        foreach (FolderPath other in this.remote_folders.keys) {
+            if (folder.path.is_descendant(other)) {
+                throw new EngineError.UNSUPPORTED(
+                    "Folder has children: %s", folder.path.to_string()
+                );
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
     public override void register_local_folder(Folder local)
         throws GLib.Error {
             var path = local.path;

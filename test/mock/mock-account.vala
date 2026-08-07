@@ -96,6 +96,25 @@ public class Mock.Account : Convey.Account,
         );
     }
 
+    public override async void delete_folder(
+        Convey.Folder folder,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        void_call("delete_folder", { folder, cancellable });
+    }
+
+    public override async Convey.Folder rename_folder(
+        Convey.Folder folder,
+        string new_name,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        return object_call<Folder>(
+            "rename_folder",
+            { folder, box_arg(new_name), cancellable },
+            new Folder(null, null, null, NONE, null)
+        );
+    }
+
     /** {@inheritDoc} */
     public override void register_local_folder(Convey.Folder local)
         throws GLib.Error {
