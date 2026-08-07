@@ -20,6 +20,9 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // responsible for completing an external drag.
     public delegate void ExternalDropHandler(Gtk.DropTarget context, Sidebar.Entry? entry);
 
+    // How long rows take to fade in when added and out when removed.
+    private const uint FADE_DURATION_MS = 200;
+
     // A node in the sidebar's tree model, mirroring one Sidebar.Entry.
     private class Node : GLib.Object {
         public Sidebar.Entry entry;
@@ -30,9 +33,15 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         // Row widgets, non-null only while the node's row is realised.
         public weak Gtk.TreeExpander? expander_widget = null;
         public weak Gtk.Image? icon_widget = null;
+        public weak Gtk.Spinner? spinner_widget = null;
         public weak Gtk.Label? name_widget = null;
         public weak Gtk.Label? count_widget = null;
         public ulong children_handler = 0;
+
+        // Set while the row is fading in or out (see FADE_DURATION_MS).
+        public bool fade_in = false;
+        public bool fading_out = false;
+        public bool unregistered = false;
 
         public Node(Sidebar.Entry entry, Node? parent) {
             this.entry = entry;
@@ -85,6 +94,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     private weak Node? selected_node = null;
     private Gtk.PopoverMenu? default_context_menu = null;
 
+    private Node? context_node = null;
+
     // Set while sync_visual_selection() is repointing the GTK selection
     // index at a stand-in row (e.g. a collapsed ancestor); on_selection_changed
     // must not treat that as a new user selection.
@@ -94,6 +105,19 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // want; instead single-click activation is driven from a click gesture.
     private bool click_selecting = false;
     private bool activated_this_click = false;
+
+    /** The entry the context menu was last invoked on, if any. */
+    public Sidebar.Entry? context_entry {
+        get { return (this.context_node != null) ? this.context_node.entry : null; }
+    }
+
+    /** Fired just before the context menu is shown. */
+    public signal void context_menu_requested(Sidebar.Entry? entry);
+
+    /** Returns the context menu to open on the given entry, if any. */
+    protected virtual Gtk.PopoverMenu? get_context_menu(Sidebar.Entry? entry) {
+        return this.default_context_menu;
+    }
 
     public signal void entry_selected(Sidebar.SelectableEntry selectable);
 
@@ -186,6 +210,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     private void on_setup_row(GLib.Object object) {
         var list_item = (Gtk.ListItem) object;
         var icon = new Gtk.Image();
+        var spinner = new Gtk.Spinner() { visible = false };
         var name = new Gtk.Label(null) {
             use_markup = true,
             ellipsize = Pango.EllipsizeMode.END,
@@ -206,6 +231,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         };
         box.add_css_class("sidebar-row-content");
         box.append(icon);
+        box.append(spinner);
         box.append(name);
         box.append(count);
         var expander = new Gtk.TreeExpander() {
@@ -225,12 +251,14 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         var box = (Gtk.Box) expander.child;
         var icon = (Gtk.Image) box.get_first_child();
-        var name = (Gtk.Label) icon.get_next_sibling();
+        var spinner = (Gtk.Spinner) icon.get_next_sibling();
+        var name = (Gtk.Label) spinner.get_next_sibling();
         var count = (Gtk.Label) name.get_next_sibling();
 
         box.set_data("sidebar-node", node);
         node.expander_widget = expander;
         node.icon_widget = icon;
+        node.spinner_widget = spinner;
         node.name_widget = name;
         node.count_widget = count;
         node.children_handler = node.children.items_changed.connect(() => {
@@ -240,12 +268,46 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         });
 
         refresh_row(node);
+
+        if (node.fade_in) {
+            node.fade_in = false;
+            fade_row(node, 0.0, 1.0, null);
+        }
+    }
+
+    // Animates the node's row between two opacities, calling done (if
+    // given) when it finishes. Does nothing if the row isn't realised.
+    private void fade_row(Node node, double from, double to,
+                          owned Adw.AnimationTargetFunc? done) {
+        Gtk.TreeExpander? widget = node.expander_widget;
+        if (widget == null) {
+            if (done != null)
+                done(to);
+            return;
+        }
+
+        widget.opacity = from;
+        var target = new Adw.CallbackAnimationTarget((value) => {
+            // The row may have been recycled onto another node mid-flight
+            if (node.expander_widget == widget)
+                widget.opacity = value;
+        });
+        var animation = new Adw.TimedAnimation(
+            widget, from, to, FADE_DURATION_MS, target
+        );
+        animation.done.connect(() => {
+            widget.opacity = 1.0;
+            if (done != null)
+                done(to);
+        });
+        animation.play();
     }
 
     private void on_unbind_row(GLib.Object object) {
         var list_item = (Gtk.ListItem) object;
         var expander = (Gtk.TreeExpander) list_item.child;
         expander.set_list_row(null);
+        expander.opacity = 1.0;
 
         var box = (Gtk.Box) expander.child;
         var node = box.get_data<Node?>("sidebar-node");
@@ -256,6 +318,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             }
             node.expander_widget = null;
             node.icon_widget = null;
+            node.spinner_widget = null;
             node.name_widget = null;
             node.count_widget = null;
         }
@@ -269,8 +332,20 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         Sidebar.Entry entry = node.entry;
         node.expander_widget.hide_expander = (node.children.get_n_items() == 0);
 
+        // A busy entry swaps its icon for a spinner and dims itself
+        bool busy = entry.is_busy();
+        node.spinner_widget.visible = busy;
+        node.spinner_widget.spinning = busy;
+        if (busy) {
+            node.expander_widget.add_css_class("dim-label");
+        } else {
+            node.expander_widget.remove_css_class("dim-label");
+        }
+
         string? icon = entry.get_sidebar_icon();
-        node.icon_widget.visible = !(entry is Sidebar.Header) && icon != null;
+        node.icon_widget.visible = (
+            !busy && !(entry is Sidebar.Header) && icon != null
+        );
         node.icon_widget.icon_name = icon;
 
         node.name_widget.label = get_name_for_entry(entry);
@@ -692,6 +767,13 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     }
 
     private void register_node(Node node) {
+        // An entry can be re-grafted while its previous node is still
+        // fading out (eg. a group emptied and immediately refilled by a
+        // rename); drop the old node now rather than tripping over it.
+        Node? stale = node_map.get(node.entry);
+        if (stale != null)
+            unregister_subtree(stale, true);
+
         assert(!node_map.has_key(node.entry));
         node_map.set(node.entry, node);
 
@@ -709,6 +791,12 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // with its whole subtree, firing selected-entry-removed if the
     // currently-selected entry is pruned.
     private void unregister_subtree(Node node, bool remove_from_parent) {
+        // A pending fade-out can race the branch being torn down, or the
+        // entry being re-grafted; either way, only remove the node once
+        if (node.unregistered)
+            return;
+        node.unregistered = true;
+
         bool selected = is_selected(node.entry);
 
         while (node.children.get_n_items() > 0) {
@@ -761,6 +849,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             if (next_node != null && parent_node.children.find(next_node, out next_index))
                 index = next_index;
         }
+        node.fade_in = !branch.suppress_animation;
         parent_node.children.insert(index, node);
         register_node(node);
         associate_children(branch, entry, node);
@@ -771,8 +860,18 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
     private void on_branch_entry_removed(Sidebar.Branch branch, Sidebar.Entry entry) {
         Node? node = node_map.get(entry);
-        if (node != null)
+        if (node == null || node.fading_out)
+            return;
+
+        if (branch.suppress_animation) {
             unregister_subtree(node, true);
+            return;
+        }
+
+        // Keep the row in the model until it has faded out, so the
+        // removal is visible rather than instant.
+        node.fading_out = true;
+        fade_row(node, 1.0, 0.0, (value) => unregister_subtree(node, true));
     }
 
     private void on_branch_entry_moved(Sidebar.Branch branch, Sidebar.Entry entry) {
@@ -925,7 +1024,13 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         };
         label.visible = false;
         box.insert_child_after(editor, label);
-        editor.grab_focus();
+        // Deferred: when renaming from the context menu, the popover is
+        // still closing and would take the focus straight back
+        GLib.Idle.add(() => {
+            editor.grab_focus();
+            editor.select_region(0, -1);
+            return GLib.Source.REMOVE;
+        });
 
         editor.activate.connect(() => {
             renameable.rename(editor.text);
@@ -970,12 +1075,17 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     }
 
     private void on_secondary_press(int n_press, double x, double y) {
-        if (this.default_context_menu == null)
+        this.context_node = node_at_position(x, y);
+
+        Gtk.PopoverMenu? menu = get_context_menu(this.context_entry);
+        if (menu == null)
             return;
 
+        context_menu_requested(this.context_entry);
+
         Gdk.Rectangle rect = { (int) x, (int) y, 1, 1 };
-        this.default_context_menu.set_pointing_to(rect);
-        this.default_context_menu.popup();
+        menu.set_pointing_to(rect);
+        menu.popup();
     }
 
     private Node? node_at_position(double x, double y) {

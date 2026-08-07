@@ -20,6 +20,15 @@ public interface Sidebar.Entry : Object {
 
     public abstract string to_string();
 
+    /**
+     * Whether a background operation is currently changing this entry.
+     *
+     * Busy entries are dimmed and show a spinner in place of their icon.
+     */
+    public virtual bool is_busy() {
+        return false;
+    }
+
     internal virtual void grafted(Sidebar.Tree tree) {
     }
 

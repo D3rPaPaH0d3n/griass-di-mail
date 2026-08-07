@@ -32,6 +32,14 @@ public class Sidebar.Branch : Convey.BaseObject {
         }
     }
 
+    /**
+     * Suppresses the tree's row fade in/out for this branch.
+     *
+     * Set while swapping one entry for another, where fading the old
+     * one out while the new one fades in would show both at once.
+     */
+    public bool suppress_animation { get; set; default = false; }
+
     private class Node {
         public delegate void PruneCallback(Node node);
 
