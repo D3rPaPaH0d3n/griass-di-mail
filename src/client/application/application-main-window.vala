@@ -1150,6 +1150,9 @@ public class Application.MainWindow :
         this.conversation_list_view.conversations_selected.connect(on_conversations_selected);
         this.conversation_list_view.conversation_activated.connect(on_conversation_activated);
         this.conversation_list_view.visible_conversations.notify.connect(on_visible_conversations_changed);
+        this.conversation_list_view.mail_drag_active.connect(
+            this.folder_list.set_drag_active
+        );
         this.conversation_list_view.vexpand = true;
 
         this.conversation_list_box.append(this.conversation_list_view);

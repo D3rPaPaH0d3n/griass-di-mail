@@ -97,6 +97,10 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
     private Node? context_node = null;
 
+    // Set while mail is being dragged over the window, hiding rows that
+    // can't accept it.
+    private bool drag_active = false;
+
     // Set while sync_visual_selection() is repointing the GTK selection
     // index at a stand-in row (e.g. a collapsed ancestor); on_selection_changed
     // must not treat that as a new user selection.
@@ -114,6 +118,26 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
     /** Fired just before the context menu is shown. */
     public signal void context_menu_requested(Sidebar.Entry? entry);
+
+    /**
+     * Hides every row that can't accept a drop, for the duration of one.
+     *
+     * @see entry_accepts_drop
+     */
+    public void set_drag_active(bool active) {
+        if (this.drag_active == active)
+            return;
+
+        this.drag_active = active;
+        foreach (var node in this.node_map.values) {
+            refresh_row(node);
+        }
+    }
+
+    /** Determines if an entry stays visible while a drag is in progress. */
+    protected virtual bool entry_accepts_drop(Sidebar.Entry entry) {
+        return true;
+    }
 
     /** Returns the context menu to open on the given entry, if any. */
     protected virtual Gtk.PopoverMenu? get_context_menu(Sidebar.Entry? entry) {
@@ -309,6 +333,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         var expander = (Gtk.TreeExpander) list_item.child;
         expander.set_list_row(null);
         expander.opacity = 1.0;
+        if (expander.parent != null)
+            expander.parent.visible = true;
 
         var box = (Gtk.Box) expander.child;
         var node = box.get_data<Node?>("sidebar-node");
@@ -332,6 +358,11 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         Sidebar.Entry entry = node.entry;
         node.expander_widget.hide_expander = (node.children.get_n_items() == 0);
+
+        // Hide the whole list item, not just its content, so the row
+        // collapses rather than leaving a gap
+        Gtk.Widget row = node.expander_widget.parent ?? node.expander_widget;
+        row.visible = (!this.drag_active || entry_accepts_drop(entry));
 
         // A busy entry swaps its icon for a spinner and dims itself
         bool busy = entry.is_busy();

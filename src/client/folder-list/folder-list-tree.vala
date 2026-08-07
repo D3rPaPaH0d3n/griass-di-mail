@@ -181,6 +181,37 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             : null;
     }
 
+    // Keep the folder groups so the remaining folders stay placed, but
+    // not the account names: only one account's folders can be a target.
+    protected override bool entry_accepts_drop(Sidebar.Entry entry) {
+        if (entry is Sidebar.Header) {
+            return false;
+        }
+        if (entry is Sidebar.Grouping) {
+            return true;
+        }
+        var folder_entry = entry as FolderEntry;
+        return (
+            folder_entry != null &&
+            accepts_drop(folder_entry.folder)
+        );
+    }
+
+    /**
+     * Determines if dragged mail can be filed into the given folder.
+     *
+     * Mail can't cross accounts: both backends resolve the destination
+     * path within the source folder's own account.
+     */
+    public bool accepts_drop(Convey.Folder folder) {
+        return (
+            this.selected != null &&
+            folder != this.selected &&
+            folder.account == this.selected.account &&
+            Application.FolderContext.is_user_destination(folder)
+        );
+    }
+
     private bool is_inboxes_entry(Sidebar.Entry entry) {
         return (
             entry is InboxFolderEntry ||

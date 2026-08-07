@@ -106,9 +106,7 @@ public class FolderList.FolderEntry :
         if (folders == null)
             return false;
 
-        // Nowhere to move mail that is already here
-        if (!Application.FolderContext.is_user_destination(this.folder) ||
-            this.folder == folders.selected)
+        if (!folders.accepts_drop(this.folder))
             return false;
 
         // Dragging always moves; copying is offered in the folder

@@ -695,7 +695,12 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         return new Gdk.ContentProvider.for_value(marker);
     }
 
+    /** Fired while conversations are being dragged out of the list. */
+    public signal void mail_drag_active(bool active);
+
     private void on_drag_begin(Gtk.DragSource drag_source, Gdk.Drag drag) {
+        mail_drag_active(true);
+
         Row? row = this.drag_widget;
         if (row != null) {
             // If the user has a selection but drags starting from an
@@ -710,6 +715,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     }
 
     private void on_drag_end(Gtk.DragSource drag_source, Gdk.Drag drag, bool delete_data) {
+        mail_drag_active(false);
         this.drag_widget = null;
     }
 
