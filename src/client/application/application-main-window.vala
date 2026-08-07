@@ -243,6 +243,7 @@ public class Application.MainWindow :
     [GtkChild] private unowned Gtk.ScrolledWindow folder_list_scrolled;
 
     [GtkChild] private unowned Adw.NavigationPage conversation_list_page;
+    [GtkChild] private unowned Adw.WindowTitle conversation_list_title;
     [GtkChild] private unowned Gtk.Box conversation_list_box;
     [GtkChild] private unowned Gtk.Revealer conversation_list_actions_revealer;
     [GtkChild] private unowned Components.ConversationActions conversation_list_actions;
@@ -506,8 +507,14 @@ public class Application.MainWindow :
         }
         this.title = title;
         this.conversation_list_page.title = account_name ?? "";
-        //XXX GTK4 still need to figure out subtitles
-        // this.conversation_list_headerbar.subtitle = folder_name?? "";
+        this.conversation_list_title.title = account_name ?? "";
+        // ponytail: only show the address when it isn't already the title
+        string address = (
+            account != null ? account.account.information.primary_mailbox.address : ""
+        );
+        this.conversation_list_title.subtitle = (
+            account_name != null && account_name != address ? address : ""
+        );
     }
 
     /** Updates the window's account status info bars. */

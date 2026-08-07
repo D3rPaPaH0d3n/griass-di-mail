@@ -326,6 +326,10 @@ row.convey-composer-from box.title > label.title {
   font-size: smaller;
 }
 
+windowtitle label.subtitle {
+  font-size: round(nearest, calc(100% - 3px), 1px);
+}
+
 convey-composer-embed headerbar {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;

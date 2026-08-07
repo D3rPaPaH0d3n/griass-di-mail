@@ -259,6 +259,9 @@
                               <object class="AdwToolbarView">
                                 <child type="top">
                                   <object class="AdwHeaderBar" id="conversation_list_headerbar">
+                                    <property name="title-widget">
+                                      <object class="AdwWindowTitle" id="conversation_list_title"/>
+                                    </property>
                                     <child>
                                       <object class="GtkButton" id="compose_new_message_button">
                                         <property name="focus_on_click">False</property>
