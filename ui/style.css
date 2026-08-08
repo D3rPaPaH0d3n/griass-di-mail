@@ -244,18 +244,24 @@ row.convey-folder-popover-list-row > label {
   font-weight: bold;
 }
 
-.convey-header-value > flowboxchild:active {
-  background: mix(@theme_base_color, @theme_bg_color, 0.5);
+.convey-header-value flowboxchild {
+  border-radius: 6px;
+  margin: 0 -2px;
 }
 
-.convey-header-value > flowboxchild:hover {
-  background: @theme_base_color;
+/* Theme-agnostic tint, so it reads on both light and dark. */
+.convey-header-value flowboxchild:hover {
+  background: alpha(currentColor, 0.08);
 }
 
-.convey-header-value > flowboxchild label.dim-label:dir(ltr) {
+.convey-header-value flowboxchild:active {
+  background: alpha(currentColor, 0.15);
+}
+
+.convey-header-value flowboxchild label.dim-label:dir(ltr) {
   margin-left: 6px;
 }
-.convey-header-value > flowboxchild label.dim-label:dir(rtl) {
+.convey-header-value flowboxchild label.dim-label:dir(rtl) {
   margin-right: 6px;
 }
 

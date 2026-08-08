@@ -80,7 +80,8 @@
                     <child>
                       <object class="GtkFlowBox" id="from">
                         <property name="hexpand">True</property>
-                        <property name="column_spacing">2</property>
+                        <property name="column_spacing">4</property>
+                        <property name="homogeneous">False</property>
                         <property name="max_children_per_line">4</property>
                         <property name="selection_mode">none</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
@@ -120,7 +121,8 @@
                         <property name="visible">False</property>
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="column_spacing">2</property>
+                        <property name="column_spacing">4</property>
+                        <property name="homogeneous">False</property>
                         <property name="max_children_per_line">4</property>
                         <property name="selection_mode">none</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
@@ -149,7 +151,8 @@
                       <object class="GtkFlowBox" id="reply_to_addresses">
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
-                        <property name="column_spacing">2</property>
+                        <property name="column_spacing">4</property>
+                        <property name="homogeneous">False</property>
                         <property name="max_children_per_line">4</property>
                         <property name="selection_mode">none</property>
                         <signal name="child-activated" handler="on_address_box_child_activated"/>

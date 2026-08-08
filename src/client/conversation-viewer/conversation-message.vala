@@ -185,7 +185,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     }
 
     /**
-     * A FlowBox that limits its contents to 12 items until a link is
+     * A wrap box that limits its contents to 12 items until a link is
      * clicked to expand it. Used for to, cc, and bcc fields.
      */
     public class ContactList : Adw.Bin, Convey.BaseInterface {
@@ -197,69 +197,75 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
          */
         private const int SHORT_RESULTS = 11;
 
-        private Gtk.FlowBox flowbox = new Gtk.FlowBox();
+        private Adw.WrapBox wrapbox = new Adw.WrapBox();
 
         private Gtk.Label show_more;
         private Gtk.Label show_less;
         private bool expanded = false;
-        private int children = 0;
+        private Gee.List<Gtk.Widget> contacts = new Gee.ArrayList<Gtk.Widget>();
+        private Gee.List<Gtk.Widget> separators = new Gee.ArrayList<Gtk.Widget>();
 
         public signal void child_activated(Gtk.FlowBoxChild child);
 
         construct {
-            this.child = this.flowbox;
-            this.flowbox.column_spacing = 2;
-            this.flowbox.max_children_per_line = 4;
-            this.flowbox.selection_mode = Gtk.SelectionMode.NONE;
-            this.flowbox.child_activated.connect((f, c) => { child_activated(c); });
+            this.child = this.wrapbox;
+            this.wrapbox.child_spacing = 4;
+            this.wrapbox.line_spacing = 2;
 
             this.show_more = create_label();
             this.show_more.activate_link.connect(() => {
                 set_expanded(true);
             });
-            this.flowbox.append(this.show_more);
+            this.wrapbox.append(this.show_more);
 
             this.show_less = create_label();
             // Translators: Label text displayed when there are too
             // many email addresses to be shown by default in an
             // email's header, but they are all being shown anyway.
-            this.show_less.label = "<a href=''>%s</a>".printf(_("Show less"));
+            this.show_less.label = "<a href=\'\'>%s</a>".printf(_("Show less"));
             this.show_less.activate_link.connect(() => {
                 set_expanded(false);
             });
-            this.flowbox.append(this.show_less);
-
-            this.flowbox.set_filter_func(this.filter_func);
+            this.wrapbox.append(this.show_less);
         }
 
 
         public void add(Gtk.Widget child) {
-            // insert before the show_more and show_less labels
-            this.flowbox.insert(child, n_children() - 2);
+            // A wrap box has no activation of its own, so drive the
+            // popover from a click on the child itself.
+            var click = new Gtk.GestureClick();
+            click.released.connect(() => {
+                var box_child = child as Gtk.FlowBoxChild;
+                if (box_child != null) {
+                    child_activated(box_child);
+                }
+            });
+            child.add_controller(click);
 
-            this.children ++;
-
-            if (this.children >= SHORT_RESULTS && this.children <= SHORT_RESULTS + 2) {
-                this.flowbox.invalidate_filter();
+            if (!this.contacts.is_empty) {
+                var comma = new Gtk.Label(",");
+                // Cancel the wrap box spacing so it hugs the name it
+                // follows; it sits outside the child so it isn't part of
+                // the hover highlight.
+                comma.margin_start = -this.wrapbox.child_spacing;
+                this.wrapbox.insert_child_after(comma, this.contacts.last());
+                this.separators.add(comma);
             }
+            this.wrapbox.insert_child_after(
+                child,
+                this.separators.is_empty ? null : this.separators.last()
+            );
+            this.contacts.add(child);
 
-            this.show_more.label = "<a href=''>%s</a>".printf(
+            this.show_more.label = "<a href=\'\'>%s</a>".printf(
                 // Translators: Label text displayed when there are
                 // too many email addresses to be shown by default in
                 // an email's header. The string substitution is the
                 // number of extra email to be shown.
-                ngettext("%d more…", "%d more…", this.children - SHORT_RESULTS).printf(this.children - SHORT_RESULTS)
+                ngettext("%d more…", "%d more…", this.contacts.size - SHORT_RESULTS).printf(this.contacts.size - SHORT_RESULTS)
             );
-        }
 
-        private int n_children() {
-            int ret = 0;
-            unowned var child = this.flowbox.get_first_child();
-            while (child != null) {
-                ret++;
-                child = child.get_next_sibling();
-            }
-            return ret;
+            update_visibility();
         }
 
         private Gtk.Label create_label() {
@@ -272,21 +278,26 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         private void set_expanded(bool expanded) {
             this.expanded = expanded;
-            this.flowbox.invalidate_filter();
+            update_visibility();
         }
 
-        private bool filter_func(Gtk.FlowBoxChild child) {
-            bool is_expandable = this.children > SHORT_RESULTS + 1;
-
-            if (child.get_child() == this.show_more) {
-                return !this.expanded && is_expandable;
-            } else if (child.get_child() == this.show_less) {
-                return this.expanded;
-            } else if (!this.expanded && is_expandable) {
-                return child.get_index() < SHORT_RESULTS;
-            } else {
-                return true;
+        private void update_visibility() {
+            bool is_expandable = this.contacts.size > SHORT_RESULTS + 1;
+            for (int i = 0; i < this.contacts.size; i++) {
+                this.contacts[i].visible = (
+                    this.expanded || !is_expandable || i < SHORT_RESULTS
+                );
             }
+            for (int i = 0; i < this.separators.size; i++) {
+                // The comma after item i is only shown when something
+                // follows it: the next address, or the "N more" link.
+                this.separators[i].visible = (
+                    this.contacts[i].visible &&
+                    (this.contacts[i + 1].visible || i + 1 == SHORT_RESULTS)
+                );
+            }
+            this.show_more.visible = !this.expanded && is_expandable;
+            this.show_less.visible = this.expanded && is_expandable;
         }
     }
 
