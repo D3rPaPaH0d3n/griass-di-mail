@@ -322,10 +322,13 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     }
 
     private async void update_color_icon(Gdk.RGBA color) {
-        // Symbolic icons follow the CSS color, so tint via a
-        // per-widget provider
+        // font-color-symbolic draws its swatch with the "success"
+        // palette slot, remapped here to the actual font color via
+        // -gtk-icon-palette. The letter shape keeps the theme's
+        // regular foreground color, so the icon stays legible no
+        // matter what color is picked.
         this.font_color_css.load_from_string(
-            "image { color: %s; }".printf(color.to_string())
+            "image { -gtk-icon-palette: success %s; }".printf(color.to_string())
         );
     }
 
