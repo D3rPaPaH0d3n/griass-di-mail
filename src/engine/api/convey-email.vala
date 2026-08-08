@@ -421,8 +421,8 @@ public class Convey.Email : BaseObject, EmailHeaderSet {
                                 RFC822.MailboxAddress? sender,
                                 RFC822.MailboxAddresses? reply_to)
         throws Error {
-        // XXX Should be throwing an error here if from is empty or
-        // sender is same as from
+        // No validation here: this is also used when parsing
+        // received mail, which may legitimately violate RFC 2822
         this._from = from;
         this._sender = sender;
         this._reply_to = reply_to;

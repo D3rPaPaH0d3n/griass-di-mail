@@ -141,9 +141,6 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
             to_lock.append(collection);
             List<DBusProxy> unlocked;
             yield service.unlock(to_lock, cancellable, out unlocked);
-            if (unlocked.length() != 0) {
-                // XXX
-            }
         }
     }
 

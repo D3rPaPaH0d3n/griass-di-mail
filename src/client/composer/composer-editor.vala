@@ -6,10 +6,6 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
-//XXX GTK4
-// [CCode (cname = "components_reflow_box_get_type")]
-// private extern Type components_reflow_box_get_type();
-
 /**
  * A widget for editing the body of an email message.
  */
@@ -144,6 +140,7 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.Stack font_button_stack;
     [GtkChild] private unowned Gtk.MenuButton font_size_button;
     [GtkChild] private unowned Gtk.Image font_color_icon;
+    private Gtk.CssProvider font_color_css = new Gtk.CssProvider();
     [GtkChild] private unowned Gtk.MenuButton more_options_button;
 
     private Gtk.GestureClick click_gesture;
@@ -154,8 +151,6 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
 
     internal Editor(Application.Configuration config, GLib.File cache_dir) {
         base_ref();
-        //XXX GTK4
-        // components_reflow_box_get_type();
         this.config = config;
 
         Gtk.Builder builder = new Gtk.Builder.from_resource(
@@ -167,6 +162,10 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
         this.context_menu_inspector = (Menu) builder.get_object("context_menu_inspector");
         this.context_menu_webkit_spelling = (Menu) builder.get_object("context_menu_webkit_spelling");
         this.context_menu_webkit_text_entry = (Menu) builder.get_object("context_menu_webkit_text_entry");
+
+        this.font_color_icon.get_style_context().add_provider(
+            this.font_color_css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        );
 
         this.body = new WebView(config, cache_dir);
         this.body.command_stack_changed.connect(on_command_state_changed);
@@ -323,23 +322,11 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     }
 
     private async void update_color_icon(Gdk.RGBA color) {
-        // XXX GTK4 - need to look into this
-#if 0
-        var theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default());
-        var icon = theme.lookup_icon("font-color-symbolic", null, 16, 1, Gtk.TextDirection.NONE, 0);
-        Gdk.RGBA fg_color = { 0, 0, 0, 1 };
-        get_style_context().lookup_color("theme_fg_color", out fg_color);
-
-        try {
-            var pixbuf = yield icon.load_symbolic_async(
-                fg_color, color, null, null, null
-            );
-            this.font_color_icon.pixbuf = pixbuf;
-        } catch(Error e) {
-            warning("Could not load icon `font-color-symbolic`!");
-            this.font_color_icon.icon_name = "font-color-symbolic";
-        }
-#endif
+        // Symbolic icons follow the CSS color, so tint via a
+        // per-widget provider
+        this.font_color_css.load_from_string(
+            "image { color: %s; }".printf(color.to_string())
+        );
     }
 
     private GLib.SimpleAction? get_action(string action_name) {
@@ -587,8 +574,8 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
 
     private void on_copy_link(SimpleAction action, Variant? param) {
         Gdk.Clipboard c = get_clipboard();
-        // XXX could this also be the cursor URL? We should be getting
-        // the target URLn as from the action param
+        // Ideally this would take the target URL from the action
+        // param rather than relying on pointer_url
         c.set_text(this.pointer_url);
         c.store_async.begin(Priority.DEFAULT, null, (obj, res) => {
             try {

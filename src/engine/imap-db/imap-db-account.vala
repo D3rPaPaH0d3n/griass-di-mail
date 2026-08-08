@@ -97,9 +97,10 @@ private class Convey.ImapDB.Account : BaseObject {
         // Inboxes that don't match our "canonical" name and that
         // appears after the first that does.
         //
-        // XXX the proper fix for this is of course to move this code
-        // to a migration and add a uniqueness constraint on
-        // (parent_id, name).
+        // A db uniqueness constraint wouldn't catch this anyway
+        // since these rows have a NULL parent_id, which SQLite
+        // treats as distinct in unique indexes, so clean up at
+        // startup instead.
         try {
             yield db.exec_transaction_async(Db.TransactionType.RW, (cx) => {
                 Db.Statement stmt = cx.prepare("""
@@ -168,7 +169,6 @@ private class Convey.ImapDB.Account : BaseObject {
         Convey.Imap.FolderProperties properties = imap_folder.properties;
         Convey.FolderPath path = imap_folder.path;
 
-        // XXX this should really be a db table constraint
         Convey.ImapDB.Folder? folder = get_local_folder(path);
         if (folder != null) {
             throw new EngineError.ALREADY_EXISTS(
@@ -214,7 +214,6 @@ private class Convey.ImapDB.Account : BaseObject {
             return Db.TransactionOutcome.COMMIT;
         }, cancellable);
 
-        // XXX can't we create this from the INSERT above?
         return yield fetch_folder_async(path, cancellable);
     }
 
@@ -1177,9 +1176,8 @@ private class Convey.ImapDB.Account : BaseObject {
             int64 docid = result.rowid_at(0);
             ImapDB.EmailIdentifier id = id_map.get(docid);
 
-            // XXX Avoid a crash when "database disk image is
-            // malformed" error occurs. Remove this when the SQLite
-            // bug is fixed. See b.g.o #765515 for more info.
+            // Avoid a crash when "database disk image is
+            // malformed" error occurs. See b.g.o #765515.
             if (result.string_at(1) == null) {
                 debug("Avoiding a crash from 'database disk image is malformed' error");
                 result.next(cancellable);

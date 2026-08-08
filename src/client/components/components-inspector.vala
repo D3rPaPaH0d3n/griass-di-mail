@@ -68,8 +68,9 @@ public class Components.Inspector : Adw.ApplicationWindow {
 
     public Inspector(Application.Client application) {
         Object(application: application);
-        //XXX GTK4 need to figure out titles
-        // this.title = this.header_bar.title = _("Inspector");
+        // The header bar title slot holds the stack switcher, so
+        // only the window title is set here
+        this.title = _("Inspector");
 
         // Edit actions
         GLib.SimpleActionGroup edit_actions = new GLib.SimpleActionGroup();
@@ -118,21 +119,6 @@ public class Components.Inspector : Adw.ApplicationWindow {
         }
 
         return ret;
-
-#if 0
-        //XXX GTK4 - not sure how to handle this
-        if (ret == Gdk.EVENT_PROPAGATE &&
-            !this.log_pane.search_mode_enabled) {
-            // Nothing has handled the event yet, and search is not
-            // active, so see if we want to activate it now.
-            ret = controller.forward(this.log_pane);
-            if (ret == Gdk.EVENT_STOP) {
-                this.search_button.set_active(true);
-            }
-        }
-
-        return ret;
-#endif
     }
 
     private void enable_log_updates(bool enabled) {

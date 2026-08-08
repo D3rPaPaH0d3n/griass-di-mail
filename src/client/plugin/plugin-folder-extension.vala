@@ -23,7 +23,7 @@ public interface Plugin.FolderExtension : PluginBase {
 }
 
 
-// XXX this should be an inner interface of FolderExtension, but
+// Top-level rather than an inner interface of FolderExtension since
 // GNOME/vala#918 prevents that.
 
 /**

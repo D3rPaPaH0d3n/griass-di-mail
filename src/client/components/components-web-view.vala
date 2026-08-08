@@ -624,8 +624,6 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     }
 
     private void init(Application.Configuration config) {
-        // XXX get the allow prefix from the extension somehow
-
         this.config = config;
         this.decide_policy.connect(on_decide_policy);
         this.web_process_terminated.connect((reason) => {

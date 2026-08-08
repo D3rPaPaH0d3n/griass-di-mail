@@ -84,7 +84,6 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
             this.conversation_find_entry
         );
 
-        // XXX Do this in Glade when possible.
         this.conversation_find_bar.connect_entry(this.conversation_find_entry);
     }
 
@@ -103,8 +102,6 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
             );
             this.current_composer = composer;
 
-            // XXX move the ConversationListView management code into
-            // MainWindow or somewhere more appropriate
             ConversationList.View conversation_list = main_window.conversation_list_view;
             this.selection_while_composing = conversation_list.selected;
             conversation_list.unselect_all();
@@ -222,14 +219,14 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
         this.conversation_find_prev.set_sensitive(false);
         new_list.search.matches_updated.connect((count) => {
                 bool found = count > 0;
-                //XXX GTK4 - Gtk.SearchEntry doesn't have a icon API anymore
-#if 0
-                this.conversation_find_entry.set_icon_from_icon_name(
-                    Gtk.EntryIconPosition.PRIMARY,
-                    found || Convey.String.is_empty(this.conversation_find_entry.text)
-                    ? "edit-find-symbolic" : "computer-fail-symbolic"
-                );
-#endif
+                // Gtk.SearchEntry no longer has an icon API, so
+                // indicate no-match with the error style instead
+                if (found ||
+                    Convey.String.is_empty(this.conversation_find_entry.text)) {
+                    this.conversation_find_entry.remove_css_class("error");
+                } else {
+                    this.conversation_find_entry.add_css_class("error");
+                }
                 this.conversation_find_next.sensitive = found;
                 this.conversation_find_prev.sensitive = found;
             });

@@ -222,39 +222,6 @@ public class Application.Contact : Convey.BaseObject {
         changed();
 
         yield open_on_desktop(cancellable);
-
-        // XXX Un-comment and use the section below instead of the
-        // code above when something has been done about
-        // https://gitlab.gnome.org/GNOME/gnome-contacts/merge_requests/66
-
-        // GLib.DBusConnection dbus = yield GLib.Bus.get(
-        // GLib.BusType.SESSION, cancellable ); GLib.DBusActionGroup
-        // contacts = DBusActionGroup.get( dbus, "org.gnome.Contacts",
-        // "/org/gnome/Contacts" );
-
-        // GLib.Variant param = new GLib.Variant.array(
-        //     new GLib.VariantType("(ss)"),
-        //     new GLib.Variant[] {
-        //         new GLib.Variant.tuple(
-        //             new GLib.Variant[] {
-        //                 Folks.PersonaStore.detail_key(
-        //                     Folks.PersonaDetail.FULL_NAME
-        //                 ),
-        //                 this.display_name ?? ""
-        //             }
-        //         ),
-        //         new GLib.Variant.tuple(
-        //             new GLib.Variant[] {
-        //                 Folks.PersonaStore.detail_key(
-        //                     Folks.PersonaDetail.EMAIL_ADDRESSES
-        //                 ),
-        //                 this.contact.email
-        //             }
-        //         )
-        //     }
-        // );
-
-        // contacts.activate_action("create-contact", param);
     }
 
     /** Invokes the desktop contacts application to open this contact. */

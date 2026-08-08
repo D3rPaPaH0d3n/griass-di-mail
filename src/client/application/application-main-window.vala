@@ -157,8 +157,6 @@ public class Application.MainWindow :
         get {
             return (
                 !this.outer_view.collapsed || this.outer_view.show_content
-                // XXX GTK4 not sure?
-                // && !this.has_composer
             );
         }
     }
@@ -325,7 +323,7 @@ public class Application.MainWindow :
     /** Keybinding signal for trashing the current selection. */
     [Signal (action=true)]
     public virtual signal void trash_conversations() {
-        // XXX the Shift+BackSpace combo above doesn't seem to work
+        // The Shift+BackSpace combo above doesn't seem to work
         // for delete, so double-check here.
         activate_action(
             !this.is_shift_down
@@ -720,7 +718,7 @@ public class Application.MainWindow :
                     // The target conversation is already loaded, just
                     // scroll to the messages.
                     //
-                    // XXX this is actually racy, since the view may
+                    // This is actually racy, since the view may
                     // still be in the middle of loading the messages
                     // obtained from the conversation monitor when
                     // this call is made.
@@ -1192,7 +1190,6 @@ public class Application.MainWindow :
         );
         this.conversation_list_selection_button.notify["active"].connect(
             (obj, pspec) => {
-                //XXX GTK4 pretty sure we can do this with breakpoints now
                 // Only show revealer with bottom actions in narrow mode
                 if (this.conversation_list_view.selection_mode_enabled)
                     this.conversation_list_actions_revealer.reveal_child = (
@@ -1920,29 +1917,9 @@ public class Application.MainWindow :
 
     private void update_headerbar() {
         update_title();
-        if (this.selected_folder != null) {
-            // Current folder's name followed by its unread count,
-            // i.e. "Inbox (42)" except for Drafts and Outbox, where
-            // we show total count
-            int count;
-            switch (this.selected_folder.used_as) {
-            case DRAFTS:
-            case OUTBOX:
-                count = this.selected_folder.properties.email_total;
-                break;
-
-            default:
-                count = this.selected_folder.properties.email_unread;
-                break;
-            }
-
-            if (count > 0) {
-                //XXX GTK4 still need to figure out titles
-                // this.conversation_list_headerbar.subtitle = _("%s (%d)").printf(
-                //     this.conversation_list_headerbar.subtitle, count
-                // );
-            }
-        }
+        // Note the headerbar no longer shows the folder's unread
+        // count: since the GTK4 port the subtitle holds the account
+        // address, and the folder list already shows the count
     }
 
     private void update_conversation_actions(ConversationCount count) {
@@ -2052,7 +2029,6 @@ public class Application.MainWindow :
     }
 
     private inline void check_shift_event(uint keyval, bool is_key_press) {
-        // XXX GTK4 - check if this is still needed
         // FIXME: it's possible the user will press two shift keys.  We want
         // the shift key to report as released when they release ALL of them.
         // There doesn't seem to be an easy way to do this in Gdk.

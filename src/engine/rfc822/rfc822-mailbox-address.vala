@@ -525,8 +525,8 @@ public class Convey.RFC822.MailboxAddress :
         if (this.domain != "") {
             address = "%s@%s".printf(
                 address,
-                // XXX Need to punycode international domains.
-                this.domain
+                // Punycode international domains for the wire
+                GLib.Hostname.to_ascii(this.domain) ?? this.domain
             );
         }
         if (address == "") {

@@ -602,13 +602,16 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         // Ensure we share the same WebProcess with the last one
         // constructed if possible.
         if (viewer != null && viewer.previous_web_view != null) {
+            // Null cache dir means an ephemeral WebKit network
+            // session: remote content in messages doesn't leave
+            // cookies or a disk cache behind
             this.web_view = new ConversationWebView.with_related_view(
                 this.config,
-                null, /// XXX GTK4 is null okay here? I honestly think not ...
+                null,
                 viewer.previous_web_view
             );
         } else {
-            this.web_view = new ConversationWebView(this.config, null); /// XXX GTK4 is null okay here? I honestly think not ...
+            this.web_view = new ConversationWebView(this.config, null);
         }
         if (viewer != null) {
             viewer.previous_web_view = this.web_view;

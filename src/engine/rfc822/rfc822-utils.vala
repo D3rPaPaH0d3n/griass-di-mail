@@ -197,9 +197,9 @@ namespace Convey.RFC822.Utils {
             preview = Convey.HTML.html_to_text(text, false);
         }
 
-        // XXX really shouldn't have to call make_valid here but do so to
-        // avoid segfaults in the regex engine on invalid char data. See
-        // issue #186 for the proper fix.
+        // Call make_valid here to avoid segfaults in the regex
+        // engine on invalid char data. See issue #186 for the
+        // proper fix.
         return Convey.String.reduce_whitespace(preview.make_valid());
     }
 

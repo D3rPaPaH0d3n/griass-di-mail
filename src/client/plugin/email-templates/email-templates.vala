@@ -180,7 +180,7 @@ public class Plugin.EmailTemplates :
             }
         }
 
-        // XXX There is no way at the moment to determine when all
+        // There is no way at the moment to determine when all
         // local folders have been loaded, but since they are all done
         // in once batch, it's a safe bet that if we've seen the
         // Inbox, then the local folder set should contain a templates

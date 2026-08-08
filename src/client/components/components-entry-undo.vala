@@ -113,7 +113,6 @@ public class Components.EntryUndo : Convey.BaseObject {
     private GLib.SimpleActionGroup edit_actions = new GLib.SimpleActionGroup();
 
 
-    // XXX GTK4 maybe rename this to EditableUndo?
     public EntryUndo(Gtk.Editable target) {
         this.edit_actions.add_action_entries(EDIT_ACTIONS, this);
 

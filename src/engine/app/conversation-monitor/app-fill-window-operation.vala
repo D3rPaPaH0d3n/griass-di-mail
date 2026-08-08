@@ -62,9 +62,6 @@ private class Convey.App.FillWindowOperation : ConversationOperation {
             // be online and it looks like there and there might be
             // some more on the remote, so go see if there are any.
             //
-            // XXX Ideally this would be performed as an explicit user
-            // action
-
             // Load the max amount if going to the trouble of talking
             // to the remote.
             num_to_load = MAX_FILL_COUNT;

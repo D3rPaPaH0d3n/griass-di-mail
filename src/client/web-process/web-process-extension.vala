@@ -52,20 +52,8 @@ public class ConveyWebExtension : Object {
         WebKit.ScriptWorld.get_default().window_object_cleared.connect(on_window_object_cleared);
     }
 
-    //XXX GTK4 - it seems this is no longer possible?
-#if 0
-    private void on_console_message(WebKit.WebPage page,
-                                    WebKit.ConsoleMessage message) {
-        string source = message.get_source_id();
-        debug("Console: [%s] %s %s:%u: %s",
-              message.get_level().to_string().substring("WEBKIT_CONSOLE_MESSAGE_LEVEL_".length),
-              message.get_source().to_string().substring("WEBKIT_CONSOLE_MESSAGE_SOURCE_".length),
-              Convey.String.is_empty(source) ? "unknown" : source,
-              message.get_line(),
-              message.get_text()
-        );
-    }
-#endif
+    // Note WebKitGTK no longer exposes console messages to web
+    // process extensions, so they can't be logged here
 
     private bool on_send_request(WebKit.WebPage page,
                                  WebKit.URIRequest request,
@@ -133,8 +121,6 @@ public class ConveyWebExtension : Object {
 
     private void on_page_created(WebKit.WebProcessExtension extension,
                                  WebKit.WebPage page) {
-        //XXX GTK4
-        // page.console_message_sent.connect(on_console_message);
         page.send_request.connect(on_send_request);
         page.user_message_received.connect(on_page_message_received);
     }

@@ -398,8 +398,8 @@ public class Convey.Imap.ClientService : Convey.ClientService {
         // and wait for it to find out. Only do this if we haven't
         // seen a response from the server in a little while, however.
         //
-        // XXX This is problematic since the server may send untagged
-        // responses to the NOOP, but at least since it won't be in
+        // The server may send untagged responses to the NOOP that we
+        // then miss, but at least since it won't be in
         // the Selected state, we won't lose notifications of new
         // messages, etc, only folder status, which should eventually
         // get picked up by UpdateRemoteFolders. :/

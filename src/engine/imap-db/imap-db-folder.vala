@@ -1834,7 +1834,7 @@ private class Convey.ImapDB.Folder : BaseObject, Convey.ReferenceSemantics {
         StringBuilder builder = new StringBuilder("id, fields");
         foreach (Convey.Email.Field field in Convey.Email.Field.all()) {
             unowned string? append = null;
-            if (fields.is_all_set(fields)) {
+            if (fields.is_all_set(field)) {
                 switch (field) {
                     case Convey.Email.Field.DATE:
                         append = "date_field, date_time_t";
@@ -1876,13 +1876,9 @@ private class Convey.ImapDB.Folder : BaseObject, Convey.ReferenceSemantics {
                         append = "internaldate, internaldate_time_t, rfc822_size";
                     break;
 
-                    case NONE:
-                        // no-op
-                        break;
-
-                    case ENVELOPE:
-                    case ALL:
-                        // XXX hmm
+                    default:
+                        // NONE/ENVELOPE/ALL are never returned by
+                        // Field.all()
                         break;
                 }
             }

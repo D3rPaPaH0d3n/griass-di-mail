@@ -11,20 +11,6 @@ public class ConversationWebView : Components.WebView {
 
     private const string DECEPTIVE_LINK_CLICKED = "deceptive_link_clicked";
 
-    // Key codes we don't forward on to the super class on key press
-    // since we want to override them elsewhere, especially
-    // ConversationListBox.
-    private const uint[] BLACKLISTED_KEY_CODES = {
-        Gdk.Key.space,
-        Gdk.Key.KP_Space,
-        Gdk.Key.Up,
-        Gdk.Key.Down,
-        Gdk.Key.Page_Up,
-        Gdk.Key.Page_Down,
-        Gdk.Key.Home,
-        Gdk.Key.End
-    };
-
     /** Specifies the type of deceptive link text when clicked. */
     public enum DeceptiveText {
         // Keep this in sync with JS ConversationPageState
@@ -127,10 +113,10 @@ public class ConversationWebView : Components.WebView {
         // Remove existing highlights
         controller.search_finish();
 
-        // XXX WK2 doesn't deal with the multiple highlighting
-        // required by search folder matches, only single highlighting
-        // for a fine-like interface. For now, just highlight the
-        // first term
+        // Browser engines don't deal with the multiple
+        // highlighting required by search folder matches, only
+        // single highlighting for a find-like interface. For now,
+        // just highlight the first term
 
         uint found = 0;
         bool finished = false;
@@ -186,21 +172,6 @@ public class ConversationWebView : Components.WebView {
         get_find_controller().search_finish();
     }
 
-    private bool on_key_pressed(Gtk.EventControllerKey controller,
-                                uint keyval,
-                                uint keycode,
-                                Gdk.ModifierType state) {
-        //XXX GTK4 not sure what to do here
-        // WebView consumes a number of key presses for scrolling
-        // itself internally, but we want them to navigate around in
-        // ConversationListBox, so don't forward any on.
-        bool ret = Gdk.EVENT_PROPAGATE;
-        // if (!(((int) keyval) in BLACKLISTED_KEY_CODES)) {
-        //     ret = base.key_press_event(event);
-        // }
-        return ret;
-    }
-
     public override void measure(Gtk.Orientation orientation,
                                  int for_size,
                                  out int minimum,
@@ -212,7 +183,7 @@ public class ConversationWebView : Components.WebView {
             // space in the parent, not by the width of the web view.
             minimum = natural = 0;
         } else {
-            // XXX clamp height to something not too outrageous so we
+            // Clamp height to something not too outrageous so we
             // don't get an XServer error trying to allocate a massive
             // window.
             const uint max_pixels = 8 * 1024 * 1024;
@@ -234,10 +205,6 @@ public class ConversationWebView : Components.WebView {
         );
 
         this.notify["preferred-height"].connect(() => queue_resize());
-
-        Gtk.EventControllerKey controller = new Gtk.EventControllerKey();
-        controller.key_pressed.connect(on_key_pressed);
-        add_controller(controller);
 
         // The view is allocated its full content height so it never
         // scrolls internally. Drop WebKit's own scroll controller so

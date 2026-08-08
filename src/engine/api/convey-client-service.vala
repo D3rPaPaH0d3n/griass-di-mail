@@ -208,7 +208,7 @@ public abstract class Convey.ClientService : BaseObject, Logging.Source {
     public ErrorContext? last_error { get; private set; default = null; }
 
     /** {@inheritDoc} */
-    // XXX see GNOME/vala#119 for why this is necessary
+    // See GNOME/vala#119 for why this is necessary
     public virtual string logging_domain {
         get { return Logging.DOMAIN; }
     }

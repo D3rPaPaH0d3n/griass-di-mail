@@ -951,14 +951,15 @@ public class Accounts.Manager : GLib.Object {
 
     private void on_goa_account_added(Goa.Object account) {
         debug("GOA account added: %s", account.get_account().id);
-        // XXX get a cancellable for this.
+        // No cancellable: driven by external GOA events, not tied
+        // to any user-cancellable operation
         this.create_goa_account.begin(account, null);
     }
 
     private void on_goa_account_changed(Goa.Object account) {
         debug("GOA account changed: %s", account.get_account().id);
         AccountState? state = this.accounts.get(to_convey_id(account));
-        // XXX get a cancellable to these
+        // No cancellable, as per on_goa_account_added
         if (state != null) {
             // We already know about this account, so check that it is
             // still valid. If not, the account should be disabled,
@@ -971,8 +972,6 @@ public class Accounts.Manager : GLib.Object {
         } else {
             // We haven't created an account for this GOA account
             // before, so try doing so now.
-            //
-            // XXX get a cancellable for this.
             this.create_goa_account.begin(account, null);
         }
     }

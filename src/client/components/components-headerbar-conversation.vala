@@ -29,18 +29,6 @@ public class Components.ConversationHeaderBar : Adw.Bin {
     // Keep a strong ref when it's temporarily removed
     private Adw.HeaderBar? _conversation_header = null;
 
-    //XXX GTK4 need to figure out close buttons
-#if 0
-    public bool show_close_button {
-        get {
-            return this.conversation_header.show_close_button;
-        }
-        set {
-            this.conversation_header.show_close_button = value;
-        }
-    }
-#endif
-
     construct {
         this.bind_property(
             "find-open",
@@ -58,14 +46,10 @@ public class Components.ConversationHeaderBar : Adw.Bin {
             requires (header.parent == null) {
         this._conversation_header = null;
         header.hexpand = true;
-        //XXX GTK4 need to figure out close buttons
-        // header.show_close_button = this.conversation_header.show_close_button;
         this.child = header;
     }
 
     public void remove_conversation_header(Adw.HeaderBar header) {
-        //XXX GTK4 need to figure out close buttons
-        // this.conversation_header.show_close_button = header.show_close_button;
         this.child = this.conversation_header;
     }
 

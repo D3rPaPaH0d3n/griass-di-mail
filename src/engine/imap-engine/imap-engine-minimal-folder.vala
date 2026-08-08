@@ -326,9 +326,9 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
                 yield remote.send_noop(cancellable);
                 have_nooped = true;
             } catch (GLib.Error err) {
-                retries =- 1;
+                retries -= 1;
                 if (is_recoverable_failure(err) && retries > 0) {
-                    // XXX In theory we should be able to just retry
+                    // In theory we should be able to just retry
                     // this immediately, but there's a race between
                     // the old connection being disposed and another
                     // being obtained that can make this into an

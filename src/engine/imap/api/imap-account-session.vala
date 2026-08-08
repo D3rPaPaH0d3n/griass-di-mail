@@ -350,7 +350,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
         return new Logging.State(
             this,
             "%s, folder root: %s",
-            base.to_logging_state().format_message(), // XXX this is cruddy
+            base.to_logging_state().format_message(),
             this.root.to_string()
         );
     }

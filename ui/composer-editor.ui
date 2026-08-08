@@ -52,9 +52,7 @@
             <child>
               <object class="GtkActionBar">
                 <child>
-                  <!-- XXX GTK4 -->
                   <object class="AdwWrapBox" id="toolbar_box">
-                  <!-- <object class="ComponentsReflowBox" id="toolbar_box"> -->
                     <property name="child-spacing">6</property>
                     <property name="line-spacing">6</property>
                     <property name="hexpand">True</property>
@@ -204,6 +202,7 @@
                         <property name="tooltip_text" translatable="yes">Change font color</property>
                         <child>
                           <object class="GtkImage" id="font_color_icon">
+                            <property name="icon-name">font-color-symbolic</property>
                           </object>
                         </child>
                       </object>

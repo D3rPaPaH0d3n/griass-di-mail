@@ -793,7 +793,7 @@ public class Convey.Logging.Record : GLib.Object {
             str.append("]");
         }
 
-        // XXX Don't append source details for the moment because of
+        // Don't append source details for the moment because of
         // https://gitlab.gnome.org/GNOME/vala/issues/815
         bool disabled = true;
         if (!disabled && !this.old_log_api && this.source_filename != null) {

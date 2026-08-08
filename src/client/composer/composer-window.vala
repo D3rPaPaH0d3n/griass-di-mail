@@ -40,7 +40,8 @@ public class Composer.Window : Gtk.ApplicationWindow, Container {
         var group = new Gtk.WindowGroup();
         group.add_window(this);
 
-        // XXX Bug 764622
+        // Use set_property to avoid the Vala name clash, see
+        // b.g.o Bug 764622
         set_property("name", "ConveyComposerWindow");
 
         this.child = this.composer;
@@ -122,13 +123,14 @@ public class Composer.Window : Gtk.ApplicationWindow, Container {
         // don't check with the composer if it has already been
         // removed from the container.
         Widget? child = get_child() as Widget;
-        bool ret = Gdk.EVENT_PROPAGATE;
-        // XXX GTK4 - This is now an async method, I'm not sure we can still stop htis?
-        // if (child != null &&
-        //     child.conditional_close(true) == CANCELLED) {
-        //     ret = Gdk.EVENT_STOP;
-        // }
-        return ret;
+        if (child != null) {
+            // The composer prompt is async, so always inhibit the
+            // close here. Unless cancelled, the composer's close
+            // path calls Container.close(), destroying the window.
+            child.conditional_close.begin(true);
+            return Gdk.EVENT_STOP;
+        }
+        return Gdk.EVENT_PROPAGATE;
     }
 
 }

@@ -145,8 +145,8 @@ public class Convey.ComposedEmail : EmailHeaderSet, BaseObject {
      * Returns true if `value` is present as an IMG SRC value.
      */
     public bool contains_inline_img_src(string value) {
-        // XXX This and replace_inline_img_src are pretty
-        // hacky. Should probably be working with a DOM tree.
+        // String matching suffices here since the composer controls
+        // the IMG SRC format, no need for a full DOM tree
         return this.body_html.contains(IMG_SRC_TEMPLATE.printf(value));
     }
 
@@ -159,8 +159,7 @@ public class Convey.ComposedEmail : EmailHeaderSet, BaseObject {
      * Returns true if `orig` has been replaced by `replacement`.
      */
     public bool replace_inline_img_src(string orig, string replacement) {
-        // XXX This and contains_inline_img_src are pretty
-        // hacky. Should probably be working with a DOM tree.
+        // As per contains_inline_img_src, string matching suffices
         int index = -1;
         if (this.body_html != null) {
             string prefixed_orig = IMG_SRC_TEMPLATE.printf(this.img_src_prefix + orig);

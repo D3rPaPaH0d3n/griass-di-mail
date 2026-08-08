@@ -61,7 +61,6 @@ client_vala_sources = files(
   'components/components-placeholder-pane.vala',
   'components/components-preferences-dialog.vala',
   'components/components-problem-report-info-bar.vala',
-  'components/components-reflow-box.c',
   'components/components-search-bar.vala',
   'components/components-validator.vala',
   'components/components-validator-group.vala',

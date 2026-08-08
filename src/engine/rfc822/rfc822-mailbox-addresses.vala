@@ -115,9 +115,9 @@ public class Convey.RFC822.MailboxAddresses :
             if (mbox_addr != null) {
                 this.addrs.add(new MailboxAddress.from_gmime(mbox_addr));
             } else {
-                // XXX this is pretty bad - we just flatten the
-                // group's addresses into this list, merging lists and
-                // losing the group names.
+                // The engine has no group concept, so flatten the
+                // group's addresses into this list, merging lists
+                // and losing the group names.
                 var mbox_group = addr as GMime.InternetAddressGroup;
                 if (mbox_group != null) {
                     var group_list = mbox_group.get_members();

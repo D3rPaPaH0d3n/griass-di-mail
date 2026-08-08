@@ -23,7 +23,7 @@ public interface Plugin.NotificationExtension : PluginBase {
 }
 
 
-// XXX this should be an inner interface of NotificationExtension, but
+// Top-level rather than an inner interface of NotificationExtension since
 // GNOME/vala#918 prevents that.
 
 /**

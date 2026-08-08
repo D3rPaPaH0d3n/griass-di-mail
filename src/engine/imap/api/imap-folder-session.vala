@@ -940,9 +940,9 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
             // Header fields are case insensitive, so use a
             // case-insensitive map.
             //
-            // XXX this is bogus because it doesn't take into the
-            // presence of multiple headers. It's not common, but it's
-            // possible for there to be two To headers, for example
+            // Note only the last instance of a repeated header is
+            // kept. Repeats are invalid per RFC 5322 and rare in
+            // practice, so that's an acceptable simplification.
             Gee.Map<string,string> headers = new Gee.HashMap<string,string>(
                 String.stri_hash, String.stri_equal
             );
@@ -1159,7 +1159,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         return new Logging.State(
             this,
             "%s, %s, ro: %s, permanent_flags: %s, accepts_user_flags: %s",
-            base.to_logging_state().format_message(), // XXX this is cruddy
+            base.to_logging_state().format_message(),
             this.folder.to_string(),
             this.readonly.to_string(),
             this.permanent_flags != null

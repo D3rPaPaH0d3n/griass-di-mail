@@ -23,7 +23,7 @@ public interface Plugin.EmailExtension : PluginBase {
 }
 
 
-// XXX this should be an inner interface of EmailExtension, but
+// Top-level rather than an inner interface of EmailExtension since
 // GNOME/vala#918 prevents that.
 
 /**

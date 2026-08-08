@@ -110,11 +110,6 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
             ret = controller.forward(this.log_pane);
         }
 
-        //XXX GTK4 not sure how to handle this
-        // if (ret == Gdk.EVENT_PROPAGATE) {
-        //     ret = base.key_press_event(event);
-        // }
-
         if (ret == Gdk.EVENT_PROPAGATE &&
             !this.log_pane.search_mode_enabled) {
             // Nothing has handled the event yet, and search is not

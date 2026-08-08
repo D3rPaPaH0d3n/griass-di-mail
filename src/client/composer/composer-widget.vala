@@ -149,7 +149,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         }
     }
 
-    // XXX need separate composer close action in addition to the
+    // A separate composer close action is needed in addition to the
     // default window close action so we can bind Esc to it without
     // also binding the default window close action to Esc as
     // well. This could probably be fixed by pulling both the main
@@ -342,9 +342,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     [GtkChild] private unowned AddressesRow reply_to_row;
     [GtkChild] private unowned Adw.EntryRow subject_row;
 
-    private Spelling.Checker subject_spell_checker = new Spelling.Checker(null, null);
-    // XXX GTK4 probably needs to become a SourceBuffer
-    // private Gtk.Entry subject_spell_entry;
+    // No spell checking for the subject row: it went away with the
+    // GTK4 port since libspelling only supports text views, not
+    // entries
 
     [GtkChild] private unowned Gtk.Box attachments_box;
     [GtkChild] private unowned Gtk.DropTarget attachment_drop_target;
@@ -418,8 +418,6 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                     Application.Configuration config,
                     Application.AccountContext initial_account,
                     Convey.Folder? save_to = null) {
-        //XXX GTK4
-        // components_reflow_box_get_type();
         base_ref();
         this.application = application;
         this.config = config;
@@ -444,16 +442,6 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         this.bcc_row.changed.connect(on_envelope_changed);
         this.reply_to_row.changed.connect(on_envelope_changed);
 
-        //XXX GTK4
-        // this.subject_spell_entry = Gspell.Entry.get_from_gtk_entry(
-        //     this.subject_row.value
-        // );
-        config.settings.changed[
-            Application.Configuration.SPELL_CHECK_LANGUAGES
-        ].connect(() => {
-                update_subject_spell_checker();
-            });
-        update_subject_spell_checker();
 
         // The drop target declared in the .ui has no accepted types, so
         // GtkDropTarget never negotiates file data. Configure it to
@@ -1085,38 +1073,26 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 this.context_type = REPLY_ALL;
             }
 
-            //XXX GTK4
-            // if (!this.to_row.addresses.contains_all(to_addresses)) {
-            //     this.to_row.value.set_modified();
-            // }
-            // if (!this.cc_row.addresses.contains_all(cc_addresses)) {
-            //     this.cc_row.value.set_modified();
-            // }
-            // if (this.bcc != "") {
-            //     this.bcc_row.value.set_modified();
-            // }
+            bool cc_modified =
+                !this.cc_row.addresses.contains_all(cc_addresses);
+            bool bcc_modified = this.bcc != "";
+            bool reply_to_modified = this.reply_to != "";
 
-            // We're in compact inline mode, but there are modified email
-            // addresses, so set us to use plain inline mode instead so
-            // the modified addresses can be seen. If there are CC
-            //XXX GTK4
-            // if (this.current_mode == INLINE_COMPACT && (
-            //         // this.to_row.value.is_modified ||
-            //         this.cc_row.value.is_modified ||
-            //         this.bcc_row.value.is_modified ||
-            //         this.reply_to_row.value.is_modified)) {
-            //     set_mode(INLINE);
-            // }
+            // We're in compact inline mode, but there are modified
+            // email addresses, so set us to use plain inline mode
+            // instead so the modified addresses can be seen.
+            if (this.current_mode == INLINE_COMPACT &&
+                (cc_modified || bcc_modified || reply_to_modified)) {
+                set_mode(INLINE);
+            }
 
-            // If there's a modified header that would normally be hidden,
-            // show full fields.
-            //XXX GTK4
-            // if (this.bcc_row.value.is_modified ||
-            //     this.reply_to_row.value.is_modified) {
-            //     this.actions.change_action_state(
-            //         ACTION_SHOW_EXTENDED_HEADERS, true
-            //     );
-            // }
+            // If there's a modified header that would normally be
+            // hidden, show full fields.
+            if (bcc_modified || reply_to_modified) {
+                this.actions.change_action_state(
+                    ACTION_SHOW_EXTENDED_HEADERS, true
+                );
+            }
         }
     }
 
@@ -1357,10 +1333,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     [GtkCallback]
     private bool on_key_pressed(uint keyval, uint keycode, Gdk.ModifierType state) {
-        // XXX GTK4 check if this actually prevents the default handler from running
-        // Override the method since key-press-event is run last, and
-        // we want this behaviour to take precedence over the default
-        // key handling
+        // The controller runs in the capture phase so this takes
+        // precedence over the default key handling, in particular
+        // the web view's
         return check_send_on_return(keyval, state);
     }
 
@@ -2461,52 +2436,6 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             sig = "";
         }
         this.editor.body.update_signature(Convey.HTML.smart_escape(sig));
-    }
-
-    private void update_subject_spell_checker() {
-        Spelling.Language? lang = null;
-        string[] langs = this.config.get_spell_check_languages();
-        //XXX GTK4
-#if 0
-        if (langs.length == 1) {
-            lang = Gspell.Language.lookup(langs[0]);
-        } else {
-            // Since GSpell doesn't support multiple languages (see
-            // <https://gitlab.gnome.org/GNOME/gspell/issues/5>) and
-            // we don't support spell checker language priority, use
-            // the first matching most preferred language, if any.
-            foreach (string pref in Util.I18n.get_user_preferred_languages()) {
-                if (pref in langs) {
-                    lang = Gspell.Language.lookup(pref);
-                    if (lang != null) {
-                        break;
-                    }
-                }
-            }
-
-            if (lang == null) {
-                // No preferred lang found, so just use first
-                // supported matching language
-                foreach (string pref in langs) {
-                    lang = Gspell.Language.lookup(pref);
-                    if (lang != null) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        var buffer = Gspell.EntryBuffer.get_from_gtk_entry_buffer(
-            this.subject_row.value.buffer
-        );
-        Spelling.Checker checker = null;
-        if (lang != null) {
-            checker = this.subject_spell_checker;
-            checker.language = lang;
-        }
-        this.subject_spell_entry.inline_spell_checking = (checker != null);
-        buffer.spell_checker = checker;
-#endif
     }
 
     private void on_draft_id_changed() {

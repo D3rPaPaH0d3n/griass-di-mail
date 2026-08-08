@@ -252,8 +252,6 @@ private class Convey.ImapDB.Attachment : Convey.Attachment {
         stmt.exec();
     }
 
-    // XXX this really should be a member of some internal
-    // ImapDB.Email class.
     internal static void add_attachments(Db.Connection cx,
                                          GLib.File attachments_path,
                                          Convey.Email email,

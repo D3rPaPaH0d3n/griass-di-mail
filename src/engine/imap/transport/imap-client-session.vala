@@ -1856,7 +1856,7 @@ public class Convey.Imap.ClientSession : BaseObject, Logging.Source {
     }
 
     private void on_received_status_response(StatusResponse status_response) {
-        // XXX Need to ignore emitted IDLE status responses. They are
+        // Ignore emitted IDLE status responses. They are
         // emitted by ClientConnection because it doesn't make any
         // sense not to, and so they get logged by that class's
         // default handlers, but because they are snooped on here (and

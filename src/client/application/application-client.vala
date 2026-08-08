@@ -53,7 +53,6 @@ public class Application.Client : Adw.Application {
     private const string OPTION_LOG_SQL = "log-sql";
     private const string OPTION_NEW_WINDOW = "new-window";
     private const string OPTION_QUIT = "quit";
-    private const string OPTION_REVOKE_CERTS = "revoke-certs";
 
     private const ActionEntry[] ACTION_ENTRIES = {
         { Action.Application.ABOUT, on_activate_about},
@@ -107,9 +106,6 @@ public class Application.Client : Adw.Application {
           N_("Perform a graceful quit"), null },
         { OPTION_NEW_WINDOW, 'n', 0, GLib.OptionArg.NONE, null,
           N_("Open a new window"), null },
-        { OPTION_REVOKE_CERTS, 0, 0, GLib.OptionArg.NONE, null,
-          /// Command line option
-          N_("Revoke all pinned TLS server certificates"), null },
         { OPTION_VERSION, 'v', 0, GLib.OptionArg.NONE, null,
           /// Command line option
           N_("Display program version"), null },
@@ -374,7 +370,8 @@ public class Application.Client : Adw.Application {
         add_edit_accelerators(Action.Edit.REDO, { "<Ctrl><Shift>Z" });
         add_edit_accelerators(Action.Edit.UNDO, { "<Ctrl>Z" });
 
-        //XXX GTK4 key shortcut themes aren't supported yet: https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
+        // Disabled since GTK4 key shortcut themes aren't supported yet:
+        // https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
 #if 0
         // Load Convey CSS for single key shortcuts
         load_css(this.single_key_shortcuts,
@@ -1075,7 +1072,6 @@ public class Application.Client : Adw.Application {
 
         this.config.enable_debug = options.contains(OPTION_DEBUG);
         this.config.enable_inspector = options.contains(OPTION_INSPECTOR);
-        this.config.revoke_certs = options.contains(OPTION_REVOKE_CERTS);
 
         if (!activated) {
             activate();
@@ -1090,7 +1086,8 @@ public class Application.Client : Adw.Application {
         set_accels_for_action("app." + action, accelerators);
     }
 
-        //XXX GTK4 key shortcut themes aren't supported yet: https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
+        // Disabled since GTK4 key shortcut themes aren't supported yet:
+        // https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
 #if 0
     private void update_single_key_shortcuts() {
         if (this.config.single_key_shortcuts) {
@@ -1256,7 +1253,8 @@ public class Application.Client : Adw.Application {
         }
     }
 
-    //XXX GTK4 key shortcut themes aren't supported yet: https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
+    // Disabled since GTK4 key shortcut themes aren't supported yet:
+    // https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
 #if 0
     private void on_single_key_shortcuts_toggled() {
         update_single_key_shortcuts();

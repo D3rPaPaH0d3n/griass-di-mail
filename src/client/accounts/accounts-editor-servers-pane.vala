@@ -83,8 +83,8 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         this.save_drafts_row.notify["active"].connect(enable_apply);
         this.save_sent_row.notify["active"].connect(enable_apply);
 
-        // XXX GMail and Outlook auto-save sent mail so don't include save sent
-        // option, but we shouldn't be hard-coding visible rows like this
+        // GMail and Outlook auto-save sent mail so don't include the
+        // save sent option for them
         this.save_sent_row.visible = (account.service_provider == OTHER);
 
         // Misc plumbing
@@ -112,7 +112,15 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                             try {
                                 accounts.show_goa_account.end(res);
                             } catch (GLib.Error err) {
-                                // XXX display an error to the user
+                                this.editor.add_toast(
+                                    new Adw.Toast(
+                                        // Translators: In-app
+                                        // notification label, when
+                                        // the GNOME Online Accounts
+                                        // panel could not be shown
+                                        _("Unable to open GNOME Online Accounts")
+                                    )
+                                );
                                 debug(
                                     "Failed to show GOA account \"%s\": %s",
                                     account.id,

@@ -921,10 +921,9 @@ internal class Application.Controller :
 
     /** Saves the email in a composer as a draft on the server. */
     internal async void save_composed_email(Composer.Widget composer) {
-        // XXX this doesn't actually do what it says on the tin, since
-        // the composer's draft manager is already saving drafts on
-        // the server. Until we get that saving local-only, this will
-        // only be around for pushing the composer onto the undo stack
+        // The composer's draft manager is already saving drafts on
+        // the server, so until that saves local-only, this is
+        // mostly here to push the composer onto the undo stack
         AccountContext context = composer.sender_context;
         try {
             yield context.commands.execute(
@@ -1276,10 +1275,6 @@ internal class Application.Controller :
                                              Convey.ServiceInformation service,
                                              Convey.Endpoint endpoint,
                                              GLib.TlsConnection cx) {
-        if (this.application.config.revoke_certs) {
-            // XXX
-        }
-
         context.tls_validation_prompting = true;
         try {
             yield this.certificate_manager.prompt_pin_certificate(

@@ -70,8 +70,8 @@ public interface Plugin.Email :
 }
 
 
-// XXX this should be an inner interface of Email, but GNOME/vala#918
-// prevents that.
+// Top-level rather than an inner interface of Email since
+// GNOME/vala#918 prevents that.
 
 /**
  * An object representing an email's identifier.

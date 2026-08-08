@@ -456,7 +456,7 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
         // ListFlags.OLDEST_TO_NEWEST is *not* specified to get all
         // messages listed.
         //
-        // XXX This is expensive, but should only usually happen once
+        // This is expensive, but should only usually happen once
         // per folder - at the end of a full sync.
         yield this.folder.list_email_by_id_async(
             null,

@@ -225,43 +225,30 @@ public class Components.InfoBar : Gtk.Box {
 
             this._message_type = message_type;
 
-            // XXX GTK4
-#if 0
-            var atk_obj = this.get_accessible();
-            if (atk_obj is Atk.Object) {
-                string name = null;
+            string? name = null;
+            switch (message_type) {
+                case Gtk.MessageType.INFO:
+                    name = _("Information");
+                    break;
 
-                atk_obj.set_role(Atk.Role.INFO_BAR);
+                case Gtk.MessageType.QUESTION:
+                    name = _("Question");
+                    break;
 
-                switch (message_type) {
-                    case Gtk.MessageType.INFO:
-                        name = _("Information");
-                        break;
+                case Gtk.MessageType.WARNING:
+                    name = _("Warning");
+                    break;
 
-                    case Gtk.MessageType.QUESTION:
-                        name = _("Question");
-                        break;
+                case Gtk.MessageType.ERROR:
+                    name = _("Error");
+                    break;
 
-                    case Gtk.MessageType.WARNING:
-                        name = _("Warning");
-                        break;
-
-                    case Gtk.MessageType.ERROR:
-                        name = _("Error");
-                        break;
-
-                    case Gtk.MessageType.OTHER:
-                        break;
-
-                    default:
-                        warning("Unknown GtkMessageType %u", message_type);
-                        break;
-                }
-
-                if (name != null)
-                    atk_obj.set_name(name);
+                default:
+                    break;
             }
-    #endif
+            if (name != null) {
+                update_property(Gtk.AccessibleProperty.LABEL, name, -1);
+            }
 
             if (type_class[this._message_type] != null)
                 add_css_class(type_class[this._message_type]);

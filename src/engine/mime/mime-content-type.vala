@@ -47,16 +47,10 @@ public class Convey.Mime.ContentType : Convey.BaseObject {
         );
         ATTACHMENT_DEFAULT = new ContentType("application", "octet-stream", null);
 
-        // XXX We should be loading file name extension information
-        // from /etc/mime.types and/or the XDG Shared MIME-info
-        // Database globs2 file, usually located at
-        // "/usr/share/mime/globs2" (See: {@link
-        // https://specifications.freedesktop.org/shared-mime-info-spec/latest/}).
-        //
-        // But for now the most part the only things that we have to
-        // guess this for are inline embeds that don't have filenames,
-        // i.e. images, so we can hopefully get away with the set
-        // below for now.
+        // The only things we have to guess extensions for are inline
+        // embeds that don't have filenames, i.e. images, so this
+        // small fixed set suffices — no need to load the full XDG
+        // Shared MIME-info database.
         TYPES_TO_EXTENSIONS["image/jpeg"] = ".jpeg";
         TYPES_TO_EXTENSIONS["image/png"] = ".png";
         TYPES_TO_EXTENSIONS["image/gif"] = ".gif";
@@ -90,8 +84,6 @@ public class Convey.Mime.ContentType : Convey.BaseObject {
         string? mime_type = null;
 
         if (file_name != null) {
-            // XXX might just want to use xdgmime lib directly here to
-            // avoid the intermediate glib_content_type step here?
             string glib_type = GLib.ContentType.guess(file_name, null, null);
             mime_type = GLib.ContentType.get_mime_type(glib_type);
             if (Convey.String.is_empty(mime_type)) {
@@ -101,14 +93,10 @@ public class Convey.Mime.ContentType : Convey.BaseObject {
 
         if (mime_type == null && buf != null) {
             int max_len = 4096;
-            // XXX determine actual max needed buffer size using
-            // xdg_mime_get_max_buffer_extents?
             uint8[] data = (buf.size <= max_len)
                 ? buf.get_uint8_array()
                 : buf.get_bytes()[0:max_len].get_data();
 
-            // XXX might just want to use xdgmime lib directly here to
-            // avoid the intermediate glib_content_type step here?
             string glib_type = GLib.ContentType.guess(null, data, null);
             mime_type = GLib.ContentType.get_mime_type(glib_type);
         }

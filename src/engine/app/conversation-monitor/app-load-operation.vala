@@ -28,7 +28,7 @@ private class Convey.App.LoadOperation : ConversationOperation {
         Convey.EmailIdentifier? lowest_known = this.monitor.window_lowest;
         if (lowest_known == null ||
             this.to_load.natural_sort_comparator(lowest_known) < 0) {
-            // XXX the further back to_load is, the more expensive
+            // Note the further back to_load is, the more expensive
             // this will be.
             debug("Loading messages into %s",
                   this.monitor.base_folder.to_string());

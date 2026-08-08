@@ -49,10 +49,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
     // Offset from the top of the list box which emails views will
     // scrolled to, so the user can see there are additional messages
-    // above it. XXX This is currently approx 0.5 times the height of
-    // a collapsed ConversationEmail, it should probably calculated
-    // somehow so that differences user's font size are taken into
-    // account.
+    // above it. This is approx 0.5 times the height of a collapsed
+    // ConversationEmail at default font size; it doesn't account for
+    // the user's font size.
     private const int EMAIL_TOP_OFFSET = 32;
 
     // Amount of time to wait after the user took some action that may
@@ -498,33 +497,21 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         add_shortcut(new Gtk.Shortcut(Gtk.ShortcutTrigger.parse_string("<Shift>Space"),
                      new Gtk.NamedAction("focus-prev")));
 
-        //XXX GTK4
-#if 0
-        Gtk.BindingEntry.add_signal(
-            bindings, Gdk.Key.Up, 0, "scroll", 1,
-            typeof(Gtk.ScrollType), Gtk.ScrollType.STEP_UP
-        );
-        Gtk.BindingEntry.add_signal(
-            bindings, Gdk.Key.Down, 0, "scroll", 1,
-            typeof(Gtk.ScrollType), Gtk.ScrollType.STEP_DOWN
-        );
-        Gtk.BindingEntry.add_signal(
-            bindings, Gdk.Key.Page_Up, 0, "scroll", 1,
-            typeof(Gtk.ScrollType), Gtk.ScrollType.PAGE_UP
-        );
-        Gtk.BindingEntry.add_signal(
-            bindings, Gdk.Key.Page_Down, 0, "scroll", 1,
-            typeof(Gtk.ScrollType), Gtk.ScrollType.PAGE_DOWN
-        );
-        Gtk.BindingEntry.add_signal(
-            bindings, Gdk.Key.Home, 0, "scroll", 1,
-            typeof(Gtk.ScrollType), Gtk.ScrollType.START
-        );
-        Gtk.BindingEntry.add_signal(
-            bindings, Gdk.Key.End, 0, "scroll", 1,
-            typeof(Gtk.ScrollType), Gtk.ScrollType.END
-        );
-#endif
+        // Keyboard bindings for the "scroll" action signal
+        string[] triggers = {
+            "Up", "Down", "Page_Up", "Page_Down", "Home", "End"
+        };
+        Gtk.ScrollType[] types = {
+            STEP_UP, STEP_DOWN, PAGE_UP, PAGE_DOWN, START, END
+        };
+        for (int i = 0; i < triggers.length; i++) {
+            var shortcut = new Gtk.Shortcut(
+                Gtk.ShortcutTrigger.parse_string(triggers[i]),
+                new Gtk.SignalAction("scroll")
+            );
+            shortcut.set_arguments(new GLib.Variant("(i)", types[i]));
+            add_shortcut(shortcut);
+        }
     }
 
     private static int on_sort(Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
@@ -944,10 +931,10 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         ConversationEmail? view = this.body_selected_view;
         if (view != null) {
             if (view.is_collapsed) {
-                // A collapsed email can't be visible
+                // A collapsed email can't be visible. Note this
+                // doesn't check whether the selected text in an
+                // expanded email is actually on screen.
                 view = null;
-            } else {
-                // XXX check the selected text is actually on screen
             }
         }
         return view;
@@ -1126,7 +1113,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         this.listbox.set_sort_func(on_sort);
 
         if (query != null) {
-            // XXX this sucks for large conversations because it can take
+            // Note for large conversations it can take
             // a long time for the load to complete and hence for
             // matches to show up.
             yield this.search.highlight_matching_email(
@@ -1212,17 +1199,6 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         view.notify["message-body-state"].connect(
             on_message_body_state_notify
         );
-
-        ConversationMessage conversation_message = view.primary_message;
-        // XXX GTK4 - I think we can do this separately
-#if 0
-        conversation_message.body_container.button_release_event.connect_after((event) => {
-                // Consume all non-consumed clicks so the row is not
-                // inadvertently activated after clicking on the
-                // email body.
-                return true;
-            });
-#endif
 
         EmailRow row = new EmailRow(view);
         row.email_loaded.connect((e) => { email_loaded(e); });
@@ -1360,9 +1336,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
     /** Determines if an email should be considered to be a draft. */
     private inline bool is_draft(Convey.Email email) {
-        // XXX should be able to edit draft emails from any
-        // conversation. This test should be more like "is in drafts
-        // folder"
+        // Only emails in the drafts folder itself are editable;
+        // ideally this would be more like "is in drafts folder" so
+        // drafts could be edited from any conversation
         Convey.Folder.SpecialUse use = this.conversation.base_folder.used_as;
         bool is_in_folder = this.conversation.is_in_base_folder(email.id);
 

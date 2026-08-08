@@ -135,8 +135,6 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
             // Oh well
         }
 
-        // XXX work out what our public IP address is somehow and use
-        // that in preference to the originator's domain
         var from = composed.from;
         var domain = from != null && !from.is_empty
             ? from[0].domain

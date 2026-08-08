@@ -4,7 +4,6 @@
  * (version 2.1 or later).  See the COPYING file in this distribution.
  */
 
-//XXX GTK4 rename headerbar to header in files too
 [GtkTemplate (ui = "/net/donnybeelo/Convey/composer-headerbar.ui")]
 public class Composer.Header : Adw.Bin {
 
@@ -84,9 +83,8 @@ public class Composer.Header : Adw.Bin {
             break;
         }
 
-        //XXX GTK4 still need to figure out close buttons
-        // this.show_close_button = (mode == Widget.PresentationMode.PANED
-        //                           && this.config.desktop_environment != UNITY);
+        // Title buttons are managed by Composer.Widget and
+        // Composer.Window when attaching or detaching the composer
     }
 
     private void set_attached(bool is_attached) {

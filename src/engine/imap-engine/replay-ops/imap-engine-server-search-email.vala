@@ -25,8 +25,8 @@ private class Convey.ImapEngine.ServerSearchEmail : Convey.ImapEngine.AbstractLi
         this.criteria = criteria;
     }
 
-    // XXX Shouldn't need to override this, but AbstractListEmail
-    // won't let us declare it as remote-only
+    // Overridden as a no-op since AbstractListEmail won't let us
+    // declare this op as remote-only
     public override async ReplayOperation.Status replay_local_async()
         throws GLib.Error {
         return ReplayOperation.Status.CONTINUE;

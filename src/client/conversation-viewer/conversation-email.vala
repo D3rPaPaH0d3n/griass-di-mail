@@ -623,8 +623,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
     private async void fetch_remote_body() {
         if (is_online()) {
-            // XXX Need proper progress reporting here, rather than just
-            // doing a pulse
+            // No proper progress reporting here, just a pulse
             if (!this.body_loading_timeout.is_running) {
                 this.body_loading_timeout.start();
             }
@@ -852,7 +851,6 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     }
 
     private void activate_email_action(string name) {
-        //XXX GTK4 check if this works still
         string action_name = ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." + name;
         activate_action_variant(action_name, this.email.id.to_variant());
     }
@@ -889,7 +887,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                     main.attachments.save_attachment.begin(
                         attachment,
                         alt_text,
-                        null // XXX no cancellable yet, need UI for it
+                        null // no cancellable yet, needs UI for it
                     );
                 } catch (GLib.Error err) {
                     debug("Could not get attachment \"%s\": %s", cid, err.message);
@@ -907,7 +905,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                 main.attachments.save_buffer.begin(
                     display_name,
                     content,
-                    null // XXX no cancellable yet, need UI for it
+                    null // no cancellable yet, needs UI for it
                 );
             }
         }

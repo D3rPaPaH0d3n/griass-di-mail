@@ -74,8 +74,6 @@ public class Components.AttachmentPane : Gtk.Box {
             );
 
             if (Convey.String.is_empty(file_name)) {
-                // XXX Check for unknown types here and try to guess
-                // using attachment data.
                 file_name = file_desc;
                 file_desc = file_size;
             } else {
@@ -96,8 +94,8 @@ public class Components.AttachmentPane : Gtk.Box {
 
             Gdk.Paintable? paintable = null;
 
-            // XXX We need to hook up to GtkWidget::style-set and
-            // reload the icon when the theme changes.
+            // Note the icon is not reloaded if the icon theme
+            // changes while the pane is showing.
 
             int window_scale = get_scale_factor();
             try {
@@ -173,7 +171,6 @@ public class Components.AttachmentPane : Gtk.Box {
         this.manager = manager;
 
         this.attachments_view = new Gtk.FlowBox();
-        //XXX GTK4 need to check if shortcuts still work
         this.attachments_view.child_activated.connect(on_child_activated);
         this.attachments_view.selected_children_changed.connect(on_selected_changed);
         Gtk.GestureClick gesture = new Gtk.GestureClick();
@@ -450,8 +447,6 @@ public class Components.AttachmentPane : Gtk.Box {
             if (child != null) {
                 Gdk.Rectangle rect = { (int) x, (int) y, 1, 1 };
                 show_popup((View) child.get_child(), rect);
-                //XXX GTK4?
-                // ret = Gdk.EVENT_STOP;
             }
         }
     }

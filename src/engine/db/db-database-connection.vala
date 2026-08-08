@@ -201,10 +201,9 @@ public class Convey.Db.DatabaseConnection : Context, Connection {
         } catch (GLib.Error err) {
             if (!(err is GLib.IOError.CANCELLED)) {
                 debug("Connection.exec_transaction: transaction threw error: %s", err.message);
-                // XXX txn logs really should be passed up with the
-                // error, or made available after the transaction, but
+                // Txn logs can't be passed up with the error since
                 // neither GLib's error model nor Db's model allows
-                // that
+                // that, so dump them to debug here instead
                 foreach (var statement in txn_cx.transaction_log) {
                     debug(" - %s", statement);
                 }
@@ -222,10 +221,8 @@ public class Convey.Db.DatabaseConnection : Context, Connection {
             debug("Connection.exec_transaction: Unable to %s transaction: %s", outcome.to_string(),
                 err.message);
             if (caught_err == null) {
-                // XXX as per above, txn logs really should be passed up
-                // with the error, or made available after the
-                // transaction, but neither GLib's error model nor Db's
-                // model allows that
+                // As per above, txn logs can't be passed up with the
+                // error, so dump them to debug here instead
                 foreach (var statement in txn_cx.transaction_log) {
                     debug(" - %s", statement);
                 }

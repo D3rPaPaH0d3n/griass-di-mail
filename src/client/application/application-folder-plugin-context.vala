@@ -16,6 +16,8 @@ internal class Application.FolderPluginContext :
     private PluginManager.PluginGlobals globals;
     private PluginManager.PluginContext plugin;
     private Plugin.FolderStore folders;
+    private Gee.HashMultiMap<Plugin.InfoBar,Components.InfoBar> info_bars =
+        new Gee.HashMultiMap<Plugin.InfoBar,Components.InfoBar>();
 
 
     internal FolderPluginContext(Client application,
@@ -39,13 +41,13 @@ internal class Application.FolderPluginContext :
         if (folder != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.selected_folder == folder) {
-                    main.conversation_list_info_bars.add(
-                        new Components.InfoBar.for_plugin(
-                            info_bar,
-                            this.plugin.action_group_name,
-                            (int) priority
-                        )
+                    var bar = new Components.InfoBar.for_plugin(
+                        info_bar,
+                        this.plugin.action_group_name,
+                        (int) priority
                     );
+                    this.info_bars.set(info_bar, bar);
+                    main.conversation_list_info_bars.add(bar);
                 }
             }
         }
@@ -53,17 +55,14 @@ internal class Application.FolderPluginContext :
 
     public void remove_folder_info_bar(Plugin.Folder selected,
                                        Plugin.InfoBar info_bar) {
-        Convey.Folder? folder = this.globals.folders.to_engine_folder(selected);
-        if (folder != null) {
-            foreach (MainWindow main in this.application.get_main_windows()) {
-                if (main.selected_folder == folder) {
-                    // XXX implement this
-                    //main.conversation_list_info_bars.remove(
-                    //    XXX
-                    //);
-                }
+        // Removing a non-member is a no-op, so just remove every
+        // bar created for info_bar from every window
+        foreach (MainWindow main in this.application.get_main_windows()) {
+            foreach (var bar in this.info_bars.get(info_bar)) {
+                main.conversation_list_info_bars.remove(bar);
             }
         }
+        this.info_bars.remove_all(info_bar);
     }
 
     public void register_folder_used_as(Plugin.Folder target,

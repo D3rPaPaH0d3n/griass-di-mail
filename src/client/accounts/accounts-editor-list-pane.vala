@@ -235,7 +235,14 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
                     try {
                         manager.show_goa_account.end(res);
                     } catch (GLib.Error err) {
-                        // XXX display an error to the user
+                        this.editor.add_toast(
+                            new Adw.Toast(
+                                // Translators: In-app notification
+                                // label, when the GNOME Online
+                                // Accounts panel could not be shown
+                                _("Unable to open GNOME Online Accounts")
+                            )
+                        );
                         debug(
                             "Failed to show GOA account \"%s\": %s",
                             account_row.account.id,

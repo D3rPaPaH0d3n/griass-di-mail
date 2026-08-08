@@ -160,11 +160,9 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         // somewhere
         this.queue_operation(new StartServices(this, this.smtp.outbox));
 
-        // Kick off a background update of the search table.
-        //
-        // XXX since this hammers the database, this is an example of
-        // an operation for which we need an engine-wide operation
-        // queue, not just an account-wide queue.
+        // Kick off a background update of the search table. Note
+        // this hammers the database, and being account-wide the
+        // queue can't schedule it behind other accounts' operations.
         this.queue_operation(new PopulateSearchTable(this));
     }
 

@@ -93,8 +93,12 @@ public class Application.AttachmentManager : GLib.Object {
         File? destination = null;
         try {
             destination = yield dialog.save(this.parent, cancellable);
+        } catch (Gtk.DialogError.DISMISSED err) {
+            // User cancelled the dialog
+            return false;
+        } catch (GLib.IOError.CANCELLED err) {
+            return false;
         } catch (Error err) {
-            //XXX GTK4 check if cancelled is accidentally caught here as well
             warning("Couldn't select file to save attachment: %s", err.message);
             return false;
         }
@@ -110,8 +114,12 @@ public class Application.AttachmentManager : GLib.Object {
         File? destination_dir = null;
         try {
             destination_dir = yield dialog.select_folder(this.parent, cancellable);
+        } catch (Gtk.DialogError.DISMISSED err) {
+            // User cancelled the dialog
+            return false;
+        } catch (GLib.IOError.CANCELLED err) {
+            return false;
         } catch (Error err) {
-            //XXX GTK4 check if cancelled is accidentally caught here as well
             warning("Couldn't select folder for saving attachments: %s", err.message);
             return false;
         }

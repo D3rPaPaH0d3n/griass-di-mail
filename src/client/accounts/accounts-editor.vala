@@ -133,7 +133,6 @@ public class Accounts.Editor : Adw.Dialog {
         } catch (Application.CertificateManagerError.UNTRUSTED err) {
             throw err;
         } catch (Application.CertificateManagerError.STORE_FAILED err) {
-            // XXX show error info bar rather than a notification?
             add_toast(
                 new Adw.Toast(
                     // Translators: In-app notification label, when

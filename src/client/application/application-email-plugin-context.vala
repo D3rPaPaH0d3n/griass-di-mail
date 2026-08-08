@@ -16,6 +16,8 @@ internal class Application.EmailPluginContext :
     private PluginManager.PluginGlobals globals;
     private PluginManager.PluginContext plugin;
     private Plugin.EmailStore email;
+    private Gee.HashMultiMap<Plugin.InfoBar,Components.InfoBar> info_bars =
+        new Gee.HashMultiMap<Plugin.InfoBar,Components.InfoBar>();
 
 
     internal EmailPluginContext(Client application,
@@ -39,13 +41,14 @@ internal class Application.EmailPluginContext :
         if (id != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.conversation_viewer.current_list != null) {
+                    var bar = new Components.InfoBar.for_plugin(
+                        info_bar,
+                        this.plugin.action_group_name,
+                        (int) priority
+                    );
+                    this.info_bars.set(info_bar, bar);
                     main.conversation_viewer.current_list.add_email_info_bar(
-                        id,
-                        new Components.InfoBar.for_plugin(
-                            info_bar,
-                            this.plugin.action_group_name,
-                            (int) priority
-                        )
+                        id, bar
                     );
                 }
             }
@@ -58,13 +61,16 @@ internal class Application.EmailPluginContext :
         if (id != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.conversation_viewer.current_list != null) {
-                    // XXX implement this
-                    //main.conversation_viewer.current_list.remove_email_info_bar(
-                    //    id,
-                    //    XXX
-                    //);
+                    // Removing a non-member is a no-op, so just
+                    // remove every bar created for info_bar
+                    foreach (var bar in this.info_bars.get(info_bar)) {
+                        main.conversation_viewer.current_list.remove_email_info_bar(
+                            id, bar
+                        );
+                    }
                 }
             }
+            this.info_bars.remove_all(info_bar);
         }
     }
 

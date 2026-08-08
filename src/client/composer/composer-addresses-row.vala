@@ -9,8 +9,6 @@
 /**
  * A widget that allows a user to create a list of email addresses
  * (for example a "CC" row).
- *
- *XXX we need to put an EntryUndo back here
  */
 public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
 
@@ -35,14 +33,14 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
     public bool is_valid { get; private set; default = false; }
 
     public bool is_empty {
-        //XXX could this be this.text.length != 0 insteaD?
-        get { return this.addresses.is_empty; }
+        // Check the text rather than the parsed addresses so that
+        // typed-but-invalid text doesn't count as empty
+        get { return Convey.String.is_empty_or_whitespace(this.text); }
     }
 
     // Text between the start of the entry or end of the previous email
     // address and the current position of the cursor, if any.
     // This will be used for searching a match in the contact list.
-    //XXX maybe replace this with a filter?
     public string search_key {
         get { return this._search_key; }
         set {
@@ -65,7 +63,10 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
 
     private unowned AddressSuggestionPopover popover;
 
+    private Components.EntryUndo undo;
+
     construct {
+        this.undo = new Components.EntryUndo(this);
         this.changed.connect(on_changed);
 
         var popover = new AddressSuggestionPopover();
@@ -204,7 +205,6 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
         string address = this.text.substring(start_idx);
         this.addresses_raw.add(address);
 
-        // XXX we probably want to do this with a timeout
         // Update current key
         this.search_key = current_key;
     }
@@ -224,7 +224,6 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
             }
         }
 
-        //XXX we should make this conditional
         notify_property("addresses");
         notify_property("is-valid");
         notify_property("is-empty");
