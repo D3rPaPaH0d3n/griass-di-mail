@@ -6,7 +6,7 @@
    version="1.1"
    id="svg31"
    sodipodi:docname="net.donnybeelo.Convey.Full.svg"
-   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
    inkscape:export-filename="/home/dan/Desktop/convey.png"
    inkscape:export-xdpi="147"
    inkscape:export-ydpi="147"
@@ -183,36 +183,36 @@
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient15"
-       id="linearGradient22"
+       xlink:href="#linearGradient37"
+       id="linearGradient27-3"
        gradientUnits="userSpaceOnUse"
-       x1="17.535204"
-       y1="273.20343"
-       x2="27.068169"
-       y2="273.20343"
-       gradientTransform="matrix(1.1989896,0,0,1.1989896,-129.64447,-601.69945)" />
+       gradientTransform="matrix(1.1989888,0,0,1.1989888,-1.6446215,-53.411787)"
+       x1="21.068029"
+       y1="268.59937"
+       x2="23.535343"
+       y2="277.8075" />
     <linearGradient
-       id="linearGradient15"
+       id="linearGradient37"
        inkscape:collect="always">
       <stop
          style="stop-color:#363636;stop-opacity:1;"
          offset="0"
-         id="stop15" />
+         id="stop36" />
       <stop
-         style="stop-color:#9a9a9a;stop-opacity:1;"
-         offset="1"
-         id="stop16" />
+         style="stop-color:#8f8f8f;stop-opacity:1;"
+         offset="0.5"
+         id="stop37" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient15"
-       id="linearGradient27"
+       xlink:href="#linearGradient37"
+       id="linearGradient22-6"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.1990861,0,0,1.1990861,-1.6472465,-53.435972)"
-       x1="17.535204"
-       y1="273.20343"
-       x2="27.068169"
-       y2="273.20343" />
+       x1="21.068029"
+       y1="277.8075"
+       x2="23.535343"
+       y2="268.59937"
+       gradientTransform="matrix(1.1989894,0,0,1.1989894,-129.64448,-601.70425)" />
   </defs>
   <sodipodi:namedview
      id="namedview31"
@@ -223,9 +223,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="2.1929141"
-     inkscape:cx="49.477542"
-     inkscape:cy="-24.852775"
+     inkscape:zoom="3.0696498"
+     inkscape:cx="33.717201"
+     inkscape:cy="42.024338"
      inkscape:window-width="2048"
      inkscape:window-height="1211"
      inkscape:window-x="0"
@@ -372,22 +372,22 @@
          style="display:inline;enable-background:new"
          transform="matrix(0.99998451,0,0,0.99998451,9.3924501e-4,0.005986)">
         <rect
-           style="display:inline;fill:url(#linearGradient22);fill-opacity:1;stroke:none;stroke-width:45.3162;stroke-linecap:round;enable-background:new"
-           id="rect3-5"
-           width="22.862875"
-           height="11.431437"
+           style="display:inline;fill:url(#linearGradient22-6);fill-opacity:1;stroke:none;stroke-width:45.3162;stroke-linecap:round;enable-background:new"
+           id="rect3-5-5"
+           width="22.862869"
+           height="11.431435"
            x="-120.05292"
-           y="-279.84711"
+           y="-279.85199"
            ry="0"
            rx="0"
            transform="rotate(-179.98891)" />
         <rect
-           style="display:inline;fill:url(#linearGradient27);fill-opacity:1;stroke:none;stroke-width:45.3198;stroke-linecap:round;enable-background:new"
-           id="rect3-5-3"
-           width="22.864716"
-           height="11.432358"
-           x="7.9450741"
-           y="268.44229"
+           style="display:inline;fill:url(#linearGradient27-3);fill-opacity:1;stroke:none;stroke-width:45.3161;stroke-linecap:round;enable-background:new"
+           id="rect3-5-3-6"
+           width="22.86286"
+           height="11.43143"
+           x="7.9469204"
+           y="268.44043"
            ry="0"
            rx="0"
            transform="rotate(-0.01109131)" />

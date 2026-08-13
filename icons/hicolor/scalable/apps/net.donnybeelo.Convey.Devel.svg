@@ -6,7 +6,7 @@
    version="1.1"
    id="svg60"
    sodipodi:docname="net.donnybeelo.Convey.Devel.svg"
-   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -66,38 +66,6 @@
          offset="1"
          id="stop8-9" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient15"
-       id="linearGradient22"
-       gradientUnits="userSpaceOnUse"
-       x1="17.535204"
-       y1="273.20343"
-       x2="27.068169"
-       y2="273.20343"
-       gradientTransform="translate(-128.05261,-546.38546)" />
-    <linearGradient
-       id="linearGradient15"
-       inkscape:collect="always">
-      <stop
-         style="stop-color:#363636;stop-opacity:1;"
-         offset="0"
-         id="stop15" />
-      <stop
-         style="stop-color:#9a9a9a;stop-opacity:1;"
-         offset="1"
-         id="stop16" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient15"
-       id="linearGradient27"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(-0.05379984,0.00525049)"
-       x1="17.535204"
-       y1="273.20343"
-       x2="27.068169"
-       y2="273.20343" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient2"
@@ -234,6 +202,38 @@
        y1="273.47113"
        x2="17.533928"
        y2="282.46991" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient37"
+       id="linearGradient22"
+       gradientUnits="userSpaceOnUse"
+       x1="21.068029"
+       y1="277.8075"
+       x2="23.535343"
+       y2="268.59937"
+       gradientTransform="translate(-128.05261,-546.38546)" />
+    <linearGradient
+       id="linearGradient37"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#363636;stop-opacity:1;"
+         offset="0"
+         id="stop36" />
+      <stop
+         style="stop-color:#8f8f8f;stop-opacity:1;"
+         offset="0.5"
+         id="stop37" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient37"
+       id="linearGradient27"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-0.05461822,0.00524952)"
+       x1="21.068029"
+       y1="268.59937"
+       x2="23.535343"
+       y2="277.8075" />
   </defs>
   <sodipodi:namedview
      id="namedview60"
@@ -246,7 +246,7 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="2.7235305"
      inkscape:cx="20.377962"
-     inkscape:cy="69.578806"
+     inkscape:cy="69.762391"
      inkscape:window-width="2048"
      inkscape:window-height="1211"
      inkscape:window-x="0"
@@ -594,11 +594,11 @@
            id="rect3-5-3"
            width="19.068451"
            height="9.5342255"
-           x="7.9458928"
+           x="7.9450746"
            y="268.44156"
            ry="0"
            rx="0"
-           transform="rotate(-0.01109131,-0.00461442,4.2276111)" />
+           transform="rotate(-0.01109131)" />
       </g>
       <path
          id="rect2"
@@ -729,7 +729,8 @@
   </g>
   <g
      mask="url(#q)"
-     id="g60">
+     id="g60"
+     style="display:inline">
     <g
        clip-path="url(#u)"
        id="g59">
@@ -740,11 +741,11 @@
            clip-path="url(#t)"
            id="g57">
           <path
-             d="m 128 80.640625 v 47.359375 h -128 v -47.359375 z m 0 0"
+             d="M 128,80.640625 V 128 H 0 V 80.640625 Z m 0,0"
              fill="url(#s)"
              id="path56" />
           <path
-             d="m 13.308594 80.640625 l 47.355468 47.359375 h 21.214844 l -47.359375 -47.359375 z m 42.421875 0 l 47.363281 47.359375 h 21.214844 l -47.363282 -47.359375 z m 42.429687 0 l 29.839844 29.839844 v -21.210938 l -8.628906 -8.628906 z m -98.160156 7.90625 v 21.214844 l 18.238281 18.238281 h 21.214844 z m 0 0"
+             d="M 13.308594,80.640625 60.664062,128 H 81.878906 L 34.519531,80.640625 Z m 42.421875,0 L 103.09375,128 h 21.21484 L 76.945312,80.640625 Z m 42.429687,0 L 128,110.48047 V 89.269531 l -8.62891,-8.628906 z M 0,88.546875 V 109.76172 L 18.238281,128 h 21.214844 z m 0,0"
              id="path57" />
         </g>
       </g>
