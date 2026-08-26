@@ -250,4 +250,4 @@ modules:
       - type: git
         url: https://gitlab.gnome.org/donnybeelo/geary.git
         tag: '50.0'
-        commit: 309c2d19137da3ab09ae45d732b430dbb0f2b9f4
+        commit: 2e816e88d8615cd5cb905bb12d7ec2a8d2cd877a
