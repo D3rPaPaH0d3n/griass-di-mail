@@ -78,11 +78,18 @@
   <releases>
     <release version="50.0" date="2026-08-26">
       <description>
-        <p>First Convey release. Changes since the Geary fork point:</p>
+        <p>The first Convey release, forked from Geary 46.0.</p>
+        <p>Enhancements included in this release:</p>
         <ul>
           <li>Ported the interface to GTK4 and libadwaita</li>
+          <li>Added a Microsoft Graph backend for Outlook and Microsoft 365 accounts</li>
           <li>Rebranded as Convey, with new application icons</li>
-          <li>New conversation list and reworked header bar</li>
+          <li>Create, rename and delete folders from the sidebar</li>
+          <li>Reworked conversation list with keyboard navigation between panes</li>
+          <li>Message colours now follow the system light and dark preference immediately</li>
+          <li>Redrawn notification avatars, rendered at the display's pixel density</li>
+          <li>Reworked address completion as a navigable dropdown</li>
+          <li>Ported plugins to libpeas-2 and migrated to gcr-4 and gck-2</li>
           <li>Numerous bug fixes and user interface improvements</li>
         </ul>
       </description>
