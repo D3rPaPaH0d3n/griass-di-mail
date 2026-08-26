@@ -153,11 +153,40 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             // bind_model doesn't re-run the header func for neighbours when
             // items change, so a deleted top row leaves the new top row with a
             // stale separator above it. Re-invalidate on every change.
-            this.model.items_changed.connect(() => this.list.invalidate_headers());
+            this.model.items_changed.connect(() => {
+                this.list.invalidate_headers();
+                if (this.focus_pending)
+                    grab_focus();
+            });
             this.model.conversations_loaded.connect(on_conversations_loaded);
             this.model.conversations_removed.connect(on_conversations_removed);
             this.model.conversation_updated.connect(on_conversation_updated);
         }
+    }
+
+    // Focus belongs on the open conversation, or the first one if none is
+    // open -- not on the scrolled window or whatever else comes first in
+    // the focus chain. The list is usually still loading when the window
+    // first asks, so remember the request and honour it once rows arrive.
+    private bool focus_pending = false;
+
+    public override bool grab_focus() {
+        Gtk.ListBoxRow? row = this.list.get_selected_row();
+        if (row == null)
+            row = this.list.get_row_at_index(0);
+
+        this.focus_pending = (row == null);
+        if (row == null)
+            return false;
+
+        // Don't yank the focus out of an entry the user has started
+        // typing in while the list was loading.
+        var root = get_root() as Gtk.Root;
+        if (root != null && root.get_focus() is Gtk.Editable) {
+            this.focus_pending = false;
+            return false;
+        }
+        return row.grab_focus();
     }
 
     /**

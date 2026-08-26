@@ -472,7 +472,10 @@ public class Application.MainWindow :
         this.cert_problem_infobar.get_action_area().append(cert_retry);
 
         this.map.connect(() => {
-            this.folder_list.grab_focus();
+            // The message list is where the keyboard is most useful; fall
+            // back to the folder list if it has nothing to focus yet.
+            if (!this.conversation_list_view.grab_focus())
+                this.folder_list.grab_focus();
         });
 
         foreach (var actions in this.folder_conversation_actions) {
@@ -2053,6 +2056,15 @@ public class Application.MainWindow :
         }
     }
 
+    // Panes are plain containers, so grab_focus() alone won't take on
+    // most of them -- fall back to handing focus to something inside.
+    private bool focus_pane(Gtk.Widget pane) {
+        return (
+            pane.grab_focus() ||
+            pane.child_focus(Gtk.DirectionType.TAB_FORWARD)
+        );
+    }
+
     // Makes Left/Right in pane move the focus to the neighbouring pane.
     // Runs in the capture phase since the panes' list widgets consume the
     // horizontal arrow keys themselves.
@@ -2088,15 +2100,7 @@ public class Application.MainWindow :
                 return false;
             }
 
-            if (target == null) {
-                return false;
-            }
-            // Panes are plain containers, so grab_focus() alone won't take
-            // -- fall back to handing focus to something inside them.
-            return (
-                target.grab_focus() ||
-                target.child_focus(Gtk.DirectionType.TAB_FORWARD)
-            );
+            return (target != null) ? focus_pane(target) : false;
         });
         pane.add_controller(keys);
     }
