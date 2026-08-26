@@ -503,6 +503,13 @@ listview.navigation-sidebar .sidebar-row-content:dir(rtl) {
   padding-right: 0;
 }
 
+/* The keyboard cursor moves independently of the selection here, so the
+ * focus ring is the only thing showing where it is. */
+listview.navigation-sidebar > row:focus-visible {
+  outline: 2px solid @accent_color;
+  outline-offset: -2px;
+}
+
 listview.navigation-sidebar > row:hover {
   background-color: color-mix(in srgb, currentColor 7%, transparent);
 }

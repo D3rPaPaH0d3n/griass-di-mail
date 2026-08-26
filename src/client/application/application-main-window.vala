@@ -1173,6 +1173,18 @@ public class Application.MainWindow :
         this.conversation_viewer.hexpand = true;
         this.conversation_viewer_page.child = this.conversation_viewer;
 
+        // Left/Right walk the keyboard focus across the panes. The
+        // conversation viewer gets no handler of its own: its message
+        // bodies and composers want the arrow keys for themselves.
+        setup_pane_navigation(
+            this.folder_list, null, this.conversation_list_view
+        );
+        setup_pane_navigation(
+            this.conversation_list_view,
+            this.folder_list,
+            this.conversation_viewer
+        );
+
         this.conversation_list_selection_button.bind_property(
             "active",
             this.conversation_list_view, "selection-mode-enabled",
@@ -2039,6 +2051,54 @@ public class Application.MainWindow :
                 set_shift_key_down(is_key_press);
             }
         }
+    }
+
+    // Makes Left/Right in pane move the focus to the neighbouring pane.
+    // Runs in the capture phase since the panes' list widgets consume the
+    // horizontal arrow keys themselves.
+    private void setup_pane_navigation(Gtk.Widget pane,
+                                       Gtk.Widget? left,
+                                       Gtk.Widget? right) {
+        var keys = new Gtk.EventControllerKey() {
+            propagation_phase = Gtk.PropagationPhase.CAPTURE
+        };
+        keys.key_pressed.connect((keyval, keycode, state) => {
+            if ((state & (Gdk.ModifierType.CONTROL_MASK |
+                          Gdk.ModifierType.ALT_MASK |
+                          Gdk.ModifierType.SHIFT_MASK)) != 0) {
+                return false;
+            }
+            // Don't steal cursor keys from an entry (e.g. renaming a
+            // folder in place, or the search bar).
+            if (get_focus() is Gtk.Editable) {
+                return false;
+            }
+
+            Gtk.Widget? target = null;
+            switch (keyval) {
+            case Gdk.Key.Left:
+            case Gdk.Key.KP_Left:
+                target = left;
+                break;
+            case Gdk.Key.Right:
+            case Gdk.Key.KP_Right:
+                target = right;
+                break;
+            default:
+                return false;
+            }
+
+            if (target == null) {
+                return false;
+            }
+            // Panes are plain containers, so grab_focus() alone won't take
+            // -- fall back to handing focus to something inside them.
+            return (
+                target.grab_focus() ||
+                target.child_focus(Gtk.DirectionType.TAB_FORWARD)
+            );
+        });
+        pane.add_controller(keys);
     }
 
     private new void focus_widget(Gtk.Widget? widget) {

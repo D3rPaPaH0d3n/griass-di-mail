@@ -88,6 +88,9 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     private bool mask_entry_selected_signal = false;
     private bool updating_selection = false;
     private uint last_selected_position = Gtk.INVALID_LIST_POSITION;
+    // Row the keyboard cursor is on. Moves with the arrow keys without
+    // changing the selection; Enter/Space commits it as the selection.
+    private uint cursor_position = Gtk.INVALID_LIST_POSITION;
     // The logically selected entry. Persists across expand/collapse: it
     // identifies the actual selected Sidebar.Entry, independent of which
     // GTK list index (if any) currently represents it visually.
@@ -197,7 +200,12 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         drop_target.drop.connect(on_drop_target_drop);
         this.list_view.add_controller(drop_target);
 
-        var key_controller = new Gtk.EventControllerKey();
+        // Capture phase so arrow keys are handled here before GtkListView's
+        // own bindings, which would move the selection (and hence switch
+        // folders) rather than just the keyboard cursor.
+        var key_controller = new Gtk.EventControllerKey() {
+            propagation_phase = Gtk.PropagationPhase.CAPTURE
+        };
         key_controller.key_pressed.connect(on_key_pressed);
         this.list_view.add_controller(key_controller);
 
@@ -540,6 +548,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         this.last_selected_position = pos;
         this.selected_node = node;
+        this.cursor_position = pos;
 
         this.list_view.scroll_to(pos, Gtk.ListScrollFlags.NONE, null);
         if (pos == 0) {
@@ -571,6 +580,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         this.updating_selection = false;
         this.selected_node = null;
         this.last_selected_position = Gtk.INVALID_LIST_POSITION;
+        this.cursor_position = Gtk.INVALID_LIST_POSITION;
     }
 
     // Single-click activation is handled by the primary click gesture, not
@@ -580,6 +590,9 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     }
 
     private void on_primary_pressed(int n_press, double x, double y) {
+        Node? clicked = node_at_position(y);
+        if (clicked != null)
+            this.cursor_position = position_of(clicked);
         this.click_selecting = true;
         this.activated_this_click = false;
     }
@@ -1082,7 +1095,116 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // Input
     //
 
+    // Where the keyboard cursor is, falling back to the selection.
+    private uint cursor_or_selection() {
+        uint n = this.tree_model.get_n_items();
+        if (this.cursor_position != Gtk.INVALID_LIST_POSITION &&
+            this.cursor_position < n)
+            return this.cursor_position;
+        if (this.selection.selected != Gtk.INVALID_LIST_POSITION &&
+            this.selection.selected < n)
+            return this.selection.selected;
+        return (n > 0) ? 0 : Gtk.INVALID_LIST_POSITION;
+    }
+
+    private bool move_cursor_to(uint pos) {
+        uint n = this.tree_model.get_n_items();
+        if (n == 0)
+            return true;
+        if (pos == Gtk.INVALID_LIST_POSITION || pos >= n)
+            pos = n - 1;
+
+        this.cursor_position = pos;
+        this.list_view.scroll_to(pos, Gtk.ListScrollFlags.FOCUS, null);
+        // scroll_to() grabs the focus programmatically, which doesn't by
+        // itself put the window into keyboard-navigation mode, so the row
+        // would get no focus ring.
+        var window = get_root() as Gtk.Window;
+        if (window != null)
+            window.set_focus_visible(true);
+        return true;
+    }
+
+    // Commits the cursor row: selects and activates it, or toggles a
+    // header/grouping row's expansion.
+    private bool activate_cursor() {
+        uint pos = cursor_or_selection();
+        Node? node = node_at(pos);
+        if (node == null)
+            return false;
+
+        var selectable = node.entry as Sidebar.SelectableEntry;
+        if (selectable == null) {
+            var row = this.tree_model.get_row(pos);
+            if (row != null)
+                row.set_expanded(!row.get_expanded());
+            return true;
+        }
+
+        if (this.selection.selected != pos) {
+            this.selection.selected = pos;
+        } else {
+            // Selection didn't change, so on_selection_changed didn't fire.
+            entry_selected(selectable);
+        }
+        entry_activated(selectable);
+        return true;
+    }
+
     private bool on_key_pressed(uint keyval, uint keycode, Gdk.ModifierType state) {
+        // Leave the inline rename editor alone -- it wants the cursor keys.
+        var root = get_root() as Gtk.Root;
+        if (root != null && root.get_focus() is Gtk.Editable)
+            return false;
+
+        if ((state & (Gdk.ModifierType.CONTROL_MASK |
+                      Gdk.ModifierType.ALT_MASK)) == 0) {
+            uint cursor = cursor_or_selection();
+            uint page = 10;
+            switch (keyval) {
+                case Gdk.Key.Up:
+                case Gdk.Key.KP_Up:
+                    return move_cursor_to(
+                        (cursor > 0 && cursor != Gtk.INVALID_LIST_POSITION)
+                            ? cursor - 1 : 0
+                    );
+
+                case Gdk.Key.Down:
+                case Gdk.Key.KP_Down:
+                    return move_cursor_to(
+                        (cursor == Gtk.INVALID_LIST_POSITION) ? 0 : cursor + 1
+                    );
+
+                case Gdk.Key.Page_Up:
+                case Gdk.Key.KP_Page_Up:
+                    return move_cursor_to(
+                        (cursor > page && cursor != Gtk.INVALID_LIST_POSITION)
+                            ? cursor - page : 0
+                    );
+
+                case Gdk.Key.Page_Down:
+                case Gdk.Key.KP_Page_Down:
+                    return move_cursor_to(
+                        (cursor == Gtk.INVALID_LIST_POSITION) ? 0 : cursor + page
+                    );
+
+                case Gdk.Key.Home:
+                case Gdk.Key.KP_Home:
+                    return move_cursor_to(0);
+
+                case Gdk.Key.End:
+                case Gdk.Key.KP_End:
+                    return move_cursor_to(Gtk.INVALID_LIST_POSITION);
+
+                case Gdk.Key.Return:
+                case Gdk.Key.ISO_Enter:
+                case Gdk.Key.KP_Enter:
+                case Gdk.Key.space:
+                case Gdk.Key.KP_Space:
+                    return activate_cursor();
+            }
+        }
+
         switch (Gdk.keyval_name(keyval)) {
             case "F2":
                 return rename_in_place();
