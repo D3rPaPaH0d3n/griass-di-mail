@@ -129,7 +129,7 @@ flatpak:
   variables:
     APP_ID: net.donnybeelo.Convey.Devel
     FLATPAK_MODULE: convey
-    MANIFEST_PATH: net.donnybeelo.Convey.json
+    MANIFEST_PATH: net.donnybeelo.Convey.Devel.json
     RUNTIME_REPO: 'https://nightly.gnome.org/gnome-nightly.flatpakrepo'
     TEST_RUN_ARGS: $TEST_ARGS
     BUNDLE: convey-dev.flatpak

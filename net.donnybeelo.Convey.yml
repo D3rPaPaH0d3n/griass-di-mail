@@ -1,0 +1,253 @@
+# Flathub (stable) manifest for Convey.
+#
+# The development/nightly manifest lives in net.donnybeelo.Convey.Devel.json
+# and is what CI builds. This file is the one submitted to Flathub.
+#
+app-id: net.donnybeelo.Convey
+runtime: org.gnome.Platform
+runtime-version: '50'
+sdk: org.gnome.Sdk
+command: convey
+
+finish-args:
+  - --share=ipc
+  # fallback-x11 rather than x11, so Wayland is preferred where available.
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  # Needed by the Sent Sound plugin.
+  - --socket=pulseaudio
+  # Core requirement: it is a mail client.
+  - --share=network
+  - --talk-name=org.freedesktop.secrets
+  - --talk-name=org.gnome.Contacts
+  - --talk-name=org.gnome.OnlineAccounts
+  - --talk-name=org.gnome.evolution.dataserver.*
+  - --system-talk-name=org.freedesktop.login1
+  - --filesystem=xdg-cache/evolution/addressbook:ro
+  - --metadata=X-DConf=migrate-path=/net/donnybeelo/Convey/
+  # Read-only migration paths, so an existing unsandboxed or Devel install
+  # can be imported. Reviewers commonly ask about these -- be ready to
+  # justify them or drop them.
+  - --filesystem=~/.config/convey:ro
+  - --filesystem=~/.var/app/net.donnybeelo.Convey/config/convey:ro
+  - --filesystem=xdg-download:rw
+  # Dropped relative to the Devel manifest, as Flathub review rejects them:
+  #   --filesystem=/tmp
+  #   --talk-name=org.gnome.ControlCenter
+  #   --talk-name=org.gnome.Settings
+
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /man
+  - /share/aclocal
+  - /share/gir-1.0
+  - /share/girepository-1
+  - /share/gtk-doc
+  - /share/man
+  - /share/pkgconfig
+  - /share/vala
+  - '*.la'
+  - '*.a'
+
+modules:
+  - name: libunwind
+    sources:
+      - type: git
+        url: https://github.com/libunwind/libunwind.git
+        tag: v1.8.3
+        commit: 44aa1a5be2ca68825a17acdf534be4d25cff09b3
+      - type: script
+        commands:
+          - autoreconf -sif
+
+  - name: gnome-online-accounts
+    buildsystem: meson
+    config-opts:
+      - -Dgoabackend=false
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/gnome-online-accounts.git
+        tag: 3.58.1
+        commit: c1fd9e58b8e4559e690ab96a191304a6660fba97
+
+  - name: gspell
+    buildsystem: meson
+    config-opts:
+      - -Dgspell_app=false
+      - -Dgtk_doc=false
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/gspell.git
+        tag: 1.14.4
+        commit: e8f304370d1230691422ddb46b340003d5e6a9b2
+    cleanup:
+      - /bin
+      - /share
+
+  # Already pinned -- no action needed.
+  - name: libical
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DBUILD_SHARED_LIBS:BOOL=ON
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DGOBJECT_INTROSPECTION=true
+      - -DICAL_BUILD_DOCS=false
+      - -DICAL_GLIB=true
+      - -DICAL_GLIB_VAPI=true
+    sources:
+      - type: archive
+        url: https://github.com/libical/libical/releases/download/v3.0.20/libical-3.0.20.tar.gz
+        sha256: e73de92f5a6ce84c1b00306446b290a2b08cdf0a80988eca0a2c9d5c3510b4c2
+    cleanup:
+      - /lib/cmake
+
+  # Already pinned -- no action needed.
+  - name: intltool
+    sources:
+      - type: archive
+        url: https://deb.debian.org/debian/pool/main/i/intltool/intltool_0.51.0.orig.tar.gz
+        mirror-urls:
+          - https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz
+        sha256: 67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd
+    cleanup:
+      - '*'
+
+  - name: evolution-data-server
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DENABLE_CANBERRA=OFF
+      - -DENABLE_EXAMPLES=OFF
+      - -DENABLE_GOA=ON
+      - -DENABLE_GTK=ON
+      - -DENABLE_GTK_DOC=OFF
+      - -DENABLE_INSTALLED_TESTS=OFF
+      - -DENABLE_INTROSPECTION=ON
+      - -DENABLE_VALA_BINDINGS=ON
+      - -DENABLE_WEATHER=OFF
+      - -DWITH_LIBDB=OFF
+      - -DWITH_OPENLDAP=OFF
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/evolution-data-server.git
+        tag: 3.60.2
+        commit: 242c81196daf074cdc4c224e48b7b4319985b589
+    cleanup:
+      - /lib/cmake
+      - /lib/evolution-data-server/*-backends
+      - /libexec
+      - /share/dbus-1/services
+
+  - name: folks
+    buildsystem: meson
+    config-opts:
+      - -Dtelepathy_backend=false
+      - -Dbluez_backend=false
+      - -Dinspect_tool=false
+      - -Dimport_tool=false
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/folks.git
+        tag: 0.15.12
+        commit: 1157825538e3d565a4e9c519ac5fedd97ea10d00
+    cleanup:
+      - /bin
+
+  # Already pinned -- no action needed.
+  - name: libcanberra
+    sources:
+      - type: archive
+        url: http://0pointer.de/lennart/projects/libcanberra/libcanberra-0.30.tar.xz
+        sha256: c2b671e67e0c288a69fc33dc1b6f1b534d07882c2aceed37004bf48c601afa72
+    config-opts:
+      - --disable-alsa
+      - --disable-null
+      - --disable-oss
+
+  - name: gsound
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/gsound.git
+        tag: 1.0.3
+        commit: 95d36d60cf53e0e7c5d5325e0f1f4fc765a611ae
+
+  - name: gmime
+    sources:
+      - type: git
+        url: https://github.com/jstedfast/gmime.git
+        tag: 3.2.15
+        commit: 76aee730fedc41dc09e1819d85bf0800bdbc0a2d
+
+  - name: libpeas
+    buildsystem: meson
+    config-opts:
+      - -Dgtk_doc=false
+      - -Dintrospection=true
+      - -Dvapi=true
+      - -Dlua51=false
+      - -Dgjs=false
+      - -Dpython3=false
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/libpeas.git
+        tag: 2.2.1
+        commit: 744430715e619069b3fcb6c994f2c09257700d05
+
+  - name: libytnef
+    sources:
+      - type: git
+        url: https://github.com/Yeraze/ytnef.git
+        tag: v1.9.3
+        commit: d9b2f01d125c9b178f7a00ec397cc2a9f258e8e1
+
+  - name: snowball
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/snowballstem/snowball.git
+        tag: v3.1.1
+        commit: cd195b51e948a902a4312f023f4a14392516a543
+    build-commands:
+      - make libstemmer.a -j$FLATPAK_BUILDER_N_JOBS CFLAGS='-g -O2 -fPIC'
+      - 'printf ''SB_STEMMER_0 {\n global: sb_stemmer_*;\n local: *;\n};\n'' > symbol.map'
+      - gcc -shared -Wl,-soname,libstemmer.so.0 -Wl,--version-script,symbol.map -Wl,--whole-archive libstemmer.a -Wl,--no-whole-archive -o libstemmer.so.0.0.0
+      - install -Dm644 include/libstemmer.h /app/include/libstemmer.h
+      - install -Dm644 libstemmer.so.0.0.0 /app/lib/libstemmer.so.0.0.0
+      - ln -s libstemmer.so.0.0.0 /app/lib/libstemmer.so.0
+      - ln -s libstemmer.so.0 /app/lib/libstemmer.so
+
+  # Already pinned -- no action needed.
+  - name: sound-theme-freedesktop
+    sources:
+      - type: archive
+        url: http://people.freedesktop.org/~mccann/dist/sound-theme-freedesktop-0.8.tar.bz2
+        sha256: cb518b20eef05ec2e82dda1fa89a292c1760dc023aba91b8aa69bafac85e8a14
+
+  - name: libspelling
+    buildsystem: meson
+    config-opts:
+      - -Dintrospection=enabled
+      - -Dvapi=true
+      - -Ddocs=false
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/libspelling.git
+        tag: 0.4.10
+        commit: 1facdde8e1c0fd72bed806f9a9be2fbec83af5f2
+
+  - name: convey
+    buildsystem: meson
+    config-opts:
+      - -Dprofile=release
+    # Tests are deliberately not run in the Flathub build: it has no network
+    # access and the engine tests want a session bus. CI covers them on the
+    # Devel build instead.
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/donnybeelo/geary.git
+        tag: '50.0'
+        commit: 85482d2f7a31e350266871e7271d6a96fe32adf0

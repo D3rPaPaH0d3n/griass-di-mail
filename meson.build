@@ -1,5 +1,5 @@
 project('convey', [ 'vala', 'c' ],
-  version: '46.0',
+  version: '50.0',
   license: 'LGPL-2.1-or-later',
   meson_version: '>= 1.7',
 )
