@@ -210,9 +210,12 @@ test(
   test_engine_bin,
   depends: [ engine_lib ]
 )
+# TEMPORARY (CI diagnostics): capture a backtrace for the Composer.WidgetTest
+# crash that only happens in the Flatpak CI sandbox. Revert once diagnosed.
 test(
   'client-tests',
-  test_client_bin,
+  find_program('gdb-wrap.sh'),
+  args: [ test_client_bin ],
   depends: [ client_lib, web_process ],
   # Avoid fatal warnings from Folks backends (e.g. telepathy) that
   # aren't available in the test environment.
