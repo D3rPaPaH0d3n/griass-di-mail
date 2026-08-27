@@ -1,8 +1,9 @@
 
-![Convey icon](./icons/hicolor/scalable/apps/net.donnybeelo.Convey.svg)
-
-Convey: Send and receive email
-=============================
+<div align="center">
+  <img src="./icons/hicolor/scalable/apps/net.donnybeelo.Convey.svg" />
+  <h1>Convey: Send and receive email</h1>
+  <img src="./desktop/screenshots/main-window.png" />
+</div>
 
 Convey is an email application built around conversations, for the
 GNOME desktop. It allows you to read, find and send email with a
