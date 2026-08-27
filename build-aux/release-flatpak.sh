@@ -23,7 +23,10 @@ cd "$(dirname "$0")/.."
 # "Listing refs: opendir(refs/remotes)".
 mkdir -p "$REPO"/{refs/heads,refs/mirrors,refs/remotes,state,extensions,tmp/cache}
 
+# --compose-url-policy=full keeps the external screenshot URLs; the default
+# strips them and software centres then show "No Screenshots".
 flatpak-builder --user --force-clean --disable-rofiles-fuse \
+  --compose-url-policy=full \
   --repo="$REPO" --gpg-sign="$KEY" --default-branch=stable \
   build-flathub "$MANIFEST"
 
