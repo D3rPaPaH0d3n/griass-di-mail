@@ -127,16 +127,6 @@ fedora:
 
 flatpak:
   stage: build
-  # The GUI test suites are flaky in this nested sandbox: client-tests has
-  # segfaulted at ~2.6s with no test output at all, and engine-tests has
-  # aborted independently, with each passing on other runs. Both pass
-  # natively (see the fedora job) and neither reproduces locally. Retry
-  # rather than let known flakiness gate the pipeline; the underlying crash
-  # is still open. Full output is in the job's meson-logs artifact --
-  # the job log itself truncates to the last 100 lines.
-  retry:
-    max: 2
-    when: script_failure
   variables:
     APP_ID: net.donnybeelo.Convey.Devel
     FLATPAK_MODULE: convey

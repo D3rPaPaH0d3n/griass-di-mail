@@ -289,7 +289,8 @@
                     "--device=dri",
                     "--socket=pulseaudio",
                     "--share=network",
-                    "--env=WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1"
+                    "--env=WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1",
+                    "--env=WEBKIT_DISABLE_DMABUF_RENDERER=1"
                 ]
             },
             "config-opts": [
