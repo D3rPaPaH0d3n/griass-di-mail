@@ -220,15 +220,20 @@ test(
   # GTK_IM_MODULE: without a running ibus daemon the ibus IM module
   # recurses (text view init -> IM context -> new text view -> ...)
   # until the stack overflows, so pin a self-contained input method.
+  #
+  # GTK_A11Y: constructing any widget makes GTK build an AT-SPI context,
+  # which warns when there is no accessibility bus -- fatal under the test
+  # harness. There is no a11y bus in the Flatpak build sandbox.
   env: [
     'FOLKS_BACKENDS_ALLOWED=key-file',
     'FOLKS_PRIMARY_STORE=key-file',
-    'GTK_IM_MODULE=gtk-im-context-simple'
+    'GTK_IM_MODULE=gtk-im-context-simple',
+    'GTK_A11Y=none'
   ]
 )
 test(
   'js-tests',
   test_js_bin,
   depends: [ client_lib, web_process ],
-  env: [ 'GTK_IM_MODULE=gtk-im-context-simple' ]
+  env: [ 'GTK_IM_MODULE=gtk-im-context-simple', 'GTK_A11Y=none' ]
 )

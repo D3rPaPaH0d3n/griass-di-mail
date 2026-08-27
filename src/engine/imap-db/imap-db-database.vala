@@ -625,7 +625,8 @@ private class Convey.ImapDB.Database : Convey.Db.VersionedDatabase {
         );
         GLib.File tmp_directory = GLib.File.new_for_path(tmp_path);
         try {
-            if (tmp_directory.query_exists() || tmp_directory.make_directory()) {
+            if (tmp_directory.query_exists() ||
+                tmp_directory.make_directory_with_parents()) {
                 cx.exec(
                     "PRAGMA temp_store_directory = '%s'".printf(tmp_path)
                 );
