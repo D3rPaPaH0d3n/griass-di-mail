@@ -1,8 +1,4 @@
-# Flathub (stable) manifest for Convey.
-#
-# The development/nightly manifest lives in net.donnybeelo.Convey.Devel.json
-# and is what CI builds. This file is the one submitted to Flathub.
-#
+# flatpak-builder config for Convey.
 app-id: net.donnybeelo.Convey
 runtime: org.gnome.Platform
 runtime-version: '50'
@@ -10,33 +6,42 @@ sdk: org.gnome.Sdk
 command: convey
 
 finish-args:
+  # X11 + XShm access
   - --share=ipc
-  # fallback-x11 rather than x11, so Wayland is preferred where available.
   - --socket=fallback-x11
-  - --socket=wayland
-  - --device=dri
-  # Needed by the Sent Sound plugin.
-  - --socket=pulseaudio
-  # Core requirement: it is a mail client.
-  - --share=network
-  - --talk-name=org.freedesktop.secrets
-  - --talk-name=org.gnome.Contacts
-  - --talk-name=org.gnome.OnlineAccounts
-  - --talk-name=org.gnome.evolution.dataserver.*
-  - --system-talk-name=org.freedesktop.login1
-  - --filesystem=xdg-cache/evolution/addressbook:ro
-  - --metadata=X-DConf=migrate-path=/net/donnybeelo/Convey/
-  # Read-only migration paths, so an existing unsandboxed or Devel install
-  # can be imported. Reviewers commonly ask about these -- be ready to
-  # justify them or drop them.
-  - --filesystem=~/.config/convey:ro
-  - --filesystem=~/.var/app/net.donnybeelo.Convey/config/convey:ro
-  - --filesystem=xdg-download:rw
-  # Dropped relative to the Devel manifest, as Flathub review rejects them:
-  #   --filesystem=/tmp
-  #   --talk-name=org.gnome.ControlCenter
-  #   --talk-name=org.gnome.Settings
 
+  # Wayland access
+  - --socket=wayland
+
+  # OpenGL access for WK2
+  - --device=dri
+
+  # Sent mail sound plugin
+  - --socket=pulseaudio
+
+  # Needs to talk to the network
+  - --share=network
+
+  # Secrets access
+  - --talk-name=org.freedesktop.secrets
+
+  # Contacts open/edit support
+  - --talk-name=org.gnome.Contacts
+
+  # GOA support
+  - --talk-name=org.gnome.OnlineAccounts
+  - --talk-name=org.gnome.Settings
+  - --talk-name=org.gnome.ControlCenter
+
+  # Folks contact and avatar support (via EDS)
+  - --talk-name=org.gnome.evolution.dataserver.*
+
+  # Saving attachments
+  - --filesystem=xdg-download:rw
+
+  # Settings migration from an unsandboxed install
+  - --metadata=X-DConf=migrate-path=/net/donnybeelo/Convey/
+  - --filesystem=~/.config/convey:ro
 cleanup:
   - /include
   - /lib/pkgconfig
@@ -62,21 +67,6 @@ modules:
         tag: 3.58.1
         commit: c1fd9e58b8e4559e690ab96a191304a6660fba97
 
-  - name: gspell
-    buildsystem: meson
-    config-opts:
-      - -Dgspell_app=false
-      - -Dgtk_doc=false
-    sources:
-      - type: git
-        url: https://gitlab.gnome.org/GNOME/gspell.git
-        tag: 1.14.4
-        commit: e8f304370d1230691422ddb46b340003d5e6a9b2
-    cleanup:
-      - /bin
-      - /share
-
-  # Already pinned -- no action needed.
   - name: libical
     buildsystem: cmake-ninja
     config-opts:
@@ -94,7 +84,6 @@ modules:
     cleanup:
       - /lib/cmake
 
-  # Already pinned -- no action needed.
   - name: intltool
     sources:
       - type: archive
@@ -146,7 +135,6 @@ modules:
     cleanup:
       - /bin
 
-  # Already pinned -- no action needed.
   - name: libcanberra
     sources:
       - type: archive
@@ -166,9 +154,7 @@ modules:
         commit: 95d36d60cf53e0e7c5d5325e0f1f4fc765a611ae
 
   - name: gmime
-    # Release tarball, not a git checkout: the tarball ships a pre-generated
-    # configure script, whereas a checkout needs autogen.sh and the SDK has
-    # no libtool.
+    # Release tarball: a git checkout needs autogen.sh, and hence libtool.
     sources:
       - type: archive
         url: https://github.com/jstedfast/gmime/releases/download/3.2.15/gmime-3.2.15.tar.xz
@@ -212,7 +198,6 @@ modules:
       - ln -s libstemmer.so.0.0.0 /app/lib/libstemmer.so.0
       - ln -s libstemmer.so.0 /app/lib/libstemmer.so
 
-  # Already pinned -- no action needed.
   - name: sound-theme-freedesktop
     sources:
       - type: archive
@@ -235,9 +220,7 @@ modules:
     buildsystem: meson
     config-opts:
       - -Dprofile=release
-    # Tests are deliberately not run in the Flathub build: it has no network
-    # access and the engine tests want a session bus. CI covers them on the
-    # Devel build instead.
+    # Tests need network and a session bus, so CI runs them, not Flathub.
     sources:
       - type: git
         url: https://gitlab.gnome.org/donnybeelo/geary.git
