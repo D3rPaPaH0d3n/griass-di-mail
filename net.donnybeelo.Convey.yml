@@ -60,6 +60,7 @@ modules:
   - name: gnome-online-accounts
     buildsystem: meson
     config-opts:
+      - --libdir=lib
       - -Dgoabackend=false
     sources:
       - type: git
@@ -123,6 +124,7 @@ modules:
   - name: folks
     buildsystem: meson
     config-opts:
+      - --libdir=lib
       - -Dtelepathy_backend=false
       - -Dbluez_backend=false
       - -Dinspect_tool=false
@@ -147,6 +149,8 @@ modules:
 
   - name: gsound
     buildsystem: meson
+    config-opts:
+      - --libdir=lib
     sources:
       - type: git
         url: https://gitlab.gnome.org/GNOME/gsound.git
@@ -163,6 +167,7 @@ modules:
   - name: libpeas
     buildsystem: meson
     config-opts:
+      - --libdir=lib
       - -Dgtk_doc=false
       - -Dintrospection=true
       - -Dvapi=true
@@ -207,6 +212,7 @@ modules:
   - name: libspelling
     buildsystem: meson
     config-opts:
+      - --libdir=lib
       - -Dintrospection=enabled
       - -Dvapi=true
       - -Ddocs=false
@@ -219,6 +225,7 @@ modules:
   - name: convey
     buildsystem: meson
     config-opts:
+      - --libdir=lib
       - -Dprofile=release
     # Tests need network and a session bus, so CI runs them, not Flathub.
     sources:
