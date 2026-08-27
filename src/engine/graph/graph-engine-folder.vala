@@ -808,6 +808,11 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
      */
     private async void delta_baseline(GLib.Cancellable? cancellable)
         throws GLib.Error {
+        // Cold-cache path: a cursor request plus a full listing. On a large
+        // folder this is the slowest thing the backend does, and it holds
+        // sync_running for its whole duration, so say when it starts.
+        debug("Graph: establishing delta baseline for %s",
+            this.path.to_string());
         Convey.Graph.Client.DeltaResult token;
         try {
             token = yield this.client.delta_messages(

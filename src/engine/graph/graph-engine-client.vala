@@ -129,8 +129,13 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         bool ordered = true;
         int pages = 0;
         int max_pages = 1000;
+        // Without $orderby the results are in no useful order, so the cutoff
+        // below can only skip individual messages, never stop paging. Left
+        // uncapped that enumerates the whole mailbox on a cold cache, which
+        // looks like a hang. Fetch a bounded prefix instead.
+        int unordered_max_pages = 20;
 
-        while (!done && pages < max_pages) {
+        while (!done && pages < (ordered ? max_pages : unordered_max_pages)) {
             pages++;
             Json.Object root;
             if (pages == 1) {
@@ -149,6 +154,9 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
                         // Not all tenants/API versions support every field
                         // in this query; try the next, simpler one.
+                        debug("Graph: list query %d rejected for folder %s, " +
+                            "trying a simpler one: %s",
+                            q, folder_id, err.message);
                     }
                 }
                 if (root == null) {
@@ -196,6 +204,12 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                 }
             }
 
+            if (pages % 5 == 0) {
+                debug("Graph: listed %d pages (%d messages) for folder %s%s",
+                    pages, messages.size, folder_id,
+                    ordered ? "" : " (unordered)");
+            }
+
             string? next_link = null;
             if (root.has_member("@odata.nextLink")) {
                 next_link = get_string_member(root, "@odata.nextLink");
@@ -208,9 +222,12 @@ internal class Convey.Graph.Client : Convey.BaseObject {
 
         if (!done) {
             warning(
-                "Graph list_messages for folder %s hit the %d page cap; " +
-                "more messages may remain unfetched",
-                folder_id, max_pages
+                "Graph list_messages for folder %s hit the %d page cap " +
+                "(%s); more messages may remain unfetched",
+                folder_id,
+                ordered ? max_pages : unordered_max_pages,
+                ordered ? "ordered" : "unordered, so paging could not stop " +
+                    "at the prefetch window"
             );
         }
 
