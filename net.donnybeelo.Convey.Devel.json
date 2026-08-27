@@ -300,6 +300,9 @@
                     "type": "dir",
                     "path": "./"
                 }
+            ],
+            "test-commands": [
+                "B=/run/build/convey/_flatpak_build; export LD_LIBRARY_PATH=$B/subprojects/vala-unit:$B/src/client:$B/src:$LD_LIBRARY_PATH FOLKS_BACKENDS_ALLOWED=key-file FOLKS_PRIMARY_STORE=key-file GTK_IM_MODULE=gtk-im-context-simple; gdb -batch -ex run -ex 'thread apply all bt' --args $B/test/test-client 2>&1 | tail -120 || true"
             ]
         }
     ]
