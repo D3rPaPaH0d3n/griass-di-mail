@@ -18,6 +18,13 @@ int main(string[] args) {
     // Let GSettings know where to find the dev schema
     Environment.set_variable("GSETTINGS_SCHEMA_DIR", Config.GSETTINGS_DIR, true);
 
+    // Constructing any widget makes GTK build an AT-SPI context, which
+    // warns when there is no accessibility bus -- and warnings are fatal
+    // under the test harness. There is no a11y bus in the Flatpak build
+    // sandbox, so disable the backend outright. Set here rather than in
+    // the meson test env because it must be in place before Gtk.init().
+    Environment.set_variable("GTK_A11Y", "none", true);
+
     /*
      * Initialise all the things.
      */
