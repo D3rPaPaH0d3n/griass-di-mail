@@ -45,22 +45,6 @@
     ],
     "modules": [
         {
-            "name": "libunwind",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/libunwind/libunwind.git",
-                    "branch": "master"
-                },
-                {
-                    "type": "script",
-                    "commands": [
-                        "autoreconf -sif"
-                    ]
-                }
-            ]
-        },
-        {
             "name": "gnome-online-accounts",
             "buildsystem": "meson",
             "config-opts": [
@@ -212,9 +196,9 @@
             "name": "gmime",
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/jstedfast/gmime.git",
-                    "branch": "master"
+                    "type": "archive",
+                    "url": "https://github.com/jstedfast/gmime/releases/download/3.2.15/gmime-3.2.15.tar.xz",
+                    "sha256": "84cd2a481a27970ec39b5c95f72db026722904a2ccf3fdbd57b280cf2d02b5c4"
                 }
             ]
         },

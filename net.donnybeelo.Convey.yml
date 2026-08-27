@@ -52,16 +52,6 @@ cleanup:
   - '*.a'
 
 modules:
-  - name: libunwind
-    sources:
-      - type: git
-        url: https://github.com/libunwind/libunwind.git
-        tag: v1.8.3
-        commit: 44aa1a5be2ca68825a17acdf534be4d25cff09b3
-      - type: script
-        commands:
-          - autoreconf -sif
-
   - name: gnome-online-accounts
     buildsystem: meson
     config-opts:
@@ -176,11 +166,13 @@ modules:
         commit: 95d36d60cf53e0e7c5d5325e0f1f4fc765a611ae
 
   - name: gmime
+    # Release tarball, not a git checkout: the tarball ships a pre-generated
+    # configure script, whereas a checkout needs autogen.sh and the SDK has
+    # no libtool.
     sources:
-      - type: git
-        url: https://github.com/jstedfast/gmime.git
-        tag: 3.2.15
-        commit: 76aee730fedc41dc09e1819d85bf0800bdbc0a2d
+      - type: archive
+        url: https://github.com/jstedfast/gmime/releases/download/3.2.15/gmime-3.2.15.tar.xz
+        sha256: 84cd2a481a27970ec39b5c95f72db026722904a2ccf3fdbd57b280cf2d02b5c4
 
   - name: libpeas
     buildsystem: meson
