@@ -210,9 +210,13 @@ test(
   test_engine_bin,
   depends: [ engine_lib ]
 )
+# TEMPORARY (CI diagnostics): run under gdb to capture a backtrace for the
+# SIGSEGV that only happens in the Flatpak CI sandbox. The wrapper falls back
+# to running the binary directly when gdb is absent. Revert once diagnosed.
 test(
   'client-tests',
-  test_client_bin,
+  find_program('gdb-wrap.sh'),
+  args: [ test_client_bin ],
   depends: [ client_lib, web_process ],
   # Avoid fatal warnings from Folks backends (e.g. telepathy) that
   # aren't available in the test environment.
@@ -223,7 +227,8 @@ test(
   #
   # GTK_A11Y: constructing any widget makes GTK build an AT-SPI context,
   # which warns when there is no accessibility bus -- fatal under the test
-  # harness. There is no a11y bus in the Flatpak build sandbox.
+  # harness. GNOME's CI sandbox does provide one, but a plain
+  # `flatpak-builder --run` sandbox does not.
   env: [
     'FOLKS_BACKENDS_ALLOWED=key-file',
     'FOLKS_PRIMARY_STORE=key-file',
