@@ -1,3 +1,21 @@
+Version 50.0
+~~~~~~~~~~~~
+Released: 2026-08-27
+
+The first Convey release, forked from Geary 46.0.
+
+Enhancements included in this release:
+ * Ported the interface to GTK4 and libadwaita
+ * Added a Microsoft Graph backend for Outlook and Microsoft 365 accounts
+ * Rebranded as Convey, with new application icons
+ * Create, rename and delete folders from the sidebar
+ * Reworked conversation list with keyboard navigation between panes
+ * Message colours now follow the system light and dark preference immediately
+ * Redrawn notification avatars, rendered at the display's pixel density
+ * Reworked address completion as a navigable dropdown
+ * Ported plugins to libpeas-2 and migrated to gcr-4 and gck-2
+ * Numerous bug fixes and user interface improvements
+
 Version 46.0
 ~~~~~~~~~~~~
 Released: 2024-05-20
@@ -974,7 +992,7 @@ And for the user manual:
  * Piotr Drąg (pl)
  * Rafael Fontenelle (pt_BR)
 
-Convey 0.11.0 - 15 May 2016
+Geary 0.11.0 - 15 May 2016
 --------------------------
 
   * Add archive special folder support (#713986)
@@ -1033,7 +1051,7 @@ Convey 0.11.0 - 15 May 2016
       Marek Černocký (cs)
       Simon Linden (de)
 
-Convey 0.10.0 - 30 March 2015
+Geary 0.10.0 - 30 March 2015
 ----------------------------
 
   * Undo Archive/Trash/Move of email (#721828)
@@ -1046,7 +1064,7 @@ Convey 0.10.0 - 30 March 2015
   * Updated translations
 
 
-Convey 0.9.1 - 2 February 2015
+Geary 0.9.1 - 2 February 2015
 -----------------------------
 
   * Support HTML signatures (#738895)
@@ -1063,7 +1081,7 @@ Convey 0.9.1 - 2 February 2015
   * Updated translations
 
 
-Convey 0.9.0 - 19 December 2014
+Geary 0.9.0 - 19 December 2014
 ------------------------------
 
   * Improved full-text search experience (#720361)
@@ -1076,7 +1094,7 @@ Convey 0.9.0 - 19 December 2014
   * Updated translations
 
 
-Convey 0.8.3 - 19 December 2014
+Geary 0.8.3 - 19 December 2014
 ------------------------------
 
   * Prevent race condition causing Convey window not to open (#737811)
@@ -1088,7 +1106,7 @@ Convey 0.8.3 - 19 December 2014
   * Updated translations
 
 
-Convey 0.8.2 - 4 November 2014
+Geary 0.8.2 - 4 November 2014
 -----------------------------
 
   * "View Source" creates temp files only readable by user (#724436)
@@ -1100,7 +1118,7 @@ Convey 0.8.2 - 4 November 2014
   * Updated translations
 
 
-Convey 0.8.1 - 7 October 2014
+Geary 0.8.1 - 7 October 2014
 ----------------------------
 
   * Display properly-scaled icons under GTK+ 3.14
@@ -1112,7 +1130,7 @@ Convey 0.8.1 - 7 October 2014
   * Updated Spanish, German translations
 
 
-Convey 0.8.0 - 19 September 2014
+Geary 0.8.0 - 19 September 2014
 -------------------------------
 
   * Enforce CSS scope style rules when viewing emails
@@ -1120,7 +1138,7 @@ Convey 0.8.0 - 19 September 2014
   * Updated translations
 
 
-Convey 0.7.2 - 2 September 2014
+Geary 0.7.2 - 2 September 2014
 ------------------------------
 
   * Warn user of TLS certificate issues when connecting (#713247)
@@ -1131,7 +1149,7 @@ Convey 0.7.2 - 2 September 2014
   * Updated translations
 
 
-Convey 0.7.1 - 20 August 2014
+Geary 0.7.1 - 20 August 2014
 ----------------------------
 
   * Show attachments lacking a Content-Disposition
@@ -1144,7 +1162,7 @@ Convey 0.7.1 - 20 August 2014
   * Updated translations
 
 
-Convey 0.7.0 - 18 July 2014
+Geary 0.7.0 - 18 July 2014
 --------------------------
 
   * Major overhaul of email composer, now inline in main window and redesigned
@@ -1155,20 +1173,20 @@ Convey 0.7.0 - 18 July 2014
   * Improved connection retry
   * Various bug fixes
 
-Convey 0.6.5 - 4 November 2014
+Geary 0.6.5 - 4 November 2014
 -----------------------------
 
   * Fixed help documentation installation of translated pages
 
 
-Convey 0.6.4 - 4 November 2014
+Geary 0.6.4 - 4 November 2014
 -----------------------------
 
   * French documentation added
   * Updated translations
 
 
-Convey 0.6.3 - 2 September 2014
+Geary 0.6.3 - 2 September 2014
 ------------------------------
 
   * Warn user of TLS certificate issues when connecting (#713247)
@@ -1176,7 +1194,7 @@ Convey 0.6.3 - 2 September 2014
   * Compile with Vala 0.25 and better
 
 
-Convey 0.6.2 - 20 August 2014
+Geary 0.6.2 - 20 August 2014
 ----------------------------
 
   * Patch major memory leak due to GMime bindings
@@ -1185,7 +1203,7 @@ Convey 0.6.2 - 20 August 2014
   * Prevent Inbox from being cleared on startup w/ Dovecot, Zimbra, and more.
 
 
-Convey 0.6.1 - 1 July 2014
+Geary 0.6.1 - 1 July 2014
 -------------------------
 
   * Copy and move message bug fixes (esp. to prevent lost emails)
@@ -1200,7 +1218,7 @@ Convey 0.6.1 - 1 July 2014
   * Improved translations
 
 
-Convey 0.6.0 - 17 March 2014
+Geary 0.6.0 - 17 March 2014
 ---------------------------
 
   * Cleaned up star/unstar and mark as read/unread functionality
@@ -1208,7 +1226,7 @@ Convey 0.6.0 - 17 March 2014
   * Many bugfixes
 
 
-Convey 0.5.3 - 3 March 2014
+Geary 0.5.3 - 3 March 2014
 --------------------------
 
   * Better styling of collapsed quotes
@@ -1221,7 +1239,7 @@ Convey 0.5.3 - 3 March 2014
   * Other miscellaneous bugfixes
 
 
-Convey 0.5.2 - 14 February 2014
+Geary 0.5.2 - 14 February 2014
 ------------------------------
 
   * Improved recognition of special folders for "Other" accounts
@@ -1232,7 +1250,7 @@ Convey 0.5.2 - 14 February 2014
   * Miscellaneous bugfixes
 
 
-Convey 0.5.1 - 30 January 2014
+Geary 0.5.1 - 30 January 2014
 -----------------------------
 
   * Ability to save sent mail
@@ -1243,7 +1261,7 @@ Convey 0.5.1 - 30 January 2014
   * Speed improvements & miscellaneous bugfixes
 
 
-Convey 0.5.0 - 12 December 2013
+Geary 0.5.0 - 12 December 2013
 ------------------------------
 
   * Port to GtkApplication
@@ -1251,20 +1269,20 @@ Convey 0.5.0 - 12 December 2013
   * Miscellaneous bugfixes
 
 
-Convey 0.4.3 - 12 December 2013
+Geary 0.4.3 - 12 December 2013
 ------------------------------
 
   * Fix "squished" conversation list when used with certain themes
   * Compile-time support for WebKitGTK 2.0
 
 
-Convey 0.4.2 - 20 November 2013
+Geary 0.4.2 - 20 November 2013
 ------------------------------
 
   * Compile with Vala 0.22.1
 
 
-Convey 0.4.1 - 11 November 2013
+Geary 0.4.1 - 11 November 2013
 ------------------------------
 
   * Compile-time support for WebKitGTK 2.2
@@ -1276,7 +1294,7 @@ Convey 0.4.1 - 11 November 2013
   * New translations
 
 
-Convey 0.4.0 - 3 October 2013
+Geary 0.4.0 - 3 October 2013
 ------------------------------
 
   * Per-account full text search
@@ -1292,7 +1310,7 @@ Convey 0.4.0 - 3 October 2013
   * Hundreds of bugs fixed and small improvements
 
 
-Convey 0.3.1 - 9 April 2013
+Geary 0.3.1 - 9 April 2013
 ---------------------------
 
   * Reduced CPU and memory footprint
@@ -1300,7 +1318,7 @@ Convey 0.3.1 - 9 April 2013
   * Stability improvements
 
 
-Convey 0.3.0 - 19 March 2013
+Geary 0.3.0 - 19 March 2013
 ---------------------------
 
   * Support for multiple accounts
@@ -1317,13 +1335,13 @@ Convey 0.3.0 - 19 March 2013
   * Conversation viewer WebKit inspector
   * Many bugfixes
 
-Convey 0.2.2 - 18 October 2012
+Geary 0.2.2 - 18 October 2012
 -----------------------------
 
   * Fix PLAIN authentication (failed w/ Yahoo! and other SMTP servers)
   * Build will fail if intltool not installed (necessary for .desktop)
 
-Convey 0.2.1 - 8 October 2012
+Geary 0.2.1 - 8 October 2012
 ----------------------------
 
   * Save attachments FileChooserDialog now displays network mounts
@@ -1334,7 +1352,7 @@ Convey 0.2.1 - 8 October 2012
   * Icon and desktop file cache updated after uninstall
   * Various translation fixes, including translations not being displayed
 
-Convey 0.2.0 - 1 October 2012
+Geary 0.2.0 - 1 October 2012
 ----------------------------
 
   * Fixed Dovecot-related IMAP issues
@@ -1346,7 +1364,7 @@ Convey 0.2.0 - 1 October 2012
   * Messaging Menu integration
   * Numerous bug and stability fixes
 
-Convey 0.1.90 - 05 September 2012
+Geary 0.1.90 - 05 September 2012
 --------------------------------
 
   * Support for sending and receiving attachments
@@ -1361,7 +1379,7 @@ Convey 0.1.90 - 05 September 2012
   * Strings marked for translation and .pot file now available
   * Numerous bug and stability fixes
 
-Convey 0.1.0 - 04 May 2012
+Geary 0.1.0 - 04 May 2012
 -------------------------
 
   * Initial release.  Features include:
