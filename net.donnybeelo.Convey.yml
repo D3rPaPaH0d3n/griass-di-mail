@@ -236,6 +236,6 @@ modules:
     # Tests need network and a session bus, so CI runs them, not Flathub.
     sources:
       - type: git
-        url: https://gitlab.gnome.org/donnybeelo/geary.git
+        url: https://gitlab.gnome.org/donnybeelo/convey.git
         tag: '50.0'
         commit: 2e816e88d8615cd5cb905bb12d7ec2a8d2cd877a

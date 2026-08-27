@@ -13,8 +13,8 @@ around conversations, for the GNOME desktop. It allows you to
 read, find and send email with a straightforward, modern
 interface.</description>
 
-  <homepage rdf:resource="https://gitlab.gnome.org/donnybeelo/geary/-/wikis" />
-  <bug-database rdf:resource="https://gitlab.gnome.org/donnybeelo/geary/issues/" />
+  <homepage rdf:resource="https://gitlab.gnome.org/donnybeelo/convey/-/wikis" />
+  <bug-database rdf:resource="https://gitlab.gnome.org/donnybeelo/convey/issues/" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#apps" />
   <programming-language>Vala</programming-language>
 

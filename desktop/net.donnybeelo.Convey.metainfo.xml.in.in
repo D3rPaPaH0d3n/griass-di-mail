@@ -40,9 +40,9 @@
     </ul>
   </description>
 
-  <url type="homepage">https://gitlab.gnome.org/donnybeelo/geary</url>
-  <url type="bugtracker">https://gitlab.gnome.org/donnybeelo/geary/-/work_items</url>
-  <url type="vcs-browser">https://gitlab.gnome.org/donnybeelo/geary</url>
+  <url type="homepage">https://gitlab.gnome.org/donnybeelo/convey</url>
+  <url type="bugtracker">https://gitlab.gnome.org/donnybeelo/convey/-/work_items</url>
+  <url type="vcs-browser">https://gitlab.gnome.org/donnybeelo/convey</url>
   <url type="contact">https://gitlab.gnome.org/donnybeelo</url>
 
   <!-- Screenshots are pinned to the release tag so store listings stay
@@ -50,15 +50,15 @@
   <screenshots>
     <screenshot type="default">
       <caption>Convey showing an inbox of conversations</caption>
-      <image>https://gitlab.gnome.org/donnybeelo/geary/-/raw/50.0/desktop/screenshots/main-window.png</image>
+      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.0/desktop/screenshots/main-window.png</image>
     </screenshot>
     <screenshot>
       <caption>Convey displaying a conversation</caption>
-      <image>https://gitlab.gnome.org/donnybeelo/geary/-/raw/50.0/desktop/screenshots/conversation.png</image>
+      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.0/desktop/screenshots/conversation.png</image>
     </screenshot>
     <screenshot>
       <caption>Convey showing the rich text composer</caption>
-      <image>https://gitlab.gnome.org/donnybeelo/geary/-/raw/50.0/desktop/screenshots/composer.png</image>
+      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.0/desktop/screenshots/composer.png</image>
     </screenshot>
   </screenshots>
 

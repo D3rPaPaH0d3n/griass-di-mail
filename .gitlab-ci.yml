@@ -11,7 +11,7 @@ include:
 
 
 variables:
-  FDO_UPSTREAM_REPO: donnybeelo/geary
+  FDO_UPSTREAM_REPO: donnybeelo/convey
 
   # ImapDB and other tests that touch the disk are super slow on CI
   # runners like gcc150.osuosl.org that use platter drives still.
