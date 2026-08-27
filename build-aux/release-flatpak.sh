@@ -18,6 +18,11 @@ ARCH=$(flatpak --default-arch)
 
 cd "$(dirname "$0")/.."
 
+# git cannot track empty directories, so a fresh clone of the release repo
+# lacks refs/remotes and friends, and ostree fails with
+# "Listing refs: opendir(refs/remotes)".
+mkdir -p "$REPO"/{refs/heads,refs/mirrors,refs/remotes,state,extensions,tmp/cache}
+
 flatpak-builder --user --force-clean --disable-rofiles-fuse \
   --repo="$REPO" --gpg-sign="$KEY" --default-branch=stable \
   build-flathub "$MANIFEST"
