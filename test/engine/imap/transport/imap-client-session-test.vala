@@ -7,7 +7,10 @@
 
 class Convey.Imap.ClientSessionTest : TestCase {
 
-    private const uint CONNECT_TIMEOUT = 2;
+    // Seconds. Kept generous: CI runners are shared and loaded, and two
+    // seconds was tight enough to fail intermittently there. The timeout
+    // assertion below scales with this, so it stays proportional.
+    private const uint CONNECT_TIMEOUT = 5;
 
     private TestServer? server = null;
 

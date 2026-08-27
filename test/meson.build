@@ -210,13 +210,9 @@ test(
   test_engine_bin,
   depends: [ engine_lib ]
 )
-# TEMPORARY (CI diagnostics): run under gdb to capture a backtrace for the
-# SIGSEGV that only happens in the Flatpak CI sandbox. The wrapper falls back
-# to running the binary directly when gdb is absent. Revert once diagnosed.
 test(
   'client-tests',
-  find_program('gdb-wrap.sh'),
-  args: [ test_client_bin ],
+  test_client_bin,
   depends: [ client_lib, web_process ],
   # Avoid fatal warnings from Folks backends (e.g. telepathy) that
   # aren't available in the test environment.
