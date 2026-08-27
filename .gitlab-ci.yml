@@ -25,6 +25,7 @@ variables:
 stages:
   - prepare
   - build
+  - publish
 
 
 ##
@@ -134,3 +135,35 @@ flatpak:
     TEST_RUN_ARGS: $TEST_ARGS
     BUNDLE: convey-dev.flatpak
   extends: .flatpak
+
+
+##
+# Publishing
+##
+
+# The Flatpak repo served at releases.donnybeelo.net is built by GitHub
+# Actions in donnybeelo/donnybeelo-releases, because that is where the
+# ostree objects are hosted. GitHub cannot watch this GitLab instance, so
+# a push to main pokes that workflow and hands it the commit to build.
+#
+# Needs a GitHub token with the "actions: write" scope, set as the masked
+# CI variable GITHUB_DISPATCH_TOKEN.
+publish-flatpak:
+  stage: publish
+  image: alpine:latest
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $GITHUB_DISPATCH_TOKEN'
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - |
+      curl --fail-with-body -sS -X POST \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer $GITHUB_DISPATCH_TOKEN" \
+        https://api.github.com/repos/donnybeelo/donnybeelo-releases/dispatches \
+        -d "{\"event_type\":\"publish\",\"client_payload\":{
+              \"manifest_ref\":\"$CI_COMMIT_BRANCH\",
+              \"app_commit\":\"$CI_COMMIT_SHA\",
+              \"label\":\"Convey $CI_COMMIT_SHORT_SHA\"}}"
+    - echo "Triggered publish for $CI_COMMIT_SHORT_SHA"
