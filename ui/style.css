@@ -40,6 +40,7 @@ convey-conversation-list revealer {
 /* Blend with the window background instead of Adwaita's darker
  * view background, which is too contrasty between the panes. */
 conversation-list list {
+  margin-top: 6px;
   background-color: transparent;
 }
 
@@ -49,8 +50,8 @@ conversation-list list {
 }
 
 row.conversation-list {
-  margin: 0 6px;
-  border-radius: 6px;
+  margin: 0.5px 8px;
+  border-radius: 8px;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   padding-right: 0.5em;
@@ -62,8 +63,7 @@ row.conversation-list {
 /* Row divider (Gtk.Separator set as row header): inset from the edges
  * rather than spanning the full width. */
 separator.conversation-list-separator {
-  margin-left: 12px;
-  margin-right: 12px;
+  margin: 0 14px;
   transition: opacity 150ms ease;
 }
 
@@ -157,7 +157,7 @@ row.convey-folder-popover-list-row > label {
 /* ConversationListBox */
 
 .conversation-listbox {
-  margin: 12px;
+  margin: 6px 12px 12px;
   /* Sit on the window background rather than the darker view
    * background so the cards don't float on a black well. */
   background-color: transparent;
