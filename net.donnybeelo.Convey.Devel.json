@@ -294,7 +294,8 @@
                 ]
             },
             "config-opts": [
-                "-Dprofile=development"
+                "-Dprofile=development",
+                "-Dlibunwind=disabled"
             ],
             "run-tests": true,
             "sources": [
