@@ -64,7 +64,7 @@ row.conversation-list {
  * rather than spanning the full width. */
 separator.conversation-list-separator {
   margin: 0 14px;
-  transition: opacity 150ms ease;
+  transition: opacity 100ms ease-in;
 }
 
 /* Set by View.update_separators() on the dividers touching the selected
