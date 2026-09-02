@@ -49,6 +49,8 @@ conversation-list list {
 }
 
 row.conversation-list {
+  margin: 0 6px;
+  border-radius: 6px;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   padding-right: 0.5em;
@@ -60,8 +62,15 @@ row.conversation-list {
 /* Row divider (Gtk.Separator set as row header): inset from the edges
  * rather than spanning the full width. */
 separator.conversation-list-separator {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 12px;
+  margin-right: 12px;
+  transition: opacity 150ms ease;
+}
+
+/* Set by View.update_separators() on the dividers touching the selected
+ * row. Opacity has to come from CSS for the transition to apply. */
+separator.conversation-list-separator.hidden-divider {
+  opacity: 0;
 }
 
 row.conversation-list.drag-n-drop {

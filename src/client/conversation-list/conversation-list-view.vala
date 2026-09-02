@@ -61,6 +61,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         this.notify["selection-mode-enabled"].connect(on_selection_mode_changed);
 
         this.list.selected_rows_changed.connect(on_selected_rows_changed);
+        this.list.selected_rows_changed.connect(update_separators);
         this.list.row_activated.connect(on_row_activated);
 
         this.list.set_header_func(header_func);
@@ -769,6 +770,25 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         this.selected = selected;
         if (this.selected.size > 0 || this.to_restore_row == null) {
             conversations_selected(this.selected);
+        }
+    }
+
+    private void update_separators() {
+        bool previous_selected = false;
+        int i = 0;
+        Gtk.ListBoxRow? row = this.list.get_row_at_index(0);
+        while (row != null) {
+            var header = row.get_header();
+            if (header != null) {
+                if (row.is_selected() || previous_selected) {
+                    header.add_css_class("hidden-divider");
+                } else {
+                    header.remove_css_class("hidden-divider");
+                }
+            }
+            previous_selected = row.is_selected();
+            i++;
+            row = this.list.get_row_at_index(i);
         }
     }
 
