@@ -199,8 +199,9 @@ row.convey-folder-popover-list-row > label {
 
 /* ConversationMessage */
 
-.convey-message infobar box {
+.convey-message infobar > revealer > box {
   border-width: 0;
+  margin: 4px 6px;
 }
 
 .convey-message infobar box button {
@@ -208,6 +209,11 @@ row.convey-folder-popover-list-row > label {
   color: alpha(@theme_text_color, 0.7);
   border: none;
   box-shadow: none;
+}
+
+.convey-message infobar box menubutton > button.image-button {
+  min-width: 24px;
+  padding: 4px;
 }
 
 .convey-message infobar box button:hover,
@@ -362,6 +368,12 @@ convey-composer-widget .convey-attachments-box > box > box {
 
 convey-composer-widget .convey-attachments-box > box > box > label {
   margin: 0px 4px;
+}
+
+infobar > revealer > box {
+  margin: 2px 8px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 8px;
 }
 
 /* AttachmentPane  */
