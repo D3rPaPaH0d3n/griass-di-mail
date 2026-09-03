@@ -379,6 +379,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
     // The web_view's context menu
     private Gtk.PopoverMenu? context_menu = null;
+    private Gdk.Rectangle? context_menu_location = null;
 
     // Menu models for creating the context menu
     private MenuModel context_menu_link;
@@ -618,6 +619,13 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         }
 
         this.web_view.context_menu.connect(on_context_menu);
+        var context_click = new Gtk.GestureClick();
+        context_click.button = Gdk.BUTTON_SECONDARY;
+        context_click.propagation_phase = CAPTURE;
+        context_click.pressed.connect((n_press, x, y) => {
+                this.context_menu_location = { (int) x, (int) y, 1, 1 };
+            });
+        this.web_view.add_controller(context_click);
         this.web_view.deceptive_link_clicked.connect(on_deceptive_link_clicked);
         this.web_view.link_activated.connect((link) => {
                 on_link_activated(new GLib.Variant("s", link));
@@ -1364,12 +1372,10 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         }
 
         this.context_menu = new Gtk.PopoverMenu.from_model(model);
-        this.context_menu.set_parent(this);
-        var event = context_menu.get_event();
-        double x = 0, y = 0;
-        if (event != null && event.get_position(out x, out y)) {
-            Gdk.Rectangle rect = { (int) x, (int) y, 1, 1 };
-            this.context_menu.set_pointing_to(rect);
+        this.context_menu.set_parent(this.web_view);
+        if (this.context_menu_location != null) {
+            this.context_menu.set_pointing_to(this.context_menu_location);
+            this.context_menu_location = null;
         }
         this.context_menu.popup();
 
