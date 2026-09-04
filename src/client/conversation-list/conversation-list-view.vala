@@ -597,13 +597,20 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     }
 
     private void on_conversations_loaded() {
-        if (this.config.autoselect &&
-            !this.should_inhibit_autoactivate &&
-            this.list.get_selected_rows().length() == 0) {
+        // ponytail: destructive folders never autoselect -- opening a message
+        // in Junk/Wastebasket on arrival is never what's wanted.
+        var used_as = (this.model != null)
+            ? this.model.monitor.base_folder.used_as
+            : Convey.Folder.SpecialUse.NONE;
+        if (used_as != TRASH && used_as != JUNK) {
+            if (this.config.autoselect &&
+                !this.should_inhibit_autoactivate &&
+                this.list.get_selected_rows().length() == 0) {
 
-            Gtk.ListBoxRow first_row = this.list.get_row_at_index(0);
-            if (first_row != null) {
-                this.list.select_row(first_row);
+                Gtk.ListBoxRow first_row = this.list.get_row_at_index(0);
+                if (first_row != null) {
+                    this.list.select_row(first_row);
+                }
             }
         }
 

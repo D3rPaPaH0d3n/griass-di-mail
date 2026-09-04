@@ -624,7 +624,14 @@ public class Application.MainWindow :
             update_conversation_actions(NONE);
             update_trash_action();
 
-            this.conversation_viewer.show_loading();
+            // ponytail: destructive folders don't autoselect, so the
+            // loading spinner would just flip to the none-selected page.
+            if (to_select != null &&
+                (to_select.used_as == TRASH || to_select.used_as == JUNK)) {
+                this.conversation_viewer.show_none_selected();
+            } else {
+                this.conversation_viewer.show_loading();
+            }
             this.previous_selection_was_interactive = is_interactive;
 
             debug("Folder selected: %s",
