@@ -509,7 +509,7 @@ public class Application.MainWindow :
         this.title = title;
         this.conversation_list_page.title = account_name ?? "";
         this.conversation_list_title.title = account_name ?? "";
-        // ponytail: only show the address when it isn't already the title
+        // Only show the address when it isn't already the title
         string address = (
             account != null ? account.account.information.primary_mailbox.address : ""
         );
@@ -624,8 +624,6 @@ public class Application.MainWindow :
             update_conversation_actions(NONE);
             update_trash_action();
 
-            // ponytail: destructive folders don't autoselect, so the
-            // loading spinner would just flip to the none-selected page.
             if (to_select != null &&
                 (to_select.used_as == TRASH || to_select.used_as == JUNK)) {
                 this.conversation_viewer.show_none_selected();

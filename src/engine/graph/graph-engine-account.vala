@@ -128,18 +128,21 @@ internal class Convey.Graph.Account : Convey.Account,
 
         this.is_account_open = true;
 
-        // Sync custom folders from the server before notifying availability,
-        // so the full folder list is presented to the UI in one shot.
-        try {
-            yield sync_custom_folders_async(cancellable);
-        } catch (GLib.Error err) {
-            debug("Graph: Failed to sync custom folders on open: %s", err.message);
-        }
-
+        // Publish the folder list without touching the network: the built-ins
+        // are hardcoded and custom folders come from the on-disk cache. The
+        // server sync then runs in the background and notifies the difference.
+        load_cached_folders();
         notify_folders_available_unavailable(
             sort_by_path(get_remote_folder_snapshot()),
             null
         );
+        sync_custom_folders_async.begin(cancellable, (obj, res) => {
+            try {
+                sync_custom_folders_async.end(res);
+            } catch (GLib.Error err) {
+                debug("Graph: Failed to sync custom folders on open: %s", err.message);
+            }
+        });
         notify_opened();
         Convey.Graph.Folder? inbox =
             this.get_graph_special_folder(Convey.Folder.SpecialUse.INBOX);
@@ -907,6 +910,108 @@ internal class Convey.Graph.Account : Convey.Account,
                 null
             );
             notify_folders_created(sort_by_path(added));
+        }
+
+        persist_cached_folders();
+    }
+
+    private string folders_cache_path() {
+        GLib.File? data_dir = this.information.data_dir;
+        // Fallback to ~/.local/share/convey if account data_dir isn't set.
+        if (data_dir == null) {
+            data_dir = GLib.File.new_for_path(
+                GLib.Path.build_filename(
+                    Environment.get_home_dir(), ".local", "share", "convey"
+                )
+            );
+        }
+        return data_dir.get_child("graph-cache").get_child("folders.json").get_path();
+    }
+
+    /**
+     * Registers the custom folders saved by the last sync.
+     *
+     * Built-in folders are hardcoded in the constructor, so only custom
+     * folders are cached.
+     */
+    private void load_cached_folders() {
+        string path = folders_cache_path();
+        if (!GLib.FileUtils.test(path, GLib.FileTest.EXISTS)) {
+            return;
+        }
+        try {
+            string contents;
+            size_t contents_length;
+            GLib.FileUtils.get_contents(path, out contents, out contents_length);
+            Json.Parser parser = new Json.Parser();
+            parser.load_from_data(contents, (ssize_t) contents_length);
+            Json.Node? root_node = parser.get_root();
+            if (root_node == null || root_node.get_node_type() != Json.NodeType.OBJECT) {
+                return;
+            }
+            Json.Object root = root_node.get_object();
+            if (!root.has_member("folders") ||
+                root.get_member("folders").get_node_type() != Json.NodeType.ARRAY) {
+                return;
+            }
+
+            Json.Array folders = root.get_array_member("folders");
+            for (uint i = 0; i < folders.get_length(); i++) {
+                if (folders.get_element(i).get_node_type() != Json.NodeType.OBJECT) {
+                    continue;
+                }
+                Json.Object entry = folders.get_object_element(i);
+                string id = Client.get_string_member(entry, "id") ?? "";
+                string name = Client.get_string_member(entry, "displayName") ?? "";
+                if (String.is_empty(id) || String.is_empty(name)) {
+                    continue;
+                }
+                // Guard against a name that collides with an already-registered
+                // folder path, as sync_custom_folders_async does.
+                Convey.FolderPath candidate =
+                    this.remote_folder_root.get_child(name);
+                if (this.remote_folders.has_key(candidate)) {
+                    continue;
+                }
+                add_folder(name, id, Convey.Folder.SpecialUse.NONE);
+            }
+        } catch (GLib.Error err) {
+            warning("Error loading Graph folder cache: %s", err.message);
+        }
+    }
+
+    private void persist_cached_folders() {
+        string path = folders_cache_path();
+        try {
+            GLib.DirUtils.create_with_parents(GLib.Path.get_dirname(path), 0700);
+
+            Json.Builder builder = new Json.Builder();
+            builder.begin_object();
+            builder.set_member_name("folders");
+            builder.begin_array();
+            foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
+                Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+                if (graph == null ||
+                    graph.used_as != Convey.Folder.SpecialUse.NONE) {
+                    continue;
+                }
+                builder.begin_object();
+                builder.set_member_name("id");
+                builder.add_string_value(graph.graph_folder_id);
+                builder.set_member_name("displayName");
+                builder.add_string_value(folder.path.name);
+                builder.end_object();
+            }
+            builder.end_array();
+            builder.end_object();
+
+            Json.Node root = builder.get_root();
+            Json.Generator generator = new Json.Generator();
+            generator.set_root(root);
+            string payload = generator.to_data(null);
+            GLib.FileUtils.set_contents(path, payload);
+        } catch (GLib.Error err) {
+            warning("Error persisting Graph folder cache: %s", err.message);
         }
     }
 

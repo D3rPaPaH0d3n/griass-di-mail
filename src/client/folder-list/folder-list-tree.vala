@@ -282,9 +282,6 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     // folder selection scrolls itself into view once its account
     // finishes opening, leaving the list part-way down. Hold it at the
     // top until the user actually touches the sidebar.
-    //
-    // ponytail: a flat 3s cap rather than tracking when every account
-    // has finished loading. Released for good on first interaction.
     private void queue_startup_scroll() {
         if (this.startup_scroll_done || this.startup_scroll_timeout != 0)
             return;

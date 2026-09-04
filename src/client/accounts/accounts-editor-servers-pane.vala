@@ -77,7 +77,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         this.save_drafts_row.active = account.save_drafts;
         this.save_sent_row.active = account.save_sent;
 
-        // ponytail: the switch rows aren't on the command stack, so
+        // The switch rows aren't on the command stack, so
         // just enable Apply directly rather than wrapping them in
         // undoable commands
         this.save_drafts_row.notify["active"].connect(enable_apply);
