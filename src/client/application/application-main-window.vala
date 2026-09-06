@@ -1249,6 +1249,12 @@ public class Application.MainWindow :
                                 uint keycode,
                                 Gdk.ModifierType state) {
         check_shift_event(keyval, true);
+        if (keyval == Gdk.Key.Escape &&
+            !this.has_composer &&
+            this.conversation_list_view.selected.size > 0) {
+            this.conversation_list_view.unselect_all();
+            return true;
+        }
         return false;
     }
 
