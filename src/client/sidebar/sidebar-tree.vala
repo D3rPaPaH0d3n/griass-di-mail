@@ -88,9 +88,10 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     private bool mask_entry_selected_signal = false;
     private bool updating_selection = false;
     private uint last_selected_position = Gtk.INVALID_LIST_POSITION;
-    // Row the keyboard cursor is on. Moves with the arrow keys without
+    // Node the keyboard cursor is on. Moves with the arrow keys without
     // changing the selection; Enter/Space commits it as the selection.
-    private uint cursor_position = Gtk.INVALID_LIST_POSITION;
+    private weak Node? cursor_node = null;
+    private uint focus_cursor_source = 0;
     // The logically selected entry. Persists across expand/collapse: it
     // identifies the actual selected Sidebar.Entry, independent of which
     // GTK list index (if any) currently represents it visually.
@@ -189,7 +190,10 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         // may hide or reveal the current selection's own row; keep the
         // GTK selection index pointed at the right stand-in row whenever
         // that happens.
-        this.tree_model.items_changed.connect(() => sync_visual_selection());
+        this.tree_model.items_changed.connect(() => {
+            sync_visual_selection();
+            queue_focus_cursor_row();
+        });
 
         // Accepts conversation drags from the conversation list, which
         // provide a string marker; the actual conversations moved are
@@ -225,9 +229,34 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         primary_gesture.pressed.connect(on_primary_pressed);
         primary_gesture.released.connect(on_primary_released);
         this.list_view.add_controller(primary_gesture);
+
+        var focus_controller = new Gtk.EventControllerFocus();
+        focus_controller.enter.connect(queue_focus_cursor_row);
+        this.list_view.add_controller(focus_controller);
+    }
+
+    private void queue_focus_cursor_row() {
+        if (this.focus_cursor_source != 0)
+            return;
+        this.focus_cursor_source = GLib.Idle.add(() => {
+            this.focus_cursor_source = 0;
+            focus_cursor_row();
+            return GLib.Source.REMOVE;
+        });
+    }
+
+    private void focus_cursor_row() {
+        // Only ever move the focus within the list, never pull it here.
+        if (!this.list_view.has_focus && this.list_view.get_focus_child() == null)
+            return;
+        uint pos = cursor_or_selection();
+        if (pos != Gtk.INVALID_LIST_POSITION)
+            this.list_view.scroll_to(pos, Gtk.ListScrollFlags.FOCUS, null);
     }
 
     ~Tree() {
+        if (this.focus_cursor_source != 0)
+            GLib.Source.remove(this.focus_cursor_source);
         if (this.list_view != null)
             this.list_view.unparent();
     }
@@ -548,7 +577,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         this.last_selected_position = pos;
         this.selected_node = node;
-        this.cursor_position = pos;
+        this.cursor_node = node;
+        queue_focus_cursor_row();
 
         this.list_view.scroll_to(pos, Gtk.ListScrollFlags.NONE, null);
         if (pos == 0) {
@@ -580,7 +610,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         this.updating_selection = false;
         this.selected_node = null;
         this.last_selected_position = Gtk.INVALID_LIST_POSITION;
-        this.cursor_position = Gtk.INVALID_LIST_POSITION;
+        this.cursor_node = null;
     }
 
     // Single-click activation is handled by the primary click gesture, not
@@ -592,7 +622,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     private void on_primary_pressed(int n_press, double x, double y) {
         Node? clicked = node_at_position(y);
         if (clicked != null)
-            this.cursor_position = position_of(clicked);
+            this.cursor_node = clicked;
         this.click_selecting = true;
         this.activated_this_click = false;
     }
@@ -860,6 +890,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         if (this.selected_node == node)
             this.selected_node = null;
+        if (this.cursor_node == node)
+            this.cursor_node = null;
 
         Sidebar.Entry entry = node.entry;
         entry.pruned(this);
@@ -1098,9 +1130,11 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // Where the keyboard cursor is, falling back to the selection.
     private uint cursor_or_selection() {
         uint n = this.tree_model.get_n_items();
-        if (this.cursor_position != Gtk.INVALID_LIST_POSITION &&
-            this.cursor_position < n)
-            return this.cursor_position;
+        if (this.cursor_node != null) {
+            uint pos = position_of(this.cursor_node);
+            if (pos != Gtk.INVALID_LIST_POSITION)
+                return pos;
+        }
         if (this.selection.selected != Gtk.INVALID_LIST_POSITION &&
             this.selection.selected < n)
             return this.selection.selected;
@@ -1114,7 +1148,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         if (pos == Gtk.INVALID_LIST_POSITION || pos >= n)
             pos = n - 1;
 
-        this.cursor_position = pos;
+        Node? at = node_at(pos);
+        this.cursor_node = at;
         this.list_view.scroll_to(pos, Gtk.ListScrollFlags.FOCUS, null);
         // scroll_to() grabs the focus programmatically, which doesn't by
         // itself put the window into keyboard-navigation mode, so the row
