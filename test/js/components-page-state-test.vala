@@ -35,6 +35,7 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
         add_test("call_returning", call_returning);
         add_test("call_returning_throws", call_returning_throws);
         add_test("unset_html_colors", unset_html_colors);
+        add_test("disable_sender_dark_mode_rules", disable_sender_dark_mode_rules);
 
         try {
             WebView.load_resources(GLib.File.new_for_path("/tmp"));
@@ -164,6 +165,29 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
         assert(!Util.JS.to_bool(run_javascript(
             "document.body.hasAttribute('data-convey-theme')"
         )));
+    }
+
+    public void disable_sender_dark_mode_rules() throws GLib.Error {
+        load_body_fixture("""
+            <style>
+              p { color: rgb(0, 0, 0); }
+              @media (prefers-color-scheme: dark) { p { color: rgb(238, 238, 238); } }
+            </style>
+            <p>OHHAI</p>
+        """);
+
+        assert_equal(
+            Util.JS.to_string(run_javascript(
+                "document.styleSheets[0].cssRules[1].media.mediaText"
+            )),
+            "not all"
+        );
+        assert_equal(
+            Util.JS.to_string(run_javascript(
+                "getComputedStyle(document.querySelector('p')).color"
+            )),
+            "rgb(0, 0, 0)"
+        );
     }
 
     protected override WebView set_up_test_view(GLib.File cache_dir) {

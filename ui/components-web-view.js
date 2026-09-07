@@ -67,11 +67,34 @@ PageState.prototype = {
     },
     loaded: function() {
         this.isLoaded = true;
+        this.disableSenderDarkModeRules();
         // Always fire a preferred height update first so that it will
         // be vaguegly correct when notifying of the HTML load
         // completing.
         this.updatePreferredHeight();
         this._contentLoaded();
+    },
+    disableSenderDarkModeRules: function() {
+        function walk(rules) {
+            for (const rule of rules) {
+                if (rule.media != null &&
+                    /prefers-color-scheme\s*:\s*dark/i.test(rule.media.mediaText)) {
+                    rule.media.mediaText = "not all";
+                } else if (rule.cssRules != null) {
+                    walk(rule.cssRules);
+                }
+            }
+        }
+        for (const sheet of document.styleSheets) {
+            if (sheet.ownerNode == null) {
+                continue;
+            }
+            try {
+                walk(sheet.cssRules);
+            } catch (e) {
+                // skip stylesheets that can't be accessed
+            }
+        }
     },
     setUnsetHtmlColors: function(enabled) {
         if (enabled === this.unsetHtmlColorsApplied) {
