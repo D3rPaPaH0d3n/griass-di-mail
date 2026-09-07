@@ -33,6 +33,12 @@ convey-conversation-list revealer {
 .convey-info-bar-stack {
   border: none;
   border-radius: 0;
+  background: none;
+}
+
+.convey-main-layout > .convey-info-bar-stack infobar > revealer > box {
+  margin: 0;
+  border-radius: 0;
 }
 
 /* Conversation List */
