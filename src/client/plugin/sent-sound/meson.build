@@ -2,7 +2,7 @@
 plugin_name = 'sent-sound'
 
 send_sound_dependencies = plugin_dependencies
-send_sound_dependencies += gsound
+send_sound_dependencies += [gstreamer, gstreamer_play]
 
 plugin_src = files(plugin_name + '.vala')
 plugin_data = plugin_name + plugin_data_suffix
@@ -27,3 +27,8 @@ custom_target(
   install: true,
   install_dir: plugin_dest
 )
+
+install_data(
+  'message.oga',
+  install_dir: plugin_dest
+) 
