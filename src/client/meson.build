@@ -164,7 +164,6 @@ client_dependencies = [
   libmath,
   libpeas,
   libsecret,
-  libspelling,
   libxml,
   posix,
   webkitgtk,

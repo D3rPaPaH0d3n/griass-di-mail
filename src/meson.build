@@ -152,7 +152,6 @@ valadoc_dependencies = [
   libadwaita,
   libpeas,
   libsecret,
-  libspelling,
   libxml,
   sqlite,
   webkitgtk,

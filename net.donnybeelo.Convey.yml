@@ -150,19 +150,6 @@ modules:
       - ln -s libstemmer.so.0.0.0 /app/lib/libstemmer.so.0
       - ln -s libstemmer.so.0 /app/lib/libstemmer.so
 
-  - name: libspelling
-    buildsystem: meson
-    config-opts:
-      - --libdir=lib
-      - -Dintrospection=enabled
-      - -Dvapi=true
-      - -Ddocs=false
-    sources:
-      - type: git
-        url: https://gitlab.gnome.org/GNOME/libspelling.git
-        tag: 0.4.10
-        commit: 1facdde8e1c0fd72bed806f9a9be2fbec83af5f2
-
   - name: convey
     buildsystem: meson
     config-opts:

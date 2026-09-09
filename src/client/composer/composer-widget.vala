@@ -342,10 +342,6 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     [GtkChild] private unowned AddressesRow reply_to_row;
     [GtkChild] private unowned Adw.EntryRow subject_row;
 
-    // No spell checking for the subject row: it went away with the
-    // GTK4 port since libspelling only supports text views, not
-    // entries
-
     [GtkChild] private unowned Gtk.Box attachments_box;
     [GtkChild] private unowned Gtk.DropTarget attachment_drop_target;
     [GtkChild] private unowned Gtk.Box hidden_on_attachment_drag_over;
