@@ -71,7 +71,7 @@ public class Plugin.SentSound : PluginBase, EmailExtension {
         this.player.play();
     }
 
-    private void on_error(GLib.Error err, Gst.Structure details) {
+    private void on_error(GLib.Error err, Gst.Structure? details) {
         warning("Failed to play sent mail sound: %s", err.message);
         this.plugin_application.report_problem(
             new Convey.ProblemReport(err)
