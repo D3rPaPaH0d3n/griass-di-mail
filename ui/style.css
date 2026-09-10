@@ -377,7 +377,7 @@ convey-composer-widget .convey-attachments-box > box > box > label {
 }
 
 infobar > revealer > box {
-  margin: 2px 8px;
+  margin: 6px 8px 2px 8px;
   padding: 8px 8px 8px 12px;
   border-radius: 8px;
 }
