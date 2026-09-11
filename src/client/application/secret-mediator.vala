@@ -39,7 +39,6 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
     public async SecretMediator(Application.Client application,
                                 GLib.Cancellable? cancellable)
         throws GLib.Error {
-        yield check_unlocked(cancellable);
         // https://github.com/flatpak/xdg-desktop-portal/issues/557
         if (application.is_flatpak_sandboxed) {
             yield Secret.password_lookup(
@@ -48,6 +47,8 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
                 ATTR_LOGIN,
                 ""
             );
+        } else {
+            yield check_unlocked(cancellable);
         }
     }
 

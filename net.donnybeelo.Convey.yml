@@ -12,7 +12,6 @@ finish-args:
   - --device=dri
   - --socket=pulseaudio
   - --share=network
-  - --talk-name=org.freedesktop.secrets
   - --talk-name=org.gnome.Contacts
   - --talk-name=org.gnome.OnlineAccounts
   - --talk-name=org.gnome.Settings
