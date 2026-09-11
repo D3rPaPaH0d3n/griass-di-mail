@@ -159,4 +159,4 @@ modules:
       - type: git
         url: https://gitlab.gnome.org/donnybeelo/convey.git
         tag: '50.1'
-        commit: 3b10fc485234b4f3842c543d6b384d7a0348758d
+        commit: 4ea3b9ab70db7c810e84bf859f9506cd2594a83b
