@@ -22,6 +22,7 @@ public class Convey.App.SearchFolder :
 
     /** The canonical name of the search folder. */
     public const string MAGIC_BASENAME = "$ConveyAccountSearchFolder$";
+    public const string STARRED_BASENAME = "$ConveyAccountStarredFolder$";
 
     private const Folder.SpecialUse[] EXCLUDE_TYPES = {
         DRAFTS,
@@ -99,8 +100,9 @@ public class Convey.App.SearchFolder :
      * Always returns {@link Folder.SpecialUse.SEARCH}.
      */
     public override Folder.SpecialUse used_as {
-        get { return SEARCH; }
+        get { return this._used_as; }
     }
+    private Folder.SpecialUse _used_as;
 
     /** The query being evaluated by this folder, if any. */
     public SearchQuery? query { get; protected set; default = null; }
@@ -120,16 +122,21 @@ public class Convey.App.SearchFolder :
     private GLib.Cancellable executing = new GLib.Cancellable();
 
 
-    public SearchFolder(Account account, FolderRoot root) {
+    public SearchFolder(Account account,
+                        FolderRoot root,
+                        string basename = MAGIC_BASENAME,
+                        Folder.SpecialUse used_as = SEARCH) {
         this._account = account;
+        this._used_as = used_as;
         this._properties = new FolderPropertiesImpl(0, 0);
-        this._path = root.get_child(MAGIC_BASENAME, Trillian.TRUE);
+        this._path = root.get_child(basename, Trillian.TRUE);
 
         account.folders_available_unavailable.connect(on_folders_available_unavailable);
         account.folders_use_changed.connect(on_folders_use_changed);
         account.email_locally_complete.connect(on_email_locally_complete);
         account.email_removed.connect(on_account_email_removed);
         account.email_locally_removed.connect(on_account_email_removed);
+        account.email_flags_changed.connect(rerun_query);
 
         this.entries = new_entry_set();
         this.ids = new_id_map();
@@ -145,6 +152,7 @@ public class Convey.App.SearchFolder :
         account.email_locally_complete.disconnect(on_email_locally_complete);
         account.email_removed.disconnect(on_account_email_removed);
         account.email_locally_removed.disconnect(on_account_email_removed);
+        account.email_flags_changed.disconnect(rerun_query);
     }
 
     /**
@@ -157,10 +165,15 @@ public class Convey.App.SearchFolder :
      */
     public void update_query(SearchQuery query) {
         if (this.query == null || !this.query.equal_to(query)) {
+            this.query = query;
+            this.rerun_query();
+        }
+    }
+
+    private void rerun_query() {
+        if (this.query != null) {
             this.executing.cancel();
             this.executing = new GLib.Cancellable();
-
-            this.query = query;
             this.update.begin();
         }
     }
@@ -546,43 +559,43 @@ public class Convey.App.SearchFolder :
                     cancellable
                 );
 
-            if (id_results != null) {
-                // Fetch email to get the received date for
-                // correct ordering in the search folder
-                Gee.Collection<Email> email_results =
-                    yield this.account.list_local_email_async(
-                        id_results,
-                        PROPERTIES,
-                        cancellable
-                    );
+            // Fetch email to get the received date for
+            // correct ordering in the search folder
+            var results = id_results ?? new Gee.LinkedList<EmailIdentifier>();
+            Gee.Collection<Email> email_results = results.is_empty
+                ? new Gee.LinkedList<Email>()
+                : yield this.account.list_local_email_async(
+                    results,
+                    PROPERTIES,
+                    cancellable
+                );
 
-                if (add_ids == null) {
-                    // Not appending new email, so remove any not
-                    // found in the results. Add to a set first to
-                    // avoid O(N^2) lookup complexity.
-                    var hashed_results = new Gee.HashSet<EmailIdentifier>();
-                    hashed_results.add_all(id_results);
+            if (add_ids == null) {
+                // Not appending new email, so remove any not
+                // found in the results. Add to a set first to
+                // avoid O(N^2) lookup complexity.
+                var hashed_results = new Gee.HashSet<EmailIdentifier>();
+                hashed_results.add_all(results);
 
-                    var existing = ids.map_iterator();
-                    while (existing.next()) {
-                        if (!hashed_results.contains(existing.get_key())) {
-                            var entry = existing.get_value();
-                            existing.unset();
-                            entries.remove(entry);
-                            removed.add(entry.id);
-                        }
+                var existing = ids.map_iterator();
+                while (existing.next()) {
+                    if (!hashed_results.contains(existing.get_key())) {
+                        var entry = existing.get_value();
+                        existing.unset();
+                        entries.remove(entry);
+                        removed.add(entry.id);
                     }
                 }
+            }
 
-                foreach (var email in email_results) {
-                    if (!ids.has_key(email.id)) {
-                        var entry = new EmailEntry(
-                            email.id, email.properties.date_received
-                        );
-                        entries.add(entry);
-                        ids.set(email.id, entry);
-                        added.add(email.id);
-                    }
+            foreach (var email in email_results) {
+                if (!ids.has_key(email.id)) {
+                    var entry = new EmailEntry(
+                        email.id, email.properties.date_received
+                    );
+                    entries.add(entry);
+                    ids.set(email.id, entry);
+                    added.add(email.id);
                 }
             }
         } else {

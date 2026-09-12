@@ -77,6 +77,7 @@ internal class Convey.Graph.Account : Convey.Account,
     private bool is_account_open = false;
     private bool prefetch_refresh_running = false;
     private bool prefetch_refresh_pending = false;
+    private Convey.App.SearchFolder? starred_folder = null;
 
 
     public Account(Convey.AccountInformation information,
@@ -117,6 +118,19 @@ internal class Convey.Graph.Account : Convey.Account,
         add_folder("Outbox", "outbox", Convey.Folder.SpecialUse.OUTBOX);
     }
 
+    private void register_starred_folder() throws GLib.Error {
+        this.starred_folder = new Convey.App.SearchFolder(
+            this,
+            this.local_folder_root,
+            Convey.App.SearchFolder.STARRED_BASENAME,
+            Convey.Folder.SpecialUse.FLAGGED
+        );
+        var terms = new Gee.ArrayList<Convey.SearchQuery.Term>();
+        terms.add(new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.FLAGGED));
+        this.starred_folder.update_query(new_search_query(terms, "is:starred"));
+        register_local_folder(this.starred_folder);
+    }
+
     public override async void open_async(GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         if (this.is_account_open) {
@@ -127,6 +141,10 @@ internal class Convey.Graph.Account : Convey.Account,
         yield this.outgoing.start(cancellable);
 
         this.is_account_open = true;
+
+        // Must exist before load_cached_folders() so junk emails don't appear
+        // in the starred folder.
+        this.register_starred_folder();
 
         // Publish the folder list without touching the network: the built-ins
         // are hardcoded and custom folders come from the on-disk cache. The
@@ -190,6 +208,11 @@ internal class Convey.Graph.Account : Convey.Account,
         if (this.screensaver_subscription != 0) {
             this.session_bus.signal_unsubscribe(this.screensaver_subscription);
             this.screensaver_subscription = 0;
+        }
+
+        if (this.starred_folder != null) {
+            deregister_local_folder(this.starred_folder);
+            this.starred_folder = null;
         }
 
         this.is_account_open = false;
@@ -754,6 +777,9 @@ internal class Convey.Graph.Account : Convey.Account,
         base.notify_folders_available_unavailable(available, unavailable);
         if (available != null) {
             foreach (Convey.Folder folder in available) {
+                if (!(folder is Convey.Graph.Folder)) {
+                    continue;
+                }
                 folder.email_appended.connect(notify_email_appended);
                 folder.email_inserted.connect(notify_email_inserted);
                 folder.email_removed.connect(notify_email_removed);
@@ -764,6 +790,9 @@ internal class Convey.Graph.Account : Convey.Account,
         }
         if (unavailable != null) {
             foreach (Convey.Folder folder in unavailable) {
+                if (!(folder is Convey.Graph.Folder)) {
+                    continue;
+                }
                 folder.email_appended.disconnect(notify_email_appended);
                 folder.email_inserted.disconnect(notify_email_inserted);
                 folder.email_removed.disconnect(notify_email_removed);
