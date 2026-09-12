@@ -126,6 +126,7 @@ public class Application.FolderContext : Convey.BaseObject,
         switch (this.folder.used_as) {
         case DRAFTS:
         case OUTBOX:
+        case FLAGGED:
             this.displayed_count = TOTAL;
             break;
 
