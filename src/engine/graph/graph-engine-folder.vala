@@ -1021,6 +1021,14 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         if (!inserted.is_empty) {
             notify_email_inserted(inserted);
         }
+        
+        var complete = new Gee.LinkedList<Convey.EmailIdentifier>();
+        complete.add_all(appended);
+        complete.add_all(inserted);
+        if (!complete.is_empty) {
+            notify_email_locally_complete(complete);
+        }
+
 
         if (!flags_changed.is_empty) {
             notify_email_flags_changed(flags_changed);
