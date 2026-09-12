@@ -86,11 +86,14 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         );
     }
 
+    public delegate void MessagePageHandler(Gee.List<Message> page);
+
     public async Gee.List<Message> list_messages(string folder_id,
                                                  int limit,
                                                  int prefetch_period_days,
                                                  int64 stop_at_unix = 0,
-                                                 GLib.Cancellable? cancellable = null)
+                                                 GLib.Cancellable? cancellable = null,
+                                                 owned MessagePageHandler? on_page = null)
         throws GLib.Error {
         if (limit < 1) {
             limit = 1;
@@ -169,6 +172,8 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                 root = yield request_json_url(next_url, cancellable);
             }
 
+            Gee.ArrayList<Message> page = new Gee.ArrayList<Message>();
+
             if (root.has_member("value")) {
                 Json.Array values = root.get_array_member("value");
                 for (uint i = 0; i < values.get_length(); i++) {
@@ -200,8 +205,12 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                         break;
                     }
 
-                    messages.add(parsed);
+                    page.add(parsed);
                 }
+            }
+            messages.add_all(page);
+            if (on_page != null && !page.is_empty) {
+                on_page(page);
             }
 
             if (pages % 5 == 0) {

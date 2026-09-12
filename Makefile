@@ -8,6 +8,6 @@ uninstall:
 	sudo ninja -C build-release uninstall
 
 clear-cache:
-	rm -rf ~/.cache/convey
-	rm -rf ~/.local/share/convey
-	rm -rf ~/.config/convey
+	rm -rf ~/.cache/convey-development
+	rm -rf ~/.local/share/convey-development
+	rm -rf ~/.config/convey-development

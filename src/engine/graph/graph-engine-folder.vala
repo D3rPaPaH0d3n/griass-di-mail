@@ -630,15 +630,22 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
             return;
         }
 
-        Gee.List<Convey.Graph.Client.Message> messages = yield this.client.list_messages(
+        Gee.Set<string> seen = new Gee.HashSet<string>();
+        yield this.client.list_messages(
             this.folder_id,
             get_refresh_limit(),
             this.owner.information.prefetch_period_days,
             0,
-            cancellable
+            cancellable,
+            (page) => {
+                foreach (Convey.Graph.Client.Message m in page) {
+                    seen.add(m.id);
+                }
+                apply_refresh(page, null, null);
+            }
         );
         // Full listing: sweep everything the server no longer reports.
-        apply_refresh(messages, new Gee.HashSet<string>(), null);
+        apply_refresh(new Gee.ArrayList<Convey.Graph.Client.Message>(), seen, null);
     }
 
     /**

@@ -130,7 +130,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
         Convey.Graph.Client client = new_client();
         Gee.List<Convey.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
-            "inbox", 10, 14, 0, null, (obj, res) => {
+            "inbox", 10, 14, 0, null, null, (obj, res) => {
                 try {
                     messages = client.list_messages.end(res);
                 } catch (GLib.Error err) {
@@ -202,7 +202,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
         Convey.Graph.Client client = new_client();
         Gee.List<Convey.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
-            "inbox", 10, 14, 0, null, (obj, res) => {
+            "inbox", 10, 14, 0, null, null, (obj, res) => {
                 try {
                     messages = client.list_messages.end(res);
                 } catch (GLib.Error err) {
