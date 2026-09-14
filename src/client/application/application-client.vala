@@ -541,10 +541,12 @@ public class Application.Client : Adw.Application {
         yield this.present();
 
         Accounts.Editor editor = new Accounts.Editor(this);
-        editor.present(get_active_main_window());
         editor.closed.connect((editor) => {
             this.controller.expunge_accounts.begin();
+            show_accounts.callback();
         });
+        editor.present(get_active_main_window());
+        yield;
     }
 
     /**
