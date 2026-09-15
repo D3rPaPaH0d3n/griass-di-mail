@@ -1,3 +1,16 @@
+Version 50.1
+~~~~~~~~~~~~
+Released: 2026-09-15
+
+ * Persist folders from Graph accounts so they load offline
+ * Fix unpredictable folder keyboard navigation
+ * Deselect conversations on Escape, disable autoselect in Trash and Junk
+ * Fix dark mode rendering in certain emails
+ * Fix context menu positioning in the message body
+ * Replace libcanberra and gsound with GStreamer for notification sounds
+ * Drop the unused libspelling dependency
+ * Numerous user interface and styling fixes
+
 Version 50.0
 ~~~~~~~~~~~~
 Released: 2026-08-27
