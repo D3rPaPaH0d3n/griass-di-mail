@@ -63,8 +63,8 @@
   </screenshots>
 
   <branding>
-    <color type="primary" scheme_preference="light">#ffe0a8</color>
-    <color type="primary" scheme_preference="dark">#7a5206</color>
+    <color type="primary" scheme_preference="light">#ffd53d</color>
+    <color type="primary" scheme_preference="dark">#804400</color>
   </branding>
 
   <provides>
@@ -76,6 +76,21 @@
   <translation type="gettext">convey</translation>
 
   <releases>
+    <release version="50.1" date="2026-09-15">
+      <description>
+        <p>A stable bug fix release.</p>
+        <ul>
+          <li>Persist folders from Graph accounts so they load offline</li>
+          <li>Fix unpredictable folder keyboard navigation</li>
+          <li>Deselect conversations on Escape, disable autoselect in Trash and Junk</li>
+          <li>Fix dark mode rendering in certain emails</li>
+          <li>Fix context menu positioning in the message body</li>
+          <li>Replace libcanberra and gsound with GStreamer for notification sounds</li>
+          <li>Drop the unused libspelling dependency</li>
+          <li>Numerous user interface and styling fixes</li>
+        </ul>
+      </description>
+    </release>
     <release version="50.0" date="2026-08-26">
       <description>
         <p>The first Convey release, forked from Geary 46.0.</p>
