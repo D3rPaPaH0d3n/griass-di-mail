@@ -1,6 +1,17 @@
+Version 50.2
+~~~~~~~~~~~~
+Released: 2026-09-20
+
+ * Refreshed application icons, screenshots and branding colours
+ * Add a combined "All Inboxes" view spanning every account
+ * Reopen the inbox last viewed at launch, or a fixed one of your choosing
+ * Remember which parts of the folder list were left collapsed
+ * Add a Starred folder for Microsoft accounts, showing its total count
+ * Page through large folders on Graph accounts so no messages are missed
+
 Version 50.1
 ~~~~~~~~~~~~
-Released: 2026-09-15
+Released: 2026-09-11
 
  * Persist folders from Graph accounts so they load offline
  * Fix unpredictable folder keyboard navigation

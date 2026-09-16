@@ -50,15 +50,15 @@
   <screenshots>
     <screenshot type="default">
       <caption>Convey showing an inbox of conversations</caption>
-      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.0/desktop/screenshots/main-window.png</image>
+      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.2/desktop/screenshots/main-window.png</image>
     </screenshot>
     <screenshot>
       <caption>Convey displaying a conversation</caption>
-      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.0/desktop/screenshots/conversation.png</image>
+      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.2/desktop/screenshots/conversation.png</image>
     </screenshot>
     <screenshot>
       <caption>Convey showing the rich text composer</caption>
-      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.0/desktop/screenshots/composer.png</image>
+      <image>https://gitlab.gnome.org/donnybeelo/convey/-/raw/50.2/desktop/screenshots/composer.png</image>
     </screenshot>
   </screenshots>
 
@@ -76,9 +76,20 @@
   <translation type="gettext">convey</translation>
 
   <releases>
-    <release version="50.1" date="2026-09-15">
+  	<release version="50.2" date="2026-09-20">
       <description>
-        <p>A stable bug fix release.</p>
+        <ul>
+          <li>Refreshed application icons, screenshots and branding colours</li>
+          <li>Add a combined "All Inboxes" view spanning every account</li>
+          <li>Reopen the inbox last viewed at launch, or a fixed one of your choosing</li>
+          <li>Remember which parts of the folder list were left collapsed</li>
+          <li>Add a Starred folder for Microsoft accounts, showing its total count</li>
+          <li>Page through large folders on Graph accounts</li>
+        </ul>
+      </description>
+    </release>
+    <release version="50.1" date="2026-09-11">
+      <description>
         <ul>
           <li>Persist folders from Graph accounts so they load offline</li>
           <li>Fix unpredictable folder keyboard navigation</li>
