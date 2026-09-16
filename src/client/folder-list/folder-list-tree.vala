@@ -12,6 +12,9 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
 
     public signal void folder_selected(Convey.Folder? folder);
+
+    /** Fired when the user collapses or expands a part of the tree. */
+    public signal void expansion_changed();
     public signal void folder_activated(Convey.Folder? folder);
     public signal void copy_conversation(Convey.Folder folder);
     public signal void move_conversation(Convey.Folder folder);
@@ -25,6 +28,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     private InboxesBranch inboxes_branch = new InboxesBranch();
     private SearchBranch? search_branch = null;
     private Gtk.PopoverMenu? inboxes_context_menu = null;
+    private Gee.Set<string> collapsed = new Gee.HashSet<string>();
     private uint startup_scroll_timeout = 0;
     private bool startup_scroll_done = false;
     private Gtk.Adjustment? pinned_vadjustment = null;
@@ -35,6 +39,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         base_ref();
         set_activate_on_single_click(true);
         entry_selected.connect(on_entry_selected);
+        entry_expansion_changed.connect(on_entry_expansion_changed);
         entry_activated.connect(on_entry_activated);
         this.notify["vadjustment"].connect(update_startup_pin);
 
@@ -210,6 +215,71 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             folder.account == this.selected.account &&
             Application.FolderContext.is_user_destination(folder)
         );
+    }
+
+    /** Restores which parts of the tree were collapsed last session. */
+    public void set_collapsed(string[] keys) {
+        this.collapsed.clear();
+        foreach (var key in keys) {
+            this.collapsed.add(key);
+        }
+    }
+
+    /** The parts of the tree the user has collapsed. */
+    public string[] get_collapsed() {
+        // Built by appending so the array is null terminated, as
+        // g_settings_set_strv requires
+        string[] keys = {};
+        foreach (var key in this.collapsed) {
+            keys += key;
+        }
+        return keys;
+    }
+
+    protected override bool is_collapsed(Sidebar.Entry entry) {
+        string? key = expansion_key(entry);
+        return key != null && key in this.collapsed;
+    }
+
+    private void on_entry_expansion_changed(Sidebar.Entry entry,
+                                            bool expanded) {
+        string? key = expansion_key(entry);
+        if (key == null) {
+            return;
+        }
+
+        if (expanded) {
+            this.collapsed.remove(key);
+        } else {
+            this.collapsed.add(key);
+        }
+        expansion_changed();
+    }
+
+    // A name that survives restarts: the account an entry belongs to,
+    // plus its folder path or group name.
+    private string? expansion_key(Sidebar.Entry entry) {
+        if (has_branch(this.inboxes_branch) &&
+            this.inboxes_branch.get_root() == entry) {
+            return "inboxes";
+        }
+
+        foreach (var branch in this.account_branches.values) {
+            string id = branch.account.information.id;
+            if (branch.get_root() == entry) {
+                return id;
+            }
+            if (branch.has_entry(entry)) {
+                var folder_entry = entry as AbstractFolderEntry;
+                return "%s:%s".printf(
+                    id,
+                    folder_entry != null
+                    ? folder_entry.folder.path.to_string()
+                    : entry.get_sidebar_name()
+                );
+            }
+        }
+        return null;
     }
 
     private bool is_inboxes_entry(Sidebar.Entry entry) {

@@ -109,6 +109,13 @@
         <description>The last recorded size of the detached composer window.</description>
     </key>
 
+    <key name="collapsed-folder-groups" type="as">
+        <default>[]</default>
+        <summary>Collapsed parts of the folder list</summary>
+        <description>Accounts and folder groups left collapsed in the
+        folder list, so they stay that way between launches</description>
+    </key>
+
     <key name="images-trusted-domains" type="as">
         <default>[]</default>
         <summary>Allow images for these domains</summary>

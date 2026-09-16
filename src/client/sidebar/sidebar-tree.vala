@@ -37,6 +37,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         public weak Gtk.Label? name_widget = null;
         public weak Gtk.Label? count_widget = null;
         public ulong children_handler = 0;
+        public ulong expanded_handler = 0;
+        public bool expansion_restored = false;
 
         // Set while the row is fading in or out (see FADE_DURATION_MS).
         public bool fade_in = false;
@@ -133,9 +135,104 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             return;
 
         this.drag_active = active;
+        this.suppress_expansion_signal = true;
+        if (active) {
+            expand_for_drag();
+        }
         foreach (var node in this.node_map.values) {
             refresh_row(node);
         }
+        if (!active) {
+            collapse_after_drag();
+        }
+        this.suppress_expansion_signal = false;
+    }
+
+    // Entries expanded by expand_for_drag, collapsed again by
+    // collapse_after_drag
+    private Gee.ArrayList<Sidebar.Entry> drag_expanded =
+        new Gee.ArrayList<Sidebar.Entry>();
+
+    private void expand_for_drag() {
+        this.drag_expanded.clear();
+        bool expanded_one = true;
+        while (expanded_one) {
+            expanded_one = false;
+            uint n = this.tree_model.get_n_items();
+            for (uint i = 0; i < n; i++) {
+                var row = this.tree_model.get_row(i);
+                if (row == null ||
+                    !row.is_expandable() ||
+                    row.get_expanded()) {
+                    continue;
+                }
+
+                var node = row.get_item() as Node;
+                if (node != null) {
+                    this.drag_expanded.add(node.entry);
+                }
+                // Restarts the scan, since expanding shifts every
+                // position after this one
+                row.set_expanded(true);
+                expanded_one = true;
+                break;
+            }
+        }
+    }
+
+    private void collapse_row(Node node) {
+        uint pos = position_of(node);
+        if (pos == Gtk.INVALID_LIST_POSITION) {
+            return;
+        }
+        var row = this.tree_model.get_row(pos);
+        if (row == null ||
+            !row.is_expandable() ||
+            !row.get_expanded()) {
+            return;
+        }
+
+        without_expansion_signal(() => row.set_expanded(false));
+    }
+
+    private void collapse_after_drag() {
+        foreach (var entry in this.drag_expanded) {
+            Node? node = this.node_map.get(entry);
+            if (node == null) {
+                continue;
+            }
+            uint pos = position_of(node);
+            if (pos != Gtk.INVALID_LIST_POSITION) {
+                var row = this.tree_model.get_row(pos);
+                if (row != null) {
+                    row.set_expanded(false);
+                }
+            }
+        }
+        this.drag_expanded.clear();
+    }
+
+    /** Fired when an entry is expanded or collapsed by the user. */
+    public signal void entry_expansion_changed(Sidebar.Entry entry,
+                                               bool expanded);
+
+    // Set while the tree itself is expanding or collapsing rows, so
+    // that only the user's own toggles are reported
+    private bool suppress_expansion_signal = false;
+
+    private delegate void ExpansionAction();
+
+    // Runs action without entry_expansion_changed being fired for it
+    private void without_expansion_signal(ExpansionAction action) {
+        bool was_suppressed = this.suppress_expansion_signal;
+        this.suppress_expansion_signal = true;
+        action();
+        this.suppress_expansion_signal = was_suppressed;
+    }
+
+    /** Determines if an entry was left collapsed by the user. */
+    protected virtual bool is_collapsed(Sidebar.Entry entry) {
+        return false;
     }
 
     /** Determines if an entry stays visible while a drag is in progress. */
@@ -328,6 +425,22 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
                 node.expander_widget.hide_expander =
                     (node.children.get_n_items() == 0);
         });
+        node.expanded_handler = row.notify["expanded"].connect(() => {
+            if (!this.suppress_expansion_signal) {
+                entry_expansion_changed(node.entry, row.get_expanded());
+            }
+        });
+
+        // Applies the saved state the first time each row appears
+        if (!node.expansion_restored) {
+            node.expansion_restored = true;
+            if (is_collapsed(node.entry)) {
+                GLib.Idle.add(() => {
+                    collapse_row(node);
+                    return GLib.Source.REMOVE;
+                });
+            }
+        }
 
         refresh_row(node);
 
@@ -379,6 +492,13 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             if (node.children_handler != 0) {
                 node.children.disconnect(node.children_handler);
                 node.children_handler = 0;
+            }
+            if (node.expanded_handler != 0) {
+                var bound = list_item.get_item() as Gtk.TreeListRow;
+                if (bound != null) {
+                    bound.disconnect(node.expanded_handler);
+                }
+                node.expanded_handler = 0;
             }
             node.expander_widget = null;
             node.icon_widget = null;
@@ -671,14 +791,16 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         for (Node? n = node.parent; n != null; n = n.parent)
             chain.insert(0, n);
 
-        foreach (Node ancestor in chain) {
-            uint pos = position_of(ancestor);
-            if (pos != Gtk.INVALID_LIST_POSITION) {
-                var row = this.tree_model.get_row(pos);
-                if (row != null)
-                    row.set_expanded(true);
+        without_expansion_signal(() => {
+            foreach (Node ancestor in chain) {
+                uint pos = position_of(ancestor);
+                if (pos != Gtk.INVALID_LIST_POSITION) {
+                    var row = this.tree_model.get_row(pos);
+                    if (row != null)
+                        row.set_expanded(true);
+                }
             }
-        }
+        });
     }
 
     public bool expand_to_entry(Sidebar.Entry entry) {
@@ -691,8 +813,9 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         uint pos = position_of(node);
         if (pos != Gtk.INVALID_LIST_POSITION) {
             var row = this.tree_model.get_row(pos);
-            if (row != null)
-                row.set_expanded(true);
+            if (row != null) {
+                without_expansion_signal(() => row.set_expanded(true));
+            }
         }
         return true;
     }
@@ -704,16 +827,18 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         expand_ancestors(node);
 
-        for (Node? cur = node; cur != null && cur.children.get_n_items() > 0;) {
-            uint pos = position_of(cur);
-            if (pos == Gtk.INVALID_LIST_POSITION)
-                break;
-            var row = this.tree_model.get_row(pos);
-            if (row == null)
-                break;
-            row.set_expanded(true);
-            cur = (Node) cur.children.get_item(0);
-        }
+        without_expansion_signal(() => {
+            for (Node? cur = node; cur != null && cur.children.get_n_items() > 0;) {
+                uint pos = position_of(cur);
+                if (pos == Gtk.INVALID_LIST_POSITION)
+                    break;
+                var row = this.tree_model.get_row(pos);
+                if (row == null)
+                    break;
+                row.set_expanded(true);
+                cur = (Node) cur.children.get_item(0);
+            }
+        });
     }
 
     public bool scroll_to_entry(Sidebar.Entry entry) {
@@ -931,8 +1056,21 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         register_node(node);
         associate_children(branch, entry, node);
 
-        if (branch.is_auto_open_on_new_child() || parent is Sidebar.Grouping)
+        if ((branch.is_auto_open_on_new_child() ||
+             parent is Sidebar.Grouping) &&
+            !user_collapsed_ancestor(node)) {
             expand_to_entry(entry);
+        }
+    }
+
+    // Determines if any ancestor of node was left collapsed by the user.
+    private bool user_collapsed_ancestor(Node node) {
+        for (Node? parent = node.parent; parent != null; parent = parent.parent) {
+            if (is_collapsed(parent.entry)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void on_branch_entry_removed(Sidebar.Branch branch, Sidebar.Entry entry) {

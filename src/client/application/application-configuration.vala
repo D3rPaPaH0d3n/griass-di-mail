@@ -15,6 +15,7 @@ public class Application.Configuration : Convey.BaseObject {
     public const string ASK_OPEN_ATTACHMENT_KEY = "ask-open-attachment";
     public const string AUTOSELECT_KEY = "autoselect";
     public const string BRIEF_NOTIFICATION_DURATION = "brief-notification-duration";
+    public const string COLLAPSED_FOLDER_GROUPS = "collapsed-folder-groups";
     public const string COMPOSER_WINDOW_SIZE_KEY = "composer-window-size";
     public const string COMPOSE_AS_HTML_KEY = "compose-as-html";
     public const string CONVERSATION_VIEWER_ZOOM_KEY = "conversation-viewer-zoom";
@@ -189,6 +190,16 @@ public class Application.Configuration : Convey.BaseObject {
     /** Sets the saved size of the composer window. */
     public void set_composer_window_size(int[] value) {
         this.settings.set_value(COMPOSER_WINDOW_SIZE_KEY, value);
+    }
+
+    /** Returns the parts of the folder list left collapsed. */
+    public string[] get_collapsed_folder_groups() {
+        return this.settings.get_strv(COLLAPSED_FOLDER_GROUPS);
+    }
+
+    /** Sets the parts of the folder list left collapsed. */
+    public void set_collapsed_folder_groups(string[] value) {
+        this.settings.set_strv(COLLAPSED_FOLDER_GROUPS, value);
     }
 
     /** Returns list of trusted domains for which images loading is allowed. */

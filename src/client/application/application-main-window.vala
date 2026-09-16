@@ -1146,6 +1146,10 @@ public class Application.MainWindow :
 
 
         // Folder list
+        this.folder_list.set_collapsed(
+            this.application.config.get_collapsed_folder_groups()
+        );
+        this.folder_list.expansion_changed.connect(on_folder_expansion_changed);
         this.folder_list.folder_selected.connect(on_folder_selected);
         this.folder_list.move_conversation.connect(on_move_conversation);
         this.folder_list.copy_conversation.connect(on_copy_conversation);
@@ -2395,6 +2399,12 @@ public class Application.MainWindow :
                 this.conversation_list_view.visible_conversations
             );
         }
+    }
+
+    private void on_folder_expansion_changed() {
+        this.application.config.set_collapsed_folder_groups(
+            this.folder_list.get_collapsed()
+        );
     }
 
     private void on_folder_selected(Convey.Folder? folder) {
