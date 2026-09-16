@@ -130,10 +130,6 @@ public class Application.MainWindow :
         get; private set; default = null;
     }
 
-    // Stands for the combined view in the last-inbox setting, where
-    // every other value is an account id
-    private const string ALL_INBOXES = "all";
-
     // Set until the inbox remembered from last session has been
     // opened, or the user has picked a different one
     private bool restoring_last_inbox = true;
@@ -699,7 +695,8 @@ public class Application.MainWindow :
             // the first inbox does not overwrite the one remembered
             if (to_select != null &&
                 to_select.used_as == INBOX &&
-                !this.restoring_last_inbox) {
+                !this.restoring_last_inbox &&
+                this.application.config.remember_last_inbox) {
                 this.application.config.set_last_inbox(
                     to_select.account.information.id
                 );
@@ -782,7 +779,9 @@ public class Application.MainWindow :
         this.conversation_list_info_bars.remove_all();
 
         this.all_inboxes = true;
-        this.application.config.set_last_inbox(ALL_INBOXES);
+        if (this.application.config.remember_last_inbox) {
+            this.application.config.set_last_inbox(Configuration.ALL_INBOXES);
+        }
         foreach (var actions in this.folder_conversation_actions) {
             actions.source_folder = null;
         }
@@ -1114,7 +1113,7 @@ public class Application.MainWindow :
     // Selects the inbox remembered from last session, if it has loaded
     private bool restore_last_inbox(bool is_interactive) {
         string last = this.application.config.get_last_inbox();
-        if (last == ALL_INBOXES) {
+        if (last == Configuration.ALL_INBOXES) {
             if (this.folder_list.get_all_inboxes().size < 2) {
                 return false;
             }

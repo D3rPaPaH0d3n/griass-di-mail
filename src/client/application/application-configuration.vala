@@ -34,6 +34,8 @@ public class Application.Configuration : Convey.BaseObject {
     public const string WINDOW_WIDTH_KEY = "window-width";
     public const string IMAGES_TRUSTED_DOMAINS = "images-trusted-domains";
     public const string LAST_INBOX = "last-inbox";
+    public const string REMEMBER_LAST_INBOX = "remember-last-inbox";
+    public const string ALL_INBOXES = "all";
 
 
     public enum DesktopEnvironment {
@@ -93,6 +95,10 @@ public class Application.Configuration : Convey.BaseObject {
 
     public bool autoselect {
         get { return settings.get_boolean(AUTOSELECT_KEY); }
+    }
+
+    public bool remember_last_inbox {
+        get { return settings.get_boolean(REMEMBER_LAST_INBOX); }
     }
 
     public bool display_preview {

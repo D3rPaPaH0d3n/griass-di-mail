@@ -116,6 +116,13 @@
         folder list, so they stay that way between launches</description>
     </key>
 
+    <key name="remember-last-inbox" type="b">
+        <default>true</default>
+        <summary>Reopen the inbox last viewed</summary>
+        <description>Open whichever inbox was last viewed when Convey
+        starts, rather than a fixed one</description>
+    </key>
+
     <key name="last-inbox" type="s">
         <default>''</default>
         <summary>Inbox to open at launch</summary>

@@ -11,6 +11,8 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     [GtkChild] private unowned Adw.SwitchRow autoselect_row;
     [GtkChild] private unowned Adw.SwitchRow display_preview_row;
+    [GtkChild] private unowned Adw.SwitchRow remember_last_inbox_row;
+    [GtkChild] private unowned Adw.ComboRow startup_inbox_row;
     [GtkChild] private unowned Adw.SwitchRow single_key_shortcuts_row;
     [GtkChild] private unowned Adw.SwitchRow startup_notifications_row;
     [GtkChild] private unowned Adw.SwitchRow trust_images_row;
@@ -96,6 +98,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     private Application.PluginManager plugins;
 
+    private string[] startup_inbox_ids = {};
 
     public PreferencesDialog(Application.Client application,
                              Application.PluginManager plugins) {
@@ -133,6 +136,18 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             this.unset_html_colors_row,
             "active"
         );
+        config.bind(
+            Application.Configuration.REMEMBER_LAST_INBOX,
+            this.remember_last_inbox_row,
+            "active"
+        );
+        this.remember_last_inbox_row.bind_property(
+            "active",
+            this.startup_inbox_row,
+            "sensitive",
+            INVERT_BOOLEAN | SYNC_CREATE
+        );
+        setup_startup_inbox_row();
         config.bind_with_mapping(
             Application.Configuration.IMAGES_TRUSTED_DOMAINS,
             this.trust_images_row,
@@ -140,6 +155,45 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             (GLib.SettingsBindGetMappingShared) settings_trust_images_getter,
             (GLib.SettingsBindSetMappingShared) settings_trust_images_setter
         );
+    }
+
+    private void setup_startup_inbox_row() {
+        var accounts = new Gee.ArrayList<Convey.AccountInformation>();
+        try {
+            foreach (var account in this.application.engine.get_accounts()) {
+                accounts.add(account.information);
+            }
+        } catch (GLib.Error error) {
+            debug("Error listing accounts: %s", error.message);
+        }
+
+        var names = new Gtk.StringList(null);
+        if (accounts.size > 1) {
+            this.startup_inbox_ids += Application.Configuration.ALL_INBOXES;
+            names.append(_("All Inboxes"));
+        }
+        foreach (var info in accounts) {
+            this.startup_inbox_ids += info.id;
+            names.append(info.display_name);
+        }
+        this.startup_inbox_row.model = names;
+
+        string current = this.application.config.get_last_inbox();
+        for (int i = 0; i < this.startup_inbox_ids.length; i++) {
+            if (this.startup_inbox_ids[i] == current) {
+                this.startup_inbox_row.selected = i;
+                break;
+            }
+        }
+
+        this.startup_inbox_row.notify["selected"].connect(() => {
+            uint selected = this.startup_inbox_row.selected;
+            if (selected < this.startup_inbox_ids.length) {
+                this.application.config.set_last_inbox(
+                    this.startup_inbox_ids[selected]
+                );
+            }
+        });
     }
 
     private void setup_plugin_pane() {

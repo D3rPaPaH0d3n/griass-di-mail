@@ -18,6 +18,19 @@
               </object>
             </child>
             <child>
+              <object class="AdwSwitchRow" id="remember_last_inbox_row">
+                <property name="title" translatable="yes">_Reopen Last Inbox</property>
+                <property name="subtitle" translatable="yes">Open whichever inbox was viewed last</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwComboRow" id="startup_inbox_row">
+                <property name="title" translatable="yes">Inbox at _Startup</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
               <object class="AdwSwitchRow" id="display_preview_row">
                 <!-- Translators: Preferences label -->
                 <property name="title" translatable="yes">_Display Conversation Preview</property>
