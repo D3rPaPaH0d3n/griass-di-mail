@@ -102,6 +102,7 @@ client_vala_sources = files(
 
   'folder-list/folder-list-abstract-folder-entry.vala',
   'folder-list/folder-list-account-branch.vala',
+  'folder-list/folder-list-all-inboxes-branch.vala',
   'folder-list/folder-list-folder-entry.vala',
   'folder-list/folder-list-pending-folder-entry.vala',
   'folder-list/folder-list-tree.vala',

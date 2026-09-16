@@ -7,15 +7,18 @@
 public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
 
-    private const int INBOX_ORDINAL = -2; // First account branch is zero
+    private const int ALL_INBOX_ORDINAL = -3; // First account branch is zero
+    private const int INBOX_ORDINAL = -2;
     private const int SEARCH_ORDINAL = -1;
 
 
     public signal void folder_selected(Convey.Folder? folder);
+    public signal void all_inboxes_selected();
 
     /** Fired when the user collapses or expands a part of the tree. */
     public signal void expansion_changed();
     public signal void folder_activated(Convey.Folder? folder);
+    public signal void all_inboxes_activated();
     public signal void copy_conversation(Convey.Folder folder);
     public signal void move_conversation(Convey.Folder folder);
     public signal void folder_rename(Convey.Folder folder, string new_name);
@@ -26,8 +29,11 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     private Gee.HashMap<Convey.Account, AccountBranch> account_branches
         = new Gee.HashMap<Convey.Account, AccountBranch>();
     private InboxesBranch inboxes_branch = new InboxesBranch();
+    private AllInboxesBranch all_inboxes_branch = new AllInboxesBranch();
     private SearchBranch? search_branch = null;
     private Gtk.PopoverMenu? inboxes_context_menu = null;
+    private Gee.Set<Convey.Folder> drag_sources =
+        new Gee.HashSet<Convey.Folder>();
     private Gee.Set<string> collapsed = new Gee.HashSet<string>();
     private uint startup_scroll_timeout = 0;
     private bool startup_scroll_done = false;
@@ -186,10 +192,15 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             : null;
     }
 
-    // Keep the folder groups so the remaining folders stay placed, but
-    // not the account names: only one account's folders can be a target.
+    // Keep the folder groups so the remaining folders stay placed, and
+    // the name of any account the mail can actually be filed into.
     protected override bool entry_accepts_drop(Sidebar.Entry entry) {
         if (entry is Sidebar.Header) {
+            foreach (var branch in this.account_branches.values) {
+                if (branch.get_root() == entry) {
+                    return has_drop_target(branch);
+                }
+            }
             return false;
         }
         if (entry is Sidebar.Grouping) {
@@ -198,23 +209,45 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         var folder_entry = entry as FolderEntry;
         return (
             folder_entry != null &&
+            !(entry is InboxFolderEntry) &&
             accepts_drop(folder_entry.folder)
         );
+    }
+
+    /** Folders the mail currently being dragged came from. */
+    public void set_drag_sources(Gee.Collection<Convey.Folder> sources) {
+        this.drag_sources.clear();
+        this.drag_sources.add_all(sources);
     }
 
     /**
      * Determines if dragged mail can be filed into the given folder.
      *
-     * Mail can't cross accounts: both backends resolve the destination
-     * path within the source folder's own account.
+     * The folder must be a user destination in the same account as the
+     * selected folder, or, when nothing is selected, as every one of
+     * the drag sources.
      */
     public bool accepts_drop(Convey.Folder folder) {
-        return (
-            this.selected != null &&
-            folder != this.selected &&
-            folder.account == this.selected.account &&
-            Application.FolderContext.is_user_destination(folder)
-        );
+        if (!Application.FolderContext.is_user_destination(folder)) {
+            return false;
+        }
+
+        if (this.selected != null) {
+            return (
+                folder != this.selected &&
+                folder.account == this.selected.account
+            );
+        }
+
+        Convey.Account? account = null;
+        foreach (var source in this.drag_sources) {
+            if (source == folder ||
+                (account != null && account != source.account)) {
+                return false;
+            }
+            account = source.account;
+        }
+        return account != null && folder.account == account;
     }
 
     /** Restores which parts of the tree were collapsed last session. */
@@ -282,6 +315,15 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         return null;
     }
 
+    private bool has_drop_target(AccountBranch branch) {
+        foreach (var entry in branch.folder_entries.values) {
+            if (accepts_drop(entry.folder)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private bool is_inboxes_entry(Sidebar.Entry entry) {
         return (
             entry is InboxFolderEntry ||
@@ -310,6 +352,9 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         if (entry != null) {
             this.selected = entry.folder;
             folder_selected(entry.folder);
+        } else if (selectable is AllInboxesEntry) {
+            this.selected = null;
+            all_inboxes_selected();
         }
     }
 
@@ -317,6 +362,8 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         AbstractFolderEntry? entry = selectable as AbstractFolderEntry;
         if (entry != null) {
             folder_activated(entry.folder);
+        } else if (selectable is AllInboxesEntry) {
+            all_inboxes_activated();
         }
     }
 
@@ -338,10 +385,14 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         if (!has_branch(account_branch))
             graft(account_branch, account.information.ordinal);
 
-        if (account_branches.size > 1 && !has_branch(inboxes_branch))
+        if (account_branches.size > 1 && !has_branch(inboxes_branch)) {
             graft(inboxes_branch, INBOX_ORDINAL); // The Inboxes branch comes first.
-        if (folder.used_as == INBOX)
+            graft(all_inboxes_branch, ALL_INBOX_ORDINAL);
+        }
+        if (folder.used_as == INBOX) {
             inboxes_branch.add_inbox(context);
+            all_inboxes_branch.get_inboxes_entry().add_inbox(context);
+        }
 
         account_branch.add_folder(context);
 
@@ -422,8 +473,10 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         }
 
         // if Inbox, remove from inboxes branch, selected or not
-        if (folder.used_as == INBOX)
+        if (folder.used_as == INBOX) {
             inboxes_branch.remove_inbox(account);
+            all_inboxes_branch.get_inboxes_entry().remove_inbox(account);
+        }
 
         account_branch.remove_folder(folder.path);
     }
@@ -445,9 +498,12 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         }
 
         inboxes_branch.remove_inbox(account);
+        all_inboxes_branch.get_inboxes_entry().remove_inbox(account);
 
-        if (account_branches.size <= 1 && has_branch(inboxes_branch))
+        if (account_branches.size <= 1 && has_branch(inboxes_branch)) {
             prune(inboxes_branch);
+            prune(all_inboxes_branch);
+        }
     }
 
     public void select_folder(Convey.Folder to_select) {
@@ -476,6 +532,23 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
         place_cursor(entry, false);
         return true;
+    }
+
+    /** Selects the combined inbox entry, if it is present. */
+    public bool select_all_inboxes() {
+        if (!has_branch(this.all_inboxes_branch))
+            return false;
+
+        this.selected = null;
+        var root = this.all_inboxes_branch.get_root();
+        if (!is_selected(root))
+            place_cursor(root, false);
+        return true;
+    }
+
+    /** The inboxes the combined entry stands for. */
+    public Gee.Collection<Convey.Folder> get_all_inboxes() {
+        return this.all_inboxes_branch.get_inboxes_entry().get_inboxes();
     }
 
     public void deselect_folder() {

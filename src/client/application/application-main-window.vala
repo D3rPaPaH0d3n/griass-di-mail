@@ -130,6 +130,13 @@ public class Application.MainWindow :
         get; private set; default = null;
     }
 
+    /** Whether the combined view of every account's inbox is selected. */
+    public bool all_inboxes { get; private set; default = false; }
+
+    // One per account inbox while the combined view is selected
+    private Gee.List<Convey.App.ConversationMonitor> inbox_monitors =
+        new Gee.ArrayList<Convey.App.ConversationMonitor>();
+
     /** Specifies if the conversation list is currently displayed. */
     public bool is_folder_list_shown {
         get {
@@ -167,7 +174,42 @@ public class Application.MainWindow :
     /** Determines if conversations in the selected folder can be trashed. */
     public bool selected_folder_supports_trash {
         get {
-            return Controller.does_folder_support_trash(this.selected_folder);
+            return Controller.does_folder_support_trash(
+                this.folder_for_actions
+            );
+        }
+    }
+
+    /**
+     * The folders whose conversations the window is currently showing.
+     *
+     * A single folder when one is selected, every account's inbox when
+     * the combined view is, and nothing otherwise.
+     */
+    private Gee.Collection<Convey.Folder> selected_folders {
+        owned get {
+            if (this.selected_folder != null) {
+                return Convey.Collection.single<Convey.Folder>(
+                    this.selected_folder
+                );
+            }
+            return this.all_inboxes
+                ? this.folder_list.get_all_inboxes()
+                : Gee.Collection.empty<Convey.Folder>();
+        }
+    }
+
+    /**
+     * The folder deciding which conversation actions are available.
+     *
+     * The combined inbox view has no folder of its own, so one of the
+     * inboxes stands in for what all of them support.
+     */
+    private Convey.Folder? folder_for_actions {
+        owned get {
+            return Convey.Collection.first<Convey.Folder>(
+                this.selected_folders
+            );
         }
     }
 
@@ -489,6 +531,14 @@ public class Application.MainWindow :
 
     /** Updates the window's title and headerbar titles. */
     public void update_title() {
+        if (this.all_inboxes) {
+            this.title = _("All Inboxes");
+            this.conversation_list_page.title = _("All Inboxes");
+            this.conversation_list_title.title = _("All Inboxes");
+            this.conversation_list_title.subtitle = "";
+            return;
+        }
+
         AccountContext? account = get_selected_account_context();
         FolderContext? folder = (
             account != null && this.selected_folder != null
@@ -565,7 +615,7 @@ public class Application.MainWindow :
     public async void select_folder(Convey.Folder? to_select,
                                     bool is_interactive,
                                     bool inhibit_autoselect = false) {
-        if (this.selected_folder == to_select) {
+        if (this.selected_folder == to_select && !this.all_inboxes) {
             // Clicking the already-selected folder scrolls the
             // conversation list back to the top.
             if (is_interactive && to_select != null) {
@@ -590,8 +640,10 @@ public class Application.MainWindow :
                 this.progress_monitor.remove(this.conversations.progress_monitor);
                 close_conversation_monitor(this.conversations);
                 this.conversations = null;
-                this.conversation_list_view.set_monitor(null);
             }
+            close_inbox_monitors();
+            this.all_inboxes = false;
+            this.conversation_list_view.set_monitors(null);
 
             this.conversation_list_info_bars.remove_all();
 
@@ -657,7 +709,9 @@ public class Application.MainWindow :
                 if (inhibit_autoselect) {
                     this.conversation_list_view.inhibit_next_autoselect();
                 }
-                this.conversation_list_view.set_monitor(this.conversations);
+                this.conversation_list_view.set_monitors(
+                    Convey.Collection.single(this.conversations)
+                );
 
                 yield open_conversation_monitor(this.conversations, cancellable);
                 yield this.controller.process_pending_composers();
@@ -667,6 +721,123 @@ public class Application.MainWindow :
         this.outer_view.show_content = false;
         this.inner_view.show_content = true;
         update_headerbar();
+    }
+
+    /**
+     * Selects the combined view of every account's inbox.
+     *
+     * The inboxes are loaded with a conversation monitor each, since
+     * folders, and hence conversation monitors, never span accounts.
+     */
+    public async void select_all_inboxes(bool is_interactive) {
+        var inboxes = this.folder_list.get_all_inboxes();
+        if (inboxes.size < 2) {
+            select_first_inbox(is_interactive);
+            return;
+        }
+
+        if (is_interactive && this.all_inboxes && !this.inbox_monitors.is_empty) {
+            // Already showing them; clicking again scrolls back to the top
+            this.conversation_list_view.scroll_to_top();
+            this.outer_view.show_content = false;
+            this.inner_view.show_content = true;
+            return;
+        }
+
+        this.folder_open.cancel();
+        var cancellable = this.folder_open = new GLib.Cancellable();
+
+        this.conversation_list_selection_button.active = false;
+
+        if (this.selected_folder != null) {
+            this.progress_monitor.remove(this.selected_folder.opening_monitor);
+            this.selected_folder.properties.notify.disconnect(update_headerbar);
+            this.selected_folder = null;
+        }
+        if (this.conversations != null) {
+            this.progress_monitor.remove(this.conversations.progress_monitor);
+            close_conversation_monitor(this.conversations);
+            this.conversations = null;
+        }
+        close_inbox_monitors();
+        this.conversation_list_view.set_monitors(null);
+        this.conversation_list_info_bars.remove_all();
+
+        this.all_inboxes = true;
+        foreach (var actions in this.folder_conversation_actions) {
+            actions.source_folder = null;
+        }
+        this.folder_list.select_all_inboxes();
+
+        update_title();
+        update_conversation_actions(NONE);
+        update_trash_action();
+        this.conversation_viewer.show_loading();
+        this.previous_selection_was_interactive = is_interactive;
+
+        foreach (var inbox in inboxes) {
+            var monitor = new Convey.App.ConversationMonitor(
+                inbox,
+                ConversationList.View.REQUIRED_FIELDS |
+                ConversationListBox.REQUIRED_FIELDS |
+                ConversationEmail.REQUIRED_FOR_CONSTRUCT,
+                MIN_CONVERSATION_COUNT
+            );
+            this.inbox_monitors.add(monitor);
+            this.progress_monitor.add(monitor.progress_monitor);
+        }
+        this.conversation_list_view.set_monitors(this.inbox_monitors);
+
+        // Iterated over a copy, since closing the window clears the
+        // monitors while this is still opening them
+        var opening = new Gee.ArrayList<Convey.App.ConversationMonitor>();
+        opening.add_all(this.inbox_monitors);
+        foreach (var monitor in opening) {
+            if (cancellable.is_cancelled()) {
+                return;
+            }
+            yield open_conversation_monitor(monitor, cancellable);
+        }
+        yield this.controller.process_pending_composers();
+
+        this.outer_view.show_content = false;
+        this.inner_view.show_content = true;
+        update_headerbar();
+    }
+
+    private void close_inbox_monitors() {
+        foreach (var monitor in this.inbox_monitors) {
+            this.progress_monitor.remove(monitor.progress_monitor);
+            close_conversation_monitor(monitor);
+        }
+        this.inbox_monitors.clear();
+    }
+
+    /**
+     * Groups conversations by the folder actions on them apply to.
+     *
+     * Conversations in the combined inbox view come from several
+     * accounts, so an action runs once per source folder.
+     */
+    private Gee.MultiMap<Convey.Folder,Convey.App.Conversation>
+        group_by_folder(Gee.Collection<Convey.App.Conversation> conversations) {
+        var groups =
+            new Gee.HashMultiMap<Convey.Folder,Convey.App.Conversation>();
+        foreach (var conversation in conversations) {
+            Convey.Folder? location = (
+                this.selected_folder ?? conversation.base_folder
+            );
+            if (location != null) {
+                groups.set(location, conversation);
+            }
+        }
+        return groups;
+    }
+
+    // The selected conversations, grouped by the folder actions apply to
+    private Gee.MultiMap<Convey.Folder,Convey.App.Conversation>
+        selected_groups() {
+        return group_by_folder(this.conversation_list_view.selected);
     }
 
     /** Selects the given account, folder and conversations. */
@@ -881,8 +1052,9 @@ public class Application.MainWindow :
     internal void stop_search(bool is_interactive) {
         // If the search folder is current selected, deselect and
         // re-select any previously selected folder
-        if (this.selected_folder == null ||
-            this.selected_folder.used_as == SEARCH) {
+        if (!this.all_inboxes &&
+            (this.selected_folder == null ||
+             this.selected_folder.used_as == SEARCH)) {
             var to_select = this.previous_non_search_folder;
             if (to_select == null) {
                 var account = get_selected_account_context();
@@ -1027,11 +1199,17 @@ public class Application.MainWindow :
                 break;
             }
         }
+
+        if (this.all_inboxes &&
+            Convey.traverse(to_add).any((c) => c.folder.used_as == INBOX)) {
+            this.select_all_inboxes.begin(false);
+        }
     }
 
     /** Removes a folder from the window. */
     private void remove_folders(Gee.Collection<FolderContext> to_remove,
                                 bool update_selecton) {
+        bool reload_all_inboxes = false;
         foreach (var context in to_remove) {
             Convey.Folder folder = context.folder;
             if (this.selected_folder == folder) {
@@ -1040,9 +1218,16 @@ public class Application.MainWindow :
                     this.select_folder.begin(account.inbox, true);
                 }
             }
+            if (this.all_inboxes && folder.used_as == INBOX) {
+                reload_all_inboxes = true;
+            }
 
             folder.use_changed.disconnect(on_use_changed);
             this.folder_list.remove_folder(context);
+        }
+
+        if (reload_all_inboxes) {
+            this.select_all_inboxes.begin(false);
         }
     }
 
@@ -1151,6 +1336,8 @@ public class Application.MainWindow :
         );
         this.folder_list.expansion_changed.connect(on_folder_expansion_changed);
         this.folder_list.folder_selected.connect(on_folder_selected);
+        this.folder_list.all_inboxes_selected.connect(on_all_inboxes_selected);
+        this.folder_list.all_inboxes_activated.connect(on_all_inboxes_activated);
         this.folder_list.move_conversation.connect(on_move_conversation);
         this.folder_list.copy_conversation.connect(on_copy_conversation);
         this.folder_list.folder_activated.connect(on_folder_activated);
@@ -1168,7 +1355,7 @@ public class Application.MainWindow :
         this.conversation_list_view.conversation_activated.connect(on_conversation_activated);
         this.conversation_list_view.visible_conversations.notify.connect(on_visible_conversations_changed);
         this.conversation_list_view.mail_drag_active.connect(
-            this.folder_list.set_drag_active
+            on_mail_drag_active
         );
         this.conversation_list_view.vexpand = true;
 
@@ -1698,7 +1885,8 @@ public class Application.MainWindow :
         this.conversation_viewer.headerbar.right_actions.selected_conversations = to_select.size;
         this.conversation_viewer.headerbar.left_actions.selected_conversations = to_select.size;
 
-        if (this.selected_folder != null && !this.has_composer) {
+        if ((this.selected_folder != null || this.all_inboxes) &&
+            !this.has_composer) {
             switch(to_select.size) {
             case 0:
                 update_conversation_actions(NONE);
@@ -1714,7 +1902,16 @@ public class Application.MainWindow :
                 // last email was removed but the conversation monitor
                 // hasn't signalled its removal yet. In this case,
                 // just don't load it since it will soon disappear.
-                AccountContext? context = get_selected_account_context();
+                if (this.all_inboxes && convo != null) {
+                    select_account(convo.base_folder.account);
+                }
+                AccountContext? context = (
+                    (this.all_inboxes && convo != null)
+                    ? this.controller.get_context_for_account(
+                        convo.base_folder.account.information
+                    )
+                    : get_selected_account_context()
+                );
                 if (context != null && convo.get_count() > 0) {
                     try {
                         yield this.conversation_viewer.load_conversation(
@@ -1838,20 +2035,18 @@ public class Application.MainWindow :
     }
 
     private void on_refresh_folder() {
-        Convey.Folder? folder = this.selected_folder;
-        if (folder == null) {
-            return;
+        foreach (var folder in this.selected_folders) {
+            headerbar_push_busy();
+            folder.synchronise_remote.begin(null, (obj, res) => {
+                try {
+                    folder.synchronise_remote.end(res);
+                } catch (GLib.Error err) {
+                    debug("Error refreshing %s: %s",
+                        folder.path.to_string(), err.message);
+                }
+                headerbar_pop_busy();
+            });
         }
-        headerbar_push_busy();
-        folder.synchronise_remote.begin(null, (obj, res) => {
-            try {
-                folder.synchronise_remote.end(res);
-            } catch (GLib.Error err) {
-                debug("Error refreshing %s: %s",
-                    folder.path.to_string(), err.message);
-            }
-            headerbar_pop_busy();
-        });
     }
 
     private void on_conversations_selected(Gee.Set<Convey.App.Conversation> selected) {
@@ -1924,9 +2119,10 @@ public class Application.MainWindow :
         // Only update the UI if we don't currently have a composer,
         // so we don't clobber it
         if (!this.has_composer) {
-            if (this.conversations.size == 0) {
+            if (current_conversation_count() == 0) {
                 // Let the user know if there's no available conversations
-                if (this.selected_folder.used_as == SEARCH) {
+                if (this.selected_folder != null &&
+                    this.selected_folder.used_as == SEARCH) {
                     this.conversation_viewer.show_empty_search();
                 } else {
                     this.conversation_viewer.show_empty_folder();
@@ -1943,6 +2139,17 @@ public class Application.MainWindow :
                 }
             }
         }
+    }
+
+    private int current_conversation_count() {
+        int count = 0;
+        if (this.conversations != null) {
+            count = this.conversations.size;
+        }
+        foreach (var monitor in this.inbox_monitors) {
+            count += monitor.size;
+        }
+        return count;
     }
 
     private void update_headerbar() {
@@ -1962,18 +2169,21 @@ public class Application.MainWindow :
         get_window_action(ACTION_FIND_IN_CONVERSATION).set_enabled(find_in_enabled);
         this.conversation_viewer.headerbar.set_find_sensitive(find_in_enabled);
 
+        Convey.Folder? actions_on = this.folder_for_actions;
         bool reply_sensitive = (
             sensitive &&
             !multiple &&
-            this.selected_folder != null &&
-            this.selected_folder.used_as != DRAFTS
+            actions_on != null &&
+            actions_on.used_as != DRAFTS
         );
         get_window_action(ACTION_REPLY_CONVERSATION).set_enabled(reply_sensitive);
         get_window_action(ACTION_REPLY_ALL_CONVERSATION).set_enabled(reply_sensitive);
         get_window_action(ACTION_FORWARD_CONVERSATION).set_enabled(reply_sensitive);
 
         bool copy_enabled = (
-            sensitive && (this.selected_folder is Convey.FolderSupport.Copy)
+            sensitive &&
+            !this.all_inboxes &&
+            (actions_on is Convey.FolderSupport.Copy)
         );
         get_window_action(ACTION_SHOW_COPY_MENU).set_enabled(copy_enabled);
         foreach (var actions in this.folder_conversation_actions) {
@@ -1981,20 +2191,20 @@ public class Application.MainWindow :
         }
 
         bool mark_enabled = (
-            sensitive && (this.selected_folder is Convey.FolderSupport.Mark)
+            sensitive && (actions_on is Convey.FolderSupport.Mark)
         );
         foreach (var actions in this.folder_conversation_actions) {
             actions.set_mark_sensitive(mark_enabled);
         }
 
         get_window_action(ACTION_ARCHIVE_CONVERSATION).set_enabled(
-            sensitive && (this.selected_folder is Convey.FolderSupport.Archive)
+            sensitive && (actions_on is Convey.FolderSupport.Archive)
         );
         get_window_action(ACTION_TRASH_CONVERSATION).set_enabled(
             sensitive && this.selected_folder_supports_trash
         );
         get_window_action(ACTION_DELETE_CONVERSATION).set_enabled(
-            sensitive && (this.selected_folder is Convey.FolderSupport.Remove)
+            sensitive && (actions_on is Convey.FolderSupport.Remove)
         );
 
         this.update_context_dependent_actions.begin(sensitive);
@@ -2393,11 +2603,13 @@ public class Application.MainWindow :
     // this signal does not necessarily indicate that the application
     // previously didn't have focus and now it does
     private void on_has_toplevel_focus() {
-        if (this.selected_folder != null) {
-            this.controller.clear_new_messages(
-                this.selected_folder,
-                this.conversation_list_view.visible_conversations
-            );
+        clear_new_messages();
+    }
+
+    private void clear_new_messages() {
+        var visible = this.conversation_list_view.visible_conversations;
+        foreach (var folder in this.selected_folders) {
+            this.controller.clear_new_messages(folder, visible);
         }
     }
 
@@ -2409,6 +2621,17 @@ public class Application.MainWindow :
 
     private void on_folder_selected(Convey.Folder? folder) {
         this.select_folder.begin(folder, true);
+    }
+
+    private void on_all_inboxes_selected() {
+        this.select_all_inboxes.begin(true);
+    }
+
+    private void on_all_inboxes_activated() {
+        this.inner_view.show_content = true;
+        if (this.application.config.autoselect) {
+            focus_widget(this.conversation_viewer.get_visible_child());
+        }
     }
 
     private void on_select_inbox(SimpleAction action, Variant? parameter) {
@@ -2437,9 +2660,7 @@ public class Application.MainWindow :
     }
 
     private void on_visible_conversations_changed() {
-        if (this.selected_folder != null) {
-            this.controller.clear_new_messages(this.selected_folder, this.conversation_list_view.visible_conversations);
-        }
+        clear_new_messages();
     }
 
     private void on_folder_activated(Convey.Folder? folder) {
@@ -2547,23 +2768,30 @@ public class Application.MainWindow :
         get_window_action(ACTION_MARK_AS_UNSTARRED).set_enabled(starred_selected);
 
         // If we're in Drafts/Outbox, we also shouldn't set a message as junk
-        bool in_junk_folder = (selected_folder.used_as == JUNK);
+        Convey.Folder? actions_on = this.folder_for_actions;
         get_window_action(ACTION_TOGGLE_JUNK).set_enabled(
-            !in_junk_folder &&
-            selected_folder.used_as != DRAFTS &&
-            selected_folder.used_as != OUTBOX
+            actions_on != null &&
+            actions_on.used_as != JUNK &&
+            actions_on.used_as != DRAFTS &&
+            actions_on.used_as != OUTBOX
         );
     }
 
     private void on_mark_conversations(Gee.Collection<Convey.App.Conversation> conversations,
                                        Convey.NamedFlag flag) {
-        Convey.Folder? location = this.selected_folder;
-        if (location != null) {
+        mark_conversations(conversations, flag, true);
+    }
+
+    private void mark_conversations(Gee.Collection<Convey.App.Conversation> conversations,
+                                    Convey.NamedFlag flag,
+                                    bool to_add) {
+        var groups = group_by_folder(conversations);
+        foreach (var location in groups.get_keys()) {
             this.controller.mark_conversations.begin(
                 location,
-                conversations,
+                groups.get(location),
                 flag,
-                true,
+                to_add,
                 (obj, res) => {
                     try {
                         this.controller.mark_conversations.end(res);
@@ -2576,125 +2804,95 @@ public class Application.MainWindow :
     }
 
     private void on_mark_as_read() {
-        Convey.Folder? location = this.selected_folder;
-        if (location != null) {
-            this.controller.mark_conversations.begin(
-                location,
-                this.conversation_list_view.selected,
-                Convey.EmailFlags.UNREAD,
-                false,
-                (obj, res) => {
-                    try {
-                        this.controller.mark_conversations.end(res);
-                    } catch (GLib.Error err) {
-                        handle_error(location.account.information, err);
-                    }
-                }
-            );
-        }
+        mark_conversations(
+            this.conversation_list_view.selected, Convey.EmailFlags.UNREAD, false
+        );
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
     private void on_mark_as_unread() {
-        Convey.Folder? location = this.selected_folder;
-        if (location != null) {
-            this.controller.mark_conversations.begin(
-                location,
-                this.conversation_list_view.selected,
-                Convey.EmailFlags.UNREAD,
-                true,
-                (obj, res) => {
-                    try {
-                        this.controller.mark_conversations.end(res);
-                    } catch (GLib.Error err) {
-                        handle_error(location.account.information, err);
-                    }
-                }
-            );
-        }
+        mark_conversations(
+            this.conversation_list_view.selected, Convey.EmailFlags.UNREAD, true
+        );
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
     private void on_mark_as_starred() {
-        Convey.Folder? location = this.selected_folder;
-        if (location != null) {
-            this.controller.mark_conversations.begin(
-                location,
-                this.conversation_list_view.selected,
-                Convey.EmailFlags.FLAGGED,
-                true,
-                (obj, res) => {
-                    try {
-                        this.controller.mark_conversations.end(res);
-                    } catch (GLib.Error err) {
-                        handle_error(location.account.information, err);
-                    }
-                }
-            );
-        }
+        mark_conversations(
+            this.conversation_list_view.selected, Convey.EmailFlags.FLAGGED, true
+        );
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
     private void on_mark_as_unstarred() {
-        Convey.Folder? location = this.selected_folder;
-        if (location != null) {
-            this.controller.mark_conversations.begin(
-                location,
-                this.conversation_list_view.selected,
-                Convey.EmailFlags.FLAGGED,
-                false,
+        mark_conversations(
+            this.conversation_list_view.selected, Convey.EmailFlags.FLAGGED, false
+        );
+        this.conversation_list_view.selection_mode_enabled = false;
+    }
+
+    private void on_mark_as_junk_toggle() {
+        var groups = selected_groups();
+        foreach (var source in groups.get_keys()) {
+            Convey.Folder.SpecialUse destination =
+                (source.used_as != JUNK)
+                ? Convey.Folder.SpecialUse.JUNK
+                : Convey.Folder.SpecialUse.INBOX;
+            move_conversations_special(
+                source, destination, groups.get(source)
+            );
+        }
+        this.conversation_list_view.selection_mode_enabled = false;
+    }
+
+    private void move_conversations_special(
+        Convey.Folder source,
+        Convey.Folder.SpecialUse destination,
+        Gee.Collection<Convey.App.Conversation> conversations) {
+        this.controller.move_conversations_special.begin(
+            source,
+            destination,
+            conversations,
+            (obj, res) => {
+                try {
+                    this.controller.move_conversations_special.end(res);
+                } catch (GLib.Error err) {
+                    handle_error(source.account.information, err);
+                }
+            }
+        );
+    }
+
+    private void on_mail_drag_active(bool active) {
+        var sources = new Gee.HashSet<Convey.Folder>();
+        if (active) {
+            sources.add_all(
+                selected_groups().get_keys()
+            );
+        }
+        this.folder_list.set_drag_sources(sources);
+        this.folder_list.set_drag_active(active);
+    }
+
+    private void on_move_conversation(Convey.Folder destination) {
+        var groups = selected_groups();
+        foreach (var location in groups.get_keys()) {
+            var source = location as Convey.FolderSupport.Move;
+            if (source == null || location.account != destination.account) {
+                continue;
+            }
+            this.controller.move_conversations.begin(
+                source,
+                destination,
+                groups.get(location),
                 (obj, res) => {
                     try {
-                        this.controller.mark_conversations.end(res);
+                        this.controller.move_conversations.end(res);
                     } catch (GLib.Error err) {
                         handle_error(location.account.information, err);
                     }
                 }
             );
-        }
-        this.conversation_list_view.selection_mode_enabled = false;
-    }
-
-    private void on_mark_as_junk_toggle() {
-        Convey.Folder? source = this.selected_folder;
-        if (source != null) {
-            Convey.Folder.SpecialUse destination =
-                (source.used_as != JUNK)
-                ? Convey.Folder.SpecialUse.JUNK
-                : Convey.Folder.SpecialUse.INBOX;
-            this.controller.move_conversations_special.begin(
-                source,
-                destination,
-                this.conversation_list_view.selected,
-                (obj, res) => {
-                    try {
-                        this.controller.move_conversations_special.end(res);
-                    } catch (GLib.Error err) {
-                        handle_error(source.account.information, err);
-                    }
-                }
-            );
-        }
-        this.conversation_list_view.selection_mode_enabled = false;
-    }
-
-    private void on_move_conversation(Convey.Folder destination) {
-        Convey.FolderSupport.Move source =
-            this.selected_folder as Convey.FolderSupport.Move;
-        if (source != null) {
-            this.controller.move_conversations.begin(
-                source,
-                destination,
-                this.conversation_list_view.selected,
-                (obj, res) => {
-                    try {
-                        this.controller.move_conversations.end(res);
-                    } catch (GLib.Error err) {
-                        handle_error(source.account.information, err);
-                    }
-                }
-            );
-
         }
         this.conversation_list_view.selection_mode_enabled = false;
     }
@@ -2720,41 +2918,20 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_archive_conversation() {
-        Convey.Folder source = this.selected_folder;
-        if (source != null) {
-            this.controller.move_conversations_special.begin(
-                source,
-                ARCHIVE,
-                this.conversation_list_view.selected,
-                (obj, res) => {
-                    try {
-                        this.controller.move_conversations_special.end(res);
-                    } catch (GLib.Error err) {
-                        handle_error(source.account.information, err);
-                    }
-                }
-            );
+    private void move_selected_special(Convey.Folder.SpecialUse destination) {
+        var groups = selected_groups();
+        foreach (var source in groups.get_keys()) {
+            move_conversations_special(source, destination, groups.get(source));
         }
+    }
+
+    private void on_archive_conversation() {
+        move_selected_special(ARCHIVE);
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
     private void on_trash_conversation() {
-        Convey.Folder source = this.selected_folder;
-        if (source != null) {
-            this.controller.move_conversations_special.begin(
-                source,
-                TRASH,
-                this.conversation_list_view.selected,
-                (obj, res) => {
-                    try {
-                        this.controller.move_conversations_special.end(res);
-                    } catch (GLib.Error err) {
-                        handle_error(source.account.information, err);
-                    }
-                }
-            );
-        }
+        move_selected_special(TRASH);
         // No need to disable selection mode, handled by model change
     }
 
@@ -2763,21 +2940,23 @@ public class Application.MainWindow :
     }
 
     private async void do_delete_conversation() {
-        var target = this.selected_folder as Convey.FolderSupport.Remove;
-        if (target == null)
+        var groups = selected_groups();
+        if (groups.size == 0 ||
+            !yield prompt_delete_conversations(groups.size))
             return;
 
-        Gee.Collection<Convey.App.Conversation> conversations =
-            this.conversation_list_view.selected;
-        if (!yield prompt_delete_conversations(conversations.size))
-            return;
+        foreach (var source in groups.get_keys()) {
+            var target = source as Convey.FolderSupport.Remove;
+            if (target == null)
+                continue;
 
-        try {
-            yield this.controller.delete_conversations(
-                target,
-                conversations);
-        } catch (GLib.Error err) {
-            handle_error(target.account.information, err);
+            try {
+                yield this.controller.delete_conversations(
+                    target,
+                    groups.get(source));
+            } catch (GLib.Error err) {
+                handle_error(source.account.information, err);
+            }
         }
 
         // No need to disable selection mode, handled by model change
@@ -2791,11 +2970,16 @@ public class Application.MainWindow :
         );
     }
 
+    // The folder an action on a displayed conversation applies to
+    private Convey.Folder? folder_for(ConversationListBox view) {
+        return this.selected_folder ?? view.conversation.base_folder;
+    }
+
     private void on_email_mark(ConversationListBox view,
                                Gee.Collection<Convey.EmailIdentifier> messages,
                                Convey.NamedFlag? to_add,
                                Convey.NamedFlag? to_remove) {
-        Convey.Folder? location = this.selected_folder;
+        Convey.Folder? location = folder_for(view);
         if (location != null) {
             Convey.EmailFlags add_flags = null;
             if (to_add != null) {
@@ -2857,7 +3041,7 @@ public class Application.MainWindow :
     }
 
     private async void do_trash_email(ConversationListBox view, Convey.Email target) {
-        Convey.Folder? source = this.selected_folder;
+        Convey.Folder? source = folder_for(view);
         if (source == null)
             return;
 
@@ -2878,7 +3062,7 @@ public class Application.MainWindow :
 
     private async void do_delete_email(ConversationListBox view, Convey.Email target) {
         Convey.FolderSupport.Remove? source =
-            this.selected_folder as Convey.FolderSupport.Remove;
+            folder_for(view) as Convey.FolderSupport.Remove;
         if (source == null || !yield prompt_delete_messages(1))
             return;
 

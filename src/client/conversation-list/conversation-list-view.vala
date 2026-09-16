@@ -137,19 +137,22 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     private Model? model;
 
     /**
-     * Set the conversation monitor which the listview is displaying
+     * Set the conversation monitors which the listview is displaying.
+     *
+     * Conversations from every monitor are merged into a single date
+     * ordered list, as used by the combined inbox view.
      */
-    public void set_monitor(Convey.App.ConversationMonitor? monitor) {
+    public void set_monitors(Gee.Collection<Convey.App.ConversationMonitor>? monitors) {
         if (this.model != null) {
             this.model.conversations_loaded.disconnect(on_conversations_loaded);
             this.model.conversations_removed.disconnect(on_conversations_removed);
             this.model.conversation_updated.disconnect(on_conversation_updated);
         }
-        if (monitor == null) {
+        if (monitors == null || monitors.is_empty) {
             this.model = null;
             this.list.bind_model(null, row_factory);
         } else {
-            this.model = new Model(monitor);
+            this.model = new Model(monitors);
             this.list.bind_model(this.model, row_factory);
             // bind_model doesn't re-run the header func for neighbours when
             // items change, so a deleted top row leaves the new top row with a
@@ -599,10 +602,16 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     private void on_conversations_loaded() {
         // ponytail: destructive folders never autoselect -- opening a message
         // in Junk/Wastebasket on arrival is never what's wanted.
-        var used_as = (this.model != null)
-            ? this.model.monitor.base_folder.used_as
-            : Convey.Folder.SpecialUse.NONE;
-        if (used_as != TRASH && used_as != JUNK) {
+        bool destructive = false;
+        if (this.model != null) {
+            foreach (var folder in this.model.get_folders()) {
+                if (folder.used_as == TRASH || folder.used_as == JUNK) {
+                    destructive = true;
+                    break;
+                }
+            }
+        }
+        if (!destructive) {
             if (this.config.autoselect &&
                 !this.should_inhibit_autoactivate &&
                 this.list.get_selected_rows().length() == 0) {
@@ -736,8 +745,6 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     public signal void mail_drag_active(bool active);
 
     private void on_drag_begin(Gtk.DragSource drag_source, Gdk.Drag drag) {
-        mail_drag_active(true);
-
         Row? row = this.drag_widget;
         if (row != null) {
             // If the user has a selection but drags starting from an
@@ -749,6 +756,8 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
             drag_source.set_icon(new Gtk.WidgetPaintable(row), 16, 16);
         }
+
+        mail_drag_active(true);
     }
 
     private void on_drag_end(Gtk.DragSource drag_source, Gdk.Drag drag, bool delete_data) {

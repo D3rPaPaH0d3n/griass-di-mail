@@ -9,28 +9,47 @@
 // The whole goal of this class to wrap the ConversationMonitor with a view that presents a sorted list
 public class ConversationList.Model : Object, ListModel {
     internal GLib.GenericArray<Convey.App.Conversation> items = new GLib.GenericArray<Convey.App.Conversation>();
-    internal Convey.App.ConversationMonitor monitor { get; set; }
 
-    private bool scanning = false;
+    // More than one monitor when several inboxes are shown combined;
+    // conversations from all of them are merged into a single date
+    // ordered list.
+    internal Gee.Collection<Convey.App.ConversationMonitor> monitors {
+        get; private set;
+    }
 
-    internal Model(Convey.App.ConversationMonitor monitor) {
-        this.monitor = monitor;
+    private int scanning = 0;
 
-        monitor.conversations_added.connect(on_conversations_added);
-        monitor.conversation_appended.connect(on_conversation_updated);
-        monitor.conversation_trimmed.connect(on_conversation_updated);
-        monitor.conversations_removed.connect(on_conversations_removed);
-        monitor.scan_started.connect(on_scan_started);
-        monitor.scan_completed.connect(on_scan_completed);
+    internal Model(Gee.Collection<Convey.App.ConversationMonitor> monitors) {
+        this.monitors = monitors;
+
+        foreach (var monitor in monitors) {
+            monitor.conversations_added.connect(on_conversations_added);
+            monitor.conversation_appended.connect(on_conversation_updated);
+            monitor.conversation_trimmed.connect(on_conversation_updated);
+            monitor.conversations_removed.connect(on_conversations_removed);
+            monitor.scan_started.connect(on_scan_started);
+            monitor.scan_completed.connect(on_scan_completed);
+        }
     }
 
     ~Model() {
-        this.monitor.conversations_added.disconnect(on_conversations_added);
-        this.monitor.conversation_appended.disconnect(on_conversation_updated);
-        this.monitor.conversation_trimmed.disconnect(on_conversation_updated);
-        this.monitor.conversations_removed.disconnect(on_conversations_removed);
-        this.monitor.scan_started.disconnect(on_scan_started);
-        this.monitor.scan_completed.disconnect(on_scan_completed);
+        foreach (var monitor in this.monitors) {
+            monitor.conversations_added.disconnect(on_conversations_added);
+            monitor.conversation_appended.disconnect(on_conversation_updated);
+            monitor.conversation_trimmed.disconnect(on_conversation_updated);
+            monitor.conversations_removed.disconnect(on_conversations_removed);
+            monitor.scan_started.disconnect(on_scan_started);
+            monitor.scan_completed.disconnect(on_scan_completed);
+        }
+    }
+
+    /** The folders being displayed. */
+    internal Gee.Collection<Convey.Folder> get_folders() {
+        var folders = new Gee.ArrayList<Convey.Folder>();
+        foreach (var monitor in this.monitors) {
+            folders.add(monitor.base_folder);
+        }
+        return folders;
     }
 
     public signal void conversations_added(bool start);
@@ -47,13 +66,13 @@ public class ConversationList.Model : Object, ListModel {
     // ------------------------
 
     private void on_scan_started(Convey.App.ConversationMonitor source) {
-        this.scanning = true;
+        this.scanning++;
     }
 
     private void on_scan_completed(Convey.App.ConversationMonitor source) {
-        this.scanning = false;
+        this.scanning = int.max(0, this.scanning - 1);
         GLib.Timeout.add(100, () => {
-            if (!this.scanning) {
+            if (this.scanning == 0) {
                 conversations_loaded();
             }
             return false;
@@ -61,11 +80,13 @@ public class ConversationList.Model : Object, ListModel {
     }
 
     public bool load_more(int amount) {
-        if (this.scanning) {
+        if (this.scanning > 0) {
             return false;
         }
 
-        this.monitor.min_window_count += amount;
+        foreach (var monitor in this.monitors) {
+            monitor.min_window_count += amount;
+        }
         return true;
     }
 
