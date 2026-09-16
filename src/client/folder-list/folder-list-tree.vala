@@ -17,6 +17,9 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
     /** Fired when the user collapses or expands a part of the tree. */
     public signal void expansion_changed();
+
+    /** Fired on a deliberate poke at the sidebar. */
+    public signal void user_interacted();
     public signal void folder_activated(Convey.Folder? folder);
     public signal void all_inboxes_activated();
     public signal void copy_conversation(Convey.Folder folder);
@@ -54,7 +57,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             Gtk.EventControllerScrollFlags.BOTH_AXES
         ) { propagation_phase = Gtk.PropagationPhase.CAPTURE };
         scroll.scroll.connect((dx, dy) => {
-            release_startup_pin();
+            on_user_poke();
             return false;
         });
         add_controller(scroll);
@@ -63,14 +66,14 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             button = 0,
             propagation_phase = Gtk.PropagationPhase.CAPTURE
         };
-        poke.pressed.connect((n, x, y) => release_startup_pin());
+        poke.pressed.connect((n, x, y) => on_user_poke());
         add_controller(poke);
 
         var keys = new Gtk.EventControllerKey() {
             propagation_phase = Gtk.PropagationPhase.CAPTURE
         };
         keys.key_pressed.connect((kv, kc, state) => {
-            release_startup_pin();
+            on_user_poke();
             return false;
         });
         add_controller(keys);
@@ -414,6 +417,11 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             release_startup_pin();
             return GLib.Source.REMOVE;
         });
+    }
+
+    private void on_user_poke() {
+        release_startup_pin();
+        user_interacted();
     }
 
     private void release_startup_pin() {

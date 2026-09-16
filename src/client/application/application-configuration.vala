@@ -33,6 +33,7 @@ public class Application.Configuration : Convey.BaseObject {
     public const string WINDOW_MAXIMIZE_KEY = "window-maximize";
     public const string WINDOW_WIDTH_KEY = "window-width";
     public const string IMAGES_TRUSTED_DOMAINS = "images-trusted-domains";
+    public const string LAST_INBOX = "last-inbox";
 
 
     public enum DesktopEnvironment {
@@ -200,6 +201,16 @@ public class Application.Configuration : Convey.BaseObject {
     /** Sets the parts of the folder list left collapsed. */
     public void set_collapsed_folder_groups(string[] value) {
         this.settings.set_strv(COLLAPSED_FOLDER_GROUPS, value);
+    }
+
+    /** Returns the inbox to open at launch. */
+    public string get_last_inbox() {
+        return this.settings.get_string(LAST_INBOX);
+    }
+
+    /** Sets the inbox to open at launch. */
+    public void set_last_inbox(string value) {
+        this.settings.set_string(LAST_INBOX, value);
     }
 
     /** Returns list of trusted domains for which images loading is allowed. */

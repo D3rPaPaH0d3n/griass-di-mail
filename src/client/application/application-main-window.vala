@@ -130,6 +130,14 @@ public class Application.MainWindow :
         get; private set; default = null;
     }
 
+    // Stands for the combined view in the last-inbox setting, where
+    // every other value is an account id
+    private const string ALL_INBOXES = "all";
+
+    // Set until the inbox remembered from last session has been
+    // opened, or the user has picked a different one
+    private bool restoring_last_inbox = true;
+
     /** Whether the combined view of every account's inbox is selected. */
     public bool all_inboxes { get; private set; default = false; }
 
@@ -687,6 +695,16 @@ public class Application.MainWindow :
             debug("Folder selected: %s",
                   (to_select != null) ? to_select.to_string() : "(null)");
 
+            // Not while a restore is pending, so that falling back to
+            // the first inbox does not overwrite the one remembered
+            if (to_select != null &&
+                to_select.used_as == INBOX &&
+                !this.restoring_last_inbox) {
+                this.application.config.set_last_inbox(
+                    to_select.account.information.id
+                );
+            }
+
             // Finally, hook up the new folder if any and start
             // loading conversations.
 
@@ -764,6 +782,7 @@ public class Application.MainWindow :
         this.conversation_list_info_bars.remove_all();
 
         this.all_inboxes = true;
+        this.application.config.set_last_inbox(ALL_INBOXES);
         foreach (var actions in this.folder_conversation_actions) {
             actions.source_folder = null;
         }
@@ -1079,14 +1098,64 @@ public class Application.MainWindow :
         }
     }
 
-    internal bool select_first_inbox(bool is_interactive) {
-        bool success = false;
-        Convey.Folder? inbox = get_first_inbox();
-        if (inbox != null) {
-            this.select_folder.begin(inbox, is_interactive);
-            success = true;
+    /**
+     * Selects the inbox last opened, or the first one as a fallback.
+     *
+     * Returns false if nothing could be selected yet, so that callers
+     * can try again once the account has finished loading folders.
+     */
+    internal bool select_startup_inbox(bool is_interactive) {
+        return (
+            restore_last_inbox(is_interactive) ||
+            select_first_inbox(is_interactive)
+        );
+    }
+
+    // Selects the inbox remembered from last session, if it has loaded
+    private bool restore_last_inbox(bool is_interactive) {
+        string last = this.application.config.get_last_inbox();
+        if (last == ALL_INBOXES) {
+            if (this.folder_list.get_all_inboxes().size < 2) {
+                return false;
+            }
+            this.restoring_last_inbox = false;
+            this.select_all_inboxes.begin(is_interactive);
+            return true;
         }
-        return success;
+
+        Convey.Folder? inbox = get_inbox_for_account(last);
+        if (inbox == null) {
+            return false;
+        }
+        this.restoring_last_inbox = false;
+        return select_inbox(inbox, is_interactive);
+    }
+
+    private bool select_first_inbox(bool is_interactive) {
+        return select_inbox(get_first_inbox(), is_interactive);
+    }
+
+    private bool select_inbox(Convey.Folder? inbox, bool is_interactive) {
+        if (inbox == null) {
+            return false;
+        }
+        this.select_folder.begin(inbox, is_interactive);
+        return true;
+    }
+
+    private Convey.Folder? get_inbox_for_account(string id) {
+        Convey.Folder? inbox = null;
+        try {
+            foreach (var account in this.application.engine.get_accounts()) {
+                if (account.information.id == id) {
+                    inbox = account.get_special_folder(INBOX);
+                    break;
+                }
+            }
+        } catch (GLib.Error error) {
+            debug("Error getting inbox for account %s: %s", id, error.message);
+        }
+        return inbox;
     }
 
     private void add_account(AccountContext to_add) {
@@ -1200,9 +1269,12 @@ public class Application.MainWindow :
             }
         }
 
-        if (this.all_inboxes &&
-            Convey.traverse(to_add).any((c) => c.folder.used_as == INBOX)) {
-            this.select_all_inboxes.begin(false);
+        if (Convey.traverse(to_add).any((c) => c.folder.used_as == INBOX)) {
+            if (this.all_inboxes) {
+                this.select_all_inboxes.begin(false);
+            } else if (this.restoring_last_inbox) {
+                restore_last_inbox(false);
+            }
         }
     }
 
@@ -1335,6 +1407,9 @@ public class Application.MainWindow :
             this.application.config.get_collapsed_folder_groups()
         );
         this.folder_list.expansion_changed.connect(on_folder_expansion_changed);
+        this.folder_list.user_interacted.connect(
+            () => this.restoring_last_inbox = false
+        );
         this.folder_list.folder_selected.connect(on_folder_selected);
         this.folder_list.all_inboxes_selected.connect(on_all_inboxes_selected);
         this.folder_list.all_inboxes_activated.connect(on_all_inboxes_activated);

@@ -116,6 +116,13 @@
         folder list, so they stay that way between launches</description>
     </key>
 
+    <key name="last-inbox" type="s">
+        <default>''</default>
+        <summary>Inbox to open at launch</summary>
+        <description>Identifier of the account whose inbox was last
+        opened, or "all" for the combined view of every inbox</description>
+    </key>
+
     <key name="images-trusted-domains" type="as">
         <default>[]</default>
         <summary>Allow images for these domains</summary>

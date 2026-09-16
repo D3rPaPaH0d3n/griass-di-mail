@@ -893,14 +893,14 @@ public class Application.Client : Adw.Application {
         return main;
     }
 
-    private MainWindow new_main_window(bool select_first_inbox) {
+    private MainWindow new_main_window(bool select_startup_inbox) {
         MainWindow window = new MainWindow(this);
         this.controller.register_window(window);
         Gtk.EventControllerFocus focus_controller = new Gtk.EventControllerFocus();
         focus_controller.enter.connect(on_main_window_focus_enter);
         ((Gtk.Widget) window).add_controller(focus_controller);
-        if (select_first_inbox) {
-            if (!window.select_first_inbox(true)) {
+        if (select_startup_inbox) {
+            if (!window.select_startup_inbox(true)) {
                 // The first inbox wasn't selected, so the account is
                 // likely still loading folders after being
                 // opened. Add a listener to try again later.
@@ -1221,7 +1221,7 @@ public class Application.Client : Adw.Application {
         Gee.BidirSortedSet<Convey.Folder>? available,
         Gee.BidirSortedSet<Convey.Folder>? unavailable
     ) {
-        if (get_active_main_window().select_first_inbox(true)) {
+        if (get_active_main_window().select_startup_inbox(true)) {
             // The handler has done its job, so disconnect it
             account.folders_available_unavailable.disconnect(
                 on_folders_first_available
