@@ -76,7 +76,16 @@
   <translation type="gettext">convey</translation>
 
   <releases>
-  	<release version="50.2" date="2026-09-20">
+    <release version="50.2-1" date="2026-09-20">
+      <description>
+        <ul>
+          <li>Show nested folders on Microsoft accounts</li>
+          <li>Create subfolders from the folder list context menu within the app</li>
+          <li>Open GNOME Online Accounts directly when adding an account</li>
+        </ul>
+      </description>
+    </release>
+  	<release version="50.2" date="2026-09-16">
       <description>
         <ul>
           <li>Refreshed application icons, screenshots and branding colours</li>

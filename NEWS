@@ -1,6 +1,14 @@
+Version 50.2-1
+~~~~~~~~~~~~~~
+Released: 2026-09-20
+
+ * Show nested folders on Microsoft accounts
+ * Create subfolders from the folder list context menu within the app
+ * Open GNOME Online Accounts directly when adding an account
+
 Version 50.2
 ~~~~~~~~~~~~
-Released: 2026-09-20
+Released: 2026-09-16
 
  * Refreshed application icons, screenshots and branding colours
  * Add a combined "All Inboxes" view spanning every account
