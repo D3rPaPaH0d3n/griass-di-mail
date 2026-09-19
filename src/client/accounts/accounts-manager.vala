@@ -395,6 +395,21 @@ public class Accounts.Manager : GLib.Object {
         return (account.mediator is GoaMediator);
     }
 
+    /** Determines if GNOME Online Accounts is available. */
+    public bool is_goa_available {
+        get { return this.goa_service != null; }
+    }
+
+    /**
+     * Opens the GNOME Online Accounts panel in GNOME Settings.
+     *
+     * Throws an error if it was not possible to open GNOME Settings.
+     */
+    public async void add_goa_account_of_any_type(GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        yield open_goa_settings("add", null, cancellable);
+    }
+
     /**
      * Opens GNOME Settings to add an account of a particular type.
      *

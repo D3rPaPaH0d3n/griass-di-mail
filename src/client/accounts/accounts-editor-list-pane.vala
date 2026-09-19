@@ -257,7 +257,21 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 
     [GtkCallback]
     private void on_add_button_clicked() {
-        show_new_account();
+        Manager manager = this.accounts;
+        if (!manager.is_goa_available) {
+            show_new_account();
+            return;
+        }
+        manager.add_goa_account_of_any_type.begin(
+            this.op_cancellable,
+            (obj, res) => {
+                try {
+                    manager.add_goa_account_of_any_type.end(res);
+                } catch (GLib.Error err) {
+                    debug("Failed to open GNOME Online Accounts: %s", err.message);
+                    show_new_account();
+                }
+            });
     }
 }
 
