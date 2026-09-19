@@ -155,7 +155,7 @@ class Convey.Graph.AccountTest : GraphTestCase {
         bool threw = false;
         try {
             account.create_personal_folder.begin(
-                "Archive", Convey.Folder.SpecialUse.ARCHIVE, null,
+                "Archive", Convey.Folder.SpecialUse.ARCHIVE, null, null,
                 (obj, res) => {
                     try {
                         account.create_personal_folder.end(res);

@@ -67,7 +67,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
 
         Convey.Graph.Client client = new_client();
         Gee.List<Convey.Graph.Client.MailFolder>? folders = null;
-        client.list_mail_folders.begin(null, (obj, res) => {
+        client.list_mail_folders.begin(null, null, (obj, res) => {
             try {
                 folders = client.list_mail_folders.end(res);
             } catch (GLib.Error err) {

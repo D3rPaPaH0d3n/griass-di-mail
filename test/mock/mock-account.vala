@@ -87,7 +87,8 @@ public class Mock.Account : Convey.Account,
     public override async Convey.Folder create_personal_folder(
         string name,
         Convey.Folder.SpecialUse use = NONE,
-        GLib.Cancellable? cancellable = null
+        GLib.Cancellable? cancellable = null,
+        Convey.Folder? parent = null
     ) throws GLib.Error {
         return object_call<Folder>(
             "create_personal_folder",

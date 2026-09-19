@@ -496,12 +496,14 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
     public override async Folder create_personal_folder(
         string name,
         Folder.SpecialUse use = NONE,
-        GLib.Cancellable? cancellable = null
+        GLib.Cancellable? cancellable = null,
+        Folder? parent = null
     ) throws GLib.Error {
         check_open();
         var remote = yield claim_account_session(cancellable);
-        FolderPath root =
-            yield remote.get_default_personal_namespace(cancellable);
+        FolderPath root = (parent != null)
+            ? parent.path
+            : yield remote.get_default_personal_namespace(cancellable);
         FolderPath path = root.get_child(name);
         if (this.remote_folders.has_key(path)) {
             throw new EngineError.ALREADY_EXISTS(

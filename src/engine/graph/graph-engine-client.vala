@@ -41,6 +41,8 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         public string display_name = "";
         public string well_known_name = "";
         public bool is_hidden = false;
+        public string parent_id = "";
+        public int64 child_folder_count = 0;
     }
 
     internal class DeltaResult : Convey.BaseObject {
@@ -584,6 +586,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
     }
 
     public async MailFolder create_mail_folder(string display_name,
+                                               string? parent_id = null,
                                                GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         Json.Builder builder = new Json.Builder();
@@ -593,7 +596,11 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         builder.end_object();
         Json.Object root = yield request_json(
             "POST",
-            "/me/mailFolders",
+            String.is_empty(parent_id)
+                ? "/me/mailFolders"
+                : "/me/mailFolders/%s/childFolders".printf(
+                    GLib.Uri.escape_string(parent_id, null, false)
+                ),
             null,
             cancellable,
             to_json(builder)
@@ -638,14 +645,17 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         return folder;
     }
 
-    public async Gee.List<MailFolder> list_mail_folders(
+    public async Gee.List<MailFolder> list_mail_folder_page(
+        string path,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         // Try progressively simpler queries, as not all tenants/API versions
         // support $select with wellKnownName/isHidden.
         string[] queries = {
-            "$top=100&$select=id,displayName,wellKnownName,isHidden",
-            "$top=100&$select=id,displayName,wellKnownName",
+            "$top=100&$select=id,displayName,parentFolderId,childFolderCount,wellKnownName,isHidden",
+            "$top=100&$select=id,displayName,parentFolderId,childFolderCount,wellKnownName",
+            "$top=100&$select=id,displayName,parentFolderId,childFolderCount",
+            "$top=100&$select=id,displayName,parentFolderId",
             "$top=100&$select=id,displayName",
             "$top=100",
         };
@@ -655,7 +665,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
             try {
                 root = yield request_json(
                     "GET",
-                    "/me/mailFolders",
+                    path,
                     query,
                     cancellable
                 );
@@ -689,6 +699,8 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     MailFolder folder = new MailFolder();
                     folder.id = id;
                     folder.display_name = get_string_member(obj, "displayName") ?? "";
+                    folder.parent_id = get_string_member(obj, "parentFolderId") ?? "";
+                    folder.child_folder_count = get_int_member(obj, "childFolderCount", 0);
                     folder.well_known_name = get_string_member(obj, "wellKnownName") ?? "";
                     folder.is_hidden = get_bool_member(obj, "isHidden", false);
                     folders.add(folder);
@@ -711,6 +723,20 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         } while (root != null);
 
         return folders;
+    }
+
+    public async Gee.List<MailFolder> list_mail_folders(
+        string? parent_id = null,
+        GLib.Cancellable? cancellable = null
+    ) throws GLib.Error {
+        return yield list_mail_folder_page(
+            String.is_empty(parent_id)
+                ? "/me/mailFolders"
+                : "/me/mailFolders/%s/childFolders".printf(
+                    GLib.Uri.escape_string(parent_id, null, false)
+                ),
+            cancellable
+        );
     }
 
     private async Json.Object request_json_url(string url,

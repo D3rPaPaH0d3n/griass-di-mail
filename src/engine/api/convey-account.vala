@@ -423,7 +423,8 @@ public abstract class Convey.Account : BaseObject, Logging.Source {
     ) throws GLib.Error;
 
     /**
-     * Creates a new folder in the root of the personal name space.
+     * Creates a new folder under the given parent, or in the root of
+     * the personal name space if none is given.
      *
      * If this account is backed by a remote server, calling this
      * causes the folder to be created on the remote.
@@ -431,7 +432,8 @@ public abstract class Convey.Account : BaseObject, Logging.Source {
     public abstract async Folder create_personal_folder(
         string name,
         Folder.SpecialUse use = NONE,
-        GLib.Cancellable? cancellable = null
+        GLib.Cancellable? cancellable = null,
+        Folder? parent = null
     ) throws GLib.Error;
 
     /**

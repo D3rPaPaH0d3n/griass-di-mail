@@ -346,7 +346,8 @@ internal class Convey.Graph.Account : Convey.Account,
     public override async Convey.Folder create_personal_folder(
         string name,
         Convey.Folder.SpecialUse use = Convey.Folder.SpecialUse.NONE,
-        GLib.Cancellable? cancellable = null
+        GLib.Cancellable? cancellable = null,
+        Convey.Folder? parent = null
     ) throws GLib.Error {
         if (!this.is_account_open) {
             throw new Convey.EngineError.OPEN_REQUIRED("Account not open");
@@ -356,9 +357,22 @@ internal class Convey.Graph.Account : Convey.Account,
                 "Setting special-use on create is not supported for Graph accounts"
             );
         }
+        Convey.Graph.Folder? graph_parent = parent as Convey.Graph.Folder;
+        if (parent != null && graph_parent == null) {
+            throw new Convey.EngineError.NOT_FOUND(
+                "Parent folder is not a Graph folder"
+            );
+        }
+        Convey.FolderPath parent_path = (graph_parent != null)
+            ? graph_parent.path
+            : this.remote_folder_root;
         Convey.Graph.Client.MailFolder created =
-            yield this.client.create_mail_folder(name, cancellable);
-        Convey.FolderPath path = this.remote_folder_root.get_child(created.display_name);
+            yield this.client.create_mail_folder(
+                name,
+                (graph_parent != null) ? graph_parent.graph_folder_id : null,
+                cancellable
+            );
+        Convey.FolderPath path = parent_path.get_child(created.display_name);
         Convey.Graph.Folder? existing = this.remote_folders.get(path) as Convey.Graph.Folder;
         if (existing != null) {
             return existing;
@@ -366,7 +380,8 @@ internal class Convey.Graph.Account : Convey.Account,
         Convey.Graph.Folder folder = add_folder(
             created.display_name,
             created.id,
-            Convey.Folder.SpecialUse.NONE
+            Convey.Folder.SpecialUse.NONE,
+            parent_path
         );
         notify_folders_available_unavailable(
             sort_by_path(Collection.single(folder)),
@@ -813,8 +828,10 @@ internal class Convey.Graph.Account : Convey.Account,
 
     private Convey.Graph.Folder add_folder(string name,
                                           string graph_id,
-                                          Convey.Folder.SpecialUse use) {
-        Convey.FolderPath path = this.remote_folder_root.get_child(name);
+                                          Convey.Folder.SpecialUse use,
+                                          FolderPath? parent = null) {
+        FolderPath root = parent ?? this.remote_folder_root;
+        Convey.FolderPath path = root.get_child(name);
         Convey.Graph.Folder folder = new Convey.Graph.Folder(
             this,
             this.client,
@@ -842,92 +859,33 @@ internal class Convey.Graph.Account : Convey.Account,
         notify_folders_deleted(sort_by_path(Collection.single(folder)));
     }
 
+    private Convey.Graph.Folder? find_folder_by_graph_id(string graph_id) {
+        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
+            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+            if (graph != null && graph.graph_folder_id == graph_id) {
+                return graph;
+            }
+        }
+        return null;
+    }
+
     private async void sync_custom_folders_async(
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Gee.List<Convey.Graph.Client.MailFolder> server_folders =
-            yield this.client.list_mail_folders(cancellable);
-
-        // Build a set of well-known names to skip
-        Gee.HashSet<string> builtin_names = new Gee.HashSet<string>();
-        foreach (string name in BUILTIN_WELL_KNOWN_NAMES) {
-            builtin_names.add(name);
-        }
-
-        // Build a set of built-in display names for secondary filtering
-        Gee.HashSet<string> builtin_display_names = new Gee.HashSet<string>();
-        foreach (string name in BUILTIN_DISPLAY_NAMES) {
-            builtin_display_names.add(name);
-        }
-
-        // Build a map of graph_id -> server folder for the custom folders
-        // (those whose wellKnownName is empty or not in our builtins list)
-        Gee.HashMap<string,Convey.Graph.Client.MailFolder> server_custom =
-            new Gee.HashMap<string,Convey.Graph.Client.MailFolder>();
-        foreach (Convey.Graph.Client.MailFolder mf in server_folders) {
-            if (mf.is_hidden) {
-                continue;
-            }
-            // Primary filter: skip by wellKnownName when the API returned it
-            if (!String.is_empty(mf.well_known_name) &&
-                builtin_names.contains(mf.well_known_name.down())) {
-                continue;
-            }
-            // Secondary filter: when wellKnownName is absent, skip by displayName
-            // so that built-in folders whose API response omitted the field are
-            // still excluded (e.g. "Sent Items", "Deleted Items", "Outbox", …).
-            if (String.is_empty(mf.well_known_name) &&
-                builtin_display_names.contains(mf.display_name.down())) {
-                continue;
-            }
-            if (String.is_empty(mf.display_name)) {
-                continue;
-            }
-            server_custom.set(mf.id, mf);
-        }
-
-        // Build a map of graph_id -> path for currently tracked custom folders
-        // (those not bound to a special use, i.e. not one of the hardcoded builtins)
-        Gee.HashMap<string,Convey.FolderPath> local_custom =
+        Gee.HashMap<string,Convey.FolderPath> seen =
             new Gee.HashMap<string,Convey.FolderPath>();
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
-            if (graph != null && graph.used_as == Convey.Folder.SpecialUse.NONE) {
-                local_custom.set(graph.graph_folder_id, folder.path);
-            }
-        }
-
-        // Add folders present on the server but not yet tracked locally
         Gee.ArrayList<Convey.Folder> added = new Gee.ArrayList<Convey.Folder>();
-        foreach (Convey.Graph.Client.MailFolder mf in server_custom.values) {
-            if (!local_custom.has_key(mf.id)) {
-                // Guard against a display_name that collides with an already-registered
-                // folder path (e.g. a user folder literally named "Inbox").
-                Convey.FolderPath candidate =
-                    this.remote_folder_root.get_child(mf.display_name);
-                if (this.remote_folders.has_key(candidate)) {
-                    debug(
-                        "Graph: Skipping custom folder '%s' (%s): path already registered",
-                        mf.display_name, mf.id
-                    );
-                    continue;
-                }
-                Convey.Graph.Folder folder = add_folder(
-                    mf.display_name,
-                    mf.id,
-                    Convey.Folder.SpecialUse.NONE
-                );
-                added.add(folder);
-                debug("Graph: Added custom folder '%s' (%s)", mf.display_name, mf.id);
-            }
-        }
+        yield walk_folders(null, this.remote_folder_root, seen, added, cancellable);
 
         // Remove folders that no longer exist on the server
-        foreach (var entry in local_custom.entries) {
-            if (!server_custom.has_key(entry.key)) {
-                Convey.FolderPath path = entry.value;
-                debug("Graph: Removing custom folder '%s' (no longer on server)", path.to_string());
-                remove_folder(path);
+        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
+            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+            if (graph != null &&
+                graph.used_as == Convey.Folder.SpecialUse.NONE &&
+                !seen.has_key(graph.graph_folder_id)) {
+                debug("Graph: Removing custom folder '%s' (no longer on server)",
+                    folder.path.to_string());
+                remove_folder(folder.path);
             }
         }
 
@@ -942,6 +900,77 @@ internal class Convey.Graph.Account : Convey.Account,
         }
 
         persist_cached_folders();
+    }
+
+    /**
+     * Registers the subtree below a folder, depth first.
+     *
+     * Built-in folders are hardcoded, so they are walked into but not
+     * registered; folders that aren't shown have their subtree skipped.
+     */
+    private async void walk_folders(string? parent_id,
+                                    Convey.FolderPath parent_path,
+                                    Gee.Map<string,Convey.FolderPath> seen,
+                                    Gee.List<Convey.Folder> added,
+                                    GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        Gee.List<Convey.Graph.Client.MailFolder> children;
+        try {
+            children = yield this.client.list_mail_folders(parent_id, cancellable);
+        } catch (GLib.Error err) {
+            if (parent_id == null) {
+                throw err;
+            }
+            debug("Graph: Failed to list children of '%s': %s",
+                parent_path.to_string(), err.message);
+            return;
+        }
+
+        foreach (Convey.Graph.Client.MailFolder mf in children) {
+            if (mf.is_hidden || String.is_empty(mf.display_name)) {
+                continue;
+            }
+
+            string well_known = mf.well_known_name.down();
+            Convey.FolderPath path;
+            if (well_known in BUILTIN_WELL_KNOWN_NAMES) {
+                Convey.Graph.Folder? builtin = find_folder_by_graph_id(well_known);
+                if (builtin == null) {
+                    continue;
+                }
+                path = builtin.path;
+            } else if (String.is_empty(well_known) &&
+                       mf.display_name.down() in BUILTIN_DISPLAY_NAMES) {
+                continue;
+            } else {
+                path = parent_path.get_child(mf.display_name);
+                Convey.Graph.Folder? tracked = find_folder_by_graph_id(mf.id);
+                if (tracked != null && !tracked.path.equal_to(path)) {
+                    remove_folder(tracked.path);
+                    tracked = null;
+                }
+                if (tracked == null) {
+                    if (this.remote_folders.has_key(path)) {
+                        debug("Graph: Skipping custom folder '%s' (%s): " +
+                            "path already registered", mf.display_name, mf.id);
+                        continue;
+                    }
+                    added.add(add_folder(
+                        mf.display_name,
+                        mf.id,
+                        Convey.Folder.SpecialUse.NONE,
+                        parent_path
+                    ));
+                    debug("Graph: Added custom folder '%s' (%s)",
+                        path.to_string(), mf.id);
+                }
+                seen.set(mf.id, path);
+            }
+
+            if (mf.child_folder_count > 0) {
+                yield walk_folders(mf.id, path, seen, added, cancellable);
+            }
+        }
     }
 
     private string folders_cache_path() {
@@ -991,18 +1020,24 @@ internal class Convey.Graph.Account : Convey.Account,
                 }
                 Json.Object entry = folders.get_object_element(i);
                 string id = Client.get_string_member(entry, "id") ?? "";
-                string name = Client.get_string_member(entry, "displayName") ?? "";
-                if (String.is_empty(id) || String.is_empty(name)) {
+                if (String.is_empty(id) || !entry.has_member("path")) {
                     continue;
                 }
+                Json.Array parts = entry.get_array_member("path");
+                if (parts.get_length() == 0) {
+                    continue;
+                }
+                Convey.FolderPath parent = this.remote_folder_root;
+                for (uint p = 0; p + 1 < parts.get_length(); p++) {
+                    parent = parent.get_child(parts.get_string_element(p));
+                }
+                string name = parts.get_string_element(parts.get_length() - 1);
                 // Guard against a name that collides with an already-registered
                 // folder path, as sync_custom_folders_async does.
-                Convey.FolderPath candidate =
-                    this.remote_folder_root.get_child(name);
-                if (this.remote_folders.has_key(candidate)) {
+                if (this.remote_folders.has_key(parent.get_child(name))) {
                     continue;
                 }
-                add_folder(name, id, Convey.Folder.SpecialUse.NONE);
+                add_folder(name, id, Convey.Folder.SpecialUse.NONE, parent);
             }
         } catch (GLib.Error err) {
             warning("Error loading Graph folder cache: %s", err.message);
@@ -1027,8 +1062,12 @@ internal class Convey.Graph.Account : Convey.Account,
                 builder.begin_object();
                 builder.set_member_name("id");
                 builder.add_string_value(graph.graph_folder_id);
-                builder.set_member_name("displayName");
-                builder.add_string_value(folder.path.name);
+                builder.set_member_name("path");
+                builder.begin_array();
+                foreach (string part in folder.path.as_array()) {
+                    builder.add_string_value(part);
+                }
+                builder.end_array();
                 builder.end_object();
             }
             builder.end_array();
