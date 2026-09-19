@@ -148,13 +148,16 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
      * attempt has failed.
      */
     public PendingFolderEntry? add_pending_folder(Convey.Account account,
-                                                  string name) {
+                                                  string name,
+                                                  Convey.Folder? parent = null) {
         var branch = this.account_branches.get(account);
         if (branch == null) {
             return null;
         }
         var entry = new PendingFolderEntry(name, Util.I18n.uses_labels(account));
-        branch.add_pending_folder(entry);
+        branch.add_pending_folder(
+            entry, (parent != null) ? parent.path : null
+        );
         return entry;
     }
 

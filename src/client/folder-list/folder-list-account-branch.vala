@@ -130,7 +130,14 @@ public class FolderList.AccountBranch : Sidebar.Branch {
     }
 
     /** Shows a placeholder row in the user folder group. */
-    public void add_pending_folder(PendingFolderEntry entry) {
+    public void add_pending_folder(PendingFolderEntry entry,
+                                   Convey.FolderPath? parent = null) {
+        Sidebar.Entry? parent_entry =
+            (parent != null) ? this.folder_entries.get(parent) : null;
+        if (parent_entry != null) {
+            graft(parent_entry, entry);
+            return;
+        }
         if (!has_entry(user_folder_group)) {
             graft(get_root(), user_folder_group);
         }

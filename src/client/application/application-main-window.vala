@@ -27,6 +27,7 @@ public class Application.MainWindow :
     public const string ACTION_SEARCH = "search";
     public const string ACTION_SELECT_INBOX = "select-inbox";
     public const string ACTION_FOLDER_NEW = "folder-new";
+    public const string ACTION_FOLDER_NEW_CHILD = "folder-new-child";
     public const string ACTION_FOLDER_RENAME = "folder-rename";
     public const string ACTION_FOLDER_DELETE = "folder-delete";
     public const string ACTION_SHOW_COPY_MENU = "show-copy-menu";
@@ -51,6 +52,7 @@ public class Application.MainWindow :
 
         // Folder actions
         { ACTION_FOLDER_NEW, on_folder_new },
+        { ACTION_FOLDER_NEW_CHILD, on_folder_new_child },
         { ACTION_FOLDER_RENAME, on_folder_rename },
         { ACTION_FOLDER_DELETE, on_folder_delete },
 
@@ -235,10 +237,6 @@ public class Application.MainWindow :
     public FolderList.Tree folder_list { get; private set; default = new FolderList.Tree(); }
     public SearchBar search_bar { get; private set; }
 
-    // Same menu, worded for folders and for labels; which model the
-    // context menu uses depends on the account under the pointer.
-    private GLib.Menu folder_menu;
-    private GLib.Menu label_menu;
     public ConversationList.View conversation_list_view  { get; private set; }
     public ConversationViewer conversation_viewer { get; private set; }
 
@@ -1533,10 +1531,9 @@ public class Application.MainWindow :
     //
 
     private void setup_folder_context_menu() {
-        this.folder_menu = new_folder_menu_model(false);
-        this.label_menu = new_folder_menu_model(true);
-
-        var popover = new Gtk.PopoverMenu.from_model(this.folder_menu) {
+        var popover = new Gtk.PopoverMenu.from_model(
+            new_folder_menu_model(false, false)
+        ) {
             has_arrow = false,
             halign = START
         };
@@ -1561,7 +1558,7 @@ public class Application.MainWindow :
         );
     }
 
-    private GLib.Menu new_folder_menu_model(bool labels) {
+    private GLib.Menu new_folder_menu_model(bool labels, bool child) {
         var menu = new GLib.Menu();
         menu.append(
             // Translators: Folder list context menu item for creating
@@ -1569,6 +1566,15 @@ public class Application.MainWindow :
             labels ? _("_New Label…") : _("_New Folder…"),
             "win." + ACTION_FOLDER_NEW
         );
+        if (child) {
+            menu.append(
+                // Translators: Folder list context menu item for
+                // creating a folder inside the folder that was
+                // right-clicked, and the label equivalent
+                labels ? _("_New Sublabel…") : _("_New Subfolder…"),
+                "win." + ACTION_FOLDER_NEW_CHILD
+            );
+        }
         menu.append(
             // Translators: Folder list context menu item for renaming
             // a folder, and the label equivalent
@@ -1606,17 +1612,21 @@ public class Application.MainWindow :
 
     private void on_folder_context_menu_requested(Sidebar.Entry? entry) {
         Convey.Account? account = get_context_account();
+        Convey.Folder? folder = get_context_folder();
         if (account != null) {
-            this.folder_list.default_context_menu.menu_model = (
-                Util.I18n.uses_labels(account) ? this.label_menu : this.folder_menu
-            );
+            this.folder_list.default_context_menu.menu_model =
+                new_folder_menu_model(
+                    Util.I18n.uses_labels(account), folder != null
+                );
         }
 
-        Convey.Folder? folder = get_context_folder();
         bool is_user_folder = (folder != null && folder.used_as == NONE);
 
         ((GLib.SimpleAction) lookup_action(ACTION_FOLDER_NEW)).set_enabled(
-            get_context_account() != null
+            account != null
+        );
+        ((GLib.SimpleAction) lookup_action(ACTION_FOLDER_NEW_CHILD)).set_enabled(
+            folder != null
         );
         ((GLib.SimpleAction) lookup_action(ACTION_FOLDER_RENAME)).set_enabled(
             is_user_folder
@@ -1629,7 +1639,14 @@ public class Application.MainWindow :
     private void on_folder_new() {
         Convey.Account? account = get_context_account();
         if (account != null) {
-            create_folder.begin(account);
+            create_folder.begin(account, null);
+        }
+    }
+
+    private void on_folder_new_child() {
+        Convey.Folder? folder = get_context_folder();
+        if (folder != null) {
+            create_folder.begin(folder.account, folder);
         }
     }
 
@@ -1658,13 +1675,16 @@ public class Application.MainWindow :
         delete_folder.begin(folder);
     }
 
-    private async void create_folder(Convey.Account account) {
+    private async void create_folder(Convey.Account account,
+                                     Convey.Folder? parent) {
         bool labels = Util.I18n.uses_labels(account);
         var entry = new Gtk.Entry() { activates_default = true };
         var dialog = new Adw.AlertDialog(
             // Translators: Title of the new folder dialog, and the
             // label equivalent
-            labels ? _("New Label") : _("New Folder"),
+            labels
+                ? _("New Label")
+                : (parent != null ? _("New Subfolder") : _("New Folder")),
             null
         );
         dialog.extra_child = entry;
@@ -1683,9 +1703,9 @@ public class Application.MainWindow :
 
         // Show the folder straight away, dimmed and spinning, so the
         // round trip to the server isn't silent
-        var pending = this.folder_list.add_pending_folder(account, name);
+        var pending = this.folder_list.add_pending_folder(account, name, parent);
         try {
-            yield account.create_personal_folder(name, NONE, null);
+            yield account.create_personal_folder(name, NONE, null, parent);
             add_toast(new Adw.Toast(
                 // Translators: Toast shown once a folder has been
                 // created on the server, and the label equivalent.
