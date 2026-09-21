@@ -489,6 +489,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         var main = get_root() as Application.MainWindow;
         if (main != null) {
             Convey.Email email = this.email;
+            string? temporary_filename = null;
             try {
                 yield Convey.Nonblocking.Concurrent.global.schedule_async(
                     () => {
@@ -496,7 +497,6 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                             email.header.buffer.to_string() +
                             email.body.buffer.to_string()
                         );
-                        string temporary_filename;
                         int temporary_handle = GLib.FileUtils.open_tmp(
                             "convey-message-XXXXXX.txt",
                             out temporary_filename
@@ -511,14 +511,14 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                             temporary_filename,
                             (int) (Posix.S_IRUSR | Posix.S_IWUSR)
                         );
-
-                        string temporary_uri = GLib.Filename.to_uri(
-                            temporary_filename, null
-                        );
-                        main.application.show_uri.begin(temporary_uri);
                     },
                     null
                 );
+
+                var launcher = new Gtk.FileLauncher(
+                    GLib.File.new_for_path(temporary_filename)
+                );
+                yield launcher.launch(main, null);
             } catch (GLib.Error error) {
                 main.application.controller.report_problem(
                     new Convey.ProblemReport(error)
