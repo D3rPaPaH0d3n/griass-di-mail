@@ -136,6 +136,11 @@ flatpak:
     TEST_RUN_ARGS: $TEST_ARGS
     BUNDLE: convey-dev.flatpak
   extends: .flatpak
+  # Keeps XDG_RUNTIME_DIR out of CI_PROJECT_DIR, where its sockets break the
+  # flatpak dir source copy.
+  script:
+    - sed 's#mktemp -p "[^"]*" -d xdg-runtime#mktemp -p "/tmp" -d xdg-runtime#' /usr/lib/citemplates/flatpak-job.sh > /tmp/flatpak-job.sh
+    - bash /tmp/flatpak-job.sh
 
 
 ##
