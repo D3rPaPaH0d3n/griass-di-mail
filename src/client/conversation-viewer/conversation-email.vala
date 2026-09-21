@@ -497,12 +497,18 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                             email.header.buffer.to_string() +
                             email.body.buffer.to_string()
                         );
-                        int temporary_handle = GLib.FileUtils.open_tmp(
-                            "convey-message-XXXXXX.txt",
-                            out temporary_filename
+                        string dir = GLib.Path.build_filename(
+                            GLib.Environment.get_user_cache_dir(),
+                            "convey", "source"
+                        );
+                        GLib.DirUtils.create_with_parents(dir, 0700);
+                        temporary_filename = GLib.Path.build_filename(
+                            dir,
+                            "convey-message-%s.txt".printf(
+                                GLib.Uuid.string_random()
+                            )
                         );
                         GLib.FileUtils.set_contents(temporary_filename, source);
-                        GLib.FileUtils.close(temporary_handle);
 
                         // ensure this file is only readable by the
                         // user ... this needs to be done after the
