@@ -62,6 +62,8 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
 
     private SnowBall.Stemmer stemmer;
 
+    private App.SearchFolder? starred_folder = null;
+
 
     protected GenericAccount(AccountInformation config,
                              ImapDB.Account local,
@@ -193,6 +195,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
 
         var locals = sort_by_path(this.local_folders.values);
         this.local_folders.clear();
+        this.starred_folder = null;
         notify_folders_available_unavailable(null, locals);
 
         var remotes = sort_by_path(this.remote_folders.values);
@@ -767,6 +770,31 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         }
     }
 
+    private void update_starred_folder() throws GLib.Error {
+        if (!this.open) {
+            return;
+        }
+        var remote_starred = traverse<Convey.Folder>(this.remote_folders.values)
+            .first_matching(f => f.used_as == FLAGGED);
+
+        if (remote_starred == null && this.starred_folder == null) {
+            var folder = new App.SearchFolder(
+                this,
+                this.local_folder_root,
+                App.SearchFolder.STARRED_BASENAME,
+                FLAGGED
+            );
+            var terms = new Gee.ArrayList<SearchQuery.Term>();
+            terms.add(new SearchQuery.EmailFlagTerm(EmailFlags.FLAGGED));
+            folder.update_query(new_search_query(terms, "is:starred"));
+            register_local_folder(folder);
+            this.starred_folder = folder;
+        } else if (remote_starred != null && this.starred_folder != null) {
+            deregister_local_folder(this.starred_folder);
+            this.starred_folder = null;
+        }
+    }
+
     /**
      * Constructs a set of folders and adds them to the account.
      *
@@ -806,6 +834,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
                 notify_folders_created(built_folders);
             }
         }
+        update_starred_folder();
 
         return built_folders;
     }
@@ -859,6 +888,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         if (!changed.is_empty) {
             folders_use_changed(changed);
         }
+        update_starred_folder();
     }
 
     /**
@@ -887,6 +917,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         if (!removed.is_empty) {
             notify_folders_available_unavailable(null, removed);
             notify_folders_deleted(removed);
+            update_starred_folder();
         }
 
         return removed;
