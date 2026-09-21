@@ -764,8 +764,10 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
                 var picked = this.list_view.pick(x, y, Gtk.PickFlags.DEFAULT);
                 var content = (node.expander_widget != null)
                     ? node.expander_widget.child : null;
-                var arrow_clicked = content == null || 
-                    (picked != content && !picked.is_ancestor(content));
+                var arrow_clicked = (content == null || 
+                    (picked != content && !picked.is_ancestor(content))) &&
+                    picked != null &&
+                    picked != node.expander_widget;
                 uint pos = position_of(node);
                 if (pos != Gtk.INVALID_LIST_POSITION && !arrow_clicked) {
                     var row = this.tree_model.get_row(pos);
