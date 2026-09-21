@@ -18,6 +18,7 @@ public class Application.Client : Adw.Application {
     public const string DESCRIPTION = _("Send and receive email");
     public const string COPYRIGHT_1 = _("Copyright © 2016 Software Freedom Conservancy Inc.");
     public const string COPYRIGHT_2 = _("Copyright © 2016-2021 Geary Development Team.");
+    public const string COPYRIGHT_3 = _("Copyright © 2026 Daniel Elia (donnybeelo)");
 
     // keep these in sync with meson_options.txt
     public const string PROFILE_RELEASE = "release";
@@ -32,6 +33,7 @@ public class Application.Client : Adw.Application {
         "Charles Lindsay <chaz@yorba.org>",
         "Robert Schroll <rschroll@gmail.com>",
         "Michael Gratton <mike@vee.net>",
+        "Daniel Elia <d.elia@outlook.com>",
         null
     };
 
@@ -523,12 +525,12 @@ public class Application.Client : Adw.Application {
             "program-name", NAME,
             "comments", DESCRIPTION,
             "authors", AUTHORS,
-            "copyright", string.join("\n", COPYRIGHT_1, COPYRIGHT_2),
+            "copyright", string.join("\n", COPYRIGHT_1, COPYRIGHT_2, COPYRIGHT_3),
             "license-type", Gtk.License.LGPL_2_1,
             "logo-icon-name", Config.APP_ID,
             "version", Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
             "website", "https://gitlab.gnome.org/donnybeelo/convey",
-            "website-label", _("Visit the Convey web site"),
+            "website-label", _("Visit the Convey repository"),
             "title", _("About %s").printf(NAME),
             // Translators: add your name and email address to receive
             // credit in the About dialog For example: Yamada Taro
