@@ -759,9 +759,15 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
                 entry_selected(selectable);
                 entry_activated(selectable);
             } else if (node != null && !(node.entry is Sidebar.SelectableEntry)) {
-                // Clicking a header/grouping row toggles its expansion.
+                // Clicking a header/grouping row toggles its expansion,
+                // except if the click was on the expander icon.
+                var picked = this.list_view.pick(x, y, Gtk.PickFlags.DEFAULT);
+                var content = (node.expander_widget != null)
+                    ? node.expander_widget.child : null;
+                var arrow_clicked = content == null || 
+                    (picked != content && !picked.is_ancestor(content));
                 uint pos = position_of(node);
-                if (pos != Gtk.INVALID_LIST_POSITION) {
+                if (pos != Gtk.INVALID_LIST_POSITION && !arrow_clicked) {
                     var row = this.tree_model.get_row(pos);
                     if (row != null)
                         row.set_expanded(!row.get_expanded());
