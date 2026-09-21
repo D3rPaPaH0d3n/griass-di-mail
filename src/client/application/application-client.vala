@@ -527,7 +527,7 @@ public class Application.Client : Adw.Application {
             "license-type", Gtk.License.LGPL_2_1,
             "logo-icon-name", Config.APP_ID,
             "version", Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
-            "website", "https://gitlab.gnome.org/GNOME/geary/-/wikis",
+            "website", "https://gitlab.gnome.org/donnybeelo/convey",
             "website-label", _("Visit the Convey web site"),
             "title", _("About %s").printf(NAME),
             // Translators: add your name and email address to receive
