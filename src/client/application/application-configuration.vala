@@ -36,6 +36,7 @@ public class Application.Configuration : Convey.BaseObject {
     public const string LAST_INBOX = "last-inbox";
     public const string REMEMBER_LAST_INBOX = "remember-last-inbox";
     public const string ALL_INBOXES = "all";
+    public const string LOCAL_STARRED_FOLDER = "local-starred-folder"; 
 
 
     public enum DesktopEnvironment {

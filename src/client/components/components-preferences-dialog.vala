@@ -13,6 +13,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.SwitchRow display_preview_row;
     [GtkChild] private unowned Adw.SwitchRow remember_last_inbox_row;
     [GtkChild] private unowned Adw.ComboRow startup_inbox_row;
+    [GtkChild] private unowned Adw.SwitchRow local_starred_folder_row;
     [GtkChild] private unowned Adw.SwitchRow single_key_shortcuts_row;
     [GtkChild] private unowned Adw.SwitchRow startup_notifications_row;
     [GtkChild] private unowned Adw.SwitchRow trust_images_row;
@@ -154,6 +155,11 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             "active",
             (GLib.SettingsBindGetMappingShared) settings_trust_images_getter,
             (GLib.SettingsBindSetMappingShared) settings_trust_images_setter
+        );
+        config.bind(
+            Application.Configuration.LOCAL_STARRED_FOLDER,
+            this.local_starred_folder_row,
+            "active"
         );
     }
 

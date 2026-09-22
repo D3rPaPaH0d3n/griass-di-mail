@@ -109,6 +109,8 @@ internal class Convey.Graph.Account : Convey.Account,
             queue_prefetch_refresh();
         });
 
+        this.notify["local-starred-folder"].connect(() => register_starred_folder());
+
         add_folder("Inbox", "inbox", Convey.Folder.SpecialUse.INBOX);
         add_folder("Sent", "sentitems", Convey.Folder.SpecialUse.SENT);
         add_folder("Drafts", "drafts", Convey.Folder.SpecialUse.DRAFTS);
@@ -119,16 +121,21 @@ internal class Convey.Graph.Account : Convey.Account,
     }
 
     private void register_starred_folder() throws GLib.Error {
-        this.starred_folder = new Convey.App.SearchFolder(
-            this,
-            this.local_folder_root,
-            Convey.App.SearchFolder.STARRED_BASENAME,
-            Convey.Folder.SpecialUse.FLAGGED
-        );
-        var terms = new Gee.ArrayList<Convey.SearchQuery.Term>();
-        terms.add(new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.FLAGGED));
-        this.starred_folder.update_query(new_search_query(terms, "is:starred"));
-        register_local_folder(this.starred_folder);
+        if (this.local_starred_folder && this.starred_folder == null) {
+            this.starred_folder = new Convey.App.SearchFolder(
+                this,
+                this.local_folder_root,
+                Convey.App.SearchFolder.STARRED_BASENAME,
+                Convey.Folder.SpecialUse.FLAGGED
+            );
+            var terms = new Gee.ArrayList<Convey.SearchQuery.Term>();
+            terms.add(new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.FLAGGED));
+            this.starred_folder.update_query(new_search_query(terms, "is:starred"));
+            register_local_folder(this.starred_folder);
+        } else if (!this.local_starred_folder && this.starred_folder != null) {
+            deregister_local_folder(this.starred_folder);
+            this.starred_folder = null;
+        }
     }
 
     public override async void open_async(GLib.Cancellable? cancellable = null)

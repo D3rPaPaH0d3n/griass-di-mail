@@ -1006,6 +1006,12 @@ internal class Application.Controller :
             queue_send.email_sent.connect(on_graph_sent);
         }
 
+        this.application.config.bind(
+            Application.Configuration.LOCAL_STARRED_FOLDER,
+            account,
+            "local-starred-folder"
+        );
+
         // Notify before opening so that listeners have a chance to
         // hook into it before signals start getting fired by folders
         // becoming available, etc.
@@ -1093,6 +1099,8 @@ internal class Application.Controller :
             if (queue_send != null) {
                 queue_send.email_sent.disconnect(on_graph_sent);
             }
+
+            GLib.Settings.unbind(account, "local-starred-folder");
 
             // Now the account is not in the accounts map, reset any
             // status notifications for it

@@ -705,4 +705,9 @@ public abstract class Convey.Account : BaseObject, Logging.Source {
         this.current_status = new_status;
     }
 
+    /**
+     * Show a local Starred folder for accounts whose
+     * server does not provide one.
+     */
+    public bool local_starred_folder { get; set; default = true; }
 }

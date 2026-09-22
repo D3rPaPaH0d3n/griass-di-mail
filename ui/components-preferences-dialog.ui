@@ -31,6 +31,13 @@
               </object>
             </child>
             <child>
+              <object class="AdwSwitchRow" id="local_starred_folder_row">
+                <property name="title" translatable="yes">_Always Show Starred Folder</property>
+                <property name="subtitle" translatable="yes">Show a local Starred folder for accounts whose server does not provide one</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
               <object class="AdwSwitchRow" id="display_preview_row">
                 <!-- Translators: Preferences label -->
                 <property name="title" translatable="yes">_Display Conversation Preview</property>

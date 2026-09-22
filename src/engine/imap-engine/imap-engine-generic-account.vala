@@ -112,6 +112,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
 
         compile_special_search_names();
         this.stemmer = new SnowBall.Stemmer(find_appropriate_search_stemmer());
+        this.notify["local-starred-folder"].connect(() => update_starred_folder());
     }
 
     /** {@inheritDoc} */
@@ -774,10 +775,10 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         if (!this.open) {
             return;
         }
-        var remote_starred = traverse<Convey.Folder>(this.remote_folders.values)
-            .first_matching(f => f.used_as == FLAGGED);
+        var remote_starred_exists = traverse<Convey.Folder>(this.remote_folders.values)
+            .first_matching(f => f.used_as == FLAGGED) != null || !this.local_starred_folder;
 
-        if (remote_starred == null && this.starred_folder == null) {
+        if (!remote_starred_exists && this.starred_folder == null) {
             var folder = new App.SearchFolder(
                 this,
                 this.local_folder_root,
@@ -789,7 +790,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
             folder.update_query(new_search_query(terms, "is:starred"));
             register_local_folder(folder);
             this.starred_folder = folder;
-        } else if (remote_starred != null && this.starred_folder != null) {
+        } else if (remote_starred_exists && this.starred_folder != null) {
             deregister_local_folder(this.starred_folder);
             this.starred_folder = null;
         }

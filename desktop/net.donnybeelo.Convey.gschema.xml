@@ -130,6 +130,14 @@
         opened, or "all" for the combined view of every inbox</description>
     </key>
 
+    <key name="local-starred-folder" type="b">
+      <default>true</default>
+      <summary>Always Show Starred Folder</summary>
+      <description>Show a local Starred folder for accounts whose
+      server does not provide one</description>
+    </key>
+
+
     <key name="images-trusted-domains" type="as">
         <default>[]</default>
         <summary>Allow images for these domains</summary>
