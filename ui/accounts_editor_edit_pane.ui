@@ -92,6 +92,12 @@
                     </property>
                   </object>
                 </child>
+                <child>
+                  <object class="AdwSwitchRow" id="archive_instead_of_trash_row">
+                    <!-- Translators: This label describes an account preference -->
+                    <property name="title" translatable="yes">Archive Instead of Moving to Trash</property>
+                  </object>
+                </child>
                 <style>
                   <class name="convey-settings"/>
                 </style>

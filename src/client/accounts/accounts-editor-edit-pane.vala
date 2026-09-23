@@ -42,6 +42,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     private bool signature_changed = false;
 
     [GtkChild] private unowned Adw.ComboRow email_prefetch_row;
+    [GtkChild] private unowned Adw.SwitchRow archive_instead_of_trash_row;
 
     [GtkChild] private unowned Gtk.Button undo_button;
 
@@ -104,6 +105,12 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
             on_prefetch_period_changed
         );
 
+        this.archive_instead_of_trash_row.active =
+            this.account.archive_instead_of_trash;
+        this.archive_instead_of_trash_row.notify["active"].connect(
+            on_archive_instead_of_trash_changed
+        );
+
         // Commit the account name when the row loses focus, rather
         // than on every keystroke, so the undo stack gets one entry
         // per edit.
@@ -123,6 +130,11 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     /** {@inheritDoc} */
     protected override void account_changed() {
         update_prefetch_period();
+        if (this.archive_instead_of_trash_row.active !=
+            this.account.archive_instead_of_trash) {
+            this.archive_instead_of_trash_row.active =
+                this.account.archive_instead_of_trash;
+        }
         // Don't yank the text out from under someone who is typing
         if (!this.display_name_row.has_focus) {
             update_display_name();
@@ -190,6 +202,24 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
                     ((PrefetchPeriod) this.account.prefetch_period_days)
                         .to_string()
                 )
+            ),
+            this.op_cancellable
+        );
+    }
+
+    private void on_archive_instead_of_trash_changed() {
+        bool active = this.archive_instead_of_trash_row.active;
+        if (active == this.account.archive_instead_of_trash) {
+            return;
+        }
+        this.commands.execute.begin(
+            new Application.PropertyCommand<bool>(
+                this.account,
+                "archive-instead-of-trash",
+                active,
+                active
+                    ? _("Undo archive instead of moving to Trash")
+                    : _("Undo move to Trash instead of archiving")
             ),
             this.op_cancellable
         );

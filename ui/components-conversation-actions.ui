@@ -56,15 +56,6 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="archive_button">
-            <property name="focus_on_click">False</property>
-            <property name="receives_default">False</property>
-            <property name="action_name">win.archive-conversation</property>
-            <property name="icon_name">mail-archive-symbolic</property>
-            <property name="use_underline">True</property>
-          </object>
-        </child>
-        <child>
           <object class="GtkButton" id="trash_delete_button">
             <property name="focus_on_click">False</property>
             <property name="receives_default">False</property>

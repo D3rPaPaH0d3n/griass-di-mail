@@ -1174,6 +1174,7 @@ public class Application.MainWindow :
             to_add.folders_available.connect(on_folders_available);
             to_add.folders_unavailable.connect(on_folders_unavailable);
             to_add.commands.executed.connect(on_command_execute);
+            to_add.account.information.changed.connect(update_trash_action);
             to_add.commands.undone.connect(on_command_undo);
             to_add.commands.redone.connect(on_command_redo);
 
@@ -1218,6 +1219,7 @@ public class Application.MainWindow :
             }
 
             to_remove.commands.executed.disconnect(on_command_execute);
+            to_remove.account.information.changed.disconnect(update_trash_action);
             to_remove.commands.undone.disconnect(on_command_undo);
             to_remove.commands.redone.disconnect(on_command_redo);
             to_remove.folders_available.disconnect(on_folders_available);
@@ -2315,9 +2317,16 @@ public class Application.MainWindow :
             !this.is_shift_down &&
             this.selected_folder_supports_trash
         );
-        this.conversation_list_actions.update_trash_button(show_trash);
-        this.conversation_viewer.headerbar.left_actions.update_trash_button(show_trash);
-        this.conversation_viewer.headerbar.right_actions.update_trash_button(show_trash);
+        Convey.Folder? actions_on = this.folder_for_actions;
+        var archive = (
+            !this.is_shift_down &&
+            actions_on != null &&
+            actions_on.account.information.archive_instead_of_trash &&
+            actions_on is Convey.FolderSupport.Archive
+        );
+        this.conversation_list_actions.update_trash_button(show_trash, archive);
+        this.conversation_viewer.headerbar.left_actions.update_trash_button(show_trash, archive);
+        this.conversation_viewer.headerbar.right_actions.update_trash_button(show_trash, archive);
     }
 
     private async void update_context_dependent_actions(bool sensitive) {

@@ -149,6 +149,9 @@ public class Convey.AccountInformation : BaseObject {
     /** Determines if drafts should be saved on the server. */
     public bool save_drafts { get; set; default = true; }
 
+    /** Determines if the trash button archives instead. */
+    public bool archive_instead_of_trash { get; set; default = false; }
+
     /**
      * The source of authentication credentials for this account.
      */
@@ -270,6 +273,7 @@ public class Convey.AccountInformation : BaseObject {
         this.prefetch_period_days = other.prefetch_period_days;
         this.save_sent = other.save_sent;
         this.save_drafts = other.save_drafts;
+        this.archive_instead_of_trash = other.archive_instead_of_trash;
         this.use_signature = other.use_signature;
         this.signature = other.signature;
 
@@ -523,6 +527,7 @@ public class Convey.AccountInformation : BaseObject {
                 this.prefetch_period_days == other.prefetch_period_days &&
                 this.save_sent == other.save_sent &&
                 this.save_drafts == other.save_drafts &&
+                this.archive_instead_of_trash == other.archive_instead_of_trash &&
                 this.use_signature == other.use_signature &&
                 this.signature == other.signature &&
                 this.incoming.equal_to(other.incoming) &&

@@ -1071,6 +1071,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
     private const string GROUP_ACCOUNT = "Account";
     private const string GROUP_FOLDERS = "Folders";
 
+    private const string ACCOUNT_ARCHIVE_INSTEAD_OF_TRASH = "archive_instead_of_trash";
     private const string ACCOUNT_LABEL = "label";
     private const string ACCOUNT_ORDINAL = "ordinal";
     private const string ACCOUNT_PREFETCH = "prefetch_days";
@@ -1157,6 +1158,9 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         account.save_sent = account_config.get_bool(
             ACCOUNT_SAVE_SENT, account.save_sent
         );
+        account.archive_instead_of_trash = account_config.get_bool(
+            ACCOUNT_ARCHIVE_INSTEAD_OF_TRASH, account.archive_instead_of_trash
+        );
         account.use_signature = account_config.get_bool(
             ACCOUNT_USE_SIG, account.use_signature
         );
@@ -1206,6 +1210,9 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         account_config.set_int(ACCOUNT_PREFETCH, account.prefetch_period_days);
         account_config.set_bool(ACCOUNT_SAVE_DRAFTS, account.save_drafts);
         account_config.set_bool(ACCOUNT_SAVE_SENT, account.save_sent);
+        account_config.set_bool(
+            ACCOUNT_ARCHIVE_INSTEAD_OF_TRASH, account.archive_instead_of_trash
+        );
         account_config.set_bool(ACCOUNT_USE_SIG, account.use_signature);
         account_config.set_string(ACCOUNT_SIG, account.signature);
         account_config.set_string_list(

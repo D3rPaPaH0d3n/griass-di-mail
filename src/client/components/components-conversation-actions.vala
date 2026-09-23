@@ -73,10 +73,11 @@ public class Components.ConversationActions : Gtk.Box {
     [GtkChild] private unowned Gtk.MenuButton move_message_button { get;  }
 
     [GtkChild] private unowned Gtk.Box action_buttons;
-    [GtkChild] private unowned Gtk.Button archive_button;
     [GtkChild] private unowned Gtk.Button trash_delete_button;
 
     private bool show_trash_button = true;
+    private bool archive_instead_of_trash = false;
+    private GLib.Menu remove_section = new GLib.Menu();
     private FolderPopover compact_copy_popover = new FolderPopover(false);
 
     static construct {
@@ -95,6 +96,7 @@ public class Components.ConversationActions : Gtk.Box {
 
         this.notify["selected-conversations"].connect(() => update_conversation_buttons());
         this.notify["service-provider"].connect(() => update_conversation_buttons());
+        ((GLib.Menu) mark_menu).append_section(null, this.remove_section);
         this.mark_message_button.menu_model = mark_menu;
         this.compact_copy_popover.set_parent(this.action_buttons);
         this.compact_copy_popover.copy_conversation.connect(
@@ -171,8 +173,9 @@ public class Components.ConversationActions : Gtk.Box {
         this.mark_message_button.icon_name = "pan-up-symbolic";
     }
 
-    public void update_trash_button(bool show_trash) {
+    public void update_trash_button(bool show_trash, bool archive) {
         this.show_trash_button = show_trash;
+        this.archive_instead_of_trash = archive;
         update_conversation_buttons();
     }
 
@@ -184,12 +187,6 @@ public class Components.ConversationActions : Gtk.Box {
         this.mark_message_button.tooltip_text = ngettext(
             "Mark conversation",
             "Mark conversations",
-            this.selected_conversations
-            );
-
-        this.archive_button.tooltip_text = ngettext(
-            "Archive conversation",
-            "Archive conversations",
             this.selected_conversations
             );
 
@@ -205,7 +202,37 @@ public class Components.ConversationActions : Gtk.Box {
             this.selected_conversations
             );
 
-        if (this.show_trash_button) {
+        this.remove_section.remove_all();
+        if (this.archive_instead_of_trash) {
+            if (this.show_trash_button) {
+                append_menu_item(
+                    _("Move to _Trash"),
+                    Application.MainWindow.ACTION_TRASH_CONVERSATION
+                );
+            } else {
+                append_menu_item(
+                    _("_Delete"),
+                    Application.MainWindow.ACTION_DELETE_CONVERSATION
+                );
+            }
+        } else {
+            append_menu_item(
+                _("_Archive"),
+                Application.MainWindow.ACTION_ARCHIVE_CONVERSATION
+            );
+        }
+
+        if (this.archive_instead_of_trash) {
+            this.trash_delete_button.action_name = Action.Window.prefix(
+                Application.MainWindow.ACTION_ARCHIVE_CONVERSATION
+                );
+            this.trash_delete_button.icon_name = "mail-archive-symbolic";
+            this.trash_delete_button.tooltip_text = ngettext(
+                "Archive conversation",
+                "Archive conversations",
+                this.selected_conversations
+                );
+        } else if (this.show_trash_button) {
             this.trash_delete_button.action_name = Action.Window.prefix(
                 Application.MainWindow.ACTION_TRASH_CONVERSATION
                 );
@@ -226,5 +253,13 @@ public class Components.ConversationActions : Gtk.Box {
                 this.selected_conversations
                 );
         }
+    }
+
+    private void append_menu_item(string label, string action) {
+        var item = new GLib.MenuItem(label, Action.Window.prefix(action));
+        item.set_attribute_value(
+            "hidden-when", new GLib.Variant.string("action-disabled")
+        );
+        this.remove_section.append_item(item);
     }
 }
