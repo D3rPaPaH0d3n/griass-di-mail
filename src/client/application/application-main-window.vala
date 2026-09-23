@@ -33,6 +33,7 @@ public class Application.MainWindow :
     public const string ACTION_SHOW_COPY_MENU = "show-copy-menu";
     public const string ACTION_TOGGLE_JUNK = "toggle-conversation-junk";
     public const string ACTION_TRASH_CONVERSATION = "trash-conversation";
+    public const string ACTION_TRASH_OR_ARCHIVE_CONVERSATION = "trash-or-archive-conversation";
     public const string ACTION_ZOOM = "zoom";
     public const string ACTION_NAVIGATION_BACK = "navigation-back";
 
@@ -62,6 +63,7 @@ public class Application.MainWindow :
         { ACTION_FORWARD_CONVERSATION, on_forward_conversation },
         { ACTION_ARCHIVE_CONVERSATION, on_archive_conversation },
         { ACTION_TRASH_CONVERSATION, on_trash_conversation },
+        { ACTION_TRASH_OR_ARCHIVE_CONVERSATION, on_trash_or_archive_conversation },
         { ACTION_DELETE_CONVERSATION, on_delete_conversation },
         { ACTION_SHOW_COPY_MENU, on_show_copy_menu },
         { ACTION_CONVERSATION_UP, on_conversation_up },
@@ -379,7 +381,7 @@ public class Application.MainWindow :
         // for delete, so double-check here.
         activate_action(
             !this.is_shift_down
-            ? get_window_action(ACTION_TRASH_CONVERSATION)
+            ? get_window_action(ACTION_TRASH_OR_ARCHIVE_CONVERSATION)
             : get_window_action(ACTION_DELETE_CONVERSATION)
         );
     }
@@ -2322,6 +2324,12 @@ public class Application.MainWindow :
         get_window_action(ACTION_TRASH_CONVERSATION).set_enabled(
             sensitive && this.selected_folder_supports_trash
         );
+        get_window_action(ACTION_TRASH_OR_ARCHIVE_CONVERSATION).set_enabled(
+            sensitive && (
+                this.selected_folder_supports_trash ||
+                actions_on is Convey.FolderSupport.Archive
+            )
+        );
         get_window_action(ACTION_DELETE_CONVERSATION).set_enabled(
             sensitive && (actions_on is Convey.FolderSupport.Remove)
         );
@@ -2330,21 +2338,39 @@ public class Application.MainWindow :
         update_trash_action();
     }
 
+    private static bool archives_instead_of_trash(Convey.Folder folder) {
+        return (
+            folder.account.information.archive_instead_of_trash &&
+            folder is Convey.FolderSupport.Archive
+        );
+    }
+
     private void update_trash_action() {
-        var show_trash = (
-            !this.is_shift_down &&
-            this.selected_folder_supports_trash
-        );
-        Convey.Folder? actions_on = this.folder_for_actions;
-        var archive = (
-            !this.is_shift_down &&
-            actions_on != null &&
-            actions_on.account.information.archive_instead_of_trash &&
-            actions_on is Convey.FolderSupport.Archive
-        );
-        this.conversation_list_actions.update_trash_button(show_trash, archive);
-        this.conversation_viewer.headerbar.left_actions.update_trash_button(show_trash, archive);
-        this.conversation_viewer.headerbar.right_actions.update_trash_button(show_trash, archive);
+        bool trash_supported = this.selected_folder_supports_trash;
+        Gee.Collection<Convey.Folder> folders = selected_groups().get_keys();
+        if (folders.is_empty) {
+            folders = this.selected_folders;
+        }
+        int archiving = 0;
+        foreach (var folder in folders) {
+            if (archives_instead_of_trash(folder)) {
+                archiving++;
+            }
+        }
+
+        var mode = Components.ConversationActions.RemoveMode.TRASH;
+        if (this.is_shift_down) {
+            mode = DELETE;
+        } else if (archiving > 0 && archiving == folders.size) {
+            mode = ARCHIVE;
+        } else if (archiving > 0) {
+            mode = MIXED;
+        } else if (!trash_supported) {
+            mode = DELETE;
+        }
+        this.conversation_list_actions.update_trash_button(mode, trash_supported);
+        this.conversation_viewer.headerbar.left_actions.update_trash_button(mode, trash_supported);
+        this.conversation_viewer.headerbar.right_actions.update_trash_button(mode, trash_supported);
     }
 
     private async void update_context_dependent_actions(bool sensitive) {
@@ -3080,6 +3106,18 @@ public class Application.MainWindow :
     private void on_trash_conversation() {
         move_selected_special(TRASH);
         // No need to disable selection mode, handled by model change
+    }
+
+    private void on_trash_or_archive_conversation() {
+        var groups = selected_groups();
+        unselect_unless_autoselect();
+        foreach (var source in groups.get_keys()) {
+            if (archives_instead_of_trash(source)) {
+                move_conversations_special(source, ARCHIVE, groups.get(source));
+            } else if (Controller.does_folder_support_trash(source)) {
+                move_conversations_special(source, TRASH, groups.get(source));
+            }
+        }
     }
 
     private void on_delete_conversation() {

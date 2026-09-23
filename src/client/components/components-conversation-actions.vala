@@ -12,6 +12,13 @@
 [GtkTemplate (ui = "/net/donnybeelo/Convey/components-conversation-actions.ui")]
 public class Components.ConversationActions : Gtk.Box {
 
+    public enum RemoveMode {
+        TRASH,
+        ARCHIVE,
+        MIXED,
+        DELETE
+    }
+
     public bool show_conversation_actions {
         get { return this.action_buttons.visible; }
         set {
@@ -75,8 +82,8 @@ public class Components.ConversationActions : Gtk.Box {
     [GtkChild] private unowned Gtk.Box action_buttons;
     [GtkChild] private unowned Gtk.Button trash_delete_button;
 
-    private bool show_trash_button = true;
-    private bool archive_instead_of_trash = false;
+    private RemoveMode remove_mode = TRASH;
+    private bool trash_supported = true;
     private GLib.Menu remove_section = new GLib.Menu();
     private FolderPopover compact_copy_popover = new FolderPopover(false);
 
@@ -173,9 +180,9 @@ public class Components.ConversationActions : Gtk.Box {
         this.mark_message_button.icon_name = "pan-up-symbolic";
     }
 
-    public void update_trash_button(bool show_trash, bool archive) {
-        this.show_trash_button = show_trash;
-        this.archive_instead_of_trash = archive;
+    public void update_trash_button(RemoveMode mode, bool trash_supported) {
+        this.remove_mode = mode;
+        this.trash_supported = trash_supported;
         update_conversation_buttons();
     }
 
@@ -203,8 +210,14 @@ public class Components.ConversationActions : Gtk.Box {
             );
 
         this.remove_section.remove_all();
-        if (this.archive_instead_of_trash) {
-            if (this.show_trash_button) {
+        if (this.remove_mode != ARCHIVE) {
+            append_menu_item(
+                _("_Archive"),
+                Application.MainWindow.ACTION_ARCHIVE_CONVERSATION
+            );
+        }
+        if (this.remove_mode == ARCHIVE || this.remove_mode == MIXED) {
+            if (this.trash_supported) {
                 append_menu_item(
                     _("Move to _Trash"),
                     Application.MainWindow.ACTION_TRASH_CONVERSATION
@@ -215,16 +228,12 @@ public class Components.ConversationActions : Gtk.Box {
                     Application.MainWindow.ACTION_DELETE_CONVERSATION
                 );
             }
-        } else {
-            append_menu_item(
-                _("_Archive"),
-                Application.MainWindow.ACTION_ARCHIVE_CONVERSATION
-            );
         }
 
-        if (this.archive_instead_of_trash) {
+        switch (this.remove_mode) {
+        case ARCHIVE:
             this.trash_delete_button.action_name = Action.Window.prefix(
-                Application.MainWindow.ACTION_ARCHIVE_CONVERSATION
+                Application.MainWindow.ACTION_TRASH_OR_ARCHIVE_CONVERSATION
                 );
             this.trash_delete_button.icon_name = "mail-archive-symbolic";
             this.trash_delete_button.tooltip_text = ngettext(
@@ -232,9 +241,21 @@ public class Components.ConversationActions : Gtk.Box {
                 "Archive conversations",
                 this.selected_conversations
                 );
-        } else if (this.show_trash_button) {
+            break;
+        case MIXED:
             this.trash_delete_button.action_name = Action.Window.prefix(
-                Application.MainWindow.ACTION_TRASH_CONVERSATION
+                Application.MainWindow.ACTION_TRASH_OR_ARCHIVE_CONVERSATION
+                );
+            this.trash_delete_button.icon_name = "user-trash-symbolic";
+            this.trash_delete_button.tooltip_text = ngettext(
+                "Archive or move conversation to Trash",
+                "Archive or move conversations to Trash",
+                this.selected_conversations
+                );
+            break;
+        case TRASH:
+            this.trash_delete_button.action_name = Action.Window.prefix(
+                Application.MainWindow.ACTION_TRASH_OR_ARCHIVE_CONVERSATION
                 );
             this.trash_delete_button.icon_name = "user-trash-symbolic";
             this.trash_delete_button.tooltip_text = ngettext(
@@ -242,7 +263,8 @@ public class Components.ConversationActions : Gtk.Box {
                 "Move conversations to Trash",
                 this.selected_conversations
                 );
-        } else {
+            break;
+        case DELETE:
             this.trash_delete_button.action_name = Action.Window.prefix(
                 Application.MainWindow.ACTION_DELETE_CONVERSATION
                 );
@@ -252,6 +274,7 @@ public class Components.ConversationActions : Gtk.Box {
                 "Delete conversations",
                 this.selected_conversations
                 );
+            break;
         }
     }
 
