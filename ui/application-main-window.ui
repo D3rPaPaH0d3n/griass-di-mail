@@ -180,7 +180,7 @@
                 <property name="vexpand">True</property>
                 <property name="sidebar-width-fraction">0.42</property>
                 <property name="min-sidebar-width">560</property>
-                <property name="max-sidebar-width">620</property>
+                <property name="max-sidebar-width">900</property>
                 <signal name="notify::collapsed" handler="on_outer_view_changed"/>
                 <signal name="notify::show-content" handler="on_outer_view_changed"/>
 

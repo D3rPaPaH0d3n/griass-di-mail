@@ -603,8 +603,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     }
 
     private void on_conversations_loaded() {
-        // ponytail: destructive folders never autoselect -- opening a message
-        // in Junk/Wastebasket on arrival is never what's wanted.
+        // Select the first conversation if autoselect on, except for Junk and Trash folders
         bool destructive = false;
         if (this.model != null) {
             foreach (var folder in this.model.get_folders()) {
