@@ -292,6 +292,8 @@ public class Application.MainWindow :
     [GtkChild] private unowned Components.ConversationActions conversation_viewer_actions;
 
     [GtkChild] private unowned Adw.NavigationPage conversation_viewer_page;
+    [GtkChild] private unowned Gtk.Box conversation_viewer_box;
+    [GtkChild] private unowned Gtk.Revealer conversation_viewer_actions_revealer;
 
     [GtkChild] private unowned Adw.ToastOverlay overlay;
 
@@ -1442,7 +1444,11 @@ public class Application.MainWindow :
         );
 
         this.conversation_viewer.hexpand = true;
-        this.conversation_viewer_page.child = this.conversation_viewer;
+        this.conversation_viewer.vexpand = true;
+        this.conversation_viewer_box.prepend(this.conversation_viewer);
+        this.conversation_viewer_actions_revealer.bind_property(
+            "reveal-child", this.conversation_viewer.headerbar, "compact", SYNC_CREATE
+        );
 
         // Left/Right walk the keyboard focus across the panes. The
         // conversation viewer gets no handler of its own: its message

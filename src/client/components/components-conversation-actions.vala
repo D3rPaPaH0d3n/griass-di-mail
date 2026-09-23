@@ -34,6 +34,8 @@ public class Components.ConversationActions : Gtk.Box {
 
     public bool pack_justified { get; construct; }
 
+    public bool compact { get; set; default = false; }
+
     public FolderPopover copy_popover {
         get {
             unowned var popover = this.copy_message_button.popover as FolderPopover;
@@ -75,6 +77,7 @@ public class Components.ConversationActions : Gtk.Box {
     [GtkChild] private unowned Gtk.Button trash_delete_button;
 
     private bool show_trash_button = true;
+    private FolderPopover compact_copy_popover = new FolderPopover(false);
 
     static construct {
         set_css_name("components-conversation-actions");
@@ -93,6 +96,14 @@ public class Components.ConversationActions : Gtk.Box {
         this.notify["selected-conversations"].connect(() => update_conversation_buttons());
         this.notify["service-provider"].connect(() => update_conversation_buttons());
         this.mark_message_button.menu_model = mark_menu;
+        this.compact_copy_popover.set_parent(this.action_buttons);
+        this.compact_copy_popover.copy_conversation.connect(
+            (folder) => this.copy_popover.copy_conversation(folder)
+        );
+        this.bind_property(
+            "compact", this.copy_message_button, "visible",
+            SYNC_CREATE | INVERT_BOOLEAN
+        );
 
         this.mark_message_button.activate.connect((button) => {
             if (button.active)
@@ -124,6 +135,19 @@ public class Components.ConversationActions : Gtk.Box {
             "source-folder", this.move_message_button.popover,
             "source", BindingFlags.SYNC_CREATE
         );
+        this.bind_property(
+            "account", this.compact_copy_popover,
+            "account", BindingFlags.SYNC_CREATE
+        );
+        this.bind_property(
+            "source-folder", this.compact_copy_popover,
+            "source", BindingFlags.SYNC_CREATE
+        );
+    }
+
+    public override void dispose() {
+        this.compact_copy_popover.unparent();
+        base.dispose();
     }
 
     public void set_copy_sensitive(bool is_sensitive) {
@@ -136,7 +160,11 @@ public class Components.ConversationActions : Gtk.Box {
     }
 
     public void show_copy_menu() {
-        this.copy_message_button.active = true;
+        if (this.compact) {
+            this.compact_copy_popover.popup();
+        } else {
+            this.copy_message_button.active = true;
+        }
     }
 
     public void set_mark_inverted() {

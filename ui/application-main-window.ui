@@ -330,34 +330,24 @@
                     <property name="tag">conversation_viewer</property>
                     <property name="title">Conversation</property>
                     <property name="child">
-                      <object class="AdwToolbarView">
-                        <property name="hexpand">True</property>
-                        <child type="top">
-                          <object class="ComponentsConversationHeaderBar" id="conversation_headerbar">
+                      <object class="GtkBox" id="conversation_viewer_box">
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkRevealer" id="conversation_viewer_actions_revealer">
+                            <property name="reveal-child">False</property>
+                            <property name="transition_type">slide-up</property>
+                            <child>
+                              <object class="ComponentsConversationActions" id="conversation_viewer_actions">
+                                <property name="show_conversation_actions">False</property>
+                                <property name="show_response_actions">True</property>
+                                <property name="halign">center</property>
+                                <style>
+                                  <class name="toolbar"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
-                        <property name="content">
-                          <object class="GtkBox">
-                            <property name="orientation">vertical</property>
-                            <child>
-                              <object class="GtkBox" id="conversation_viewer_box">
-                                <property name="orientation">vertical</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkRevealer" id="conversation_viewer_actions_revealer">
-                                <property name="reveal-child">False</property>
-                                <property name="transition_type">slide-up</property>
-                                <child>
-                                  <object class="ComponentsConversationActions" id="conversation_viewer_actions">
-                                    <property name="show_conversation_actions">True</property>
-                                    <property name="show_response_actions">False</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </property>
                       </object>
                     </property>
                   </object>
@@ -377,6 +367,12 @@
       </object>
     </child>
 
+    <child>
+      <object class="AdwBreakpoint">
+        <condition>max-width: 1020sp</condition>
+        <setter object="conversation_viewer_actions_revealer" property="reveal-child">True</setter>
+      </object>
+    </child>
     <!-- 1st breakpoint: split folder/conversation list from conversation viewer -->
     <child>
       <object class="AdwBreakpoint">
@@ -388,7 +384,7 @@
     <!-- 2nd breakpoint: also split folder list from conversation list -->
     <child>
       <object class="AdwBreakpoint">
-        <condition>max-width: 500sp</condition>
+        <condition>max-width: 540sp</condition>
         <setter object="outer_view" property="collapsed">True</setter>
         <setter object="inner_view" property="sidebar-width-fraction">0.45</setter>
         <setter object="inner_view" property="collapsed">True</setter>
@@ -397,10 +393,9 @@
     <!-- When things get really tight, split up the actions in the conversation viewer -->
     <child>
       <object class="AdwBreakpoint">
-        <condition>max-width: 400sp</condition>
+        <condition>max-width: 500sp</condition>
         <setter object="outer_view" property="collapsed">True</setter>
         <setter object="inner_view" property="collapsed">True</setter>
-        <setter object="conversation_headerbar" property="compact">True</setter>
         <setter object="conversation_viewer_actions_revealer" property="reveal-child">True</setter>
       </object>
     </child>

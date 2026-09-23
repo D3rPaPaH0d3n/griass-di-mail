@@ -25,5 +25,15 @@
       <attribute name="label" translatable="yes">Toggle as _Junk</attribute>
       <attribute name="action">win.toggle-conversation-junk</attribute>
     </item>
+    <item>
+      <attribute name="label" translatable="yes">_Copy to Folder…</attribute>
+      <attribute name="action">win.show-copy-menu</attribute>
+      <attribute name="hidden-when">action-disabled</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">_Find in Conversation</attribute>
+      <attribute name="action">win.find-in-conversation</attribute>
+      <attribute name="hidden-when">action-disabled</attribute>
+    </item>
   </menu>
 </interface>
