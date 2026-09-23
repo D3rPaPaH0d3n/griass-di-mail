@@ -213,6 +213,12 @@ public class Application.MainWindow :
      */
     private Convey.Folder? folder_for_actions {
         owned get {
+            if (this.selected_folder == null && this.all_inboxes) {
+                var folders = selected_groups().get_keys();
+                if (folders.size == 1) {
+                    return Convey.Collection.first<Convey.Folder>(folders);
+                }
+            }
             return Convey.Collection.first<Convey.Folder>(
                 this.selected_folders
             );
@@ -2284,9 +2290,20 @@ public class Application.MainWindow :
 
         bool copy_enabled = (
             sensitive &&
-            !this.all_inboxes &&
+            (this.selected_folder != null ||
+             selected_groups().get_keys().size == 1) &&
             (actions_on is Convey.FolderSupport.Copy)
         );
+        if (this.all_inboxes && actions_on != null) {
+            foreach (var actions in this.folder_conversation_actions) {
+                if (actions.account != actions_on.account) {
+                    actions.account = actions_on.account;
+                }
+                if (actions.source_folder != actions_on) {
+                    actions.source_folder = actions_on;
+                }
+            }
+        }
         get_window_action(ACTION_SHOW_COPY_MENU).set_enabled(copy_enabled);
         foreach (var actions in this.folder_conversation_actions) {
             actions.set_copy_sensitive(copy_enabled);
@@ -2310,6 +2327,7 @@ public class Application.MainWindow :
         );
 
         this.update_context_dependent_actions.begin(sensitive);
+        update_trash_action();
     }
 
     private void update_trash_action() {
@@ -3018,22 +3036,24 @@ public class Application.MainWindow :
     }
 
     private void on_copy_conversation(Convey.Folder destination) {
-        Convey.FolderSupport.Copy source =
-            this.selected_folder as Convey.FolderSupport.Copy;
-        if (source != null) {
+        var groups = selected_groups();
+        foreach (var location in groups.get_keys()) {
+            var source = location as Convey.FolderSupport.Copy;
+            if (source == null || location.account != destination.account) {
+                continue;
+            }
             this.controller.copy_conversations.begin(
                 source,
                 destination,
-                this.conversation_list_view.selected,
+                groups.get(location),
                 (obj, res) => {
                     try {
                         this.controller.copy_conversations.end(res);
                     } catch (GLib.Error err) {
-                        handle_error(source.account.information, err);
+                        handle_error(location.account.information, err);
                     }
                 }
             );
-
         }
         this.conversation_list_view.selection_mode_enabled = false;
     }
