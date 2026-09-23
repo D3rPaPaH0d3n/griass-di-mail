@@ -598,7 +598,7 @@ dialog.convey-upgrade label {
 
 /* Misc */
 
-.thin-button {
+.thin-button > button {
   padding-left: 4px;
   padding-right: 4px;
 }
