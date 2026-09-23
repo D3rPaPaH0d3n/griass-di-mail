@@ -433,6 +433,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      * Unselects all conversations
      */
     public void unselect_all() {
+        this.to_restore_row = null;
         this.list.unselect_all();
     }
 
@@ -630,6 +631,12 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      * Select next conversation
      */
     private void on_conversations_removed(bool start) {
+        if (start) {
+            remember_focused_row();
+        } else {
+            refocus_removed_row();
+        }
+
         // Before model update, just find a conversation
         if (this.config.autoselect && start) {
             this.to_restore_row = get_next_conversation();
@@ -646,6 +653,32 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
                 this.to_restore_row = null;
             }
         }
+    }
+
+    // Remembers the row index of the focused row, so focus can be restored
+    // after deeting/moving a conversation
+    private Gtk.ListBoxRow? focused_row = null;
+    private int focused_index = -1;
+
+    private void remember_focused_row() {
+        var focus = (get_root() as Gtk.Root)?.get_focus();
+        var row = focus?.get_ancestor(typeof(Gtk.ListBoxRow)) as Gtk.ListBoxRow;
+        if (row != null && row.get_parent() == this.list) {
+            this.focused_row = row;
+            this.focused_index = row.get_index();
+        }
+    }
+
+    // Moves focus from a removed row to the row that replaced it
+    private void refocus_removed_row() {
+        if (this.focused_row != null && this.focused_row.get_parent() == null) {
+            var row = this.list.get_row_at_index(this.focused_index) ??
+                this.list.get_row_at_index(this.focused_index - 1);
+            if (row != null) {
+                row.grab_focus();
+            }
+        }
+        this.focused_row = null;
     }
 
     /*

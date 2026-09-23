@@ -2927,6 +2927,7 @@ public class Application.MainWindow :
 
     private void on_mark_as_junk_toggle() {
         var groups = selected_groups();
+        unselect_unless_autoselect();
         foreach (var source in groups.get_keys()) {
             Convey.Folder.SpecialUse destination =
                 (source.used_as != JUNK)
@@ -2970,6 +2971,7 @@ public class Application.MainWindow :
 
     private void on_move_conversation(Convey.Folder destination) {
         var groups = selected_groups();
+        unselect_unless_autoselect();
         foreach (var location in groups.get_keys()) {
             var source = location as Convey.FolderSupport.Move;
             if (source == null || location.account != destination.account) {
@@ -3014,8 +3016,15 @@ public class Application.MainWindow :
 
     private void move_selected_special(Convey.Folder.SpecialUse destination) {
         var groups = selected_groups();
+        unselect_unless_autoselect();
         foreach (var source in groups.get_keys()) {
             move_conversations_special(source, destination, groups.get(source));
+        }
+    }
+
+    private void unselect_unless_autoselect() {
+        if (!this.application.config.autoselect) {
+            this.conversation_list_view.unselect_all();
         }
     }
 
@@ -3039,6 +3048,7 @@ public class Application.MainWindow :
             !yield prompt_delete_conversations(groups.size))
             return;
 
+        unselect_unless_autoselect();
         foreach (var source in groups.get_keys()) {
             var target = source as Convey.FolderSupport.Remove;
             if (target == null)
