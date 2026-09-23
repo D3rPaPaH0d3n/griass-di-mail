@@ -2515,6 +2515,15 @@ public class Application.MainWindow :
     }
 
     [GtkCallback]
+    private void on_outer_view_changed(GLib.Object object, ParamSpec pspec) {
+        bool shown = this.is_conversation_viewer_shown;
+        this.conversation_list_view.can_autoselect = shown;
+        if (!shown && !this.conversation_list_view.selection_mode_enabled) {
+            this.conversation_list_view.unselect_all();
+        }
+    }
+
+    [GtkCallback]
     private void on_inner_view_changed(GLib.Object object, ParamSpec pspec) {
         int selected = this.conversation_list_view.selected.size;
         update_conversation_actions(

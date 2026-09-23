@@ -566,6 +566,8 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     // ------------
     private bool should_inhibit_autoactivate = false;
 
+    public bool can_autoselect { get; set; default = true; }
+
     /**
      * Informs the listbox to suppress autoactivate behavior on the next update
      */
@@ -614,6 +616,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         }
         if (!destructive) {
             if (this.config.autoselect &&
+                this.can_autoselect &&
                 !this.should_inhibit_autoactivate &&
                 this.list.get_selected_rows().length() == 0) {
 
@@ -638,13 +641,13 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         }
 
         // Before model update, just find a conversation
-        if (this.config.autoselect && start) {
+        if (this.config.autoselect && this.can_autoselect && start) {
             this.to_restore_row = get_next_conversation();
         // If in selection mode, leaving will do the job
         } else if (this.selection_mode_enabled) {
             this.selection_mode_enabled = false;
         // Set next conversation
-        } else if (this.config.autoselect) {
+        } else if (this.config.autoselect && this.can_autoselect) {
             if (this.list.get_selected_rows().length() == 0) {
                 restore_row();
             } else {
@@ -742,6 +745,14 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             if ((modifier_type & Gdk.ModifierType.SHIFT_MASK) ==
                     Gdk.ModifierType.SHIFT_MASK) {
                 this.selection_mode_enabled = true;
+            } else if (!this.can_autoselect && !this.selection_mode_enabled) {
+                this.list.move_cursor(
+                    Gtk.MovementStep.DISPLAY_LINES,
+                    keyval == Gdk.Key.Up ? -1 : 1,
+                    false,
+                    true
+                );
+                return true;
             }
             break;
         case Gdk.Key.Escape:
