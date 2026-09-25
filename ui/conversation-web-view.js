@@ -35,6 +35,37 @@ ConversationPageState.prototype = {
                 e.preventDefault();
             }
         }, true);
+        document.addEventListener("mousemove", function(e) {
+            state._pointer = e;
+        });
+    },
+    scrollHorizontally: function(dx) {
+        let p = this._pointer;
+        let el = p ? document.elementFromPoint(p.clientX, p.clientY) : null;
+        for (; el; el = el.parentElement) {
+            if (el.scrollWidth > el.clientWidth &&
+                /auto|scroll/.test(getComputedStyle(el).overflowX)) {
+                this._hTarget = el;
+                el.scrollLeft += dx;
+                return;
+            }
+        }
+    },
+    flingHorizontally: function(vx) {
+        cancelAnimationFrame(this._fling);
+        let el = this._hTarget, last = null, start = null, state = this;
+        let step = function(t) {
+            if (last != null) {
+                let dt = (t - last) / 1000;
+                if (t - start > 100) vx *= Math.exp(-4 * dt);
+                el.scrollLeft += vx * dt;
+            } else {
+                start = t;
+            }
+            last = t;
+            if (Math.abs(vx) > 10) state._fling = requestAnimationFrame(step);
+				};
+			if (el && vx) this._fling = requestAnimationFrame(step);
     },
     /**
      * Add email headers for printing

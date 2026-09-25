@@ -224,6 +224,36 @@ public class ConversationWebView : Components.WebView {
         foreach (var scroll in to_remove) {
             remove_controller(scroll);
         }
+
+        var hscroll = new Gtk.EventControllerScroll(
+            Gtk.EventControllerScrollFlags.BOTH_AXES |
+            Gtk.EventControllerScrollFlags.KINETIC
+        );
+        hscroll.scroll.connect(on_horizontal_scroll);
+        hscroll.decelerate.connect((vx, vy) => call_js(Util.JS.callable("flingHorizontally").double(vx)));
+        hscroll.scroll_begin.connect(() => call_js(Util.JS.callable("flingHorizontally").double(0)));
+        add_controller(hscroll);
+    }
+
+    private bool on_horizontal_scroll(Gtk.EventControllerScroll controller,
+                                      double dx, double dy) {
+        bool wheel = controller.get_unit() == Gdk.ScrollUnit.WHEEL;
+        bool shift = wheel && (controller.get_current_event_state() & Gdk.ModifierType.SHIFT_MASK) != 0;
+        double d = shift ? dy : dx;
+        if (d != 0) {
+            call_js(Util.JS.callable("scrollHorizontally").double(wheel ? d * 50 : d));
+        }
+        return shift;
+    }
+
+    private void call_js(Util.JS.Callable target) {
+        call_void.begin(target, null, (obj, res) => {
+            try {
+                call_void.end(res);
+            } catch (GLib.Error err) {
+                debug("Horizontal scroll failed: %s", err.message);
+            }
+        });
     }
 
     private void on_deceptive_link_clicked(GLib.Variant? parameters) {
