@@ -13,7 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/geary/issues/\n"
 "POT-Creation-Date: 2025-12-12 00:02+0000\n"
 "PO-Revision-Date: 2026-02-09 18:08+0100\n"
-"Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
+"Last-Translator: yesseruser <yesseruseryt@gmail.com>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
@@ -129,8 +129,8 @@ msgid ""
 "Overrides the original colors in HTML messages to integrate better with the "
 "app theme."
 msgstr ""
-"Přepíše původní barvy ve zprávách formátu HTML, aby se lépe integrovaly s "
-"motivem aplikace."
+"Přepíše původní barvy ve zprávách formátu HTML, aby lépe odpovídaly "
+"motivu aplikace."
 
 #: desktop/net.donnybeelo.Convey.gschema.xml:50
 msgid "Move messages by default"
@@ -149,7 +149,7 @@ msgid ""
 "Enables shortcuts for email actions that do not require pressing <Ctrl> to "
 "emulate those used by Gmail."
 msgstr ""
-"Pro činnosti s e-maily pouvolit klávesové zkratky, které nepotřebují "
+"Pro činnosti s e-maily povolit klávesové zkratky, které nepotřebují "
 "zmáčknutí <Ctrl>, aby se tak emulovalo chování Gmailu."
 
 #: desktop/net.donnybeelo.Convey.gschema.xml:64
@@ -187,11 +187,11 @@ msgstr "Povolit pro spuštění aplikace na pozadí."
 
 #: desktop/net.donnybeelo.Convey.gschema.xml:84
 msgid "Ask when opening an attachment"
-msgstr "Dotazovat se při otevírání přílohy"
+msgstr "Ptát se při otevírání přílohy"
 
 #: desktop/net.donnybeelo.Convey.gschema.xml:85
 msgid "True to ask when opening an attachment."
-msgstr "Zapnuto, pokud máte být dotazováni, když otevíráte přílohu."
+msgstr "Zapnuto, pokud se vás má aplikace ptát, když otevíráte přílohu."
 
 #: desktop/net.donnybeelo.Convey.gschema.xml:90
 msgid "Whether to compose emails in HTML"
@@ -225,7 +225,7 @@ msgstr "Přiblížení, které se má použit při zobrazení konverzace."
 
 #: desktop/net.donnybeelo.Convey.gschema.xml:108
 msgid "Size of detached composer window"
-msgstr "Velikost odpojeného okno pro psaní zprávy"
+msgstr "Velikost odpojeného okna pro psaní zprávy"
 
 #: desktop/net.donnybeelo.Convey.gschema.xml:109
 msgid "The last recorded size of the detached composer window."
@@ -314,7 +314,7 @@ msgstr "Rychlé nastavení poštovního účtu"
 
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:29
 msgid "Shows related messages together in conversations"
-msgstr "Zobrazení souvisejících zprávy dohromady v podobě konverzace"
+msgstr "Zobrazení souvisejících zpráv dohromady v podobě konverzace"
 
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:30
 msgid "Fast, full text and keyword search"
@@ -330,7 +330,7 @@ msgstr "Upozornění na nové zprávy přímo v uživatelském prostředí"
 
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:33
 msgid "Compatible with GMail, Yahoo! Mail, Outlook.com and other IMAP servers"
-msgstr "Kompatibilitu s GMail, Yahoo! Mail, Outlook.com a dalšími servery IMAP"
+msgstr "Kompatibilitu s Gmail, Yahoo! Mail, Outlook.com a dalšími servery IMAP"
 
 #. Translators: A screenshot description.
 #: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:50
@@ -375,7 +375,7 @@ msgstr "Zkontrolujte své přihlašovací jméno a heslo pro odesílání"
 #: src/client/accounts/accounts-editor-add-pane.vala:218
 #: src/client/accounts/accounts-editor-servers-pane.vala:359
 msgid "Check your sending server details"
-msgstr "Zkontrolujte údaje odesilacího serveru"
+msgstr "Zkontrolujte údaje odesílacího serveru"
 
 #. Translators: In-app notification label
 #: src/client/accounts/accounts-editor-add-pane.vala:233
@@ -530,7 +530,7 @@ msgstr "Změnit název účtu zpět na „%s“"
 #. address's address to an account
 #: src/client/accounts/accounts-editor-edit-pane.vala:354
 msgid "Add a new sender email address"
-msgstr "Přidat novou e-mailovou adresu odesilatele"
+msgstr "Přidat novou e-mailovou adresu odesílatele"
 
 #. Translators: Label used to indicate the user has
 #. provided no display name for one of their sender
@@ -544,7 +544,7 @@ msgstr "Název není nastavený"
 #. sender address preferences for an account.
 #: src/client/accounts/accounts-editor-edit-pane.vala:479
 msgid "Sender Name"
-msgstr "Jméno odesilatele"
+msgstr "Jméno odesílatele"
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:506
 msgid "Remove"
@@ -555,7 +555,7 @@ msgstr "Odebrat"
 #. preferences for an account.
 #: src/client/accounts/accounts-editor-edit-pane.vala:521
 msgid "Sender name"
-msgstr "Jméno odesilatele"
+msgstr "Jméno odesílatele"
 
 #. Translators: Label used as the undo tooltip after adding an
 #. new sender email address to an account. The string
@@ -671,7 +671,7 @@ msgstr "Tento účet byl zakázán"
 #. used.
 #: src/client/accounts/accounts-editor-list-pane.vala:362
 msgid "This account has encountered a problem and is unavailable"
-msgstr "U tohoto účtu účtu se objevil problém a proto je nedostupný"
+msgstr "U tohoto účtu se objevil problém a proto je nedostupný"
 
 #. Translators: Notification shown after removing an
 #. account. The string substitution is the name of the
@@ -738,21 +738,21 @@ msgstr "Přihlášení"
 #. account
 #: src/client/accounts/accounts-editor-row.vala:576
 msgid "No login needed"
-msgstr "přihlášení není zapotřebí"
+msgstr "Přihlášení není zapotřebí"
 
 #. Translators: ComboBox value for source of SMTP
 #. authentication credentials (use IMAP) when adding a new
 #. account
 #: src/client/accounts/accounts-editor-row.vala:588
 msgid "Use same login as receiving"
-msgstr "používat stejné přihlášení jako pro příjem"
+msgstr "Používat stejné přihlášení jako pro příjem"
 
 #. Translators: ComboBox value for source of SMTP
 #. authentication credentials (custom) when adding a new
 #. account
 #: src/client/accounts/accounts-editor-row.vala:600
 msgid "Use a different login"
-msgstr "používat jiné přihlášení"
+msgstr "Používat jiné přihlášení"
 
 #. Translators: In-app notification label, the
 #. string substitution is a more detailed reason.
@@ -796,7 +796,7 @@ msgstr "%s pomocí OAuth2"
 
 #: src/client/accounts/accounts-editor-servers-pane.vala:962
 msgid "Use receiving server login"
-msgstr "Používat přihlášení přijimacího serveru"
+msgstr "Používat přihlášení přijímacího serveru"
 
 #. Translators: File name used in save chooser when saving
 #. attachments that do not otherwise have a name.
@@ -893,7 +893,7 @@ msgstr "Otevřít nové okno"
 #. / Command line option
 #: src/client/application/application-client.vala:112
 msgid "Revoke all pinned TLS server certificates"
-msgstr "Odvolat všechny spjaté serverové certifikáty TLS"
+msgstr "Odvolat všechny připnuté serverové certifikáty TLS"
 
 #. / Command line option
 #: src/client/application/application-client.vala:115
@@ -1055,8 +1055,8 @@ msgstr[2] "Zprávy byly obnoveny do složky %s"
 msgid "Message archived"
 msgid_plural "Messages archived"
 msgstr[0] "Zpráva byla archivována"
-msgstr[1] "Zpráva byly archivovány"
-msgstr[2] "Zpráva byly archivovány"
+msgstr[1] "Zprávy byly archivovány"
+msgstr[2] "Zprávy byly archivovány"
 
 #. / Translators: Label for in-app
 #. / notification. String substitution is the name
@@ -1118,7 +1118,7 @@ msgstr ""
 "skončit.\n"
 "\n"
 "Opětovné sestavení databáze zničí všechny místně uložené e-maily a jejich "
-"přílohy <b>Na e-maily na vašem serveru to nebude mít vliv.</b>"
+"přílohy. <b>Na e-maily na vašem serveru to nebude mít vliv.</b>"
 
 #: src/client/application/application-controller.vala:1314
 msgid "_Rebuild"
@@ -1165,7 +1165,7 @@ msgstr "E-mail byl uložen jako koncept"
 #: src/client/application/application-controller.vala:2570
 #: src/client/application/application-controller.vala:2625
 msgid "Composer could not be restored"
-msgstr "Nezdařílo se obnovit předchozí stav editoru"
+msgstr "Nezdařilo se obnovit předchozí stav editoru"
 
 #. / Translators: The label for an in-app notification. The
 #. / string substitution is a list of recipients of the email.
@@ -1187,7 +1187,7 @@ msgstr "Aktualizace účtu"
 #. Translators: An info bar status label
 #: src/client/application/application-main-window.vala:628
 msgid "Working offline"
-msgstr "Pracuje se v režimu odpojení"
+msgstr "Pracuje se v offline režimu"
 
 #. Translators: An info bar description label
 #: src/client/application/application-main-window.vala:630
@@ -1207,7 +1207,7 @@ msgstr "Účet oznámil nesprávné přihlašovací jméno nebo heslo."
 #. Translators: An info bar button tool-tip
 #: src/client/application/application-main-window.vala:646
 msgid "Retry login, you will be prompted for your password"
-msgstr "Zkusit znovu přihlásit, budete dotázáni na heslo"
+msgstr "Zkusit se znovu přihlásit, budete dotázáni na heslo"
 
 #. Translators: An info bar status label
 #: src/client/application/application-main-window.vala:653
@@ -1253,7 +1253,7 @@ msgstr "Tímto se odstraní pošta z aplikace Convey i z poštovního serveru."
 
 #: src/client/application/application-main-window.vala:1423
 msgid "This cannot be undone."
-msgstr "Nebude možné to vrátit zpět."
+msgstr "Nebude to možné vrátit zpět."
 
 #: src/client/application/application-main-window.vala:1424
 #, c-format
@@ -1327,9 +1327,9 @@ msgstr[2] "Označit konverzace"
 #: src/client/components/components-conversation-actions.vala:132
 msgid "Archive conversation"
 msgid_plural "Archive conversations"
-msgstr[0] "Archivovat konverzaci (A)"
-msgstr[1] "Archivovat konverzace (A)"
-msgstr[2] "Archivovat konverzace (A)"
+msgstr[0] "Archivovat konverzaci"
+msgstr[1] "Archivovat konverzace"
+msgstr[2] "Archivovat konverzace"
 
 #: src/client/components/components-conversation-actions.vala:141
 msgid "Add label to conversation"
@@ -1348,9 +1348,9 @@ msgstr[2] "Zkopírovat konverzace"
 #: src/client/components/components-conversation-actions.vala:170
 msgid "Move conversation to Trash"
 msgid_plural "Move conversations to Trash"
-msgstr[0] "Přesunout konverzaci"
-msgstr[1] "Přesunout konverzace"
-msgstr[2] "Přesunout konverzace"
+msgstr[0] "Přesunout konverzaci do Koše"
+msgstr[1] "Přesunout konverzace do Koše"
+msgstr[2] "Přesunout konverzace do Koše"
 
 #: src/client/components/components-conversation-actions.vala:180
 msgid "Delete conversation"
@@ -1463,8 +1463,8 @@ msgid ""
 "Overrides the original colors in HTML messages to integrate better with the "
 "app theme. Requires restart."
 msgstr ""
-"Přepíše původní barvy ve zprávách formátu HTML, aby se lépe integrovaly s "
-"motivem aplikace. Vyžaduje restart."
+"Přepíše původní barvy ve zprávách formátu HTML, aby lépe odpovídaly "
+"motivu aplikace. Vyžaduje restart."
 
 #. / Translators: Preferences page title
 #: src/client/components/components-preferences-window.vala:203
@@ -1500,7 +1500,7 @@ msgstr "Aplikace Convey narazila na problém při kontrole pošty na účtu %s."
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:57
 msgid "Try reconnecting"
-msgstr "Zkusit znovu připojit"
+msgstr "Zkusit se znovu připojit"
 
 #. Translators: Info bar title for an outgoing
 #. account problem. String substitution is the
@@ -1555,7 +1555,7 @@ msgstr "Hledat"
 #. / Translators: Search entry tooltip
 #: src/client/components/components-search-bar.vala:32
 msgid "Search all mail in account for keywords"
-msgstr "Prohledat všechny e-maily v účtu podle klíčového slova"
+msgstr "Prohledat všechny e-maily v účtu podle klíčových slov"
 
 #. / Translators: Search entry placeholder, string
 #. / replacement is the name of an account
@@ -1733,14 +1733,14 @@ msgstr "_Předmět"
 #. Keep, Discard or Cancel.
 #: src/client/composer/composer-widget.vala:904
 msgid "Do you want to keep or discard this draft message?"
-msgstr "Chcete tento koncept zprávy zachovat nebo zahodit?"
+msgstr "Chcete tento koncept zachovat nebo zahodit?"
 
 #. Translators: This dialog text is displayed to the
 #. user when closing a composer where the options are
 #. only Discard or Cancel.
 #: src/client/composer/composer-widget.vala:930
 msgid "Do you want to discard this draft message?"
-msgstr "Chcete zahodit tento koncept zprávy?"
+msgstr "Chcete zahodit tento koncept?"
 
 #: src/client/composer/composer-widget.vala:1503
 msgid "Send message with an empty subject and body?"
@@ -1948,7 +1948,7 @@ msgstr[2] "%d dalších"
 #. when the message has no from address.
 #: src/client/conversation-viewer/conversation-message.vala:550
 msgid "No sender"
-msgstr "Bez odesilatele"
+msgstr "Bez odesílatele"
 
 #. Translators: This separates multiple 'from'
 #. addresses in the compact header for a message.
@@ -2028,7 +2028,7 @@ msgstr "Tato složka neobsahuje žádnou konverzaci."
 #. conversations have been found in a search.
 #: src/client/conversation-viewer/conversation-viewer.vala:135
 msgid "Your search returned no results, try refining your search terms."
-msgstr "Hledání nevrátilo žádný výsledek, zkuste upravit podmínky."
+msgstr "Hledání nevrátilo žádný výsledek, zkuste upravit hledaný výraz."
 
 #: src/client/dialogs/attachment-dialog.vala:25
 msgid "Choose a file"
@@ -2074,7 +2074,7 @@ msgid ""
 "Selecting “Don’t Trust This Server” will cause Convey to stop accessing this "
 "account."
 msgstr ""
-"Pokud vyberete „Nedůvěřovat tomuto serveru“, zastaví Convey přístup k tomuto "
+"Pokud vyberete „Nedůvěřovat tomuto serveru“, přestane Convey přistupovat k tomuto "
 "účtu."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:69
@@ -2103,7 +2103,7 @@ msgstr "Certifikát serveru nebyl aktivován"
 
 #: src/client/dialogs/certificate-warning-dialog.vala:88
 msgid "The server’s certificate has been revoked and is now invalid"
-msgstr "Certifikát serveru byl odvolán a v současnosti je neplatný"
+msgstr "Certifikát serveru byl odvolán a je již neplatný"
 
 #: src/client/dialogs/certificate-warning-dialog.vala:91
 msgid "The server’s certificate is considered insecure"
@@ -2249,7 +2249,7 @@ msgstr "Vytvářejte znovupoužitelné šablony pro odesílání e-mailů"
 #: src/client/plugin/email-templates/email-templates.vala:29
 #: src/client/plugin/mail-merge/mail-merge.vala:29
 msgid "Templates | Template Mail | Template Email | Template E-Mail"
-msgstr "Šablony | Šabony zpráv | Šablony e-mailů"
+msgstr "Šablony | Šablony zpráv | Šablony e-mailů"
 
 #. Translators: The name of the folder used to
 #. store email templates
@@ -2266,7 +2266,7 @@ msgstr "Nová"
 #. Translators: Infobar status label for an email template
 #: src/client/plugin/email-templates/email-templates.vala:293
 msgid "Message template"
-msgstr "šablona zprávy"
+msgstr "Šablona zprávy"
 
 #. Translators: Info bar button label for sending an
 #. email template
@@ -2355,7 +2355,7 @@ msgstr "Nabídka konverzace"
 
 #: src/client/plugin/messaging-menu/messaging-menu.plugin.desktop.in:4
 msgid "Displays Unity Messaging Menu notifications for new email"
-msgstr "Zobrazuje v Unity v upozornění na nový e-mail nabídku konverzace"
+msgstr "Zobrazuje v Unity upozornění na nový e-mail"
 
 #: src/client/plugin/messaging-menu/messaging-menu.vala:79
 #, c-format
@@ -2994,7 +2994,7 @@ msgstr "Změnit velikost textu"
 
 #: ui/composer-editor.ui:402
 msgid "Insert or update text link"
-msgstr "Vložit nebo aktualizovat textový odkaz"
+msgstr "Vložit nebo aktualizovat odkaz"
 
 #: ui/composer-editor.ui:424
 msgid "Insert an image"
@@ -3022,7 +3022,7 @@ msgstr "Další volby"
 
 #: ui/composer-editor.ui:617
 msgid "Show formatting toolbar"
-msgstr "Zobrazovat nástrojovou lištu formátování"
+msgstr "Zobrazit nástrojovou lištu formátování"
 
 #: ui/composer-editor.ui:634
 msgid "Select spell checking languages"
@@ -3138,7 +3138,7 @@ msgstr "Smazat tento odkaz"
 
 #: ui/composer-widget.ui:119
 msgid "Drop files here"
-msgstr "upusťte soubory zde"
+msgstr "Přetáhněte soubory sem"
 
 #: ui/composer-widget.ui:134
 msgid "To add them as attachments"
@@ -3207,9 +3207,9 @@ msgid ""
 msgstr ""
 "Pokud je problém vážný, nebo přetrvává, uložte a odešlete prosím tyto údaje "
 "na jeden z <a href=\"https://gitlab.gnome.org/GNOME/geary/-/wikis/"
-"Contact\">kontaktních kanálů</a>, nebo zadejte <a href=\"https://"
+"Contact\">kontaktních kanálů</a>, nebo přiložte do <a href=\"https://"
 "gitlab.gnome.org/GNOME/geary/-/wikis/Reporting-Bugs-and-Requesting-"
-"Features\">nové hlášení chyby</a>."
+"Features\">nového hlášení chyby</a>."
 
 #: ui/components-inspector-error-view.ui:42
 msgid "Details:"
@@ -3301,12 +3301,12 @@ msgstr "Tato e-mailová adresa je:"
 #. Contact popover label
 #: ui/conversation-contact-popover.ui:293
 msgid "But was forged as:"
-msgstr "Ale byl podvržena jako:"
+msgstr "Ale byla podvržena jako:"
 
 #. Contact popover label
 #: ui/conversation-contact-popover.ui:316
 msgid "The sender may not be trustworthy"
-msgstr "Odesilatel nemusí být důvěryhodný"
+msgstr "Odesílatel nemusí být důvěryhodný"
 
 #: ui/conversation-email.ui:24
 msgid "Save all attachments"
@@ -3341,7 +3341,7 @@ msgstr "_Označit jako nepřečtené"
 #. conversation from this one as unread.
 #: ui/conversation-email-menus.ui:42
 msgid "Mark Unread From _Here"
-msgstr "Označit jako nepřečtené z_de"
+msgstr "Označit jako nepřečtené o_dtud"
 
 #. Translators: Menu item to move a single, specific message
 #. to the trash folder
@@ -3373,12 +3373,12 @@ msgstr "Nalezen klamný odkaz"
 
 #: ui/conversation-message-link-popover.ui:102
 msgid "The email sender may be leading you to the wrong web site."
-msgstr "Odesilatel zprávy se vás snaží navést na nesprávné webové stránky."
+msgstr "Odesílatel zprávy se vás snaží navést na nesprávné webové stránky."
 
 #: ui/conversation-message-link-popover.ui:114
 msgid "If unsure, contact the sender and ask before continuing."
 msgstr ""
-"Pokud máte pochybnosti, před pokračování kontaktujte odesilatele a vše si "
+"Pokud máte pochybnosti, před pokračování kontaktujte odesílatele a vše si "
 "ověřte."
 
 #: ui/conversation-message-menus.ui:7
@@ -3490,7 +3490,7 @@ msgstr "Nová konverzace"
 #: ui/gtk/help-overlay.ui:23
 msgctxt "shortcut window"
 msgid "Reply to sender"
-msgstr "Odpovědět odesilateli"
+msgstr "Odpovědět odesílateli"
 
 #: ui/gtk/help-overlay.ui:30 ui/gtk/help-overlay.ui:450
 msgctxt "shortcut window"
@@ -3733,7 +3733,7 @@ msgstr "Ukončit aplikaci"
 #: ui/gtk/help-overlay.ui:391
 msgctxt "shortcut window"
 msgid "Keyboard navigation"
-msgstr "Navigace z klávesnice"
+msgstr "Navigace klávesnicí"
 
 #: ui/gtk/help-overlay.ui:395
 msgctxt "shortcut window"
@@ -3767,7 +3767,7 @@ msgstr "Jednoklávesové zkratky (pokud je povoleno)"
 #: ui/gtk/help-overlay.ui:443
 msgctxt "shortcut window"
 msgid "Reply to sender "
-msgstr "Odpovědět odesilateli"
+msgstr "Odpovědět odesílateli"
 
 #: ui/gtk/help-overlay.ui:530
 msgctxt "shortcut window"
