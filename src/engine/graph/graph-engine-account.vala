@@ -99,6 +99,9 @@ internal class Convey.Graph.Account : Convey.Account,
             Convey.ProgressType.ACTIVITY
         );
         this.client = new Convey.Graph.Client(information);
+        this.client.response_received.connect(
+            ((Convey.Graph.Service) this.incoming).notify_response_received
+        );
         this.poll_timer = new Convey.TimeoutManager.seconds(
             POLL_INTERVAL_SEC,
             on_poll_tick

@@ -280,7 +280,7 @@ public class Application.MainWindow :
     [GtkChild] private unowned Gtk.Button refresh_button;
     [GtkChild] private unowned Gtk.Stack refresh_stack;
     [GtkChild] private unowned Gtk.Image refresh_image;
-    [GtkChild] private unowned Gtk.Spinner headerbar_spinner;
+    [GtkChild] private unowned Adw.Spinner headerbar_spinner;
 
     private int headerbar_busy_count = 0;
 
@@ -2131,7 +2131,6 @@ public class Application.MainWindow :
     /** Shows the spinner in place of the refresh button while busy. */
     private void headerbar_push_busy() {
         this.headerbar_busy_count++;
-        this.headerbar_spinner.start();
         this.refresh_stack.visible_child = this.headerbar_spinner;
     }
 
@@ -2139,7 +2138,6 @@ public class Application.MainWindow :
     private void headerbar_pop_busy() {
         this.headerbar_busy_count = int.max(0, this.headerbar_busy_count - 1);
         if (this.headerbar_busy_count == 0) {
-            this.headerbar_spinner.stop();
             this.refresh_stack.visible_child = this.refresh_image;
         }
     }

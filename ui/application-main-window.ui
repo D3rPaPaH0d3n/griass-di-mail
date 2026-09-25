@@ -219,7 +219,7 @@
                                               </object>
                                             </child>
                                             <child>
-                                              <object class="GtkSpinner" id="headerbar_spinner">
+                                              <object class="AdwSpinner" id="headerbar_spinner">
                                                 <property name="halign">center</property>
                                                 <property name="valign">center</property>
                                                 <property name="width_request">16</property>

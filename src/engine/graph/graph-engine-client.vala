@@ -62,6 +62,8 @@ internal class Convey.Graph.Client : Convey.BaseObject {
     }
 
 
+    public signal void response_received();
+
     private Convey.AccountInformation account;
     private Soup.Session session;
     internal string base_uri { get; set; default = DEFAULT_BASE_URI; }
@@ -861,6 +863,8 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     uri
                 );
             }
+
+            response_received();
 
             uint status = request.status_code;
             if (status >= 200 && status < 300) {

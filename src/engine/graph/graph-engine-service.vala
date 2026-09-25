@@ -24,6 +24,14 @@ internal class Convey.Graph.Service : Convey.ClientService {
         notify_stopped();
     }
 
+    internal void notify_response_received() {
+        if (this.is_running &&
+            this.current_status != CONNECTED &&
+            this.current_status.automatically_reconnect()) {
+            notify_connected();
+        }
+    }
+
     protected override void became_reachable() {
         notify_connected();
     }
