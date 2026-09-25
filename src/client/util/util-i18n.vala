@@ -80,6 +80,107 @@ namespace Util.I18n {
         return dictionaries;
     }
 
+    private const string DICTIONARIES_URL =
+        "https://raw.githubusercontent.com/wooorm/dictionaries/8cfea406b505e4d7df52d5a19bce525df98c54ab/dictionaries/";
+
+    private const string[] DOWNLOADABLE_DICTIONARIES = {
+        "bg_BG:bg", "br_FR:br", "ca_ES:ca", "cs_CZ:cs", "cy_GB:cy",
+        "da_DK:da", "de_AT:de-AT", "de_CH:de-CH", "de_DE:de", "el_GR:el",
+        "en_AU:en-AU", "en_CA:en-CA", "en_GB:en-GB", "en_US:en",
+        "en_ZA:en-ZA", "eo:eo", "es_AR:es-AR", "es_BO:es-BO", "es_CL:es-CL",
+        "es_CO:es-CO", "es_CR:es-CR", "es_CU:es-CU", "es_DO:es-DO",
+        "es_EC:es-EC", "es_ES:es", "es_GT:es-GT", "es_HN:es-HN",
+        "es_MX:es-MX", "es_NI:es-NI", "es_PA:es-PA", "es_PE:es-PE",
+        "es_PH:es-PH", "es_PR:es-PR", "es_PY:es-PY", "es_SV:es-SV",
+        "es_US:es-US", "es_UY:es-UY", "es_VE:es-VE", "et_EE:et", "eu_ES:eu",
+        "fa_IR:fa", "fo_FO:fo", "fr_FR:fr", "fur_IT:fur", "fy_NL:fy",
+        "ga_IE:ga", "gd_GB:gd", "gl_ES:gl", "he_IL:he", "hr_HR:hr",
+        "hu_HU:hu", "hy_AM:hy", "ia:ia", "ie:ie", "is_IS:is", "it_IT:it",
+        "ka_GE:ka", "ko_KR:ko", "la:la", "lb_LU:lb", "lt_LT:lt",
+        "ltg_LV:ltg", "lv_LV:lv", "mk_MK:mk", "mn_MN:mn", "nb_NO:nb",
+        "nds_DE:nds", "ne_NP:ne", "nl_NL:nl", "nn_NO:nn", "oc_FR:oc",
+        "pl_PL:pl", "pt_BR:pt", "pt_PT:pt-PT", "ro_RO:ro", "ru_RU:ru",
+        "rw_RW:rw", "sk_SK:sk", "sl_SI:sl", "sr_RS:sr", "sv_FI:sv-FI",
+        "sv_SE:sv", "tk_TM:tk", "tr_TR:tr", "uk_UA:uk", "vi_VN:vi"
+    };
+
+    /**
+     * Returns the languages that {@link download_dictionary} can install.
+     */
+    public string[] get_downloadable_dictionaries() {
+        string[] langs = {};
+        foreach (string entry in DOWNLOADABLE_DICTIONARIES) {
+            langs += entry.split(":")[0];
+        }
+        return langs;
+    }
+
+    public delegate void DownloadProgress(double fraction);
+
+    /**
+     * Downloads a dictionary into the user's Enchant hunspell directory.
+     */
+    public async void download_dictionary(string lang,
+                                          DownloadProgress? progress,
+                                          GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        string? source = null;
+        foreach (string entry in DOWNLOADABLE_DICTIONARIES) {
+            string[] parts = entry.split(":");
+            if (parts[0] == lang) {
+                source = parts[1];
+            }
+        }
+        if (source == null) {
+            throw new GLib.IOError.NOT_FOUND("No dictionary for %s", lang);
+        }
+
+        string path = GLib.Path.build_filename(
+            GLib.Environment.get_user_config_dir(), "enchant", "hunspell"
+        );
+        GLib.DirUtils.create_with_parents(path, 0755);
+        GLib.File dir = GLib.File.new_for_path(path);
+
+        var session = new Soup.Session();
+        session.remove_feature_by_type(typeof(Soup.ContentDecoder));
+        foreach (string ext in new string[] { "aff", "dic" }) {
+            var msg = new Soup.Message(
+                "GET", DICTIONARIES_URL + source + "/index." + ext
+            );
+            GLib.InputStream input = yield session.send_async(
+                msg, GLib.Priority.DEFAULT, cancellable
+            );
+            if (msg.status_code != Soup.Status.OK) {
+                throw new GLib.IOError.FAILED(
+                    "HTTP %u downloading %s", msg.status_code, lang
+                );
+            }
+            int64 total = msg.response_headers.get_content_length();
+            int64 received = 0;
+            GLib.File part = dir.get_child(lang + "." + ext + ".part");
+            GLib.OutputStream output = yield part.replace_async(
+                null, false, REPLACE_DESTINATION, GLib.Priority.DEFAULT, cancellable
+            );
+            while (true) {
+                GLib.Bytes chunk = yield input.read_bytes_async(
+                    65536, GLib.Priority.DEFAULT, cancellable
+                );
+                if (chunk.get_size() == 0) {
+                    break;
+                }
+                yield output.write_all_async(
+                    chunk.get_data(), GLib.Priority.DEFAULT, cancellable, null
+                );
+                received += chunk.get_size();
+                if (ext == "dic" && progress != null && total > 0) {
+                    progress(double.min((double) received / total, 1.0));
+                }
+            }
+            yield output.close_async(GLib.Priority.DEFAULT, cancellable);
+            part.move(dir.get_child(lang + "." + ext), OVERWRITE, cancellable);
+        }
+    }
+
     /**
      * Returns a list of installed locale languages.
      *

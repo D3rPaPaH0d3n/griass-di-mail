@@ -16,7 +16,6 @@ public class SpellCheckPopover {
 
     private Gtk.Popover? popover = null;
     private GLib.GenericSet<string> selected_rows;
-    private bool is_expanded = false;
     private Gtk.ListBox langs_list;
     private Gtk.SearchEntry search_box;
     private Gtk.ScrolledWindow view;
@@ -34,9 +33,12 @@ public class SpellCheckPopover {
 
         private string lang_name;
         private string country_name;
-        private bool is_lang_visible;
+        public bool is_lang_visible { get; private set; }
+        private bool needs_download;
         private Gtk.Image active_image;
         private Gtk.Button visibility_button;
+        private Gtk.DrawingArea progress_circle;
+        private double download_progress = 0.0;
         private SpellCheckStatus lang_active = SpellCheckStatus.INACTIVE;
 
         /**
@@ -52,8 +54,10 @@ public class SpellCheckPopover {
 
         public SpellCheckLangRow(string lang_code,
                                  bool is_active,
-                                 bool is_visible) {
+                                 bool is_visible,
+                                 bool needs_download) {
             this.lang_code = lang_code;
+            this.needs_download = needs_download;
             this.lang_active = is_active
                 ? SpellCheckStatus.ACTIVE
                 : SpellCheckStatus.INACTIVE;
@@ -86,8 +90,10 @@ public class SpellCheckPopover {
 
                 label_box.append(label);
                 label_box.append(country_label);
+                label_box.hexpand = true;
                 box.append(label_box);
             } else {
+                label.hexpand = true;
                 box.append(label);
             }
 
@@ -96,6 +102,16 @@ public class SpellCheckPopover {
             this.visibility_button.add_css_class("flat");
             box.append(active_image);
             box.append(this.visibility_button);
+
+            this.progress_circle = new Gtk.DrawingArea();
+            this.progress_circle.content_width = 16;
+            this.progress_circle.content_height = 16;
+            this.progress_circle.margin_start = 9;
+            this.progress_circle.margin_end = 9;
+            this.progress_circle.valign = CENTER;
+            this.progress_circle.visible = false;
+            this.progress_circle.set_draw_func(draw_progress);
+            box.append(this.progress_circle);
             this.visibility_button.halign = Gtk.Align.END; // Make the button stay at the right end of the screen
             this.visibility_button.valign = CENTER;
 
@@ -119,7 +135,11 @@ public class SpellCheckPopover {
                 break;
             }
 
-            if (is_lang_visible) {
+            if (needs_download) {
+                this.visibility_button.icon_name = "folder-download-symbolic";
+                this.visibility_button.set_tooltip_text(_("Download this language"));
+            }
+            else if (is_lang_visible) {
                 this.visibility_button.icon_name = "list-remove-symbolic";
                 this.visibility_button.set_tooltip_text(_("Remove this language from the preferred list"));
             }
@@ -127,6 +147,10 @@ public class SpellCheckPopover {
                 this.visibility_button.icon_name = "list-add-symbolic";
                 this.visibility_button.set_tooltip_text(_("Add this language to the preferred list"));
             }
+        }
+
+        public string sort_key() {
+            return (lang_name ?? lang_code) + " " + (country_name ?? "");
         }
 
         public bool match_filter(string filter) {
@@ -171,6 +195,11 @@ public class SpellCheckPopover {
             if (!visible)
                 return;
 
+            if (needs_download) {
+                on_visibility_clicked();
+                return;
+            }
+
             switch (lang_active) {
                 case SpellCheckStatus.ACTIVE:
                     set_lang_active(SpellCheckStatus.INACTIVE);
@@ -181,11 +210,52 @@ public class SpellCheckPopover {
             }
         }
 
-        public bool is_row_visible(bool is_expanded) {
-            return is_lang_visible || is_expanded;
+        private void set_download_progress(double fraction) {
+            this.download_progress = fraction;
+            this.progress_circle.queue_draw();
+        }
+
+        private async void download() {
+            set_download_progress(0.0);
+            this.visibility_button.visible = false;
+            this.progress_circle.visible = true;
+            try {
+                yield Util.I18n.download_dictionary(lang_code, set_download_progress, null);
+                this.needs_download = false;
+                set_lang_active(SpellCheckStatus.ACTIVE);
+            } catch (GLib.Error err) {
+                warning("Failed to download dictionary %s: %s", lang_code, err.message);
+                this.visibility_button.set_tooltip_text(
+                    _("Download failed: %s").printf(err.message)
+                );
+            }
+            this.progress_circle.visible = false;
+            this.visibility_button.visible = true;
+        }
+
+        private void draw_progress(Gtk.DrawingArea area,
+                                   Cairo.Context cr,
+                                   int width,
+                                   int height) {
+            Gdk.RGBA color = area.get_color();
+            double radius = double.min(width, height) / 2.0 - 1.5;
+            double start = -Math.PI / 2.0;
+            cr.set_line_width(2.0);
+            cr.set_source_rgba(color.red, color.green, color.blue, color.alpha * 0.2);
+            cr.arc(width / 2.0, height / 2.0, radius, 0, 2.0 * Math.PI);
+            cr.stroke();
+            cr.set_source_rgba(color.red, color.green, color.blue, color.alpha);
+            cr.arc(width / 2.0, height / 2.0, radius, start, start + 2.0 * Math.PI * download_progress);
+            cr.stroke();
         }
 
         private void on_visibility_clicked() {
+            if (needs_download) {
+                if (!this.progress_circle.visible) {
+                    download.begin();
+                }
+                return;
+            }
             set_lang_visible(!this.is_lang_visible);
         }
 
@@ -210,12 +280,30 @@ public class SpellCheckPopover {
     private bool filter_function (Gtk.ListBoxRow row) {
         string text = search_box.get_text();
         SpellCheckLangRow r = row as SpellCheckLangRow;
-        return (r.is_row_visible(is_expanded) && r.match_filter(text));
+        return r.match_filter(text);
+    }
+
+    private int sort_function(Gtk.ListBoxRow row_a, Gtk.ListBoxRow row_b) {
+        SpellCheckLangRow a = row_a as SpellCheckLangRow;
+        SpellCheckLangRow b = row_b as SpellCheckLangRow;
+        if (a.is_lang_active() != b.is_lang_active()) {
+            return a.is_lang_active() ? -1 : 1;
+        }
+        if (a.is_lang_visible != b.is_lang_visible) {
+            return a.is_lang_visible ? -1 : 1;
+        }
+        return a.sort_key().collate(b.sort_key());
     }
 
     private void setup_popover() {
         // We populate the popover with the list of languages that the user wants to see
-        string[] languages = Util.I18n.get_available_dictionaries();
+        string[] installed = Util.I18n.get_available_dictionaries();
+        string[] languages = installed;
+        foreach (string lang in Util.I18n.get_downloadable_dictionaries()) {
+            if (!(lang in installed)) {
+                languages += lang;
+            }
+        }
         string[] enabled_langs = this.config.get_spell_check_languages();
         string[] visible_langs = this.config.get_spell_check_visible_languages();
 
@@ -223,9 +311,6 @@ public class SpellCheckPopover {
         search_box = new Gtk.SearchEntry();
         search_box.set_placeholder_text(_("Search for more languages"));
         search_box.changed.connect(on_search_box_changed);
-        var search_focus = new Gtk.EventControllerFocus();
-        search_focus.enter.connect(() => set_expanded(true));
-        search_box.add_controller(search_focus);
         content.append(search_box);
 
         view = new Gtk.ScrolledWindow();
@@ -238,7 +323,8 @@ public class SpellCheckPopover {
             SpellCheckLangRow row = new SpellCheckLangRow(
                 lang,
                 lang in enabled_langs,
-                lang in visible_langs
+                lang in visible_langs,
+                !(lang in installed)
             );
             langs_list.append(row);
 
@@ -255,6 +341,7 @@ public class SpellCheckPopover {
 
         langs_list.set_filter_func(this.filter_function);
         langs_list.set_header_func(this.header_function);
+        langs_list.set_sort_func(this.sort_function);
 
         this.popover.child = content;
 
@@ -282,20 +369,15 @@ public class SpellCheckPopover {
         langs_list.invalidate_filter();
     }
 
-    private void set_expanded(bool expanded) {
-        is_expanded = expanded;
-        langs_list.invalidate_filter();
-    }
-
     private void on_shown() {
         search_box.set_text("");
         content.set_focus_child(view);
-        is_expanded = false;
         langs_list.invalidate_filter();
     }
 
     private void on_row_enabled_changed(SpellCheckLangRow row,
                                         bool is_active) {
+        langs_list.invalidate_sort();
         string lang = row.lang_code;
         if (is_active) {
             selected_rows.add(lang);
@@ -312,6 +394,7 @@ public class SpellCheckPopover {
     private void on_row_visibility_changed(SpellCheckLangRow row,
                                            bool is_visible) {
         langs_list.invalidate_filter();
+        langs_list.invalidate_sort();
 
         string[] visible_langs = this.config.get_spell_check_visible_languages();
         string lang = row.lang_code;
