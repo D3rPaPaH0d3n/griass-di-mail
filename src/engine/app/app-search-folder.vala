@@ -144,6 +144,11 @@ public class Convey.App.SearchFolder :
         // Always exclude emails that don't live anywhere from search
         // results.
         exclude_orphan_emails();
+        foreach (Folder folder in account.list_folders()) {
+            if (folder.used_as in EXCLUDE_TYPES) {
+                exclude_folder(folder);
+            }
+        }
     }
 
     ~SearchFolder() {
