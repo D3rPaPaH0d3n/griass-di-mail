@@ -949,7 +949,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         try {
             GLib.Uri uri = GLib.Uri.parse(
                 uri_string,
-                GLib.UriFlags.PARSE_RELAXED
+                GLib.UriFlags.PARSE_RELAXED | GLib.UriFlags.ENCODED
             );
             return new Soup.Message.from_uri(method, uri);
         } catch (GLib.UriError err) {
