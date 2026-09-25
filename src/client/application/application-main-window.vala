@@ -79,6 +79,7 @@ public class Application.MainWindow :
     };
 
     private const int UPDATE_UI_INTERVAL = 60;
+    private const int MAX_COMMAND_HISTORY = 100;
 
     private const int MIN_CONVERSATION_COUNT = 50;
 
@@ -283,6 +284,7 @@ public class Application.MainWindow :
     [GtkChild] private unowned Adw.Spinner headerbar_spinner;
 
     private int headerbar_busy_count = 0;
+    private Gee.LinkedList<Command> command_history = new Gee.LinkedList<Command>();
 
     [GtkChild] private unowned Adw.HeaderBar conversation_list_headerbar;
 
@@ -1501,6 +1503,7 @@ public class Application.MainWindow :
         progress_monitor.start.connect(() => headerbar_push_busy());
         progress_monitor.finish.connect(() => headerbar_pop_busy());
         this.refresh_button.clicked.connect(on_refresh_folder);
+        this.notify["all-inboxes"].connect(() => update_command_actions());
         this.notify["focus-widget"].connect(() => update_command_actions());
 
         this.conversation_list_actions.set_mark_inverted();
@@ -1825,13 +1828,16 @@ public class Application.MainWindow :
 
     /** Un-does the last executed application command, if any. */
     private async void undo() {
-        AccountContext? selected = get_selected_account_context();
+        AccountContext? selected = get_command_context(true);
         if (selected != null) {
             selected.commands.undo.begin(
                 selected.cancellable,
                 (obj, res) => {
                     try {
                         selected.commands.undo.end(res);
+                        if (this.all_inboxes) {
+                            on_refresh_folder();
+                        }
                     } catch (GLib.Error err) {
                         handle_error(selected.account.information, err);
                     }
@@ -1842,13 +1848,16 @@ public class Application.MainWindow :
 
     /** Re-does the last undone application command, if any. */
     private async void redo() {
-        AccountContext? selected = get_selected_account_context();
+        AccountContext? selected = get_command_context(false);
         if (selected != null) {
             selected.commands.redo.begin(
                 selected.cancellable,
                 (obj, res) => {
                     try {
                         selected.commands.redo.end(res);
+                        if (this.all_inboxes) {
+                            on_refresh_folder();
+                        }
                     } catch (GLib.Error err) {
                         handle_error(selected.account.information, err);
                     }
@@ -1864,13 +1873,43 @@ public class Application.MainWindow :
             focus is Gtk.TextView ||
             focus is Composer.WebView
         );
-        AccountContext? selected = get_selected_account_context();
+        AccountContext? undo = get_command_context(true);
         get_edit_action(Action.Edit.UNDO).set_enabled(
-            !editing && selected != null && selected.commands.can_undo
+            !editing && undo != null && undo.commands.can_undo
         );
+        AccountContext? redo = get_command_context(false);
         get_edit_action(Action.Edit.REDO).set_enabled(
-            !editing && selected != null && selected.commands.can_redo
+            !editing && redo != null && redo.commands.can_redo
         );
+    }
+
+    /** Finds the account whose next undo or redo is the newest command. */
+    private AccountContext? get_command_context(bool undo) {
+        if (!this.all_inboxes) {
+            return get_selected_account_context();
+        }
+        var contexts = this.controller.get_account_contexts();
+        for (int i = this.command_history.size - 1; i >= 0; i--) {
+            foreach (var context in contexts) {
+                Command? next = (
+                    undo
+                    ? context.commands.peek_undo()
+                    : context.commands.peek_redo()
+                );
+                if (next == this.command_history[i]) {
+                    return context;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void record_command(Command command) {
+        this.command_history.remove(command);
+        this.command_history.add(command);
+        if (this.command_history.size > MAX_COMMAND_HISTORY) {
+            this.command_history.poll_head();
+        }
     }
 
     private async bool prompt_delete_conversations(int count) {
@@ -2698,6 +2737,7 @@ public class Application.MainWindow :
     }
 
     private void on_command_execute(Command command) {
+        record_command(command);
         if (!(command is TrivialCommand)) {
             // Only show an execute notification for non-trivial
             // commands
@@ -2710,9 +2750,10 @@ public class Application.MainWindow :
     }
 
     private void on_command_undo(Command command) {
+        record_command(command);
         update_command_actions();
         EmailCommand? email = command as EmailCommand;
-        if (email != null) {
+        if (email != null && !this.all_inboxes) {
             if (email.conversations.size > 1) {
                 this.show_conversations.begin(
                     email.location, email.conversations, false
@@ -2732,6 +2773,7 @@ public class Application.MainWindow :
     }
 
     private void on_command_redo(Command command) {
+        record_command(command);
         update_command_actions();
         if (command.executed_label != null) {
             var toast = new Adw.Toast(command.executed_label);
