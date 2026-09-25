@@ -244,6 +244,17 @@ internal class Application.NotificationPluginContext :
         }
     }
 
+    private void emit_email_seen(Convey.Folder folder,
+                                 Gee.Collection<Convey.EmailIdentifier> email_ids) {
+        MonitorInformation? info = this.folder_information.get(folder);
+        if (info != null && !email_ids.is_empty) {
+            email_seen(
+                this.globals.folders.to_plugin_folder(folder),
+                this.globals.email.to_plugin_ids(email_ids, info.context)
+            );
+        }
+    }
+
     private void update_count(MonitorInformation info,
                               bool arrived,
                               Gee.Collection<Convey.EmailIdentifier> delta) {
@@ -332,11 +343,18 @@ internal class Application.NotificationPluginContext :
     private void on_email_flags_changed(Convey.Folder folder,
         Gee.Map<Convey.EmailIdentifier, Convey.EmailFlags> ids) {
         retire_new_messages(folder, ids.keys);
+        emit_email_seen(
+            folder,
+            Convey.traverse(ids.keys).filter(
+                (id) => !ids.get(id).is_unread()
+            ).to_array_list()
+        );
     }
 
     private void on_email_removed(Convey.Folder folder,
                                   Gee.Collection<Convey.EmailIdentifier> ids) {
         retire_new_messages(folder, ids);
+        emit_email_seen(folder, ids);
     }
 
 }

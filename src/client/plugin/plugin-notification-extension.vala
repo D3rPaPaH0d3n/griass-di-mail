@@ -75,6 +75,17 @@ public interface Plugin.NotificationContext : Convey.BaseObject {
      */
     public signal void new_messages_retired(Plugin.Folder parent, int total);
 
+    /**
+     * Emitted when email has been marked as read or removed.
+     *
+     * This will only be emitted for folders that are being monitored
+     * after a call to {@link start_monitoring_folder}.
+     */
+    public signal void email_seen(
+        Plugin.Folder parent,
+        Gee.Collection<Plugin.EmailIdentifier> seen
+    );
+
 
     /**
      * Returns a store to lookup contacts for notifications.

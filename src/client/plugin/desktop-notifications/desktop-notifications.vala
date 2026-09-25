@@ -51,9 +51,12 @@ public class Plugin.DesktopNotifications :
     }
 
     private const string ARRIVED_ID = "email-arrived";
+    private const int MAX_INDIVIDUAL = 3;
 
     private EmailStore? email_store = null;
-    private GLib.Notification? arrived_notification = null;
+    private FolderStore? folder_store = null;
+    private Gee.HashMultiMap<string, string> arrived =
+        new Gee.HashMultiMap<string, string>();
     private GLib.Cancellable? cancellable = null;
 
 
@@ -63,18 +66,19 @@ public class Plugin.DesktopNotifications :
 
         this.notifications.new_messages_arrived.connect(on_new_messages_arrived);
         this.notifications.new_messages_retired.connect(on_new_messages_retired);
+        this.notifications.email_seen.connect(on_email_seen);
 
-        FolderStore folder_store = yield this.folders.get_folder_store();
-        folder_store.folders_available.connect(
+        this.folder_store = yield this.folders.get_folder_store();
+        this.folder_store.folders_available.connect(
             (folders) => check_folders(folders)
         );
-        folder_store.folders_unavailable.connect(
+        this.folder_store.folders_unavailable.connect(
                 (folders) => check_folders(folders)
         );
-        folder_store.folders_type_changed.connect(
+        this.folder_store.folders_type_changed.connect(
             (folders) => check_folders(folders)
         );
-        check_folders(folder_store.get_folders());
+        check_folders(this.folder_store.get_folders());
     }
 
     public override async void deactivate(bool is_shutdown) throws GLib.Error {
@@ -83,20 +87,42 @@ public class Plugin.DesktopNotifications :
         // Keep existing notifications if shutting down since they are
         // persistent, but revoke if the plugin is being disabled.
         if (!is_shutdown) {
-            clear_arrived_notification();
+            foreach (string id in this.arrived.get_values()) {
+                this.client_application.withdraw_notification(id);
+            }
+            this.arrived.clear();
         }
     }
 
-    private void clear_arrived_notification() {
-        this.client_application.withdraw_notification(ARRIVED_ID);
-        this.arrived_notification = null;
+    private string email_notification_id(EmailIdentifier id) {
+        return "%s-%s".printf(ARRIVED_ID, id.to_variant().print(false));
+    }
+
+    private string folder_notification_id(Folder folder) {
+        return "%s-%s".printf(ARRIVED_ID, folder.persistent_id);
+    }
+
+    private bool has_multiple_accounts() {
+        var accounts = new Gee.HashSet<string>();
+        foreach (Folder folder in this.folder_store.get_folders()) {
+            if (folder.account != null) {
+                accounts.add(folder.account.display_name);
+            }
+        }
+        return accounts.size > 1;
+    }
+
+    private string with_account(string body, Folder folder) {
+        if (folder.account != null && has_multiple_accounts()) {
+            return "%s\n%s".printf(body, folder.account.display_name);
+        }
+        return body;
     }
 
     private async void notify_specific_message(Folder folder,
-                                               int total,
                                                Email email
     ) throws GLib.Error {
-        string title = to_notitication_title(folder.account, total);
+        string title = to_notitication_title(folder.account, 1);
         GLib.Icon? icon = null;
         Convey.RFC822.MailboxAddress? originator = email.get_primary_originator();
         if (originator != null) {
@@ -115,22 +141,9 @@ public class Plugin.DesktopNotifications :
             icon = contact.avatar;
         }
 
-        string body = Util.Email.strip_subject_prefixes(email);
-        if (total > 1) {
-            body = ngettext(
-                /// Notification body when a message as been received
-                /// and other unread messages have not been
-                /// seen. First string substitution is the message
-                /// subject and the second is the number of unseen
-                /// messages
-                "%s\n(%d other new message)",
-                "%s\n(%d other new messages)",
-                total - 1
-            ).printf(
-                body,
-                total - 1
-            );
-        }
+        string body = with_account(
+            Util.Email.strip_subject_prefixes(email), folder
+        );
 
         Gdk.Texture texture;
         if (icon != null) {
@@ -144,7 +157,10 @@ public class Plugin.DesktopNotifications :
             texture = generate_fallback_avatar(title);
         }
 
-        issue_arrived_notification(title, body, texture, folder, email.identifier);
+        issue_arrived_notification(
+            email_notification_id(email.identifier),
+            title, body, texture, folder, email.identifier
+        );
     }
 
     // Clip the contact photo to a circle, matching the shape of the
@@ -334,16 +350,19 @@ public class Plugin.DesktopNotifications :
             ).printf(body, total);
         }
 
-        issue_arrived_notification(title, body, icon, folder, null);
+        issue_arrived_notification(
+            folder_notification_id(folder),
+            title, with_account(body, folder), icon, folder, null
+        );
     }
 
-    private void issue_arrived_notification(string summary,
+    private void issue_arrived_notification(string notification_id,
+                                            string summary,
                                             string body,
                                             GLib.Icon icon,
                                             Folder folder,
                                             EmailIdentifier? id) {
-        // only one outstanding notification at a time
-        clear_arrived_notification();
+        this.arrived.set(folder.persistent_id, notification_id);
 
         string? action = null;
         GLib.Variant? target_param = null;
@@ -355,8 +374,8 @@ public class Plugin.DesktopNotifications :
             target_param = id.to_variant();
         }
 
-        this.arrived_notification = issue_notification(
-            ARRIVED_ID,
+        issue_notification(
+            notification_id,
             summary,
             body,
             icon,
@@ -396,25 +415,22 @@ public class Plugin.DesktopNotifications :
                                            int total,
                                            Gee.Collection<EmailIdentifier> added) {
         if (this.notifications.should_notify_new_messages(folder)) {
-            // notify about a specific message if it's the only one
-            // present and it can be loaded, otherwise notify
-            // generally
+            // notify about each message if there are only a few and
+            // they can be loaded, otherwise notify generally
             bool notified = false;
-            try {
-                Email? message = Convey.Collection.first(
-                    yield this.email_store.get_email(
-                        Convey.Collection.single(Convey.Collection.first(added)),
-                        this.cancellable
-                    )
-                );
-                if (message != null) {
-                    yield notify_specific_message(folder, total, message);
-                    notified = true;
-                } else {
-                    warning("Could not load email for notification");
+            if (added.size <= MAX_INDIVIDUAL) {
+                try {
+                    foreach (Email message in
+                             yield this.email_store.get_email(added, this.cancellable)) {
+                        yield notify_specific_message(folder, message);
+                        notified = true;
+                    }
+                    if (!notified) {
+                        warning("Could not load email for notification");
+                    }
+                } catch (GLib.Error error) {
+                    warning("Error loading email for notification: %s", error.message);
                 }
-            } catch (GLib.Error error) {
-                warning("Error loading email for notification: %s", error.message);
             }
 
             if (!notified) {
@@ -447,8 +463,23 @@ public class Plugin.DesktopNotifications :
         this.handle_new_messages.begin(folder, total, added);
     }
 
+    private void on_email_seen(Folder folder,
+                               Gee.Collection<EmailIdentifier> seen) {
+        foreach (EmailIdentifier id in seen) {
+            string notification_id = email_notification_id(id);
+            this.client_application.withdraw_notification(notification_id);
+            this.arrived.remove(folder.persistent_id, notification_id);
+        }
+    }
+
     private void on_new_messages_retired(Folder folder, int total) {
-        clear_arrived_notification();
+        string key = folder.persistent_id;
+        if (total == 0) {
+            foreach (string notification_id in this.arrived.get(key)) {
+                this.client_application.withdraw_notification(notification_id);
+            }
+            this.arrived.remove_all(key);
+        }
     }
 
 }
