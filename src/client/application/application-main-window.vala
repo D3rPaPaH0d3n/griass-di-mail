@@ -1501,6 +1501,7 @@ public class Application.MainWindow :
         progress_monitor.start.connect(() => headerbar_push_busy());
         progress_monitor.finish.connect(() => headerbar_pop_busy());
         this.refresh_button.clicked.connect(on_refresh_folder);
+        this.notify["focus-widget"].connect(() => update_command_actions());
 
         this.conversation_list_actions.set_mark_inverted();
 
@@ -1857,12 +1858,18 @@ public class Application.MainWindow :
     }
 
     private void update_command_actions() {
+        Gtk.Widget? focus = get_focus();
+        bool editing = (
+            focus is Gtk.Text ||
+            focus is Gtk.TextView ||
+            focus is Composer.WebView
+        );
         AccountContext? selected = get_selected_account_context();
         get_edit_action(Action.Edit.UNDO).set_enabled(
-            selected != null && selected.commands.can_undo
+            !editing && selected != null && selected.commands.can_undo
         );
         get_edit_action(Action.Edit.REDO).set_enabled(
-            selected != null && selected.commands.can_redo
+            !editing && selected != null && selected.commands.can_redo
         );
     }
 
