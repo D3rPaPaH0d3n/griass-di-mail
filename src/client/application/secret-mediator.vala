@@ -41,12 +41,19 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
         throws GLib.Error {
         // https://github.com/flatpak/xdg-desktop-portal/issues/557
         if (application.is_flatpak_sandboxed) {
-            yield Secret.password_lookup(
-                SecretMediator.schema,
-                cancellable,
-                ATTR_LOGIN,
-                ""
-            );
+            try {
+                yield Secret.password_lookup(
+                    SecretMediator.schema,
+                    cancellable,
+                    ATTR_LOGIN,
+                    ""
+                );
+            } catch (GLib.IOError.CANCELLED err) {
+                throw err;
+            } catch (GLib.Error err) {
+                warning("Secret portal unavailable, saved passwords won't work: %s",
+                        err.message);
+            }
         } else {
             yield check_unlocked(cancellable);
         }
