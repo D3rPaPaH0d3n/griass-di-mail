@@ -223,6 +223,9 @@ public class SpellCheckPopover {
         search_box = new Gtk.SearchEntry();
         search_box.set_placeholder_text(_("Search for more languages"));
         search_box.changed.connect(on_search_box_changed);
+        var search_focus = new Gtk.EventControllerFocus();
+        search_focus.enter.connect(() => set_expanded(true));
+        search_box.add_controller(search_focus);
         content.append(search_box);
 
         view = new Gtk.ScrolledWindow();
