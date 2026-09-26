@@ -112,11 +112,11 @@ public class Plugin.DesktopNotifications :
         return accounts.size > 1;
     }
 
-    private string with_account(string body, Folder folder) {
+    private string with_account(string title, Folder folder) {
         if (folder.account != null && has_multiple_accounts()) {
-            return "%s\n%s".printf(body, folder.account.display_name);
+            return "[%s] %s".printf(folder.account.display_name, title);
         }
-        return body;
+        return title;
     }
 
     private async void notify_specific_message(Folder folder,
@@ -141,9 +141,7 @@ public class Plugin.DesktopNotifications :
             icon = contact.avatar;
         }
 
-        string body = with_account(
-            Util.Email.strip_subject_prefixes(email), folder
-        );
+        string body = Util.Email.strip_subject_prefixes(email);
 
         Gdk.Texture texture;
         if (icon != null) {
@@ -352,7 +350,7 @@ public class Plugin.DesktopNotifications :
 
         issue_arrived_notification(
             folder_notification_id(folder),
-            title, with_account(body, folder), icon, folder, null
+            title, body, icon, folder, null
         );
     }
 
@@ -376,7 +374,7 @@ public class Plugin.DesktopNotifications :
 
         issue_notification(
             notification_id,
-            summary,
+            with_account(summary, folder),
             body,
             icon,
             Action.Application.prefix(action),
