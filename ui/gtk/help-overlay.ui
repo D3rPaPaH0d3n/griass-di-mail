@@ -76,7 +76,7 @@
             <child>
               <object class="GtkShortcutsShortcut">
                 <property name="visible">True</property>
-                <property name="title" translatable="yes" context="shortcut window">Trash conversations</property>
+                <property name="title" translatable="yes" context="shortcut window">Archive or trash conversations</property>
                 <property name="accelerator">Delete BackSpace</property>
               </object>
             </child>
