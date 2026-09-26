@@ -86,9 +86,7 @@ internal class Application.NotificationPluginContext :
         Convey.Folder? folder = this.globals.folders.to_engine_folder(source);
         AccountContext? context = null;
         if (folder != null) {
-            context = this.application.controller.get_context_for_account(
-                folder.account.information
-            );
+            context = to_account_context(source);
         }
         if (context == null) {
             throw new Plugin.Error.NOT_FOUND(
@@ -156,9 +154,7 @@ internal class Application.NotificationPluginContext :
         Convey.Folder? folder = this.globals.folders.to_engine_folder(target);
         AccountContext? context = null;
         if (folder != null) {
-            context = this.application.controller.get_context_for_account(
-                folder.account.information
-            );
+            context = to_account_context(target);
         }
         if (folder != null &&
             context != null &&
@@ -242,6 +238,11 @@ internal class Application.NotificationPluginContext :
         if (removed.size > 0) {
             update_count(info, false, removed);
         }
+    }
+
+    private AccountContext? to_account_context(Plugin.Folder folder) {
+        var account = folder.account as PluginManager.AccountImpl;
+        return account != null ? account.backing : null;
     }
 
     private void emit_email_seen(Convey.Folder folder,
