@@ -35,6 +35,7 @@ public class Application.FolderContext : Convey.BaseObject,
         case NONE:
         case INBOX:
         case TRASH:
+        case ARCHIVE:
         case JUNK:
             return true;
 
