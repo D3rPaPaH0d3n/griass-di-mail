@@ -1273,7 +1273,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
                 row.is_expanded &&
                 view.message_body_state == COMPLETED &&
                 !view.is_manually_read &&
-                email.is_unread().is_certain()) {
+                this.conversation.has_unread_copy(email.id)) {
                 ConversationMessage conversation_message = view.primary_message;
                  double body_top = 0;
                  double body_left = 0;

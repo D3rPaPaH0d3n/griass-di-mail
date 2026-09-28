@@ -3224,10 +3224,14 @@ public class Application.MainWindow :
                 remove_flags = new Convey.EmailFlags();
                 remove_flags.add(to_remove);
             }
+            var ids = new Gee.HashSet<Convey.EmailIdentifier>();
+            foreach (var id in messages) {
+                ids.add_all(view.conversation.with_copies(id));
+            }
             this.controller.mark_messages.begin(
                 location,
                 Convey.Collection.single(view.conversation),
-                messages,
+                ids,
                 add_flags,
                 remove_flags,
                 (obj, res) => {

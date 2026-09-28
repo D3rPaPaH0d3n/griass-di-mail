@@ -339,7 +339,7 @@ public class Convey.App.Conversation : BaseObject {
     }
 
     // The given id plus any copies of the same message folded into it.
-    private Gee.Collection<Convey.EmailIdentifier>
+    public Gee.Collection<Convey.EmailIdentifier>
         with_copies(Convey.EmailIdentifier id) {
         var ids = new Gee.ArrayList<Convey.EmailIdentifier>();
         ids.add(id);
@@ -349,6 +349,26 @@ public class Convey.App.Conversation : BaseObject {
             }
         }
         return ids;
+    }
+
+    /**
+     * Determines if the message or any copy folded into it is unread.
+     */
+    public bool has_unread_copy(Convey.EmailIdentifier id) {
+        foreach (var copy in with_copies(id)) {
+            Convey.Email? email = get_copy_by_id(copy);
+            if (email != null && email.is_unread().is_certain()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the email with exactly the given id, including folded copies.
+     */
+    public Convey.Email? get_copy_by_id(EmailIdentifier id) {
+        return this.emails.get(id) ?? this.folded.get(id);
     }
 
     /**
@@ -590,7 +610,11 @@ public class Convey.App.Conversation : BaseObject {
     }
 
     private bool check_flag(Convey.NamedFlag flag, bool contains) {
-        foreach (Convey.Email email in get_emails(Ordering.NONE)) {
+        var emails_with_folds = new Gee.ArrayList<Convey.Email>();
+        emails_with_folds.add_all(get_emails(Ordering.NONE));
+        emails_with_folds.add_all(this.folded.values);
+
+        foreach (Convey.Email email in emails_with_folds) {
             if (email.email_flags != null && email.email_flags.contains(flag) == contains)
                 return true;
         }

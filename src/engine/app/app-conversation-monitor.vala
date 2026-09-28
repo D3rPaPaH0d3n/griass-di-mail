@@ -917,12 +917,12 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
                 continue;
             }
 
-            Email? email = conversation.get_email_by_id(id);
+            Email? email = conversation.get_copy_by_id(id);
             if (email == null)
                 continue;
 
             email.set_flags(map.get(id));
-            notify_email_flags_changed(conversation, email);
+            notify_email_flags_changed(conversation, conversation.get_email_by_id(id));
 
             // Remove conversation if get_emails yields an empty collection -- this probably means
             // the conversation was deleted.
