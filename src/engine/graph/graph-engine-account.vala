@@ -88,7 +88,7 @@ internal class Convey.Graph.Account : Convey.Account,
             new Convey.Graph.Service(information, information.incoming, incoming_remote),
             new Convey.Graph.Service(information, information.outgoing, outgoing_remote)
         );
-        this.contact_store = new Convey.Graph.NoopContactStore();
+        this.contact_store = new Convey.Graph.SentContactStore(this);
         this.background_progress = new Convey.ReentrantProgressMonitor(
             Convey.ProgressType.ACTIVITY
         );
@@ -1408,7 +1408,13 @@ internal class Convey.Graph.Account : Convey.Account,
 
 }
 
-internal class Convey.Graph.NoopContactStore : Convey.BaseObject, Convey.ContactStore {
+internal class Convey.Graph.SentContactStore : Convey.BaseObject, Convey.ContactStore {
+
+    private unowned Convey.Graph.Account account;
+
+    public SentContactStore(Convey.Graph.Account account) {
+        this.account = account;
+    }
 
     public async Convey.Contact? get_by_rfc822(
         Convey.RFC822.MailboxAddress address,
@@ -1423,7 +1429,39 @@ internal class Convey.Graph.NoopContactStore : Convey.BaseObject, Convey.Contact
         uint limit,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
-        return new Gee.ArrayList<Convey.Contact>();
+        var contacts = new Gee.HashMap<string,Convey.Contact>();
+        var sent = this.account.get_graph_special_folder(Convey.Folder.SpecialUse.SENT);
+        if (sent == null) {
+            return contacts.values;
+        }
+        if (!sent.is_cache_loaded) {
+            sent.load_persisted_cache();
+        }
+
+        string text = query.replace("%", "").casefold();
+        foreach (Convey.Email email in sent.list_cached_emails()) {
+            add_matches(contacts, email.to, text);
+            add_matches(contacts, email.cc, text);
+            add_matches(contacts, email.bcc, text);
+        }
+        return contacts.values;
+    }
+
+    private void add_matches(Gee.Map<string,Convey.Contact> contacts,
+                             Convey.RFC822.MailboxAddresses? addresses,
+                             string text) {
+        if (addresses == null) {
+            return;
+        }
+        foreach (Convey.RFC822.MailboxAddress address in addresses) {
+            string name = address.name ?? "";
+            if (text in address.address.casefold() || text in name.casefold()) {
+                contacts[Convey.Contact.normalise_email(address.address)] =
+                    new Convey.Contact.from_rfc822_address(
+                        address, Convey.Contact.Importance.SENT_TO
+                    );
+            }
+        }
     }
 
     public async void update_contacts(
