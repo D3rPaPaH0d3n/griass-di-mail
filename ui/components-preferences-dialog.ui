@@ -11,44 +11,15 @@
         <child>
           <object class="AdwPreferencesGroup">
             <child>
-              <object class="AdwSwitchRow" id="autoselect_row">
-                <!-- Translators: Preferences label -->
-                <property name="title" translatable="yes">_Automatically Select Next Message</property>
-                <property name="use-underline">True</property>
-              </object>
-            </child>
-            <child>
               <object class="AdwSwitchRow" id="remember_last_inbox_row">
-                <property name="title" translatable="yes">_Reopen Last Inbox</property>
+                <property name="title" translatable="yes">_Reopen last inbox</property>
                 <property name="subtitle" translatable="yes">Open whichever inbox was viewed last</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
             <child>
               <object class="AdwComboRow" id="startup_inbox_row">
-                <property name="title" translatable="yes">Inbox at _Startup</property>
-                <property name="use-underline">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="AdwSwitchRow" id="local_starred_folder_row">
-                <property name="title" translatable="yes">_Always Show Starred Folder</property>
-                <property name="subtitle" translatable="yes">Show a local Starred folder for accounts whose server does not provide one</property>
-                <property name="use-underline">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="AdwSwitchRow" id="display_preview_row">
-                <!-- Translators: Preferences label -->
-                <property name="title" translatable="yes">_Display Conversation Preview</property>
-                <property name="use-underline">True</property>
-              </object>
-            </child>
-            <child>
-              <object class="AdwSwitchRow" id="single_key_shortcuts_row">
-                <!-- Translators: Preferences label -->
-                <property name="title" translatable="yes">Use _single key email shortcuts</property>
-                <property name="tooltip-text" translatable="yes">Enable keyboard shortcuts for email actions that do not require pressing &lt;Ctrl&gt;</property>
+                <property name="title" translatable="yes">Inbox at _startup</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
@@ -60,10 +31,41 @@
                 <property name="use-underline">True</property>
               </object>
             </child>
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwPreferencesGroup">
+            <child>
+              <object class="AdwSwitchRow" id="local_starred_folder_row">
+                <property name="title" translatable="yes">_Always show Starred folder</property>
+                <property name="subtitle" translatable="yes">Show a local Starred folder for accounts whose server does not provide one</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwSwitchRow" id="display_preview_row">
+                <!-- Translators: Preferences label -->
+                <property name="title" translatable="yes">_Display conversation preview</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwSwitchRow" id="autoselect_row">
+                <!-- Translators: Preferences label -->
+                <property name="title" translatable="yes">_Automatically select next message</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwPreferencesGroup">
             <child>
               <object class="AdwSwitchRow" id="trust_images_row">
                 <!-- Translators: Preferences label -->
-                <property name="title" translatable="yes">Always _Load Images</property>
+                <property name="title" translatable="yes">Always _load images</property>
                 <property name="subtitle" translatable="yes">Showing remote images allows the sender to track you</property>
                 <property name="use-underline">True</property>
               </object>
@@ -81,13 +83,24 @@
 
         <child>
           <object class="AdwPreferencesGroup">
-            <!-- Translators: Preferences group title -->
-            <property name="title" translatable="yes">Network</property>
+            <child>
+              <object class="AdwSwitchRow" id="single_key_shortcuts_row">
+                <!-- Translators: Preferences label -->
+                <property name="title" translatable="yes">Use _single key email shortcuts</property>
+                <property name="tooltip-text" translatable="yes">Enable keyboard shortcuts for email actions that do not require pressing &lt;Ctrl&gt;</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwPreferencesGroup">
             <child>
               <object class="AdwSwitchRow" id="custom_proxy_row">
                 <!-- Translators: Preferences label -->
-                <property name="title" translatable="yes">Use _Custom Proxy</property>
-                <property name="subtitle" translatable="yes">Instead of the system proxy settings</property>
+                <property name="title" translatable="yes">Use _custom proxy</property>
+                <property name="subtitle" translatable="yes">Set a proxy for Convey to use for all network requests</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
