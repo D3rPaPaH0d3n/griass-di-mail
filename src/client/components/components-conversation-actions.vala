@@ -39,6 +39,11 @@ public class Components.ConversationActions : Gtk.Box {
         }
     }
 
+    public bool show_reply_list {
+        get { return !this.reply_all_button.visible; }
+        set { this.reply_all_button.visible = !value; }
+    }
+
     public bool pack_justified { get; construct; }
 
     public bool compact { get; set; default = false; }
@@ -74,6 +79,8 @@ public class Components.ConversationActions : Gtk.Box {
     }
 
     [GtkChild] private unowned Gtk.Box response_buttons { get; }
+    [GtkChild] private unowned Gtk.Button reply_all_button;
+    [GtkChild] private unowned Gtk.MenuButton reply_menu_button;
 
     [GtkChild] private unowned Gtk.MenuButton mark_message_button { get; }
     [GtkChild] private unowned Gtk.MenuButton copy_message_button { get;  }
@@ -176,8 +183,13 @@ public class Components.ConversationActions : Gtk.Box {
         }
     }
 
-    public void set_mark_inverted() {
-        this.mark_message_button.icon_name = "pan-up-symbolic";
+    public void set_menus_inverted() {
+        foreach (var button in new Gtk.MenuButton[] {
+                this.mark_message_button, this.reply_menu_button
+            }) {
+            button.direction = UP;
+            button.icon_name = "pan-up-symbolic";
+        }
     }
 
     public void update_trash_button(RemoveMode mode, bool trash_supported) {

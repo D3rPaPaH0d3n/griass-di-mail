@@ -13,6 +13,7 @@ class Convey.RFC822.Utils.Test : TestCase {
         add_test("best_encoding_default", best_encoding_default);
         add_test("best_encoding_long_line", best_encoding_long_line);
         add_test("best_encoding_binary", best_encoding_binary);
+        add_test("list_post_address", list_post_address);
     }
 
     public void to_preview_text() throws GLib.Error {
@@ -49,6 +50,23 @@ class Convey.RFC822.Utils.Test : TestCase {
         get_best_encoding.begin(stream, 7BIT, null, this.async_completion);
         var encoding = get_best_encoding.end(async_result());
         assert_true(encoding == BASE64);
+    }
+
+    public void list_post_address() throws GLib.Error {
+        assert_null(get_list_post_address(email_with_header("From: a@example.com\r\n\r\n")));
+        assert_null(get_list_post_address(email_with_header("List-Post: NO\r\n\r\n")));
+        assert_equal(
+            get_list_post_address(
+                email_with_header("List-Post: <mailto:list%2Bdev@example.com?subject=hi>\r\n\r\n")
+            ).to_rfc822_string(),
+            "list+dev@example.com"
+        );
+    }
+
+    private Email email_with_header(string header) throws GLib.Error {
+        var email = new Email(new Mock.EmailIdentifer(0));
+        email.set_message_header(new Header(new Memory.StringBuffer(header)));
+        return email;
     }
 
 

@@ -789,6 +789,13 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             );
         }
 
+        string reply_list_action = (
+            ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
+            ConversationListBox.ACTION_REPLY_LIST
+        );
+        bool show_reply_list =
+            Convey.RFC822.Utils.get_list_post_address(this.email) != null;
+
         bool show_trash = !is_shift_down && supports_trash;
         bool show_delete = !show_trash && supports_delete;
         GLib.Variant email_target = email.id.to_variant();
@@ -800,6 +807,9 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                     accept = false;
                 }
                 if (submenu == email_menu_delete_section && !show_delete) {
+                    accept = false;
+                }
+                if (action == reply_list_action && !show_reply_list) {
                     accept = false;
                 }
                 if (action != null && !(action in blacklist)) {

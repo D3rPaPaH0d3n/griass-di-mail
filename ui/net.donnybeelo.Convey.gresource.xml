@@ -76,6 +76,8 @@
     <file alias="icons/scalable/actions/mail-drafts-symbolic-rtl.svg" preprocess="xml-stripblanks">../icons/mail-drafts-symbolic-rtl.svg</file>
     <file alias="icons/scalable/actions/mail-inbox-symbolic.svg" preprocess="xml-stripblanks">../icons/mail-inbox-symbolic.svg</file>
     <file alias="icons/scalable/actions/mail-outbox-symbolic.svg" preprocess="xml-stripblanks">../icons/mail-outbox-symbolic.svg</file>
+    <file alias="icons/scalable/actions/mail-reply-list-symbolic.svg" preprocess="xml-stripblanks">../icons/mail-reply-list-symbolic.svg</file>
+    <file alias="icons/scalable/actions/mail-reply-list-symbolic-rtl.svg" preprocess="xml-stripblanks">../icons/mail-reply-list-symbolic-rtl.svg</file>
     <file alias="icons/scalable/actions/mail-sent-symbolic.svg" preprocess="xml-stripblanks">../icons/mail-sent-symbolic.svg</file>
     <file alias="icons/scalable/actions/mail-sent-symbolic-rtl.svg" preprocess="xml-stripblanks">../icons/mail-sent-symbolic-rtl.svg</file>
     <file alias="icons/scalable/actions/tag-symbolic.svg" preprocess="xml-stripblanks">../icons/tag-symbolic.svg</file>

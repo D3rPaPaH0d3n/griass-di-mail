@@ -42,6 +42,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     internal const string ACTION_MARK_UNSTARRED = "mark-unstarred";
     internal const string ACTION_PRINT = "print";
     internal const string ACTION_REPLY_ALL = "reply-all";
+    internal const string ACTION_REPLY_LIST = "reply-list";
     internal const string ACTION_REPLY_SENDER = "reply-sender";
     internal const string ACTION_SAVE_ALL_ATTACHMENTS = "save-all-attachments";
     internal const string ACTION_TRASH = "trash";
@@ -77,6 +78,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         { ACTION_MARK_UNSTARRED, on_email_mark_unstarred, ACTION_TARGET_TYPE },
         { ACTION_PRINT, on_email_print, ACTION_TARGET_TYPE },
         { ACTION_REPLY_ALL, on_email_reply_all, ACTION_TARGET_TYPE },
+        { ACTION_REPLY_LIST, on_email_reply_list, ACTION_TARGET_TYPE },
         { ACTION_REPLY_SENDER, on_email_reply_sender, ACTION_TARGET_TYPE },
         { ACTION_SAVE_ALL_ATTACHMENTS, on_email_save_all_attachments, ACTION_TARGET_TYPE },
         { ACTION_TRASH, on_email_trash, ACTION_TARGET_TYPE },
@@ -530,6 +532,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     internal Gtk.ListBox listbox { get; set; default = new Gtk.ListBox(); }
 
 
+    /** Whether the latest email was sent via a mailing list. */
+    public bool latest_has_list_post { get; private set; default = false; }
+
     /** Conversation being displayed. */
     public Convey.App.Conversation conversation { get; private set; }
 
@@ -662,6 +667,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     /** Fired when the user clicks "reply all" in the message menu. */
     public signal void reply_to_all_email(Convey.Email email, string? quote);
 
+    /** Fired when the user clicks "reply to list" in the message menu. */
+    public signal void reply_to_list_email(Convey.Email email, string? quote);
+
     /** Fired when the user clicks "forward" in the message menu. */
     public signal void forward_email(Convey.Email email, string? quote);
 
@@ -768,6 +776,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     public async void load_conversation(Gee.Collection<Convey.EmailIdentifier> scroll_to,
                                         Convey.SearchQuery? query)
         throws GLib.Error {
+        this.check_latest_list_post.begin();
         this.listbox.set_sort_func(null);
 
         Gee.Collection<Convey.Email>? all_email = this.conversation.get_emails(
@@ -1142,6 +1151,39 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
     }
 
+    private Convey.Email? get_latest_email() {
+        Convey.Email? latest = null;
+        foreach (var email in this.conversation.get_emails(SENT_DATE_ASCENDING)) {
+            latest = email;
+        }
+        return latest;
+    }
+
+    private async void check_latest_list_post() {
+        Convey.Email? latest = get_latest_email();
+        if (latest == null) {
+            return;
+        }
+        try {
+            latest = yield this.email_store.fetch_email_async(
+                latest.id, HEADER, LOCAL_ONLY, this.cancellable
+            );
+        } catch (GLib.Error err) {
+            return;
+        }
+        this.latest_has_list_post =
+            Convey.RFC822.Utils.get_list_post_address(latest) != null;
+    }
+
+    private void on_row_email_loaded(Convey.Email loaded) {
+        Convey.Email? latest = get_latest_email();
+        if (latest != null && loaded.id.equal_to(latest.id)) {
+            this.latest_has_list_post =
+                Convey.RFC822.Utils.get_list_post_address(loaded) != null;
+        }
+        email_loaded(loaded);
+    }
+
     // Loads full version of an email, adds it to the listbox
     private async void load_full_email(Convey.EmailIdentifier id)
         throws GLib.Error {
@@ -1201,7 +1243,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         );
 
         EmailRow row = new EmailRow(view);
-        row.email_loaded.connect((e) => { email_loaded(e); });
+        row.email_loaded.connect(on_row_email_loaded);
         this.email_rows.set(email.id, row);
 
         if (append_row) {
@@ -1449,6 +1491,17 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             view.get_selection_for_quoting.begin((obj, res) => {
                     string? quote = view.get_selection_for_quoting.end(res);
                     reply_to_all_email(view.email, quote);
+                });
+        }
+    }
+
+    private void on_email_reply_list(GLib.SimpleAction action,
+                                     GLib.Variant? param) {
+        ConversationEmail? view = action_target_to_view(param);
+        if (view != null) {
+            view.get_selection_for_quoting.begin((obj, res) => {
+                    string? quote = view.get_selection_for_quoting.end(res);
+                    reply_to_list_email(view.email, quote);
                 });
         }
     }

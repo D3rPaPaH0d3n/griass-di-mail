@@ -50,6 +50,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         /** Context is an email being replied to all recipients. */
         REPLY_ALL,
 
+        /** Context is an email being replied to its mailing list. */
+        REPLY_LIST,
+
         /** Context is an email being forwarded. */
         FORWARD
     }
@@ -663,7 +666,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             type == FORWARD) {
             this.pending_include = AttachPending.ALL;
             this.pending_attachments = full_context.attachments;
-        } else if (type == REPLY_SENDER || type == REPLY_ALL) {
+        } else if (type == REPLY_SENDER || type == REPLY_ALL || type == REPLY_LIST) {
             var attachments = new Gee.ArrayList<Convey.Attachment>();
             foreach (var attachment in full_context.attachments) {
                 if (attachment.content_id == null &&
@@ -726,6 +729,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
         case REPLY_SENDER:
         case REPLY_ALL:
+        case REPLY_LIST:
             // Set the preferred from address based on the message
             // being replied to
             if (!update_from_address(full_context.to)) {
@@ -1290,13 +1294,23 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         Gee.List<Convey.RFC822.MailboxAddress> sender_addresses =
             this.sender_context.account.information.sender_mailboxes;
 
-        // Add the sender to the To address list if needed
-        this.to_row.addresses = Convey.RFC822.Utils.merge_addresses(
-            this.to_row.addresses,
-            Convey.RFC822.Utils.create_to_addresses_for_reply(
-                referred, sender_addresses
-            )
-        );
+        Convey.RFC822.MailboxAddresses? list_address =
+            type == REPLY_LIST
+            ? Convey.RFC822.Utils.get_list_post_address(referred)
+            : null;
+        if (list_address != null) {
+            this.to_row.addresses = Convey.RFC822.Utils.merge_addresses(
+                this.to_row.addresses, list_address
+            );
+        } else {
+            // Add the sender to the To address list if needed
+            this.to_row.addresses = Convey.RFC822.Utils.merge_addresses(
+                this.to_row.addresses,
+                Convey.RFC822.Utils.create_to_addresses_for_reply(
+                    referred, sender_addresses
+                )
+            );
+        }
         if (type == REPLY_ALL) {
             // Add other recipients to the Cc address list if needed,
             // but don't include any already in the To list.

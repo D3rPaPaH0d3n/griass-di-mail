@@ -19,6 +19,27 @@ namespace Convey.RFC822.Utils {
         return (email.subject ?? new Subject("")).create_reply().value;
     }
 
+    public MailboxAddresses? get_list_post_address(Email email) {
+        string? value = email.header?.get_header("List-Post");
+        if (value == null) {
+            return null;
+        }
+        int start = value.index_of("<mailto:");
+        if (start < 0) {
+            return null;
+        }
+        start += "<mailto:".length;
+        int end = start;
+        while (end < value.length && value[end] != '>' && value[end] != '?') {
+            end++;
+        }
+        string? address = GLib.Uri.unescape_string(value.substring(start, end - start).strip());
+        if (String.is_empty(address)) {
+            return null;
+        }
+        return new MailboxAddresses.single(new MailboxAddress(null, address));
+    }
+
     public string create_subject_for_forward(Email email) {
         return (email.subject ?? new Subject("")).create_forward().value;
     }

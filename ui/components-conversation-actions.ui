@@ -5,23 +5,56 @@
     <property name="spacing">6</property>
     <child>
       <object class="GtkBox" id="response_buttons">
-      <property name="hexpand">true</property>
+        <property name="hexpand">true</property>
+        <property name="spacing">6</property>
         <child>
-          <object class="GtkButton" id="reply_sender_button">
-            <property name="focus_on_click">False</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip_text" translatable="yes">Reply</property>
-            <property name="action_name">win.reply-conversation</property>
-            <property name="icon_name">mail-reply-sender-symbolic</property>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="reply_all_button">
-            <property name="focus_on_click">False</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip_text" translatable="yes">Reply All</property>
-            <property name="action_name">win.reply-all-conversation</property>
-            <property name="icon_name">mail-reply-all-symbolic</property>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkButton" id="reply_sender_button">
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Reply</property>
+                <property name="action_name">win.reply-conversation</property>
+                <property name="icon_name">mail-reply-sender-symbolic</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="reply_all_button">
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Reply All</property>
+                <property name="action_name">win.reply-all-conversation</property>
+                <property name="icon_name">mail-reply-all-symbolic</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="reply_list_button">
+                <property name="visible" bind-source="reply_all_button" bind-property="visible" bind-flags="sync-create|invert-boolean"/>
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Reply to List</property>
+                <property name="action_name">win.reply-list-conversation</property>
+                <property name="icon_name">mail-reply-list-symbolic</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="reply_menu_button">
+                <property name="visible" bind-source="reply_all_button" bind-property="visible" bind-flags="sync-create|invert-boolean"/>
+                <property name="focus_on_click">False</property>
+                <property name="receives_default">False</property>
+                <property name="sensitive" bind-source="reply_all_button" bind-property="sensitive" bind-flags="sync-create"/>
+                <property name="tooltip_text" translatable="yes">More Reply Options</property>
+                <property name="icon_name">pan-down-symbolic</property>
+                <property name="menu_model">reply_menu</property>
+                <style>
+                  <class name="thinner-button"/>
+                </style>
+              </object>
+            </child>
+            <style>
+              <class name="raised"/>
+              <class name="linked"/>
+            </style>
           </object>
         </child>
         <child>
@@ -31,12 +64,11 @@
             <property name="tooltip_text" translatable="yes">Forward</property>
             <property name="action_name">win.forward-conversation</property>
             <property name="icon_name">mail-forward-symbolic</property>
+            <style>
+              <class name="raised"/>
+            </style>
           </object>
         </child>
-        <style>
-          <class name="raised"/>
-          <class name="linked"/>
-        </style>
       </object>
     </child>
     <child>
@@ -80,4 +112,11 @@
       </object>
     </child>
   </template>
+  <menu id="reply_menu">
+    <item>
+      <!-- Translators: Menu item to reply to all recipients of a conversation. -->
+      <attribute name="label" translatable="yes">Reply _All</attribute>
+      <attribute name="action">win.reply-all-conversation</attribute>
+    </item>
+  </menu>
 </interface>

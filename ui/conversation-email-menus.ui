@@ -17,6 +17,12 @@
         <attribute name="verb-icon">mail-reply-all-symbolic</attribute>
       </item>
       <item>
+        <!-- Translators: Menu item to reply to the mailing list a specific message was sent to. -->
+        <attribute name="label" translatable="yes">Reply to _List</attribute>
+        <attribute name="action">eml.reply-list</attribute>
+        <attribute name="verb-icon">mail-reply-list-symbolic</attribute>
+      </item>
+      <item>
         <!-- Translators: Menu item to forward a specific message. -->
         <attribute name="label" translatable="yes">_Forward</attribute>
         <attribute name="action">eml.forward</attribute>

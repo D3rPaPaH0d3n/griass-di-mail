@@ -23,6 +23,7 @@ public class Application.MainWindow :
     public const string ACTION_MARK_AS_UNREAD = "mark-conversation-unread";
     public const string ACTION_MARK_AS_UNSTARRED = "mark-conversation-unstarred";
     public const string ACTION_REPLY_ALL_CONVERSATION = "reply-all-conversation";
+    public const string ACTION_REPLY_LIST_CONVERSATION = "reply-list-conversation";
     public const string ACTION_REPLY_CONVERSATION = "reply-conversation";
     public const string ACTION_SEARCH = "search";
     public const string ACTION_SELECT_INBOX = "select-inbox";
@@ -60,6 +61,7 @@ public class Application.MainWindow :
         // Message actions
         { ACTION_REPLY_CONVERSATION, on_reply_conversation },
         { ACTION_REPLY_ALL_CONVERSATION, on_reply_all_conversation },
+        { ACTION_REPLY_LIST_CONVERSATION, on_reply_list_conversation },
         { ACTION_FORWARD_CONVERSATION, on_forward_conversation },
         { ACTION_ARCHIVE_CONVERSATION, on_archive_conversation },
         { ACTION_TRASH_CONVERSATION, on_trash_conversation },
@@ -1506,7 +1508,8 @@ public class Application.MainWindow :
         this.notify["all-inboxes"].connect(() => update_command_actions());
         this.notify["focus-widget"].connect(() => update_command_actions());
 
-        this.conversation_list_actions.set_mark_inverted();
+        this.conversation_list_actions.set_menus_inverted();
+        this.conversation_viewer_actions.set_menus_inverted();
 
         this.conversation_viewer.headerbar.left_actions.init(this.application.config);
         this.conversation_viewer.headerbar.right_actions.init(this.application.config);
@@ -2332,6 +2335,7 @@ public class Application.MainWindow :
         );
         get_window_action(ACTION_REPLY_CONVERSATION).set_enabled(reply_sensitive);
         get_window_action(ACTION_REPLY_ALL_CONVERSATION).set_enabled(reply_sensitive);
+        get_window_action(ACTION_REPLY_LIST_CONVERSATION).set_enabled(reply_sensitive);
         get_window_action(ACTION_FORWARD_CONVERSATION).set_enabled(reply_sensitive);
 
         bool copy_enabled = (
@@ -2786,9 +2790,12 @@ public class Application.MainWindow :
     }
 
     private void on_conversation_view_added(ConversationListBox list) {
+        update_reply_list_button(false);
+        list.notify["latest-has-list-post"].connect(on_latest_has_list_post);
         list.email_loaded.connect(on_email_loaded);
         list.mark_email.connect(on_email_mark);
         list.reply_to_all_email.connect(on_email_reply_to_all);
+        list.reply_to_list_email.connect(on_email_reply_to_list);
         list.reply_to_sender_email.connect(on_email_reply_to_sender);
         list.forward_email.connect(on_email_forward);
         list.trash_email.connect(on_email_trash);
@@ -2909,6 +2916,24 @@ public class Application.MainWindow :
 
     private void on_reply_all_conversation() {
         reply_conversation(REPLY_ALL);
+    }
+
+    private void on_reply_list_conversation() {
+        reply_conversation(REPLY_LIST);
+    }
+
+    private void on_latest_has_list_post(GLib.Object object,
+                                         GLib.ParamSpec param) {
+        var list = (ConversationListBox) object;
+        if (list == this.conversation_viewer.current_list) {
+            update_reply_list_button(list.latest_has_list_post);
+        }
+    }
+
+    private void update_reply_list_button(bool show) {
+        foreach (var actions in this.folder_conversation_actions) {
+            actions.show_reply_list = show;
+        }
     }
 
     private void on_forward_conversation() {
@@ -3259,6 +3284,15 @@ public class Application.MainWindow :
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, REPLY_ALL, target, quote
+            );
+        }
+        this.conversation_list_view.selection_mode_enabled = false;
+    }
+
+    private void on_email_reply_to_list(Convey.Email target, string? quote) {
+        if (this.selected_account != null) {
+            this.create_composer.begin(
+                this.selected_account, REPLY_LIST, target, quote
             );
         }
         this.conversation_list_view.selection_mode_enabled = false;

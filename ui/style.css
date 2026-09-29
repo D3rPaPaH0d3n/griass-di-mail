@@ -603,6 +603,12 @@ dialog.convey-upgrade label {
   padding-right: 4px;
 }
 
+.thinner-button > button {
+  min-width: 0;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
 /* Recipient address completion dropdown. Only the selected row is
  * highlighted; selection follows either the keyboard or the mouse, so
  * there is always exactly one highlighted row. */

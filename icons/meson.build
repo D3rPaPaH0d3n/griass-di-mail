@@ -18,6 +18,8 @@ icon_files = files(
   'mail-drafts-symbolic-rtl.svg',
   'mail-inbox-symbolic.svg',
   'mail-outbox-symbolic.svg',
+  'mail-reply-list-symbolic.svg',
+  'mail-reply-list-symbolic-rtl.svg',
   'mail-sent-symbolic.svg',
   'mail-sent-symbolic-rtl.svg',
   'tag-symbolic.svg',
