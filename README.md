@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="./icons/hicolor/scalable/apps/net.donnybeelo.Convey.Full.svg" />
+  <img src="./icons/hicolor/scalable/apps/net.donnybeelo.Convey.svg" />
   <h1>Convey: Send and receive email</h1>
   <img src="./desktop/screenshots/main-window.png" />
 </div>
