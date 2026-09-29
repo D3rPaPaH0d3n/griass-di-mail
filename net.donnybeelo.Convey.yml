@@ -76,6 +76,7 @@ modules:
       - -DENABLE_VALA_BINDINGS=ON
       - -DENABLE_WEATHER=OFF
       - -DWITH_LIBDB=OFF
+      - -DENABLE_OAUTH2_WEBKITGTK=OFF
       - -DWITH_OPENLDAP=OFF
     sources:
       - type: git
@@ -158,5 +159,5 @@ modules:
     sources:
       - type: git
         url: https://gitlab.gnome.org/donnybeelo/convey.git
-        tag: '50.2-1'
-        commit: 2a0b661bf1d7fde57b6dfcb7e09ce33d7b4b9f42
+        tag: '51.0'
+        commit: INSERT_COMMIT_SHA_HERE
