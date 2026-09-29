@@ -2,6 +2,7 @@
 <interface>
   <template class="ApplicationMainWindow" parent="AdwApplicationWindow">
     <property name="show_menubar">False</property>
+    <property name="width_request">360</property>
     <signal name="map" handler="on_map"/>
     <signal name="unmap" handler="on_unmap"/>
 
@@ -376,7 +377,7 @@
     <!-- 1st breakpoint: split folder/conversation list from conversation viewer -->
     <child>
       <object class="AdwBreakpoint">
-        <condition>max-width: 860sp</condition>
+        <condition>max-width: 920sp</condition>
         <setter object="outer_view" property="collapsed">True</setter>
         <setter object="inner_view" property="sidebar-width-fraction">0.33</setter>
       </object>

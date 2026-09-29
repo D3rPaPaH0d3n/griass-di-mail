@@ -79,7 +79,10 @@ public class Components.ConversationActions : Gtk.Box {
     }
 
     [GtkChild] private unowned Gtk.Box response_buttons { get; }
+    [GtkChild] private unowned Gtk.Button reply_sender_button;
     [GtkChild] private unowned Gtk.Button reply_all_button;
+    [GtkChild] private unowned Gtk.Button reply_list_button;
+    [GtkChild] private unowned Gtk.Button forward_button;
     [GtkChild] private unowned Gtk.MenuButton reply_menu_button;
 
     [GtkChild] private unowned Gtk.MenuButton mark_message_button { get; }
@@ -189,6 +192,19 @@ public class Components.ConversationActions : Gtk.Box {
             }) {
             button.direction = UP;
             button.icon_name = "pan-up-symbolic";
+        }
+    }
+
+    public void show_button_labels() {
+        foreach (var button in new Gtk.Button[] {
+                this.reply_sender_button, this.reply_all_button,
+                this.reply_list_button, this.forward_button
+            }) {
+            button.child = new Adw.ButtonContent() {
+                icon_name = button.icon_name,
+                label = button.tooltip_text,
+                can_shrink = true
+            };
         }
     }
 

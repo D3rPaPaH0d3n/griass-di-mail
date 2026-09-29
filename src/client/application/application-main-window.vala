@@ -1510,6 +1510,7 @@ public class Application.MainWindow :
 
         this.conversation_list_actions.set_menus_inverted();
         this.conversation_viewer_actions.set_menus_inverted();
+        this.conversation_viewer_actions.show_button_labels();
 
         this.conversation_viewer.headerbar.left_actions.init(this.application.config);
         this.conversation_viewer.headerbar.right_actions.init(this.application.config);
