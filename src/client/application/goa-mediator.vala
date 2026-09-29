@@ -18,7 +18,7 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
     private const string OUTLOOK_IMAP_HOST = "imap-mail.outlook.com";
     private const string OUTLOOK_SMTP_HOST = "smtp-mail.outlook.com";
 
-    private Goa.Object handle;
+    public Goa.Object handle { get; set; }
 
 
     public GoaMediator(Goa.Object handle) {

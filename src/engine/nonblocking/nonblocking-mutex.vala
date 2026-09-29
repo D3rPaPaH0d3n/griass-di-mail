@@ -86,7 +86,14 @@ public class Convey.Nonblocking.Mutex : BaseObject {
                 return locked_token;
             }
 
-            yield spinlock.wait_async(cancellable);
+            try {
+                yield spinlock.wait_async(cancellable);
+            } catch (GLib.Error err) {
+                if (!locked) {
+                    spinlock.blind_notify();
+                }
+                throw err;
+            }
         }
     }
 

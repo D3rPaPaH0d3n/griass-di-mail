@@ -968,7 +968,7 @@ public class Accounts.Manager : GLib.Object {
         debug("GOA account added: %s", account.get_account().id);
         // No cancellable: driven by external GOA events, not tied
         // to any user-cancellable operation
-        this.create_goa_account.begin(account, null);
+        on_goa_account_changed(account);
     }
 
     private void on_goa_account_changed(Goa.Object account) {
@@ -976,6 +976,7 @@ public class Accounts.Manager : GLib.Object {
         AccountState? state = this.accounts.get(to_convey_id(account));
         // No cancellable, as per on_goa_account_added
         if (state != null) {
+            ((GoaMediator) state.account.mediator).handle = account;
             // We already know about this account, so check that it is
             // still valid. If not, the account should be disabled,
             // not deleted, since it may be re-enabled at some point.

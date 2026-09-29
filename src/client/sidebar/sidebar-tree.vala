@@ -1007,6 +1007,8 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         bool selected = is_selected(node.entry);
 
+        bool was_suppressed = this.suppress_expansion_signal;
+        this.suppress_expansion_signal = true;
         while (node.children.get_n_items() > 0) {
             var child = (Node) node.children.get_item(0);
             unregister_subtree(child, false);
@@ -1020,6 +1022,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             if (parent_store.find(node, out index))
                 parent_store.remove(index);
         }
+        this.suppress_expansion_signal = was_suppressed;
 
         if (this.selected_node == node)
             this.selected_node = null;
