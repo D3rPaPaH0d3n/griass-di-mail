@@ -128,6 +128,10 @@ internal class Application.Controller :
         // Create DB upgrade dialog.
         this.database_manager = new DatabaseManager(application);
 
+        update_proxy();
+        this.application.config.settings.changed[Configuration.USE_CUSTOM_PROXY].connect(update_proxy);
+        this.application.config.settings.changed[Configuration.PROXY_URI].connect(update_proxy);
+
         // Initialise WebKit and WebViews
         Components.WebView.init_web_context(
             this.application.config,
@@ -959,6 +963,11 @@ internal class Application.Controller :
         } catch (GLib.Error err) {
             report_problem(new Convey.ProblemReport(err));
         }
+    }
+
+    private void update_proxy() {
+        Convey.Endpoint.proxy_resolver = this.application.config.get_proxy_resolver();
+        Components.WebView.proxy_uri = this.application.config.get_custom_proxy_uri();
     }
 
     private void add_account(Convey.AccountInformation added) {

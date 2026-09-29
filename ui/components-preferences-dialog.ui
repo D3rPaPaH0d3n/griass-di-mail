@@ -78,6 +78,28 @@
             </child>
           </object>
         </child>
+
+        <child>
+          <object class="AdwPreferencesGroup">
+            <!-- Translators: Preferences group title -->
+            <property name="title" translatable="yes">Network</property>
+            <child>
+              <object class="AdwSwitchRow" id="custom_proxy_row">
+                <!-- Translators: Preferences label -->
+                <property name="title" translatable="yes">Use _Custom Proxy</property>
+                <property name="subtitle" translatable="yes">Instead of the system proxy settings</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwEntryRow" id="proxy_uri_row">
+                <!-- Translators: Preferences label -->
+                <property name="title" translatable="yes">Proxy Address (e.g. socks5://127.0.0.1:9050)</property>
+                <property name="show-apply-button">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
 

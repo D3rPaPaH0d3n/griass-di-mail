@@ -75,6 +75,9 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         this.session = new Soup.Session();
         this.session.timeout = REQUEST_TIMEOUT_SEC;
         this.session.idle_timeout = REQUEST_TIMEOUT_SEC;
+        if (Endpoint.proxy_resolver != null) {
+            this.session.proxy_resolver = Endpoint.proxy_resolver;
+        }
         if (base_uri != null) {
             this.base_uri = base_uri;
         }

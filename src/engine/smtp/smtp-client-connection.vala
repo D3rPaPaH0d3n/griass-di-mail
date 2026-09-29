@@ -190,7 +190,8 @@ internal class Convey.Smtp.ClientConnection : BaseObject, Logging.Source {
         // only attempt to produce a FQDN if not a local address and use the local address if
         // unavailable
         string? fqdn = null;
-        if (!local_addr.is_link_local && !local_addr.is_loopback && !local_addr.is_site_local) {
+        if (Endpoint.proxy_resolver == null &&
+            !local_addr.is_link_local && !local_addr.is_loopback && !local_addr.is_site_local) {
             try {
                 fqdn = yield Resolver.get_default().lookup_by_address_async(local_addr, cancellable);
             } catch (Error err) {

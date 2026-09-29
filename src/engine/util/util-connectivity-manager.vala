@@ -94,9 +94,13 @@ public class Convey.ConnectivityManager : BaseObject {
             // Check first, and ask questions only if an error occurs,
             // because if we can connect, then we can connect.
             debug("Checking if %s reachable...", endpoint);
-            is_reachable = yield this.monitor.can_reach_async(
-                this.remote, cancellable
-            );
+            if (Endpoint.proxy_resolver != null) {
+                is_reachable = this.monitor.network_available;
+            } else {
+                is_reachable = yield this.monitor.can_reach_async(
+                    this.remote, cancellable
+                );
+            }
         } catch (GLib.IOError.CANCELLED err) {
             // User cancelled, so leave as unreachable
         } catch (GLib.IOError.HOST_UNREACHABLE err) {

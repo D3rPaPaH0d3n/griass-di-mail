@@ -143,6 +143,9 @@ namespace Util.I18n {
 
         var session = new Soup.Session();
         session.remove_feature_by_type(typeof(Soup.ContentDecoder));
+        if (Convey.Endpoint.proxy_resolver != null) {
+            session.proxy_resolver = Convey.Endpoint.proxy_resolver;
+        }
         foreach (string ext in new string[] { "aff", "dic" }) {
             var msg = new Soup.Message(
                 "GET", DICTIONARIES_URL + source + "/index." + ext

@@ -20,6 +20,13 @@ public class Convey.Endpoint : BaseObject {
      */
     public static GLib.TlsDatabase? default_tls_database = null;
 
+    /**
+     * The proxy resolver to use when connecting.
+     *
+     * If null, the system default proxy resolver is used.
+     */
+    public static GLib.ProxyResolver? proxy_resolver = null;
+
 
     /** Returns {@link GLib.TlsCertificateFlags} as a string. */
     public static string tls_flag_to_string(GLib.TlsCertificateFlags flag) {
@@ -109,11 +116,16 @@ public class Convey.Endpoint : BaseObject {
     public async GLib.SocketConnection connect_async(GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         GLib.SocketClient client = get_socket_client();
+        client.set_proxy_resolver(Endpoint.proxy_resolver);
         GLib.IOError? connect_error = null;
         try {
             return yield client.connect_async(this.remote, cancellable);
         } catch (GLib.IOError.NETWORK_UNREACHABLE err) {
             connect_error = err;
+        }
+
+        if (Endpoint.proxy_resolver != null) {
+            throw connect_error;
         }
 
         // Ubuntu 18.04 for some reason started throwing

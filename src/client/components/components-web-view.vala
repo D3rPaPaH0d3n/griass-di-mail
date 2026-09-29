@@ -50,6 +50,9 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
 
     private static WebKit.WebContext? default_context = null;
 
+    /** Custom proxy URI for new web views, or null for the system proxy. */
+    public static string? proxy_uri = null;
+
     private static GenericArray<WebKit.UserStyleSheet> styles = null;
 
     private static GenericArray<WebKit.UserScript> scripts = null;
@@ -360,6 +363,12 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
             );
         } else {
             nw_session = new WebKit.NetworkSession.ephemeral();
+        }
+        if (WebView.proxy_uri != null) {
+            nw_session.set_proxy_settings(
+                WebKit.NetworkProxyMode.CUSTOM,
+                new WebKit.NetworkProxySettings(WebView.proxy_uri, null)
+            );
         }
 
         Object(

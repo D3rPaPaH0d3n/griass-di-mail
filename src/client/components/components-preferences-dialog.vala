@@ -18,6 +18,8 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.SwitchRow startup_notifications_row;
     [GtkChild] private unowned Adw.SwitchRow trust_images_row;
     [GtkChild] private unowned Adw.SwitchRow unset_html_colors_row;
+    [GtkChild] private unowned Adw.SwitchRow custom_proxy_row;
+    [GtkChild] private unowned Adw.EntryRow proxy_uri_row;
 
     [GtkChild] private unowned Adw.PreferencesGroup plugins_group;
 
@@ -161,6 +163,24 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             this.local_starred_folder_row,
             "active"
         );
+        config.bind(
+            Application.Configuration.USE_CUSTOM_PROXY,
+            this.custom_proxy_row,
+            "active"
+        );
+        this.custom_proxy_row.bind_property(
+            "active",
+            this.proxy_uri_row,
+            "sensitive",
+            SYNC_CREATE
+        );
+        this.proxy_uri_row.text = config.proxy_uri;
+        this.proxy_uri_row.apply.connect(() => {
+            config.settings.set_string(
+                Application.Configuration.PROXY_URI,
+                this.proxy_uri_row.text.strip()
+            );
+        });
     }
 
     private void setup_startup_inbox_row() {

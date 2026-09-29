@@ -137,6 +137,18 @@
       server does not provide one</description>
     </key>
 
+    <key name="custom-proxy" type="b">
+        <default>false</default>
+        <summary>Use Custom Proxy</summary>
+        <description>Route all connections through a custom proxy
+        instead of the system proxy settings</description>
+    </key>
+
+    <key name="proxy-uri" type="s">
+        <default>''</default>
+        <summary>Proxy Address</summary>
+        <description>URI of the proxy to use</description>
+    </key>
 
     <key name="images-trusted-domains" type="as">
         <default>[]</default>

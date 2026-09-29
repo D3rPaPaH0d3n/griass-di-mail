@@ -50,6 +50,9 @@ internal class Accounts.AutoConfig {
     internal AutoConfig(GLib.Cancellable auto_config_cancellable) {
         cancellable = auto_config_cancellable;
         session = new Soup.Session();
+        if (Convey.Endpoint.proxy_resolver != null) {
+            session.proxy_resolver = Convey.Endpoint.proxy_resolver;
+        }
     }
 
     public async AutoConfigValues get_config(string hostname)

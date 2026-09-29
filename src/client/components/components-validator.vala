@@ -508,7 +508,10 @@ public class Components.NetworkAddressValidator : Validator {
         if (address != null) {
             // Re-validate if previously invalid or the host has
             // changed
-            if (this.validated_address == null ||
+            if (Convey.Endpoint.proxy_resolver != null) {
+                this.validated_address = address;
+                ret = Validator.Validity.VALID;
+            } else if (this.validated_address == null ||
                 this.validated_address.hostname != address.hostname) {
                 this.cancellable = new GLib.Cancellable();
                 this.resolver.lookup_by_name_async.begin(

@@ -36,7 +36,9 @@ public class Application.Configuration : Convey.BaseObject {
     public const string LAST_INBOX = "last-inbox";
     public const string REMEMBER_LAST_INBOX = "remember-last-inbox";
     public const string ALL_INBOXES = "all";
-    public const string LOCAL_STARRED_FOLDER = "local-starred-folder"; 
+    public const string LOCAL_STARRED_FOLDER = "local-starred-folder";
+    public const string USE_CUSTOM_PROXY = "custom-proxy";
+    public const string PROXY_URI = "proxy-uri";
 
 
     public enum DesktopEnvironment {
@@ -150,6 +152,29 @@ public class Application.Configuration : Convey.BaseObject {
     /** The number of seconds for which brief notifications should be displayed. */
     public int brief_notification_duration {
         get { return settings.get_int(BRIEF_NOTIFICATION_DURATION); }
+    }
+
+    public bool use_custom_proxy {
+        get { return settings.get_boolean(USE_CUSTOM_PROXY); }
+    }
+
+    public string proxy_uri {
+        owned get { return settings.get_string(PROXY_URI); }
+    }
+
+    private const string UNUSABLE_PROXY_URI = "socks5://0.0.0.0:0";
+
+    public string? get_custom_proxy_uri() {
+        if (!use_custom_proxy) {
+            return null;
+        }
+        string uri = proxy_uri.strip();
+        return uri != "" ? uri : UNUSABLE_PROXY_URI;
+    }
+
+    public GLib.ProxyResolver? get_proxy_resolver() {
+        string? uri = get_custom_proxy_uri();
+        return uri != null ? new GLib.SimpleProxyResolver(uri, null) : null;
     }
 
     // Creates a configuration object.
