@@ -1213,6 +1213,17 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
     // Constructs a row and view for an email, adds it to the listbox
     private EmailRow add_email(Convey.Email email, bool append_row = true) {
+        // The initial conversation load and the conversation's
+        // "appended" signal can race to add the same email — e.g. when
+        // opening a just-arrived message from a notification — and the
+        // append handler's has_key() guard is checked before an async
+        // load, so it does not prevent this. Return any existing row
+        // rather than adding a duplicate.
+        EmailRow? existing = this.email_rows.get(email.id);
+        if (existing != null) {
+            return existing;
+        }
+
         bool is_sent = false;
         Convey.Account account = this.conversation.base_folder.account;
         if (email.from != null) {
