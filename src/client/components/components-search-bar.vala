@@ -25,6 +25,15 @@ public class SearchBar : Adw.Bin {
     private Convey.Account? current_account = null;
     private Convey.Engine engine;
 
+    public bool all_accounts {
+        get { return this._all_accounts; }
+        set {
+            this._all_accounts = value;
+            on_information_changed();
+        }
+    }
+    private bool _all_accounts = false;
+
     public signal void search_text_changed(string search_text);
 
 
@@ -83,7 +92,9 @@ public class SearchBar : Adw.Bin {
 
     private void on_information_changed() {
         this.entry.placeholder_text = (
-            this.current_account == null || this.engine.accounts_count == 1
+            this.all_accounts
+            ? _("Search all accounts")
+            : this.current_account == null || this.engine.accounts_count == 1
             ? DEFAULT_SEARCH_TEXT
             /// Translators: Search entry placeholder, string
             /// replacement is the name of an account

@@ -269,6 +269,8 @@ public class Application.MainWindow :
     // the search folder closing
     private Convey.Folder? previous_non_search_folder = null;
 
+    private bool searching_all_inboxes = false;
+
     private Convey.AggregateProgressMonitor progress_monitor = new Convey.AggregateProgressMonitor();
 
     private GLib.Cancellable action_update_cancellable = new GLib.Cancellable();
@@ -659,6 +661,7 @@ public class Application.MainWindow :
             }
             close_inbox_monitors();
             this.all_inboxes = false;
+            this.searching_all_inboxes = false;
             this.conversation_list_view.set_monitors(null);
 
             this.conversation_list_info_bars.remove_all();
@@ -771,6 +774,18 @@ public class Application.MainWindow :
             return;
         }
 
+        this.all_inboxes = true;
+        if (this.application.config.remember_last_inbox) {
+            this.application.config.set_last_inbox(Configuration.ALL_INBOXES);
+        }
+        this.folder_list.select_all_inboxes();
+        update_title();
+
+        yield show_folders(inboxes, is_interactive);
+    }
+
+    private async void show_folders(Gee.Collection<Convey.Folder> folders,
+                                    bool is_interactive) {
         this.folder_open.cancel();
         var cancellable = this.folder_open = new GLib.Cancellable();
 
@@ -790,24 +805,18 @@ public class Application.MainWindow :
         this.conversation_list_view.set_monitors(null);
         this.conversation_list_info_bars.remove_all();
 
-        this.all_inboxes = true;
-        if (this.application.config.remember_last_inbox) {
-            this.application.config.set_last_inbox(Configuration.ALL_INBOXES);
-        }
         foreach (var actions in this.folder_conversation_actions) {
             actions.source_folder = null;
         }
-        this.folder_list.select_all_inboxes();
 
-        update_title();
         update_conversation_actions(NONE);
         update_trash_action();
         this.conversation_viewer.show_loading();
         this.previous_selection_was_interactive = is_interactive;
 
-        foreach (var inbox in inboxes) {
+        foreach (var folder in folders) {
             var monitor = new Convey.App.ConversationMonitor(
-                inbox,
+                folder,
                 ConversationList.View.REQUIRED_FIELDS |
                 ConversationListBox.REQUIRED_FIELDS |
                 ConversationEmail.REQUIRED_FOR_CONSTRUCT,
@@ -1050,6 +1059,32 @@ public class Application.MainWindow :
     }
 
     internal void start_search(string query_text, bool is_interactive) {
+        if (this.all_inboxes) {
+            var folders = new Gee.ArrayList<Convey.Folder>();
+            foreach (var account in this.controller.get_account_contexts()) {
+                try {
+                    var expr_factory = new Util.Email.SearchExpressionFactory(
+                        this.application.config.get_search_strategy(),
+                        account.account.information
+                    );
+                    account.search.update_query(
+                        account.account.new_search_query(
+                            expr_factory.parse_query(query_text),
+                            query_text
+                        )
+                    );
+                    folders.add(account.search);
+                } catch (GLib.Error error) {
+                    handle_error(account.account.information, error);
+                }
+            }
+            if (!this.searching_all_inboxes) {
+                this.searching_all_inboxes = true;
+                this.show_folders.begin(folders, is_interactive);
+            }
+            return;
+        }
+
         var context = get_selected_account_context();
         if (context != null) {
             // If the current folder is not the search folder, save it
@@ -1080,6 +1115,10 @@ public class Application.MainWindow :
     }
 
     internal void stop_search(bool is_interactive) {
+        if (this.searching_all_inboxes) {
+            this.searching_all_inboxes = false;
+            this.select_all_inboxes.begin(false);
+        }
         // If the search folder is current selected, deselect and
         // re-select any previously selected folder
         if (!this.all_inboxes &&
@@ -1485,6 +1524,11 @@ public class Application.MainWindow :
             "active",
             this.search_bar, "search-mode-enabled",
             SYNC_CREATE | BIDIRECTIONAL
+        );
+        this.bind_property(
+            "all-inboxes",
+            this.search_bar, "all-accounts",
+            SYNC_CREATE
         );
         this.conversation_viewer.headerbar.bind_property(
             "find-open",
