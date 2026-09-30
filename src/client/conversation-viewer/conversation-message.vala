@@ -871,12 +871,17 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
                                                        "text",
                                                        BindingFlags.SYNC_CREATE);
 
+                    this.avatar.custom_image = null;
                     if (this.primary_contact.avatar != null) {
-                        var icon_stream = yield this.primary_contact.avatar.load_async(48, null);
-                        var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(icon_stream, 48, 48, true);
-                        this.avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
-                    } else {
-                        this.avatar.custom_image = null;
+                        try {
+                            var icon_stream = yield this.primary_contact.avatar.load_async(48, cancellable);
+                            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(icon_stream, 48, 48, true, cancellable);
+                            this.avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
+                        } catch (GLib.IOError.CANCELLED err) {
+                            throw err;
+                        } catch (GLib.Error err) {
+                            debug("Couldn't load avatar for contact: %s", err.message);
+                        }
                     }
                 }
             }
