@@ -452,22 +452,31 @@ internal class Application.Controller :
      */
     public async void compose_mailto(string mailto) {
         MainWindow? window = this.application.last_active_main_window;
+        AccountContext? context = null;
+        bool ambiguous = false;
         if (window != null && window.selected_account != null) {
-            var context = this.accounts.get(window.selected_account.information);
-            if (context != null) {
-                var composer = new Composer.Widget(
-                    this,
-                    this.application.config,
-                    context
-                );
-                register_composer(composer);
-                present_composer(composer);
+            context = this.accounts.get(window.selected_account.information);
+        }
+        if (context == null && window != null) {
+            context = Convey.Collection.first(get_account_contexts());
+            ambiguous = get_account_contexts().size > 1;
+        }
+        if (context != null) {
+            var composer = new Composer.Widget(
+                this,
+                this.application.config,
+                context
+            );
+            register_composer(composer);
+            present_composer(composer);
+            if (ambiguous) {
+                composer.require_sender();
+            }
 
-                try {
-                    yield composer.load_mailto(mailto);
-                } catch (GLib.Error err) {
-                    report_problem(new Convey.ProblemReport(err));
-                }
+            try {
+                yield composer.load_mailto(mailto);
+            } catch (GLib.Error err) {
+                report_problem(new Convey.ProblemReport(err));
             }
         } else {
             // Schedule the send for after we have an account open.
@@ -904,10 +913,12 @@ internal class Application.Controller :
 
     /** Opens any pending composers. */
     internal async void process_pending_composers() {
-        foreach (string? mailto in this.pending_mailtos) {
+        var pending = new Gee.ArrayList<string?>();
+        pending.add_all(this.pending_mailtos);
+        this.pending_mailtos.clear();
+        foreach (string? mailto in pending) {
             yield compose_mailto(mailto);
         }
-        this.pending_mailtos.clear();
     }
 
     /** Queues the email in a composer for delivery. */

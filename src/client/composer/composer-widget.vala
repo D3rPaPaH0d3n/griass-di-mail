@@ -271,6 +271,8 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
     private bool _can_send = true;
 
+    private bool sender_required = false;
+
     /** Currently selected sender mailbox. */
     public Convey.RFC822.MailboxAddresses from { get; private set; }
 
@@ -558,6 +560,14 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             update_extended_headers();
         }
         yield finish_loading("", "", false);
+    }
+
+    /** Clears the From row until the user picks a sender. */
+    public void require_sender() {
+        this.sender_required = true;
+        this.from_row.selected = Gtk.INVALID_LIST_POSITION;
+        this.from_row.add_css_class("error");
+        validate_send_button();
     }
 
     /** Loads a mailto: URL into the composer. */
@@ -2133,6 +2143,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         // fields must be either empty or valid.
         get_action(ACTION_SEND).set_enabled(
             this.can_send &&
+            !this.sender_required &&
             this.to_row.is_valid &&
             (this.cc_row.is_empty || this.cc_row.is_valid) &&
             (this.bcc_row.is_empty || this.bcc_row.is_valid) &&
@@ -2351,6 +2362,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     // Updates from combobox contents and visibility, returns true if
     // the from address had to be set
     private bool update_from_field() {
+        bool sender_required = this.sender_required;
         this.from_row.visible = false;
 
         // Don't show in inline unless the current account has
@@ -2394,6 +2406,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             // the account or any other)
             this.from_row.selected = 0;
         }
+        if (sender_required) {
+            require_sender();
+        }
 
         this.from_row.notify["selected"].connect((obj, pspec) => { on_from_changed(); });
         return !set_active;
@@ -2403,6 +2418,11 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         FromAddressMap selected = this.from_row.selected_item as FromAddressMap;
         if (selected != null) {
             this.from = selected.from;
+            if (this.sender_required) {
+                this.sender_required = false;
+                this.from_row.remove_css_class("error");
+                validate_send_button();
+            }
 
             if (selected.account != this.sender_context) {
                 this.sender_context = selected.account;
