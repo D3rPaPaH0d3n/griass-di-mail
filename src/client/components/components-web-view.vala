@@ -468,6 +468,10 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
         this.internal_resources.set_all(res);
     }
 
+    public Gee.Map<string,Convey.Memory.Buffer> get_internal_resources() {
+        return this.internal_resources;
+    }
+
     /**
      * Load any remote resources that were previously blocked.
      *

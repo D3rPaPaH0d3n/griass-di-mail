@@ -10,6 +10,7 @@ public class ConversationWebView : Components.WebView {
 
 
     private const string DECEPTIVE_LINK_CLICKED = "deceptive_link_clicked";
+    private const double MAGIC_SCROLL_FACTOR = 2.5;
 
     /** Specifies the type of deceptive link text when clicked. */
     public enum DeceptiveText {
@@ -35,6 +36,10 @@ public class ConversationWebView : Components.WebView {
         );
     }
 
+
+    public bool is_truncated { get; private set; default = false; }
+
+    private bool scrolls_internally = false;
 
     /** Emitted when the user clicks on a link with deceptive text. */
     public signal void deceptive_link_clicked(
@@ -69,6 +74,21 @@ public class ConversationWebView : Components.WebView {
         ConversationWebView related
     ) {
         base.with_related_view(config, related);
+        init();
+    }
+
+    /**
+     * Constructs a web view that scrolls its own content.
+     *
+     * The WebKitGTK WebProcess will be shared with the related view's
+     * process.
+     */
+    internal ConversationWebView.standalone(
+        Application.Configuration config,
+        ConversationWebView related
+    ) {
+        base.with_related_view(config, related);
+        this.scrolls_internally = true;
         init();
     }
 
@@ -182,21 +202,25 @@ public class ConversationWebView : Components.WebView {
             // We always want the view to be sized according to the available
             // space in the parent, not by the width of the web view.
             minimum = natural = 0;
+        } else if (this.scrolls_internally) {
+            minimum = natural = 0;
         } else {
-            // Clamp height to something not too outrageous so we
-            // don't get an XServer error trying to allocate a massive
-            // window.
-            const uint max_pixels = 8 * 1024 * 1024;
-            int width = get_width();
-            int height = this.preferred_height;
-            if (height * width > max_pixels) {
-                height = (int) Math.floor(max_pixels / (double) width);
-            }
-
+            int height = int.min(this.preferred_height, max_height());
             minimum = natural = height;
         }
 
         minimum_baseline = natural_baseline = -1;
+    }
+
+    private int max_height() {
+        const uint max_pixels = 8 * 1024 * 1024;
+        const int max_texture_size = 16384;
+        int height = max_texture_size / get_scale_factor();
+        int width = get_width();
+        if (width > 0) {
+            height = int.min(height, (int) (max_pixels / width));
+        }
+        return height;
     }
 
     private void init() {
@@ -204,14 +228,17 @@ public class ConversationWebView : Components.WebView {
             DECEPTIVE_LINK_CLICKED, on_deceptive_link_clicked
         );
 
-        this.notify["preferred-height"].connect(() => queue_resize());
+        this.notify["preferred-height"].connect(() => {
+            this.is_truncated = this.preferred_height > max_height();
+            queue_resize();
+        });
 
-        // The view is allocated its full content height so it never
-        // scrolls internally. Drop WebKit's own scroll controller so
-        // scroll gestures bubble to the surrounding ScrolledWindow
-        // whole and get stock GTK mechanics (kinetic deceleration,
-        // etc). The base class's Ctrl+scroll zoom controller is
-        // vertical-only, so leave that one in place.
+        // Unless standalone, the view is allocated its full content
+        // height so it never scrolls internally. Drop WebKit's own scroll
+        // controller so scroll gestures bubble to the surrounding
+        // ScrolledWindow whole and get stock GTK mechanics (kinetic
+        // deceleration, etc). The base class's Ctrl+scroll zoom
+        // controller is vertical-only, so leave that one in place.
         var to_remove = new Gee.ArrayList<Gtk.EventController>();
         var controllers = observe_controllers();
         for (uint i = 0; i < controllers.get_n_items(); i++) {
@@ -225,14 +252,40 @@ public class ConversationWebView : Components.WebView {
             remove_controller(scroll);
         }
 
-        var hscroll = new Gtk.EventControllerScroll(
+        var kinetic = new Gtk.EventControllerScroll(
             Gtk.EventControllerScrollFlags.BOTH_AXES |
             Gtk.EventControllerScrollFlags.KINETIC
         );
-        hscroll.scroll.connect(on_horizontal_scroll);
-        hscroll.decelerate.connect((vx, vy) => call_js(Util.JS.callable("flingHorizontally").double(vx)));
-        hscroll.scroll_begin.connect(() => call_js(Util.JS.callable("flingHorizontally").double(0)));
-        add_controller(hscroll);
+        unowned var controller = kinetic;
+        string fling = "flingHorizontally";
+        if (this.scrolls_internally) {
+            fling = "flingPage";
+            kinetic.scroll.connect(on_page_scroll);
+        } else {
+            kinetic.scroll.connect(on_horizontal_scroll);
+        }
+        kinetic.decelerate.connect((vx, vy) => {
+                if (controller.get_unit() == Gdk.ScrollUnit.SURFACE) {
+                    vx *= MAGIC_SCROLL_FACTOR;
+                    vy *= MAGIC_SCROLL_FACTOR;
+                }
+                call_js(Util.JS.callable(fling).double(vx).double(vy));
+            });
+        kinetic.scroll_begin.connect(() => call_js(Util.JS.callable(fling).double(0).double(0)));
+        add_controller(kinetic);
+    }
+
+    private bool on_page_scroll(Gtk.EventControllerScroll controller,
+                                double dx, double dy) {
+        if (controller.get_unit() == Gdk.ScrollUnit.WHEEL) {
+            dx *= Math.pow(get_width(), 2.0 / 3.0);
+            dy *= Math.pow(get_height(), 2.0 / 3.0);
+        } else {
+            dx *= MAGIC_SCROLL_FACTOR;
+            dy *= MAGIC_SCROLL_FACTOR;
+        }
+        call_js(Util.JS.callable("scrollPage").double(dx).double(dy));
+        return true;
     }
 
     private bool on_horizontal_scroll(Gtk.EventControllerScroll controller,
@@ -241,7 +294,7 @@ public class ConversationWebView : Components.WebView {
         bool shift = wheel && (controller.get_current_event_state() & Gdk.ModifierType.SHIFT_MASK) != 0;
         double d = shift ? dy : dx;
         if (d != 0) {
-            call_js(Util.JS.callable("scrollHorizontally").double(wheel ? d * 50 : d));
+            call_js(Util.JS.callable("scrollHorizontally").double(wheel ? d * 50 : d * MAGIC_SCROLL_FACTOR));
         }
         return shift;
     }

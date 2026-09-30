@@ -46,26 +46,56 @@ ConversationPageState.prototype = {
             if (el.scrollWidth > el.clientWidth &&
                 /auto|scroll/.test(getComputedStyle(el).overflowX)) {
                 this._hTarget = el;
-                el.scrollLeft += dx;
+                this.scrollElement(el, "scrollLeft", dx);
                 return;
             }
         }
     },
     flingHorizontally: function(vx) {
-        cancelAnimationFrame(this._fling);
-        let el = this._hTarget, last = null, start = null, state = this;
+        this.fling("_hFling", this._hTarget, "scrollLeft", vx);
+    },
+    scrollPage: function(dx, dy) {
+        if (dx) this.scrollHorizontally(dx);
+        this.scrollElement(document.scrollingElement, "scrollTop", dy);
+    },
+    scrollElement: function(el, prop, d) {
+        this._remainder = this._remainder || {};
+        let total = (this._remainder[prop] || 0) + d;
+        let whole = Math.trunc(total);
+        this._remainder[prop] = total - whole;
+        el[prop] += whole;
+    },
+    flingPage: function(vx, vy) {
+        this.flingHorizontally(vx);
+        this.fling("_vFling", document.scrollingElement, "scrollTop", vy);
+    },
+    // Port of GtkKineticScrolling and gtk_scrolled_window_accumulate_velocity()
+    fling: function(id, el, prop, v) {
+        const FRICTION = 4, FLOOR = 0.33, CEIL = 1.0, MAX = 6.0;
+        let prev = this[id];
+        if (prev) cancelAnimationFrame(prev.frame);
+        if (!v) return;
+        this[id] = null;
+        if (prev && prev.velocity && (v >= 0) == (prev.velocity >= 0) &&
+            Math.abs(v) >= Math.abs(prev.velocity) * FLOOR) {
+            let min = prev.velocity * FLOOR, max = prev.velocity * CEIL;
+            v += prev.velocity * Math.min((v - min) / (max - min), MAX);
+        }
+        if (!el) return;
+        let from = el[prop], start = null;
+        let state = this[id] = { velocity: v, frame: null };
         let step = function(t) {
-            if (last != null) {
-                let dt = (t - last) / 1000;
-                if (t - start > 100) vx *= Math.exp(-4 * dt);
-                el.scrollLeft += vx * dt;
+            if (start == null) start = t;
+            let decay = Math.exp(-FRICTION * (t - start) / 1000);
+            el[prop] = from + v / FRICTION * (1 - decay);
+            state.velocity = v * decay;
+            if (Math.abs(state.velocity) >= 0.1) {
+                state.frame = requestAnimationFrame(step);
             } else {
-                start = t;
+                state.velocity = 0;
             }
-            last = t;
-            if (Math.abs(vx) > 10) state._fling = requestAnimationFrame(step);
-				};
-			if (el && vx) this._fling = requestAnimationFrame(step);
+        };
+        state.frame = requestAnimationFrame(step);
     },
     /**
      * Add email headers for printing

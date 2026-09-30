@@ -372,6 +372,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.ProgressBar body_progress;
 
     private Components.InfoBar? remote_images_info_bar = null;
+    private Components.InfoBar? truncated_info_bar = null;
+    private string? body_html = null;
 
     private Gtk.Widget? body_placeholder = null;
 
@@ -634,6 +636,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         this.web_view.notify["has-selection"].connect(on_selection_changed);
         this.web_view.resource_load_started.connect(on_resource_load_started);
         this.web_view.remote_resource_load_blocked.connect(on_remote_resources_blocked);
+        this.web_view.notify["is-truncated"].connect(on_truncated_changed);
         this.web_view.internal_resource_loaded.connect(trigger_internal_resource_loaded);
         this.web_view.content_loaded.connect(trigger_content_loaded);
         this.web_view.set_hexpand(true);
@@ -944,6 +947,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             debug("Could not get message text. %s", err.message);
         }
 
+        this.body_html = body_text;
         load_cancelled.cancelled.connect(() => { web_view.stop_loading(); });
         this.web_view.load_html(body_text ?? "");
     }
@@ -1452,6 +1456,64 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     private void on_selection_changed() {
         set_action_enabled(ACTION_COPY_SELECTION, this.web_view.has_selection);
         selection_changed(this.web_view.has_selection);
+    }
+
+    private void on_truncated_changed() {
+        if (this.web_view.is_truncated && this.truncated_info_bar == null) {
+            this.truncated_info_bar = new Components.InfoBar(
+                // Translators: Info bar status message
+                _("Message too long to show in full"),
+                // Translators: Info bar description
+                _("Open it in a separate window to read the rest of the message")
+            );
+            this.truncated_info_bar.add_button(
+                // Translators: Info bar button label
+                _("Open in Window"), 1
+            );
+            this.truncated_info_bar.response.connect(() => open_in_window());
+            this.info_bars.add(this.truncated_info_bar);
+        } else if (!this.web_view.is_truncated &&
+                   this.truncated_info_bar != null) {
+            this.info_bars.remove(this.truncated_info_bar);
+            this.truncated_info_bar = null;
+        }
+    }
+
+    private void open_in_window() {
+        var main = get_root() as Application.MainWindow;
+        if (main == null || this.body_html == null) {
+            return;
+        }
+
+        var view = new ConversationWebView.standalone(this.config, this.web_view);
+        view.add_internal_resources(this.web_view.get_internal_resources());
+        view.link_activated.connect((link) => {
+                if (!link.has_prefix(INTERNAL_ANCHOR_PREFIX)) {
+                    main.application.show_uri.begin(link);
+                }
+            });
+        view.set_hexpand(true);
+        view.set_vexpand(true);
+
+        var toolbar = new Adw.ToolbarView();
+        toolbar.add_top_bar(new Adw.HeaderBar());
+        toolbar.content = view;
+
+        var window = new Adw.Window();
+        window.title = this.subject.label;
+        window.transient_for = main;
+        window.default_width = 900;
+        window.default_height = 800;
+        window.content = toolbar;
+        window.present();
+
+        if (this.web_view.is_load_remote_resources_enabled) {
+            view.load_remote_resources.begin(null, () => {
+                    view.load_html(this.body_html);
+                });
+        } else {
+            view.load_html(this.body_html);
+        }
     }
 
     private void on_remote_resources_blocked() {
