@@ -372,6 +372,13 @@ public class Convey.App.Conversation : BaseObject {
     }
 
     /**
+     * Returns the copies folded into other emails in the conversation.
+     */
+    internal Gee.Collection<Email> get_folded() {
+        return this.folded.values;
+    }
+
+    /**
      * Determines if an email with the give id exists in the conversation.
      */
     public bool contains_email_by_id(EmailIdentifier id) {

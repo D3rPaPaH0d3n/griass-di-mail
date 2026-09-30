@@ -25,6 +25,7 @@ class Convey.App.ConversationSetTest : TestCase {
         add_test("remove_all_trimmed", remove_all_trimmed);
         add_test("remove_all_remove_path", remove_all_remove_path);
         add_test("remove_all_base_folder", remove_all_base_folder);
+        add_test("remove_conversation_folded", remove_conversation_folded);
     }
 
     public override void set_up() {
@@ -474,6 +475,24 @@ class Convey.App.ConversationSetTest : TestCase {
 
         assert_collection(removed, "Removed size").size(1);
         assert_equal(trimmed.size, 0, "Trimmed size");
+    }
+
+    public void remove_conversation_folded() throws Error {
+        Email e1 = setup_email(1);
+        Email e2 = setup_email(2);
+        e2.set_full_references(e1.message_id, null, null);
+        add_email_to_test_set(e1);
+        add_email_to_test_set(e2);
+
+        Conversation convo = this.test.get_by_email_identifier(e1.id);
+        assert(this.test.get_by_email_identifier(e2.id) == convo);
+
+        this.test.remove_conversation(convo);
+
+        assert(this.test.size == 0);
+        assert(this.test.get_email_count() == 0);
+        assert(this.test.get_by_email_identifier(e1.id) == null);
+        assert(this.test.get_by_email_identifier(e2.id) == null);
     }
 
     private Email setup_email(int id, Email? references = null) {

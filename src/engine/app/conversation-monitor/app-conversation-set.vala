@@ -251,12 +251,14 @@ private class Convey.App.ConversationSet : BaseObject, Logging.Source {
      * Removes a conversation from the set.
      */
     public void remove_conversation(Conversation conversation) {
-        Gee.Collection<Email> conversation_emails = conversation.get_emails(
+        var conversation_emails = new Gee.ArrayList<Email>();
+        conversation_emails.add_all(conversation.get_folded());
+        conversation_emails.add_all(conversation.get_emails(
             Conversation.Ordering.NONE,     // ordering
             Conversation.Location.ANYWHERE, // location
             null,                           // blacklist
             false                           // filter deleted (false, so we remove emails that are flagged for deletion too)
-        );
+        ));
 
         foreach (Convey.Email conversation_email in conversation_emails)
             remove_email_from_conversation(conversation, conversation_email);
