@@ -295,6 +295,11 @@ public class Application.MainWindow :
     // Outer and inner split are [[ folder_box | conversation_list ] | conversation_viewer ]
     [GtkChild] private unowned Adw.NavigationSplitView outer_view;
     [GtkChild] private unowned Adw.NavigationSplitView inner_view;
+    [GtkChild] private unowned Gtk.Widget sidebar_resize_handle;
+    private double sidebar_drag_start_width;
+    private int default_min_sidebar_width;
+    private int default_max_sidebar_width;
+    private double default_sidebar_width_fraction;
 
     [GtkChild] private unowned Gtk.ScrolledWindow folder_list_scrolled;
 
@@ -1447,6 +1452,26 @@ public class Application.MainWindow :
 
     private void setup_layout(Configuration config) {
         this.notify["has-toplevel-focus"].connect(on_has_toplevel_focus);
+
+        this.sidebar_resize_handle.set_cursor_from_name("col-resize");
+        var sidebar_drag = new Gtk.GestureDrag();
+        sidebar_drag.propagation_phase = CAPTURE;
+        sidebar_drag.drag_begin.connect(on_sidebar_drag_begin);
+        sidebar_drag.drag_update.connect(on_sidebar_drag_update);
+        this.outer_view.add_controller(sidebar_drag);
+
+        this.default_min_sidebar_width = (int) this.outer_view.min_sidebar_width;
+        this.default_max_sidebar_width = (int) this.outer_view.max_sidebar_width;
+        this.default_sidebar_width_fraction = this.outer_view.sidebar_width_fraction;
+        var sidebar_reset = new Gtk.GestureClick();
+        sidebar_reset.pressed.connect((n_press, x, y) => {
+            if (n_press == 2) {
+                this.outer_view.min_sidebar_width = this.default_min_sidebar_width;
+                this.outer_view.max_sidebar_width = this.default_max_sidebar_width;
+                this.outer_view.sidebar_width_fraction = this.default_sidebar_width_fraction;
+            }
+        });
+        this.sidebar_resize_handle.add_controller(sidebar_reset);
 
         // Search bar
         this.search_bar = new SearchBar(this.application.engine);
@@ -2668,11 +2693,39 @@ public class Application.MainWindow :
 
     [GtkCallback]
     private void on_outer_view_changed(GLib.Object object, ParamSpec pspec) {
+        this.sidebar_resize_handle.visible = !this.outer_view.collapsed;
         bool shown = this.is_conversation_viewer_shown;
         this.conversation_list_view.can_autoselect = shown;
         if (!shown && !this.conversation_list_view.selection_mode_enabled) {
             this.conversation_list_view.unselect_all();
         }
+    }
+
+    private void on_sidebar_drag_begin(Gtk.GestureDrag gesture,
+                                       double x, double y) {
+        Graphene.Rect bounds;
+        if (!this.sidebar_resize_handle.compute_bounds(this.outer_view, out bounds) ||
+            !bounds.contains_point(Graphene.Point() { x = (float) x, y = (float) y })) {
+            gesture.set_state(DENIED);
+            return;
+        }
+        this.sidebar_drag_start_width = bounds.origin.x + bounds.size.width;
+    }
+
+    private void on_sidebar_drag_update(Gtk.GestureDrag gesture,
+                                        double dx, double dy) {
+        if (gesture.get_sequence_state(gesture.get_current_sequence()) !=
+            Gtk.EventSequenceState.CLAIMED) {
+            if (dx.abs() < 3) {
+                return;
+            }
+            gesture.set_state(CLAIMED);
+        }
+        int total = this.outer_view.get_width();
+        double width = (this.sidebar_drag_start_width + dx).clamp(360, total - 360);
+        this.outer_view.min_sidebar_width = 360;
+        this.outer_view.max_sidebar_width = total;
+        this.outer_view.sidebar_width_fraction = width / total;
     }
 
     [GtkCallback]
