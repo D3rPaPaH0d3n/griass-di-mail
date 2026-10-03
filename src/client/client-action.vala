@@ -18,6 +18,7 @@ namespace Action {
         public const string ABOUT = "about";
         public const string ACCOUNTS = "accounts";
         public const string COMPOSE = "compose";
+        public const string IMPORT_PGP_KEY = "import-pgp-key";
         public const string INSPECT = "inspect";
         public const string HELP = "help";
         public const string MAILTO = "mailto";

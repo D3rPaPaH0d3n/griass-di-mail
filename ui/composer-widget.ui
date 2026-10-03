@@ -78,6 +78,15 @@
                                 <property name="title" translatable="yes">_To</property>
                                 <property name="use-underline">True</property>
                                 <child type="suffix">
+                                  <object class="GtkToggleButton" id="encrypt_button">
+                                    <property name="visible">False</property>
+                                    <property name="valign">center</property>
+                                    <property name="tooltip-text" translatable="yes">Encrypt with OpenPGP</property>
+                                    <property name="action-name">win.encrypt</property>
+                                    <property name="icon-name">changes-allow-symbolic</property>
+                                  </object>
+                                </child>
+                                <child type="suffix">
                                   <object class="GtkToggleButton" id="show_extended_headers">
                                     <property name="valign">center</property>
                                     <property name="tooltip-text" translatable="yes">Show Cc, Bcc, and Reply-To fields</property>

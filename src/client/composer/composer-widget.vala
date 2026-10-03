@@ -163,6 +163,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private const string ACTION_CLOSE = "composer-close";
     private const string ACTION_DETACH = "detach";
     private const string ACTION_DISCARD = "discard";
+    private const string ACTION_ENCRYPT = "encrypt";
     private const string ACTION_SEND = "send";
     private const string ACTION_SHOW_EXTENDED_HEADERS = "show-extended-headers";
 
@@ -175,6 +176,8 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         { ACTION_CLOSE,                    on_close                         },
         { ACTION_DETACH,                   on_detach                        },
         { ACTION_DISCARD,                  on_discard                       },
+        { ACTION_ENCRYPT,                  on_toggle_action, null, "false",
+                                           on_encrypt_toggled               },
         { ACTION_SEND,                     on_send                          },
         { ACTION_SHOW_EXTENDED_HEADERS,    on_toggle_action, null, "false",
                                            on_show_extended_headers_toggled },
@@ -335,6 +338,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     [GtkChild] private unowned Gtk.Box email_headers;
     [GtkChild] private unowned Gtk.ToggleButton show_extended_headers;
+    [GtkChild] private unowned Gtk.ToggleButton encrypt_button;
 
     private bool extended_headers_shown = false;
 
@@ -379,7 +383,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     private Gee.List<Convey.Attachment>? pending_attachments = null;
     private AttachPending pending_include = AttachPending.INLINE_ONLY;
-    private Gee.Set<File> attached_files = new Gee.HashSet<File>(Convey.Files.nullable_hash,
+    private Gee.Map<string,bool> pgp_keys = new Gee.HashMap<string,bool>();
+    private Gee.Set<string> pgp_looked_up = new Gee.HashSet<string>();
+    private bool encrypt_set_by_user = false;
+    private bool pgp_available = false;
+    private bool reply_encrypted = false;
+    private uint pgp_check_id = 0;
+    private Gee.Set<File> attached_files =new Gee.HashSet<File>(Convey.Files.nullable_hash,
         Convey.Files.nullable_equal);
     private Gee.Map<string,Convey.Memory.Buffer> inline_files = new Gee.HashMap<string,Convey.Memory.Buffer>();
     private Gee.Map<string,Convey.Memory.Buffer> cid_files = new Gee.HashMap<string,Convey.Memory.Buffer>();
@@ -436,6 +446,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         );
 
         this.from_row.notify["selected"].connect(on_envelope_changed);
+        this.notify["from"].connect(() => { this.update_pgp_available.begin(); });
         setup_from_popover();
 
         this.to_row.changed.connect(on_envelope_changed);
@@ -959,6 +970,10 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     public override void dispose() {
+        if (this.pgp_check_id != 0) {
+            GLib.Source.remove(this.pgp_check_id);
+            this.pgp_check_id = 0;
+        }
         if (this.draft_manager != null) {
             warning("Draft manager still open on composer destroy");
         }
@@ -1273,6 +1288,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
         // User-Agent
         email.mailer = Environment.get_prgname() + "/" + Config.VERSION;
+        email.encrypt = !for_draft && get_action(ACTION_ENCRYPT).get_state().get_boolean();
 
         return email;
     }
@@ -1290,6 +1306,19 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
         if (!this.referred_ids.contains(referred.id)) {
             add_recipients_and_ids(type, referred);
+        }
+
+        if (type != NONE && type != EDIT) {
+            try {
+                if (referred.get_message().has_encrypted_body()) {
+                    this.reply_encrypted = true;
+                    this.encrypt_set_by_user = true;
+                    set_encrypt(true);
+                    schedule_pgp_check();
+                }
+            } catch (GLib.Error err) {
+                debug("Unable to check if referred email is encrypted: %s", err.message);
+            }
         }
 
         // Always use reply styling, since forward styling doesn't
@@ -1448,6 +1477,21 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     private async bool should_send() {
+        if (this.pgp_check_id != 0) {
+            GLib.Source.remove(this.pgp_check_id);
+            this.pgp_check_id = 0;
+        }
+        Gee.List<string> missing = yield update_pgp_status();
+        if (get_encrypt() && !missing.is_empty) {
+            var dialog = new Adw.AlertDialog(
+                _("No OpenPGP key found"),
+                string.joinv("\n", missing.to_array())
+            );
+            dialog.add_response("close", _("_Close"));
+            yield dialog.choose(this.container.top_window, null);
+            return false;
+        }
+
         bool has_subject = !Convey.String.is_empty(subject.strip());
         bool has_attachment = this.attached_files.size > 0;
         bool has_body = true;
@@ -2190,6 +2234,137 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         action.change_state(!action.state.get_boolean());
     }
 
+    private void on_encrypt_toggled(GLib.SimpleAction? action,
+                                    GLib.Variant? new_state) {
+        this.encrypt_set_by_user = true;
+        set_encrypt(new_state.get_boolean());
+        schedule_pgp_check();
+    }
+
+    private bool get_encrypt() {
+        return get_action(ACTION_ENCRYPT).get_state().get_boolean();
+    }
+
+    private async void update_pgp_available() {
+        bool available = false;
+        foreach (var mailbox in this.from) {
+            available = yield Convey.RFC822.Utils.has_pgp_secret_key(
+                mailbox.address, null
+            );
+        }
+        this.pgp_available = available;
+        this.encrypt_button.visible = available;
+        set_encrypt(available && this.reply_encrypted);
+        schedule_pgp_check();
+    }
+
+    private void set_encrypt(bool encrypt) {
+        encrypt = encrypt && this.pgp_available;
+        get_action(ACTION_ENCRYPT).set_state(encrypt);
+        this.encrypt_button.icon_name = encrypt
+            ? "changes-prevent-symbolic"
+            : "changes-allow-symbolic";
+        update_pgp_indicators();
+    }
+
+    private void schedule_pgp_check() {
+        if (this.pgp_check_id != 0) {
+            GLib.Source.remove(this.pgp_check_id);
+        }
+        this.pgp_check_id = GLib.Timeout.add(500, () => {
+            this.pgp_check_id = 0;
+            this.update_pgp_status.begin();
+            return GLib.Source.REMOVE;
+        });
+    }
+
+    private async Gee.List<string> update_pgp_status() {
+        Composer.AddressesRow[] rows = { this.to_row, this.cc_row, this.bcc_row };
+        var addresses = new Gee.ArrayList<string>();
+        foreach (var mailbox in this.from) {
+            addresses.add(mailbox.address);
+        }
+        bool has_recipients = false;
+        foreach (var row in rows) {
+            foreach (var mailbox in row.addresses) {
+                addresses.add(mailbox.address);
+                has_recipients = true;
+            }
+        }
+
+        foreach (string address in addresses) {
+            if (!this.pgp_keys.has_key(address)) {
+                bool found = false;
+                try {
+                    yield Convey.Nonblocking.Concurrent.global.schedule_async(
+                        () => { found = Convey.RFC822.Utils.has_pgp_key(address); },
+                        null
+                    );
+                } catch (GLib.Error err) {
+                    debug("OpenPGP key check failed for %s: %s", address, err.message);
+                }
+                this.pgp_keys[address] = found;
+            }
+            if (!this.pgp_keys[address] && get_encrypt() &&
+                !(address in this.pgp_looked_up)) {
+                this.pgp_looked_up.add(address);
+                try {
+                    this.pgp_keys[address] =
+                        yield Convey.RFC822.Utils.discover_pgp_key(address, null);
+                } catch (GLib.Error err) {
+                    warning("OpenPGP key lookup failed for %s: %s", address, err.message);
+                }
+            }
+        }
+
+        var missing = new Gee.ArrayList<string>();
+        foreach (string address in addresses) {
+            if (!this.pgp_keys[address] && !(address in missing)) {
+                missing.add(address);
+            }
+        }
+        if (!this.encrypt_set_by_user) {
+            set_encrypt(has_recipients && missing.is_empty);
+        }
+        update_pgp_indicators();
+        return missing;
+    }
+
+    private void update_pgp_indicators() {
+        bool encrypt = get_encrypt();
+        var missing = new Gee.ArrayList<string>();
+        Composer.AddressesRow[] rows = { this.to_row, this.cc_row, this.bcc_row };
+        foreach (var row in rows) {
+            bool row_missing = false;
+            foreach (var mailbox in row.addresses) {
+                if (this.pgp_keys.has_key(mailbox.address) &&
+                    !this.pgp_keys[mailbox.address]) {
+                    row_missing = true;
+                    missing.add(mailbox.address);
+                }
+            }
+            if (encrypt && row_missing) {
+                row.add_css_class("warning");
+            } else {
+                row.remove_css_class("warning");
+            }
+        }
+
+        this.encrypt_button.remove_css_class("accent");
+        this.encrypt_button.remove_css_class("warning");
+        if (!encrypt) {
+            this.encrypt_button.tooltip_text = _("Encrypt with OpenPGP");
+        } else if (missing.is_empty) {
+            this.encrypt_button.tooltip_text = _("Will be encrypted with OpenPGP");
+            this.encrypt_button.add_css_class("accent");
+        } else {
+            this.encrypt_button.tooltip_text = _("No OpenPGP key for:\n%s").printf(
+                string.joinv("\n", missing.to_array())
+            );
+            this.encrypt_button.add_css_class("warning");
+        }
+    }
+
     private void update_extended_headers(bool reorder=true) {
         bool cc = !this.cc_row.is_empty;
         bool bcc = !this.bcc_row.is_empty;
@@ -2487,12 +2662,14 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     private void on_envelope_changed() {
+        schedule_pgp_check();
         draft_changed();
         update_extended_headers(false);
         validate_send_button();
     }
 
     private void on_from_changed() {
+        schedule_pgp_check();
         try {
             update_from();
         } catch (Error err) {

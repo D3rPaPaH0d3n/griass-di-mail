@@ -672,12 +672,18 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     private async void update_body()
         throws GLib.Error {
         Convey.RFC822.Message message = this.email.get_message();
+        yield Convey.Nonblocking.Concurrent.global.schedule_async(
+            () => { message.decrypt(); }, this.load_cancellable
+        );
 
         // Load all mime parts and construct CID resources from them
 
         Gee.Map<string,Convey.Memory.Buffer> cid_resources =
             new Gee.HashMap<string,Convey.Memory.Buffer>();
-        foreach (Convey.Attachment attachment in email.attachments) {
+        Gee.Collection<Convey.Attachment> attachments = message.is_encrypted
+            ? Gee.Collection.empty<Convey.Attachment>()
+            : email.attachments;
+        foreach (Convey.Attachment attachment in attachments) {
             // Assume all parts are attachments. As the primary and
             // secondary message bodies are loaded, any displayed
             // inline will be removed from the list.

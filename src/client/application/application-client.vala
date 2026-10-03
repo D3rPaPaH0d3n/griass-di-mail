@@ -61,6 +61,7 @@ public class Application.Client : Adw.Application {
         { Action.Application.ACCOUNTS, on_activate_accounts},
         { Action.Application.COMPOSE, on_activate_compose},
         { Action.Application.HELP, on_activate_help},
+        { Action.Application.IMPORT_PGP_KEY, on_activate_import_pgp_key},
         { Action.Application.INSPECT, on_activate_inspect},
         { Action.Application.MAILTO, on_activate_mailto, "s"},
         { Action.Application.NEW_WINDOW, on_activate_new_window },
@@ -345,6 +346,8 @@ public class Application.Client : Adw.Application {
 
         // Calls Gtk.init(), amongst other things
         base.startup();
+
+        Convey.RFC822.Utils.init_pgp(get_home_data_directory().get_child("gnupg"));
 
         this.engine = new Convey.Engine(get_resource_directory());
         this.config = new Configuration(SCHEMA_ID);
@@ -1141,6 +1144,45 @@ public class Application.Client : Adw.Application {
 
     private void on_activate_accounts() {
         this.show_accounts.begin();
+    }
+
+    private void on_activate_import_pgp_key() {
+        this.import_pgp_key.begin();
+    }
+
+    private async void import_pgp_key() {
+        var filter = new Gtk.FileFilter();
+        filter.name = _("OpenPGP keys");
+        filter.add_pattern("*.asc");
+        filter.add_pattern("*.gpg");
+        filter.add_pattern("*.pgp");
+        filter.add_pattern("*.key");
+        var filters = new GLib.ListStore(typeof(Gtk.FileFilter));
+        filters.append(filter);
+        var chooser = new Gtk.FileDialog();
+        chooser.title = _("Import OpenPGP Key");
+        chooser.filters = filters;
+
+        string message;
+        try {
+            GLib.File file = yield chooser.open(this.active_window, null);
+            GLib.Bytes data = yield file.load_bytes_async(null, null);
+            int count = 0;
+            yield Convey.Nonblocking.Concurrent.global.schedule_async(
+                () => { count = Convey.RFC822.Utils.import_pgp_keys(data.get_data()); },
+                null
+            );
+            message = (count > 0)
+                ? ngettext("Imported %d key", "Imported %d keys", count).printf(count)
+                : _("Import finished. No new public keys were added");
+        } catch (Gtk.DialogError.DISMISSED err) {
+            return;
+        } catch (GLib.Error err) {
+            message = _("Unable to import key: %s").printf(err.message);
+        }
+        var dialog = new Adw.AlertDialog(_("Import OpenPGP Key"), message);
+        dialog.add_response("close", _("_Close"));
+        dialog.present(this.active_window);
     }
 
     private void on_activate_compose() {

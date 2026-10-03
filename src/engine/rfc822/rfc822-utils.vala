@@ -345,4 +345,58 @@ namespace Convey.RFC822.Utils {
         return ret;
     }
 
+    public void init_pgp(GLib.File home) {
+        GLib.DirUtils.create_with_parents(home.get_path(), 0700);
+        GLib.Environment.set_variable("GNUPGHOME", home.get_path(), true);
+    }
+
+    public int import_pgp_keys(uint8[] data) throws GLib.Error {
+        return new GMime.GpgContext().import_keys(new GMime.StreamMem.with_buffer(data));
+    }
+
+    public async bool has_pgp_secret_key(string address,
+                                         GLib.Cancellable? cancellable) {
+        try {
+            var gpg = new GLib.Subprocess(
+                STDOUT_SILENCE | STDERR_SILENCE,
+                "gpg", "--batch", "--list-secret-keys", "--", "<%s>".printf(address)
+            );
+            return yield gpg.wait_check_async(cancellable);
+        } catch (GLib.Error err) {
+            return false;
+        }
+    }
+
+    public bool has_pgp_key(string address) {
+        var recipients = new GLib.GenericArray<string>();
+        recipients.add(address);
+        try {
+            new GMime.GpgContext().encrypt(
+                false, null, ALWAYS_TRUST, recipients,
+                new GMime.StreamMem(), new GMime.StreamMem()
+            );
+            return true;
+        } catch (GLib.Error err) {
+            return false;
+        }
+    }
+
+    public async bool discover_pgp_key(string address,
+                                       GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        var message = new Soup.Message(
+            "GET",
+            "https://keys.openpgp.org/vks/v1/by-email/" +
+            GLib.Uri.escape_string(address, null, false)
+        );
+        GLib.Bytes body = yield new Soup.Session().send_and_read_async(
+            message, GLib.Priority.DEFAULT, cancellable
+        );
+        if (message.status_code != Soup.Status.OK) {
+            return false;
+        }
+        import_pgp_keys(body.get_data());
+        return has_pgp_key(address);
+    }
+
 }

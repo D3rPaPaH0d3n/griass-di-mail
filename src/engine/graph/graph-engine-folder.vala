@@ -34,6 +34,7 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         new Gee.HashMap<string,Convey.Email>();
     private Gee.HashMap<string,Convey.Graph.Client.Message> message_by_id =
         new Gee.HashMap<string,Convey.Graph.Client.Message>();
+    private Gee.HashSet<string> rfc822_loaded = new Gee.HashSet<string>();
     private bool is_loaded = false;
     // Graph delta cursor, persisted with the cache after every applied
     // batch; empty means the next sync establishes a fresh baseline.
@@ -236,7 +237,8 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
             required_fields.requires_any(Convey.Email.Field.BODY | Convey.Email.Field.HEADER);
 
         if (is_open_now && needs_full_message &&
-            (email == null || !email.fields.fulfills(required_fields))) {
+            (email == null || !email.fields.fulfills(required_fields) ||
+             !(graph.graph_id in this.rfc822_loaded))) {
             try {
                 Convey.Graph.Client.Message full = yield this.client.fetch_message(
                     graph.graph_id, cancellable
@@ -1195,7 +1197,7 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         GLib.DateTime received = message.received_at ?? new GLib.DateTime.now_local();
         email.set_email_properties(new Convey.Graph.EmailProperties(received, message.size));
 
-        if (message.body != null) {
+        if (message.body != null && !(message.id in this.rfc822_loaded)) {
             string body = message.body;
             email.set_message_body(new Convey.RFC822.Text(new Convey.Memory.StringBuffer(body)));
             Convey.RFC822.Header? header = build_header(message);
@@ -1270,6 +1272,7 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
 
         email.set_message_header(parsed.get_header());
         email.set_message_body(parsed.get_body());
+        this.rfc822_loaded.add(graph_message_id);
         string preview = parsed.get_preview();
         if (!String.is_empty(preview)) {
             email.set_message_preview(

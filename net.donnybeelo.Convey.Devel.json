@@ -19,6 +19,7 @@
         "--talk-name=org.gnome.Settings",
         "--talk-name=org.gnome.OnlineAccounts",
         "--talk-name=org.gnome.evolution.dataserver.*",
+        "--talk-name=org.gnome.keyring.SystemPrompter",
         "--system-talk-name=org.freedesktop.login1",
         "--filesystem=xdg-cache/evolution/addressbook:ro",
         "--metadata=X-DConf=migrate-path=/net/donnybeelo/Convey/",

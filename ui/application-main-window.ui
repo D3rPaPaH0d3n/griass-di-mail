@@ -419,6 +419,10 @@
         <attribute name="action">app.accounts</attribute>
       </item>
       <item>
+        <attribute name="label" translatable="yes">_Import OpenPGP Key…</attribute>
+        <attribute name="action">app.import-pgp-key</attribute>
+      </item>
+      <item>
         <attribute name="label" translatable="yes">_Preferences</attribute>
         <attribute name="action">app.preferences</attribute>
       </item>

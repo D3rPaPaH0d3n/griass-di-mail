@@ -127,6 +127,14 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
     // The backing store for this message. Used to access body parts.
     private GMime.Message message;
 
+    public bool is_encrypted { get; private set; default = false; }
+
+    public GMime.SignatureList? signatures { get; private set; default = null; }
+
+    private GMime.Object? content_root = null;
+
+    private bool decryption_allowed = false;
+
 
     public Message(Full full) throws Error {
         GMime.Parser parser = new GMime.Parser.with_stream(
@@ -491,6 +499,19 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             main_parts.add(attachment_part);
 
         GMime.Object? main_part = coalesce_parts(main_parts, "mixed");
+        if (email.encrypt && main_part != null) {
+            var recipients = new GLib.GenericArray<string>();
+            foreach (var list in new RFC822.MailboxAddresses?[] { email.from, email.to, email.cc, email.bcc }) {
+                if (list != null) {
+                    foreach (RFC822.MailboxAddress mailbox in list) {
+                        recipients.add(mailbox.address);
+                    }
+                }
+            }
+            main_part = GMime.MultipartEncrypted.encrypt(
+                new GMime.GpgContext(), main_part, false, null, ALWAYS_TRUST, recipients
+            );
+        }
         this.message.set_mime_part(main_part);
     }
 
@@ -660,6 +681,76 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         return new Header.from_gmime(this.message);
     }
 
+    public bool has_encrypted_body() {
+        GMime.Object? root = this.message.get_mime_part();
+        return root is GMime.MultipartEncrypted || is_exchange_mangled_pgp(root);
+    }
+
+    /**
+     * Detects PGP/MIME rewritten by Exchange into multipart/mixed:
+     * an empty text/plain part, the application/pgp-encrypted
+     * version part and the application/octet-stream payload.
+     */
+    private static bool is_exchange_mangled_pgp(GMime.Object? node) {
+        var mixed = node as GMime.Multipart;
+        return mixed != null &&
+            !(mixed is GMime.MultipartEncrypted) &&
+            mixed.get_content_type().is_type("multipart", "mixed") &&
+            mixed.get_count() == 3 &&
+            mixed.get_part(0).get_content_type().is_type("text", "plain") &&
+            mixed.get_part(1).get_content_type().is_type("application", "pgp-encrypted") &&
+            mixed.get_part(2).get_content_type().is_type("application", "octet-stream");
+    }
+
+    private static GMime.MultipartEncrypted repair_exchange_mangled_pgp(GMime.Multipart mixed) {
+        var repaired = new GMime.MultipartEncrypted();
+        repaired.set_content_type_parameter("protocol", "application/pgp-encrypted");
+        repaired.add(mixed.get_part(1));
+        repaired.add(mixed.get_part(2));
+        return repaired;
+    }
+
+    public void decrypt() {
+        this.decryption_allowed = true;
+        this.content_root = null;
+        get_content_root();
+    }
+
+    private GMime.Object? get_content_root() {
+        if (this.content_root != null) {
+            return this.content_root;
+        }
+
+        GMime.Object? node = this.message.get_mime_part();
+        try {
+            while (true) {
+                if (this.decryption_allowed && is_exchange_mangled_pgp(node)) {
+                    node = repair_exchange_mangled_pgp((GMime.Multipart) node);
+                }
+                var encrypted = node as GMime.MultipartEncrypted;
+                var signed = node as GMime.MultipartSigned;
+                if (encrypted != null && this.decryption_allowed) {
+                    GMime.DecryptResult result;
+                    node = encrypted.decrypt(NONE, null, out result);
+                    this.is_encrypted = true;
+                    if (result.signatures != null) {
+                        this.signatures = result.signatures;
+                    }
+                } else if (signed != null) {
+                    this.signatures = signed.verify(NONE);
+                    node = signed.get_part(0);
+                } else {
+                    break;
+                }
+            }
+        } catch (GLib.Error err) {
+            warning("Unable to decrypt or verify message: %s", err.message);
+        }
+
+        this.content_root = node;
+        return node;
+    }
+
     /**
      * Returns the body of the message.
      */
@@ -708,14 +799,14 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
      * Determines if the message has one or display HTML parts.
      */
     public bool has_html_body() {
-        return has_body_parts(message.get_mime_part(), "html");
+        return has_body_parts(get_content_root(), "html");
     }
 
     /**
      * Determines if the message has one or plain text display parts.
      */
     public bool has_plain_body() {
-        return has_body_parts(message.get_mime_part(), "plain");
+        return has_body_parts(get_content_root(), "plain");
     }
 
     /**
@@ -845,7 +936,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
     private string? internal_get_body(string text_subtype, bool to_html, InlinePartReplacer? replacer)
         throws Error {
         string? body = null;
-        if (!construct_body_from_mime_parts(message.get_mime_part(), Mime.MultipartSubtype.UNSPECIFIED,
+        if (!construct_body_from_mime_parts(get_content_root(), Mime.MultipartSubtype.UNSPECIFIED,
             text_subtype, to_html, replacer, ref body)) {
             throw new Error.NOT_FOUND("Could not find any \"text/%s\" parts", text_subtype);
         }
@@ -976,7 +1067,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         Mime.DispositionType disposition = Mime.DispositionType.UNSPECIFIED)
         throws Error {
         Gee.List<Part> attachments = new Gee.LinkedList<Part>();
-        get_attachments_recursively(attachments, message.get_mime_part(), disposition);
+        get_attachments_recursively(attachments, get_content_root(), disposition);
         return attachments;
     }
 
@@ -1102,7 +1193,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
     public Gee.List<Convey.RFC822.Message> get_sub_messages()
         throws Error {
         Gee.List<Convey.RFC822.Message> messages = new Gee.ArrayList<Convey.RFC822.Message>();
-        find_sub_messages(messages, message.get_mime_part());
+        find_sub_messages(messages, get_content_root());
         return messages;
     }
 

@@ -18,6 +18,9 @@ finish-args:
 
   # Folks contact and avatar support (via EDS)
   - --talk-name=org.gnome.evolution.dataserver.*
+
+  # OpenPGP passphrase prompts
+  - --talk-name=org.gnome.keyring.SystemPrompter
  
 cleanup:
   - /include
