@@ -58,7 +58,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     internal void update() {
         Convey.Email? last_email = conversation.get_latest_recv_email(
-            Convey.App.Conversation.Location.ANYWHERE
+            Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
         );
 
         if (last_email != null) {
