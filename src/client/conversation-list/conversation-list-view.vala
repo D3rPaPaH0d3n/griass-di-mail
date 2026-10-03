@@ -58,6 +58,12 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     public View(Application.Configuration config) {
         this.config = config;
 
+        var overlay = new Gtk.Overlay();
+        Gtk.Widget scrolled = this.child;
+        this.child = overlay;
+        overlay.child = scrolled;
+        overlay.add_overlay(this.old_list);
+
         this.notify["selection-mode-enabled"].connect(on_selection_mode_changed);
 
         this.list.selected_rows_changed.connect(on_selected_rows_changed);
@@ -136,6 +142,17 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      */
     private Model? model;
 
+    private Adw.TimedAnimation? list_fade = null;
+
+    private const uint SWITCH_FADE_OUT_MS = 150;
+
+    // Still image of the previous folder's list, faded out over the new one
+    private Gtk.Picture old_list = new Gtk.Picture() {
+        can_target = false,
+        visible = false
+    };
+    private Adw.TimedAnimation? old_list_fade = null;
+
     /**
      * Set the conversation monitors which the listview is displaying.
      *
@@ -143,16 +160,29 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      * ordered list, as used by the combined inbox view.
      */
     public void set_monitors(Gee.Collection<Convey.App.ConversationMonitor>? monitors) {
+        if (this.model != null && this.list.opacity > 0) {
+            fade_out_old_list();
+        }
         if (this.model != null) {
             this.model.conversations_loaded.disconnect(on_conversations_loaded);
             this.model.conversations_removed.disconnect(on_conversations_removed);
             this.model.conversation_updated.disconnect(on_conversation_updated);
+            this.model.conversation_leaving.disconnect(on_conversation_leaving);
+            this.model.ready.disconnect(on_model_ready);
         }
+        if (this.list_fade != null) {
+            this.list_fade.skip();
+            this.list_fade = null;
+        }
+
         if (monitors == null || monitors.is_empty) {
             this.model = null;
+            this.list.opacity = 1;
             this.list.bind_model(null, row_factory);
         } else {
             this.model = new Model(monitors);
+            this.list.opacity = 0;
+            this.model.ready.connect(on_model_ready);
             this.list.bind_model(this.model, row_factory);
             // bind_model doesn't re-run the header func for neighbours when
             // items change, so a deleted top row leaves the new top row with a
@@ -165,7 +195,30 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             this.model.conversations_loaded.connect(on_conversations_loaded);
             this.model.conversations_removed.connect(on_conversations_removed);
             this.model.conversation_updated.connect(on_conversation_updated);
+            this.model.conversation_leaving.connect(on_conversation_leaving);
         }
+    }
+
+    private void fade_out_old_list() {
+        var image = new Gtk.WidgetPaintable(this.scrolled_window).get_current_image();
+        this.old_list.paintable = image;
+        this.old_list.visible = true;
+        if (this.old_list_fade != null) {
+            this.old_list_fade.pause();
+        }
+        var target = new Adw.PropertyAnimationTarget(this.old_list, "opacity");
+        this.old_list_fade = new Adw.TimedAnimation(
+            this.old_list, 1, 0, SWITCH_FADE_OUT_MS, target
+        );
+        this.old_list_fade.done.connect(() => {
+            this.old_list.visible = false;
+            this.old_list.paintable = null;
+            this.old_list_fade = null;
+            if (this.model != null && this.model.is_ready) {
+                on_model_ready();
+            }
+        });
+        this.old_list_fade.play();
     }
 
     // Focus belongs on the open conversation, or the first one if none is
@@ -237,7 +290,57 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         var row = new Row(config, convo, this.selection_mode_enabled);
         row.toggle_flag.connect(on_toggle_flags);
         row.toggle_selection.connect(on_toggle_selection);
+        if (this.model != null && this.model.is_ready) {
+            row.animate_in();
+        } else {
+            row.show_now();
+        }
         return row;
+    }
+
+    private void on_model_ready() {
+        if (this.old_list_fade != null) {
+            return;
+        }
+        var target = new Adw.PropertyAnimationTarget(this.list, "opacity");
+        this.list_fade = new Adw.TimedAnimation(
+            this.list, this.list.opacity, 1, Row.ANIMATION_DURATION_MS, target
+        );
+        this.list_fade.play();
+    }
+
+    private void on_conversation_leaving(uint position) {
+        var row = this.list.get_row_at_index((int) position) as Row;
+        if (row == null) {
+            return;
+        }
+        bool was_selected = row.is_selected();
+        bool had_focus = row.has_focus;
+        row.animate_out();
+
+        // A re-sorted conversation has a new row elsewhere in the list
+        Row? moved = find_live_row(row.conversation);
+        if (moved != null) {
+            if (was_selected) {
+                this.list.select_row(moved);
+            }
+            if (had_focus) {
+                moved.grab_focus();
+            }
+        }
+    }
+
+    private Row? find_live_row(Convey.App.Conversation conversation) {
+        int i = 0;
+        Row? row = this.list.get_row_at_index(0) as Row;
+        while (row != null) {
+            if (!row.leaving && row.conversation == conversation) {
+                return row;
+            }
+            i++;
+            row = this.list.get_row_at_index(i) as Row;
+        }
+        return null;
     }
 
 
@@ -401,7 +504,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {
             Convey.App.Conversation conversation = row.conversation;
-            if (selection.contains(conversation)) {
+            if (!row.leaving && selection.contains(conversation)) {
                 this.list.select_row(row);
             }
             i++;

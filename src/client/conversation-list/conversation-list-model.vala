@@ -8,7 +8,16 @@
 
 // The whole goal of this class to wrap the ConversationMonitor with a view that presents a sorted list
 public class ConversationList.Model : Object, ListModel {
-    internal GLib.GenericArray<Convey.App.Conversation> items = new GLib.GenericArray<Convey.App.Conversation>();
+    private class Entry {
+        public Convey.App.Conversation conversation;
+        public bool leaving = false;
+
+        public Entry(Convey.App.Conversation conversation) {
+            this.conversation = conversation;
+        }
+    }
+
+    private GLib.GenericArray<Entry> entries = new GLib.GenericArray<Entry>();
 
     // More than one monitor when several inboxes are shown combined;
     // conversations from all of them are merged into a single date
@@ -19,8 +28,21 @@ public class ConversationList.Model : Object, ListModel {
 
     private int scanning = 0;
 
+    private const uint READY_TIMEOUT_MS = 2000;
+
+    /** Whether every monitor has finished its first scan. */
+    public bool is_ready { get; private set; default = false; }
+
+    private Gee.Set<Convey.App.ConversationMonitor> unscanned =
+        new Gee.HashSet<Convey.App.ConversationMonitor>();
+
     internal Model(Gee.Collection<Convey.App.ConversationMonitor> monitors) {
         this.monitors = monitors;
+        this.unscanned.add_all(monitors);
+        GLib.Timeout.add(READY_TIMEOUT_MS, () => {
+            set_ready();
+            return GLib.Source.REMOVE;
+        });
 
         foreach (var monitor in monitors) {
             monitor.conversations_added.connect(on_conversations_added);
@@ -56,9 +78,11 @@ public class ConversationList.Model : Object, ListModel {
     public signal void conversations_removed(bool start);
     public signal void conversations_loaded();
     public signal void conversation_updated(Convey.App.Conversation convo);
+    public signal void conversation_leaving(uint position);
+    public signal void ready();
 
-    private static int compare(Object a, Object b) {
-        return Util.Email.compare_conversation_descending(a as Convey.App.Conversation, b as Convey.App.Conversation);
+    private static int compare(Convey.App.Conversation a, Convey.App.Conversation b) {
+        return Util.Email.compare_conversation_descending(a, b);
     }
 
     // ------------------------
@@ -69,7 +93,18 @@ public class ConversationList.Model : Object, ListModel {
         this.scanning++;
     }
 
+    private void set_ready() {
+        if (!this.is_ready) {
+            this.is_ready = true;
+            ready();
+        }
+    }
+
     private void on_scan_completed(Convey.App.ConversationMonitor source) {
+        this.unscanned.remove(source);
+        if (this.unscanned.is_empty) {
+            set_ready();
+        }
         this.scanning = int.max(0, this.scanning - 1);
         GLib.Timeout.add(100, () => {
             if (this.scanning == 0) {
@@ -96,7 +131,10 @@ public class ConversationList.Model : Object, ListModel {
     // ------------------------
 
     public Object? get_item(uint position) {
-        return this.items.get(position);
+        if (position >= this.entries.length) {
+            return null;
+        }
+        return this.entries[position].conversation;
     }
 
     public Type get_item_type() {
@@ -104,74 +142,53 @@ public class ConversationList.Model : Object, ListModel {
     }
 
     public uint get_n_items() {
-        return this.items.length;
+        return this.entries.length;
     }
 
-    private bool insert_conversation(Convey.App.Conversation convo) {
+    private bool is_valid(Convey.App.Conversation convo) {
         // The conversation may be bogus, if so don't do anything
-        Convey.Email? last_email = convo.get_latest_recv_email(Convey.App.Conversation.Location.ANYWHERE);
-
-        if (last_email == null) {
+        if (convo.get_latest_recv_email(ANYWHERE) == null) {
             debug("Cannot add conversation: last email is null");
             return false;
         }
-
-        this.items.add(convo);
-
         return true;
     }
 
-    private GenericArray<uint> conversations_indexes(Gee.Collection<Convey.App.Conversation> conversations) {
-        GenericArray<uint> indexes = new GenericArray<uint>();
-        uint index;
-
-        foreach (Convey.App.Conversation convo in conversations) {
-            if (this.items.find(convo, out index)) {
-                indexes.add(index);
+    private int find_live(Convey.App.Conversation convo) {
+        for (int i = 0; i < this.entries.length; i++) {
+            if (!this.entries[i].leaving && this.entries[i].conversation == convo) {
+                return i;
             }
         }
-
-        return indexes;
+        return -1;
     }
 
-    private void update_added(GenericArray<uint> indexes) {
-        indexes.sort((a, b) => {
-            return (int) (a > b) - (int) (a < b);
-        });
-
-        while (indexes.length > 0) {
-            uint? last_index = null;
-            uint count = 0;
-            foreach (unowned uint index in indexes) {
-                if (last_index != null && index > last_index + 1) {
-                    break;
-                }
-                last_index = (int) index;
-                count++;
+    // Marks entries as leaving, then removes them once their rows have
+    // animated out
+    private void remove_later(Gee.Collection<Entry> leaving, bool notify) {
+        foreach (var entry in leaving) {
+            entry.leaving = true;
+            uint position;
+            if (this.entries.find(entry, out position)) {
+                conversation_leaving(position);
             }
-            this.items_changed(indexes[0], 0, count);
-            indexes.remove_range(0, count);
         }
-    }
-
-    private void update_removed(GenericArray<uint> indexes) {
-        indexes.sort((a, b) => {
-            return (int) (a < b) - (int) (a > b);
-        });
-
-        while (indexes.length > 0) {
-            uint? last_index = null;
-            uint count = 0;
-            foreach (unowned uint index in indexes) {
-                if (last_index != null && index < last_index - 1) {
-                    break;
-                }
-                last_index = index;
-                count++;
+        GLib.Timeout.add(Row.ANIMATION_DURATION_MS + 50, () => {
+            if (notify) {
+                conversations_removed(true);
             }
-            this.items_changed(last_index, count, 0);
-            indexes.remove_range(0, count);
-        }
+            foreach (var entry in leaving) {
+                uint position;
+                if (this.entries.find(entry, out position)) {
+                    this.entries.remove_index(position);
+                    this.items_changed(position, 1, 0);
+                }
+            }
+            if (notify) {
+                conversations_removed(false);
+            }
+            return GLib.Source.REMOVE;
+        });
     }
 
     private void on_conversations_added(Gee.Collection<Convey.App.Conversation> conversations) {
@@ -179,60 +196,96 @@ public class ConversationList.Model : Object, ListModel {
 
         conversations_added(true);
 
-        var added = 0;
+        var added = new Gee.ArrayList<Convey.App.Conversation>();
         foreach (Convey.App.Conversation convo in conversations) {
-            if (insert_conversation(convo)) {
-                added++;
+            if (is_valid(convo)) {
+                added.add(convo);
             }
         }
-        this.items.sort(compare);
+        added.sort(compare);
 
-        GenericArray<uint> indexes = conversations_indexes(conversations);
-        update_added(indexes);
+        uint i = 0;
+        int j = 0;
+        while (j < added.size) {
+            while (i < this.entries.length &&
+                   (this.entries[i].leaving ||
+                    compare(this.entries[i].conversation, added[j]) <= 0)) {
+                i++;
+            }
+            uint start = i;
+            do {
+                this.entries.insert((int) i, new Entry(added[j]));
+                i++;
+                j++;
+            } while (j < added.size &&
+                     (i == this.entries.length ||
+                      (!this.entries[i].leaving &&
+                       compare(added[j], this.entries[i].conversation) < 0)));
+            this.items_changed(start, 0, i - start);
+        }
 
         conversations_added(false);
 
-        debug("Added %d/%d conversations.", added, conversations.size);
+        debug("Added %d/%d conversations.", added.size, conversations.size);
     }
 
     private void on_conversations_removed(Gee.Collection<Convey.App.Conversation> conversations) {
-        GenericArray<uint> indexes = conversations_indexes(conversations);
-
         debug("Removing %d conversations.", conversations.size);
 
-        conversations_removed(true);
-
-        var removed = 0;
+        var leaving = new Gee.ArrayList<Entry>();
         foreach (Convey.App.Conversation convo in conversations) {
-            this.items.remove(convo);
-            removed++;
+            int position = find_live(convo);
+            if (position >= 0) {
+                leaving.add(this.entries[position]);
+            }
         }
-
-        update_removed(indexes);
-
-        conversations_removed(false);
-
-        debug("Removed %ld/%d conversations.", removed, conversations.size);
+        if (!leaving.is_empty) {
+            remove_later(leaving, true);
+        }
     }
 
     private void on_conversation_updated(Convey.App.ConversationMonitor sender, Convey.App.Conversation convo, Gee.Collection<Convey.Email> emails) {
         conversation_updated(convo);
 
-        uint initial_index;
-        if (!this.items.find(convo, out initial_index)) {
+        int position = find_live(convo);
+        if (position < 0) {
             return;
         }
 
-        this.items.sort(compare);
-
-        uint final_index;
-        if (!this.items.find(convo, out final_index) || initial_index == final_index) {
+        bool in_place = true;
+        for (int i = position - 1; i >= 0; i--) {
+            if (!this.entries[i].leaving) {
+                in_place = compare(this.entries[i].conversation, convo) <= 0;
+                break;
+            }
+        }
+        for (int i = position + 1; in_place && i < this.entries.length; i++) {
+            if (!this.entries[i].leaving) {
+                in_place = compare(convo, this.entries[i].conversation) <= 0;
+                break;
+            }
+        }
+        if (in_place) {
             return;
         }
 
-        uint count = initial_index > final_index ?
-            initial_index + 1 - final_index :
-            final_index + 1 - initial_index;
-        this.items_changed(uint.min(initial_index, final_index), count, count);
+        // Inserts the conversation at its new position and animates the
+        // old row out at the same time
+        Entry ghost = this.entries[position];
+        uint insert_at = this.entries.length;
+        for (uint i = 0; i < this.entries.length; i++) {
+            Entry entry = this.entries[i];
+            if (entry != ghost && !entry.leaving &&
+                compare(convo, entry.conversation) < 0) {
+                insert_at = i;
+                break;
+            }
+        }
+        this.entries.insert((int) insert_at, new Entry(convo));
+        this.items_changed(insert_at, 0, 1);
+
+        var leaving = new Gee.ArrayList<Entry>();
+        leaving.add(ghost);
+        remove_later(leaving, false);
     }
 }

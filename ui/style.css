@@ -50,20 +50,16 @@ conversation-list list {
   background-color: transparent;
 }
 
-@keyframes conversation-row-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 row.conversation-list {
   margin: 0.5px 8px;
   border-radius: 8px;
+  padding: 0;
+}
+
+row.conversation-list > revealer > box {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   padding-right: 0.5em;
-  /* Fade rows in as they appear (folder switch, new mail). GTK skips
-     this automatically when animations are disabled. */
-  animation: conversation-row-fade-in 0.25s;
 }
 
 /* Row divider (Gtk.Separator set as row header): inset from the edges
@@ -88,7 +84,7 @@ row.conversation-list.drag-n-drop {
 /* Scope to the row's own content box: context menu popovers are
  * widget children of the row, so a bare `label` rule would leak
  * into the menu items. */
-row.conversation-list > box label {
+row.conversation-list > revealer > box label {
   margin-bottom: 0.4em;
 }
 

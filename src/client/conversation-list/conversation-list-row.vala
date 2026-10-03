@@ -29,6 +29,17 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     [GtkChild] unowned Gtk.CheckButton selected_button;
 
+    private Gtk.Revealer revealer = new Gtk.Revealer() {
+        transition_type = SLIDE_DOWN,
+        transition_duration = ANIMATION_DURATION_MS
+    };
+
+    internal const uint ANIMATION_DURATION_MS = 250;
+
+    internal bool leaving { get; private set; default = false; }
+
+    private Adw.TimedAnimation? fade_animation = null;
+
     internal Convey.App.Conversation conversation;
     private Application.Configuration config;
     private DateTime? recv_time;
@@ -44,6 +55,10 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         this.config = config;
         this.conversation = conversation;
 
+        Gtk.Widget content = this.child;
+        this.child = this.revealer;
+        this.revealer.child = content;
+
         conversation.email_flags_changed.connect(update_flags);
 
         config.bind(Application.Configuration.DISPLAY_PREVIEW_KEY,
@@ -54,6 +69,52 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         }
 
         update();
+    }
+
+    /** Shows the row immediately, without animating. */
+    internal void show_now() {
+        this.revealer.transition_type = NONE;
+        this.revealer.reveal_child = true;
+        this.revealer.transition_type = SLIDE_DOWN;
+    }
+
+    /** Glides the row open once it is on screen. */
+    internal void animate_in() {
+        this.opacity = 0;
+        if (get_mapped()) {
+            reveal();
+            return;
+        }
+        ulong id = 0;
+        id = this.map.connect(() => {
+            disconnect(id);
+            if (!this.leaving) {
+                reveal();
+            }
+        });
+    }
+
+    private void reveal() {
+        fade(1);
+        this.revealer.reveal_child = true;
+    }
+
+    /** Fades the row out while gliding it closed. */
+    internal void animate_out() {
+        this.leaving = true;
+        fade(0);
+        this.revealer.reveal_child = false;
+    }
+
+    private void fade(double to) {
+        if (this.fade_animation != null) {
+            this.fade_animation.pause();
+        }
+        var target = new Adw.PropertyAnimationTarget(this, "opacity");
+        this.fade_animation = new Adw.TimedAnimation(
+            this, this.opacity, to, ANIMATION_DURATION_MS, target
+        );
+        this.fade_animation.play();
     }
 
     internal void update() {
