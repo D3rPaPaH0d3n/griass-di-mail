@@ -75,7 +75,11 @@ public class Convey.Nonblocking.Mutex : BaseObject {
      * @return A token which must be passed to {@link release} when
      * the critical section has completed executing.
      */
-    public async int claim_async(Cancellable? cancellable = null) throws Error {
+    // The cancellable is typed as Object so Vala doesn't attach it to
+    // this method's GTask, which would discard a claimed token if
+    // cancelled before the caller resumes
+    public async int claim_async(GLib.Object? cancellable = null) throws Error {
+        var wait_cancellable = cancellable as Cancellable;
         for (;;) {
             if (!locked) {
                 locked = true;
@@ -87,7 +91,7 @@ public class Convey.Nonblocking.Mutex : BaseObject {
             }
 
             try {
-                yield spinlock.wait_async(cancellable);
+                yield spinlock.wait_async(wait_cancellable);
             } catch (GLib.Error err) {
                 if (!locked) {
                     spinlock.blind_notify();
