@@ -622,6 +622,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
                 Gtk.ListBoxRow first_row = this.list.get_row_at_index(0);
                 if (first_row != null) {
                     this.list.select_row(first_row);
+                    grab_focus();
                 }
             }
         }
