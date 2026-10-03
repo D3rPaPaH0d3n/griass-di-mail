@@ -288,6 +288,7 @@ public class Application.MainWindow :
     [GtkChild] private unowned Adw.Spinner headerbar_spinner;
 
     private int headerbar_busy_count = 0;
+    private Adw.Toast? offline_toast = null;
     private Gee.LinkedList<Command> command_history = new Gee.LinkedList<Command>();
 
     [GtkChild] private unowned Adw.HeaderBar conversation_list_headerbar;
@@ -2262,18 +2263,51 @@ public class Application.MainWindow :
     }
 
     private void on_refresh_folder() {
+        bool any_offline = false;
         foreach (var folder in this.selected_folders) {
+            Convey.ClientService incoming = folder.account.incoming;
+            if (incoming.current_status == UNREACHABLE) {
+                any_offline = true;
+                continue;
+            }
+
+            var cancellable = new GLib.Cancellable();
+            ulong status_id = incoming.notify["current-status"].connect(() => {
+                if (incoming.current_status == UNREACHABLE) {
+                    cancellable.cancel();
+                }
+            });
+
             headerbar_push_busy();
-            folder.synchronise_remote.begin(null, (obj, res) => {
+            folder.synchronise_remote.begin(cancellable, (obj, res) => {
                 try {
                     folder.synchronise_remote.end(res);
+                } catch (GLib.IOError.CANCELLED err) {
+                    add_offline_toast();
                 } catch (GLib.Error err) {
                     debug("Error refreshing %s: %s",
                         folder.path.to_string(), err.message);
                 }
+                incoming.disconnect(status_id);
                 headerbar_pop_busy();
             });
         }
+        if (any_offline) {
+            add_offline_toast();
+        }
+    }
+
+    private void add_offline_toast() {
+        if (this.offline_toast != null) {
+            return;
+        }
+        this.offline_toast = new Adw.Toast(
+            // Translators: Toast shown when checking for new mail
+            // while the mail server cannot be reached.
+            _("Can’t check for new mail while offline")
+        );
+        this.offline_toast.dismissed.connect(() => this.offline_toast = null);
+        add_toast(this.offline_toast);
     }
 
     private void on_conversations_selected(Gee.Set<Convey.App.Conversation> selected) {
