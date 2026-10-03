@@ -301,6 +301,7 @@ public class Application.MainWindow :
     private int default_min_sidebar_width;
     private int default_max_sidebar_width;
     private double default_sidebar_width_fraction;
+    private bool sidebar_dragged = false;
 
     [GtkChild] private unowned Gtk.ScrolledWindow folder_list_scrolled;
 
@@ -1459,17 +1460,28 @@ public class Application.MainWindow :
         sidebar_drag.propagation_phase = CAPTURE;
         sidebar_drag.drag_begin.connect(on_sidebar_drag_begin);
         sidebar_drag.drag_update.connect(on_sidebar_drag_update);
+        sidebar_drag.drag_end.connect(() => {
+            if (this.sidebar_dragged) {
+                config.sidebar_width_fraction = this.outer_view.sidebar_width_fraction;
+            }
+        });
         this.outer_view.add_controller(sidebar_drag);
 
         this.default_min_sidebar_width = (int) this.outer_view.min_sidebar_width;
         this.default_max_sidebar_width = (int) this.outer_view.max_sidebar_width;
         this.default_sidebar_width_fraction = this.outer_view.sidebar_width_fraction;
+        if (config.sidebar_width_fraction > 0) {
+            this.outer_view.min_sidebar_width = 360;
+            this.outer_view.max_sidebar_width = int.MAX;
+            this.outer_view.sidebar_width_fraction = config.sidebar_width_fraction;
+        }
         var sidebar_reset = new Gtk.GestureClick();
         sidebar_reset.pressed.connect((n_press, x, y) => {
             if (n_press == 2) {
                 this.outer_view.min_sidebar_width = this.default_min_sidebar_width;
                 this.outer_view.max_sidebar_width = this.default_max_sidebar_width;
                 this.outer_view.sidebar_width_fraction = this.default_sidebar_width_fraction;
+                config.sidebar_width_fraction = 0;
             }
         });
         this.sidebar_resize_handle.add_controller(sidebar_reset);
@@ -2737,6 +2749,7 @@ public class Application.MainWindow :
 
     private void on_sidebar_drag_begin(Gtk.GestureDrag gesture,
                                        double x, double y) {
+        this.sidebar_dragged = false;
         Graphene.Rect bounds;
         if (!this.sidebar_resize_handle.compute_bounds(this.outer_view, out bounds) ||
             !bounds.contains_point(Graphene.Point() { x = (float) x, y = (float) y })) {
@@ -2760,6 +2773,7 @@ public class Application.MainWindow :
         this.outer_view.min_sidebar_width = 360;
         this.outer_view.max_sidebar_width = total;
         this.outer_view.sidebar_width_fraction = width / total;
+        this.sidebar_dragged = true;
     }
 
     [GtkCallback]

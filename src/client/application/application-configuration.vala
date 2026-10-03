@@ -24,6 +24,7 @@ public class Application.Configuration : Convey.BaseObject {
     public const string FORMATTING_TOOLBAR_VISIBLE = "formatting-toolbar-visible";
     public const string OPTIONAL_PLUGINS = "optional-plugins";
     public const string SEARCH_STRATEGY_KEY = "search-strategy";
+    public const string SIDEBAR_WIDTH_FRACTION_KEY = "sidebar-width-fraction";
     public const string SINGLE_KEY_SHORTCUTS = "single-key-shortcuts";
     public const string SPELL_CHECK_LANGUAGES = "spell-check-languages";
     public const string SPELL_CHECK_VISIBLE_LANGUAGES = "spell-check-visible-languages";
@@ -142,6 +143,11 @@ public class Application.Configuration : Convey.BaseObject {
     public double conversation_viewer_zoom {
         get { return settings.get_double(CONVERSATION_VIEWER_ZOOM_KEY); }
         set { settings.set_double(CONVERSATION_VIEWER_ZOOM_KEY, value); }
+    }
+
+    public double sidebar_width_fraction {
+        get { return settings.get_double(SIDEBAR_WIDTH_FRACTION_KEY); }
+        set { settings.set_double(SIDEBAR_WIDTH_FRACTION_KEY, value); }
     }
 
     /** The number of seconds to wait before sending an email. */

@@ -103,6 +103,12 @@
         <description>The zoom to apply on the conservation view.</description>
     </key>
 
+    <key name="sidebar-width-fraction" type="d">
+        <default>0</default>
+        <summary>Sidebar width fraction</summary>
+        <description>Fraction of the window width used by the sidebar, or 0 for the default width.</description>
+    </key>
+
     <key name="composer-window-size" type="ai">
         <default>[-1,-1]</default>
         <summary>Size of detached composer window</summary>
