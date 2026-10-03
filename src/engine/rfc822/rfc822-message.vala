@@ -35,6 +35,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
     private const string HEADER_IN_REPLY_TO = "In-Reply-To";
     private const string HEADER_REFERENCES = "References";
     private const string HEADER_MAILER = "X-Mailer";
+    private const string HEADER_AUTOCRYPT = "Autocrypt";
     private const string HEADER_BCC = "Bcc";
     private const string[] HEADER_AUTH_RESULTS = {
         "ARC-Authentication-Results",
@@ -327,6 +328,18 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                                     Convey.RFC822.get_charset());
         }
 
+        if (email.autocrypt && email.from != null && email.from.size > 0) {
+            string address = email.from.get(0).address;
+            string? keydata = yield Utils.export_pgp_key(address, cancellable);
+            if (keydata != null) {
+                this.message.set_header(
+                    HEADER_AUTOCRYPT,
+                    "addr=%s; keydata=%s".printf(address, keydata),
+                    Convey.RFC822.get_charset()
+                );
+            }
+        }
+
         // Build the message's body mime parts
 
         Gee.List<GMime.Object> body_parts = new Gee.LinkedList<GMime.Object>();
@@ -509,7 +522,8 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                 }
             }
             main_part = GMime.MultipartEncrypted.encrypt(
-                new GMime.GpgContext(), main_part, false, null, ALWAYS_TRUST, recipients
+                new GMime.GpgContext(), main_part, true, email.from.get(0).address,
+                ALWAYS_TRUST, recipients
             );
         }
         this.message.set_mime_part(main_part);
@@ -679,6 +693,35 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
      */
     public Header get_header() {
         return new Header.from_gmime(this.message);
+    }
+
+    /**
+     * Returns the sender's OpenPGP key from the Autocrypt header, if
+     * the header is for the From address.
+     */
+    public uint8[]? get_autocrypt_key() {
+        string? header = this.message.get_header(HEADER_AUTOCRYPT);
+        if (header == null || this.from == null || this.from.size == 0) {
+            return null;
+        }
+        string? addr = null;
+        string? keydata = null;
+        foreach (string attribute in header.split(";")) {
+            string[] pair = attribute.strip().split("=", 2);
+            if (pair.length != 2) {
+                continue;
+            }
+            if (pair[0] == "addr") {
+                addr = pair[1].strip();
+            } else if (pair[0] == "keydata") {
+                keydata = string.joinv("", pair[1].split_set(" \t\r\n"));
+            }
+        }
+        if (addr == null || keydata == null ||
+            addr.down() != this.from.get(0).address.down()) {
+            return null;
+        }
+        return GLib.Base64.decode(keydata);
     }
 
     public bool has_encrypted_body() {

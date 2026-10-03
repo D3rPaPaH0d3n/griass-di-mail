@@ -367,6 +367,26 @@ namespace Convey.RFC822.Utils {
         }
     }
 
+    public async string? export_pgp_key(string address,
+                                        GLib.Cancellable? cancellable) {
+        try {
+            var gpg = new GLib.Subprocess(
+                STDOUT_PIPE | STDERR_SILENCE,
+                "gpg", "--batch", "--export",
+                "--export-options", "export-minimal",
+                "--", "<%s>".printf(address)
+            );
+            GLib.Bytes? output;
+            yield gpg.communicate_async(null, cancellable, out output, null);
+            if (!gpg.get_successful() || output == null || output.get_size() == 0) {
+                return null;
+            }
+            return GLib.Base64.encode(output.get_data());
+        } catch (GLib.Error err) {
+            return null;
+        }
+    }
+
     public bool has_pgp_key(string address) {
         var recipients = new GLib.GenericArray<string>();
         recipients.add(address);

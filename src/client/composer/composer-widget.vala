@@ -1289,6 +1289,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         // User-Agent
         email.mailer = Environment.get_prgname() + "/" + Config.VERSION;
         email.encrypt = !for_draft && get_action(ACTION_ENCRYPT).get_state().get_boolean();
+        email.autocrypt = !for_draft && this.pgp_available;
 
         return email;
     }

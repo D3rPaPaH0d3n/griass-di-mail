@@ -373,6 +373,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
     private Components.InfoBar? remote_images_info_bar = null;
     private Components.InfoBar? truncated_info_bar = null;
+    private Components.InfoBar? autocrypt_info_bar = null;
     private string? body_html = null;
 
     private Gtk.Widget? body_placeholder = null;
@@ -955,6 +956,66 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         this.body_html = body_text;
         load_cancelled.cancelled.connect(() => { web_view.stop_loading(); });
         this.web_view.load_html(body_text ?? "");
+
+        yield update_autocrypt_info_bar(message, load_cancelled);
+    }
+
+    private async void update_autocrypt_info_bar(Convey.RFC822.Message message,
+                                                 GLib.Cancellable cancellable)
+        throws GLib.Error {
+        uint8[]? keydata = message.get_autocrypt_key();
+        if (keydata == null || this.autocrypt_info_bar != null) {
+            return;
+        }
+        string address = message.from.get(0).address;
+        bool has_key = false;
+        yield Convey.Nonblocking.Concurrent.global.schedule_async(
+            () => { has_key = Convey.RFC822.Utils.has_pgp_key(address); },
+            cancellable
+        );
+        if (has_key) {
+            return;
+        }
+
+        this.autocrypt_info_bar = new Components.InfoBar(
+            // Translators: Info bar status message. Substitution is
+            // the sender's email address.
+            _("%s included an OpenPGP key").printf(address),
+            // Translators: Info bar description
+            _("Import it to send encrypted email to this sender")
+        );
+        this.autocrypt_info_bar.show_close_button = true;
+        this.autocrypt_info_bar.add_button(
+            // Translators: Info bar button label
+            _("Import Key"), 1
+        );
+        this.autocrypt_info_bar.response.connect((response_id) => {
+            if (response_id == 1) {
+                this.import_autocrypt_key.begin(keydata);
+            }
+            this.info_bars.remove(this.autocrypt_info_bar);
+        });
+        this.info_bars.add(this.autocrypt_info_bar);
+    }
+
+    private async void import_autocrypt_key(uint8[] keydata) {
+        int count = 0;
+        string message;
+        try {
+            yield Convey.Nonblocking.Concurrent.global.schedule_async(
+                () => { count = Convey.RFC822.Utils.import_pgp_keys(keydata); },
+                null
+            );
+            message = (count > 0)
+                ? _("Imported OpenPGP key")
+                : _("No new OpenPGP key was imported");
+        } catch (GLib.Error err) {
+            message = _("Unable to import key: %s").printf(err.message);
+        }
+        var window = get_root() as Application.MainWindow;
+        if (window != null) {
+            window.add_toast(new Adw.Toast(message));
+        }
     }
 
     /**

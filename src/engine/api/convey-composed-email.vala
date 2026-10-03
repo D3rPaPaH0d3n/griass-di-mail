@@ -69,6 +69,7 @@ public class Convey.ComposedEmail : EmailHeaderSet, BaseObject {
     public string? body_html { get; set; default = null; }
     public string? mailer { get; set; default = null; }
     public bool encrypt { get; set; default = false; }
+    public bool autocrypt { get; set; default = false; }
 
     public Convey.Email? reply_to_email { get; set; default = null; }
 
