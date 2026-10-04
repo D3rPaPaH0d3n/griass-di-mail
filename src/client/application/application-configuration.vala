@@ -223,7 +223,7 @@ public class Application.Configuration : Convey.BaseObject {
                 set_font(key, yield this.portal_settings.read_one(INTERFACE_SCHEMA, key));
             }
         } catch (GLib.Error err) {
-            warning("Failed to read fonts from settings portal: %s", err.message);
+            debug("Failed to read fonts from settings portal: %s", err.message);
         }
     }
 
