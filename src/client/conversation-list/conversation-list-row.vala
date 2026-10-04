@@ -28,6 +28,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
     [GtkChild] unowned Gtk.Image flagged_icon;
 
     [GtkChild] unowned Gtk.CheckButton selected_button;
+    [GtkChild] unowned Gtk.Revealer selected_revealer;
 
     private Gtk.Revealer revealer = new Gtk.Revealer() {
         transition_type = SLIDE_DOWN,
@@ -150,18 +151,22 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     }
 
-    internal void set_selection_enabled(bool enabled) {
+    internal void set_selection_enabled(bool enabled, bool animate = true) {
+        if (!animate) {
+            this.selected_revealer.transition_type = NONE;
+        }
         if (enabled) {
             set_button_active(this.is_selected());
             this.state_flags_changed.connect(update_button);
             this.selected_button.toggled.connect(update_state_flags);
-            this.selected_button.show();
+            this.selected_revealer.reveal_child = true;
         } else {
             this.state_flags_changed.disconnect(update_button);
             this.selected_button.toggled.disconnect(update_state_flags);
             set_button_active(false);
-            this.selected_button.hide();
+            this.selected_revealer.reveal_child = false;
         }
+        this.selected_revealer.transition_type = SLIDE_RIGHT;
     }
 
     internal void refresh_time() {

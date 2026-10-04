@@ -8,11 +8,16 @@
       <object class="GtkBox" id="container">
         <property name="has-tooltip">True</property>
         <child>
-          <object class="GtkCheckButton" id="selected_button">
-            <property name="visible">False</property>
-            <property name="receives-default">True</property>
-            <property name="vexpand">True</property>
-            <property name="can-focus">False</property>
+          <object class="GtkRevealer" id="selected_revealer">
+            <property name="transition-type">slide-right</property>
+            <property name="transition-duration">150</property>
+            <child>
+              <object class="GtkCheckButton" id="selected_button">
+                <property name="receives-default">True</property>
+                <property name="vexpand">True</property>
+                <property name="can-focus">False</property>
+              </object>
+            </child>
           </object>
         </child>
         <child>

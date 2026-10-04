@@ -944,12 +944,12 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
     private void on_selected_rows_changed() {
         // When the focused row is removed, GTK moves focus (and with it
-        // the selection) to the row above. Ignore that transient
-        // selection so it isn't opened and marked read; restore_row()
-        // will activate the intended row shortly.
+        // the selection) to the row above, and leaving selection mode
+        // clears the selection. Ignore those transient selections so they
+        // aren't opened and marked read; the intended row is restored
+        // shortly.
         if (this.to_restore_row != null && !this.selection_mode_enabled) {
-            var row = this.list.get_selected_row();
-            if (row != null && row != this.to_restore_row) {
+            if (this.list.get_selected_row() != this.to_restore_row) {
                 return;
             }
         }
@@ -996,13 +996,21 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         int i = 0;
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {
-            row.set_selection_enabled(this.selection_mode_enabled);
+            Graphene.Rect bounds;
+            bool on_screen = row.compute_bounds(this.scrolled_window, out bounds) &&
+                bounds.get_y() + bounds.get_height() > 0 &&
+                bounds.get_y() < this.scrolled_window.get_height();
+            row.set_selection_enabled(this.selection_mode_enabled, on_screen);
             i++;
             row = this.list.get_row_at_index(i) as Row;
         }
 
         if (this.selection_mode_enabled) {
             this.to_restore_row = this.list.get_selected_row();
+        } else if (this.to_restore_row != null &&
+                   this.to_restore_row.get_parent() == this.list) {
+            this.list.select_row(this.to_restore_row);
+            this.to_restore_row = null;
         } else {
             restore_row();
         }
