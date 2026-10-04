@@ -689,11 +689,8 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
         add_controller(scroll_controller);
 
         // Watch desktop font settings
-        Settings system_settings = config.gnome_interface;
-        system_settings.bind("document-font-name", this,
-                             "document-font", SettingsBindFlags.DEFAULT);
-        system_settings.bind("monospace-font-name", this,
-                             "monospace-font", SettingsBindFlags.DEFAULT);
+        config.bind_property("document-font", this, "document-font", GLib.BindingFlags.SYNC_CREATE);
+        config.bind_property("monospace-font", this, "monospace-font", GLib.BindingFlags.SYNC_CREATE);
     }
 
     private async void update_unset_html_colors() {

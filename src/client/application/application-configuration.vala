@@ -6,6 +6,15 @@
  * (version 2.1 or later). See the COPYING file in this distribution.
  */
 
+namespace portal {
+    [DBus(name = "org.freedesktop.portal.Settings")]
+    public interface Settings : GLib.Object {
+        public abstract async GLib.Variant read_one(string @namespace, string key)
+        throws DBusError, IOError;
+        public signal void setting_changed(string @namespace, string key, GLib.Variant value);
+    }
+}
+
 /**
  * Provides properties to access application GSettings values.
  */
@@ -41,6 +50,8 @@ public class Application.Configuration : Convey.BaseObject {
     public const string USE_CUSTOM_PROXY = "custom-proxy";
     public const string PROXY_URI = "proxy-uri";
 
+    private const string INTERFACE_SCHEMA = "org.gnome.desktop.interface";
+
 
     public enum DesktopEnvironment {
         UNKNOWN = 0,
@@ -62,6 +73,10 @@ public class Application.Configuration : Convey.BaseObject {
 
     public Settings settings { get; private set; }
     public Settings gnome_interface { get; private set; }
+    public string document_font { get; set; }
+    public string monospace_font { get; set; }
+
+    private portal.Settings? portal_settings = null;
 
     // Can be set as an arguments
     public bool enable_debug { get; set; default = false; }
@@ -187,11 +202,46 @@ public class Application.Configuration : Convey.BaseObject {
     public Configuration(string schema_id) {
         // Start GSettings.
         settings = new Settings(schema_id);
-        gnome_interface = new Settings("org.gnome.desktop.interface");
+        gnome_interface = new Settings(INTERFACE_SCHEMA);
+        gnome_interface.bind("document-font-name", this, "document-font", GLib.SettingsBindFlags.GET);
+        gnome_interface.bind("monospace-font-name", this, "monospace-font", GLib.SettingsBindFlags.GET);
+        this.read_portal_fonts.begin();
 
         Util.Migrate.old_app_config(settings);
 
         this.bind(SINGLE_KEY_SHORTCUTS, this, SINGLE_KEY_SHORTCUTS);
+    }
+
+    private async void read_portal_fonts() {
+        try {
+            GLib.DBusConnection bus = yield GLib.Bus.get(GLib.BusType.SESSION);
+            this.portal_settings = yield bus.get_proxy<portal.Settings>(
+                "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop"
+            );
+            this.portal_settings.setting_changed.connect(on_portal_setting_changed);
+            foreach (string key in new string[] { "document-font-name", "monospace-font-name" }) {
+                set_font(key, yield this.portal_settings.read_one(INTERFACE_SCHEMA, key));
+            }
+        } catch (GLib.Error err) {
+            warning("Failed to read fonts from settings portal: %s", err.message);
+        }
+    }
+
+    private void on_portal_setting_changed(string @namespace, string key, GLib.Variant value) {
+        if (@namespace == INTERFACE_SCHEMA) {
+            set_font(key, value);
+        }
+    }
+
+    private void set_font(string key, GLib.Variant value) {
+        if (!value.is_of_type(GLib.VariantType.STRING)) {
+            return;
+        }
+        if (key == "document-font-name") {
+            this.document_font = value.get_string();
+        } else if (key == "monospace-font-name") {
+            this.monospace_font = value.get_string();
+        }
     }
 
     public void bind(string key, Object object, string property,
