@@ -237,6 +237,15 @@ public class Application.MainWindow :
         }
     }
 
+    internal bool composer_open {
+        get {
+            var composer = this.conversation_viewer.current_composer;
+            return composer != null &&
+                composer.current_mode != NONE &&
+                composer.current_mode != CLOSED;
+        }
+    }
+
     /** Specifies if the Shift key is currently being held. */
     public bool is_shift_down { get; private set; default = false; }
 
@@ -705,7 +714,7 @@ public class Application.MainWindow :
             if (to_select != null &&
                 (to_select.used_as == TRASH || to_select.used_as == JUNK)) {
                 this.conversation_viewer.show_none_selected();
-            } else {
+            } else if (!this.composer_open) {
                 this.conversation_viewer.show_loading();
             }
             this.previous_selection_was_interactive = is_interactive;
@@ -818,7 +827,9 @@ public class Application.MainWindow :
 
         update_conversation_actions(NONE);
         update_trash_action();
-        this.conversation_viewer.show_loading();
+        if (!this.composer_open) {
+            this.conversation_viewer.show_loading();
+        }
         this.previous_selection_was_interactive = is_interactive;
 
         foreach (var folder in folders) {
@@ -2132,7 +2143,9 @@ public class Application.MainWindow :
             switch(to_select.size) {
             case 0:
                 update_conversation_actions(NONE);
-                this.conversation_viewer.show_none_selected();
+                if (current_conversation_count() > 0) {
+                    this.conversation_viewer.show_none_selected();
+                }
                 break;
 
             case 1:

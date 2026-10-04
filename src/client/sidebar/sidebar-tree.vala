@@ -562,7 +562,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
     // Selection and activation
     //
 
-    public virtual bool accept_cursor_changed() {
+    public virtual bool accept_cursor_changed(Sidebar.SelectableEntry entry) {
         return true;
     }
 
@@ -599,7 +599,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             var selectable = (Sidebar.SelectableEntry) node.entry;
             this.selected_node = node;
             if (!this.mask_entry_selected_signal) {
-                if (accept_cursor_changed()) {
+                if (accept_cursor_changed(selectable)) {
                     this.last_selected_position = pos;
                     entry_selected(selectable);
                     // A single click both selects and activates (activation

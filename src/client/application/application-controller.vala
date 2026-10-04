@@ -461,7 +461,8 @@ internal class Application.Controller :
             context = Convey.Collection.first(get_account_contexts());
             ambiguous = get_account_contexts().size > 1;
         }
-        if (context != null) {
+        if (context != null &&
+            (window.selected_folder != null || window.all_inboxes)) {
             var composer = new Composer.Widget(
                 this,
                 this.application.config,

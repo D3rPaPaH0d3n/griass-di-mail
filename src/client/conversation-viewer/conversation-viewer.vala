@@ -438,6 +438,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
                         conversation_list.conversations_selected(
                             this.selection_while_composing
                         );
+                        conversation_list.autoselect();
                     } else {
                         conversation_list.select_conversations(
                             this.selection_while_composing

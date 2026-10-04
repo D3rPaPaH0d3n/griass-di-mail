@@ -164,7 +164,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             fade_out_old_list();
         }
         if (this.model != null) {
-            this.model.conversations_loaded.disconnect(on_conversations_loaded);
+            this.model.conversations_loaded.disconnect(autoselect);
             this.model.conversations_removed.disconnect(on_conversations_removed);
             this.model.conversation_updated.disconnect(on_conversation_updated);
             this.model.conversation_leaving.disconnect(on_conversation_leaving);
@@ -192,7 +192,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
                 if (this.focus_pending)
                     grab_focus();
             });
-            this.model.conversations_loaded.connect(on_conversations_loaded);
+            this.model.conversations_loaded.connect(autoselect);
             this.model.conversations_removed.connect(on_conversations_removed);
             this.model.conversation_updated.connect(on_conversation_updated);
             this.model.conversation_leaving.connect(on_conversation_leaving);
@@ -708,7 +708,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         return row != null || !asc ? row : get_next_conversation(false);
     }
 
-    private void on_conversations_loaded() {
+    internal void autoselect() {
         // Select the first conversation if autoselect on, except for Junk and Trash folders
         bool destructive = false;
         if (this.model != null) {
@@ -719,10 +719,12 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
                 }
             }
         }
+        var main = get_root() as Application.MainWindow;
         if (!destructive) {
             if (this.config.autoselect &&
                 this.can_autoselect &&
                 !this.should_inhibit_autoactivate &&
+                (main == null || !main.composer_open) &&
                 this.list.get_selected_rows().length() == 0) {
 
                 Gtk.ListBoxRow first_row = this.list.get_row_at_index(0);

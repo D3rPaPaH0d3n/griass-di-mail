@@ -344,13 +344,15 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             account_branch.get_entry_for_path(folder.path));
     }
 
-    public override bool accept_cursor_changed() {
-        bool can_switch = true;
+    public override bool accept_cursor_changed(Sidebar.SelectableEntry entry) {
         var parent = get_root() as Application.MainWindow;
-        if (parent != null) {
-            can_switch = parent.close_composer(false);
+        var folder_entry = entry as AbstractFolderEntry;
+        if (parent == null ||
+            (folder_entry != null && folder_entry.folder == parent.selected_folder) ||
+            (entry is AllInboxesEntry && parent.all_inboxes)) {
+            return true;
         }
-        return can_switch;
+        return parent.close_composer(false);
     }
 
     private void on_entry_selected(Sidebar.SelectableEntry selectable) {
