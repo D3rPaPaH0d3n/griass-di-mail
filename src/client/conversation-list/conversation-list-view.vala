@@ -317,6 +317,9 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         bool was_selected = row.is_selected();
         bool had_focus = row.has_focus;
         row.animate_out();
+        if (row.get_header() == null) {
+            this.list.get_row_at_index((int) position + 1)?.get_header()?.add_css_class("hidden-divider");
+        }
 
         // A re-sorted conversation has a new row elsewhere in the list
         Row? moved = find_live_row(row.conversation);
@@ -943,7 +946,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         while (row != null) {
             var header = row.get_header();
             if (header != null) {
-                if (row.is_selected() || previous_selected) {
+                if (((Row) row).leaving || row.is_selected() || previous_selected) {
                     header.add_css_class("hidden-divider");
                 } else {
                     header.remove_css_class("hidden-divider");

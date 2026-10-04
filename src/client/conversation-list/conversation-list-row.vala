@@ -102,6 +102,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
     /** Fades the row out while gliding it closed. */
     internal void animate_out() {
         this.leaving = true;
+        get_header()?.add_css_class("hidden-divider");
         fade(0);
         this.revealer.reveal_child = false;
     }
