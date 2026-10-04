@@ -85,6 +85,8 @@ public class Application.MainWindow :
 
     private const int MIN_CONVERSATION_COUNT = 50;
 
+    private const int ALL_INBOXES_WAIT = 5;
+
     public static void add_accelerators(Client owner) {
         for (int i = 1; i <= 9; i++) {
             owner.add_window_accelerators(
@@ -140,6 +142,10 @@ public class Application.MainWindow :
     // Set until the inbox remembered from last session has been
     // opened, or the user has picked a different one
     private bool restoring_last_inbox = true;
+
+    // Delays falling back to the first inbox while All Inboxes loads
+    private Convey.TimeoutManager all_inboxes_wait;
+    private bool all_inboxes_wait_over = false;
 
     /** Whether the combined view of every account's inbox is selected. */
     public bool all_inboxes { get; private set; default = false; }
@@ -493,6 +499,10 @@ public class Application.MainWindow :
             UPDATE_UI_INTERVAL, on_update_ui_timeout
         );
         this.update_ui_timeout.repetition = FOREVER;
+
+        this.all_inboxes_wait = new Convey.TimeoutManager.seconds(
+            ALL_INBOXES_WAIT, on_all_inboxes_wait_over
+        );
 
         // Add future and existing accounts to the main window
         this.controller.account_available.connect(
@@ -1175,8 +1185,33 @@ public class Application.MainWindow :
     internal bool select_startup_inbox(bool is_interactive) {
         return (
             restore_last_inbox(is_interactive) ||
-            select_first_inbox(is_interactive)
+            (!waiting_for_all_inboxes() && select_first_inbox(is_interactive))
         );
+    }
+
+    private bool waiting_for_all_inboxes() {
+        if (this.all_inboxes_wait_over ||
+            this.application.config.get_last_inbox() != Configuration.ALL_INBOXES) {
+            return false;
+        }
+        try {
+            if (this.application.engine.get_accounts().size <= 1) {
+                return false;
+            }
+        } catch (GLib.Error error) {
+            return false;
+        }
+        if (!this.all_inboxes_wait.is_running) {
+            this.all_inboxes_wait.start();
+        }
+        return true;
+    }
+
+    private void on_all_inboxes_wait_over() {
+        this.all_inboxes_wait_over = true;
+        if (this.restoring_last_inbox) {
+            select_startup_inbox(false);
+        }
     }
 
     // Selects the inbox remembered from last session, if it has loaded
@@ -1446,6 +1481,7 @@ public class Application.MainWindow :
             );
         }
         this.update_ui_timeout.reset();
+        this.all_inboxes_wait.reset();
 
         this.sensitive = false;
         this.select_folder.begin(
