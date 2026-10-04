@@ -330,7 +330,32 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             if (had_focus) {
                 moved.grab_focus();
             }
+        } else if (was_selected && !this.selection_mode_enabled &&
+                   this.config.autoselect && this.can_autoselect) {
+            Row? next = find_live_neighbour((int) position);
+            if (next != null) {
+                this.list.select_row(next);
+                if (had_focus) {
+                    next.grab_focus();
+                }
+            }
         }
+    }
+
+    private Row? find_live_neighbour(int index) {
+        for (int i = index + 1; this.list.get_row_at_index(i) != null; i++) {
+            var row = (Row) this.list.get_row_at_index(i);
+            if (!row.leaving) {
+                return row;
+            }
+        }
+        for (int i = index - 1; i >= 0; i--) {
+            var row = (Row) this.list.get_row_at_index(i);
+            if (!row.leaving) {
+                return row;
+            }
+        }
+        return null;
     }
 
     private Row? find_live_row(Convey.App.Conversation conversation) {
