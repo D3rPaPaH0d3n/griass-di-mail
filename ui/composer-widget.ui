@@ -66,6 +66,12 @@
                                     <property name="item-type">ComposerWidgetFromAddressMap</property>
                                   </object>
                                 </property>
+                                <property name="list-factory">
+                                  <object class="GtkSignalListItemFactory">
+                                    <signal name="setup" handler="on_from_item_setup"/>
+                                    <signal name="bind" handler="on_from_item_bind"/>
+                                  </object>
+                                </property>
                                 <style>
                                   <class name="property"/>
                                   <class name="convey-composer-from"/>

@@ -2496,6 +2496,8 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         if (popover == null) {
             return;
         }
+        popover.has_arrow = false;
+        popover.set_offset(0, 6);
         popover.map.connect(() => {
             var parent = popover.get_parent();
             Graphene.Point point = { 0, 0 };
@@ -2511,6 +2513,38 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             popover.set_pointing_to(target);
             popover.width_request = target.width;
         });
+    }
+
+    [GtkCallback]
+    private void on_from_item_setup(Gtk.SignalListItemFactory factory, GLib.Object object) {
+        unowned var item = (Gtk.ListItem) object;
+
+        var label = new Gtk.Label(null);
+        label.hexpand = true;
+        label.xalign = 0.0f;
+        label.ellipsize = Pango.EllipsizeMode.END;
+
+        var tick = new Gtk.Image.from_icon_name("object-select-symbolic");
+        this.from_row.bind_property(
+            "selected-item", tick, "visible", GLib.BindingFlags.DEFAULT,
+            (binding, from, ref to) => {
+                to.set_boolean(from.get_object() == item.item);
+                return true;
+            }
+        );
+
+        var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+        box.append(label);
+        box.append(tick);
+        item.child = box;
+    }
+
+    [GtkCallback]
+    private void on_from_item_bind(Gtk.SignalListItemFactory factory, GLib.Object object) {
+        unowned var item = (Gtk.ListItem) object;
+        unowned var label = (Gtk.Label) item.child.get_first_child();
+        label.label = ((FromAddressMap) item.item).display;
+        label.get_next_sibling().visible = (item.item == this.from_row.selected_item);
     }
 
     private static Gtk.Popover? find_popover(Gtk.Widget parent) {

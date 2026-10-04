@@ -95,6 +95,11 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
             cancel_search();
             this.popover.clear_suggestions();
             this.popover.popdown();
+
+            string trimmed = this.text.chomp();
+            if (trimmed.has_suffix(",")) {
+                delete_text(trimmed.char_count() - 1, -1);
+            }
         });
         add_controller(focus_controller);
     }
@@ -117,6 +122,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
             return Gdk.EVENT_STOP;
         case Gdk.Key.Return:
         case Gdk.Key.KP_Enter:
+        case Gdk.Key.Tab:
             this.popover.activate_selected();
             return Gdk.EVENT_STOP;
         case Gdk.Key.Escape:
@@ -297,14 +303,13 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
             // pad it out
             formatted = " " + formatted;
         }
-        if (get_position() < this.text.char_count() &&
+        if (get_position() >= this.text.char_count() ||
             this.addresses_raw[this.cursor_at_address].strip() !=
             this.search_key.strip()) {
-            // Isn't at the end of the entry, and the address
-            // under the cursor does not simply consist of the
-            // lookup key (i.e. is effectively already empty
-            // otherwise), so add a comma to separate this address
-            // from the next one
+            // At the end of the entry, or the address under the
+            // cursor does not simply consist of the lookup key
+            // (i.e. is effectively already empty otherwise), so add
+            // a comma to separate this address from the next one
             formatted = formatted + ", ";
         }
         this.addresses_raw.insert(this.cursor_at_address, formatted);
@@ -362,6 +367,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
         this.has_arrow = false;
         this.position = Gtk.PositionType.BOTTOM;
         this.halign = Gtk.Align.START;
+        set_offset(0, 6);
         add_css_class("menu");
 
         var factory = new Gtk.SignalListItemFactory();
