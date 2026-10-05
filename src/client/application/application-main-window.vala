@@ -1598,6 +1598,9 @@ public class Application.MainWindow :
         this.conversation_list_view.mail_drag_active.connect(
             on_mail_drag_active
         );
+        this.conversation_list_view.scrolled_window.vadjustment.value_changed.connect(
+            update_header_divider
+        );
         this.conversation_list_view.vexpand = true;
 
         this.conversation_list_box.append(this.conversation_list_view);
@@ -1612,6 +1615,9 @@ public class Application.MainWindow :
 
         this.conversation_viewer.hexpand = true;
         this.conversation_viewer.vexpand = true;
+        this.conversation_viewer.conversation_scroller.vadjustment.value_changed.connect(
+            update_header_divider
+        );
         this.conversation_viewer_box.prepend(this.conversation_viewer);
         this.conversation_viewer_actions_revealer.bind_property(
             "reveal-child", this.conversation_viewer.headerbar, "compact", SYNC_CREATE
@@ -3363,6 +3369,16 @@ public class Application.MainWindow :
         }
         this.folder_list.set_drag_sources(sources);
         this.folder_list.set_drag_active(active);
+    }
+
+    private void update_header_divider() {
+        var list = this.conversation_list_view.scrolled_window.vadjustment;
+        var viewer = this.conversation_viewer.conversation_scroller.vadjustment;
+        if (list.value > list.lower || viewer.value > viewer.lower) {
+            this.outer_view.add_css_class("scrolled-under");
+        } else {
+            this.outer_view.remove_css_class("scrolled-under");
+        }
     }
 
     private void on_move_conversation(Convey.Folder destination) {

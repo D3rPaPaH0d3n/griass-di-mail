@@ -48,6 +48,28 @@ convey-conversation-list revealer {
   color: @window_fg_color;
 }
 
+#outer-split > .sidebar-pane,
+#outer-split navigation-split-view > .content-pane {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.conversation-list-page headerbar {
+  margin-right: 0;
+}
+
+#outer-split.scrolled-under .conversation-list-page headerbar {
+  box-shadow: inset -1px 0 var(--sidebar-border-color);
+}
+
+#outer-split navigation-split-view > .sidebar-pane {
+  background-color: var(--sidebar-bg-color);
+}
+
+#outer-split navigation-split-view > .sidebar-pane:backdrop {
+  background-color: var(--sidebar-backdrop-color);
+}
+
 /* Blend with the window background instead of Adwaita's darker
  * view background, which is too contrasty between the panes. */
 conversation-list list {

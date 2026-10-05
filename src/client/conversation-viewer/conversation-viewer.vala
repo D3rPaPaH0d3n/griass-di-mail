@@ -50,7 +50,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     [GtkChild] private unowned Adw.StatusPage empty_search_page;
     [GtkChild] private unowned Adw.Bin composer_page;
 
-    [GtkChild] private unowned Gtk.ScrolledWindow conversation_scroller;
+    [GtkChild] public unowned Gtk.ScrolledWindow conversation_scroller;
 
     [GtkChild] internal unowned Gtk.SearchBar conversation_find_bar;
 
