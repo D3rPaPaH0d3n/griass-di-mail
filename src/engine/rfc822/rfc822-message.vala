@@ -332,9 +332,18 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             string address = email.from.get(0).address;
             string? keydata = yield Utils.export_pgp_key(address, cancellable);
             if (keydata != null) {
+                // Splits keydata with spaces so it is folded rather
+                // than RFC 2047 encoded
+                var chunks = new GLib.StringBuilder();
+                for (int i = 0; i < keydata.length; i += 64) {
+                    if (i > 0) {
+                        chunks.append_c(' ');
+                    }
+                    chunks.append(keydata.substring(i, int.min(64, keydata.length - i)));
+                }
                 this.message.set_header(
                     HEADER_AUTOCRYPT,
-                    "addr=%s; keydata=%s".printf(address, keydata),
+                    "addr=%s; keydata=%s".printf(address, chunks.str),
                     Convey.RFC822.get_charset()
                 );
             }
