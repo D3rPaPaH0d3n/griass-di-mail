@@ -737,6 +737,8 @@ internal class Convey.Graph.Account : Convey.Account,
         Convey.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
+        // Encrypted mail is sent as inline PGP
+        composed.pgp_inline = true;
         string message_id =
             yield this.client.create_message_in_outbox(composed, cancellable);
         // Refresh Drafts and Outbox so the staged message moves cleanly in

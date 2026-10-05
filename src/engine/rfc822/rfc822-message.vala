@@ -349,6 +349,13 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             }
         }
 
+        if (email.encrypt && email.pgp_inline) {
+            this.message.set_mime_part(
+                yield build_inline_pgp(email, cancellable)
+            );
+            return;
+        }
+
         // Build the message's body mime parts
 
         Gee.List<GMime.Object> body_parts = new Gee.LinkedList<GMime.Object>();
@@ -522,20 +529,58 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
         GMime.Object? main_part = coalesce_parts(main_parts, "mixed");
         if (email.encrypt && main_part != null) {
-            var recipients = new GLib.GenericArray<string>();
-            foreach (var list in new RFC822.MailboxAddresses?[] { email.from, email.to, email.cc, email.bcc }) {
-                if (list != null) {
-                    foreach (RFC822.MailboxAddress mailbox in list) {
-                        recipients.add(mailbox.address);
-                    }
-                }
-            }
             main_part = GMime.MultipartEncrypted.encrypt(
                 new GMime.GpgContext(), main_part, true, email.from.get(0).address,
-                ALWAYS_TRUST, recipients
+                ALWAYS_TRUST, get_pgp_recipients(email)
             );
         }
         this.message.set_mime_part(main_part);
+    }
+
+    private static GLib.GenericArray<string> get_pgp_recipients(Convey.ComposedEmail email) {
+        var recipients = new GLib.GenericArray<string>();
+        foreach (var list in new RFC822.MailboxAddresses?[] { email.from, email.to, email.cc, email.bcc }) {
+            if (list != null) {
+                foreach (RFC822.MailboxAddress mailbox in list) {
+                    recipients.add(mailbox.address);
+                }
+            }
+        }
+        return recipients;
+    }
+
+    /**
+     * Builds an inline PGP body: a signed and encrypted plain text
+     * part, with each attachment encrypted separately as a .pgp file.
+     */
+    private async GMime.Object build_inline_pgp(Convey.ComposedEmail email,
+                                                GLib.Cancellable? cancellable)
+        throws GLib.Error {
+        string signer = email.from.get(0).address;
+        GLib.GenericArray<string> recipients = get_pgp_recipients(email);
+
+        var body = new GMime.TextPart.with_subtype("plain");
+        body.set_text(email.body_text ?? "");
+        body.openpgp_encrypt(true, signer, ALWAYS_TRUST, recipients);
+        body.set_content_encoding(GMime.ContentEncoding.7BIT);
+
+        Gee.List<GMime.Object> parts = new Gee.LinkedList<GMime.Object>();
+        parts.add(body);
+        foreach (File file in email.attached_files) {
+            GMime.Part? part = yield get_file_part(
+                file, Convey.Mime.DispositionType.ATTACHMENT, cancellable
+            );
+            if (part != null) {
+                part.openpgp_encrypt(true, signer, ALWAYS_TRUST, recipients);
+                part.set_content_type(
+                    new GMime.ContentType("application", "octet-stream")
+                );
+                part.set_filename(file.get_basename() + ".pgp");
+                part.set_content_encoding(GMime.ContentEncoding.7BIT);
+                parts.add(part);
+            }
+        }
+        return coalesce_parts(parts, "mixed");
     }
 
     private GMime.Object? coalesce_related(Gee.List<GMime.Object> parts,
@@ -735,7 +780,44 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
     public bool has_encrypted_body() {
         GMime.Object? root = this.message.get_mime_part();
-        return root is GMime.MultipartEncrypted || is_exchange_mangled_pgp(root);
+        return root is GMime.MultipartEncrypted ||
+            is_exchange_mangled_pgp(root) ||
+            has_inline_pgp(root);
+    }
+
+    /** Returns the plain text parts holding inline encrypted PGP. */
+    private static Gee.List<GMime.TextPart> find_inline_pgp(GMime.Object? node) {
+        var found = new Gee.ArrayList<GMime.TextPart>();
+        var multipart = node as GMime.Multipart;
+        if (multipart != null) {
+            for (int i = 0; i < multipart.get_count(); i++) {
+                found.add_all(find_inline_pgp(multipart.get_part(i)));
+            }
+        }
+        var text = node as GMime.TextPart;
+        if (text != null &&
+            text.get_content_type().is_type("text", "plain") &&
+            text.get_openpgp_data() == ENCRYPTED) {
+            found.add(text);
+        }
+        return found;
+    }
+
+    private static bool has_inline_pgp(GMime.Object? node) {
+        return !find_inline_pgp(node).is_empty;
+    }
+
+    private void decrypt_inline_pgp(GMime.Object node) {
+        foreach (GMime.TextPart text in find_inline_pgp(node)) {
+            try {
+                GMime.DecryptResult? result = text.openpgp_decrypt(NONE, null);
+                if (result != null && result.signatures != null) {
+                    this.signatures = result.signatures;
+                }
+            } catch (GLib.Error err) {
+                warning("Unable to decrypt inline PGP: %s", err.message);
+            }
+        }
     }
 
     /**
@@ -797,6 +879,10 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             }
         } catch (GLib.Error err) {
             warning("Unable to decrypt or verify message: %s", err.message);
+        }
+
+        if (this.decryption_allowed && node != null) {
+            decrypt_inline_pgp(node);
         }
 
         this.content_root = node;
