@@ -266,6 +266,9 @@
                         <property name="content">
                           <object class="AdwNavigationPage" id="conversation_list_page">
                             <property name="tag">conversation_list</property>
+                            <style>
+                              <class name="conversation-list-page"/>
+                            </style>
                             <property name="child">
                               <object class="AdwToolbarView">
                                 <child type="top">

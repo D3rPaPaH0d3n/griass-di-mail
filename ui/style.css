@@ -43,6 +43,11 @@ convey-conversation-list revealer {
 
 /* Conversation List */
 
+.conversation-list-page {
+  background-color: @window_bg_color;
+  color: @window_fg_color;
+}
+
 /* Blend with the window background instead of Adwaita's darker
  * view background, which is too contrasty between the panes. */
 conversation-list list {
