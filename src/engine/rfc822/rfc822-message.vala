@@ -1209,6 +1209,32 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         return attachments;
     }
 
+    public Gee.List<Convey.Attachment> save_decrypted_attachments(GLib.File dir)
+        throws Error {
+        var saved = new Gee.LinkedList<Convey.Attachment>();
+        int index = 0;
+        foreach (Part part in get_attachments()) {
+            index++;
+            string? name = part.get_clean_filename();
+            if (String.is_empty(name)) {
+                name = "attachment-%d".printf(index);
+            }
+            GLib.File file = dir.get_child("%03d-%s".printf(index, name));
+            try {
+                Memory.Buffer content = part.write_to_buffer(NONE);
+                file.replace_contents(
+                    content.get_bytes().get_data(), null, false, PRIVATE, null
+                );
+                saved.add(
+                    new Convey.Graph.Attachment.from_part(part, file, (int64) content.size)
+                );
+            } catch (GLib.Error err) {
+                warning("Error saving decrypted attachment: %s", err.message);
+            }
+        }
+        return saved;
+    }
+
     private MailboxAddresses? to_addresses(GMime.InternetAddressList? list)
         throws Error {
         MailboxAddresses? addresses = null;

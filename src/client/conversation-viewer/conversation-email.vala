@@ -680,9 +680,15 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
         Gee.Map<string,Convey.Memory.Buffer> cid_resources =
             new Gee.HashMap<string,Convey.Memory.Buffer>();
-        Gee.Collection<Convey.Attachment> attachments = message.is_encrypted
-            ? Gee.Collection.empty<Convey.Attachment>()
-            : email.attachments;
+        Gee.Collection<Convey.Attachment> attachments = email.attachments;
+        if (message.is_encrypted) {
+            yield Convey.Nonblocking.Concurrent.global.schedule_async(() => {
+                var dir = GLib.File.new_for_path(
+                    GLib.DirUtils.make_tmp("convey-decrypted-XXXXXX")
+                );
+                attachments = message.save_decrypted_attachments(dir);
+            }, this.load_cancellable);
+        }
         foreach (Convey.Attachment attachment in attachments) {
             // Assume all parts are attachments. As the primary and
             // secondary message bodies are loaded, any displayed
