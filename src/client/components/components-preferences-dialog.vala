@@ -11,6 +11,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     [GtkChild] private unowned Adw.SwitchRow autoselect_row;
     [GtkChild] private unowned Adw.SwitchRow display_preview_row;
+    [GtkChild] private unowned Adw.SwitchRow flat_panes_row;
     [GtkChild] private unowned Adw.SwitchRow remember_last_inbox_row;
     [GtkChild] private unowned Adw.ComboRow startup_inbox_row;
     [GtkChild] private unowned Adw.SwitchRow local_starred_folder_row;
@@ -122,6 +123,11 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
         config.bind(
             Application.Configuration.DISPLAY_PREVIEW_KEY,
             this.display_preview_row,
+            "active"
+        );
+        config.bind(
+            Application.Configuration.FLAT_PANES_KEY,
+            this.flat_panes_row,
             "active"
         );
         config.bind(

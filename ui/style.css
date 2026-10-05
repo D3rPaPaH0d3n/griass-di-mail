@@ -43,30 +43,30 @@ convey-conversation-list revealer {
 
 /* Conversation List */
 
-.conversation-list-page {
+#outer-split.flat-panes .conversation-list-page {
   background-color: @window_bg_color;
   color: @window_fg_color;
 }
 
-#outer-split > .sidebar-pane,
-#outer-split navigation-split-view > .content-pane {
+#outer-split.flat-panes > .sidebar-pane,
+#outer-split.flat-panes navigation-split-view > .content-pane {
   box-shadow: none;
   background-color: transparent;
 }
 
-.conversation-list-page headerbar {
+#outer-split.flat-panes .conversation-list-page headerbar {
   margin-right: 0;
 }
 
-#outer-split.scrolled-under .conversation-list-page headerbar {
+#outer-split.flat-panes.scrolled-under .conversation-list-page headerbar {
   box-shadow: inset -1px 0 var(--sidebar-border-color);
 }
 
-#outer-split navigation-split-view > .sidebar-pane {
+#outer-split.flat-panes navigation-split-view > .sidebar-pane {
   background-color: var(--sidebar-bg-color);
 }
 
-#outer-split navigation-split-view > .sidebar-pane:backdrop {
+#outer-split.flat-panes navigation-split-view > .sidebar-pane:backdrop {
   background-color: var(--sidebar-backdrop-color);
 }
 

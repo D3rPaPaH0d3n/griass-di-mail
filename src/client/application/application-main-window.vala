@@ -1444,6 +1444,8 @@ public class Application.MainWindow :
         config.bind(Configuration.WINDOW_WIDTH_KEY, this, "window-width");
         config.bind(Configuration.WINDOW_HEIGHT_KEY, this, "window-height");
         config.bind(Configuration.WINDOW_MAXIMIZE_KEY, this, "maximized");
+        config.settings.changed[Configuration.FLAT_PANES_KEY].connect(update_pane_style);
+        update_pane_style();
     }
 
     private void restore_saved_window_state() {
@@ -3369,6 +3371,14 @@ public class Application.MainWindow :
         }
         this.folder_list.set_drag_sources(sources);
         this.folder_list.set_drag_active(active);
+    }
+
+    private void update_pane_style() {
+        if (this.application.config.settings.get_boolean(Configuration.FLAT_PANES_KEY)) {
+            this.outer_view.add_css_class("flat-panes");
+        } else {
+            this.outer_view.remove_css_class("flat-panes");
+        }
     }
 
     private void update_header_divider() {

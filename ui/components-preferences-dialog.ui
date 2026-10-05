@@ -51,6 +51,14 @@
               </object>
             </child>
             <child>
+              <object class="AdwSwitchRow" id="flat_panes_row">
+                <!-- Translators: Preferences label -->
+                <property name="title" translatable="yes">_Blend conversation list with window</property>
+                <property name="subtitle" translatable="yes">Use the window background for improved text contrast</property>
+                <property name="use-underline">False</property>
+              </object>
+            </child>
+            <child>
               <object class="AdwSwitchRow" id="autoselect_row">
                 <!-- Translators: Preferences label -->
                 <property name="title" translatable="yes">_Automatically select next message</property>
