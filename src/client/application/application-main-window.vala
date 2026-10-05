@@ -2834,7 +2834,7 @@ public class Application.MainWindow :
             gesture.set_state(DENIED);
             return;
         }
-        this.sidebar_drag_start_width = bounds.origin.x + bounds.size.width;
+        this.sidebar_drag_start_width = bounds.origin.x;
     }
 
     private void on_sidebar_drag_update(Gtk.GestureDrag gesture,
@@ -2863,7 +2863,7 @@ public class Application.MainWindow :
             gesture.set_state(DENIED);
             return;
         }
-        this.folder_drag_start_width = bounds.origin.x + bounds.size.width;
+        this.folder_drag_start_width = bounds.origin.x;
     }
 
     private void on_folder_drag_update(Gtk.GestureDrag gesture,

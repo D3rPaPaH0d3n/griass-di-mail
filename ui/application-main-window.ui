@@ -188,14 +188,6 @@
                 <property name="sidebar">
                   <object class="AdwNavigationPage">
                     <property name="child">
-                      <object class="GtkOverlay">
-                        <child type="overlay">
-                          <object class="GtkBox" id="sidebar_resize_handle">
-                            <property name="halign">end</property>
-                            <property name="width-request">6</property>
-                          </object>
-                        </child>
-                        <property name="child">
                       <object class="AdwNavigationSplitView" id="inner_view">
                         <property name="min-sidebar-width">220</property>
                         <property name="max-sidebar-width">230</property>
@@ -207,14 +199,6 @@
                             <property name="tag">folder_list</property>
                             <property name="title" translatable="yes">Mail</property>
                             <property name="child">
-                              <object class="GtkOverlay">
-                                <child type="overlay">
-                                  <object class="GtkBox" id="folder_resize_handle">
-                                    <property name="halign">end</property>
-                                    <property name="width-request">6</property>
-                                  </object>
-                                </child>
-                                <property name="child">
                               <object class="AdwToolbarView" id="folder_box">
                                 <child type="top">
                                   <object class="AdwHeaderBar">
@@ -266,8 +250,6 @@
                                   </object>
                                 </property>
                               </object>
-                                </property>
-                              </object>
                             </property>
                           </object>
                         </property>
@@ -279,6 +261,14 @@
                               <class name="conversation-list-page"/>
                             </style>
                             <property name="child">
+                              <object class="GtkOverlay">
+                                <child type="overlay">
+                                  <object class="GtkBox" id="folder_resize_handle">
+                                    <property name="halign">start</property>
+                                    <property name="width-request">10</property>
+                                  </object>
+                                </child>
+                                <property name="child">
                               <object class="AdwToolbarView">
                                 <child type="top">
                                   <object class="AdwHeaderBar" id="conversation_list_headerbar">
@@ -338,10 +328,10 @@
                                   </object>
                                 </property>
                               </object>
+                                </property>
+                              </object>
                             </property>
                           </object>
-                        </property>
-                      </object>
                         </property>
                       </object>
                     </property>
@@ -353,6 +343,14 @@
                     <property name="tag">conversation_viewer</property>
                     <property name="title">Conversation</property>
                     <property name="child">
+                      <object class="GtkOverlay">
+                        <child type="overlay">
+                          <object class="GtkBox" id="sidebar_resize_handle">
+                            <property name="halign">start</property>
+                            <property name="width-request">10</property>
+                          </object>
+                        </child>
+                        <property name="child">
                       <object class="GtkBox" id="conversation_viewer_box">
                         <property name="orientation">vertical</property>
                         <child>
@@ -371,6 +369,8 @@
                             </child>
                           </object>
                         </child>
+                      </object>
+                        </property>
                       </object>
                     </property>
                   </object>
