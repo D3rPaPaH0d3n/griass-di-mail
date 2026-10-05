@@ -40,7 +40,7 @@
       </key>
 
     <key name="flat-panes" type="b">
-      <default>true</default>
+      <default>false</default>
       <summary>Flat conversation list</summary>
       <description>True to give the conversation list the window background instead of the sidebar background.</description>
     </key>
