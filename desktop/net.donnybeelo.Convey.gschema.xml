@@ -109,6 +109,12 @@
         <description>Fraction of the window width used by the sidebar, or 0 for the default width.</description>
     </key>
 
+    <key name="folder-list-width" type="i">
+        <default>0</default>
+        <summary>Folder list width</summary>
+        <description>Width of the folder list in pixels, or 0 for the default width.</description>
+    </key>
+
     <key name="composer-window-size" type="ai">
         <default>[-1,-1]</default>
         <summary>Size of detached composer window</summary>

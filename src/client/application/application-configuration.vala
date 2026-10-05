@@ -34,6 +34,7 @@ public class Application.Configuration : Convey.BaseObject {
     public const string OPTIONAL_PLUGINS = "optional-plugins";
     public const string SEARCH_STRATEGY_KEY = "search-strategy";
     public const string SIDEBAR_WIDTH_FRACTION_KEY = "sidebar-width-fraction";
+    public const string FOLDER_LIST_WIDTH_KEY = "folder-list-width";
     public const string SINGLE_KEY_SHORTCUTS = "single-key-shortcuts";
     public const string SPELL_CHECK_LANGUAGES = "spell-check-languages";
     public const string SPELL_CHECK_VISIBLE_LANGUAGES = "spell-check-visible-languages";
@@ -163,6 +164,11 @@ public class Application.Configuration : Convey.BaseObject {
     public double sidebar_width_fraction {
         get { return settings.get_double(SIDEBAR_WIDTH_FRACTION_KEY); }
         set { settings.set_double(SIDEBAR_WIDTH_FRACTION_KEY, value); }
+    }
+
+    public int folder_list_width {
+        get { return settings.get_int(FOLDER_LIST_WIDTH_KEY); }
+        set { settings.set_int(FOLDER_LIST_WIDTH_KEY, value); }
     }
 
     /** The number of seconds to wait before sending an email. */

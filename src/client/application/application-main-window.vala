@@ -317,6 +317,10 @@ public class Application.MainWindow :
     private int default_max_sidebar_width;
     private double default_sidebar_width_fraction;
     private bool sidebar_dragged = false;
+    [GtkChild] private unowned Gtk.Widget folder_resize_handle;
+    private double folder_drag_start_width;
+    private int default_folder_list_width;
+    private bool folder_list_dragged = false;
 
     [GtkChild] private unowned Gtk.ScrolledWindow folder_list_scrolled;
 
@@ -1532,6 +1536,31 @@ public class Application.MainWindow :
             }
         });
         this.sidebar_resize_handle.add_controller(sidebar_reset);
+
+        this.folder_resize_handle.set_cursor_from_name("col-resize");
+        var folder_drag = new Gtk.GestureDrag();
+        folder_drag.propagation_phase = CAPTURE;
+        folder_drag.drag_begin.connect(on_folder_drag_begin);
+        folder_drag.drag_update.connect(on_folder_drag_update);
+        folder_drag.drag_end.connect(() => {
+            if (this.folder_list_dragged) {
+                config.folder_list_width = (int) this.inner_view.min_sidebar_width;
+            }
+        });
+        this.inner_view.add_controller(folder_drag);
+
+        this.default_folder_list_width = (int) this.inner_view.min_sidebar_width;
+        if (config.folder_list_width > 0) {
+            set_folder_list_width(config.folder_list_width);
+        }
+        var folder_reset = new Gtk.GestureClick();
+        folder_reset.pressed.connect((n_press, x, y) => {
+            if (n_press == 2) {
+                set_folder_list_width(this.default_folder_list_width);
+                config.folder_list_width = 0;
+            }
+        });
+        this.folder_resize_handle.add_controller(folder_reset);
 
         // Search bar
         this.search_bar = new SearchBar(this.application.engine);
@@ -2825,8 +2854,40 @@ public class Application.MainWindow :
         this.sidebar_dragged = true;
     }
 
+    private void on_folder_drag_begin(Gtk.GestureDrag gesture,
+                                      double x, double y) {
+        this.folder_list_dragged = false;
+        Graphene.Rect bounds;
+        if (!this.folder_resize_handle.compute_bounds(this.inner_view, out bounds) ||
+            !bounds.contains_point(Graphene.Point() { x = (float) x, y = (float) y })) {
+            gesture.set_state(DENIED);
+            return;
+        }
+        this.folder_drag_start_width = bounds.origin.x + bounds.size.width;
+    }
+
+    private void on_folder_drag_update(Gtk.GestureDrag gesture,
+                                       double dx, double dy) {
+        if (gesture.get_sequence_state(gesture.get_current_sequence()) !=
+            Gtk.EventSequenceState.CLAIMED) {
+            if (dx.abs() < 3) {
+                return;
+            }
+            gesture.set_state(CLAIMED);
+        }
+        set_folder_list_width((int) (this.folder_drag_start_width + dx));
+        this.folder_list_dragged = true;
+    }
+
+    private void set_folder_list_width(int width) {
+        width = width.clamp(180, 400);
+        this.inner_view.min_sidebar_width = width;
+        this.inner_view.max_sidebar_width = width;
+    }
+
     [GtkCallback]
     private void on_inner_view_changed(GLib.Object object, ParamSpec pspec) {
+        this.folder_resize_handle.visible = !this.inner_view.collapsed;
         int selected = this.conversation_list_view.selected.size;
         update_conversation_actions(
             ConversationCount.for_size(selected)

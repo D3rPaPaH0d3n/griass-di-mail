@@ -197,9 +197,8 @@
                         </child>
                         <property name="child">
                       <object class="AdwNavigationSplitView" id="inner_view">
-                        <property name="sidebar-width-fraction">0.4</property>
                         <property name="min-sidebar-width">220</property>
-                        <property name="max-sidebar-width">280</property>
+                        <property name="max-sidebar-width">230</property>
                         <signal name="notify::collapsed" handler="on_inner_view_changed"/>
                         <signal name="notify::show-content" handler="on_inner_view_changed"/>
 
@@ -208,6 +207,14 @@
                             <property name="tag">folder_list</property>
                             <property name="title" translatable="yes">Mail</property>
                             <property name="child">
+                              <object class="GtkOverlay">
+                                <child type="overlay">
+                                  <object class="GtkBox" id="folder_resize_handle">
+                                    <property name="halign">end</property>
+                                    <property name="width-request">6</property>
+                                  </object>
+                                </child>
+                                <property name="child">
                               <object class="AdwToolbarView" id="folder_box">
                                 <child type="top">
                                   <object class="AdwHeaderBar">
@@ -257,6 +264,8 @@
                                         <class name="convey-folder"/>
                                       </style>
                                   </object>
+                                </property>
+                              </object>
                                 </property>
                               </object>
                             </property>
@@ -392,7 +401,6 @@
       <object class="AdwBreakpoint">
         <condition>max-width: 920sp</condition>
         <setter object="outer_view" property="collapsed">True</setter>
-        <setter object="inner_view" property="sidebar-width-fraction">0.33</setter>
       </object>
     </child>
     <!-- 2nd breakpoint: also split folder list from conversation list -->
@@ -400,7 +408,6 @@
       <object class="AdwBreakpoint">
         <condition>max-width: 540sp</condition>
         <setter object="outer_view" property="collapsed">True</setter>
-        <setter object="inner_view" property="sidebar-width-fraction">0.45</setter>
         <setter object="inner_view" property="collapsed">True</setter>
       </object>
     </child>
