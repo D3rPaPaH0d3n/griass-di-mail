@@ -398,9 +398,11 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                 handle_load_failure(err);
                 throw err;
             }
-            yield this.message_bodies_loaded_lock.wait_async(
-                this.load_cancellable
-            );
+            if (this.message_body_state != COMPLETED) {
+                yield this.message_bodies_loaded_lock.wait_async(
+                    this.load_cancellable
+                );
+            }
         }
     }
 
