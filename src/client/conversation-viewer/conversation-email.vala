@@ -674,9 +674,11 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     private async void update_body()
         throws GLib.Error {
         Convey.RFC822.Message message = this.email.get_message();
+        bool encrypted = message.has_encrypted_body();
         yield Convey.Nonblocking.Concurrent.global.schedule_async(
             () => { message.decrypt(); }, this.load_cancellable
         );
+        this.primary_message.set_encrypted(encrypted);
 
         // Load all mime parts and construct CID resources from them
 

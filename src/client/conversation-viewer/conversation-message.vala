@@ -361,6 +361,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.Box sender_header;
     [GtkChild] private unowned Gtk.FlowBox sender_address;
 
+    [GtkChild] private unowned Gtk.Image encryption_icon;
+
     [GtkChild] private unowned Gtk.Box reply_to_header;
     [GtkChild] private unowned Gtk.FlowBox reply_to_addresses;
 
@@ -919,6 +921,10 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     /**
      * Starts loading the message body in the HTML view.
      */
+    internal void set_encrypted(bool encrypted) {
+        this.encryption_icon.visible = encrypted;
+    }
+
     public async void load_message_body(Convey.RFC822.Message message,
                                         GLib.Cancellable load_cancelled)
         throws GLib.Error {

@@ -183,6 +183,18 @@
                     <property name="visible">False</property>
                     <property name="orientation">horizontal</property>
                     <child>
+                      <object class="GtkImage" id="encryption_icon">
+                        <property name="visible">False</property>
+                        <property name="valign">center</property>
+                        <property name="margin-end">6</property>
+                        <property name="icon-name">channel-secure-symbolic</property>
+                        <property name="tooltip_text" translatable="yes">This message was encrypted</property>
+                        <style>
+                          <class name="dim-label"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkLabel" id="to_label">
                         <property name="label" translatable="yes">To:</property>
                         <property name="yalign">0</property>
