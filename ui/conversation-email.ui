@@ -20,7 +20,7 @@
         <property name="sensitive">False</property>
         <property name="receives_default">True</property>
         <property name="tooltip_text" translatable="yes">Save all attachments</property>
-        <property name="valign">start</property>
+        <property name="valign">center</property>
         <property name="icon-name">mail-attachment-symbolic</property>
         <property name="action-name">eml.save-all-attachments</property>
         <style>
@@ -33,7 +33,7 @@
         <property name="sensitive">False</property>
         <property name="receives_default">True</property>
         <property name="tooltip_text" translatable="yes" comments="Note: The application will never show this button at the same time as unstar_button, one will always be hidden.">Mark this message as starred</property>
-        <property name="valign">start</property>
+        <property name="valign">center</property>
         <property name="icon-name">non-starred-symbolic</property>
         <property name="action-name">eml.mark-starred</property>
         <style>
@@ -46,7 +46,7 @@
         <property name="sensitive">False</property>
         <property name="receives_default">True</property>
         <property name="tooltip_text" translatable="yes" comments="Note: The application will never show this button at the same time as star_button, one will always be hidden.">Mark this message as not starred</property>
-        <property name="valign">start</property>
+        <property name="valign">center</property>
         <property name="icon-name">starred-symbolic</property>
         <property name="action-name">eml.mark-unstarred</property>
         <style>
@@ -58,7 +58,7 @@
       <object class="GtkMenuButton" id="email_menubutton">
         <property name="sensitive">False</property>
         <property name="receives_default">True</property>
-        <property name="valign">start</property>
+        <property name="valign">center</property>
         <property name="icon-name">view-more-symbolic</property>
         <style>
           <class name="flat"/>
