@@ -42,6 +42,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     }
 
     private Application.Configuration config;
+    private Application.DecryptedSubjects decrypted_subjects;
 
     private Gtk.GestureLongPress long_press_gesture;
     private Gdk.ModifierType last_modifier_type;
@@ -55,8 +56,10 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      */
     private Gtk.ListBoxRow? to_restore_row = null;
 
-    public View(Application.Configuration config) {
+    public View(Application.Configuration config,
+                Application.DecryptedSubjects decrypted_subjects) {
         this.config = config;
+        this.decrypted_subjects = decrypted_subjects;
 
         var overlay = new Gtk.Overlay();
         Gtk.Widget scrolled = this.child;
@@ -287,7 +290,9 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
     private Gtk.Widget row_factory(Object convo_obj) {
         var convo = (Convey.App.Conversation) convo_obj;
-        var row = new Row(config, convo, this.selection_mode_enabled);
+        var row = new Row(
+            config, this.decrypted_subjects, convo, this.selection_mode_enabled
+        );
         row.toggle_flag.connect(on_toggle_flags);
         row.toggle_selection.connect(on_toggle_selection);
         if (this.model != null && this.model.is_ready) {
@@ -820,7 +825,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     /*
      * Update conversation row
      */
-    private void on_conversation_updated(Convey.App.Conversation convo) {
+    internal void on_conversation_updated(Convey.App.Conversation convo) {
         int i = 0;
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {

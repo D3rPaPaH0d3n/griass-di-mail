@@ -43,6 +43,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     internal Convey.App.Conversation conversation;
     private Application.Configuration config;
+    private Application.DecryptedSubjects decrypted_subjects;
     private DateTime? recv_time;
 
     internal signal void toggle_flag(ConversationList.Row row,
@@ -51,9 +52,11 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                                           bool active);
 
     internal Row(Application.Configuration config,
+                 Application.DecryptedSubjects decrypted_subjects,
                  Convey.App.Conversation conversation,
                  bool selection_mode_enabled) {
         this.config = config;
+        this.decrypted_subjects = decrypted_subjects;
         this.conversation = conversation;
 
         Gtk.Widget content = this.child;
@@ -125,8 +128,12 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         );
 
         if (last_email != null) {
-            var text = Util.Email.strip_subject_prefixes(last_email);
-            this.subject.set_text(text);
+            string? decrypted = this.decrypted_subjects.get(last_email.message_id);
+            this.subject.set_text(
+                decrypted != null
+                ? new Convey.RFC822.Subject(decrypted).strip_prefixes()
+                : Util.Email.strip_subject_prefixes(last_email)
+            );
             this.preview.set_text(
                 Convey.String.reduce_whitespace(
                     last_email.get_preview_as_string()

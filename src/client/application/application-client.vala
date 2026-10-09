@@ -151,6 +151,11 @@ public class Application.Client : Adw.Application {
         get; private set; default = null;
     }
 
+    /** Real subjects of encrypted email the user has opened. */
+    public DecryptedSubjects? decrypted_subjects {
+        get; private set; default = null;
+    }
+
     /**
      * The last active main window.
      *
@@ -351,6 +356,9 @@ public class Application.Client : Adw.Application {
 
         this.engine = new Convey.Engine(get_resource_directory());
         this.config = new Configuration(SCHEMA_ID);
+        this.decrypted_subjects = new DecryptedSubjects(
+            get_home_data_directory().get_child("decrypted-subjects.json")
+        );
         this.autostart = new StartupManager(this);
 
         // Ensure all convey windows have an icon

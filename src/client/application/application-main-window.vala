@@ -1592,7 +1592,9 @@ public class Application.MainWindow :
         // Conversation list
         this.conversation_list_box.append(this.conversation_list_info_bars);
 
-        this.conversation_list_view = new ConversationList.View(this.application.config);
+        this.conversation_list_view = new ConversationList.View(
+            this.application.config, this.application.decrypted_subjects
+        );
         this.conversation_list_view.mark_conversations.connect(on_mark_conversations);
         this.conversation_list_view.conversations_selected.connect(on_conversations_selected);
         this.conversation_list_view.conversation_activated.connect(on_conversation_activated);
@@ -3508,6 +3510,17 @@ public class Application.MainWindow :
             view.conversation.base_folder.account.information,
             loaded
         );
+
+        string? subject = null;
+        try {
+            subject = loaded.get_message().protected_subject;
+        } catch (GLib.Error err) {
+            debug("Unable to read message subject: %s", err.message);
+        }
+        if (subject != null && loaded.message_id != null) {
+            this.application.decrypted_subjects.set(loaded.message_id, subject);
+            this.conversation_list_view.on_conversation_updated(view.conversation);
+        }
     }
 
     // The folder an action on a displayed conversation applies to

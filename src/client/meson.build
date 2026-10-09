@@ -22,6 +22,7 @@ client_vala_sources = files(
   'application/application-contact.vala',
   'application/application-controller.vala',
   'application/application-database-manager.vala',
+  'application/application-decrypted-subjects.vala',
   'application/application-email-plugin-context.vala',
   'application/application-email-store-factory.vala',
   'application/application-folder-context.vala',
