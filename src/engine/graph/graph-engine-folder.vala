@@ -235,6 +235,9 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         Convey.Email? email = this.email_by_id.get(graph.graph_id);
         bool needs_full_message =
             required_fields.requires_any(Convey.Email.Field.BODY | Convey.Email.Field.HEADER);
+        if (needs_full_message && email != null && !(graph.graph_id in this.rfc822_loaded)) {
+            load_saved_message(email, graph.graph_id);
+        }
 
         if (is_open_now && needs_full_message &&
             (email == null || !email.fields.fulfills(required_fields) ||
@@ -256,6 +259,9 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
                             cancellable
                         );
                     populate_full_message(email, full_rfc822, graph.graph_id);
+                    if (graph.graph_id in this.rfc822_loaded) {
+                        save_message_rfc822(graph.graph_id, full_rfc822);
+                    }
                 } catch (GLib.Error err) {
                     debug(
                         "Error fetching Graph RFC822 payload for %s: %s",
@@ -1094,6 +1100,11 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
             this.email_cache.remove(email);
             this.email_by_id.unset(graph.graph_id);
             this.message_by_id.unset(graph.graph_id);
+            this.rfc822_loaded.remove(graph.graph_id);
+            string? saved_path = compute_message_path(graph.graph_id);
+            if (!String.is_empty(saved_path)) {
+                GLib.FileUtils.unlink((string) saved_path);
+            }
             removed.add(id);
         }
         if (!removed.is_empty) {
@@ -1197,58 +1208,7 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         GLib.DateTime received = message.received_at ?? new GLib.DateTime.now_local();
         email.set_email_properties(new Convey.Graph.EmailProperties(received, message.size));
 
-        if (message.body != null && !(message.id in this.rfc822_loaded)) {
-            string body = message.body;
-            email.set_message_body(new Convey.RFC822.Text(new Convey.Memory.StringBuffer(body)));
-            Convey.RFC822.Header? header = build_header(message);
-            if (header != null) {
-                email.set_message_header(header);
-            }
-        }
-
         return email;
-    }
-
-    private Convey.RFC822.Header? build_header(Convey.Graph.Client.Message message) {
-        Convey.RFC822.Date sent = new Convey.RFC822.Date(
-            message.received_at ?? new GLib.DateTime.now_local()
-        );
-        string header = "";
-        if (message.from != null) {
-            header += "From: %s\r\n".printf(message.from.to_rfc822_string());
-        }
-        if (message.to != null) {
-            header += "To: %s\r\n".printf(message.to.to_rfc822_string());
-        }
-        if (message.cc != null) {
-            header += "Cc: %s\r\n".printf(message.cc.to_rfc822_string());
-        }
-        if (!String.is_empty(message.subject)) {
-            header += "Subject: %s\r\n".printf(new Convey.RFC822.Subject(message.subject).to_rfc822_string());
-        }
-        Convey.RFC822.MessageID? message_id = build_message_id(message);
-        if (message_id != null) {
-            header += "Message-Id: %s\r\n".printf(message_id.to_rfc822_string());
-        }
-        Convey.RFC822.MessageIDList? references = build_conversation_references(message);
-        if (references != null) {
-            header += "References: %s\r\n".printf(references.to_rfc822_string());
-        }
-        header += "MIME-Version: 1.0\r\n";
-        if (message.body_content_type.down() == "html") {
-            header += "Content-Type: text/html; charset=UTF-8\r\n";
-        } else {
-            header += "Content-Type: text/plain; charset=UTF-8\r\n";
-        }
-        header += "Content-Transfer-Encoding: 8bit\r\n";
-        header += "Date: %s\r\n\r\n".printf(sent.to_rfc822_string());
-
-        try {
-            return new Convey.RFC822.Header(new Convey.Memory.StringBuffer(header));
-        } catch (Convey.RFC822.Error err) {
-            debug("Could not build Graph headers: %s", err.message);
-        }
-        return null;
     }
 
     private int get_refresh_limit() {
@@ -1393,6 +1353,52 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
             "%s.json".printf(folder_hash)
         );
         return cache_file.get_path();
+    }
+
+    private string? compute_message_path(string graph_message_id) {
+        string? attachment_dir = compute_attachment_path(graph_message_id);
+        if (String.is_empty(attachment_dir)) {
+            return null;
+        }
+        return GLib.Path.build_filename((string) attachment_dir, "message.eml");
+    }
+
+    private void save_message_rfc822(string graph_message_id,
+                                     Convey.Memory.Buffer full_rfc822) {
+        string? path = compute_message_path(graph_message_id);
+        if (String.is_empty(path)) {
+            return;
+        }
+        try {
+            GLib.DirUtils.create_with_parents(GLib.Path.get_dirname((string) path), 0700);
+            GLib.File.new_for_path((string) path).replace_contents(
+                full_rfc822.get_bytes().get_data(),
+                null,
+                false,
+                GLib.FileCreateFlags.NONE,
+                null
+            );
+        } catch (GLib.Error err) {
+            warning("Error saving Graph message %s: %s", graph_message_id, err.message);
+        }
+    }
+
+    private bool load_saved_message(Convey.Email email, string graph_message_id) {
+        string? path = compute_message_path(graph_message_id);
+        if (String.is_empty(path) ||
+            !GLib.FileUtils.test((string) path, GLib.FileTest.EXISTS)) {
+            return false;
+        }
+        try {
+            populate_full_message(
+                email,
+                new Convey.Memory.FileBuffer(GLib.File.new_for_path((string) path), true),
+                graph_message_id
+            );
+        } catch (GLib.Error err) {
+            debug("Error loading saved Graph message %s: %s", graph_message_id, err.message);
+        }
+        return graph_message_id in this.rfc822_loaded;
     }
 
     private string? compute_attachment_path(string graph_message_id) {
