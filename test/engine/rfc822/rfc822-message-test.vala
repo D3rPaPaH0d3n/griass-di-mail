@@ -62,6 +62,8 @@ This is the second line.
         add_test("get_searchable_recipients", get_searchable_recipients);
         add_test("from_composed_email", from_composed_email);
         add_test("from_composed_email_inline_attachments", from_composed_email_inline_attachments);
+        add_test("find_protected_subject", find_protected_subject);
+        add_test("protected_subject_ignored_when_unencrypted", protected_subject_ignored_when_unencrypted);
         add_test("get_rfc822_buffer", get_rfc822_buffer);
         add_test("get_rfc822_buffer_dot_stuff", get_rfc822_buffer_dot_stuff);
         add_test("get_rfc822_buffer_no_bcc", get_rfc822_buffer_no_bcc);
@@ -439,6 +441,35 @@ This is the second line.
 
         Memory.Buffer out_buffer =  message.get_native_buffer();
         assert_true(out_buffer.size > (buffer.size+buffer2.size), "Expected sizeable message");
+    }
+
+    public void find_protected_subject() throws GLib.Error {
+        var plain = new GMime.TextPart.with_subtype("plain");
+        plain.set_header("Subject", "Real subject", null);
+        assert_null(Message.find_protected_subject(plain), "no parameter");
+
+        var mixed = new GMime.Multipart.with_subtype("mixed");
+        mixed.add(plain);
+        mixed.set_content_type_parameter("protected-headers", "v1");
+        mixed.set_header("Subject", "Real subject", null);
+        assert_equal(Message.find_protected_subject(mixed), "Real subject");
+    }
+
+    public void protected_subject_ignored_when_unencrypted() throws GLib.Error {
+        var body = new GMime.TextPart.with_subtype("plain");
+        body.set_text("hello");
+        body.set_content_type_parameter("protected-headers", "v1");
+        body.set_header("Subject", "Real subject", null);
+        var gmime = new GMime.Message(true);
+        gmime.set_subject("...", null);
+        gmime.set_mime_part(body);
+
+        Message message = new Message.from_gmime_message(gmime);
+        assert_data(message.subject, "...");
+        assert_null(message.protected_subject, "before decrypt");
+
+        message.decrypt();
+        assert_null(message.protected_subject, "unencrypted message");
     }
 
     private async Message message_from_composed_email(ComposedEmail composed)

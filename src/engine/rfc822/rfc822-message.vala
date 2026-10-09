@@ -132,6 +132,9 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
     public GMime.SignatureList? signatures { get; private set; default = null; }
 
+    /** The Subject from OpenPGP protected headers, available after {@link decrypt}. */
+    public string? protected_subject { get; private set; default = null; }
+
     private GMime.Object? content_root = null;
 
     private bool decryption_allowed = false;
@@ -529,12 +532,28 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
         GMime.Object? main_part = coalesce_parts(main_parts, "mixed");
         if (email.encrypt && main_part != null) {
+            if (email.subject != null) {
+                main_part.set_content_type_parameter("protected-headers", "v1");
+                main_part.set_header("Subject", email.subject.value,
+                                     Convey.RFC822.get_charset());
+                this._subject = new Subject("...");
+                this.message.set_subject(this._subject.value,
+                                         Convey.RFC822.get_charset());
+            }
             main_part = GMime.MultipartEncrypted.encrypt(
                 new GMime.GpgContext(), main_part, true, email.from.get(0).address,
                 ALWAYS_TRUST, get_pgp_recipients(email)
             );
         }
         this.message.set_mime_part(main_part);
+    }
+
+    internal static string? find_protected_subject(GMime.Object? node) {
+        if (node == null ||
+            node.get_content_type_parameter("protected-headers") != "v1") {
+            return null;
+        }
+        return node.get_header("Subject");
     }
 
     private static GLib.GenericArray<string> get_pgp_recipients(Convey.ComposedEmail email) {
@@ -856,10 +875,17 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         GMime.Object? node = this.message.get_mime_part();
+        bool was_decrypted = false;
         try {
             while (true) {
                 if (this.decryption_allowed && is_exchange_mangled_pgp(node)) {
                     node = repair_exchange_mangled_pgp((GMime.Multipart) node);
+                }
+                if (was_decrypted) {
+                    string? subject = find_protected_subject(node);
+                    if (subject != null) {
+                        this.protected_subject = subject;
+                    }
                 }
                 var encrypted = node as GMime.MultipartEncrypted;
                 var signed = node as GMime.MultipartSigned;
@@ -867,6 +893,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                     GMime.DecryptResult result;
                     node = encrypted.decrypt(NONE, null, out result);
                     this.is_encrypted = true;
+                    was_decrypted = true;
                     if (result.signatures != null) {
                         this.signatures = result.signatures;
                     }

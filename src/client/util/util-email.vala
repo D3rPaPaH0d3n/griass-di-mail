@@ -258,7 +258,7 @@ namespace Util.Email {
             quoted += HEADER_FORMAT.printf(_("From:"), from_line);
         }
         // Translators: Human-readable version of the RFC 822 Subject header
-        quoted += HEADER_FORMAT.printf(_("Subject:"), email.subject != null ? email.subject.to_string() : "");
+        quoted += HEADER_FORMAT.printf(_("Subject:"), Convey.RFC822.Utils.get_real_subject(email).to_string());
         // Translators: Human-readable version of the RFC 822 Date header
         quoted += HEADER_FORMAT.printf(_("Date:"), email.date != null ? email.date.to_string() : "");
         string to_line = Convey.RFC822.Utils.email_addresses_for_reply(email.to, format);

@@ -15,8 +15,20 @@ namespace Convey.RFC822.Utils {
     public const char QUOTE_MARKER = '\x7f';
 
 
+    public Subject get_real_subject(Email email) {
+        try {
+            string? protected_subject = email.get_message().protected_subject;
+            if (protected_subject != null) {
+                return new Subject(protected_subject);
+            }
+        } catch (GLib.Error err) {
+            debug("Unable to load message for its subject: %s", err.message);
+        }
+        return email.subject ?? new Subject("");
+    }
+
     public string create_subject_for_reply(Email email) {
-        return (email.subject ?? new Subject("")).create_reply().value;
+        return get_real_subject(email).create_reply().value;
     }
 
     public MailboxAddresses? get_list_post_address(Email email) {
@@ -41,7 +53,7 @@ namespace Convey.RFC822.Utils {
     }
 
     public string create_subject_for_forward(Email email) {
-        return (email.subject ?? new Subject("")).create_forward().value;
+        return get_real_subject(email).create_forward().value;
     }
 
     public MailboxAddresses create_to_addresses_for_reply(Email email,

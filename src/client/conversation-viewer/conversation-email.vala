@@ -571,7 +571,9 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         if (this.email.subject != null) {
             // Translators: Human-readable version of the RFC 822 Subject header
             builder.set_member_name(_("Subject:"));
-            builder.add_string_value(this.email.subject.to_string());
+            builder.add_string_value(
+                Convey.RFC822.Utils.get_real_subject(this.email).to_string()
+            );
         }
         builder.end_object();
         Json.Generator generator = new Json.Generator();
@@ -593,7 +595,9 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         }
 
         if (this.email.subject != null) {
-            string file_name = Convey.String.reduce_whitespace(this.email.subject.value);
+            string file_name = Convey.String.reduce_whitespace(
+                Convey.RFC822.Utils.get_real_subject(this.email).value
+            );
             file_name = file_name.replace("/", "_");
             if (file_name.char_count() > 128) {
                 file_name = Convey.String.safe_byte_substring(file_name, 128);
@@ -679,6 +683,9 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             () => { message.decrypt(); }, this.load_cancellable
         );
         this.primary_message.set_encrypted(encrypted);
+        if (message.protected_subject != null) {
+            this.primary_message.set_subject(message.protected_subject);
+        }
 
         // Load all mime parts and construct CID resources from them
 

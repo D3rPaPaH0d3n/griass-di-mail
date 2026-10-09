@@ -893,10 +893,6 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             this.compact_from.set_text(
                 yield format_originator_compact(cancellable)
             );
-            if (this.headers.subject != null &&
-                !Convey.String.is_empty(this.headers.subject.value)) {
-                this.compact_body.set_text(this.headers.subject.value);
-            }
 
             // Full headers
             Convey.EmailHeaderSet headers = this.headers;
@@ -923,6 +919,13 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
      */
     internal void set_encrypted(bool encrypted) {
         this.encryption_icon.visible = encrypted;
+    }
+
+    internal void set_subject(string subject) {
+        this.compact_body.set_text(subject);
+        this.subject.set_text(subject);
+        this.subject.set_visible(true);
+        this.subject_searchable = subject.casefold();
     }
 
     public async void load_message_body(Convey.RFC822.Message message,
