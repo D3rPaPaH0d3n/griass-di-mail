@@ -919,7 +919,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
      * Serialises the message using native (i.e. LF) line endings.
      */
     public Memory.Buffer get_native_buffer() throws Error {
-        return message_to_memory_buffer(false, NONE);
+        return message_to_memory_buffer(this.message, false, NONE);
     }
 
     /**
@@ -930,7 +930,21 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
      */
     public Memory.Buffer get_rfc822_buffer(RFC822FormatOptions options = NONE)
         throws Error {
-        return message_to_memory_buffer(true, options);
+        return message_to_memory_buffer(this.message, true, options);
+    }
+
+    /**
+     * Serialises a PGP/MIME encrypted body, including its own
+     * Content-Type header, using CRLF line endings.
+     *
+     * Returns null if the body is not multipart/encrypted.
+     */
+    public Memory.Buffer? get_pgp_mime_buffer() throws Error {
+        GMime.Object? root = this.message.get_mime_part();
+        if (!(root is GMime.MultipartEncrypted)) {
+            return null;
+        }
+        return message_to_memory_buffer(root, true, NONE);
     }
 
     /**
@@ -1385,7 +1399,8 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         }
     }
 
-    private Memory.Buffer message_to_memory_buffer(bool encode_lf,
+    private Memory.Buffer message_to_memory_buffer(GMime.Object source,
+                                                   bool encode_lf,
                                                    RFC822FormatOptions options)
         throws Error {
         ByteArray byte_array = new ByteArray();
@@ -1408,7 +1423,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             format.add_hidden_header("Bcc");
         }
 
-        if (message.write_to_stream(format, stream_filter) < 0) {
+        if (source.write_to_stream(format, stream_filter) < 0) {
             throw new Error.FAILED(
                 "Unable to write RFC822 message to filter stream"
             );

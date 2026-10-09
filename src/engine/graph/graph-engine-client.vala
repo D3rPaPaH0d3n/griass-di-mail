@@ -475,6 +475,10 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         // Graph preserves the MIME body, but the saved draft can lose the
         // explicit recipient envelope unless it is patched separately.
         yield patch_message_recipients(id, composed, cancellable);
+        Convey.Memory.Buffer? pgp_mime = rfc822.get_pgp_mime_buffer();
+        if (pgp_mime != null) {
+            yield replace_with_pgp_mime_attachment(id, pgp_mime, cancellable);
+        }
         return yield move_message(id, "outbox", cancellable);
     }
 
@@ -1217,6 +1221,72 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                 to_json(builder)
             );
         }
+    }
+
+    private async void replace_with_pgp_mime_attachment(
+        string message_id,
+        Convey.Memory.Buffer pgp_mime,
+        GLib.Cancellable? cancellable
+    ) throws GLib.Error {
+        string path = "/me/messages/%s".printf(
+            GLib.Uri.escape_string(message_id, null, false)
+        );
+        string attachments_path = path + "/attachments";
+
+        Json.Object existing = yield request_json(
+            "GET", attachments_path, "$select=id", cancellable
+        );
+        if (existing.has_member("value")) {
+            foreach (Json.Node node in existing.get_array_member("value").get_elements()) {
+                string? attachment_id = get_string_member(
+                    node.get_object(), "id"
+                );
+                if (!String.is_empty(attachment_id)) {
+                    yield request_no_content(
+                        "DELETE",
+                        "%s/%s".printf(
+                            attachments_path,
+                            GLib.Uri.escape_string(attachment_id, null, false)
+                        ),
+                        null,
+                        cancellable
+                    );
+                }
+            }
+        }
+
+        Json.Builder attachment = new Json.Builder();
+        attachment.begin_object();
+        attachment.set_member_name("@odata.type");
+        attachment.add_string_value("#microsoft.graph.fileAttachment");
+        attachment.set_member_name("name");
+        attachment.add_string_value("smime.p7m");
+        attachment.set_member_name("contentType");
+        attachment.add_string_value("multipart/signed");
+        attachment.set_member_name("contentBytes");
+        attachment.add_string_value(
+            GLib.Base64.encode(pgp_mime.get_bytes().get_data())
+        );
+        attachment.end_object();
+        yield request_json(
+            "POST", attachments_path, null, cancellable, to_json(attachment)
+        );
+
+        Json.Builder message_class = new Json.Builder();
+        message_class.begin_object();
+        message_class.set_member_name("singleValueExtendedProperties");
+        message_class.begin_array();
+        message_class.begin_object();
+        message_class.set_member_name("id");
+        message_class.add_string_value("String 0x001A");
+        message_class.set_member_name("value");
+        message_class.add_string_value("IPM.Note.SMIME.MultipartSigned");
+        message_class.end_object();
+        message_class.end_array();
+        message_class.end_object();
+        yield request_json(
+            "PATCH", path, null, cancellable, to_json(message_class)
+        );
     }
 
     private static bool append_mailbox_addresses_to_builder(

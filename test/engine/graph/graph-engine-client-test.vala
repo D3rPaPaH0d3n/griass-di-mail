@@ -20,6 +20,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
         add_test("delta_messages_baseline_returns_cursor", delta_messages_baseline_returns_cursor);
         add_test("delta_messages_gone_requires_resync", delta_messages_gone_requires_resync);
         add_test("create_message_in_outbox_returns_id", create_message_in_outbox_returns_id);
+        add_test("get_pgp_mime_buffer_is_null_for_plain_mail", get_pgp_mime_buffer_is_null_for_plain_mail);
         add_test("send_message_posts_to_send_endpoint", send_message_posts_to_send_endpoint);
         add_test("request_failure_throws_http_error", request_failure_throws_http_error);
         add_test("throttled_request_retries_after_wait", throttled_request_retries_after_wait);
@@ -377,7 +378,10 @@ class Convey.Graph.ClientTest : GraphTestCase {
     }
 
     public void create_message_in_outbox_returns_id() throws GLib.Error {
+        var create = new SoupServerCapture("/me/messages");
+        var patch = new SoupServerCapture("/me/messages/draft-42");
         this.server.add_handler("/me/messages", (srv, msg, p, query) => {
+            create.record(msg);
             string body = """{"id": "draft-42"}""";
             uint8[] bytes = (uint8[]) body.data;
             msg.set_response("application/json", Soup.MemoryUse.COPY, bytes);
@@ -390,7 +394,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
         this.server.add_handler("/me/messages/draft-42", (srv, msg, p, query) => {
-            // PATCH recipients
+            patch.record(msg);
             uint8[] bytes = (uint8[]) """{}""".data;
             msg.set_response("application/json", Soup.MemoryUse.COPY, bytes);
             msg.set_status(200, null);
@@ -424,6 +428,24 @@ class Convey.Graph.ClientTest : GraphTestCase {
         }
 
         assert_equal(id, "draft-42");
+        assert_equal(create.headers.get("content-type") ?? "", "text/plain");
+        uint8[] mime = GLib.Base64.decode(create.body);
+        mime += 0;
+        assert_true(
+            ((string) mime).contains("Subject: Test"),
+            "Plain mail should be uploaded as base64 MIME"
+        );
+        assert_equal(patch.method, "PATCH");
+    }
+
+    public void get_pgp_mime_buffer_is_null_for_plain_mail()
+        throws GLib.Error {
+        RFC822.Message rfc822 = new RFC822.Message.from_buffer(
+            new Memory.StringBuffer(
+                "From: user@example.com\nSubject: Hi\n\nHello\n"
+            )
+        );
+        assert_null(rfc822.get_pgp_mime_buffer());
     }
 
     public void send_message_posts_to_send_endpoint() throws GLib.Error {
