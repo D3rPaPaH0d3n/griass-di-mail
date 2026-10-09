@@ -139,6 +139,13 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
             bool encrypted = last_email.preview != null && last_email.preview.is_encrypted;
             this.encrypted_icon.visible = encrypted;
             if (encrypted) {
+                if (last_email.preview.is_inline_encrypted) {
+                    this.encrypted_icon.icon_name = "dialog-password-symbolic";
+                    this.encrypted_icon.tooltip_text = _("Encrypted with inline PGP");
+                } else {
+                    this.encrypted_icon.icon_name = "channel-secure-symbolic";
+                    this.encrypted_icon.tooltip_text = null;
+                }
                 this.preview.set_text(_("Encrypted message"));
                 this.preview.add_css_class("encrypted");
             } else {

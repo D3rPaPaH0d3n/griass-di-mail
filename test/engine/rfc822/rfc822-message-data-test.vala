@@ -67,6 +67,7 @@ class Convey.RFC822.MessageDataTest : TestCase {
             new Convey.Memory.StringBuffer("Version: 1\r\n")
         );
         assert_true(pgp_mime.is_encrypted);
+        assert_false(pgp_mime.is_inline_encrypted);
 
         PreviewText inline_pgp = new PreviewText.with_header(
             new Convey.Memory.StringBuffer(
@@ -76,10 +77,10 @@ class Convey.RFC822.MessageDataTest : TestCase {
                 "-----BEGIN PGP MESSAGE-----\r\n\r\nhQEMA1234\r\n"
             )
         );
-        assert_true(inline_pgp.is_encrypted);
+        assert_true(inline_pgp.is_inline_encrypted);
 
         assert_true(
-            new PreviewText.from_string("-----BEGIN PGP MESSAGE----- hQEMA").is_encrypted
+            new PreviewText.from_string("-----BEGIN PGP MESSAGE----- hQEMA").is_inline_encrypted
         );
         assert_false(
             new PreviewText.from_string("Encrypted message").is_encrypted

@@ -352,13 +352,6 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             }
         }
 
-        if (email.encrypt && email.pgp_inline) {
-            this.message.set_mime_part(
-                yield build_inline_pgp(email, cancellable)
-            );
-            return;
-        }
-
         // Build the message's body mime parts
 
         Gee.List<GMime.Object> body_parts = new Gee.LinkedList<GMime.Object>();
@@ -568,40 +561,6 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         return recipients;
     }
 
-    /**
-     * Builds an inline PGP body: a signed and encrypted plain text
-     * part, with each attachment encrypted separately as a .pgp file.
-     */
-    private async GMime.Object build_inline_pgp(Convey.ComposedEmail email,
-                                                GLib.Cancellable? cancellable)
-        throws GLib.Error {
-        string signer = email.from.get(0).address;
-        GLib.GenericArray<string> recipients = get_pgp_recipients(email);
-
-        var body = new GMime.TextPart.with_subtype("plain");
-        body.set_text(email.body_text ?? "");
-        body.openpgp_encrypt(true, signer, ALWAYS_TRUST, recipients);
-        body.set_content_encoding(GMime.ContentEncoding.7BIT);
-
-        Gee.List<GMime.Object> parts = new Gee.LinkedList<GMime.Object>();
-        parts.add(body);
-        foreach (File file in email.attached_files) {
-            GMime.Part? part = yield get_file_part(
-                file, Convey.Mime.DispositionType.ATTACHMENT, cancellable
-            );
-            if (part != null) {
-                part.openpgp_encrypt(true, signer, ALWAYS_TRUST, recipients);
-                part.set_content_type(
-                    new GMime.ContentType("application", "octet-stream")
-                );
-                part.set_filename(file.get_basename() + ".pgp");
-                part.set_content_encoding(GMime.ContentEncoding.7BIT);
-                parts.add(part);
-            }
-        }
-        return coalesce_parts(parts, "mixed");
-    }
-
     private GMime.Object? coalesce_related(Gee.List<GMime.Object> parts,
                                            string type) {
         GMime.Object? part = coalesce_parts(parts, "related");
@@ -727,6 +686,9 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
      * If there is no body, the empty string will be returned.
      */
     public string get_preview() {
+        if (has_inline_encrypted_body()) {
+            return PreviewText.ENCRYPTED_INLINE;
+        }
         if (has_encrypted_body()) {
             return PreviewText.ENCRYPTED;
         }
@@ -805,6 +767,10 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         return root is GMime.MultipartEncrypted ||
             is_exchange_mangled_pgp(root) ||
             has_inline_pgp(root);
+    }
+
+    public bool has_inline_encrypted_body() {
+        return has_inline_pgp(this.message.get_mime_part());
     }
 
     /** Returns the plain text parts holding inline encrypted PGP. */

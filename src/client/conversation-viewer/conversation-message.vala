@@ -566,7 +566,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         if (headers.subject != null && !Convey.String.is_empty(headers.subject.value)) {
             this.compact_body.set_text(headers.subject.value);
-        } else if (preview == Convey.RFC822.PreviewText.ENCRYPTED) {
+        } else if (preview == Convey.RFC822.PreviewText.ENCRYPTED ||
+                   preview == Convey.RFC822.PreviewText.ENCRYPTED_INLINE) {
             this.compact_body.set_text(_("Encrypted message"));
         } else if (preview != null) {
             string clean_preview = preview;
@@ -919,8 +920,13 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     /**
      * Starts loading the message body in the HTML view.
      */
-    internal void set_encrypted(bool encrypted) {
+    internal void set_encrypted(bool encrypted, bool inline_pgp) {
         this.encryption_icon.visible = encrypted;
+        if (inline_pgp) {
+            this.encryption_icon.icon_name = "dialog-password-symbolic";
+            this.encryption_icon.tooltip_text =
+                _("This message was encrypted with inline PGP");
+        }
     }
 
     internal void set_subject(string subject) {
