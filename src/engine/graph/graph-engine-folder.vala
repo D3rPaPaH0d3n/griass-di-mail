@@ -1186,7 +1186,11 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
 
         email.set_message_subject(new Convey.RFC822.Subject(message.subject));
         email.set_message_preview(
-            new Convey.RFC822.PreviewText.from_string(message.body_preview)
+            new Convey.RFC822.PreviewText.from_string(
+                message.is_encrypted
+                ? Convey.RFC822.PreviewText.ENCRYPTED
+                : message.body_preview
+            )
         );
 
         var flags = new Convey.EmailFlags();
@@ -1541,6 +1545,7 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         parsed.is_read = Client.get_bool_member(object, "isRead", true);
         parsed.is_flagged = Client.get_bool_member(object, "isFlagged", false);
         parsed.load_remote_images = Client.get_bool_member(object, "loadRemoteImages", false);
+        parsed.is_encrypted = Client.get_bool_member(object, "isEncrypted", false);
         parsed.received_at = Client.parse_datetime(Client.get_string_member(object, "receivedDateTime"));
         parsed.size = Client.get_int_member(object, "size", 0);
         parsed.from = parse_addresses_member(object, "from");
@@ -1574,6 +1579,8 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         builder.add_boolean_value(message.is_flagged);
         builder.set_member_name("loadRemoteImages");
         builder.add_boolean_value(message.load_remote_images);
+        builder.set_member_name("isEncrypted");
+        builder.add_boolean_value(message.is_encrypted);
         if (message.received_at != null) {
             set_string_member(
                 builder,

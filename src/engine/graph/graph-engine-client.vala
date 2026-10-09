@@ -32,6 +32,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         public string? body = null;
         public string body_content_type = "text";
         public bool has_attachments = false;
+        public bool is_encrypted = false;
         public bool is_read = true;
         public bool is_flagged = false;
         public bool load_remote_images = false;
@@ -225,6 +226,9 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     page.add(parsed);
                 }
             }
+            foreach (Message message in page) {
+                yield detect_encryption(message, cancellable);
+            }
             messages.add_all(page);
             if (on_page != null && !page.is_empty) {
                 on_page(page);
@@ -275,7 +279,40 @@ internal class Convey.Graph.Client : Convey.BaseObject {
             null,
             GLib.Priority.HIGH
         );
-        return parse_message(root, true);
+        Message message = parse_message(root, true);
+        yield detect_encryption(message, cancellable);
+        return message;
+    }
+
+    private async void detect_encryption(Message message,
+                                         GLib.Cancellable? cancellable) {
+        if (!message.has_attachments || !String.is_empty(message.body_preview)) {
+            return;
+        }
+        try {
+            Json.Object attachments = yield request_json(
+                "GET",
+                "/me/messages/%s/attachments".printf(
+                    GLib.Uri.escape_string(message.id, null, false)
+                ),
+                "$select=contentType",
+                cancellable
+            );
+            if (attachments.has_member("value")) {
+                foreach (Json.Node node in
+                         attachments.get_array_member("value").get_elements()) {
+                    string? type = get_string_member(node.get_object(), "contentType");
+                    if (type == "application/pgp-encrypted" ||
+                        type == "multipart/signed") {
+                        message.is_encrypted = true;
+                        return;
+                    }
+                }
+            }
+        } catch (GLib.Error err) {
+            debug("Graph: unable to check attachments of %s: %s",
+                  message.id, err.message);
+        }
     }
 
     public async Convey.Memory.Buffer fetch_message_rfc822(
