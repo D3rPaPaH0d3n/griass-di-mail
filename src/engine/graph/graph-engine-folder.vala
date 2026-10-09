@@ -1178,9 +1178,10 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         email.set_receivers(to, cc, bcc);
 
         Convey.RFC822.MessageID? message_id = build_message_id(message);
+        Convey.RFC822.MessageIDList? in_reply_to = parse_message_ids(message.in_reply_to);
         Convey.RFC822.MessageIDList? references = build_conversation_references(message);
-        if (message_id != null || references != null) {
-            email.set_full_references(message_id, null, references);
+        if (message_id != null || in_reply_to != null || references != null) {
+            email.set_full_references(message_id, in_reply_to, references);
         }
 
         email.set_message_subject(new Convey.RFC822.Subject(message.subject));
@@ -1308,8 +1309,9 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
     private Convey.RFC822.MessageIDList? build_conversation_references(
         Convey.Graph.Client.Message message
     ) {
+        Convey.RFC822.MessageIDList? references = parse_message_ids(message.references);
         if (String.is_empty(message.conversation_id)) {
-            return null;
+            return references;
         }
         string conversation_hash = GLib.Checksum.compute_for_string(
             GLib.ChecksumType.SHA1,
@@ -1318,7 +1320,21 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         Convey.RFC822.MessageID conversation_id = new Convey.RFC822.MessageID(
             "graph-conversation-%s@convey.local".printf(conversation_hash)
         );
-        return new Convey.RFC822.MessageIDList.single(conversation_id);
+        return references != null
+            ? references.concatenate_id(conversation_id)
+            : new Convey.RFC822.MessageIDList.single(conversation_id);
+    }
+
+    private Convey.RFC822.MessageIDList? parse_message_ids(string ids) {
+        if (String.is_empty(ids)) {
+            return null;
+        }
+        try {
+            return new Convey.RFC822.MessageIDList.from_rfc822_string(ids);
+        } catch (Convey.RFC822.Error err) {
+            debug("Error parsing Graph message ids: %s", err.message);
+            return null;
+        }
     }
 
     private Convey.RFC822.MessageID? build_message_id(Convey.Graph.Client.Message message) {
@@ -1517,6 +1533,8 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         parsed.conversation_id = Client.get_string_member(object, "conversationId") ?? "";
         parsed.subject = Client.get_string_member(object, "subject") ?? "";
         parsed.internet_message_id = Client.get_string_member(object, "internetMessageId") ?? "";
+        parsed.in_reply_to = Client.get_string_member(object, "inReplyTo") ?? "";
+        parsed.references = Client.get_string_member(object, "references") ?? "";
         parsed.body_preview = Client.get_string_member(object, "bodyPreview") ?? "";
         parsed.body = Client.get_string_member(object, "body");
         parsed.body_content_type = Client.get_string_member(object, "bodyContentType") ?? "text";
@@ -1539,6 +1557,8 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
         set_string_member(builder, "conversationId", message.conversation_id);
         set_string_member(builder, "subject", message.subject);
         set_string_member(builder, "internetMessageId", message.internet_message_id);
+        set_string_member(builder, "inReplyTo", message.in_reply_to);
+        set_string_member(builder, "references", message.references);
         set_string_member(builder, "bodyPreview", message.body_preview);
         if (message.body != null) {
             set_string_member(builder, "body", message.body);

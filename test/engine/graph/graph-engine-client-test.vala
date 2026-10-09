@@ -246,7 +246,11 @@ class Convey.Graph.ClientTest : GraphTestCase {
                 "body": {
                     "contentType": "html",
                     "content": "<p>hello</p>"
-                }
+                },
+                "singleValueExtendedProperties": [
+                    {"id": "String 0x1042", "value": "<parent@example.com>"},
+                    {"id": "String 0x1039", "value": "<root@example.com> <parent@example.com>"}
+                ]
             }"""
         );
 
@@ -270,6 +274,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
         assert_false(msg.is_flagged);
         assert_equal(msg.body_content_type, "html");
         assert_equal(msg.body, "<p>hello</p>");
+        assert_equal(msg.in_reply_to, "<parent@example.com>");
+        assert_equal(msg.references, "<root@example.com> <parent@example.com>");
     }
 
     public void delta_messages_parses_changed_and_removed() throws GLib.Error {

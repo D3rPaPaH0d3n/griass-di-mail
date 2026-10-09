@@ -12,6 +12,9 @@ internal class Convey.Graph.Client : Convey.BaseObject {
     private const int REQUEST_RETRIES = 1;
     private const uint MAX_THROTTLE_RETRIES = 5;
     private const uint MAX_RETRY_AFTER_SEC = 60;
+    private const string EXPAND_THREADING_HEADERS =
+        "$expand=singleValueExtendedProperties($filter=" +
+        "id%20eq%20'String%200x1042'%20or%20id%20eq%20'String%200x1039')";
 
 
     internal class Message : Convey.BaseObject {
@@ -23,6 +26,8 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         public Convey.RFC822.MailboxAddresses? bcc = null;
         public string subject = "";
         public string internet_message_id = "";
+        public string in_reply_to = "";
+        public string references = "";
         public string body_preview = "";
         public string? body = null;
         public string body_content_type = "text";
@@ -125,6 +130,11 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                 "$top=%d"
               + "&$orderby=receivedDateTime%%20desc"
               + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,sender,from,toRecipients,ccRecipients,bccRecipients,hasAttachments,replyTo"
+            ).printf(limit) + "&" + EXPAND_THREADING_HEADERS,
+            (
+                "$top=%d"
+              + "&$orderby=receivedDateTime%%20desc"
+              + "&$select=id,conversationId,subject,internetMessageId,receivedDateTime,from,bodyPreview,isRead,flag,sender,from,toRecipients,ccRecipients,bccRecipients,hasAttachments,replyTo"
             ).printf(limit),
             (
                 "$top=%d"
@@ -153,7 +163,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                 for (int q = 0; q < queries.length; q++) {
                     try {
                         root = yield request_json("GET", path, queries[q], cancellable);
-                        if (q > 0) {
+                        if (!queries[q].contains("$orderby")) {
                             // Fallback queries carry no $orderby, so results
                             // aren't guaranteed newest-first and the early
                             // stops below could truncate the listing.
@@ -260,7 +270,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         root = yield request_json(
             "GET",
             path,
-            null,
+            EXPAND_THREADING_HEADERS,
             cancellable,
             null,
             GLib.Priority.HIGH
@@ -989,6 +999,20 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         parsed.to = parse_addresses_member(object, "toRecipients");
         parsed.cc = parse_addresses_member(object, "ccRecipients");
         parsed.bcc = parse_addresses_member(object, "bccRecipients");
+
+        if (object.has_member("singleValueExtendedProperties")) {
+            foreach (Json.Node node in
+                     object.get_array_member("singleValueExtendedProperties").get_elements()) {
+                Json.Object property = node.get_object();
+                string id = get_string_member(property, "id") ?? "";
+                string value = get_string_member(property, "value") ?? "";
+                if (id == "String 0x1042") {
+                    parsed.in_reply_to = value;
+                } else if (id == "String 0x1039") {
+                    parsed.references = value;
+                }
+            }
+        }
 
         if (include_body &&
             object.has_member("body") &&
