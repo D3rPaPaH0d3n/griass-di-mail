@@ -191,9 +191,9 @@ private class Convey.App.ConversationSet : BaseObject, Logging.Source {
             // search terms in the search folder.
             if (conversation != null) {
                 // Conditionally remove email from its conversation
-                Convey.Email? email = conversation.get_email_by_id(id);
+                Convey.Email? email = conversation.get_copy_by_id(id);
                 if (email != null) {
-                    switch (conversation.get_folder_count(id)) {
+                    switch (conversation.path_map.get(id).size) {
                     case 0:
                         warning("Email %s conversation %s not in any folders",
                                 id.to_string(), conversation.to_string());

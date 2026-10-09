@@ -26,6 +26,7 @@ class Convey.App.ConversationSetTest : TestCase {
         add_test("remove_all_remove_path", remove_all_remove_path);
         add_test("remove_all_base_folder", remove_all_base_folder);
         add_test("remove_conversation_folded", remove_conversation_folded);
+        add_test("remove_all_folded_base_copy", remove_all_folded_base_copy);
     }
 
     public override void set_up() {
@@ -493,6 +494,50 @@ class Convey.App.ConversationSetTest : TestCase {
         assert(this.test.get_email_count() == 0);
         assert(this.test.get_by_email_identifier(e1.id) == null);
         assert(this.test.get_by_email_identifier(e2.id) == null);
+    }
+
+    public void remove_all_folded_base_copy() throws Error {
+        FolderPath other_path = this.folder_root.get_child("sent");
+        Email primary = setup_email(1);
+        Email copy = setup_email(2);
+        copy.set_full_references(primary.message_id, null, null);
+
+        add_email_to_path(primary, other_path);
+        add_email_to_path(copy, this.base_folder.path);
+
+        Conversation convo = this.test.get_by_email_identifier(primary.id);
+        assert(this.test.get_by_email_identifier(copy.id) == convo);
+
+        Gee.LinkedList<EmailIdentifier> ids =
+            new Gee.LinkedList<EmailIdentifier>();
+        ids.add(copy.id);
+
+        Gee.List<Conversation> removed = new Gee.LinkedList<Conversation>();
+        Gee.MultiMap<Conversation,Email> trimmed =
+            new Gee.HashMultiMap<Conversation, Convey.Email>();
+        this.test.remove_all_emails_by_identifier(
+            this.base_folder.path, ids, removed, trimmed
+        );
+
+        assert_collection(removed, "Removed size").size(1);
+        assert_equal(this.test.size, 0, "ConversationSet size");
+        assert(this.test.get_by_email_identifier(primary.id) == null);
+    }
+
+    private void add_email_to_path(Email to_add, FolderPath path) {
+        Gee.LinkedList<Email> emails = new Gee.LinkedList<Email>();
+        emails.add(to_add);
+
+        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
+            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        email_paths.set(to_add.id, path);
+
+        Gee.Collection<Conversation>? added = null;
+        Gee.MultiMap<Conversation,Email>? appended = null;
+        Gee.Collection<Conversation>? removed = null;
+        this.test.add_all_emails(
+            emails, email_paths, out added, out appended, out removed
+        );
     }
 
     private Email setup_email(int id, Email? references = null) {
