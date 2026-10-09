@@ -566,6 +566,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         if (headers.subject != null && !Convey.String.is_empty(headers.subject.value)) {
             this.compact_body.set_text(headers.subject.value);
+        } else if (preview == Convey.RFC822.PreviewText.ENCRYPTED) {
+            this.compact_body.set_text(_("Encrypted message"));
         } else if (preview != null) {
             string clean_preview = preview;
             if (preview.length > MAX_PREVIEW_BYTES) {

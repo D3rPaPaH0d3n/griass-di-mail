@@ -571,6 +571,13 @@ public class Convey.RFC822.Full :
 /** Represents text providing a preview of an email's body. */
 public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
 
+    /** The preview stored for an encrypted email. */
+    public const string ENCRYPTED = "\x01encrypted\x01";
+
+    public bool is_encrypted {
+        get { return this.buffer.to_string() == ENCRYPTED; }
+    }
+
     public PreviewText(Memory.Buffer _buffer) {
         base (_buffer);
     }
@@ -589,7 +596,10 @@ public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
             bool is_plain = content_type.is_type("text", "plain");
             bool is_html = content_type.is_type("text", "html");
 
-            if (is_plain || is_html) {
+            if (content_type.is_type("application", "pgp-encrypted") ||
+                preview.to_string().has_prefix("-----BEGIN PGP MESSAGE-----")) {
+                preview_text = PreviewText.ENCRYPTED;
+            } else if (is_plain || is_html) {
                 // Parse the partial body
                 GMime.DataWrapper body = new GMime.DataWrapper.with_stream(
                     new GMime.StreamMem.with_buffer(preview.get_uint8_array()),
@@ -615,7 +625,11 @@ public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
     }
 
     public PreviewText.from_string(string preview) {
-        base (new Convey.Memory.StringBuffer(preview));
+        base (new Convey.Memory.StringBuffer(
+            preview.has_prefix("-----BEGIN PGP MESSAGE-----")
+            ? PreviewText.ENCRYPTED
+            : preview
+        ));
     }
 
 }

@@ -19,6 +19,8 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         }
     }
 
+    [GtkChild] unowned Gtk.Box preview_box;
+    [GtkChild] unowned Gtk.Image encrypted_icon;
     [GtkChild] unowned Gtk.Label preview;
     [GtkChild] unowned Gtk.Label subject;
     [GtkChild] unowned Gtk.Label participants;
@@ -66,7 +68,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         conversation.email_flags_changed.connect(update_flags);
 
         config.bind(Application.Configuration.DISPLAY_PREVIEW_KEY,
-                    this.preview, "visible");
+                    this.preview_box, "visible");
 
         if (selection_mode_enabled) {
             set_selection_enabled(true);
@@ -134,11 +136,17 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                 ? new Convey.RFC822.Subject(decrypted).strip_prefixes()
                 : Util.Email.strip_subject_prefixes(last_email)
             );
-            this.preview.set_text(
-                Convey.String.reduce_whitespace(
-                    last_email.get_preview_as_string()
-                )
-            );
+            bool encrypted = last_email.preview != null && last_email.preview.is_encrypted;
+            this.encrypted_icon.visible = encrypted;
+            if (encrypted) {
+                this.preview.set_text(_("Encrypted message"));
+                this.preview.add_css_class("encrypted");
+            } else {
+                this.preview.set_text(
+                    Convey.String.reduce_whitespace(last_email.get_preview_as_string())
+                );
+                this.preview.remove_css_class("encrypted");
+            }
             if (last_email.properties != null) {
                 this.recv_time = last_email.properties.date_received.to_local();
                 refresh_time();

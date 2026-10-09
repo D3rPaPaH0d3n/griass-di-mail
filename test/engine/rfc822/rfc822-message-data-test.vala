@@ -16,6 +16,7 @@ class Convey.RFC822.MessageDataTest : TestCase {
         add_test("header_from_rfc822", header_from_rfc822);
         add_test("header_names_from_rfc822", header_names_from_rfc822);
         add_test("PreviewText.with_header", preview_text_with_header);
+        add_test("PreviewText.encrypted", preview_text_encrypted);
         add_test("MessageId.from_rfc822_string", message_id_from_rfc822_string);
         add_test("MessageId.to_rfc822_string", message_id_to_rfc822_string);
         add_test("MessageIdList.from_rfc822_string", message_id_list_from_rfc822_string);
@@ -56,6 +57,37 @@ class Convey.RFC822.MessageDataTest : TestCase {
             new Convey.Memory.StringBuffer(HTML_BODY2_ENCODED)
         );
         assert_equal(html_preview2.buffer.to_string(), HTML_BODY2_EXPECTED);
+    }
+
+    public void preview_text_encrypted() throws GLib.Error {
+        PreviewText pgp_mime = new PreviewText.with_header(
+            new Convey.Memory.StringBuffer(
+                "Content-Type: application/pgp-encrypted\r\n\r\n"
+            ),
+            new Convey.Memory.StringBuffer("Version: 1\r\n")
+        );
+        assert_true(pgp_mime.is_encrypted);
+
+        PreviewText inline_pgp = new PreviewText.with_header(
+            new Convey.Memory.StringBuffer(
+                "Content-Type: text/plain; charset=us-ascii\r\n\r\n"
+            ),
+            new Convey.Memory.StringBuffer(
+                "-----BEGIN PGP MESSAGE-----\r\n\r\nhQEMA1234\r\n"
+            )
+        );
+        assert_true(inline_pgp.is_encrypted);
+
+        assert_true(
+            new PreviewText.from_string("-----BEGIN PGP MESSAGE----- hQEMA").is_encrypted
+        );
+        assert_false(
+            new PreviewText.from_string("Encrypted message").is_encrypted
+        );
+        assert_equal(
+            new PreviewText.from_string("Hello there").buffer.to_string(),
+            "Hello there"
+        );
     }
 
     public void header_from_rfc822() throws GLib.Error {

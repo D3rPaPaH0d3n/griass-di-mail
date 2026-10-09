@@ -727,6 +727,9 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
      * If there is no body, the empty string will be returned.
      */
     public string get_preview() {
+        if (has_encrypted_body()) {
+            return PreviewText.ENCRYPTED;
+        }
         TextFormat format = TextFormat.PLAIN;
         string? preview = null;
         try {

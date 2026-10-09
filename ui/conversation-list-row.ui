@@ -50,17 +50,31 @@
               </object>
             </child>
             <child>
-              <object class="GtkLabel" id="preview">
-                <property name="halign">start</property>
-                <property name="hexpand">True</property>
-                <property name="single-line-mode">True</property>
-                <property name="wrap">False</property>
-                <property name="ellipsize">end</property>
-                <property name="xalign">0</property>
-                <style>
-                  <class name="preview"/>
-                  <class name="tertiary"/>
-                </style>
+              <object class="GtkBox" id="preview_box">
+                <child>
+                  <object class="GtkImage" id="encrypted_icon">
+                    <property name="visible">False</property>
+                    <property name="icon-name">channel-secure-symbolic</property>
+                    <style>
+                      <class name="preview-icon"/>
+                      <class name="tertiary"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="preview">
+                    <property name="halign">start</property>
+                    <property name="hexpand">True</property>
+                    <property name="single-line-mode">True</property>
+                    <property name="wrap">False</property>
+                    <property name="ellipsize">end</property>
+                    <property name="xalign">0</property>
+                    <style>
+                      <class name="preview"/>
+                      <class name="tertiary"/>
+                    </style>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
