@@ -209,7 +209,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         construct {
             this.child = this.wrapbox;
-            this.wrapbox.child_spacing = 4;
+            this.wrapbox.child_spacing = 0;
             this.wrapbox.line_spacing = 2;
 
             this.show_more = create_label();
@@ -244,10 +244,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
             if (!this.contacts.is_empty) {
                 var comma = new Gtk.Label(",");
-                // Cancel the wrap box spacing so it hugs the name it
-                // follows; it sits outside the child so it isn't part of
-                // the hover highlight.
-                comma.margin_start = -this.wrapbox.child_spacing;
+                child.margin_start = 4;
                 this.wrapbox.insert_child_after(comma, this.contacts.last());
                 this.separators.add(comma);
             }
