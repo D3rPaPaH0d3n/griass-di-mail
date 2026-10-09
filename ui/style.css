@@ -265,7 +265,6 @@ row.convey-folder-popover-list-row > label {
 .convey-message-summary {
   border-top: 4px solid transparent;
   padding: 12px;
-  padding-top: 8px;
   transition: border 4s;
 }
 
@@ -302,6 +301,11 @@ row.convey-folder-popover-list-row > label {
 .convey-header-value flowboxchild {
   border-radius: 6px;
   margin: 0 -2px;
+}
+
+/* Align sender names with the subject and recipient headings. */
+.convey-from-addresses flowboxchild {
+  margin: 0;
 }
 
 /* Theme-agnostic tint, so it reads on both light and dark. */

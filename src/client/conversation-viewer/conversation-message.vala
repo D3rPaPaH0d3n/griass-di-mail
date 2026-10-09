@@ -348,11 +348,13 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     [GtkChild] private unowned Adw.Avatar avatar;
 
     [GtkChild] private unowned Gtk.Box compact_header;
+    [GtkChild] private unowned Gtk.Box compact_from_header;
     [GtkChild] private unowned Gtk.Label compact_from;
     [GtkChild] private unowned Gtk.Label compact_date;
     [GtkChild] private unowned Gtk.Label compact_body;
 
     [GtkChild] private unowned Gtk.Box expanded_header;
+    [GtkChild] private unowned Gtk.Grid from_header;
     [GtkChild] private unowned Gtk.FlowBox from;
     [GtkChild] private unowned Gtk.Label subject;
     private string subject_searchable = "";
@@ -733,6 +735,44 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         this.web_view.compute_point(widget, { (float) x, (float) anchor_y }, out point);
         x1 = point.x;
         y1 = point.y;
+    }
+
+    internal void add_header_actions(Gtk.Widget actions) {
+        // Reserve the buttons' width without increasing the text row's height.
+        var space = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+        var width = new Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL);
+        width.add_widget(space);
+        width.add_widget(actions);
+
+        var overlay = new Gtk.Overlay();
+        overlay.child = space;
+        overlay.add_overlay(actions);
+        overlay.set_clip_overlay(actions, false);
+        overlay.get_child_position.connect(on_header_actions_position);
+        this.summary.append(overlay);
+    }
+
+    private bool on_header_actions_position(Gtk.Overlay overlay,
+                                            Gtk.Widget widget,
+                                            out Gdk.Rectangle allocation) {
+        int minimum, natural_width, natural_height;
+        widget.measure(Gtk.Orientation.HORIZONTAL, -1,
+                       out minimum, out natural_width, null, null);
+        widget.measure(Gtk.Orientation.VERTICAL, natural_width,
+                       out minimum, out natural_height, null, null);
+        Gtk.Widget row = this.expanded_header.visible
+            ? (Gtk.Widget) this.from_header : this.compact_from_header;
+        Graphene.Rect bounds;
+        allocation = Gdk.Rectangle() {
+            width = natural_width,
+            height = natural_height
+        };
+        if (row.compute_bounds(overlay, out bounds)) {
+            allocation.y = (int) Math.floor(
+                bounds.origin.y + (bounds.size.height - natural_height) / 2
+            );
+        }
+        return true;
     }
 
     public int web_view_get_allocated_height() {

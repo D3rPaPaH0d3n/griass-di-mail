@@ -295,7 +295,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             this.contacts,
             this.config
         );
-        this.primary_message.summary.append(this.actions);
+        this.primary_message.add_header_actions(this.actions);
         // Build the menu when it is about to be shown. Not via
         // GtkMenuButton::activate: that is an action signal, emitted to
         // *cause* the popup, so it never fires for a pointer click.

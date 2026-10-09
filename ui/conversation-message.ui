@@ -6,7 +6,7 @@
       <object class="GtkBox" id="summary">
         <property name="orientation">horizontal</property>
         <property name="hexpand">True</property>
-        <property name="spacing">6</property>
+        <property name="spacing">12</property>
         <child>
           <object class="AdwAvatar" id="avatar">
             <property name="valign">start</property>
@@ -24,7 +24,7 @@
                 <property name="orientation">vertical</property>
 
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="compact_from_header">
                     <property name="orientation">horizontal</property>
                     <property name="hexpand">True</property>
                     <child>
@@ -79,6 +79,7 @@
                     <property name="orientation">horizontal</property>
                     <child>
                       <object class="GtkFlowBox" id="from">
+                        <property name="valign">center</property>
                         <property name="hexpand">True</property>
                         <property name="column_spacing">4</property>
                         <property name="homogeneous">False</property>
@@ -87,12 +88,13 @@
                         <signal name="child-activated" handler="on_address_box_child_activated"/>
                         <style>
                           <class name="convey-header-value"/>
+                          <class name="convey-from-addresses"/>
                         </style>
                       </object>
                     </child>
                     <child>
                       <object class="GtkLabel" id="date">
-                        <property name="valign">baseline</property>
+                        <property name="valign">center</property>
                         <property name="label" translatable="yes">1/1/1970	</property>
                         <property name="ellipsize">end</property>
                         <style>
