@@ -93,13 +93,14 @@ row.conversation-list > revealer > box {
  * rather than spanning the full width. */
 separator.conversation-list-separator {
   margin: 0 14px;
-  transition: opacity 100ms ease-in;
+  transition: opacity 100ms, transform 120ms;
 }
 
 /* Set by View.update_separators() on the dividers touching the selected
  * row. Opacity has to come from CSS for the transition to apply. */
 separator.conversation-list-separator.hidden-divider {
   opacity: 0;
+  transform: scaleX(0.8);
 }
 
 row.conversation-list.drag-n-drop {
