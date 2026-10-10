@@ -802,7 +802,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             if (first_scroll != null) {
                 foreach (Convey.Email email in all_email) {
                     if (first_interesting == null) {
-                        if (email.id == first_scroll) {
+                        if (email.id.equal_to(first_scroll)) {
                             first_interesting = email;
                         } else {
                             // Inserted reversed so most recent uninteresting

@@ -237,6 +237,8 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     // window, for updating email menu trash/delete actions.
     private bool shift_handler_installed = false;
 
+    private bool contacts_loaded = false;
+
     [GtkChild] private unowned Gtk.Box actions;
 
     [GtkChild] private unowned Gtk.Button attachments_button;
@@ -329,6 +331,10 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
      */
     public async void load_contacts()
         throws GLib.Error {
+        if (this.contacts_loaded) {
+            return;
+        }
+        this.contacts_loaded = true;
         try {
             yield this.primary_message.load_contacts(this.load_cancellable);
         } catch (IOError.CANCELLED err) {
