@@ -2199,7 +2199,7 @@ public class Application.MainWindow :
                                             Gee.Collection<Convey.EmailIdentifier> scroll_to,
                                             bool is_interactive) {
         bool start_mark_timer = (
-            this.previous_selection_was_interactive && is_interactive
+            is_interactive || this.previous_selection_was_interactive
         );
         this.previous_selection_was_interactive = is_interactive;
 
@@ -2422,7 +2422,11 @@ public class Application.MainWindow :
 
         // If the viewer is a separate page, selection is handled by activate
         if (selected.size > 1 || !viewer_is_separate_page) {
-            select_conversations.begin(selected, Gee.Collection.empty(), true);
+            select_conversations.begin(
+                selected,
+                Gee.Collection.empty(),
+                !this.conversation_list_view.is_autoselecting
+            );
         } else if (viewer_is_separate_page) {
             switch(selected.size) {
             case 0:

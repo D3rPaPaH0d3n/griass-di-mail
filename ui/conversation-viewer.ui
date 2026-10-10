@@ -99,11 +99,6 @@
                             <property name="hexpand">True</property>
                             <property name="vexpand">True</property>
                             <property name="hscrollbar_policy">never</property>
-                            <child>
-                              <object class="GtkEventControllerScroll">
-                                <signal name="scroll" handler="on_conversation_scroll"/>
-                              </object>
-                            </child>
                             <style>
                               <class name="convey-conversation-scroller"/>
                             </style>

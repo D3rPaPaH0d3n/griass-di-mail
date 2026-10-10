@@ -703,6 +703,9 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
     public bool can_autoselect { get; set; default = true; }
 
+    /** Whether the current selection change was made by autoselect. */
+    public bool is_autoselecting { get; private set; default = false; }
+
     /**
      * Informs the listbox to suppress autoactivate behavior on the next update
      */
@@ -758,7 +761,9 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
                 Gtk.ListBoxRow first_row = this.list.get_row_at_index(0);
                 if (first_row != null) {
+                    this.is_autoselecting = true;
                     this.list.select_row(first_row);
+                    this.is_autoselecting = false;
                     grab_focus();
                 }
             }

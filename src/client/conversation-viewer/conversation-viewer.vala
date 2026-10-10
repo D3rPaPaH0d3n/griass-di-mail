@@ -85,6 +85,12 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
         );
 
         this.conversation_find_bar.connect_entry(this.conversation_find_entry);
+
+        this.conversation_scroller.vadjustment.value_changed.connect(() => {
+            if (this.current_list != null) {
+                this.current_list.mark_visible_read();
+            }
+        });
     }
 
     ~ConversationViewer() {
@@ -410,16 +416,6 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
         if (this.current_list != null) {
             //this.current_list.show_next_search_term();
         }
-    }
-
-    [GtkCallback]
-    private bool on_conversation_scroll(Gtk.EventControllerScroll controller,
-                                        double dx,
-                                        double dy) {
-        if (this.current_list != null) {
-            this.current_list.mark_visible_read();
-        }
-        return Gdk.EVENT_PROPAGATE;
     }
 
     private void on_composer_closed() {

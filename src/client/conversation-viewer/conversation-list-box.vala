@@ -988,7 +988,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
      * Marks all email with a visible body read.
      */
     public void mark_visible_read() {
-        this.mark_read_timer.start();
+        if (!this.suppress_mark_timer) {
+            this.mark_read_timer.start();
+        }
     }
 
     /** Adds an info bar to the given email, if any. */
