@@ -368,14 +368,12 @@ public class Composer.WebView : Components.WebView {
 
     /**
      * Inserts an IMG element at the current text cursor location.
+     *
+     * The image is added to the end of the text if there is no cursor.
      */
     public void insert_image(string src) {
-        // Use insertHTML instead of insertImage here so
-        // we can specify a max width inline, preventing
-        // large images from overflowing the view port.
-        execute_editing_command_with_argument(
-            "insertHTML",
-            @"<img style=\"max-width: 100%\" src=\"$src\">"
+        this.call_void.begin(
+            Util.JS.callable("insertImage").string(src), null
         );
     }
 

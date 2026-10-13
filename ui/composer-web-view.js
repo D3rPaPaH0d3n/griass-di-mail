@@ -431,6 +431,24 @@ ComposerPageState.prototype = {
 
         return parent.innerHTML;
     },
+    insertImage: function(src) {
+        let selection = window.getSelection();
+        if (selection.rangeCount == 0 ||
+            !this.containedInPart(selection.getRangeAt(0).startContainer)) {
+            this.bodyPart.focus();
+            let range = document.createRange();
+            range.selectNodeContents(this.bodyPart);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        // Use insertHTML instead of insertImage so a max width can be
+        // set inline, preventing large images overflowing the view.
+        let image = document.createElement("img");
+        image.style.maxWidth = "100%";
+        image.src = src;
+        document.execCommand("insertHTML", false, image.outerHTML);
+    },
     getBodyHtml: function() {
         let part = this.bodyPart;
         let blank = part.innerText.trim() == "" &&
