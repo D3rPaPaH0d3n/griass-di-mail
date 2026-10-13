@@ -2678,7 +2678,45 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             // doesn't create &nbsp;'s
             sig = "";
         }
-        this.editor.body.update_signature(Convey.HTML.smart_escape(sig));
+        this.editor.body.update_signature(
+            embed_signature_images(Convey.HTML.smart_escape(sig))
+        );
+    }
+
+    private string embed_signature_images(string signature) {
+        try {
+            var data_image = new GLib.Regex(
+                "src=\"data:image/([^;\"]+);base64,([^\"]+)\""
+            );
+            return data_image.replace_eval(
+                signature, -1, 0, 0, (info, result) => {
+                    uint8[] data = GLib.Base64.decode(info.fetch(2));
+                    string name = "signature.%s".printf(
+                        info.fetch(1).split("+")[0]
+                    );
+                    try {
+                        string unique_id;
+                        add_inline_part(
+                            new Convey.Memory.ByteBuffer(data, data.length),
+                            name,
+                            out unique_id
+                        );
+                        result.append(
+                            "src=\"%s%s\"".printf(
+                                Components.WebView.INTERNAL_URL_PREFIX,
+                                unique_id
+                            )
+                        );
+                    } catch (AttachmentError err) {
+                        result.append(info.fetch(0));
+                    }
+                    return false;
+                }
+            );
+        } catch (GLib.RegexError err) {
+            debug("Couldn't embed signature images: %s", err.message);
+            return signature;
+        }
     }
 
     private void on_draft_id_changed() {

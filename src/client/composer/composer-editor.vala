@@ -36,6 +36,8 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     private const string ACTION_ULIST = "ulist";
     private const string ACTION_UNDERLINE = "underline";
 
+    private const int MAX_SIGNATURE_IMAGE_BYTES = 1024 * 1024;
+
     // ACTION_INSERT_LINK and ACTION_REMOVE_FORMAT are missing from
     // here since they are handled in update_selection_actions
     private const string[] HTML_ACTIONS = {
@@ -129,7 +131,6 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.Box action_bar_box;
 
     [GtkChild] private unowned Gtk.Button insert_link_button;
-    [GtkChild] private unowned Gtk.Button insert_image_button;
     [GtkChild] private unowned Gtk.MenuButton select_dictionary_button;
 
     [GtkChild] private unowned Gtk.Label info_label;
@@ -267,12 +268,25 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     internal void load_signature(string signature) {
         foreach (string html_action in HTML_ACTIONS)
             get_action(html_action).set_enabled(true);
-        get_action(ACTION_INSERT_IMAGE).set_enabled(false);
         this.body.set_rich_text(true);
         update_cursor_actions();
 
+        this.insert_image.connect(on_signature_insert_image);
+        var file_drop = new Gtk.DropTarget(
+            typeof(Gdk.FileList), Gdk.DragAction.COPY
+        );
+        file_drop.propagation_phase = CAPTURE;
+        file_drop.drop.connect((target, val, x, y) => {
+            this.body.set_cursor_at_point(x, y);
+            var files = (Gdk.FileList) val.get_boxed();
+            foreach (unowned GLib.File file in files.get_files()) {
+                load_signature_image_file.begin(file);
+            }
+            return true;
+        });
+        this.body.add_controller(file_drop);
+
         this.formatting.reveal_child = true;
-        this.insert_image_button.visible = false;
         this.new_message_attach_button.visible = false;
         this.conversation_attach_buttons.visible = false;
         this.more_options_button.visible = false;
@@ -280,6 +294,66 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
         set_size_request(-1, 200);
 
         this.body.load_signature(Convey.HTML.smart_escape(signature));
+    }
+
+    private void on_signature_insert_image(bool from_clipboard) {
+        if (from_clipboard) {
+            var clipboard = get_clipboard();
+            clipboard.read_texture_async.begin(null, (obj, res) => {
+                try {
+                    var texture = clipboard.read_texture_async.end(res);
+                    if (texture != null) {
+                        insert_signature_image(
+                            "image/png", texture.save_to_png_bytes().get_data()
+                        );
+                    }
+                } catch (GLib.Error err) {
+                    debug("Couldn't paste signature image: %s", err.message);
+                }
+            });
+            return;
+        }
+
+        var filter = new Gtk.FileFilter();
+        filter.set_filter_name(_("Images"));
+        filter.add_mime_type("image/*");
+        var filters = new GLib.ListStore(typeof(Gtk.FileFilter));
+        filters.append(filter);
+        var dialog = new Gtk.FileDialog();
+        dialog.set_filters(filters);
+        dialog.open.begin(get_root() as Gtk.Window, null, (obj, res) => {
+            try {
+                load_signature_image_file.begin(dialog.open.end(res));
+            } catch (GLib.Error err) {
+                debug("No signature image chosen: %s", err.message);
+            }
+        });
+    }
+
+    private async void load_signature_image_file(GLib.File file) {
+        try {
+            uint8[] data;
+            yield file.load_contents_async(null, out data, null);
+            string type = GLib.ContentType.get_mime_type(
+                GLib.ContentType.guess(file.get_basename(), data, null)
+            );
+            if (type != null && type.has_prefix("image/")) {
+                insert_signature_image(type, data);
+            }
+        } catch (GLib.Error err) {
+            debug("Couldn't load signature image: %s", err.message);
+        }
+    }
+
+    private void insert_signature_image(string type, uint8[] data) {
+        if (data.length > MAX_SIGNATURE_IMAGE_BYTES) {
+            set_info_label(_("Image is too large for a signature (1 MB maximum)"));
+            return;
+        }
+        set_info_label("");
+        this.body.insert_image(
+            "data:%s;base64,%s".printf(type, GLib.Base64.encode(data))
+        );
     }
 
     /** Displays the given human readable text in the UI */
