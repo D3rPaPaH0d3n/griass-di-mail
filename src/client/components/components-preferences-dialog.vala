@@ -18,6 +18,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.SwitchRow single_key_shortcuts_row;
     [GtkChild] private unowned Adw.SwitchRow startup_notifications_row;
     [GtkChild] private unowned Adw.SwitchRow trust_images_row;
+    [GtkChild] private unowned Adw.SwitchRow unverified_images_row;
     [GtkChild] private unowned Adw.SwitchRow unset_html_colors_row;
     [GtkChild] private unowned Adw.SwitchRow custom_proxy_row;
     [GtkChild] private unowned Adw.EntryRow proxy_uri_row;
@@ -163,6 +164,17 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             "active",
             (GLib.SettingsBindGetMappingShared) settings_trust_images_getter,
             (GLib.SettingsBindSetMappingShared) settings_trust_images_setter
+        );
+        config.bind(
+            Application.Configuration.LOAD_UNVERIFIED_IMAGES,
+            this.unverified_images_row,
+            "active"
+        );
+        this.trust_images_row.bind_property(
+            "active",
+            this.unverified_images_row,
+            "sensitive",
+            SYNC_CREATE
         );
         config.bind(
             Application.Configuration.LOCAL_STARRED_FOLDER,

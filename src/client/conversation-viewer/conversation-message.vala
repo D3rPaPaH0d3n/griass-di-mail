@@ -991,7 +991,10 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             message.auth_results.is_dkim_valid() ||
             message.auth_results.is_dmarc_valid()
         );
-        if (this.load_remote_resources || (
+        var domains = this.config.get_images_trusted_domains();
+        bool load_unverified = this.config.load_unverified_images &&
+            domains.length > 0 && domains[0] == "*";
+        if (this.load_remote_resources || load_unverified || (
                 contact_load_images && this.authenticated_message)) {
             yield this.web_view.load_remote_resources(load_cancelled);
         }

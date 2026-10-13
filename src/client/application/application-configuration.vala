@@ -45,6 +45,7 @@ public class Application.Configuration : Convey.BaseObject {
     public const string WINDOW_MAXIMIZE_KEY = "window-maximize";
     public const string WINDOW_WIDTH_KEY = "window-width";
     public const string IMAGES_TRUSTED_DOMAINS = "images-trusted-domains";
+    public const string LOAD_UNVERIFIED_IMAGES = "load-unverified-images";
     public const string LAST_INBOX = "last-inbox";
     public const string REMEMBER_LAST_INBOX = "remember-last-inbox";
     public const string ALL_INBOXES = "all";
@@ -180,6 +181,10 @@ public class Application.Configuration : Convey.BaseObject {
     /** The number of seconds for which brief notifications should be displayed. */
     public int brief_notification_duration {
         get { return settings.get_int(BRIEF_NOTIFICATION_DURATION); }
+    }
+
+    public bool load_unverified_images {
+        get { return settings.get_boolean(LOAD_UNVERIFIED_IMAGES); }
     }
 
     public bool use_custom_proxy {

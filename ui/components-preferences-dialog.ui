@@ -73,8 +73,16 @@
             <child>
               <object class="AdwSwitchRow" id="trust_images_row">
                 <!-- Translators: Preferences label -->
-                <property name="title" translatable="yes">Always _load images</property>
+                <property name="title" translatable="yes">_Load images from verified senders</property>
                 <property name="subtitle" translatable="yes">Showing remote images allows the sender to track you</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwSwitchRow" id="unverified_images_row">
+                <!-- Translators: Preferences label -->
+                <property name="title" translatable="yes">Also load images from _unverified senders</property>
+                <property name="subtitle" translatable="yes">Messages that can't be verified are often spam or phishing</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
