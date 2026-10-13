@@ -201,6 +201,9 @@ public class Convey.AccountInformation : BaseObject {
         default = new Gee.LinkedList<Convey.RFC822.MailboxAddress>();
     }
 
+    private Gee.Map<string,string> sender_signatures =
+        new Gee.HashMap<string,string>();
+
 
     /**
      * Emitted when a service has reported an authentication failure.
@@ -276,6 +279,7 @@ public class Convey.AccountInformation : BaseObject {
         this.archive_instead_of_trash = other.archive_instead_of_trash;
         this.use_signature = other.use_signature;
         this.signature = other.signature;
+        this.sender_signatures.set_all(other.sender_signatures);
 
         this.incoming = new ServiceInformation.copy(other.incoming);
         this.outgoing = new ServiceInformation.copy(other.outgoing);
@@ -355,6 +359,31 @@ public class Convey.AccountInformation : BaseObject {
      */
     public void replace_sender(int index, Convey.RFC822.MailboxAddress mailbox) {
         this.mailboxes.set(index, mailbox);
+    }
+
+    /**
+     * Returns the signature set for a specific sender mailbox.
+     *
+     * Returns an empty string if the mailbox has no signature of its
+     * own, in which case {@link signature} should be used.
+     */
+    public string get_sender_signature(Convey.RFC822.MailboxAddress mailbox) {
+        return this.sender_signatures.get(mailbox.address.casefold()) ?? "";
+    }
+
+    /**
+     * Sets the signature for a specific sender mailbox.
+     *
+     * An empty signature removes the mailbox's own signature.
+     */
+    public void set_sender_signature(Convey.RFC822.MailboxAddress mailbox,
+                                     string signature) {
+        string key = mailbox.address.casefold();
+        if (Convey.String.is_empty_or_whitespace(signature)) {
+            this.sender_signatures.unset(key);
+        } else {
+            this.sender_signatures.set(key, signature);
+        }
     }
 
     /**
@@ -530,6 +559,8 @@ public class Convey.AccountInformation : BaseObject {
                 this.archive_instead_of_trash == other.archive_instead_of_trash &&
                 this.use_signature == other.use_signature &&
                 this.signature == other.signature &&
+                this.sender_signatures.size == other.sender_signatures.size &&
+                this.sender_signatures.has_all(other.sender_signatures) &&
                 this.incoming.equal_to(other.incoming) &&
                 this.outgoing.equal_to(other.outgoing) &&
                 this.special_use_paths.size == other.special_use_paths.size &&

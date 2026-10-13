@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="AccountsMailboxEditorDialog" parent="AdwDialog">
+    <property name="content-width">600</property>
     <property name="child">
       <object class="AdwToolbarView">
 
@@ -54,6 +55,12 @@
                     <signal name="activate" handler="on_entry_activate"/>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwPreferencesGroup" id="signature_group">
+                <property name="title" translatable="yes">Signature</property>
+                <property name="description" translatable="yes">Used instead of the account signature when sending from this address</property>
               </object>
             </child>
             <child>

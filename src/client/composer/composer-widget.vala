@@ -2636,19 +2636,22 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
             if (selected.account != this.sender_context) {
                 this.sender_context = selected.account;
-                this.update_signature.begin(null);
                 load_entry_completions();
 
                 this.reopen_draft_manager.begin();
+            }
+            if (this.editor.body.is_content_loaded) {
+                this.update_signature.begin(null);
             }
         }
     }
 
     private async void update_signature(Cancellable? cancellable = null) {
-        string sig = "";
         Convey.AccountInformation account =
             this.sender_context.account.information;
-        if (account.use_signature) {
+        Convey.RFC822.MailboxAddress? sender = this.from.get(0);
+        string sig = sender != null ? account.get_sender_signature(sender) : "";
+        if (Convey.String.is_empty_or_whitespace(sig) && account.use_signature) {
             sig = account.signature;
             if (Convey.String.is_empty_or_whitespace(sig)) {
                 // No signature is specified in the settings, so use

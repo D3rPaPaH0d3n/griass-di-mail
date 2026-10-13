@@ -17,7 +17,9 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
     [GtkChild] private unowned Adw.EntryRow address_row;
     [GtkChild] private unowned Gtk.Button apply_button;
     [GtkChild] private unowned Gtk.Button remove_button;
+    [GtkChild] private unowned Adw.PreferencesGroup signature_group;
     private Components.EmailValidator address_validator;
+    private Composer.Editor signature_editor;
 
     private bool changed = false;
 
@@ -30,7 +32,8 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
 
 
     /** Fired if the user pressed "Add"/"Apply" with the new details */
-    public signal void apply(Convey.RFC822.MailboxAddress mailbox);
+    public signal void apply(Convey.RFC822.MailboxAddress mailbox,
+                             string signature);
 
     /** Fired if the user requested to remove the address */
     public signal void remove();
@@ -59,11 +62,13 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
      * Creates a MailboxEditorDialog for creating a new mailbox.
      * @param display_name A suggestion for the name
      */
-    public MailboxEditorDialog.for_new(string? display_name) {
+    public MailboxEditorDialog.for_new(string? display_name,
+                                       Composer.Editor signature_editor) {
         Object(
             display_name: display_name ?? "",
             address: ""
         );
+        add_signature_editor(signature_editor);
 
         // Cange "Apply" to "Add" in this case, since that matches better
         this.apply_button.label = _("_Add");
@@ -73,13 +78,20 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
     }
 
     public MailboxEditorDialog.for_existing(Convey.RFC822.MailboxAddress mailbox,
-                                            bool can_remove) {
+                                            bool can_remove,
+                                            Composer.Editor signature_editor) {
         Object(
             display_name: mailbox.name ?? "",
             address: mailbox.address
         );
+        add_signature_editor(signature_editor);
 
         action_set_enabled("remove", can_remove);
+    }
+
+    private void add_signature_editor(Composer.Editor signature_editor) {
+        this.signature_editor = signature_editor;
+        this.signature_group.add(this.signature_editor);
     }
 
     [GtkCallback]
@@ -117,9 +129,18 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
             return;
         }
 
-        apply(
-            new Convey.RFC822.MailboxAddress(this.display_name, this.address)
+        var mailbox = new Convey.RFC822.MailboxAddress(
+            this.display_name, this.address
         );
+        this.signature_editor.body.get_body_html.begin((obj, res) => {
+            string signature = "";
+            try {
+                signature = this.signature_editor.body.get_body_html.end(res) ?? "";
+            } catch (GLib.Error err) {
+                debug("Error getting signature: %s", err.message);
+            }
+            apply(mailbox, signature);
+        });
     }
 
     private void action_remove(string action_name, Variant? param) {

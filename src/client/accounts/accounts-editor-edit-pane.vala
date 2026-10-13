@@ -307,12 +307,15 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
 
     [GtkCallback]
     private void on_add_mailbox_clicked(Gtk.Button add_button) {
-        var dialog = new MailboxEditorDialog.for_new(get_default_name());
-        dialog.apply.connect((dialog, mailbox) => {
+        var dialog = new MailboxEditorDialog.for_new(
+            get_default_name(), new_signature_editor("")
+        );
+        dialog.apply.connect((dialog, mailbox, signature) => {
             this.commands.execute.begin(
                 new AppendMailboxCommand(
                     this.senders_list,
-                    new_mailbox_row(mailbox)
+                    new_mailbox_row(mailbox),
+                    signature
                 ),
                 this.op_cancellable
             );
@@ -533,12 +536,15 @@ private class Accounts.MailboxRow : Adw.ActionRow {
     public override void activate() {
         var dialog = new MailboxEditorDialog.for_existing(
             this.mailbox,
-            this.account.has_sender_aliases
+            this.account.has_sender_aliases,
+            this.pane.new_signature_editor(
+                this.account.get_sender_signature(this.mailbox)
+            )
         );
 
-        dialog.apply.connect((dialog, mailbox) => {
+        dialog.apply.connect((dialog, mailbox, signature) => {
             this.pane.commands.execute.begin(
-                new UpdateMailboxCommand(this, mailbox),
+                new UpdateMailboxCommand(this, mailbox, signature),
                 this.pane.op_cancellable
             );
             dialog.close();
@@ -576,13 +582,17 @@ internal class Accounts.AppendMailboxCommand : Application.Command {
 
     private Gtk.ListBox senders_list;
     private MailboxRow new_row = null;
+    private string signature;
 
     private int mailbox_index;
 
 
-    public AppendMailboxCommand(Gtk.ListBox senders_list, MailboxRow new_row) {
+    public AppendMailboxCommand(Gtk.ListBox senders_list,
+                                MailboxRow new_row,
+                                string signature) {
         this.senders_list = senders_list;
         this.new_row = new_row;
+        this.signature = signature;
 
         this.mailbox_index = new_row.account.sender_mailboxes.size;
 
@@ -595,12 +605,16 @@ internal class Accounts.AppendMailboxCommand : Application.Command {
     public async override void execute(GLib.Cancellable? cancellable) {
         this.senders_list.insert(this.new_row, this.mailbox_index);
         this.new_row.account.append_sender(this.new_row.mailbox);
+        this.new_row.account.set_sender_signature(
+            this.new_row.mailbox, this.signature
+        );
         this.new_row.account.changed();
     }
 
     public async override void undo(GLib.Cancellable? cancellable) {
         this.senders_list.remove(this.new_row);
         this.new_row.account.remove_sender(this.new_row.mailbox);
+        this.new_row.account.set_sender_signature(this.new_row.mailbox, "");
         this.new_row.account.changed();
     }
 
@@ -612,17 +626,22 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
 
     private MailboxRow row;
     private Convey.RFC822.MailboxAddress new_mailbox;
+    private string new_signature;
 
     private Convey.RFC822.MailboxAddress old_mailbox;
+    private string old_signature;
     private int mailbox_index;
 
 
     public UpdateMailboxCommand(MailboxRow row,
-                                Convey.RFC822.MailboxAddress new_mailbox) {
+                                Convey.RFC822.MailboxAddress new_mailbox,
+                                string new_signature) {
         this.row = row;
         this.new_mailbox = new_mailbox;
+        this.new_signature = new_signature;
 
         this.old_mailbox = row.mailbox;
+        this.old_signature = row.account.get_sender_signature(row.mailbox);
         this.mailbox_index =
             row.account.sender_mailboxes.index_of(this.old_mailbox);
 
@@ -637,12 +656,20 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
     public async override void execute(GLib.Cancellable? cancellable) {
         this.row.mailbox = this.new_mailbox;
         this.row.account.replace_sender(this.mailbox_index, this.new_mailbox);
+        this.row.account.set_sender_signature(this.old_mailbox, "");
+        this.row.account.set_sender_signature(
+            this.new_mailbox, this.new_signature
+        );
         this.row.account.changed();
     }
 
     public async override void undo(GLib.Cancellable? cancellable) {
         this.row.mailbox = this.old_mailbox;
         this.row.account.replace_sender(this.mailbox_index, this.old_mailbox);
+        this.row.account.set_sender_signature(this.new_mailbox, "");
+        this.row.account.set_sender_signature(
+            this.old_mailbox, this.old_signature
+        );
         this.row.account.changed();
     }
 

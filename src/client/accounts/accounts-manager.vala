@@ -1080,6 +1080,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
     private const string ACCOUNT_SAVE_DRAFTS = "save_drafts";
     private const string ACCOUNT_SAVE_SENT = "save_sent";
     private const string ACCOUNT_SENDERS = "sender_mailboxes";
+    private const string ACCOUNT_SENDER_SIGS = "sender_signatures";
     private const string ACCOUNT_SIG = "signature";
     private const string ACCOUNT_USE_SIG = "use_signature";
 
@@ -1171,6 +1172,15 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         foreach (Convey.RFC822.MailboxAddress sender in senders) {
             account.append_sender(sender);
         }
+        Gee.List<string> sender_sigs =
+            account_config.get_string_list(ACCOUNT_SENDER_SIGS);
+        for (int i = 0;
+             i < sender_sigs.size && i < account.sender_mailboxes.size;
+             i++) {
+            account.set_sender_signature(
+                account.sender_mailboxes[i], sender_sigs[i]
+            );
+        }
 
         Convey.ConfigFile.Group folder_config =
             config.get_group(GROUP_FOLDERS);
@@ -1220,6 +1230,12 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
             ACCOUNT_SENDERS,
             Convey.traverse(account.sender_mailboxes)
             .map<string>((sender) => sender.to_rfc822_string())
+            .to_array_list()
+        );
+        account_config.set_string_list(
+            ACCOUNT_SENDER_SIGS,
+            Convey.traverse(account.sender_mailboxes)
+            .map<string>((sender) => account.get_sender_signature(sender))
             .to_array_list()
         );
 
