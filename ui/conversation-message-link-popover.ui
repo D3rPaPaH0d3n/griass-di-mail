@@ -1,137 +1,124 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0.3 -->
 <!-- Generated with glade 3.22.1 -->
 <interface>
-  <requires lib="gtk+" version="3.14"/>
+  <!-- interface-name conversation-message-link-popover.ui -->
+  <requires lib="gtk" version="4.0"/>
   <object class="GtkPopover" id="link_popover">
     <property name="position">bottom</property>
     <child>
       <object class="GtkGrid">
-        <property name="visible">True</property>
-        <property name="margin_left">12</property>
-        <property name="margin_right">12</property>
-        <property name="margin_top">12</property>
-        <property name="margin_bottom">12</property>
+        <property name="margin-bottom">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-start">12</property>
+        <property name="margin-top">12</property>
         <property name="orientation">vertical</property>
+        <property name="visible">True</property>
         <child>
           <object class="GtkImage">
-            <property name="visible">True</property>
             <property name="halign">center</property>
-            <property name="margin_right">12</property>
+            <property name="icon-name">dialog-warning-symbolic</property>
+            <property name="icon-size">large</property>
+            <property name="margin-end">12</property>
             <property name="vexpand">True</property>
-            <property name="icon_name">dialog-warning-symbolic</property>
-            <property name="icon_size">3</property>
+            <property name="visible">True</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">0</property>
+              <property name="row-span">2</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">0</property>
-            <property name="height">2</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel" id="bad_link_label">
-            <property name="visible">True</property>
-            <property name="halign">start</property>
-            <property name="margin_left">12</property>
-            <property name="label">&lt;a href="http://badlink.com"&gt;http://badlink.com&lt;/a&gt;</property>
-            <property name="use_markup">True</property>
             <property name="ellipsize">middle</property>
-            <property name="max_width_chars">60</property>
+            <property name="halign">start</property>
+            <property name="label">&lt;a href="http://badlink.com"&gt;http://badlink.com&lt;/a&gt;</property>
+            <property name="margin-start">12</property>
+            <property name="max-width-chars">60</property>
+            <property name="use-markup">True</property>
+            <property name="visible">True</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">5</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">5</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="visible">True</property>
             <property name="halign">start</property>
             <property name="label" translatable="yes">But actually goes to:</property>
+            <property name="visible">True</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">4</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">4</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel" id="good_link_label">
-            <property name="visible">True</property>
-            <property name="halign">start</property>
-            <property name="margin_left">12</property>
-            <property name="margin_bottom">6</property>
-            <property name="label">&lt;a href="http://goodlink.com"&gt;http://goodlink.com&lt;/a&gt;</property>
-            <property name="use_markup">True</property>
             <property name="ellipsize">middle</property>
-            <property name="max_width_chars">60</property>
-          </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel">
-            <property name="visible">True</property>
             <property name="halign">start</property>
-            <property name="margin_top">12</property>
-            <property name="label" translatable="yes">The link appears to go to:</property>
+            <property name="label">&lt;a href="http://goodlink.com"&gt;http://goodlink.com&lt;/a&gt;</property>
+            <property name="margin-bottom">6</property>
+            <property name="margin-start">12</property>
+            <property name="max-width-chars">60</property>
+            <property name="use-markup">True</property>
+            <property name="visible">True</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">3</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">2</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel">
+            <property name="halign">start</property>
+            <property name="label" translatable="yes">The link appears to go to:</property>
+            <property name="margin-top">12</property>
             <property name="visible">True</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">2</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
             <property name="halign">start</property>
             <property name="label" translatable="yes">Deceptive link found</property>
+            <property name="visible">True</property>
             <attributes>
               <attribute name="weight" value="bold"/>
             </attributes>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">0</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">0</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="visible">True</property>
             <property name="halign">start</property>
             <property name="label" translatable="yes">The email sender may be leading you to the wrong web site.</property>
+            <property name="visible">True</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">1</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">1</property>
-          </packing>
         </child>
         <child>
           <object class="GtkLabel">
-            <property name="visible">True</property>
             <property name="halign">start</property>
-            <property name="margin_top">12</property>
             <property name="label" translatable="yes">If unsure, contact the sender and ask before continuing.</property>
+            <property name="margin-top">12</property>
+            <property name="visible">True</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="row">6</property>
+            </layout>
           </object>
-          <packing>
-            <property name="left_attach">1</property>
-            <property name="top_attach">6</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>

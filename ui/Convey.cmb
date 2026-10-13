@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
+<!-- Created with Cambalache 1.0.3 -->
+<cambalache-project version="1.0.0" target_tk="gtk-4.0">
+  <gresources filename="net.donnybeelo.Convey.gresource.xml" sha256="bc9c5d86ffc11aabac9f07d11b4bc82c397f3dcff64454088e4035f5d4b551b3"/>
+  <css priority="600" is_global="1" filename="composer-web-view.css" sha256="5835c67371db7aaf94fabde8146939f3be29242d67f4da95999d5d2c962759d6"/>
+  <css priority="600" is_global="1" filename="conversation-web-view.css" sha256="1aa9cfbc398550f20a3074bde660d58fef004749f12177b7ee6d2eb0d6c4cea7"/>
+  <css priority="600" is_global="1" filename="style.css" sha256="361b678ee702591c62ca77c8ed1d6f40ce2c434b4c6c169014cc82003123a5ab"/>
+  <css priority="600" is_global="1" filename="components-web-view.css" sha256="ef3ce7550824306abaaa42f5db8fed6391346e036d0a00c43d0876c9739207da"/>
+  <css priority="600" is_global="1" filename="single-key-shortcuts.css" sha256="480e15ccea64baf074701d5a4ef77b056d637f04dabf26b023d760b5812527a5"/>
+  <ui template-class="ConversationListRow" filename="conversation-list-row.ui" sha256="ab60f68e0046c6ad7d51642cf92f183d33109d09c230f3ea8ec68d43a1d4e9cf"/>
+  <ui template-class="ComponentsInspectorErrorView" filename="components-inspector-error-view.ui" sha256="2b1e2783852ad618e734ba1052079662240ac4b18823693c83385ece5eb9c034"/>
+  <ui template-class="ComponentsConversationActions" filename="components-conversation-actions.ui" sha256="98b559e72d91249521bf1d8ae9b6718610589dde22f4b3d01d67a32b6c10a123"/>
+  <ui template-class="AccountsEditorListPane" filename="accounts_editor_list_pane.ui" sha256="15fe401b7cc0975ece04a41d50eda3290ce20c808fa053f80560437f21f64f88"/>
+  <ui template-class="AccountsTlsComboRow" filename="accounts-tls-combo-row.ui" sha256="98682ee5674f43fdfa386c0328d55d07b213c63c2a028b6fb24e63516d9f548e"/>
+  <ui filename="conversation-message-link-popover.ui" sha256="ad451bc223404ebcf26e2c673bf400bd6fb448c99a82e82937ccbfb4d312c053"/>
+  <ui template-class="PasswordDialog" filename="password-dialog.ui" sha256="46139414dce57c463be44fae199820544e1865e34d3c842901d7645c74e1f370"/>
+  <ui template-class="ConversationContactPopover" filename="conversation-contact-popover.ui" sha256="ca67645d21ef2ca951ef772ae7ef0a17ba83f86b98880121fae6922a230f7202"/>
+  <ui template-class="ComponentsInfoBar" filename="components-info-bar.ui" sha256="8aefe33bb73707c0dfabe01a43baa71f59282044a7775020805174c313d4b8e8"/>
+  <ui template-class="ComponentsPreferencesDialog" filename="components-preferences-dialog.ui" sha256="dd15a839f50001accf6ed4fcb856037097a599b4afbed2474c288cfb43ce741e"/>
+  <ui template-class="DialogsProblemDetailsDialog" filename="problem-details-dialog.ui" sha256="1657cac8c2e74adc23e8cd3dae1119751fa0f48a6ddce322ac2b39e634bdf89a"/>
+  <ui template-class="ComposerEditor" filename="composer-editor.ui" sha256="5095069eb7f33d2dfe01e3aae10d9f0aaf0ad310e2f2eea488ea455304cd4e9b"/>
+  <ui template-class="ComposerLinkPopover" filename="composer-link-popover.ui" sha256="aa0a85d6311bb48227f5208198b851e54f06440b00b0660a6d105d501cee1d0f"/>
+  <ui filename="conversation-message-menus.ui" sha256="93e0895648e25fa2d153fdf78f4e79e94021ab5edbea7bba6df478bac0204118"/>
+  <ui template-class="FolderPopoverRow" filename="folder-popover-row.ui" sha256="8dceee24aaff9911cf5697bd7e92990fb78f6e31a125bd09875e99a139b64b59"/>
+  <ui template-class="ComponentsInspectorSystemView" filename="components-inspector-system-view.ui" sha256="6a17bf05f57c2fb590f14b52c1fed0d2a7befdbf716db2caccf6cac3bd52ac5a"/>
+  <ui filename="components-attachment-pane-menus.ui" sha256="6df91ec5073fe12c8aab3a6f9a9401c8fed47e67bc774d39167973c651fb8bd2"/>
+  <ui template-class="ComponentsAttachmentPaneView" filename="components-attachment-view.ui" sha256="c9c94277708d699c79c814983e5299cc6164debe6cee7c45db14f0354b393f69"/>
+  <ui template-class="ComponentsInspector" filename="components-inspector.ui" sha256="102a2ffe6fa6ccbdcfe9815c064e6e09d44e2eab8451f156b28ff18501628f6c"/>
+  <ui template-class="ComposerWidget" filename="composer-widget.ui" sha256="b92780c67874d9483033c656650e7fff02930caf17fe3aac0df6197cac28b95b"/>
+  <ui filename="composer-editor-menus.ui" sha256="370b68d42df2ef5d12a72a15edc4df1971457845b157694088f2d0648ce3617d"/>
+  <ui filename="components-menu-conversation.ui" sha256="f695990bb767f190ecba444fed5d8481a064773f843430f715c3927c1b31010a"/>
+  <ui template-class="ConversationEmail" filename="conversation-email.ui" sha256="e4bb037ae1b1733b59c26c8e1270d1e945798994a7c32aded835dd65a527e988"/>
+  <ui template-class="CertificateWarningDialog" filename="certificate-warning-dialog.ui" sha256="b6f75dd5fc4abad186b2093418e16340d18c91cd75078ade7e34bd4cbd2960eb"/>
+  <ui template-class="ComponentsPlaceholderPane" filename="components-placeholder-pane.ui" sha256="e1996a3d8aa2c8b3cf19f28343f9f239467cfc4bccae6e4f8d9f40f3410b5f8b"/>
+  <ui template-class="FolderPopover" filename="folder-popover.ui" sha256="1550b61f8a4c54c9cc9c8630b6ae6ac879655d7ea7431d626efe9e33249d9b45"/>
+  <ui template-class="ComponentsAttachmentPane" filename="components-attachment-pane.ui" sha256="ec1e4d89ff528eb45c8016a0a5975e06048168f3730282d7b8a4da93c037170b"/>
+  <ui template-class="AccountsEditorEditPane" filename="accounts_editor_edit_pane.ui" sha256="441f10ac632be425073da4e6153552123cd4192e0ff3a2adf3f1d414b576a649"/>
+  <ui template-class="ConversationMessage" filename="conversation-message.ui" sha256="775f89bb8f678bfe81dceaa031ee245c7557a2bfaa8b205afe28aa539b6b2e1c"/>
+  <ui template-class="ConversationListView" filename="conversation-list-view.ui" sha256="43db61eb30e0f554a10fe374de45d8bafc4ed662ac3b382ea95142ac6e8b3245"/>
+  <ui template-class="AccountsMailboxEditorDialog" filename="accounts-mailbox-editor-dialog.ui" sha256="7b1d6910146623661e43f224a8769a7f102313982fc30e876372ab6c64395c30"/>
+  <ui template-class="AccountsAccountListRow" filename="accounts-editor-account-list-row.ui" sha256="bd6db2d0ad7acfeaa849ec1f46203132ae5c2fb9385135c5b2751d94139e4e4f"/>
+  <ui template-class="AccountsEditor" filename="accounts_editor.ui" sha256="cacae661581e489123190694be17726f9dbf2f8687cb6777fe5cada3abffecf7"/>
+  <ui template-class="ComponentsInspectorLogView" filename="components-inspector-log-view.ui" sha256="0efba1ba8a6601e1c5a0307311158c7b0af19377409c241a03638725eff92cfb"/>
+  <ui template-class="ComposerHeader" filename="composer-headerbar.ui" sha256="e8da1b29b5d9e60e607e17e9881b50cbef11d13e624fc03fd62088902f0a0506"/>
+  <ui filename="conversation-email-menus.ui" sha256="40cf8e1ab60c5770265866518b46ad6e3541ec5d88c92b2094a9af80ba8face6"/>
+  <ui filename="gtk/help-overlay.ui" sha256="fb05d4cd6c683540430e19923929ef3581afe30be83ef3805937243aea1a9f68"/>
+  <ui template-class="ApplicationMainWindow" filename="application-main-window.ui" sha256="1910bd623ffe392b19b4067b976212e62a84437112b9de55a630263745655281"/>
+  <ui template-class="ComponentsConversationHeaderBar" filename="components-headerbar-conversation.ui" sha256="76efbb370aa6ef7de73cb7cbf1b84ceecbc72176a81b7bf2a132d5689c140194"/>
+  <ui template-class="AccountsServiceInformationWidget" filename="accounts-service-information-widget.ui" sha256="08fa46b7009a5f77f91ba26a1eba4b4829cca05136d65f1d9a21ce9e64e2db39"/>
+  <ui template-class="ConversationViewer" filename="conversation-viewer.ui" sha256="19a40763694f5bfd0b056ac9198d402f89a527fc49bf09d20af2019b9227f534"/>
+  <ui template-class="AccountsEditorAddPane" filename="accounts_editor_add_pane.ui" sha256="04b5488e2e1b7bfaa98f4ecbd8c906af0b836e5fd6b3c24d6d20bd9dea15d7c3"/>
+  <ui template-class="AccountsEditorServersPane" filename="accounts_editor_servers_pane.ui" sha256="b6c3277a2373b3c28f6d86ee291349120aee27010bd968fb0999e2ecc718ae27"/>
+</cambalache-project>
