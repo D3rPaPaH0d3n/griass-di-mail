@@ -145,11 +145,81 @@ ComposerPageState.prototype = {
         }
 
 
+        this.initImageResizer();
+
         // Enable editing only after modifying the body above.
         this.setEditable(true);
 
         PageState.prototype.loaded.apply(this, []);
         this.sendScrollPosition();
+    },
+    initImageResizer: function() {
+        let state = this;
+        this.resizeImage = null;
+
+        this.resizeFrame = document.createElement("div");
+        this.resizeFrame.id = "convey-image-resizer";
+        this.resizeFrame.hidden = true;
+        let handle = document.createElement("div");
+        handle.id = "convey-image-resizer-handle";
+        this.resizeFrame.appendChild(handle);
+        document.documentElement.appendChild(this.resizeFrame);
+
+        document.addEventListener("click", function(e) {
+            if (e.target.tagName == "IMG" && state.containedInPart(e.target)) {
+                state.resizeImage = e.target;
+                state.positionImageResizer();
+            } else if (e.target != handle) {
+                state.hideImageResizer();
+            }
+        });
+        handle.addEventListener("mousedown", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            let image = state.resizeImage;
+            let startX = e.clientX;
+            let startWidth = image.getBoundingClientRect().width;
+            let move = function(e) {
+                let width = Math.max(
+                    16, Math.round(startWidth + e.clientX - startX)
+                );
+                image.setAttribute("width", width);
+                image.removeAttribute("height");
+                image.style.width = width + "px";
+                image.style.height = "auto";
+                state.positionImageResizer();
+            };
+            let up = function() {
+                document.removeEventListener("mousemove", move);
+                document.removeEventListener("mouseup", up);
+            };
+            document.addEventListener("mousemove", move);
+            document.addEventListener("mouseup", up);
+        });
+        window.addEventListener("resize", function() {
+            state.positionImageResizer();
+        });
+        document.addEventListener("keyup", function() {
+            state.positionImageResizer();
+        });
+    },
+    hideImageResizer: function() {
+        this.resizeImage = null;
+        this.resizeFrame.hidden = true;
+    },
+    positionImageResizer: function() {
+        let image = this.resizeImage;
+        if (image == null || !document.body.contains(image)) {
+            this.hideImageResizer();
+            return;
+        }
+        let rect = image.getBoundingClientRect();
+        let frame = this.resizeFrame;
+        frame.style.left = (rect.left + window.scrollX) + "px";
+        frame.style.top = (rect.top + window.scrollY) + "px";
+        frame.style.width = rect.width + "px";
+        frame.style.height = rect.height + "px";
+        frame.hidden = false;
     },
     // Reports whether the body is scrolled to its top and/or bottom, so
     // the client can decide whether a scroll gesture should be handed to

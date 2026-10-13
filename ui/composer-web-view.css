@@ -69,3 +69,27 @@ pre {
   white-space: break-spaces;
   margin: 0;
 }
+
+#convey-image-resizer {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid #3584e4;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+#convey-image-resizer[hidden] {
+  display: none;
+}
+
+#convey-image-resizer-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  background: #3584e4;
+  border: 1px solid white;
+  cursor: nwse-resize;
+  pointer-events: auto;
+}
