@@ -129,6 +129,7 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.Box action_bar_box;
 
     [GtkChild] private unowned Gtk.Button insert_link_button;
+    [GtkChild] private unowned Gtk.Button insert_image_button;
     [GtkChild] private unowned Gtk.MenuButton select_dictionary_button;
 
     [GtkChild] private unowned Gtk.Label info_label;
@@ -142,6 +143,7 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.Image font_color_icon;
     private Gtk.CssProvider font_color_css = new Gtk.CssProvider();
     [GtkChild] private unowned Gtk.MenuButton more_options_button;
+    [GtkChild] private unowned Gtk.ToggleButton show_formatting_button;
 
     private Gtk.GestureClick click_gesture;
 
@@ -257,6 +259,27 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
         if (menu != null) {
             menu.insert_section(0, null, section);
         }
+    }
+
+    /**
+     * Sets the editor up for editing a signature rather than a message.
+     */
+    internal void load_signature(string signature) {
+        foreach (string html_action in HTML_ACTIONS)
+            get_action(html_action).set_enabled(true);
+        get_action(ACTION_INSERT_IMAGE).set_enabled(false);
+        this.body.set_rich_text(true);
+        update_cursor_actions();
+
+        this.formatting.reveal_child = true;
+        this.insert_image_button.visible = false;
+        this.new_message_attach_button.visible = false;
+        this.conversation_attach_buttons.visible = false;
+        this.more_options_button.visible = false;
+        this.show_formatting_button.visible = false;
+        set_size_request(-1, 200);
+
+        this.body.load_signature(Convey.HTML.smart_escape(signature));
     }
 
     /** Displays the given human readable text in the UI */

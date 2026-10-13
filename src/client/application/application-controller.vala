@@ -140,7 +140,6 @@ internal class Application.Controller :
         Components.WebView.load_resources(config_dir);
         Composer.WebView.load_resources();
         ConversationWebView.load_resources();
-        Accounts.SignatureWebView.load_resources();
 
         this.all_windows_backgrounded_timeout =
             new Convey.TimeoutManager.seconds(CLEANUP_CHECK_AFTER_IDLE_BACKGROUND_MINUTES * 60, on_unfocused_idle);

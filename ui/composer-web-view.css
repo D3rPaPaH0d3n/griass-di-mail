@@ -35,6 +35,11 @@ body > div#convey-body {
   outline: 0px !important;
 }
 
+body > div#convey-body:only-child {
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
 body > div#convey-signature,
 body > div#convey-quote {
   margin: 0 6px !important;

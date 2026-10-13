@@ -198,6 +198,30 @@ public class Composer.WebView : Components.WebView {
     }
 
     /**
+     * Loads a signature into the view so it can be edited on its own.
+     */
+    public void load_signature(string signature) {
+        base.load_html(
+            HTML_PRE.printf("") +
+            BODY_PRE.printf(BODY_HTML_ID) +
+            signature +
+            "</div>" +
+            HTML_POST
+        );
+    }
+
+    /**
+     * Returns the HTML of the view's main text section.
+     *
+     * Returns an empty string if it has no text or images.
+     */
+    public async string? get_body_html() throws Error {
+        return yield call_returning<string?>(
+            Util.JS.callable("getBodyHtml"), null
+        );
+    }
+
+    /**
      * Returns the view's content as HTML without being cleaned.
      */
     public async string? get_html_for_draft() throws Error {

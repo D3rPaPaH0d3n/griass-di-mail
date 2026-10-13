@@ -361,6 +361,12 @@ ComposerPageState.prototype = {
 
         return parent.innerHTML;
     },
+    getBodyHtml: function() {
+        let part = this.bodyPart;
+        let blank = part.innerText.trim() == "" &&
+            part.querySelector("img") == null;
+        return blank ? "" : part.innerHTML;
+    },
     getText: function() {
         let text = ComposerPageState.htmlToText(document.body);
         return ComposerPageState.replaceNonBreakingSpace(text);

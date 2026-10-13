@@ -38,7 +38,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
 
     [GtkChild] private unowned Adw.PreferencesGroup signature_bin;
 
-    private SignatureWebView signature_preview;
+    private Composer.Editor signature_editor;
     private bool signature_changed = false;
 
     [GtkChild] private unowned Adw.ComboRow email_prefetch_row;
@@ -60,16 +60,8 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
             this.senders_list.append(new_mailbox_row(sender));
         }
 
-        this.signature_preview = new SignatureWebView(editor.application.config);
-        this.signature_preview.add_css_class("card");
-        this.signature_preview.content_loaded.connect(() => {
-                // Only enable editability after the content has fully
-                // loaded to avoid the WebProcess crashing.
-                this.signature_preview.set_editable.begin(
-                    true, this.op_cancellable
-                );
-            });
-        this.signature_preview.document_modified.connect(() => {
+        this.signature_editor = new_signature_editor(account.signature);
+        this.signature_editor.body.document_modified.connect(() => {
                 this.signature_changed = true;
             });
         var focus_controller = new Gtk.EventControllerFocus();
@@ -78,23 +70,19 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
             // window loses focus, e.g. if the user alt-tabs away,
             // so don't execute the command if the signature web
             // view no longer the focus widget
-            if (!this.signature_preview.is_focus() &&
+            if (!this.signature_editor.body.is_focus() &&
                 this.signature_changed) {
                 this.commands.execute.begin(
                     new SignatureChangedCommand(
-                        this.signature_preview, account
+                        this.signature_editor.body, account
                     ),
                     this.op_cancellable
                 );
             }
         });
-        this.signature_preview.add_controller(focus_controller);
+        this.signature_editor.body.add_controller(focus_controller);
 
-        this.signature_bin.add(this.signature_preview);
-
-        this.signature_preview.load_html(
-            Convey.HTML.smart_escape(account.signature)
-        );
+        this.signature_bin.add(this.signature_editor);
 
         this.remove_button.set_visible(
             !this.editor.accounts.is_goa_account(account)
@@ -233,6 +221,15 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         }
 
         return name;
+    }
+
+    internal Composer.Editor new_signature_editor(string signature) {
+        var signature_editor = new Composer.Editor(
+            this.editor.application.config,
+            this.editor.application.controller.get_web_cache_dir()
+        );
+        signature_editor.load_signature(signature);
+        return signature_editor;
     }
 
     internal MailboxRow new_mailbox_row(Convey.RFC822.MailboxAddress sender) {
@@ -740,7 +737,7 @@ internal class Accounts.RemoveMailboxCommand : Application.Command {
 internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
-    private Components.WebView signature_view;
+    private Composer.WebView signature_view;
     private Convey.AccountInformation account;
 
     private string old_value;
@@ -750,7 +747,7 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
     private bool new_enabled = false;
 
 
-    public SignatureChangedCommand(Components.WebView signature_view,
+    public SignatureChangedCommand(Composer.WebView signature_view,
                                    Convey.AccountInformation account) {
         this.signature_view = signature_view;
         this.account = account;
@@ -766,20 +763,18 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
     public async override void execute(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        this.new_value = yield this.signature_view.get_html();
-        this.new_enabled = !Convey.String.is_empty_or_whitespace(
-            Convey.HTML.html_to_text(this.new_value)
-        );
+        this.new_value = yield this.signature_view.get_body_html();
+        this.new_enabled = !Convey.String.is_empty(this.new_value);
         update_account_signature(this.new_value, this.new_enabled);
     }
 
     public async override void undo(GLib.Cancellable? cancellable) {
-        this.signature_view.load_html(this.old_value);
+        this.signature_view.load_signature(this.old_value);
         update_account_signature(this.old_value, this.old_enabled);
     }
 
     public async override void redo(GLib.Cancellable? cancellable) {
-        this.signature_view.load_html(this.new_value);
+        this.signature_view.load_signature(this.new_value);
         update_account_signature(this.new_value, this.new_enabled);
     }
 

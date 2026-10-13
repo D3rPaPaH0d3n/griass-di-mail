@@ -515,11 +515,6 @@ row.convey-settings > grid > grid.convey-drag-handle image:dir(rtl) {
   padding-left: 6px;
 }
 
-.convey-settings .convey-signature {
-  min-height: 5em;
-  padding: 0.2em;
-}
-
 buttonbox.convey-settings {
   margin-top: 36px;
 }
