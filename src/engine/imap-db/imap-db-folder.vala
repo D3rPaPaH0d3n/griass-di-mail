@@ -1207,14 +1207,15 @@ private class Convey.ImapDB.Folder : BaseObject, Convey.ReferenceSemantics {
                     id.to_string(), to_string());
             }
 
+            internal_is_marked = location.marked_removed;
+
             // Check to see if message is unread (this only affects non-marked emails.)
-            if (do_get_unread_count_for_ids(cx,
+            if (!internal_is_marked &&
+                do_get_unread_count_for_ids(cx,
                 Convey.iterate<ImapDB.EmailIdentifier>(id).to_array_list(), cancellable) > 0) {
                 do_add_to_unread_count(cx, -1, cancellable);
                 was_unread = true;
             }
-
-            internal_is_marked = location.marked_removed;
 
             do_remove_association_with_folder(cx, location, cancellable);
 
@@ -1253,6 +1254,9 @@ private class Convey.ImapDB.Folder : BaseObject, Convey.ReferenceSemantics {
 
             total_changed = locs.size;
             unread_count = do_get_unread_count_for_ids(cx, ids, cancellable);
+            if (mark_removed) {
+                unread_count = -unread_count;
+            }
 
             Gee.HashSet<Imap.UID> uids = new Gee.HashSet<Imap.UID>();
             foreach (LocationIdentifier location in locs) {
@@ -1261,7 +1265,7 @@ private class Convey.ImapDB.Folder : BaseObject, Convey.ReferenceSemantics {
             }
 
             do_mark_unmark_removed(cx, uids, mark_removed, cancellable);
-            do_add_to_unread_count(cx, -unread_count, cancellable);
+            do_add_to_unread_count(cx, unread_count, cancellable);
 
             return Db.TransactionOutcome.DONE;
         }, cancellable);
@@ -1280,8 +1284,8 @@ private class Convey.ImapDB.Folder : BaseObject, Convey.ReferenceSemantics {
         }
 
         // Unread total
-        if (unread_count > 0)
-            properties.set_status_unseen(properties.email_unread - unread_count);
+        if (unread_count != 0)
+            properties.set_status_unseen(properties.email_unread + unread_count);
 
         return (removed_ids.size > 0) ? removed_ids : null;
     }

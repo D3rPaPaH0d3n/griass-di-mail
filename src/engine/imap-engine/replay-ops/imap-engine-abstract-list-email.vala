@@ -18,7 +18,6 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
         public Imap.MessageSet msg_set;
         public Convey.Email.Field unfulfilled_fields;
         public Convey.Email.Field required_fields;
-        public bool update_unread;
 
         // OUT
         public Gee.Set<Convey.EmailIdentifier> created_ids = new Gee.HashSet<Convey.EmailIdentifier>();
@@ -31,14 +30,12 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
                                     Imap.MessageSet msg_set,
                                     Convey.Email.Field unfulfilled_fields,
                                     Convey.Email.Field required_fields,
-                                    bool update_unread,
                                     ContactHarvester harvester) {
             this.remote = remote;
             this.local = local;
             this.msg_set = msg_set;
             this.unfulfilled_fields = unfulfilled_fields;
             this.required_fields = required_fields;
-            this.update_unread = update_unread;
             this.harvester = harvester;
         }
 
@@ -54,7 +51,7 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
             Gee.Map<Email, bool> created_or_merged =
                 yield this.local.create_or_merge_email_async(
                     list,
-                    this.update_unread,
+                    false,
                     this.harvester,
                     cancellable
                 );
@@ -186,7 +183,6 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
                     msg_set,
                     unfulfilled_fields,
                     required_fields,
-                    !this.flags.is_any_set(NO_UNREAD_UPDATE),
                     this.owner.harvester
                 );
                 batch.add(remote_op);

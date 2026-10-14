@@ -246,11 +246,7 @@ public abstract class Convey.Folder : BaseObject, Logging.Source {
         /**
          * Direction of list traversal (if not set, from newest to oldest).
          */
-        OLDEST_TO_NEWEST,
-        /**
-         * Internal use only, prevents flag changes updating unread count.
-         */
-        NO_UNREAD_UPDATE;
+        OLDEST_TO_NEWEST;
 
         public bool is_any_set(ListFlags flags) {
             return (this & flags) != 0;

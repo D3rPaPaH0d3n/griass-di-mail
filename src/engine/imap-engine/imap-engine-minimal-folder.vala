@@ -1607,10 +1607,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
             Gee.List<Convey.Email>? list_remote = yield list_email_by_sparse_id_async(
                 local_map.keys,
                 Email.Field.FLAGS,
-                Folder.ListFlags.FORCE_UPDATE |
-                // Updating read/unread count here breaks the unread
-                // count, so don't do it. See issue #213.
-                Folder.ListFlags.NO_UNREAD_UPDATE,
+                Folder.ListFlags.FORCE_UPDATE,
                 cancellable
             );
             if (list_remote == null || list_remote.is_empty)
