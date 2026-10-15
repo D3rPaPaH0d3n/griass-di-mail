@@ -1502,6 +1502,7 @@ public class Application.MainWindow :
     }
 
     public void add_toast(Adw.Toast toast) {
+        toast.priority = Adw.ToastPriority.HIGH;
         this.overlay.add_toast(toast);
     }
 
