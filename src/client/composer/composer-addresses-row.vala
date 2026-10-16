@@ -89,7 +89,14 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
         // Only suggest while the entry has the focus, since the popover
         // doesn't autohide and would otherwise stay up.
         var focus_controller = new Gtk.EventControllerFocus();
-        focus_controller.enter.connect(() => { this.entry_focused = true; });
+        focus_controller.enter.connect(() => {
+            this.entry_focused = true;
+            if (this.is_valid && !this.text.chomp().has_suffix(",")) {
+                int pos = this.text.char_count();
+                insert_text(", ", -1, ref pos);
+                set_position(-1);
+            }
+        });
         focus_controller.leave.connect(() => {
             this.entry_focused = false;
             cancel_search();
@@ -399,6 +406,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
         listview.tab_behavior = Gtk.ListTabBehavior.ITEM;
         listview.activate.connect(on_activate);
         listview.add_css_class("contact-completion");
+        listview.can_focus = false;
         this.listview = listview;
 
         var sw = new Gtk.ScrolledWindow();
