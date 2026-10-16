@@ -1983,6 +1983,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     private void attachment_failed(string msg) {
         var dialog = new Adw.AlertDialog(_("Cannot add attachment"), msg);
+        dialog.add_response("ok", _("_OK"));
         dialog.add_css_class("error");
         dialog.present(this.container.top_window);
     }
