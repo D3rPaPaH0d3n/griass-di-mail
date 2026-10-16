@@ -885,7 +885,18 @@ internal class Convey.Graph.Account : Convey.Account,
         Gee.HashMap<string,Convey.FolderPath> seen =
             new Gee.HashMap<string,Convey.FolderPath>();
         Gee.ArrayList<Convey.Folder> added = new Gee.ArrayList<Convey.Folder>();
-        yield walk_folders(null, this.remote_folder_root, seen, added, cancellable);
+        Gee.HashMap<string,string> builtin_ids = new Gee.HashMap<string,string>();
+        foreach (string name in BUILTIN_WELL_KNOWN_NAMES) {
+            try {
+                builtin_ids.set(
+                    yield this.client.get_mail_folder_id(name, cancellable),
+                    name
+                );
+            } catch (GLib.Error err) {
+                debug("Graph: No built-in folder '%s': %s", name, err.message);
+            }
+        }
+        yield walk_folders(null, this.remote_folder_root, seen, added, builtin_ids, cancellable);
 
         // Remove folders that no longer exist on the server
         foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
@@ -922,6 +933,7 @@ internal class Convey.Graph.Account : Convey.Account,
                                     Convey.FolderPath parent_path,
                                     Gee.Map<string,Convey.FolderPath> seen,
                                     Gee.List<Convey.Folder> added,
+                                    Gee.Map<string,string> builtin_ids,
                                     GLib.Cancellable? cancellable)
         throws GLib.Error {
         Gee.List<Convey.Graph.Client.MailFolder> children;
@@ -942,6 +954,9 @@ internal class Convey.Graph.Account : Convey.Account,
             }
 
             string well_known = mf.well_known_name.down();
+            if (String.is_empty(well_known)) {
+                well_known = builtin_ids.get(mf.id) ?? "";
+            }
             Convey.FolderPath path;
             if (well_known in BUILTIN_WELL_KNOWN_NAMES) {
                 Convey.Graph.Folder? builtin = find_folder_by_graph_id(well_known);
@@ -978,7 +993,7 @@ internal class Convey.Graph.Account : Convey.Account,
             }
 
             if (mf.child_folder_count > 0) {
-                yield walk_folders(mf.id, path, seen, added, cancellable);
+                yield walk_folders(mf.id, path, seen, added, builtin_ids, cancellable);
             }
         }
     }

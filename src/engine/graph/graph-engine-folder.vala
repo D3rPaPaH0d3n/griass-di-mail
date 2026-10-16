@@ -39,6 +39,7 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
     // Graph delta cursor, persisted with the cache after every applied
     // batch; empty means the next sync establishes a fresh baseline.
     private string delta_link = "";
+    private string? real_folder_id = null;
     // Set when the server rejects delta queries; sync falls back to
     // newest-first polling for the rest of the session.
     private bool delta_unsupported = false;
@@ -778,12 +779,21 @@ internal class Convey.Graph.Folder : Convey.AbstractLocalFolder,
                 .to_unix();
         }
 
+        if (this.real_folder_id == null) {
+            this.real_folder_id =
+                yield this.client.get_mail_folder_id(this.folder_id, cancellable);
+        }
+
         Gee.ArrayList<Convey.Graph.Client.Message> fetched =
             new Gee.ArrayList<Convey.Graph.Client.Message>();
         foreach (string id in changed_ids) {
             try {
                 Convey.Graph.Client.Message message =
                     yield this.client.fetch_message(id, cancellable);
+                if (message.parent_folder_id != this.real_folder_id) {
+                    removed.add(id);
+                    continue;
+                }
                 if (cutoff_unix > 0 &&
                     message.received_at != null &&
                     message.received_at.to_unix() < cutoff_unix &&

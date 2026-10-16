@@ -20,6 +20,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
     internal class Message : Convey.BaseObject {
         public string id = "";
         public string conversation_id = "";
+        public string parent_folder_id = "";
         public Convey.RFC822.MailboxAddresses? from = null;
         public Convey.RFC822.MailboxAddresses? to = null;
         public Convey.RFC822.MailboxAddresses? cc = null;
@@ -701,6 +702,18 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         return folder;
     }
 
+    public async string get_mail_folder_id(string folder_id,
+                                           GLib.Cancellable? cancellable = null)
+        throws GLib.Error {
+        Json.Object root = yield request_json(
+            "GET",
+            "/me/mailFolders/%s".printf(GLib.Uri.escape_string(folder_id, null, false)),
+            "$select=id",
+            cancellable
+        );
+        return get_string_member(root, "id") ?? "";
+    }
+
     public async Gee.List<MailFolder> list_mail_folder_page(
         string path,
         GLib.Cancellable? cancellable = null
@@ -1020,6 +1033,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         var parsed = new Message();
         parsed.id = get_string_member(object, "id") ?? "";
         parsed.conversation_id = get_string_member(object, "conversationId") ?? "";
+        parsed.parent_folder_id = get_string_member(object, "parentFolderId") ?? "";
         parsed.subject = get_string_member(object, "subject") ?? "";
         parsed.internet_message_id = get_string_member(object, "internetMessageId") ?? "";
         parsed.body_preview = get_string_member(object, "bodyPreview") ?? "";
