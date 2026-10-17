@@ -27,20 +27,19 @@ mkdir -p "$REPO"/{refs/heads,refs/mirrors,refs/remotes,state,extensions,tmp/cach
 # strips them and software centres then show "No Screenshots".
 flatpak-builder --user --force-clean --disable-rofiles-fuse \
   --compose-url-policy=full \
-  --repo="$REPO" --gpg-sign="$KEY" --default-branch=stable \
+  --repo="$REPO" --gpg-sign="$KEY" --default-branch=nightly \
   build-flathub "$MANIFEST"
 
 # The Debug extension is ~3x the app itself and nobody fetches it from a
 # personal repo; drop it before the objects get published.
-ostree --repo="$REPO" refs --delete "runtime/$APP_ID.Debug/$ARCH/stable" || true
-
+ostree --repo="$REPO" refs --delete "runtime/$APP_ID.Debug/$ARCH/nightly" || true
 # --prune only drops objects no ref points at, so other apps in the shared
 # repo are unaffected.
 flatpak build-update-repo "$REPO" \
   --title="Daniel Elia's Flatpaks" \
   --comment="Flatpak releases by Daniel Elia" \
   --homepage="https://donnybeelo.net" \
-  --default-branch=stable \
+  --default-branch=nightly \
   --generate-static-deltas --prune \
   --gpg-sign="$KEY"
 
