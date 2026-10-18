@@ -41,9 +41,15 @@ install_data(icon_files,
 
 scalable_dir = join_paths('hicolor', 'scalable', 'apps')
 
+app_icon = '@0@.svg'.format(convey_id)
+if get_option('nightly')
+  app_icon = 'net.donnybeelo.Convey.Nightly.svg'
+endif
+
 install_data(
-  join_paths(scalable_dir, '@0@.svg'.format(convey_id)),
+  join_paths(scalable_dir, app_icon),
   install_dir: join_paths(data_dir, 'icons', scalable_dir),
+  rename: '@0@.svg'.format(convey_id),
 )
 
 symbolic_dir = join_paths('hicolor', 'symbolic', 'apps')
