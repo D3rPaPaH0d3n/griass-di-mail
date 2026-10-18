@@ -14,6 +14,7 @@ class Convey.RFC822.Utils.Test : TestCase {
         add_test("best_encoding_long_line", best_encoding_long_line);
         add_test("best_encoding_binary", best_encoding_binary);
         add_test("list_post_address", list_post_address);
+        add_test("list_unsubscribe", list_unsubscribe);
     }
 
     public void to_preview_text() throws GLib.Error {
@@ -61,6 +62,34 @@ class Convey.RFC822.Utils.Test : TestCase {
             ).to_rfc822_string(),
             "list+dev@example.com"
         );
+    }
+
+    public void list_unsubscribe() throws GLib.Error {
+        var none = email_with_header("From: a@example.com\r\n\r\n");
+        assert_null(get_list_unsubscribe_uri(none, { "https", "mailto" }));
+        assert_false(has_one_click_unsubscribe(none));
+
+        var both = email_with_header(
+            "List-Unsubscribe: <mailto:leave@example.com?subject=unsubscribe>,\r\n" +
+            " <https://example.com/u/123>\r\n" +
+            "List-Unsubscribe-Post: List-Unsubscribe=One-Click\r\n\r\n"
+        );
+        assert_equal(
+            get_list_unsubscribe_uri(both, { "https" }),
+            "https://example.com/u/123"
+        );
+        assert_equal(
+            get_list_unsubscribe_uri(both, { "mailto" }),
+            "mailto:leave@example.com?subject=unsubscribe"
+        );
+        assert_true(has_one_click_unsubscribe(both));
+
+        var mailto_only = email_with_header(
+            "List-Unsubscribe: <mailto:leave@example.com>\r\n" +
+            "List-Unsubscribe-Post: List-Unsubscribe=One-Click\r\n\r\n"
+        );
+        assert_null(get_list_unsubscribe_uri(mailto_only, { "https", "http" }));
+        assert_false(has_one_click_unsubscribe(mailto_only));
     }
 
     private Email email_with_header(string header) throws GLib.Error {

@@ -683,6 +683,16 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
     private async void update_body()
         throws GLib.Error {
+        if (Convey.RFC822.Utils.get_list_unsubscribe_uri(
+                this.email, { "https", "http", "mailto" }
+            ) != null) {
+            this.primary_message.show_unsubscribe(
+                ConversationListBox.EMAIL_ACTION_GROUP_NAME + "." +
+                ConversationListBox.ACTION_UNSUBSCRIBE,
+                this.email.id.to_variant()
+            );
+        }
+
         Convey.RFC822.Message message = this.email.get_message();
         bool encrypted = message.has_encrypted_body();
         bool inline_pgp = message.has_inline_encrypted_body();

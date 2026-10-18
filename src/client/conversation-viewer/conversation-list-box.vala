@@ -46,6 +46,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     internal const string ACTION_REPLY_SENDER = "reply-sender";
     internal const string ACTION_SAVE_ALL_ATTACHMENTS = "save-all-attachments";
     internal const string ACTION_TRASH = "trash";
+    internal const string ACTION_UNSUBSCRIBE = "unsubscribe";
     internal const string ACTION_VIEW_SOURCE = "view-source";
 
     // Offset from the top of the list box which emails views will
@@ -82,6 +83,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         { ACTION_REPLY_SENDER, on_email_reply_sender, ACTION_TARGET_TYPE },
         { ACTION_SAVE_ALL_ATTACHMENTS, on_email_save_all_attachments, ACTION_TARGET_TYPE },
         { ACTION_TRASH, on_email_trash, ACTION_TARGET_TYPE },
+        { ACTION_UNSUBSCRIBE, on_email_unsubscribe, ACTION_TARGET_TYPE },
         { ACTION_VIEW_SOURCE, on_email_view_source, ACTION_TARGET_TYPE },
     };
 
@@ -672,6 +674,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
     /** Fired when the user clicks "forward" in the message menu. */
     public signal void forward_email(Convey.Email email, string? quote);
+
+    /** Fired when the user clicks "unsubscribe" in the message header. */
+    public signal void unsubscribe_email(Convey.Email email);
 
     /** Emitted when email message flags are to be updated. */
     public signal void mark_email(Gee.Collection<Convey.EmailIdentifier> email,
@@ -1516,6 +1521,14 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
                     string? quote = view.get_selection_for_quoting.end(res);
                     reply_to_list_email(view.email, quote);
                 });
+        }
+    }
+
+    private void on_email_unsubscribe(GLib.SimpleAction action,
+                                      GLib.Variant? param) {
+        ConversationEmail? view = action_target_to_view(param);
+        if (view != null) {
+            unsubscribe_email(view.email);
         }
     }
 

@@ -273,6 +273,11 @@ row.convey-folder-popover-list-row > label {
   margin: 0;
   padding: 1px;
 }
+
+.convey-unsubscribe {
+  min-height: 0;
+  padding: 4px 8px;
+}
 .convey-headers label.convey-header:dir(ltr) {
   padding-right: 6px;
 }

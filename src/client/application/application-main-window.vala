@@ -3069,6 +3069,7 @@ public class Application.MainWindow :
         list.reply_to_list_email.connect(on_email_reply_to_list);
         list.reply_to_sender_email.connect(on_email_reply_to_sender);
         list.forward_email.connect(on_email_forward);
+        list.unsubscribe_email.connect(on_email_unsubscribe);
         list.trash_email.connect(on_email_trash);
         list.delete_email.connect(on_email_delete);
     }
@@ -3605,6 +3606,136 @@ public class Application.MainWindow :
             );
         }
         this.conversation_list_view.selection_mode_enabled = false;
+    }
+
+    private void on_email_unsubscribe(Convey.Email target) {
+        if (this.selected_account != null) {
+            this.unsubscribe.begin(this.selected_account, target);
+        }
+    }
+
+    private async void unsubscribe(Convey.Account account, Convey.Email email) {
+        string? one_click = Convey.RFC822.Utils.has_one_click_unsubscribe(email)
+            ? Convey.RFC822.Utils.get_list_unsubscribe_uri(email, { "https" })
+            : null;
+        string? mailto = Convey.RFC822.Utils.get_list_unsubscribe_uri(
+            email, { "mailto" }
+        );
+        string? website = Convey.RFC822.Utils.get_list_unsubscribe_uri(
+            email, { "https", "http" }
+        );
+        bool automatic = one_click != null || mailto != null;
+
+        Convey.RFC822.MailboxAddress? originator =
+            Util.Email.get_primary_originator(email);
+        string sender = originator != null
+            ? originator.to_short_display()
+            : _("this mailing list");
+
+        var dialog = new Adw.AlertDialog(
+            // Translators: Title of the unsubscribe confirmation,
+            // substitution is the sender's name
+            _("Unsubscribe from %s?").printf(sender),
+            automatic
+            ? _("Convey will ask the sender to stop sending you emails.")
+            : _("To unsubscribe, go to the sender’s website.")
+        );
+        dialog.add_response("cancel", _("_Cancel"));
+        dialog.add_response(
+            "unsubscribe", automatic ? _("_Unsubscribe") : _("_Go to Website")
+        );
+        dialog.default_response = "unsubscribe";
+        dialog.close_response = "cancel";
+        dialog.set_response_appearance(
+            "unsubscribe", Adw.ResponseAppearance.SUGGESTED
+        );
+        if ((yield dialog.choose(this, null)) != "unsubscribe") {
+            return;
+        }
+
+        try {
+            if (one_click != null) {
+                yield send_one_click_unsubscribe(one_click);
+                // Translators: Toast shown after unsubscribing,
+                // substitution is the sender's name
+                add_toast(new Adw.Toast(_("Unsubscribed from %s").printf(sender)));
+            } else if (mailto != null) {
+                yield send_mailto_unsubscribe(account, email, mailto);
+                // Translators: Toast shown after sending an unsubscribe
+                // email, substitution is the sender's name
+                add_toast(new Adw.Toast(
+                    _("Unsubscribe request sent to %s").printf(sender)
+                ));
+            } else {
+                yield new Gtk.UriLauncher(website).launch(this, null);
+            }
+        } catch (GLib.Error err) {
+            handle_error(account.information, err);
+        }
+    }
+
+    private async void send_one_click_unsubscribe(string uri)
+        throws GLib.Error {
+        var message = new Soup.Message.from_uri(
+            "POST", GLib.Uri.parse(uri, GLib.UriFlags.NONE)
+        );
+        message.set_request_body_from_bytes(
+            "application/x-www-form-urlencoded",
+            new GLib.Bytes("List-Unsubscribe=One-Click".data)
+        );
+        yield new Soup.Session().send_and_read_async(
+            message, GLib.Priority.DEFAULT, null
+        );
+        if (message.status_code < 200 || message.status_code >= 300) {
+            throw new GLib.IOError.FAILED(
+                "Unsubscribe request failed: %u %s",
+                message.status_code,
+                message.reason_phrase
+            );
+        }
+    }
+
+    private async void send_mailto_unsubscribe(Convey.Account account,
+                                               Convey.Email email,
+                                               string mailto)
+        throws GLib.Error {
+        GLib.Uri uri = GLib.Uri.parse(mailto, GLib.UriFlags.NONE);
+        string? subject = null;
+        string? body = null;
+        string? query = uri.get_query();
+        if (query != null) {
+            HashTable<string,string> params = GLib.Uri.parse_params(
+                query, -1, "&", GLib.UriParamsFlags.CASE_INSENSITIVE
+            );
+            subject = params.get("subject");
+            body = params.get("body");
+        }
+
+        Convey.RFC822.MailboxAddress from = account.information.primary_mailbox;
+        foreach (var mailbox in account.information.sender_mailboxes) {
+            if ((email.to != null && email.to.contains_normalized(mailbox.address)) ||
+                (email.cc != null && email.cc.contains_normalized(mailbox.address))) {
+                from = mailbox;
+                break;
+            }
+        }
+
+        var composed = new Convey.ComposedEmail(
+            new GLib.DateTime.now_local(),
+            new Convey.RFC822.MailboxAddresses.single(from)
+        );
+        composed.set_to(new Convey.RFC822.MailboxAddresses.single(
+            new Convey.RFC822.MailboxAddress(null, uri.get_path())
+        ));
+        composed.set_subject(subject ?? "Unsubscribe");
+        composed.body_text = body ?? "Unsubscribe";
+
+        var smtp = account.outgoing as Convey.Smtp.ClientService;
+        if (smtp != null) {
+            yield smtp.send_email(composed, null);
+        } else {
+            yield account.send_composed_email(composed, null);
+        }
     }
 
     private void on_email_trash(ConversationListBox view, Convey.Email target) {

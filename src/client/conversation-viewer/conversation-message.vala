@@ -357,6 +357,9 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     private string subject_searchable = "";
     [GtkChild] private unowned Gtk.Label date;
 
+    private Gtk.Overlay? header_overlay = null;
+    private Gtk.Button? unsubscribe_button = null;
+
     [GtkChild] private unowned Gtk.Box sender_header;
     [GtkChild] private unowned Gtk.FlowBox sender_address;
 
@@ -734,6 +737,29 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         y1 = point.y;
     }
 
+    internal void show_unsubscribe(string action_name, GLib.Variant target) {
+        if (this.unsubscribe_button == null) {
+            this.unsubscribe_button = new Gtk.Button.with_label(_("Unsubscribe"));
+            this.unsubscribe_button.tooltip_text = _(
+                "Stop receiving emails from this mailing list"
+            );
+            this.unsubscribe_button.add_css_class("convey-unsubscribe");
+            this.expanded_header.bind_property(
+                "visible", this.unsubscribe_button, "visible",
+                GLib.BindingFlags.SYNC_CREATE
+            );
+            this.header_overlay.add_overlay(this.unsubscribe_button);
+            this.header_overlay.set_clip_overlay(this.unsubscribe_button, false);
+
+            int button_width, actions_width, height;
+            measure_natural(this.unsubscribe_button, out button_width, out height);
+            measure_natural(this.header_overlay.child, out actions_width, out height);
+            this.subject.margin_end = int.max(0, button_width - actions_width);
+        }
+        this.unsubscribe_button.set_action_name(action_name);
+        this.unsubscribe_button.set_action_target_value(target);
+    }
+
     internal void add_header_actions(Gtk.Widget actions) {
         // Reserve the buttons' width without increasing the text row's height.
         var space = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
@@ -741,35 +767,51 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         width.add_widget(space);
         width.add_widget(actions);
 
-        var overlay = new Gtk.Overlay();
-        overlay.child = space;
-        overlay.add_overlay(actions);
-        overlay.set_clip_overlay(actions, false);
-        overlay.get_child_position.connect(on_header_actions_position);
-        this.summary.append(overlay);
+        this.header_overlay = new Gtk.Overlay();
+        this.header_overlay.child = space;
+        this.header_overlay.add_overlay(actions);
+        this.header_overlay.set_clip_overlay(actions, false);
+        this.header_overlay.get_child_position.connect(on_header_actions_position);
+        this.summary.append(this.header_overlay);
     }
 
     private bool on_header_actions_position(Gtk.Overlay overlay,
                                             Gtk.Widget widget,
                                             out Gdk.Rectangle allocation) {
-        int minimum, natural_width, natural_height;
-        widget.measure(Gtk.Orientation.HORIZONTAL, -1,
-                       out minimum, out natural_width, null, null);
-        widget.measure(Gtk.Orientation.VERTICAL, natural_width,
-                       out minimum, out natural_height, null, null);
+        int width, height;
+        measure_natural(widget, out width, out height);
+        allocation = Gdk.Rectangle() {
+            x = overlay.get_width() - width,
+            width = width,
+            height = height
+        };
+        Graphene.Rect bounds;
+        if (widget == this.unsubscribe_button) {
+            if (this.expanded_header.compute_bounds(overlay, out bounds)) {
+                allocation.y = (int) Math.floor(
+                    bounds.origin.y + bounds.size.height - height
+                );
+            }
+            return true;
+        }
         Gtk.Widget row = this.expanded_header.visible
             ? (Gtk.Widget) this.from_header : this.compact_from_header;
-        Graphene.Rect bounds;
-        allocation = Gdk.Rectangle() {
-            width = natural_width,
-            height = natural_height
-        };
         if (row.compute_bounds(overlay, out bounds)) {
             allocation.y = (int) Math.floor(
-                bounds.origin.y + (bounds.size.height - natural_height) / 2
+                bounds.origin.y + (bounds.size.height - height) / 2
             );
         }
         return true;
+    }
+
+    private static void measure_natural(Gtk.Widget widget,
+                                        out int width,
+                                        out int height) {
+        int minimum;
+        widget.measure(Gtk.Orientation.HORIZONTAL, -1,
+                       out minimum, out width, null, null);
+        widget.measure(Gtk.Orientation.VERTICAL, width,
+                       out minimum, out height, null, null);
     }
 
     public int web_view_get_allocated_height() {

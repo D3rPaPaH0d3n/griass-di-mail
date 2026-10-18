@@ -52,6 +52,33 @@ namespace Convey.RFC822.Utils {
         return new MailboxAddresses.single(new MailboxAddress(null, address));
     }
 
+    public string? get_list_unsubscribe_uri(Email email, string[] schemes) {
+        string? value = email.header?.get_header("List-Unsubscribe");
+        if (value == null) {
+            return null;
+        }
+        foreach (string part in value.split(",")) {
+            int start = part.index_of("<");
+            int end = part.index_of(">", start + 1);
+            if (start < 0 || end < 0) {
+                continue;
+            }
+            string uri = part.substring(start + 1, end - start - 1).strip();
+            string? scheme = GLib.Uri.peek_scheme(uri);
+            if (scheme != null && scheme in schemes) {
+                return uri;
+            }
+        }
+        return null;
+    }
+
+    public bool has_one_click_unsubscribe(Email email) {
+        string? value = email.header?.get_header("List-Unsubscribe-Post");
+        return value != null &&
+            value.strip().ascii_down() == "list-unsubscribe=one-click" &&
+            get_list_unsubscribe_uri(email, { "https" }) != null;
+    }
+
     public string create_subject_for_forward(Email email) {
         return get_real_subject(email).create_forward().value;
     }
