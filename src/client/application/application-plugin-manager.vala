@@ -555,6 +555,9 @@ public class Application.PluginManager : GLib.Object {
     public signal void plugin_deactivated(Peas.PluginInfo info,
                                           GLib.Error? error);
 
+    /** Emitted before an active plugin begins deactivating. */
+    public signal void plugin_unloading(Peas.PluginInfo info);
+
 
     internal PluginGlobals globals { get; private set; }
 
@@ -681,6 +684,26 @@ public class Application.PluginManager : GLib.Object {
         return unloaded;
     }
 
+    /** Whether an active plugin provides a preferences dialog. */
+    public bool has_preferences(Peas.PluginInfo info) {
+        var context = this.plugin_set.get(info);
+        return context != null && context.instance is Plugin.Configurable;
+    }
+
+    /** Presents preferences for an active plugin without activating it. */
+    public Adw.Dialog present_preferences(Peas.PluginInfo info,
+                                          Gtk.Widget parent) throws GLib.Error {
+        var context = this.plugin_set.get(info);
+        var configurable = context != null
+            ? context.instance as Plugin.Configurable : null;
+        if (configurable == null || !info.is_loaded()) {
+            throw new Plugin.Error.NOT_SUPPORTED(
+                "Plugin preferences are not available"
+            );
+        }
+        return configurable.present_preferences(parent);
+    }
+
     internal void close() throws GLib.Error {
         this.is_shutdown = true;
         this.plugin_engine.set_loaded_plugins(null);
@@ -768,6 +791,7 @@ public class Application.PluginManager : GLib.Object {
     private void on_unload_plugin(Peas.PluginInfo info) {
         var plugin_context = this.plugin_set.get(info);
         if (plugin_context != null) {
+            plugin_unloading(info);
             plugin_context.deactivate.begin(
                 this.is_shutdown,
                 (obj, res) => {
