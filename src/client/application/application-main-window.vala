@@ -2097,7 +2097,7 @@ public class Application.MainWindow :
         );
         dialog.add_response("cancel", _("_Cancel"));
         dialog.add_response("delete", _("_Delete"));
-        dialog.default_response = "cancel";
+        dialog.default_response = "delete";
         dialog.close_response = "cancel";
         dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE);
         string response = yield dialog.choose(this, null);
@@ -2116,7 +2116,7 @@ public class Application.MainWindow :
         );
         dialog.add_response("cancel", _("_Cancel"));
         dialog.add_response("delete", _("_Delete"));
-        dialog.default_response = "cancel";
+        dialog.default_response = "delete";
         dialog.close_response = "cancel";
         dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE);
         string response = yield dialog.choose(this, null);
