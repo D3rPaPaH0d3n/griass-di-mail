@@ -47,28 +47,26 @@ body[data-convey-theme] {
   background-color: var(--bg-color);
 }
 
-@media (prefers-color-scheme: dark) {
-  body[data-convey-theme=dark] {
-    color-scheme: dark;
-    --bg-color: #2a2d30;
-    --fg-color: #eaeaea;
-    --quote-container-bg: #36383b;
-    --quote-container-fg: #e3e3e3;
+body[data-convey-theme=dark] {
+  color-scheme: dark;
+  --bg-color: #2a2d30;
+  --fg-color: #eaeaea;
+  --quote-container-bg: #36383b;
+  --quote-container-fg: #e3e3e3;
 
-    /* Adwaita Dark inspired button colors */
-    --button-color: #eeeeec;
-    --button-outline-color: rgba(0, 0, 0, 0.3);
-    --button-border-color: #202020;
-    --button-border-bottom-color: #151515;
-    --button-background-image: linear-gradient(to bottom, #4a4a4a, #3c3c3c 60%, #303030);
-    --button-text-shadow-color: rgba(0, 0, 0, 0.4);
-    --button-box-shadow-color: rgba(0, 0, 0, 0.3);
+  /* Adwaita Dark inspired button colors */
+  --button-color: #eeeeec;
+  --button-outline-color: rgba(0, 0, 0, 0.3);
+  --button-border-color: #202020;
+  --button-border-bottom-color: #151515;
+  --button-background-image: linear-gradient(to bottom, #4a4a4a, #3c3c3c 60%, #303030);
+  --button-text-shadow-color: rgba(0, 0, 0, 0.4);
+  --button-box-shadow-color: rgba(0, 0, 0, 0.3);
 
-    --hover-button-color: #ffffff;
-    --hover-button-outline-color: rgba(0, 0, 0, 0.4);
-    --hover-button-border-color: #2c2c2c;
-    --hover-button-border-bottom-color: #1e1e1e;
-    --hover-button-background-image: linear-gradient(to bottom, #5a5a5a, #4c4c4c 60%, #404040);
-    --hover-button-box-shadow-color: rgba(0, 0, 0, 0.4);
-  }
+  --hover-button-color: #ffffff;
+  --hover-button-outline-color: rgba(0, 0, 0, 0.4);
+  --hover-button-border-color: #2c2c2c;
+  --hover-button-border-bottom-color: #1e1e1e;
+  --hover-button-background-image: linear-gradient(to bottom, #5a5a5a, #4c4c4c 60%, #404040);
+  --hover-button-box-shadow-color: rgba(0, 0, 0, 0.4);
 }

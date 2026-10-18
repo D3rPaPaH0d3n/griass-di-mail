@@ -19,7 +19,7 @@ PageState.prototype = {
         this.redoEnabled = false;
         this.hasSelection = false;
         this.lastPreferredHeight = 0;
-        this.unsetHtmlColorsApplied = false;
+        this.unsetHtmlColorsApplied = null;
 
         this._selectionChanged = MessageSender("selection_changed");
         this._contentLoaded = MessageSender("content_loaded");
@@ -96,26 +96,30 @@ PageState.prototype = {
             }
         }
     },
-    setUnsetHtmlColors: function(enabled) {
-        if (enabled === this.unsetHtmlColorsApplied) {
+    setUnsetHtmlColors: function(enabled, dark) {
+        const theme = enabled ? (dark ? "dark" : "light") : null;
+        if (theme === this.unsetHtmlColorsApplied) {
             return;
         }
-        this.unsetHtmlColorsApplied = enabled;
+        this.unsetHtmlColorsApplied = theme;
         if (!document.body) {
             return;
         }
         if (typeof DarkReader === "undefined") {
             return;
         }
-        if (enabled) {
-            document.body.setAttribute("data-convey-theme", "dark");
-            DarkReader.auto({
+        if (theme != null) {
+            document.body.setAttribute("data-convey-theme", theme);
+        } else {
+            document.body.removeAttribute("data-convey-theme");
+        }
+        if (theme === "dark") {
+            DarkReader.enable({
                 // Defaults is too dark. These colors are better fitting into Adwaita style.
                 darkSchemeBackgroundColor: "#2a2d30",
                 darkSchemeTextColor: "#eaeaea",
             });
         } else {
-            document.body.removeAttribute("data-convey-theme");
             DarkReader.disable();
         }
     },

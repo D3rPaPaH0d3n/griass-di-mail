@@ -405,6 +405,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     }
 
     public override void dispose() {
+        Adw.StyleManager.get_default().notify["dark"].disconnect(on_dark_changed);
         this.message_handlers.clear();
         base.dispose();
     }
@@ -668,6 +669,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
         ].connect(() => {
                 update_unset_html_colors.begin();
             });
+        Adw.StyleManager.get_default().notify["dark"].connect(on_dark_changed);
 
         // Load the persisted zoom once, then only write changes back.
         // A bidirectional binding would slave every open message view
@@ -693,6 +695,10 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
         config.bind_property("monospace-font", this, "monospace-font", GLib.BindingFlags.SYNC_CREATE);
     }
 
+    private void on_dark_changed() {
+        update_unset_html_colors.begin();
+    }
+
     private async void update_unset_html_colors() {
         if (!this.is_content_loaded) {
             return;
@@ -702,6 +708,8 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
             yield call_void(
                 Util.JS.callable("setUnsetHtmlColors").bool(
                     this.config.unset_html_colors
+                ).bool(
+                    Adw.StyleManager.get_default().dark
                 ),
                 null
             );
