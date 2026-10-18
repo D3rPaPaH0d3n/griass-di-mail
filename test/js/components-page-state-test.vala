@@ -147,20 +147,30 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
         load_body_fixture("OHHAI");
 
         run_javascript(
-            "window.darkReaderAutoCalled = false; window.darkReaderDisabledCalled = false;"
+            "window.darkReaderEnableCalled = false; window.darkReaderDisabledCalled = false;"
         );
-        run_javascript("convey.setUnsetHtmlColors(true);");
-        assert(Util.JS.to_bool(run_javascript("window.darkReaderAutoCalled")));
+        run_javascript("convey.setUnsetHtmlColors(true, true);");
+        assert(Util.JS.to_bool(run_javascript("window.darkReaderEnableCalled")));
         assert(!Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
         assert(Util.JS.to_bool(run_javascript(
             "document.body.getAttribute('data-convey-theme') == 'dark'"
         )));
 
         run_javascript(
-            "window.darkReaderAutoCalled = false; window.darkReaderDisabledCalled = false;"
+            "window.darkReaderEnableCalled = false; window.darkReaderDisabledCalled = false;"
         );
-        run_javascript("convey.setUnsetHtmlColors(false);");
-        assert(!Util.JS.to_bool(run_javascript("window.darkReaderAutoCalled")));
+        run_javascript("convey.setUnsetHtmlColors(true, false);");
+        assert(!Util.JS.to_bool(run_javascript("window.darkReaderEnableCalled")));
+        assert(Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
+        assert(Util.JS.to_bool(run_javascript(
+            "document.body.getAttribute('data-convey-theme') == 'light'"
+        )));
+
+        run_javascript(
+            "window.darkReaderEnableCalled = false; window.darkReaderDisabledCalled = false;"
+        );
+        run_javascript("convey.setUnsetHtmlColors(false, false);");
+        assert(!Util.JS.to_bool(run_javascript("window.darkReaderEnableCalled")));
         assert(Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
         assert(!Util.JS.to_bool(run_javascript(
             "document.body.hasAttribute('data-convey-theme')"
@@ -193,12 +203,12 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
     protected override WebView set_up_test_view(GLib.File cache_dir) {
         WebKit.UserScript test_script;
         test_script = new WebKit.UserScript(
-            "window.darkReaderAutoCalled = false;\n" +
+            "window.darkReaderEnableCalled = false;\n" +
             "window.darkReaderDisabledCalled = false;\n" +
             "window.DarkReader = {\n" +
-            "    auto: function(options) {\n" +
-            "        window.darkReaderAutoCalled = true;\n" +
-            "        window.darkReaderAutoOptions = options;\n" +
+            "    enable: function(options) {\n" +
+            "        window.darkReaderEnableCalled = true;\n" +
+            "        window.darkReaderEnableOptions = options;\n" +
             "    },\n" +
             "    disable: function() {\n" +
             "        window.darkReaderDisabledCalled = true;\n" +
