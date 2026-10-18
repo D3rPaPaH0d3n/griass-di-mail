@@ -116,6 +116,7 @@ client_vala_sources = files(
   'plugin/plugin-actionable.vala',
   'plugin/plugin-application.vala',
   'plugin/plugin-composer.vala',
+  'plugin/plugin-configurable.vala',
   'plugin/plugin-contact-store.vala',
   'plugin/plugin-email-extension.vala',
   'plugin/plugin-email-store.vala',

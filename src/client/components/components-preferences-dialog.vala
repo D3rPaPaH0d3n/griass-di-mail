@@ -30,6 +30,14 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
         private Peas.PluginInfo plugin;
         private Application.PluginManager plugins;
         private Gtk.Switch sw = new Gtk.Switch();
+        private Gtk.Button configure = new Gtk.Button.from_icon_name(
+            "emblem-system-symbolic"
+        );
+        private Adw.Dialog? preferences = null;
+        private ulong activated_id;
+        private ulong unloading_id;
+        private ulong deactivated_id;
+        private ulong error_id;
 
 
         public PluginRow(Peas.PluginInfo plugin,
@@ -41,27 +49,100 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             this.sw.notify["active"].connect_after(() => update_plugin());
             this.sw.valign = CENTER;
 
+            var label = _("Configure %s").printf(this.plugin.get_name());
+            this.configure.valign = CENTER;
+            this.configure.tooltip_text = label;
+            this.configure.update_property(
+                Gtk.AccessibleProperty.LABEL, label, -1
+            );
+            this.configure.clicked.connect(on_configure);
+            this.add_suffix(this.configure);
+            this.configure.visible = this.plugins.has_preferences(this.plugin);
+
             this.title = plugin.get_name();
             this.subtitle = plugin.get_description();
             this.activatable_widget = this.sw;
             this.add_suffix(this.sw);
 
-            plugins.plugin_activated.connect((info) => {
+            this.activated_id = plugins.plugin_activated.connect((info) => {
                     if (this.plugin == info) {
                         this.sw.active = true;
+                        this.configure.visible = this.plugins.has_preferences(this.plugin);
                     }
                 });
-            plugins.plugin_deactivated.connect((info) => {
+            this.unloading_id = plugins.plugin_unloading.connect((info) => {
                     if (this.plugin == info) {
+                        close_preferences();
+                        this.configure.visible = false;
+                    }
+                });
+            this.deactivated_id = plugins.plugin_deactivated.connect((info) => {
+                    if (this.plugin == info) {
+                        close_preferences();
                         this.sw.active = false;
+                        this.configure.visible = false;
                     }
                 });
-            plugins.plugin_error.connect((info) => {
+            this.error_id = plugins.plugin_error.connect((info) => {
                     if (this.plugin == info) {
+                        close_preferences();
                         this.sw.active = false;
                         this.sw.sensitive = false;
+                        this.configure.visible = false;
                     }
                 });
+        }
+
+        protected override void dispose() {
+            close_preferences();
+            disconnect_handler(ref this.activated_id);
+            disconnect_handler(ref this.unloading_id);
+            disconnect_handler(ref this.deactivated_id);
+            disconnect_handler(ref this.error_id);
+            base.dispose();
+        }
+
+        private void disconnect_handler(ref ulong id) {
+            if (id != 0) {
+                GLib.SignalHandler.disconnect(this.plugins, id);
+                id = 0;
+            }
+        }
+
+        private void close_preferences() {
+            if (this.preferences != null) {
+                this.preferences.close();
+                this.preferences = null;
+            }
+        }
+
+        private void on_configure() {
+            if (this.preferences != null) {
+                return;
+            }
+            try {
+                var dialog = this.plugins.present_preferences(
+                    this.plugin, this
+                );
+                this.preferences = dialog;
+                dialog.closed.connect(() => {
+                    if (this.preferences == dialog) {
+                        this.preferences = null;
+                    }
+                });
+            } catch (GLib.Error err) {
+                warning(
+                    "Plugin %s preferences could not be opened: %s",
+                    this.plugin.get_name(), err.message
+                );
+                var dialog = this.get_ancestor(typeof(Adw.PreferencesDialog))
+                    as Adw.PreferencesDialog;
+                if (dialog != null) {
+                    dialog.add_toast(new Adw.Toast(
+                        _("Could not open plugin preferences")
+                    ));
+                }
+            }
         }
 
         private void update_plugin() {
