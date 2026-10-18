@@ -950,13 +950,20 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
                 FolderPath root =
                     yield remote.get_default_personal_namespace(cancellable);
                 Gee.List<string> search_names = special_search_names.get(use);
-                foreach (string search_name in search_names) {
-                    FolderPath search_path = root.get_child(search_name);
-                    foreach (FolderPath test_path in this.remote_folders.keys) {
-                        if (test_path.compare_normalized_ci(search_path) == 0) {
-                            path = search_path;
-                            break;
+                FolderPath[] search_parents = {
+                    root, this.local.imap_folder_root.inbox
+                };
+                foreach (FolderPath parent in search_parents) {
+                    foreach (string search_name in search_names) {
+                        FolderPath search_path = parent.get_child(search_name);
+                        foreach (FolderPath test_path in this.remote_folders.keys) {
+                            if (test_path.compare_normalized_ci(search_path) == 0) {
+                                path = test_path;
+                                break;
+                            }
                         }
+                        if (path != null)
+                            break;
                     }
                     if (path != null)
                         break;
