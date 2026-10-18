@@ -16,13 +16,13 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
      id="namedview1"
-     pagecolor="#e0e0e0"
+     pagecolor="#ffffff"
      bordercolor="currentColor"
      borderopacity="0.25"
      inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#b8b8b8"
+     inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1.7237967"
      inkscape:cx="21.17419"
@@ -49,15 +49,15 @@
        id="linearGradient4"
        inkscape:collect="always">
       <stop
-         style="stop-color:#0b0b0b;stop-opacity:1;"
+         style="stop-color:#0c0c0c;stop-opacity:1;"
          offset="0"
          id="stop5-6" />
       <stop
-         style="stop-color:#363636;stop-opacity:1;"
+         style="stop-color:#3d3d3d;stop-opacity:1;"
          offset="0.78983217"
          id="stop6-2" />
       <stop
-         style="stop-color:#6c4b1d;stop-opacity:1;"
+         style="stop-color:#7b5521;stop-opacity:1;"
          offset="1"
          id="stop8-9" />
     </linearGradient>
@@ -75,11 +75,11 @@
        id="linearGradient15"
        inkscape:collect="always">
       <stop
-         style="stop-color:#303030;stop-opacity:1;"
+         style="stop-color:#363636;stop-opacity:1;"
          offset="0"
          id="stop15" />
       <stop
-         style="stop-color:#7e7e7e;stop-opacity:1;"
+         style="stop-color:#8f8f8f;stop-opacity:1;"
          offset="0.5"
          id="stop16" />
     </linearGradient>
@@ -97,19 +97,19 @@
        id="linearGradient2"
        inkscape:collect="always">
       <stop
-         style="stop-color:#4f4023;stop-opacity:1;"
+         style="stop-color:#8d6007;stop-opacity:1;"
          offset="0"
          id="stop2-3" />
       <stop
-         style="stop-color:#8f723e;stop-opacity:1;"
+         style="stop-color:#ffa70d;stop-opacity:1;"
          offset="0.1"
          id="stop7-7" />
       <stop
-         style="stop-color:#8f723e;stop-opacity:1;"
+         style="stop-color:#ffa70d;stop-opacity:1;"
          offset="0.89999998"
          id="stop4-5" />
       <stop
-         style="stop-color:#4f4023;stop-opacity:1;"
+         style="stop-color:#8d6007;stop-opacity:1;"
          offset="1"
          id="stop3-9" />
     </linearGradient>
@@ -126,11 +126,11 @@
        id="linearGradient13"
        inkscape:collect="always">
       <stop
-         style="stop-color:#a5a5a5;stop-opacity:1;"
+         style="stop-color:#bcbcbc;stop-opacity:1;"
          offset="0"
          id="stop13" />
       <stop
-         style="stop-color:#666666;stop-opacity:1;"
+         style="stop-color:#747474;stop-opacity:1;"
          offset="1"
          id="stop17" />
     </linearGradient>
@@ -147,11 +147,11 @@
        id="linearGradient20"
        inkscape:collect="always">
       <stop
-         style="stop-color:#3f3f3f;stop-opacity:1;"
+         style="stop-color:#484848;stop-opacity:1;"
          offset="0"
          id="stop20" />
       <stop
-         style="stop-color:#272727;stop-opacity:1;"
+         style="stop-color:#2c2c2c;stop-opacity:1;"
          offset="1"
          id="stop21" />
     </linearGradient>
@@ -168,15 +168,15 @@
        id="linearGradient18"
        inkscape:collect="always">
       <stop
-         style="stop-color:#d8d8d7;stop-opacity:1;"
+         style="stop-color:#f6f5f4;stop-opacity:1;"
          offset="0"
          id="stop18" />
       <stop
-         style="stop-color:#d8d7d6;stop-opacity:1;"
+         style="stop-color:#f5f4f3;stop-opacity:1;"
          offset="0.7414968"
          id="stop6" />
       <stop
-         style="stop-color:#aba7a0;stop-opacity:1;"
+         style="stop-color:#c2beb6;stop-opacity:1;"
          offset="1"
          id="stop19" />
     </linearGradient>
@@ -184,7 +184,7 @@
        clipPathUnits="userSpaceOnUse"
        id="clipPath7">
       <rect
-         style="display:inline;fill:#d8d8d7;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
+         style="display:inline;fill:#f6f5f4;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
          id="rect7"
          width="88.005341"
          height="54.179703"
@@ -197,7 +197,7 @@
        clipPathUnits="userSpaceOnUse"
        id="clipPath6">
       <rect
-         style="display:inline;fill:#d8d8d7;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
+         style="display:inline;fill:#f6f5f4;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
          id="rect6"
          width="88.005341"
          height="54.179703"
@@ -283,13 +283,44 @@
          inkscape:label="belt top"
          d="M 5.0737525,3.1750011 A 1.8987514,1.8987514 0 0 0 3.1750011,5.0737525 L 3.1750011,28.661818 5.0369019,28.661818 5.0369019,26.763742 28.829766,26.763742 28.829766,28.661818 30.691667,28.661818 30.691667,5.0737525 A 1.8987514,1.8987514 0 0 0 28.792916,3.1750011 Z"
          transform="matrix(4.0705009,0,0,4.0705009,-4.9271236,159.49692)" />
+      <defs>
+        <linearGradient id="night-linearGradient3-8" x1="8" y1="239.32031" x2="120.00008" y2="239.32031" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0.24567001,0,0,0.24567001,1.2104409,-40.873289)">
+          <stop
+             style="stop-color:#5a4928;stop-opacity:1;"
+             offset="0"
+             id="night-stop2-3" />
+          <stop
+             style="stop-color:#a28147;stop-opacity:1;"
+             offset="0.1"
+             id="night-stop7-7" />
+          <stop
+             style="stop-color:#a28147;stop-opacity:1;"
+             offset="0.89999998"
+             id="night-stop4-5" />
+          <stop
+             style="stop-color:#5a4928;stop-opacity:1;"
+             offset="1"
+             id="night-stop3-9" />
+        </linearGradient>
+        <mask id="nightpartmask0">
+          <rect transform="matrix(4.0705 0 0 4.0705 -4.92712 159.497)" width="100%" height="100%" fill="url(#nightfade)" />
+        </mask>
+      </defs>
+      <g mask="url(#nightpartmask0)">
+        <path
+           id="night-rect2-9"
+           style="display:inline;enable-background:new;fill:url(#night-linearGradient3-8);stroke:none;stroke-width:4.40037"
+           inkscape:label="belt top night"
+           d="M 5.0737525,3.1750011 A 1.8987514,1.8987514 0 0 0 3.1750011,5.0737525 L 3.1750011,28.661818 5.0369019,28.661818 5.0369019,26.763742 28.829766,26.763742 28.829766,28.661818 30.691667,28.661818 30.691667,5.0737525 A 1.8987514,1.8987514 0 0 0 28.792916,3.1750011 Z"
+           transform="matrix(4.0705009,0,0,4.0705009,-4.9271236,159.49692)" />
+      </g>
       <g
          id="layer5-3"
          transform="matrix(1.2795627,0,0,1.4010963,-17.892148,-99.901303)"
          inkscape:label="slats"
          style="display:inline;enable-background:new">
         <rect
-           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+           style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
            id="slat5-0-2-1-7"
            x="30"
            y="204"
@@ -299,7 +330,7 @@
            ry="1.5562998"
            inkscape:label="slat1" />
         <rect
-           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+           style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
            id="slat5-0-2-1"
            x="46"
            y="204"
@@ -309,7 +340,7 @@
            ry="1.5562998"
            inkscape:label="slat2" />
         <rect
-           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+           style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
            id="slat5-0-2"
            x="62"
            y="204"
@@ -319,7 +350,7 @@
            ry="1.5562998"
            inkscape:label="slat3" />
         <rect
-           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1.4398;enable-background:new"
+           style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1.4398;enable-background:new"
            id="slat5-0"
            x="81.913933"
            y="194.01614"
@@ -330,7 +361,7 @@
            transform="matrix(0.78151462,0,0,0.61724859,13.983064,84.243804)"
            inkscape:label="slat4" />
         <rect
-           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;enable-background:new"
+           style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;enable-background:new"
            id="slat5"
            x="94"
            y="204"
@@ -338,6 +369,70 @@
            height="52"
            rx="2"
            ry="1.5562998" />
+      </g>
+      <defs>
+
+        <mask id="nightpartmask1">
+          <rect transform="matrix(4.0705 0 0 4.0705 -4.92712 159.497)" width="100%" height="100%" fill="url(#nightfade)" />
+        </mask>
+      </defs>
+      <g mask="url(#nightpartmask1)">
+        <g
+           id="night-layer5-3"
+           transform="matrix(1.2795627,0,0,1.4010963,-17.892148,-99.901303)"
+           inkscape:label="slats night"
+           style="display:inline;enable-background:new">
+          <rect
+             style="display:inline;fill:#535255;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+             id="night-slat5-0-2-1-7"
+             x="30"
+             y="204"
+             width="4"
+             height="52"
+             rx="2"
+             ry="1.5562998"
+             inkscape:label="slat1 night" />
+          <rect
+             style="display:inline;fill:#535255;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+             id="night-slat5-0-2-1"
+             x="46"
+             y="204"
+             width="4"
+             height="52"
+             rx="2"
+             ry="1.5562998"
+             inkscape:label="slat2 night" />
+          <rect
+             style="display:inline;fill:#535255;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+             id="night-slat5-0-2"
+             x="62"
+             y="204"
+             width="4"
+             height="52"
+             rx="2"
+             ry="1.5562998"
+             inkscape:label="slat3 night" />
+          <rect
+             style="display:inline;fill:#535255;fill-opacity:1;stroke:none;stroke-width:1.4398;enable-background:new"
+             id="night-slat5-0"
+             x="81.913933"
+             y="194.01614"
+             width="5.1182666"
+             height="84.244827"
+             rx="2.5591333"
+             ry="2.5213501"
+             transform="matrix(0.78151462,0,0,0.61724859,13.983064,84.243804)"
+             inkscape:label="slat4 night" />
+          <rect
+             style="display:inline;fill:#535255;fill-opacity:1;stroke:none;enable-background:new"
+             id="night-slat5"
+             x="94"
+             y="204"
+             width="4"
+             height="52"
+             rx="2"
+             ry="1.5562998" />
+        </g>
       </g>
     </g>
     <g
@@ -420,21 +515,26 @@
          inkscape:label="bottom-fold" />
     </g>
   </g>
-  <defs id="moondefs">
-    <filter id="moonwhite" x="0" y="0" width="1" height="1">
+  <defs id="nightdefs">
+    <filter id="nightsilhouette" x="0" y="0" width="1" height="1">
       <feColorMatrix color-interpolation-filters="sRGB"
          values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
     </filter>
-    <mask id="moonmask">
-      <g filter="url(#moonwhite)">
+    <mask id="nightmask">
+      <g filter="url(#nightsilhouette)">
         <use href="#layer5" xlink:href="#layer5" />
       </g>
     </mask>
-    <linearGradient id="moonglow" gradientUnits="userSpaceOnUse"
-       x1="0" y1="3" x2="0" y2="16">
-      <stop offset="0" stop-color="#e6eeff" stop-opacity="0.45" />
-      <stop offset="1" stop-color="#e6eeff" stop-opacity="0" />
-    </linearGradient>
+    <radialGradient id="nightfade" gradientUnits="userSpaceOnUse"
+       cx="16.93" cy="3" r="16">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="1" stop-color="#ffffff" stop-opacity="1" />
+    </radialGradient>
+    <radialGradient id="nightshade" gradientUnits="userSpaceOnUse"
+       cx="16.93" cy="3" r="16">
+      <stop offset="0" stop-color="#000000" stop-opacity="0" />
+      <stop offset="1" stop-color="#000000" stop-opacity="0.12" />
+    </radialGradient>
   </defs>
-  <rect mask="url(#moonmask)" width="100%" height="100%" fill="url(#moonglow)" />
+  <rect mask="url(#nightmask)" width="100%" height="100%" fill="url(#nightshade)" />
 </svg>

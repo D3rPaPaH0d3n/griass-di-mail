@@ -420,27 +420,40 @@
          inkscape:label="bottom-fold" />
     </g>
   </g>
-  <defs id="variantdefs">
-    <filter id="variantwhite" x="0" y="0" width="1" height="1">
-      <feColorMatrix color-interpolation-filters="sRGB"
-         values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" />
-    </filter>
-    <mask id="variantmask">
-      <g filter="url(#variantwhite)">
-        <use href="#layer5" xlink:href="#layer5" />
-      </g>
-    </mask>
-    <linearGradient id="variantgrad" gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0 0.37 -0.98462 0 295.38501 -30.360001)"
-       x1="300" x2="428" y1="235" y2="235">
+  <defs id="tapedefs">
+    <linearGradient id="tapecolour" gradientUnits="userSpaceOnUse"
+       x1="0" y1="12.8400" x2="0" y2="19.7388">
       <stop offset="0" stop-color="#ffffff" />
       <stop offset="1" stop-color="#c0bfbc" />
     </linearGradient>
+    <pattern id="tapestripes" patternUnits="userSpaceOnUse"
+       width="4.5" height="4.5" patternTransform="rotate(-45)">
+      <rect width="2.25" height="4.5" fill="#1e1e1e" />
+    </pattern>
+    <linearGradient id="tapeshade" gradientUnits="userSpaceOnUse"
+       x1="3.175" y1="0" x2="30.692" y2="0">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.45" />
+      <stop offset="0.12" stop-color="#000000" stop-opacity="0" />
+      <stop offset="0.88" stop-color="#000000" stop-opacity="0" />
+      <stop offset="1" stop-color="#000000" stop-opacity="0.45" />
+    </linearGradient>
+    <linearGradient id="tapeshine" gradientUnits="userSpaceOnUse"
+       x1="0" y1="12.8400" x2="0" y2="17.8400">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.25" />
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+    <filter id="tapeblur" x="-0.1" y="-0.5" width="1.2" height="2">
+      <feGaussianBlur stdDeviation="0.35" />
+    </filter>
+    <clipPath id="tapeclip">
+      <rect x="3.175" y="0" width="27.5170" height="100%" />
+    </clipPath>
   </defs>
-  <g mask="url(#variantmask)" opacity="0.8">
-    <g transform="scale(0.2645833671875)">
-      <path d="M 128,80.640625 V 128 H 0 V 80.640625 Z m 0,0" fill="url(#variantgrad)" />
-      <path d="M 13.308594,80.640625 60.664062,128 H 81.878906 L 34.519531,80.640625 Z m 42.421875,0 L 103.09375,128 h 21.21484 L 76.945312,80.640625 Z m 42.429687,0 L 128,110.48047 V 89.269531 l -8.62891,-8.628906 z M 0,88.546875 V 109.76172 L 18.238281,128 h 21.214844 z m 0,0" />
-    </g>
+  <g id="tape" clip-path="url(#tapeclip)">
+    <path transform="translate(0 0.35)" d="M 5.0738,12.8400 H 28.7932 A 1.8987514,1.8987514 0 0 1 30.6920,14.7388 V 19.7388 A 1.8987514,1.8987514 0 0 0 28.7932,17.8400 H 5.0738 A 1.8987514,1.8987514 0 0 0 3.1750,19.7388 V 14.7388 A 1.8987514,1.8987514 0 0 1 5.0738,12.8400 Z" fill="#000000" fill-opacity="0.35" filter="url(#tapeblur)" />
+    <path d="M 5.0738,12.8400 H 28.7932 A 1.8987514,1.8987514 0 0 1 30.6920,14.7388 V 19.7388 A 1.8987514,1.8987514 0 0 0 28.7932,17.8400 H 5.0738 A 1.8987514,1.8987514 0 0 0 3.1750,19.7388 V 14.7388 A 1.8987514,1.8987514 0 0 1 5.0738,12.8400 Z" fill="url(#tapecolour)" />
+    <path d="M 5.0738,12.8400 H 28.7932 A 1.8987514,1.8987514 0 0 1 30.6920,14.7388 V 19.7388 A 1.8987514,1.8987514 0 0 0 28.7932,17.8400 H 5.0738 A 1.8987514,1.8987514 0 0 0 3.1750,19.7388 V 14.7388 A 1.8987514,1.8987514 0 0 1 5.0738,12.8400 Z" fill="url(#tapestripes)" />
+    <path d="M 5.0738,12.8400 H 28.7932 A 1.8987514,1.8987514 0 0 1 30.6920,14.7388 V 19.7388 A 1.8987514,1.8987514 0 0 0 28.7932,17.8400 H 5.0738 A 1.8987514,1.8987514 0 0 0 3.1750,19.7388 V 14.7388 A 1.8987514,1.8987514 0 0 1 5.0738,12.8400 Z" fill="url(#tapeshine)" />
+    <path d="M 5.0738,12.8400 H 28.7932 A 1.8987514,1.8987514 0 0 1 30.6920,14.7388 V 19.7388 A 1.8987514,1.8987514 0 0 0 28.7932,17.8400 H 5.0738 A 1.8987514,1.8987514 0 0 0 3.1750,19.7388 V 14.7388 A 1.8987514,1.8987514 0 0 1 5.0738,12.8400 Z" fill="url(#tapeshade)" />
   </g>
 </svg>
