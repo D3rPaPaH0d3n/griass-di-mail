@@ -16,13 +16,13 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
      id="namedview1"
-     pagecolor="#a6a6a6"
+     pagecolor="#e0e0e0"
      bordercolor="currentColor"
      borderopacity="0.25"
      inkscape:showpageshadow="2"
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#888888"
+     inkscape:deskcolor="#b8b8b8"
      inkscape:document-units="px"
      inkscape:zoom="1.7237967"
      inkscape:cx="21.17419"
@@ -49,15 +49,15 @@
        id="linearGradient4"
        inkscape:collect="always">
       <stop
-         style="stop-color:#080808;stop-opacity:1;"
+         style="stop-color:#0b0b0b;stop-opacity:1;"
          offset="0"
          id="stop5-6" />
       <stop
-         style="stop-color:#282828;stop-opacity:1;"
+         style="stop-color:#363636;stop-opacity:1;"
          offset="0.78983217"
          id="stop6-2" />
       <stop
-         style="stop-color:#503715;stop-opacity:1;"
+         style="stop-color:#6c4b1d;stop-opacity:1;"
          offset="1"
          id="stop8-9" />
     </linearGradient>
@@ -75,11 +75,11 @@
        id="linearGradient15"
        inkscape:collect="always">
       <stop
-         style="stop-color:#232323;stop-opacity:1;"
+         style="stop-color:#303030;stop-opacity:1;"
          offset="0"
          id="stop15" />
       <stop
-         style="stop-color:#5d5d5d;stop-opacity:1;"
+         style="stop-color:#7e7e7e;stop-opacity:1;"
          offset="0.5"
          id="stop16" />
     </linearGradient>
@@ -97,19 +97,19 @@
        id="linearGradient2"
        inkscape:collect="always">
       <stop
-         style="stop-color:#3a2f1a;stop-opacity:1;"
+         style="stop-color:#4f4023;stop-opacity:1;"
          offset="0"
          id="stop2-3" />
       <stop
-         style="stop-color:#69542e;stop-opacity:1;"
+         style="stop-color:#8f723e;stop-opacity:1;"
          offset="0.1"
          id="stop7-7" />
       <stop
-         style="stop-color:#69542e;stop-opacity:1;"
+         style="stop-color:#8f723e;stop-opacity:1;"
          offset="0.89999998"
          id="stop4-5" />
       <stop
-         style="stop-color:#3a2f1a;stop-opacity:1;"
+         style="stop-color:#4f4023;stop-opacity:1;"
          offset="1"
          id="stop3-9" />
     </linearGradient>
@@ -126,11 +126,11 @@
        id="linearGradient13"
        inkscape:collect="always">
       <stop
-         style="stop-color:#7a7a7a;stop-opacity:1;"
+         style="stop-color:#a5a5a5;stop-opacity:1;"
          offset="0"
          id="stop13" />
       <stop
-         style="stop-color:#4b4b4b;stop-opacity:1;"
+         style="stop-color:#666666;stop-opacity:1;"
          offset="1"
          id="stop17" />
     </linearGradient>
@@ -147,11 +147,11 @@
        id="linearGradient20"
        inkscape:collect="always">
       <stop
-         style="stop-color:#2f2f2f;stop-opacity:1;"
+         style="stop-color:#3f3f3f;stop-opacity:1;"
          offset="0"
          id="stop20" />
       <stop
-         style="stop-color:#1d1d1d;stop-opacity:1;"
+         style="stop-color:#272727;stop-opacity:1;"
          offset="1"
          id="stop21" />
     </linearGradient>
@@ -168,15 +168,15 @@
        id="linearGradient18"
        inkscape:collect="always">
       <stop
-         style="stop-color:#a09f9f;stop-opacity:1;"
+         style="stop-color:#d8d8d7;stop-opacity:1;"
          offset="0"
          id="stop18" />
       <stop
-         style="stop-color:#9f9f9e;stop-opacity:1;"
+         style="stop-color:#d8d7d6;stop-opacity:1;"
          offset="0.7414968"
          id="stop6" />
       <stop
-         style="stop-color:#7e7c76;stop-opacity:1;"
+         style="stop-color:#aba7a0;stop-opacity:1;"
          offset="1"
          id="stop19" />
     </linearGradient>
@@ -184,7 +184,7 @@
        clipPathUnits="userSpaceOnUse"
        id="clipPath7">
       <rect
-         style="display:inline;fill:#a09f9f;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
+         style="display:inline;fill:#d8d8d7;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
          id="rect7"
          width="88.005341"
          height="54.179703"
@@ -197,7 +197,7 @@
        clipPathUnits="userSpaceOnUse"
        id="clipPath6">
       <rect
-         style="display:inline;fill:#a09f9f;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
+         style="display:inline;fill:#d8d8d7;stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new"
          id="rect6"
          width="88.005341"
          height="54.179703"
@@ -289,7 +289,7 @@
          inkscape:label="slats"
          style="display:inline;enable-background:new">
         <rect
-           style="display:inline;fill:#363537;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
            id="slat5-0-2-1-7"
            x="30"
            y="204"
@@ -299,7 +299,7 @@
            ry="1.5562998"
            inkscape:label="slat1" />
         <rect
-           style="display:inline;fill:#363537;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
            id="slat5-0-2-1"
            x="46"
            y="204"
@@ -309,7 +309,7 @@
            ry="1.5562998"
            inkscape:label="slat2" />
         <rect
-           style="display:inline;fill:#363537;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
+           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new"
            id="slat5-0-2"
            x="62"
            y="204"
@@ -319,7 +319,7 @@
            ry="1.5562998"
            inkscape:label="slat3" />
         <rect
-           style="display:inline;fill:#363537;fill-opacity:1;stroke:none;stroke-width:1.4398;enable-background:new"
+           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;stroke-width:1.4398;enable-background:new"
            id="slat5-0"
            x="81.913933"
            y="194.01614"
@@ -330,7 +330,7 @@
            transform="matrix(0.78151462,0,0,0.61724859,13.983064,84.243804)"
            inkscape:label="slat4" />
         <rect
-           style="display:inline;fill:#363537;fill-opacity:1;stroke:none;enable-background:new"
+           style="display:inline;fill:#49484b;fill-opacity:1;stroke:none;enable-background:new"
            id="slat5"
            x="94"
            y="204"
