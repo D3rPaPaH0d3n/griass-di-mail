@@ -1650,6 +1650,11 @@ public class Application.MainWindow :
             this.search_bar, "search-mode-enabled",
             SYNC_CREATE | BIDIRECTIONAL
         );
+        this.search_bar.unread_button.bind_property(
+            "active",
+            this.conversation_list_view, "unread-only",
+            SYNC_CREATE
+        );
         this.bind_property(
             "all-inboxes",
             this.search_bar, "all-accounts",

@@ -33,6 +33,22 @@ public class ConversationList.Model : Object, ListModel {
     /** Whether every monitor has finished its first scan. */
     public bool is_ready { get; private set; default = false; }
 
+    /**
+     * Whether only unread conversations are listed.
+     *
+     * Conversations that are read while listed stay until this changes.
+     */
+    public bool unread_only {
+        get { return this._unread_only; }
+        set {
+            if (this._unread_only != value) {
+                this._unread_only = value;
+                apply_filter();
+            }
+        }
+    }
+    private bool _unread_only = false;
+
     private Gee.Set<Convey.App.ConversationMonitor> unscanned =
         new Gee.HashSet<Convey.App.ConversationMonitor>();
 
@@ -154,6 +170,42 @@ public class ConversationList.Model : Object, ListModel {
         return true;
     }
 
+    private bool is_shown(Convey.App.Conversation convo) {
+        return !this._unread_only || convo.is_unread();
+    }
+
+    private void apply_filter() {
+        if (this._unread_only) {
+            var leaving = new Gee.ArrayList<Entry>();
+            foreach (var entry in this.entries) {
+                if (!entry.leaving && !is_shown(entry.conversation)) {
+                    leaving.add(entry);
+                }
+            }
+            if (!leaving.is_empty) {
+                remove_later(leaving, true);
+            }
+        } else {
+            var listed = new Gee.HashSet<Convey.App.Conversation>();
+            foreach (var entry in this.entries) {
+                if (!entry.leaving) {
+                    listed.add(entry.conversation);
+                }
+            }
+            var missing = new Gee.ArrayList<Convey.App.Conversation>();
+            foreach (var monitor in this.monitors) {
+                foreach (var convo in monitor.read_only_view) {
+                    if (!listed.contains(convo)) {
+                        missing.add(convo);
+                    }
+                }
+            }
+            if (!missing.is_empty) {
+                on_conversations_added(missing);
+            }
+        }
+    }
+
     private int find_live(Convey.App.Conversation convo) {
         for (int i = 0; i < this.entries.length; i++) {
             if (!this.entries[i].leaving && this.entries[i].conversation == convo) {
@@ -198,7 +250,7 @@ public class ConversationList.Model : Object, ListModel {
 
         var added = new Gee.ArrayList<Convey.App.Conversation>();
         foreach (Convey.App.Conversation convo in conversations) {
-            if (is_valid(convo)) {
+            if (is_shown(convo) && is_valid(convo)) {
                 added.add(convo);
             }
         }
@@ -249,6 +301,10 @@ public class ConversationList.Model : Object, ListModel {
 
         int position = find_live(convo);
         if (position < 0) {
+            if (this._unread_only && convo.is_unread() &&
+                sender.read_only_view.contains(convo)) {
+                on_conversations_added(Convey.Collection.single(convo));
+            }
             return;
         }
 

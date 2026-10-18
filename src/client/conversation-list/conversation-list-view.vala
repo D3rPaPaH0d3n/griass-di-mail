@@ -109,6 +109,9 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             if (row.get_header() == null) {
                 var sep = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
                 sep.add_css_class("conversation-list-separator");
+                if (((Row) row).entering) {
+                    sep.add_css_class("hidden-divider");
+                }
                 sep.show();
                 row.set_header(sep);
             }
@@ -144,6 +147,21 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      * The currently bound model
      */
     private Model? model;
+
+    /** Whether only unread conversations are listed. */
+    public bool unread_only {
+        get { return this._unread_only; }
+        set {
+            this._unread_only = value;
+            if (this.model != null) {
+                this.model.unread_only = value;
+                if (value) {
+                    load_more(LOAD_MORE_COUNT);
+                }
+            }
+        }
+    }
+    private bool _unread_only = false;
 
     private Adw.TimedAnimation? list_fade = null;
 
@@ -184,6 +202,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             this.list.bind_model(null, row_factory);
         } else {
             this.model = new Model(monitors);
+            this.model.unread_only = this.unread_only;
             this.list.opacity = 0;
             this.model.ready.connect(on_model_ready);
             this.list.bind_model(this.model, row_factory);
@@ -296,6 +315,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         );
         row.toggle_flag.connect(on_toggle_flags);
         row.toggle_selection.connect(on_toggle_selection);
+        row.notify["entering"].connect(update_separators);
         if (this.model != null && this.model.is_ready) {
             row.animate_in();
         } else {
@@ -983,7 +1003,8 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         while (row != null) {
             var header = row.get_header();
             if (header != null) {
-                if (((Row) row).leaving || row.is_selected() || previous_selected || at_top) {
+                if (((Row) row).leaving || ((Row) row).entering ||
+                    row.is_selected() || previous_selected || at_top) {
                     header.add_css_class("hidden-divider");
                 } else {
                     header.remove_css_class("hidden-divider");

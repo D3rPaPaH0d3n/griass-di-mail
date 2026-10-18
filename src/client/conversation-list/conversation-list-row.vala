@@ -38,8 +38,10 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
     };
 
     internal const uint ANIMATION_DURATION_MS = 250;
+    private const uint DIVIDER_DELAY_MS = 20;
 
     internal bool leaving { get; private set; default = false; }
+    internal bool entering { get; private set; default = false; }
 
     private Adw.TimedAnimation? fade_animation = null;
 
@@ -64,6 +66,14 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         Gtk.Widget content = this.child;
         this.child = this.revealer;
         this.revealer.child = content;
+        this.revealer.notify["child-revealed"].connect(() => {
+            if (this.revealer.child_revealed && this.entering) {
+                GLib.Timeout.add(DIVIDER_DELAY_MS, () => {
+                    this.entering = false;
+                    return GLib.Source.REMOVE;
+                });
+            }
+        });
 
         conversation.email_flags_changed.connect(update_flags);
 
@@ -86,6 +96,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     /** Glides the row open once it is on screen. */
     internal void animate_in() {
+        this.entering = true;
         this.opacity = 0;
         if (get_mapped()) {
             reveal();

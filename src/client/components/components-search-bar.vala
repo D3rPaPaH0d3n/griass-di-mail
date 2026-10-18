@@ -21,6 +21,10 @@ public class SearchBar : Adw.Bin {
         get; private set; default = new Gtk.SearchEntry();
     }
 
+    public Gtk.ToggleButton unread_button {
+        get; private set; default = new Gtk.ToggleButton.with_label(_("Unread"));
+    }
+
     private Components.EntryUndo search_undo;
     private Convey.Account? current_account = null;
     private Convey.Engine engine;
@@ -56,10 +60,17 @@ public class SearchBar : Adw.Bin {
             search_text_changed(this.entry.text);
         });
         this.entry.placeholder_text = DEFAULT_SEARCH_TEXT;
+        this.entry.hexpand = true;
+
+        this.unread_button.tooltip_text = _("Show only unread conversations");
+
+        var row = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 6);
+        row.append(this.entry);
+        row.append(this.unread_button);
 
         var column = new Adw.Clamp();
         column.maximum_size = 400;
-        column.child = this.entry;
+        column.child = row;
 
         search_bar.connect_entry(this.entry);
         search_bar.child = column;
@@ -107,6 +118,7 @@ public class SearchBar : Adw.Bin {
     private void on_search_mode_changed() {
         if (!this.search_mode_enabled) {
             this.search_undo.reset();
+            this.unread_button.active = false;
         }
     }
 }
