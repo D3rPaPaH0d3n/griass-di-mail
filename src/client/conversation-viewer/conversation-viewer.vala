@@ -33,6 +33,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     internal ConversationWebView? previous_web_view { get; set; default = null; }
 
     private Application.Configuration config;
+    private Application.DecryptedSubjects decrypted_subjects;
 
     private Gee.Set<Convey.App.Conversation>? selection_while_composing = null;
     private GLib.Cancellable? find_cancellable = null;
@@ -49,6 +50,8 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     [GtkChild] private unowned Adw.StatusPage empty_folder_page;
     [GtkChild] private unowned Adw.StatusPage empty_search_page;
     [GtkChild] private unowned Adw.Bin composer_page;
+
+    [GtkChild] private unowned Gtk.Label conversation_subject;
 
     [GtkChild] public unowned Gtk.ScrolledWindow conversation_scroller;
 
@@ -76,9 +79,11 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     /**
      * Constructs a new conversation view instance.
      */
-    public ConversationViewer(Application.Configuration config) {
+    public ConversationViewer(Application.Configuration config,
+                              Application.DecryptedSubjects decrypted_subjects) {
         base_ref();
         this.config = config;
+        this.decrypted_subjects = decrypted_subjects;
 
         this.conversation_find_undo = new Components.EntryUndo(
             this.conversation_find_entry
@@ -237,6 +242,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
                 this.conversation_find_prev.sensitive = found;
             });
         add_new_list(new_list);
+        update_subject();
         set_visible_child(this.conversation_page);
 
         // Highlight matching terms from find if active, otherwise
@@ -251,6 +257,20 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
 
         yield new_list.load_conversation(scroll_to, query);
         old_viewport = null;
+    }
+
+    public void update_subject() {
+        Convey.Email? email = this.current_list?.conversation.get_latest_recv_email(
+            Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
+        );
+        this.conversation_subject.visible = email != null;
+        if (email != null) {
+            this.conversation_subject.label =
+                this.decrypted_subjects.get_display_subject(email);
+            this.current_list.set_conversation_subject(
+                this.conversation_subject.label
+            );
+        }
     }
 
     // Add a new conversation list to the UI

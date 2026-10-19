@@ -355,9 +355,11 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.FlowBox from;
     [GtkChild] private unowned Gtk.Label subject;
     private string subject_searchable = "";
+    private string? conversation_subject = null;
     [GtkChild] private unowned Gtk.Label date;
 
     private Gtk.Overlay? header_overlay = null;
+    private Gtk.Widget? header_actions = null;
     private Gtk.Button? unsubscribe_button = null;
 
     [GtkChild] private unowned Gtk.Box sender_header;
@@ -366,6 +368,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     [GtkChild] private unowned Gtk.Image encryption_icon;
 
     [GtkChild] private unowned Gtk.Box reply_to_header;
+    [GtkChild] private unowned Gtk.Box to_header;
     [GtkChild] private unowned Gtk.FlowBox reply_to_addresses;
 
     [GtkChild] private unowned ContactList to_list;
@@ -566,16 +569,18 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         this.compact_from.add_css_class(FROM_CLASS);
 
-        if (headers.subject != null && !Convey.String.is_empty(headers.subject.value)) {
-            this.compact_body.set_text(headers.subject.value);
-        } else if (preview == Convey.RFC822.PreviewText.ENCRYPTED ||
-                   preview == Convey.RFC822.PreviewText.ENCRYPTED_INLINE) {
+        if (preview == Convey.RFC822.PreviewText.ENCRYPTED ||
+            preview == Convey.RFC822.PreviewText.ENCRYPTED_INLINE) {
             this.compact_body.set_text(_("Encrypted message"));
-        } else if (preview != null) {
-            string clean_preview = preview;
-            if (preview.length > MAX_PREVIEW_BYTES) {
+        } else if (Convey.String.is_empty_or_whitespace(preview)) {
+            if (headers.subject != null) {
+                this.compact_body.set_text(headers.subject.value);
+            }
+        } else {
+            string clean_preview = Convey.String.reduce_whitespace(preview);
+            if (clean_preview.length > MAX_PREVIEW_BYTES) {
                 clean_preview = Convey.String.safe_byte_substring(
-                    preview, MAX_PREVIEW_BYTES
+                    clean_preview, MAX_PREVIEW_BYTES
                 );
                 // Add an ellipsis in case the view is wider is wider than
                 // the text
@@ -589,8 +594,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         if (headers.subject != null) {
             this.subject.set_text(headers.subject.value);
-            this.subject.set_visible(true);
             this.subject_searchable = headers.subject.value.casefold();
+            update_subject_visible();
         }
 
         this.body_container.set_has_tooltip(true); // Used to show link URLs
@@ -750,14 +755,28 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             );
             this.header_overlay.add_overlay(this.unsubscribe_button);
             this.header_overlay.set_clip_overlay(this.unsubscribe_button, false);
-
-            int button_width, actions_width, height;
-            measure_natural(this.unsubscribe_button, out button_width, out height);
-            measure_natural(this.header_overlay.child, out actions_width, out height);
-            this.subject.margin_end = int.max(0, button_width - actions_width);
+            this.unsubscribe_button.map.connect(reserve_unsubscribe_space);
+            reserve_unsubscribe_space();
         }
         this.unsubscribe_button.set_action_name(action_name);
         this.unsubscribe_button.set_action_target_value(target);
+    }
+
+    private void reserve_unsubscribe_space() {
+        if (this.unsubscribe_button == null) {
+            return;
+        }
+        int button_width, button_height, actions_width, actions_height;
+        int from_width, from_height;
+        measure_natural(this.unsubscribe_button, out button_width, out button_height);
+        measure_natural(this.header_actions, out actions_width, out actions_height);
+        measure_natural(this.from_header, out from_width, out from_height);
+        int reserved = int.max(0, button_width - actions_width);
+        int overhang = int.max(0, actions_height - from_height) / 2;
+        this.subject.margin_end = reserved;
+        this.to_header.margin_end = this.subject.visible ? 0 : reserved;
+        this.to_header.height_request =
+            this.subject.visible ? -1 : button_height + overhang;
     }
 
     internal void add_header_actions(Gtk.Widget actions) {
@@ -767,6 +786,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         width.add_widget(space);
         width.add_widget(actions);
 
+        this.header_actions = actions;
         this.header_overlay = new Gtk.Overlay();
         this.header_overlay.child = space;
         this.header_overlay.add_overlay(actions);
@@ -790,7 +810,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             if (this.expanded_header.compute_bounds(overlay, out bounds)) {
                 allocation.y = (int) Math.floor(
                     bounds.origin.y + bounds.size.height - height
-                );
+                ) + 2;
             }
             return true;
         }
@@ -1009,10 +1029,22 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     }
 
     internal void set_subject(string subject) {
-        this.compact_body.set_text(subject);
         this.subject.set_text(subject);
-        this.subject.set_visible(true);
         this.subject_searchable = subject.casefold();
+        update_subject_visible();
+    }
+
+    internal void set_conversation_subject(string? subject) {
+        this.conversation_subject = subject;
+        update_subject_visible();
+    }
+
+    private void update_subject_visible() {
+        this.subject.visible =
+            this.subject_searchable != "" &&
+            new Convey.RFC822.Subject(this.subject.label).strip_prefixes() !=
+            this.conversation_subject;
+        reserve_unsubscribe_space();
     }
 
     public async void load_message_body(Convey.RFC822.Message message,

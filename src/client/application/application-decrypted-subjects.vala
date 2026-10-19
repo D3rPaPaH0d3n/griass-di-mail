@@ -36,6 +36,13 @@ public class Application.DecryptedSubjects : Convey.BaseObject {
         return id != null ? this.subjects.get(id.value) : null;
     }
 
+    public string get_display_subject(Convey.Email email) {
+        string? decrypted = get(email.message_id);
+        return decrypted != null
+            ? new Convey.RFC822.Subject(decrypted).strip_prefixes()
+            : Util.Email.strip_subject_prefixes(email);
+    }
+
     public void set(Convey.RFC822.MessageID id, string subject) {
         if (this.subjects.get(id.value) == subject) {
             return;

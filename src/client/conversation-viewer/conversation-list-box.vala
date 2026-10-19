@@ -567,6 +567,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     private Gee.Map<Convey.EmailIdentifier,EmailRow> email_rows =
         new Gee.HashMap<Convey.EmailIdentifier,EmailRow>();
 
+    private string? conversation_subject = null;
+
     // The current composer, if any
     private ComposerRow? current_composer = null;
 
@@ -857,6 +859,14 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         this.finish_loading.begin(
             query, scroll_to.is_empty, uninteresting, post_interesting
         );
+    }
+
+    public void set_conversation_subject(string subject) {
+        this.conversation_subject = subject;
+        email_view_iterator().foreach((view) => {
+                view.primary_message.set_conversation_subject(subject);
+                return true;
+            });
     }
 
     /** Cancels loading the current conversation, if still in progress */
@@ -1252,6 +1262,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             is_draft(email),
             this.cancellable
         );
+        view.primary_message.set_conversation_subject(this.conversation_subject);
         view.internal_link_activated.connect(on_internal_link_activated);
         view.body_selection_changed.connect((email, has_selection) => {
                 this.body_selected_view = has_selection ? email : null;

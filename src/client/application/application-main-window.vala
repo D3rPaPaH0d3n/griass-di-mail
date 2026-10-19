@@ -1612,7 +1612,7 @@ public class Application.MainWindow :
 
         // Conversation viewer
         this.conversation_viewer = new ConversationViewer(
-            this.application.config
+            this.application.config, this.application.decrypted_subjects
         );
         this.conversation_viewer.conversation_added.connect(
             on_conversation_view_added
@@ -3531,6 +3531,7 @@ public class Application.MainWindow :
         if (subject != null && loaded.message_id != null) {
             this.application.decrypted_subjects.set(loaded.message_id, subject);
             this.conversation_list_view.on_conversation_updated(view.conversation);
+            this.conversation_viewer.update_subject();
         }
     }
 

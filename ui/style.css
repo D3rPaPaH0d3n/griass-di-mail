@@ -195,6 +195,12 @@ row.convey-folder-popover-list-row > label {
   color: @theme_text_color;
 }
 
+/* ConversationViewer */
+
+.conversation-subject {
+  margin: 12px 24px 6px;
+}
+
 /* ConversationListBox */
 
 .conversation-listbox {

@@ -94,6 +94,19 @@
                           </object>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="conversation_subject">
+                            <property name="xalign">0</property>
+                            <property name="wrap">True</property>
+                            <property name="wrap-mode">word-char</property>
+                            <property name="ellipsize">end</property>
+                            <property name="lines">3</property>
+                            <style>
+                              <class name="title-3"/>
+                              <class name="conversation-subject"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
                           <object class="GtkScrolledWindow" id="conversation_scroller">
                             <property name="can_focus">True</property>
                             <property name="hexpand">True</property>

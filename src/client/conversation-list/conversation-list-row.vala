@@ -141,11 +141,8 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         );
 
         if (last_email != null) {
-            string? decrypted = this.decrypted_subjects.get(last_email.message_id);
             this.subject.set_text(
-                decrypted != null
-                ? new Convey.RFC822.Subject(decrypted).strip_prefixes()
-                : Util.Email.strip_subject_prefixes(last_email)
+                this.decrypted_subjects.get_display_subject(last_email)
             );
             bool encrypted = last_email.preview != null && last_email.preview.is_encrypted;
             this.encrypted_icon.visible = encrypted;
