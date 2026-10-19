@@ -96,6 +96,29 @@ PageState.prototype = {
             }
         }
     },
+    demoteImportantInlineColors: function() {
+        for (const el of document.body.querySelectorAll("[style]")) {
+            const demoted = [];
+            for (const prop of Array.from(el.style)) {
+                if (prop.includes("color") &&
+                    el.style.getPropertyPriority(prop) == "important") {
+                    el.style.setProperty(prop, el.style.getPropertyValue(prop));
+                    demoted.push(prop);
+                }
+            }
+            if (demoted.length > 0) {
+                el.dataset.conveyImportant = demoted.join(",");
+            }
+        }
+    },
+    restoreImportantInlineColors: function() {
+        for (const el of document.body.querySelectorAll("[data-convey-important]")) {
+            for (const prop of el.dataset.conveyImportant.split(",")) {
+                el.style.setProperty(prop, el.style.getPropertyValue(prop), "important");
+            }
+            delete el.dataset.conveyImportant;
+        }
+    },
     setUnsetHtmlColors: function(enabled, dark) {
         const theme = enabled ? (dark ? "dark" : "light") : null;
         if (theme === this.unsetHtmlColorsApplied) {
@@ -114,6 +137,7 @@ PageState.prototype = {
             document.body.removeAttribute("data-convey-theme");
         }
         if (theme === "dark") {
+            this.demoteImportantInlineColors();
             DarkReader.enable({
                 // Defaults is too dark. These colors are better fitting into Adwaita style.
                 darkSchemeBackgroundColor: "#2a2d30",
@@ -121,6 +145,7 @@ PageState.prototype = {
             });
         } else {
             DarkReader.disable();
+            this.restoreImportantInlineColors();
         }
     },
     loadRemoteResources: function() {
