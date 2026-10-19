@@ -522,7 +522,39 @@
     </filter>
     <mask id="nightmask">
       <g filter="url(#nightsilhouette)">
-        <use href="#layer5" xlink:href="#layer5" />
+        <g style="display:inline;enable-background:new" transform="matrix(0.24567001,0,0,0.24567001,1.2104465,-40.910541)">
+          <g transform="translate(0,7.02947)">
+            <rect style="display:inline;fill:url(#linearGradient6-9);fill-opacity:1;stroke:none;stroke-width:16.7823;enable-background:new" width="96.84967" height="15.458379" x="15.575211" y="268.43567" ry="0" />
+            <g>
+              <rect style="display:inline;fill:url(#linearGradient22);fill-opacity:1;stroke:none;stroke-width:30.6358;stroke-linecap:round;enable-background:new" width="15.457183" height="7.727725" x="-120.05293" y="-276.14197" ry="0" rx="0" transform="rotate(-179.98891)" />
+              <rect style="display:inline;fill:url(#linearGradient27);fill-opacity:1;stroke:none;stroke-width:30.6338;stroke-linecap:round;enable-background:new" width="15.458906" height="7.7258654" x="7.9450502" y="268.44086" ry="0" rx="0" transform="rotate(-0.01108616)" />
+            </g>
+            <path style="display:inline;enable-background:new;fill:url(#linearGradient3-8);stroke:none;stroke-width:4.40037" d="M 5.0737525,3.1750011 A 1.8987514,1.8987514 0 0 0 3.1750011,5.0737525 L 3.1750011,28.661818 5.0369019,28.661818 5.0369019,26.763742 28.829766,26.763742 28.829766,28.661818 30.691667,28.661818 30.691667,5.0737525 A 1.8987514,1.8987514 0 0 0 28.792916,3.1750011 Z" transform="matrix(4.0705009,0,0,4.0705009,-4.9271236,159.49692)" />
+            <g transform="matrix(1.2795627,0,0,1.4010963,-17.892148,-99.901303)" style="display:inline;enable-background:new">
+              <rect style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new" x="30" y="204" width="4" height="52" rx="2" ry="1.5562998" />
+              <rect style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new" x="46" y="204" width="4" height="52" rx="2" ry="1.5562998" />
+              <rect style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1;enable-background:new" x="62" y="204" width="4" height="52" rx="2" ry="1.5562998" />
+              <rect style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;stroke-width:1.4398;enable-background:new" x="81.913933" y="194.01614" width="5.1182666" height="84.244827" rx="2.5591333" ry="2.5213501" transform="matrix(0.78151462,0,0,0.61724859,13.983064,84.243804)" />
+              <rect style="display:inline;fill:#6f6d71;fill-opacity:1;stroke:none;enable-background:new" x="94" y="204" width="4" height="52" rx="2" ry="1.5562998" />
+            </g>
+          </g>
+          <g transform="translate(0,7.029485)">
+            <g transform="matrix(0.8106447,0,0,0.8106447,1.514786,50.829835)">
+              <circle style="display:inline;fill:url(#linearGradient1);fill-opacity:1;stroke:none;stroke-width:20;enable-background:new" cx="17.533928" cy="277.97052" r="9.5342255" />
+              <circle style="fill:url(#linearGradient5);stroke-width:20" cx="17.533928" cy="277.97052" r="4.4993987" />
+            </g>
+            <g transform="matrix(0.81064586,0,0,0.81064586,22.722505,50.829522)">
+              <circle style="display:inline;fill:url(#linearGradient32);fill-opacity:1;stroke:none;stroke-width:20;enable-background:new" cx="110.46582" cy="277.97052" r="9.5342255" />
+              <circle style="display:inline;fill:url(#linearGradient33);stroke-width:20;enable-background:new" cx="110.46582" cy="277.97052" r="4.4993987" />
+            </g>
+          </g>
+          <g style="display:inline;enable-background:new" transform="matrix(0.98869297,0,0,0.98869297,57.1098,-89.364112)">
+            <rect style="display:inline;fill:#000000;fill-opacity:0.224122;stroke-width:3.89159;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new" width="89.208817" height="54.360931" x="-37.635548" y="295.94507" rx="2.0505357" ry="2.029639" />
+            <rect style="display:inline;fill:url(#linearGradient19);stroke-width:3.8588;stroke-linecap:round;stroke-opacity:0.315355;enable-background:new" width="88.005341" height="54.179703" x="-37.03381" y="294.88559" rx="2.0228727" ry="2.0228727" />
+            <path style="fill:none;stroke:#000000;stroke-width:3.08033;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.315355" d="m -36.344682,295.38512 30.5783152,34.56816 c 7.8361162,7.9054 17.5159528,7.99887 25.4267308,0.0181 l 30.607912,-34.59852" clip-path="url(#clipPath7)" />
+            <path style="display:inline;fill:none;stroke:#000000;stroke-width:3.08033;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.315355;enable-background:new" d="m -36.51312,348.39996 25.618133,-24.24451 5.1286234,5.83409 c 7.836112,7.90542 17.5159436,7.96259 25.4267206,-0.0181 2e-6,0 5.177555,-5.85257 5.17756,-5.85257 l 25.65488,24.23316" clip-path="url(#clipPath6)" />
+          </g>
+        </g>
       </g>
     </mask>
     <radialGradient id="nightfade" gradientUnits="userSpaceOnUse"
