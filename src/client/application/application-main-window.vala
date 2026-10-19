@@ -3402,6 +3402,11 @@ public class Application.MainWindow :
         } else {
             this.outer_view.remove_css_class("scrolled-under");
         }
+        if (viewer.value > viewer.lower) {
+            this.outer_view.add_css_class("viewer-scrolled-under");
+        } else {
+            this.outer_view.remove_css_class("viewer-scrolled-under");
+        }
     }
 
     private void on_move_conversation(Convey.Folder destination) {

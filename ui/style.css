@@ -58,8 +58,13 @@ convey-conversation-list revealer {
   margin-right: 0;
 }
 
-#outer-split.flat-panes.scrolled-under .conversation-list-page headerbar {
-  box-shadow: inset -1px 0 var(--sidebar-border-color);
+#outer-split.flat-panes convey-conversation-viewer headerbar {
+  margin-left: 0;
+}
+
+#outer-split.flat-panes.scrolled-under convey-conversation-viewer headerbar,
+#outer-split.flat-panes.viewer-scrolled-under .conversation-subject {
+  box-shadow: inset 1px 0 var(--sidebar-border-color);
 }
 
 #outer-split.flat-panes navigation-split-view > .sidebar-pane {
@@ -198,7 +203,7 @@ row.convey-folder-popover-list-row > label {
 /* ConversationViewer */
 
 .conversation-subject {
-  margin: 12px 24px 6px;
+  padding: 12px 24px 6px;
 }
 
 /* ConversationListBox */
