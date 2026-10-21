@@ -412,6 +412,19 @@ row.convey-composer-from.property box.title > label.title {
   font-size: smaller;
 }
 
+row.convey-composer-from box.title > label.title {
+  transition: font-size 250ms ease-out, opacity 250ms ease-out, color 250ms ease-out;
+}
+
+row.convey-composer-from box.title > label.subtitle {
+  transition: font-size 250ms ease-out, opacity 250ms ease-out;
+}
+
+row.convey-composer-from:not(.property) box.title > label.subtitle {
+  font-size: 1px;
+  opacity: 0;
+}
+
 windowtitle label.subtitle {
   font-size: round(nearest, calc(100% - 3px), 1px);
 }
