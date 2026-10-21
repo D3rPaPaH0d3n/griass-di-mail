@@ -58,8 +58,12 @@ convey-conversation-list revealer {
   margin-right: 0;
 }
 
-#outer-split.flat-panes convey-conversation-viewer headerbar {
+convey-conversation-viewer headerbar {
   margin-left: 0;
+}
+
+convey-conversation-viewer headerbar > windowhandle > box {
+  padding-left: 12px;
 }
 
 #outer-split.flat-panes.scrolled-under convey-conversation-viewer headerbar,
