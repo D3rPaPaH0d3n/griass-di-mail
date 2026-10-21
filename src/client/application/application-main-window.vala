@@ -1710,6 +1710,13 @@ public class Application.MainWindow :
                                 uint keycode,
                                 Gdk.ModifierType state) {
         check_shift_event(keyval, true);
+        var composer = get_focus()?.get_ancestor(
+            typeof(Composer.Widget)
+        ) as Composer.Widget;
+        if (keyval == Gdk.Key.Escape && composer != null) {
+            composer.conditional_close.begin(false);
+            return true;
+        }
         if (keyval == Gdk.Key.Escape &&
             !this.has_composer &&
             this.conversation_list_view.selected.size > 0) {

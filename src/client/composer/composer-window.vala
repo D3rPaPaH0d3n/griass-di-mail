@@ -71,6 +71,16 @@ public class Composer.Window : Gtk.ApplicationWindow, Container {
             application.controller.window_focus_out();
         });
         ((Gtk.Widget) this).add_controller(focus_controller);
+
+        var key_controller = new Gtk.EventControllerKey();
+        key_controller.key_pressed.connect((keyval) => {
+            if (keyval == Gdk.Key.Escape) {
+                ((Gtk.Window) this).close();
+                return Gdk.EVENT_STOP;
+            }
+            return Gdk.EVENT_PROPAGATE;
+        });
+        ((Gtk.Widget) this).add_controller(key_controller);
     }
 
     /** {@inheritDoc} */
