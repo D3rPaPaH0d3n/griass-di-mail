@@ -32,6 +32,8 @@ PageState.prototype = {
         let modifiedId = null;
         this.bodyObserver = new MutationObserver((records) => {
             if (modifiedId == null) {
+                this.documentModified();
+                this.checkCommandStack();
                 modifiedId = window.setTimeout(() => {
                     this.documentModified();
                     this.checkCommandStack();

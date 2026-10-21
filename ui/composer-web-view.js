@@ -334,6 +334,7 @@ ComposerPageState.prototype = {
                 this.signaturePart.innerHTML = "";
                 this.signaturePart.classList.add("convey-no-display");
             }
+            this.bodyObserver.takeRecords();
         }
     },
     deleteQuotedMessage: function() {

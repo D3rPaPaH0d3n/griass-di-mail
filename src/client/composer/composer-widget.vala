@@ -397,6 +397,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private GLib.Cancellable? draft_manager_opening = null;
     private Convey.TimeoutManager draft_timer;
     private bool is_draft_saved = false;
+    private bool is_modified = false;
     private string draft_status_text {
         get { return this._draft_status_text; }
         set {
@@ -880,7 +881,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             break;
 
         default:
-            if (this.is_blank) {
+            if (this.is_blank || !this.is_modified) {
                 this.close.begin();
                 // This may be a bit of a lie but will very soon
                 // become true.
@@ -1474,6 +1475,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 }
             }
         );
+        this.is_modified = false;
     }
 
     private async bool should_send() {
@@ -1730,6 +1732,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         // can_save depends on the value of this, so reset it after
         // the if test above
         this.is_draft_saved = false;
+        this.is_modified = true;
     }
 
     // Note that drafts are NOT "linkified."
