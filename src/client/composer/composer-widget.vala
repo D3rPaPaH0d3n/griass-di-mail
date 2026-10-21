@@ -892,7 +892,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
         default:
             if (this.is_blank || (!this.is_modified && this.context_type == EDIT)) {
-                this.close.begin();
+                this.close.begin(this.is_blank && this.context_type != EDIT);
                 // This may be a bit of a lie but will very soon
                 // become true.
                 status = CLOSED;
@@ -956,7 +956,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
      * This method disables the composer, closes the draft manager,
      * then destroys the composer itself.
      */
-    public async void close() {
+    public async void close(bool discard_draft = false) {
         if (this.current_mode != CLOSED) {
             // this will set current_mode to NONE first
             set_enabled(false);
@@ -968,7 +968,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             }
 
             try {
-                yield close_draft_manager(KEEP);
+                yield close_draft_manager(discard_draft ? DraftPolicy.DISCARD : DraftPolicy.KEEP);
             } catch (GLib.Error error) {
                 this.application.report_problem(
                     new Convey.AccountProblemReport(

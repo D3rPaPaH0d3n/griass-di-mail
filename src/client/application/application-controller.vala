@@ -263,6 +263,7 @@ internal class Application.Controller :
             if (composer.current_mode != CLOSED) {
                 composer_barrier.acquire();
                 composer.close.begin(
+                    false,
                     (obj, res) => {
                         composer.close.end(res);
                         composer_barrier.blind_notify();
