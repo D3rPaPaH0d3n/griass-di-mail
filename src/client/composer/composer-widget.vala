@@ -360,6 +360,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     private GLib.SimpleActionGroup actions = new GLib.SimpleActionGroup();
 
+    private bool is_modified {
+        get {
+            return get_editable_state() != this.loaded_state ||
+                !this.editor.body.is_empty;
+        }
+    }
+
     /** Determines if the composer can currently save a draft. */
     private bool can_save {
         get { return this.draft_manager != null; }
@@ -398,7 +405,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private GLib.Cancellable? draft_manager_opening = null;
     private Convey.TimeoutManager draft_timer;
     private bool is_draft_saved = false;
-    private bool is_modified = false;
+    private string loaded_state = "";
     private string draft_status_text {
         get { return this._draft_status_text; }
         set {
@@ -884,11 +891,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             break;
 
         default:
-            if (this.is_blank || !this.is_modified) {
+            if (this.is_blank || (!this.is_modified && this.context_type == EDIT)) {
                 this.close.begin();
                 // This may be a bit of a lie but will very soon
                 // become true.
                 status = CLOSED;
+            } else if (!this.is_modified) {
+                this.discard_and_close.begin();
             } else if (should_prompt) {
                 present();
                 if (this.can_save) {
@@ -1478,7 +1487,19 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 }
             }
         );
-        this.is_modified = false;
+        this.loaded_state = get_editable_state();
+    }
+
+    private string get_editable_state() {
+        return string.joinv("\n", {
+            this.from.to_rfc822_string(),
+            this.to,
+            this.cc,
+            this.bcc,
+            this.reply_to,
+            this.subject,
+            this.attached_files.size.to_string()
+        });
     }
 
     private async bool should_send() {
@@ -1735,7 +1756,6 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         // can_save depends on the value of this, so reset it after
         // the if test above
         this.is_draft_saved = false;
-        this.is_modified = true;
     }
 
     // Note that drafts are NOT "linkified."
