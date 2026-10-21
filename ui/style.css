@@ -87,7 +87,7 @@ conversation-list list {
 }
 
 row.conversation-list {
-  margin: 0.5px 8px;
+  margin: 0 8px;
   border-radius: 8px;
   padding: 0;
 }
