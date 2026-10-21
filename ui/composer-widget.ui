@@ -72,6 +72,13 @@
                                     <signal name="bind" handler="on_from_item_bind"/>
                                   </object>
                                 </property>
+                                <child type="suffix">
+                                  <object class="GtkImage" id="from_warning">
+                                    <property name="visible">False</property>
+                                    <property name="icon-name">dialog-warning-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Choose an address to send from</property>
+                                  </object>
+                                </child>
                                 <style>
                                   <class name="property"/>
                                   <class name="convey-composer-from"/>

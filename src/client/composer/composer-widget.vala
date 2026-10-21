@@ -342,6 +342,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private bool extended_headers_shown = false;
 
     [GtkChild] private unowned Adw.ComboRow from_row;
+    [GtkChild] private unowned Gtk.Image from_warning;
     [GtkChild] private unowned GLib.ListStore from_model;
 
     [GtkChild] private unowned AddressesRow to_row;
@@ -577,7 +578,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     public void require_sender() {
         this.sender_required = true;
         this.from_row.selected = Gtk.INVALID_LIST_POSITION;
-        this.from_row.add_css_class("error");
+        this.from_row.remove_css_class("property");
+        this.from_row.add_css_class("warning");
+        this.from_warning.visible = true;
         validate_send_button();
     }
 
@@ -753,12 +756,12 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         case REPLY_LIST:
             // Set the preferred from address based on the message
             // being replied to
-            if (!update_from_address(full_context.to)) {
-                if (!update_from_address(full_context.cc)) {
-                    if (!update_from_address(full_context.bcc)) {
-                        update_from_address(full_context.from);
-                    }
-                }
+            if (!update_from_address(full_context.to) &&
+                !update_from_address(full_context.cc) &&
+                !update_from_address(full_context.bcc) &&
+                !update_from_address(full_context.from) &&
+                this.sender_context.account.information.has_sender_aliases) {
+                require_sender();
             }
             this.subject = Convey.RFC822.Utils.create_subject_for_reply(
                 full_context
@@ -2501,6 +2504,17 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         }
         popover.has_arrow = false;
         popover.set_offset(0, 6);
+        var current = find_list_view(this.from_row)?.model as Gtk.NoSelection;
+        var filter = current?.model as Gtk.SelectionFilterModel;
+        foreach (var selection in new Gtk.SingleSelection?[] {
+                     filter?.model as Gtk.SingleSelection,
+                     find_list_view(popover)?.model as Gtk.SingleSelection
+                 }) {
+            if (selection != null) {
+                selection.autoselect = false;
+                selection.can_unselect = true;
+            }
+        }
         popover.map.connect(() => {
             var parent = popover.get_parent();
             Graphene.Point point = { 0, 0 };
@@ -2557,6 +2571,18 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             var popover = child as Gtk.Popover ?? find_popover(child);
             if (popover != null) {
                 return popover;
+            }
+        }
+        return null;
+    }
+
+    private static Gtk.ListView? find_list_view(Gtk.Widget parent) {
+        for (var child = parent.get_first_child();
+             child != null;
+             child = child.get_next_sibling()) {
+            var list = child as Gtk.ListView ?? find_list_view(child);
+            if (list != null) {
+                return list;
             }
         }
         return null;
@@ -2633,7 +2659,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             this.from = selected.from;
             if (this.sender_required) {
                 this.sender_required = false;
-                this.from_row.remove_css_class("error");
+                this.from_row.remove_css_class("warning");
+                this.from_row.add_css_class("property");
+                this.from_warning.visible = false;
                 validate_send_button();
             }
 

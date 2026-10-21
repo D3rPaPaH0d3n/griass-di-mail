@@ -702,10 +702,13 @@ public class Application.Client : Adw.Application {
                 main.selected_account.information
             );
         }
+        bool ambiguous = main.all_inboxes &&
+            this.controller.get_account_contexts().size > 1;
         if (account == null) {
             account = Convey.Collection.first(
                 this.controller.get_account_contexts()
             );
+            ambiguous = this.controller.get_account_contexts().size > 1;
         }
         if (account != null) {
             Composer.Widget composer = yield this.controller.compose_blank(
@@ -713,6 +716,9 @@ public class Application.Client : Adw.Application {
                 to
             );
             this.controller.present_composer(composer);
+            if (ambiguous) {
+                composer.require_sender();
+            }
         }
     }
 

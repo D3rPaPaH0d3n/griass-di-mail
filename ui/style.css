@@ -408,7 +408,7 @@ convey-composer-editor frame {
  * caption with .subtitle typography (font-size: smaller), so match
  * that exactly. Scope to the label: the box around both labels also
  * carries a "title" class, and shrinking that shrinks everything. */
-row.convey-composer-from box.title > label.title {
+row.convey-composer-from.property box.title > label.title {
   font-size: smaller;
 }
 
