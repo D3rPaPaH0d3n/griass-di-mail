@@ -15,6 +15,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.SwitchRow display_subject_row;
     [GtkChild] private unowned Adw.PreferencesGroup conversation_list_group;
     [GtkChild] private unowned Adw.NavigationPage conversation_list_subpage;
+    [GtkChild] private unowned Gtk.Button conversation_list_reset_button;
     [GtkChild] private unowned Adw.SwitchRow flat_panes_row;
     [GtkChild] private unowned Adw.SwitchRow remember_last_inbox_row;
     [GtkChild] private unowned Adw.ComboRow startup_inbox_row;
@@ -345,9 +346,33 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
         push_subpage(this.conversation_list_subpage);
     }
 
+    [GtkCallback]
+    private void on_conversation_list_reset() {
+        foreach (string key in new string[] {
+                     Application.Configuration.CONVERSATION_LIST_ORDER_KEY,
+                     Application.Configuration.DISPLAY_PARTICIPANTS_KEY,
+                     Application.Configuration.DISPLAY_SUBJECT_KEY,
+                     Application.Configuration.DISPLAY_PREVIEW_KEY
+                 }) {
+            this.application.config.settings.reset(key);
+        }
+        show_conversation_list_order(get_conversation_list_order());
+    }
+
+    private void update_conversation_list_reset() {
+        bool all_shown = true;
+        foreach (string field in CONVERSATION_LIST_FIELDS) {
+            all_shown &= get_conversation_list_row(field).active;
+        }
+        this.conversation_list_reset_button.sensitive = !all_shown ||
+            string.joinv(",", get_conversation_list_order()) !=
+            string.joinv(",", CONVERSATION_LIST_FIELDS);
+    }
+
     private void setup_conversation_list_order() {
         foreach (string field in CONVERSATION_LIST_FIELDS) {
             var row = get_conversation_list_row(field);
+            row.notify["active"].connect(update_conversation_list_reset);
             row.add_prefix(new Gtk.Image.from_icon_name("list-drag-handle-symbolic"));
 
             double hot_x = 0, hot_y = 0;
@@ -406,6 +431,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     }
 
     private void show_conversation_list_order(string[] order) {
+        update_conversation_list_reset();
         foreach (string field in order) {
             Adw.SwitchRow row = get_conversation_list_row(field);
             this.conversation_list_group.remove(row);

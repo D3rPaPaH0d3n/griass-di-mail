@@ -163,6 +163,15 @@
           <object class="AdwPreferencesPage">
             <child>
               <object class="AdwPreferencesGroup" id="conversation_list_group">
+                <property name="header-suffix">
+                  <object class="GtkButton" id="conversation_list_reset_button">
+                    <!-- Translators: Button that restores the default conversation list line order -->
+                    <property name="label" translatable="yes">_Reset</property>
+                    <property name="use-underline">True</property>
+                    <property name="valign">end</property>
+                    <signal name="clicked" handler="on_conversation_list_reset"/>
+                  </object>
+                </property>
                 <!-- Translators: Preferences page title -->
                 <property name="title" translatable="yes">Conversation list order</property>
                 <property name="description" translatable="yes">Choose which lines each conversation shows, and in what order</property>
