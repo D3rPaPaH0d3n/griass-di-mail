@@ -311,6 +311,8 @@ public class Application.MainWindow :
     // Outer and inner split are [[ folder_box | conversation_list ] | conversation_viewer ]
     [GtkChild] private unowned Adw.NavigationSplitView outer_view;
     [GtkChild] private unowned Adw.NavigationSplitView inner_view;
+    [GtkChild] private unowned Gtk.Overlay empty_overlay;
+    [GtkChild] private unowned Adw.StatusPage empty_overlay_page;
     [GtkChild] private unowned Gtk.Widget sidebar_resize_handle;
     private double sidebar_drag_start_width;
     private int default_min_sidebar_width;
@@ -1620,6 +1622,9 @@ public class Application.MainWindow :
 
         this.conversation_viewer.hexpand = true;
         this.conversation_viewer.vexpand = true;
+        this.conversation_viewer.notify["empty-page"].connect(update_empty_message);
+        this.empty_overlay.get_child_position.connect(on_empty_overlay_position);
+        config.settings.changed[Configuration.FLAT_PANES_KEY].connect(update_empty_message);
         this.conversation_viewer.conversation_scroller.vadjustment.value_changed.connect(
             update_header_divider
         );
@@ -2842,9 +2847,44 @@ public class Application.MainWindow :
         application.controller.window_focus_out();
     }
 
+    private void update_empty_message() {
+        Adw.StatusPage? page = this.conversation_viewer.empty_page;
+        bool list_shown =
+            (!this.outer_view.collapsed || !this.outer_view.show_content) &&
+            (!this.inner_view.collapsed || this.inner_view.show_content);
+        bool overlay = page != null && list_shown && (
+            this.outer_view.collapsed ||
+            this.application.config.settings.get_boolean(Configuration.FLAT_PANES_KEY)
+        );
+        this.empty_overlay_page.visible = overlay;
+        if (page != null) {
+            page.opacity = overlay ? 0 : 1;
+            this.empty_overlay_page.icon_name = page.icon_name;
+            this.empty_overlay_page.title = page.title;
+            this.empty_overlay_page.description = page.description;
+        }
+    }
+
+    private bool on_empty_overlay_position(Gtk.Overlay overlay,
+                                           Gtk.Widget widget,
+                                           out Gdk.Rectangle allocation) {
+        allocation = Gdk.Rectangle();
+        Graphene.Rect list;
+        if (!this.conversation_list_view.compute_bounds(overlay, out list)) {
+            return false;
+        }
+        float right = this.outer_view.collapsed
+            ? list.origin.x + list.size.width
+            : overlay.get_width();
+        allocation = { (int) list.origin.x, (int) list.origin.y,
+                       (int) (right - list.origin.x), (int) list.size.height };
+        return true;
+    }
+
     [GtkCallback]
     private void on_outer_view_changed(GLib.Object object, ParamSpec pspec) {
         this.sidebar_resize_handle.visible = !this.outer_view.collapsed;
+        update_empty_message();
         bool shown = this.is_conversation_viewer_shown;
         this.conversation_list_view.can_autoselect = shown;
         if (!shown && !this.conversation_list_view.selection_mode_enabled) {
@@ -2915,6 +2955,7 @@ public class Application.MainWindow :
     [GtkCallback]
     private void on_inner_view_changed(GLib.Object object, ParamSpec pspec) {
         this.folder_resize_handle.visible = !this.inner_view.collapsed;
+        update_empty_message();
         int selected = this.conversation_list_view.selected.size;
         update_conversation_actions(
             ConversationCount.for_size(selected)

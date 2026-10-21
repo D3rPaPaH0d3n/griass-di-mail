@@ -72,6 +72,9 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     public signal void conversation_removed(ConversationListBox list);
 
 
+    /** The empty folder or search message being shown, if any. */
+    public Adw.StatusPage? empty_page { get; private set; default = null; }
+
     static construct {
         set_css_name("convey-conversation-viewer");
     }
@@ -332,6 +335,9 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
             }
         }
         this.stack.set_visible_child(widget);
+        this.empty_page = (
+            widget == this.empty_folder_page || widget == this.empty_search_page
+        ) ? (Adw.StatusPage) widget : null;
     }
 
     private async void update_find_results() {

@@ -177,6 +177,8 @@
           <object class="GtkBox" id="main_layout">
             <property name="orientation">vertical</property>
             <child>
+              <object class="GtkOverlay" id="empty_overlay">
+              <property name="child">
               <object class="AdwNavigationSplitView" id="outer_view">
                 <property name="vexpand">True</property>
                 <property name="sidebar-width-fraction">0.42</property>
@@ -377,6 +379,14 @@
                     </property>
                   </object>
                 </property>
+              </object>
+              </property>
+              <child type="overlay">
+                <object class="AdwStatusPage" id="empty_overlay_page">
+                  <property name="visible">False</property>
+                  <property name="can-target">False</property>
+                </object>
+              </child>
               </object>
             </child>
 
