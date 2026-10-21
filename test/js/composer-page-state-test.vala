@@ -28,6 +28,7 @@ class Composer.PageStateTest : Components.WebViewTestCase<Composer.WebView> {
         add_test("clean_content", clean_content);
         add_test("get_html", get_html);
         add_test("get_html_collapses_break_spaces", get_html_collapses_break_spaces);
+        add_test("get_html_keeps_image_only_signature", get_html_keeps_image_only_signature);
         add_test("get_text", get_text);
         add_test("contains_keywords", contains_keywords);
         // Depends contains_keywords and html_to_text_with_blacklist
@@ -298,6 +299,15 @@ I can send email through smtp.gmail.com:587 or through <a href="https://www.gmai
             "<span style=\"white-space: break-spaces;\">\t</span>" +
             "<div class=\"plaintext\" style=\"white-space: break-spaces;\">a\nb</div>"
         ));
+    }
+
+    public void get_html_keeps_image_only_signature() throws Error {
+        load_body_fixture("<p>para</p>");
+        run_javascript("window.convey.updateSignature('<img src=banner.png>');");
+        string result = Util.JS.to_string(
+            run_javascript(@"window.convey.getHtml();")
+        );
+        assert(result.contains("<img src=\"banner.png\">"));
     }
 
     public void get_text() throws Error {

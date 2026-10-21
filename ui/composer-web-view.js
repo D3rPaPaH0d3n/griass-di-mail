@@ -419,14 +419,14 @@ ComposerPageState.prototype = {
         parent.appendChild(ComposerPageState.cleanPart(body));
 
         if (this.signaturePart != null &&
-            (!removeEmpty || this.signaturePart.innerText.trim() != "")) {
+            (!removeEmpty || !ComposerPageState.isEmptyPart(this.signaturePart))) {
             let signature = this.signaturePart.cloneNode(true);
             ComposerPageState.collapseWhiteSpace(signature);
             parent.appendChild(ComposerPageState.cleanPart(signature));
         }
 
         if (this.quotePart != null &&
-            (!removeEmpty || this.quotePart.innerText.trim() != "")) {
+            (!removeEmpty || !ComposerPageState.isEmptyPart(this.quotePart))) {
             parent.appendChild(
                 ComposerPageState.cleanPart(this.quotePart.cloneNode(true))
             );
@@ -623,6 +623,10 @@ ComposerPageState.cleanPart = function(part) {
         part.removeAttribute("contenteditable");
     }
     return part;
+};
+
+ComposerPageState.isEmptyPart = function(part) {
+    return part.innerText.trim() == "" && part.querySelector("img") == null;
 };
 
 /**
