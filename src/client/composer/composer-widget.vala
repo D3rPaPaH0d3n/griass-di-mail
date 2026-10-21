@@ -1139,13 +1139,12 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     public void set_focus() {
-        bool not_inline = (
-            this.current_mode != INLINE &&
+        bool header_visible = (
             this.current_mode != INLINE_COMPACT
         );
-        if (not_inline && Convey.String.is_empty(to)) {
+        if (header_visible && Convey.String.is_empty(to)) {
             this.to_row.grab_focus();
-        } else if (not_inline && Convey.String.is_empty(subject)) {
+        } else if (header_visible && Convey.String.is_empty(subject)) {
             this.subject_row.grab_focus();
         } else {
             // Need to grab the focus after the content has finished
