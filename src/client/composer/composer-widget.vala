@@ -1681,7 +1681,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         try {
             yield close_draft_manager(DISCARD);
             yield open_draft_manager(null);
-            yield save_draft();
+            if (!this.is_blank) {
+                yield save_draft();
+            }
         } catch (GLib.Error error) {
             this.application.report_problem(
                 new Convey.AccountProblemReport(
