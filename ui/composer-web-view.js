@@ -73,6 +73,8 @@ ComposerPageState.prototype = {
         if (this.signaturePart != null) {
             ComposerPageState.linkify(this.signaturePart);
         }
+        ComposerPageState.collapseWhiteSpace(this.bodyPart);
+        ComposerPageState.collapseWhiteSpace(this.signaturePart);
         this.quotePart = document.getElementById("convey-quote");
 
         // Should be using 'e.key' in listeners below instead of
@@ -412,15 +414,15 @@ ComposerPageState.prototype = {
         }
 
         let parent = document.createElement("DIV");
-        parent.appendChild(
-            ComposerPageState.cleanPart(this.bodyPart.cloneNode(true))
-        );
+        let body = this.bodyPart.cloneNode(true);
+        ComposerPageState.collapseWhiteSpace(body);
+        parent.appendChild(ComposerPageState.cleanPart(body));
 
         if (this.signaturePart != null &&
             (!removeEmpty || this.signaturePart.innerText.trim() != "")) {
-            parent.appendChild(
-                ComposerPageState.cleanPart(this.signaturePart.cloneNode(true))
-            );
+            let signature = this.signaturePart.cloneNode(true);
+            ComposerPageState.collapseWhiteSpace(signature);
+            parent.appendChild(ComposerPageState.cleanPart(signature));
         }
 
         if (this.quotePart != null &&
@@ -598,6 +600,23 @@ ComposerPageState.containsKeywords = function(line, wordKeys, suffixKeys) {
 /**
  * Removes internal attributes from a composer part.
  */
+ComposerPageState.collapseWhiteSpace = function(part) {
+    if (part == null) {
+        return;
+    }
+    for (const element of part.querySelectorAll("[style*='white-space']")) {
+        if (element.style.getPropertyValue("white-space-collapse") == "break-spaces" &&
+            element.textContent != "\t" &&
+            element.closest(".plaintext") == null) {
+            element.style.removeProperty("white-space");
+            element.style.removeProperty("white-space-collapse");
+            if (element.style.length == 0) {
+                element.removeAttribute("style");
+            }
+        }
+    }
+};
+
 ComposerPageState.cleanPart = function(part) {
     if (part != null) {
         part.removeAttribute("class");
