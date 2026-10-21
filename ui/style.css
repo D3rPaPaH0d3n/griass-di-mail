@@ -134,17 +134,18 @@ row.conversation-list .tertiary {
   font-size: 0.8em;
 }
 
-row.conversation-list .subject {
+row.conversation-list .details > :nth-child(2) {
   font-size: 0.9em;
   padding-left: 0.5em;
 }
 
-row.conversation-list .preview {
+row.conversation-list .details > :nth-child(3) {
+  opacity: 0.7;
+  font-size: 0.8em;
   padding-left: 0.6em;
 }
 
 row.conversation-list .preview-icon {
-  margin-left: 0.6em;
   margin-bottom: 0.4em;
   -gtk-icon-size: 12px;
 }
@@ -159,11 +160,8 @@ row.conversation-list .date {
 }
 
 /* Unread styling */
-row.conversation-list.unread .subject {
-  font-weight: bold;
-}
-
-row.conversation-list.unread .participants {
+row.conversation-list.unread .details > :nth-child(1),
+row.conversation-list.unread .details > :nth-child(2) {
   font-weight: bold;
 }
 

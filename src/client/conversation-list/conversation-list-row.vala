@@ -19,6 +19,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         }
     }
 
+    [GtkChild] unowned Gtk.Box details;
     [GtkChild] unowned Gtk.Box preview_box;
     [GtkChild] unowned Gtk.Image encrypted_icon;
     [GtkChild] unowned Gtk.Label preview;
@@ -39,6 +40,19 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     internal const uint ANIMATION_DURATION_MS = 250;
     private const uint DIVIDER_DELAY_MS = 20;
+
+    internal string[] field_order {
+        set {
+            Gtk.Widget? previous = null;
+            foreach (string field in value) {
+                Gtk.Widget? widget = get_field_widget(field);
+                if (widget != null) {
+                    this.details.reorder_child_after(widget, previous);
+                    previous = widget;
+                }
+            }
+        }
+    }
 
     internal bool leaving { get; private set; default = false; }
     internal bool entering { get; private set; default = false; }
@@ -79,6 +93,12 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
         config.bind(Application.Configuration.DISPLAY_PREVIEW_KEY,
                     this.preview_box, "visible");
+        config.bind(Application.Configuration.DISPLAY_PARTICIPANTS_KEY,
+                    this.participants, "visible");
+        config.bind(Application.Configuration.DISPLAY_SUBJECT_KEY,
+                    this.subject, "visible");
+        config.bind(Application.Configuration.CONVERSATION_LIST_ORDER_KEY,
+                    this, "field-order", GET);
 
         if (selection_mode_enabled) {
             set_selection_enabled(true);
@@ -246,6 +266,19 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
             this.flagged_icon.show();
         } else {
             this.flagged_icon.hide();
+        }
+    }
+
+    private Gtk.Widget? get_field_widget(string field) {
+        switch (field) {
+        case "participants":
+            return this.participants;
+        case "subject":
+            return this.subject;
+        case "preview":
+            return this.preview_box;
+        default:
+            return null;
         }
     }
 

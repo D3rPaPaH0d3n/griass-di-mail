@@ -44,10 +44,18 @@
               </object>
             </child>
             <child>
-              <object class="AdwSwitchRow" id="display_preview_row">
+              <object class="AdwActionRow">
                 <!-- Translators: Preferences label -->
-                <property name="title" translatable="yes">_Display conversation preview</property>
+                <property name="title" translatable="yes">_Conversation list order</property>
+                <property name="subtitle" translatable="yes">Choose which lines each conversation shows, and in what order</property>
                 <property name="use-underline">True</property>
+                <property name="activatable">True</property>
+                <signal name="activated" handler="on_conversation_list_activated"/>
+                <child type="suffix">
+                  <object class="GtkImage">
+                    <property name="icon-name">go-next-symbolic</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
@@ -145,4 +153,45 @@
       </object>
     </child>
   </template>
+  <object class="AdwNavigationPage" id="conversation_list_subpage">
+    <property name="child">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar"/>
+        </child>
+        <property name="content">
+          <object class="AdwPreferencesPage">
+            <child>
+              <object class="AdwPreferencesGroup" id="conversation_list_group">
+                <!-- Translators: Preferences page title -->
+                <property name="title" translatable="yes">Conversation list order</property>
+                <property name="description" translatable="yes">Choose which lines each conversation shows, and in what order</property>
+                <child>
+                  <object class="AdwSwitchRow" id="display_participants_row">
+                    <!-- Translators: Preferences label -->
+                    <property name="title" translatable="yes">_Participants</property>
+                    <property name="use-underline">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwSwitchRow" id="display_subject_row">
+                    <!-- Translators: Preferences label -->
+                    <property name="title" translatable="yes">S_ubject</property>
+                    <property name="use-underline">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwSwitchRow" id="display_preview_row">
+                    <!-- Translators: Preferences label -->
+                    <property name="title" translatable="yes">Pr_eview</property>
+                    <property name="use-underline">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </property>
+  </object>
 </interface>

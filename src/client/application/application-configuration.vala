@@ -29,6 +29,9 @@ public class Application.Configuration : Convey.BaseObject {
     public const string COMPOSE_AS_HTML_KEY = "compose-as-html";
     public const string CONVERSATION_VIEWER_ZOOM_KEY = "conversation-viewer-zoom";
     public const string DISPLAY_PREVIEW_KEY = "display-preview";
+    public const string DISPLAY_PARTICIPANTS_KEY = "display-participants";
+    public const string DISPLAY_SUBJECT_KEY = "display-subject";
+    public const string CONVERSATION_LIST_ORDER_KEY = "conversation-list-order";
     public const string FLAT_PANES_KEY = "flat-panes";
     public const string UNSET_HTML_COLORS = "unset-html-colors";
     public const string FORMATTING_TOOLBAR_VISIBLE = "formatting-toolbar-visible";

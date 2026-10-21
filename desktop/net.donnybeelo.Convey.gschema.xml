@@ -39,6 +39,24 @@
         <description>True if we should display a short preview of each message.</description>
       </key>
 
+    <key name="display-participants" type="b">
+      <default>true</default>
+      <summary>Display conversation participants</summary>
+      <description>True if we should display the participants of each conversation in the conversation list.</description>
+    </key>
+
+    <key name="display-subject" type="b">
+      <default>true</default>
+      <summary>Display conversation subjects</summary>
+      <description>True if we should display the subject of each conversation in the conversation list.</description>
+    </key>
+
+    <key name="conversation-list-order" type="as">
+      <default>['participants', 'subject', 'preview']</default>
+      <summary>Conversation list line order</summary>
+      <description>The order of the participants, subject and preview lines of each conversation in the conversation list.</description>
+    </key>
+
     <key name="flat-panes" type="b">
       <default>false</default>
       <summary>Flat conversation list</summary>

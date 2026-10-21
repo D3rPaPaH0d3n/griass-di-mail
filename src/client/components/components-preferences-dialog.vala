@@ -11,6 +11,10 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     [GtkChild] private unowned Adw.SwitchRow autoselect_row;
     [GtkChild] private unowned Adw.SwitchRow display_preview_row;
+    [GtkChild] private unowned Adw.SwitchRow display_participants_row;
+    [GtkChild] private unowned Adw.SwitchRow display_subject_row;
+    [GtkChild] private unowned Adw.PreferencesGroup conversation_list_group;
+    [GtkChild] private unowned Adw.NavigationPage conversation_list_subpage;
     [GtkChild] private unowned Adw.SwitchRow flat_panes_row;
     [GtkChild] private unowned Adw.SwitchRow remember_last_inbox_row;
     [GtkChild] private unowned Adw.ComboRow startup_inbox_row;
@@ -186,6 +190,10 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     private string[] startup_inbox_ids = {};
 
+    private const string[] CONVERSATION_LIST_FIELDS = {
+        "participants", "subject", "preview"
+    };
+
     public PreferencesDialog(Application.Client application,
                              Application.PluginManager plugins) {
         Object(application: application);
@@ -207,6 +215,17 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             this.display_preview_row,
             "active"
         );
+        config.bind(
+            Application.Configuration.DISPLAY_PARTICIPANTS_KEY,
+            this.display_participants_row,
+            "active"
+        );
+        config.bind(
+            Application.Configuration.DISPLAY_SUBJECT_KEY,
+            this.display_subject_row,
+            "active"
+        );
+        setup_conversation_list_order();
         config.bind(
             Application.Configuration.FLAT_PANES_KEY,
             this.flat_panes_row,
@@ -319,6 +338,90 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
                 );
             }
         });
+    }
+
+    [GtkCallback]
+    private void on_conversation_list_activated() {
+        push_subpage(this.conversation_list_subpage);
+    }
+
+    private void setup_conversation_list_order() {
+        foreach (string field in CONVERSATION_LIST_FIELDS) {
+            var row = get_conversation_list_row(field);
+            row.add_prefix(new Gtk.Image.from_icon_name("list-drag-handle-symbolic"));
+
+            double hot_x = 0, hot_y = 0;
+            var drag = new Gtk.DragSource();
+            drag.actions = MOVE;
+            drag.prepare.connect((x, y) => {
+                hot_x = x;
+                hot_y = y;
+                return new Gdk.ContentProvider.for_value(field);
+            });
+            drag.drag_begin.connect(() => {
+                drag.set_icon(new Gtk.WidgetPaintable(row), (int) hot_x, (int) hot_y);
+            });
+            row.add_controller(drag);
+
+            var drop = new Gtk.DropTarget(typeof(string), MOVE);
+            drop.drop.connect((value) => {
+                move_conversation_list_field(value.get_string(), field);
+                return true;
+            });
+            row.add_controller(drop);
+        }
+        show_conversation_list_order(get_conversation_list_order());
+    }
+
+    private string[] get_conversation_list_order() {
+        string[] order = {};
+        foreach (string field in this.application.config.settings.get_strv(
+                     Application.Configuration.CONVERSATION_LIST_ORDER_KEY
+                 )) {
+            if (field in CONVERSATION_LIST_FIELDS && !(field in order)) {
+                order += field;
+            }
+        }
+        foreach (string field in CONVERSATION_LIST_FIELDS) {
+            if (!(field in order)) {
+                order += field;
+            }
+        }
+        return order;
+    }
+
+    private void move_conversation_list_field(string field, string target) {
+        var order = new Gee.ArrayList<string>.wrap(get_conversation_list_order());
+        int to = order.index_of(target);
+        order.remove(field);
+        order.insert(to, field);
+        string[] fields = {};
+        foreach (string item in order) {
+            fields += item;
+        }
+        this.application.config.settings.set_strv(
+            Application.Configuration.CONVERSATION_LIST_ORDER_KEY, fields
+        );
+        show_conversation_list_order(fields);
+    }
+
+    private void show_conversation_list_order(string[] order) {
+        foreach (string field in order) {
+            Adw.SwitchRow row = get_conversation_list_row(field);
+            this.conversation_list_group.remove(row);
+            this.conversation_list_group.add(row);
+        }
+    }
+
+    private Adw.SwitchRow get_conversation_list_row(string field) {
+        switch (field) {
+        case "participants":
+            return this.display_participants_row;
+        case "subject":
+            return this.display_subject_row;
+        default:
+            return this.display_preview_row;
+        }
     }
 
     private void setup_plugin_pane() {
