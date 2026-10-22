@@ -1008,6 +1008,14 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
     }
 
+    /**
+     * Marks all email with a visible body read, now and once loaded.
+     */
+    public void mark_visible_read_on_activate() {
+        this.suppress_mark_timer = false;
+        this.mark_read_timer.start();
+    }
+
     /** Adds an info bar to the given email, if any. */
     public void add_email_info_bar(Convey.EmailIdentifier id,
                                    Components.InfoBar info_bar) {

@@ -2474,6 +2474,9 @@ public class Application.MainWindow :
                     new Gee.ArrayList<Convey.App.Conversation>();
                 selected.add(activated);
                 select_conversations.begin(selected, Gee.Collection.empty(), true);
+            } else if (this.conversation_viewer.current_list?.conversation == activated) {
+                this.previous_selection_was_interactive = true;
+                this.conversation_viewer.current_list.mark_visible_read_on_activate();
             }
         } else if (this.selected_folder != null) {
             if (this.selected_folder.used_as != DRAFTS) {
