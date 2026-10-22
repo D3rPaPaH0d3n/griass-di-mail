@@ -160,7 +160,7 @@ public class Application.MainWindow :
             return (
                 (!this.outer_view.collapsed || !this.outer_view.show_content)
                 &&
-                (!this.inner_view.collapsed || !this.inner_view.show_content)
+                (!this.inner_view.collapsed || this.inner_view.show_sidebar)
             );
         }
     }
@@ -171,7 +171,7 @@ public class Application.MainWindow :
             return (
                 (!this.outer_view.collapsed || !this.outer_view.show_content)
                 &&
-                (!this.inner_view.collapsed || this.inner_view.show_content)
+                (!this.inner_view.collapsed || !this.inner_view.show_sidebar)
             );
         }
     }
@@ -310,7 +310,7 @@ public class Application.MainWindow :
 
     // Outer and inner split are [[ folder_box | conversation_list ] | conversation_viewer ]
     [GtkChild] private unowned Adw.NavigationSplitView outer_view;
-    [GtkChild] private unowned Adw.NavigationSplitView inner_view;
+    [GtkChild] private unowned Adw.OverlaySplitView inner_view;
     [GtkChild] private unowned Gtk.Overlay empty_overlay;
     [GtkChild] private unowned Adw.StatusPage empty_overlay_page;
     [GtkChild] private unowned Gtk.Widget sidebar_resize_handle;
@@ -781,7 +781,7 @@ public class Application.MainWindow :
         }
 
         this.outer_view.show_content = false;
-        this.inner_view.show_content = true;
+        close_folder_drawer();
         update_headerbar();
     }
 
@@ -802,7 +802,7 @@ public class Application.MainWindow :
             // Already showing them; clicking again scrolls back to the top
             this.conversation_list_view.scroll_to_top();
             this.outer_view.show_content = false;
-            this.inner_view.show_content = true;
+            close_folder_drawer();
             return;
         }
 
@@ -874,7 +874,7 @@ public class Application.MainWindow :
         yield this.controller.process_pending_composers();
 
         this.outer_view.show_content = false;
-        this.inner_view.show_content = true;
+        close_folder_drawer();
         update_headerbar();
     }
 
@@ -994,14 +994,14 @@ public class Application.MainWindow :
     /** Shows the appopriate window menu, if any. */
     public void show_window_menu() {
         this.outer_view.show_content = false;
-        this.inner_view.show_content = false;
+        this.inner_view.show_sidebar = true;
         this.app_menu_button.active = true;
     }
 
     /** Displays and focuses the search bar for the window. */
     public void show_search_bar(string? text = null) {
         this.outer_view.show_content = false;
-        this.inner_view.show_content = true;
+        close_folder_drawer();
 
         this.search_bar.search_mode_enabled = true;
         this.search_bar.grab_focus();
@@ -2784,7 +2784,7 @@ public class Application.MainWindow :
     private void reply_conversation(Composer.Widget.ContextType context_type) {
         if (this.inner_view.collapsed) {
             this.conversation_list_view.activate_selected();
-            this.inner_view.show_content = true;
+            close_folder_drawer();
             // This is a lot of async actions, delay composer creation
             GLib.Timeout.add(500, () => {
               this.create_composer_from_viewer.begin(context_type);
@@ -2851,7 +2851,7 @@ public class Application.MainWindow :
         Adw.StatusPage? page = this.conversation_viewer.empty_page;
         bool list_shown =
             (!this.outer_view.collapsed || !this.outer_view.show_content) &&
-            (!this.inner_view.collapsed || this.inner_view.show_content);
+            (!this.inner_view.collapsed || !this.inner_view.show_sidebar);
         bool overlay = page != null && list_shown && (
             this.outer_view.collapsed ||
             this.application.config.settings.get_boolean(Configuration.FLAT_PANES_KEY)
@@ -2950,6 +2950,12 @@ public class Application.MainWindow :
         width = width.clamp(180, 400);
         this.inner_view.min_sidebar_width = width;
         this.inner_view.max_sidebar_width = width;
+    }
+
+    private void close_folder_drawer() {
+        if (this.inner_view.collapsed) {
+            this.inner_view.show_sidebar = false;
+        }
     }
 
     [GtkCallback]
@@ -3169,7 +3175,7 @@ public class Application.MainWindow :
     }
 
     private void on_all_inboxes_activated() {
-        this.inner_view.show_content = true;
+        close_folder_drawer();
         if (this.application.config.autoselect) {
             focus_widget(this.conversation_viewer.get_visible_child());
         }
@@ -3206,7 +3212,7 @@ public class Application.MainWindow :
 
     private void on_folder_activated(Convey.Folder? folder) {
         if (folder != null) {
-            this.inner_view.show_content = true;
+            close_folder_drawer();
             // Focus on conversation list will autoselect
             if (this.application.config.autoselect) {
                 focus_widget(this.conversation_viewer.get_visible_child());

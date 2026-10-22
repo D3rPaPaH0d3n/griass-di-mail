@@ -49,7 +49,7 @@ convey-conversation-list revealer {
 }
 
 #outer-split.flat-panes > .sidebar-pane,
-#outer-split.flat-panes navigation-split-view > .content-pane {
+#outer-split.flat-panes overlay-split-view > .content-pane {
   box-shadow: none;
   background-color: transparent;
 }
@@ -71,11 +71,11 @@ convey-conversation-viewer headerbar > windowhandle > box {
   box-shadow: inset 1px 0 var(--sidebar-border-color);
 }
 
-#outer-split.flat-panes navigation-split-view > .sidebar-pane {
+#outer-split.flat-panes overlay-split-view > .sidebar-pane {
   background-color: var(--sidebar-bg-color);
 }
 
-#outer-split.flat-panes navigation-split-view > .sidebar-pane:backdrop {
+#outer-split.flat-panes overlay-split-view > .sidebar-pane:backdrop {
   background-color: var(--sidebar-backdrop-color);
 }
 

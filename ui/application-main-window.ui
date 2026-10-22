@@ -191,11 +191,11 @@
                 <property name="sidebar">
                   <object class="AdwNavigationPage">
                     <property name="child">
-                      <object class="AdwNavigationSplitView" id="inner_view">
+                      <object class="AdwOverlaySplitView" id="inner_view">
                         <property name="min-sidebar-width">220</property>
                         <property name="max-sidebar-width">230</property>
                         <signal name="notify::collapsed" handler="on_inner_view_changed"/>
-                        <signal name="notify::show-content" handler="on_inner_view_changed"/>
+                        <signal name="notify::show-sidebar" handler="on_inner_view_changed"/>
 
                         <property name="sidebar">
                           <object class="AdwNavigationPage" id="folder_list_page">
@@ -278,6 +278,16 @@
                                     <property name="title-widget">
                                       <object class="AdwWindowTitle" id="conversation_list_title"/>
                                     </property>
+                                    <child>
+                                      <object class="GtkToggleButton" id="folder_drawer_button">
+                                        <property name="visible">False</property>
+                                        <property name="focus_on_click">False</property>
+                                        <property name="receives_default">False</property>
+                                        <property name="icon-name">sidebar-show-symbolic</property>
+                                        <property name="tooltip_text" translatable="yes">Show folders</property>
+                                        <property name="active" bind-source="inner_view" bind-property="show-sidebar" bind-flags="sync-create|bidirectional"/>
+                                      </object>
+                                    </child>
                                     <child>
                                       <object class="GtkButton" id="compose_new_message_button">
                                         <property name="focus_on_click">False</property>
@@ -421,6 +431,7 @@
         <condition>max-width: 540sp</condition>
         <setter object="outer_view" property="collapsed">True</setter>
         <setter object="inner_view" property="collapsed">True</setter>
+        <setter object="folder_drawer_button" property="visible">True</setter>
       </object>
     </child>
     <!-- When things get really tight, split up the actions in the conversation viewer -->
@@ -429,6 +440,7 @@
         <condition>max-width: 500sp</condition>
         <setter object="outer_view" property="collapsed">True</setter>
         <setter object="inner_view" property="collapsed">True</setter>
+        <setter object="folder_drawer_button" property="visible">True</setter>
         <setter object="conversation_viewer_actions_revealer" property="reveal-child">True</setter>
       </object>
     </child>
