@@ -1,3 +1,40 @@
+Version 51.0
+~~~~~~~~~~~~
+Released: 2026-10-22
+
+Features:
+ * A new look, combining the conversation list with the message viewer
+ * PGP encryption and decryption with Autocrypt support
+ * A signature for each sender address
+ * Formatting and images in signatures
+ * Show the conversation subject above the conversation viewer
+ * Configurable line order in the conversation list
+ * Add an unread filter to the search bar
+ * Add a button to unsubscribe from mailing lists
+ * Add Reply to List button for mailing lists
+ * Add proper spell-check support
+ * Manual proxy configuration
+
+Bug fixes:
+ * Search all accounts at once from All Inboxes
+ * Discard untouched replies instead of saving empty drafts
+ * Mark emails read when scrolling a conversation thread
+ * Email colours now follow GNOME's light and dark switch when HTML override is enabled
+ * Stop spam in Outlook accounts from sending notifications
+ * Fix unread counts not resetting after deleting email
+ * Handle long messages instead of failing to render
+ * Fix duplicate emails opening from notifications
+ * Fix mailto: links being ignored when Convey isn't already running
+ * Fix "View Source" not working for Flatpak builds
+ * Point the bug report and website links to Convey instead of Geary
+ * Fix clicking a folder's arrow not expanding or collapsing it
+ * "Automatically select next message" honoured after deleting
+ * Fix special folders not being found in some cases
+ * Force Ctrl+Z to only act within the textbox when a textbox is focused
+ * Fix the email font not following the system's document font
+ * Fix saved drafts gaining extra line breaks in Microsoft accounts
+ * Make "Delete" the default in permanent delete dialogs
+
 Version 50.2-1
 ~~~~~~~~~~~~~~
 Released: 2026-09-20

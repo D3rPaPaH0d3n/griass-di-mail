@@ -76,6 +76,45 @@
   <translation type="gettext">convey</translation>
 
   <releases>
+    <release version="51.0" date="2026-10-22">
+      <description>
+        <p>Features:</p>
+        <ul>
+          <li>A new look, combining the conversation list with the message viewer</li>
+          <li>PGP encryption and decryption with Autocrypt support</li>
+          <li>A signature for each sender address</li>
+          <li>Formatting and images in signatures</li>
+          <li>Show the conversation subject above the conversation viewer</li>
+          <li>Configurable line order in the conversation list</li>
+          <li>Add an unread filter to the search bar</li>
+          <li>Add a button to unsubscribe from mailing lists</li>
+          <li>Add Reply to List button for mailing lists</li>
+          <li>Add proper spell-check support</li>
+          <li>Manual proxy configuration</li>
+        </ul>
+        <p>Bug fixes:</p>
+        <ul>
+          <li>Search all accounts at once from All Inboxes</li>
+          <li>Discard untouched replies instead of saving empty drafts</li>
+          <li>Mark emails read when scrolling a conversation thread</li>
+          <li>Email colours now follow GNOME's light and dark switch when HTML override is enabled</li>
+          <li>Stop spam in Outlook accounts from sending notifications</li>
+          <li>Fix unread counts not resetting after deleting email</li>
+          <li>Handle long messages instead of failing to render</li>
+          <li>Fix duplicate emails opening from notifications</li>
+          <li>Fix mailto: links being ignored when Convey isn't already running</li>
+          <li>Fix "View Source" not working for Flatpak builds</li>
+          <li>Point the bug report and website links to Convey instead of Geary</li>
+          <li>Fix clicking a folder's arrow not expanding or collapsing it</li>
+          <li>"Automatically select next message" honoured after deleting</li>
+          <li>Fix special folders not being found in some cases</li>
+          <li>Force Ctrl+Z to only act within the textbox when a textbox is focused</li>
+          <li>Fix the email font not following the system's document font</li>
+          <li>Fix saved drafts gaining extra line breaks in Microsoft accounts</li>
+          <li>Make "Delete" the default in permanent delete dialogs</li>
+        </ul>
+      </description>
+    </release>
     <release version="50.2-1" date="2026-09-20">
       <description>
         <ul>
