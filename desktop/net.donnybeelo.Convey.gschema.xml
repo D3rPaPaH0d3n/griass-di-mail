@@ -57,11 +57,6 @@
       <description>The order of the participants, subject and preview lines of each conversation in the conversation list.</description>
     </key>
 
-    <key name="flat-panes" type="b">
-      <default>false</default>
-      <summary>Flat conversation list</summary>
-      <description>True to give the conversation list the window background instead of the sidebar background.</description>
-    </key>
 
     <key name="unset-html-colors" type="b">
       <default>false</default>

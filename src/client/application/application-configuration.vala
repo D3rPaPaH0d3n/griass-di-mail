@@ -32,7 +32,6 @@ public class Application.Configuration : Convey.BaseObject {
     public const string DISPLAY_PARTICIPANTS_KEY = "display-participants";
     public const string DISPLAY_SUBJECT_KEY = "display-subject";
     public const string CONVERSATION_LIST_ORDER_KEY = "conversation-list-order";
-    public const string FLAT_PANES_KEY = "flat-panes";
     public const string UNSET_HTML_COLORS = "unset-html-colors";
     public const string FORMATTING_TOOLBAR_VISIBLE = "formatting-toolbar-visible";
     public const string OPTIONAL_PLUGINS = "optional-plugins";

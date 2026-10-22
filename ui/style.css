@@ -43,18 +43,20 @@ convey-conversation-list revealer {
 
 /* Conversation List */
 
-#outer-split.flat-panes .conversation-list-page {
-  background-color: @window_bg_color;
-  color: @window_fg_color;
+#outer-split,
+#outer-split .conversation-list-page,
+#outer-split > .content-pane {
+  background-color: @view_bg_color;
+  color: @view_fg_color;
 }
 
-#outer-split.flat-panes > .sidebar-pane,
-#outer-split.flat-panes overlay-split-view > .content-pane {
+#outer-split > .sidebar-pane,
+#outer-split overlay-split-view > .content-pane {
   box-shadow: none;
   background-color: transparent;
 }
 
-#outer-split.flat-panes .conversation-list-page headerbar {
+#outer-split .conversation-list-page headerbar {
   margin-right: 0;
 }
 
@@ -66,21 +68,19 @@ convey-conversation-viewer headerbar > windowhandle > box {
   padding-left: 12px;
 }
 
-#outer-split.flat-panes.scrolled-under convey-conversation-viewer headerbar,
-#outer-split.flat-panes.viewer-scrolled-under .conversation-subject {
+#outer-split.scrolled-under convey-conversation-viewer headerbar,
+#outer-split.viewer-scrolled-under .conversation-subject {
   box-shadow: inset 1px 0 var(--sidebar-border-color);
 }
 
-#outer-split.flat-panes overlay-split-view > .sidebar-pane {
+#outer-split overlay-split-view > .sidebar-pane {
   background-color: var(--sidebar-bg-color);
 }
 
-#outer-split.flat-panes overlay-split-view > .sidebar-pane:backdrop {
+#outer-split overlay-split-view > .sidebar-pane:backdrop {
   background-color: var(--sidebar-backdrop-color);
 }
 
-/* Blend with the window background instead of Adwaita's darker
- * view background, which is too contrasty between the panes. */
 conversation-list list {
   margin-top: 6px;
   background-color: transparent;
@@ -212,8 +212,6 @@ row.convey-folder-popover-list-row > label {
 
 .conversation-listbox {
   margin: 6px 12px 12px;
-  /* Sit on the window background rather than the darker view
-   * background so the cards don't float on a black well. */
   background-color: transparent;
 }
 

@@ -16,7 +16,6 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.PreferencesGroup conversation_list_group;
     [GtkChild] private unowned Adw.NavigationPage conversation_list_subpage;
     [GtkChild] private unowned Gtk.Button conversation_list_reset_button;
-    [GtkChild] private unowned Adw.SwitchRow flat_panes_row;
     [GtkChild] private unowned Adw.SwitchRow remember_last_inbox_row;
     [GtkChild] private unowned Adw.ComboRow startup_inbox_row;
     [GtkChild] private unowned Adw.SwitchRow local_starred_folder_row;
@@ -227,11 +226,6 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             "active"
         );
         setup_conversation_list_order();
-        config.bind(
-            Application.Configuration.FLAT_PANES_KEY,
-            this.flat_panes_row,
-            "active"
-        );
         config.bind(
             Application.Configuration.SINGLE_KEY_SHORTCUTS,
             this.single_key_shortcuts_row,

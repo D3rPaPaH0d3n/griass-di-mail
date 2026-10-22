@@ -1446,8 +1446,6 @@ public class Application.MainWindow :
         config.bind(Configuration.WINDOW_WIDTH_KEY, this, "window-width");
         config.bind(Configuration.WINDOW_HEIGHT_KEY, this, "window-height");
         config.bind(Configuration.WINDOW_MAXIMIZE_KEY, this, "maximized");
-        config.settings.changed[Configuration.FLAT_PANES_KEY].connect(update_pane_style);
-        update_pane_style();
     }
 
     private void restore_saved_window_state() {
@@ -1624,7 +1622,6 @@ public class Application.MainWindow :
         this.conversation_viewer.vexpand = true;
         this.conversation_viewer.notify["empty-page"].connect(update_empty_message);
         this.empty_overlay.get_child_position.connect(on_empty_overlay_position);
-        config.settings.changed[Configuration.FLAT_PANES_KEY].connect(update_empty_message);
         this.conversation_viewer.conversation_scroller.vadjustment.value_changed.connect(
             update_header_divider
         );
@@ -2852,10 +2849,7 @@ public class Application.MainWindow :
         bool list_shown =
             (!this.outer_view.collapsed || !this.outer_view.show_content) &&
             (!this.inner_view.collapsed || !this.inner_view.show_sidebar);
-        bool overlay = page != null && list_shown && (
-            this.outer_view.collapsed ||
-            this.application.config.settings.get_boolean(Configuration.FLAT_PANES_KEY)
-        );
+        bool overlay = page != null && list_shown;
         this.empty_overlay_page.visible = overlay;
         if (page != null) {
             page.opacity = overlay ? 0 : 1;
@@ -3438,14 +3432,6 @@ public class Application.MainWindow :
         }
         this.folder_list.set_drag_sources(sources);
         this.folder_list.set_drag_active(active);
-    }
-
-    private void update_pane_style() {
-        if (this.application.config.settings.get_boolean(Configuration.FLAT_PANES_KEY)) {
-            this.outer_view.add_css_class("flat-panes");
-        } else {
-            this.outer_view.remove_css_class("flat-panes");
-        }
     }
 
     private void update_header_divider() {
