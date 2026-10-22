@@ -3117,7 +3117,6 @@ public class Application.MainWindow :
     }
 
     private void on_conversation_view_added(ConversationListBox list) {
-        update_reply_list_button(false);
         list.notify["latest-has-list-post"].connect(on_latest_has_list_post);
         list.email_loaded.connect(on_email_loaded);
         list.mark_email.connect(on_email_mark);

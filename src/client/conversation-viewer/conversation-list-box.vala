@@ -1198,6 +1198,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
         this.latest_has_list_post =
             Convey.RFC822.Utils.get_list_post_address(latest) != null;
+        notify_property("latest-has-list-post");
     }
 
     private void on_row_email_loaded(Convey.Email loaded) {
