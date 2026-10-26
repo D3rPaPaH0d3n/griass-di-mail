@@ -78,3 +78,34 @@ not fixed by adding a comment. Engineering semantics are unchanged after capture
 
 See [release gates](../../RELEASE-CHECKLIST.md), [licensing](../../THIRD-PARTY-NOTICES.md)
 and [name collision / identity plan](../BRANDING.md).
+
+## Presentation follow-up · Griabuntu Mail
+
+Owner update **2026-10-26, 19:25 UTC**: **Griabuntu Mail** replaces Briefwerk /
+Griabu as the chosen private working name. The earlier Briefwerk identity is
+superseded, not a parallel current brand. Its vectors remain in prior Git
+history; current assets are newly drawn folded-G/mail-slot geometry, not a B
+with a different caption. Pastel teal/petrol and peach/copper tonal surfaces
+implement the presentation brief, not a runtime application redesign.
+
+The earlier candidate `f97005840cea5034201f6ae021996b6eb05597e5` was confirmed
+present on the private remote preparation branch before this follow-up. This
+follow-up changes only presentation/docs/new brand art; captured engineering,
+source IDs, profiles, installed icons, build settings and dependency/licence
+choices remain unchanged. No canonical development checkout is modified.
+
+Exact/broad web searches and a GitHub-name search produced no identifiable
+Griabuntu Mail project in the returned set. Canonical's current policy was read
+on 2026-10-26: the similar-BUNTU-mark/software-title permission question is an
+explicit public-name gate, not cleared or declared automatically prohibited.
+An enquiry draft is **unsent**. No Canonical contact, public write or new name
+permission was obtained. The future native desktop direction was incorporated
+as an input brief, not as an implemented redesign.
+
+New SVGs/PNGs retain explicit original CC0 provenance. Actual hero/identity and
+16/24/32px renders are inspected, local relative links/SVG syntax checked, and
+representative foreground/tonal-surface contrast measured. These are artwork
+checks, not real UI accessibility acceptance. No binary rebuild is needed for
+this presentation-only follow-up. All GPL-libytnef, dependency/assets, source-
+binary/runtime mapping, red flag-suite, UI acceptance, privacy/history and
+technical identity/publication gates above remain open.

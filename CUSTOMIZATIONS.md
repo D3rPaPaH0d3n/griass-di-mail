@@ -1,5 +1,5 @@
-<!-- Downstream modification: 2026-10-26 — document downstream features, engineering baseline and Briefwerk presentation. -->
-# Briefwerk — independent Convey downstream
+<!-- Downstream modification: 2026-10-26 — document downstream features, engineering baseline and Griabuntu Mail presentation. -->
+# Griabuntu Mail — independent Convey downstream
 
 Based on Convey 51.0 at `d24c1da859fc9cc2cfb19872b1d8e972d4dc1a20`.
 Upstream: https://github.com/donnybeelo/convey
@@ -71,9 +71,18 @@ Keep profiles, credentials, private operational notes, local build directories,
 bundles and signing keys outside version control. No release package is published by this preparation; no signing secret or
 personal account configuration belongs in this repository.
 
-## Briefwerk presentation — 2026-10-26
+## Griabuntu Mail presentation — 2026-10-26
 
-Markus selected Briefwerk as the downstream project name. This preparation adds
-original logo/hero assets and documentation only; technical IDs, installed icons,
-profile paths and repository name remain unchanged. See [BRANDING.md](docs/BRANDING.md)
-for a material adjacent-field name collision and the separate migration gates.
+At 19:25 UTC Markus selected **Griabuntu Mail** as the private working identity,
+superseding the Briefwerk study and Griabu proposal. Original folded-G logo and
+synthetic hero assets now use pastel teal/petrol and peach/copper. The future
+interface direction is native GTK4/libadwaita integration coherent with Ubuntu/
+GNOME, with restrained Material-inspired tonal surfaces — **not a completed app
+redesign**. No runtime theme, installed icon, technical ID, profile path or
+repository name changed.
+
+Exact-name checks returned no results, but Canonical's current policy creates a
+material similar-BUNTU-mark/software-title permission question. No clearance is
+claimed and no contact was made. See [BRANDING.md](docs/BRANDING.md),
+[desktop direction](docs/desktop-design-direction.md) and the
+[unsent permission draft](docs/CANONICAL-NAME-PERMISSION-DRAFT.md).

@@ -1,23 +1,25 @@
 <!-- Downstream modification: 2026-10-26 — independent preparation README; original notices retained below. -->
 <div align="center">
 
-# Briefwerk
+# Griabuntu Mail
 
 A little more clarity in your inbox.
 
-**Independent Convey downstream · Linux desktop mail**
+**Independent Convey downstream · private working identity**
 
 Conversation-based email for the Linux desktop, with useful details close at hand.
+
+[Original folded-G identity](brand/README.md) · [Future native-desktop direction](docs/desktop-design-direction.md)
 
 [Features](#features) · [Build](BUILDING.md) · [Development status](#development-status) · [Licences](THIRD-PARTY-NOTICES.md)
 
 <img src="docs/images/inbox-details.png" width="1120" alt="Original concept illustration: recipient badges, a full sender address, a received timestamp with seconds and a session-new tray list. Synthetic data only; not an application screenshot." />
 
-*Concept illustration, not an application screenshot. All names and mail are synthetic.*
+*Synthetic concept illustration — not an app screenshot or completed UI redesign.*
 
 </div>
 
-> **Development preview — no downstream public release yet.** Briefwerk is the chosen name; trademark review and a separate application ID are still pending. This branch prepares source and documentation; it is not a release, a support promise or a claim of completed licence compliance.
+> **Development preview — no downstream public release yet.** Griabuntu Mail is the chosen **private working name**; Canonical name/permission review and a separate application ID are still pending. This branch prepares source and documentation; it is not a release, a support promise or a claim of completed licence compliance.
 
 <a id="features"></a>
 
@@ -35,6 +37,12 @@ Built on [Convey](https://github.com/donnybeelo/convey), itself a fork of [Geary
 | Individual popup actions 🧪 | Reply opens a composer; Archive/Delete move the exact message | Work in progress; desktop/composer acceptance still pending |
 
 Popup Reply never sends automatically. Archive uses an existing All Mail/archive folder; Delete uses existing Trash. There is no expunge/permanent-delete fallback and no automatic destination-folder creation. Targets bind account, message and original folder; stale targets are rejected and concurrent repeated clicks are deduplicated. Group notifications remain Open-only. See [the engineering notes](CUSTOMIZATIONS.md).
+
+## 🎨 A softer direction, a native foundation
+
+The new folded-G mark and pastel teal/peach art explore a **future** Material-inspired tonal direction. Actual buttons, icons, menus and dialogs should remain native GTK4/libadwaita, coherent with Ubuntu/GNOME and responsive to system light/dark, scaling and accessibility. **No running app redesign, installed icon or runtime theme change is included here.** [Design brief →](docs/desktop-design-direction.md)
+
+Griabuntu Mail is **not an Ubuntu/Canonical product**. The name may raise a confusing-similarity/permission question under Canonical’s current policy. The absence of exact-name search hits is not clearance; an independence disclaimer is not permission. [Name findings and release gate →](docs/BRANDING.md)
 
 ## 🛠 Try the source, not the upstream download
 
@@ -64,20 +72,20 @@ Known gates:
 
 Please use this repository for downstream bugs and proposals, not upstream's tracker for unverified fork-specific issues. Keep examples synthetic; never attach mail stores, credentials, contact caches or unredacted debug logs. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) first. No managed security-response SLA is offered.
 
-![Briefwerk original identity, light and dark](brand/identity-board.png)
+![Griabuntu Mail original identity, light and dark](brand/identity-board.png)
 
-[Original logo files and provenance →](brand/README.md) · [Name collision and identity plan →](docs/BRANDING.md)
+[Original logo files and provenance →](brand/README.md) · [Name permission and identity plan →](docs/BRANDING.md)
 
 ## 📜 Standing on good work
 
-This is an independent modification, **not official Convey or Geary**, and is not affiliated with or endorsed by their maintainers or the GNOME Foundation. Original authors, copyright notices and full upstream history are retained; see [AUTHORS](AUTHORS), [THANKS](THANKS) and [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md).
+This is an independent modification, **not official Convey or Geary**, and is not affiliated with or endorsed by their maintainers, the GNOME Foundation or Canonical. Original authors, copyright notices and full upstream history are retained; see [AUTHORS](AUTHORS), [THANKS](THANKS) and [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md).
 
 Application source is declared **LGPL-2.1-or-later** in [COPYING](COPYING); AppStream metadata declares CC0-1.0. Icons, sounds and bundled libraries have their own terms. [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) explains the prepared notices and unresolved checks. No blanket relicensing is intended. The new illustration is original CC0-1.0 artwork; [provenance and licence](docs/images/README.md).
 
 <details>
 <summary>Deutsch, kurz</summary>
 
-Ein unabhängiger Convey-Ableger mit Empfänger-Alias-Badges, lokalen Kontaktfotos, vollständigen Absenderdaten, sekundengenauer Empfangszeit und einem Tray für neue Nachrichten dieser Sitzung. Popup-Aktionen sind noch in Erprobung. Der Name **Briefwerk** ist gewählt; Markenprüfung, eigene App-ID und öffentliche Veröffentlichung stehen noch aus. Es gibt noch keinen öffentlichen Download dieses Ablegers; bekannte Fehler und Lizenzprüfungen stehen in der Release-Checkliste.
+Ein unabhängiger Convey-Ableger mit Empfänger-Alias-Badges, lokalen Kontaktfotos, vollständigen Absenderdaten, sekundengenauer Empfangszeit und einem Tray für neue Nachrichten dieser Sitzung. Popup-Aktionen sind noch in Erprobung. **Griabuntu Mail** ist der gewählte private Arbeitsname; insbesondere die Canonical-Namens-/Erlaubnisfrage, eigene App-ID und öffentliche Veröffentlichung sind noch offen. Das Pastell-/Material-Konzept ist eine künftige native Designrichtung, keine bereits umgesetzte App-Neugestaltung. Es gibt noch keinen öffentlichen Download dieses Ablegers; bekannte Fehler und Lizenzprüfungen stehen in der Release-Checkliste.
 
 </details>
 

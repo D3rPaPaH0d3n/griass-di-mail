@@ -1,6 +1,6 @@
 # Licensing and third-party notices
 
-Prepared **2026-10-26** for the private Briefwerk preparation branch. This is an
+Prepared **2026-10-26** for the private Griabuntu Mail preparation branch. This is an
 evidence-based inventory, not legal advice or a certificate for an existing or
 future binary. Original licences, notices, authorship and full history remain.
 
@@ -8,7 +8,7 @@ future binary. Original licences, notices, authorship and full history remain.
 
 - Convey/Geary-derived application code: **LGPL-2.1-or-later**, as declared by
   [COPYING](COPYING), Meson and AppStream. Consult individual headers and
-  [AUTHORS](AUTHORS)/[THANKS](THANKS); Briefwerk does not own upstream work.
+  [AUTHORS](AUTHORS)/[THANKS](THANKS); Griabuntu Mail does not own upstream work.
 - AppStream metadata separately declares **CC0-1.0**. Do not apply that to all
   application code or third-party resources.
 - [COPYING.icons](COPYING.icons) retains work-specific **CC-BY-3.0** attributions
@@ -18,14 +18,14 @@ future binary. Original licences, notices, authorship and full history remain.
   `message.oga` under **CC-BY-SA-3.0**. Those lists are retained verbatim.
 - The new downstream tray SVG is original geometry introduced on 2026-10-26,
   marked LGPL-2.1-or-later in-file. No inherited asset was modified for branding.
-- New Briefwerk brand vectors and synthetic hero artwork: **CC0-1.0**, explicitly
+- New Griabuntu Mail brand vectors and synthetic hero artwork: **CC0-1.0**, explicitly
   limited to those new files; see [brand/README.md](brand/README.md) and
   [docs/images/README.md](docs/images/README.md). No trademark rights are granted
   or claimed by that copyright dedication.
 - Legacy screenshots in `desktop/screenshots/` are not used in the README:
   their per-image provenance, licensing and visible-data suitability have not
   been independently established. The inherited upstream application icons are
-  also retained unchanged but not appropriated as Briefwerk's brand. Finish the
+  also retained unchanged but not appropriated as Griabuntu Mail's brand. Finish the
   per-asset audit before choosing public screenshots or distributing packages.
 
 ## Vendored resources

@@ -1,8 +1,8 @@
-<!-- Downstream modification: 2026-10-26 — extend preliminary audit into actionable Briefwerk preparation gates. -->
-# Briefwerk · release preparation checklist
+<!-- Downstream modification: 2026-10-26 — extend preliminary audit into actionable Griabuntu Mail preparation gates. -->
+# Griabuntu Mail · release preparation checklist
 
 Prepared **2026-10-26**. **Private candidate only — no release approval or legal
-assurance.** Name selected by Markus: **Briefwerk**. Repository name/visibility,
+assurance.** Private working name selected by Markus: **Griabuntu Mail** (supersedes Briefwerk/Griabu). Repository name/visibility,
 technical IDs, installed profiles/icons and default branch remain unchanged.
 Publication, release/package upload and technical migration need separate owner
 approval. Distribution to other people can trigger obligations even if GitHub
@@ -32,11 +32,14 @@ remains private.
 - [x] Prepare modern English README + concise German summary, real feature scope,
   safe build guidance, contribution/security routes and honest test status.
   Remove misleading official Convey install commands.
-- [x] Create original Briefwerk logo/wordmark/app-icon candidates, light/dark/mono
+- [x] Create original Griabuntu Mail logo/wordmark/app-icon candidates, light/dark/mono
   SVGs + PNGs and synthetic hero art; label concepts, licence/provenance explicit.
   Render and inspect the images and small exports; check local README targets.
-- [x] Brief current name collision search: **briefwerk.com** already uses the name
-  for mailing/lettershop services. Record it, do not claim trademark clearance.
+- [x] Brief current Griabuntu/Griabuntu Mail exact/broad web and GitHub-name
+  search: no identifiable exact-name project surfaced. This is not clearance.
+  Record Canonical’s material similar-BUNTU/software-title permission question.
+- [x] Prepare an **unsent** Canonical enquiry draft and future native/pastel
+  desktop design brief; neither contact nor app redesign has occurred.
 - [x] Remove inherited tracked test log `ct.out` from the prepared current tree;
   keep source/build files and preserve history. Historical privacy review is open.
 
@@ -109,9 +112,16 @@ remains private.
 
 ## 4 · Identity, privacy and explicit publication decisions
 
-- [x] Owner selected **Briefwerk** for presentation; original logo assets ready.
-- [ ] Resolve material adjacent-field naming collision and review appropriate
-  trademark registers/markets; short web search is not legal clearance.
+- [x] Owner selected **Griabuntu Mail** as private working identity; new original
+  folded-G assets replace the superseded B-study at the tip (history retained).
+- [ ] Resolve Canonical’s potentially confusingly similar BUNTU-mark/software-title
+  permission question and public-name clearance before public branding. Obtain
+  any necessary written permission; an independence disclaimer is insufficient.
+  Review relevant registers/markets, domains and app stores as appropriate; no
+  automatic prohibition or clearance is asserted.
+- [ ] Separately approve and implement the future native GTK4/libadwaita visual
+  direction, then accept-test actual controls, states, contrast and scaling.
+  Current pastel hero/logo studies are not proof of a completed redesign.
 - [ ] Choose an owner-controlled application namespace, then separately approve
   the [safe identity/migration plan](docs/BRANDING.md): schemas, D-Bus, desktop/
   AppStream, icons, resources, portals, sandbox and profile/keyring references.
@@ -131,4 +141,5 @@ remains private.
 [COPYING](COPYING), especially 0, 1, 2(b), 4 and where applicable 6;
 [COPYING.icons](COPYING.icons), [COPYING.sounds](COPYING.sounds),
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md), [BUILDING.md](BUILDING.md),
-[CUSTOMIZATIONS.md](CUSTOMIZATIONS.md), [test/README.md](test/README.md).
+[CUSTOMIZATIONS.md](CUSTOMIZATIONS.md), [test/README.md](test/README.md),
+[BRANDING.md](docs/BRANDING.md), [unsent permission enquiry](docs/CANONICAL-NAME-PERMISSION-DRAFT.md).

@@ -1,42 +1,57 @@
-# Briefwerk identity · 26 October 2026
+# Griabuntu Mail identity · 26 October 2026
 
-Original vector artwork prepared for Markus's **Briefwerk** name decision,
-with OpenClaw assistance. A petrol **B**, open folded-letter counters and one
-copper fold corner: recognisable as a letterform before its details are visible.
-No Convey/Geary/GNOME logo, stock icon, live screenshot or external image service
-was used. This is candidate artwork, **not an installed application-icon change**.
+Original artwork for Markus's chosen **private working name**, replacing the
+superseded Briefwerk B-study (preserved in Git history). A newly drawn **G**
+combines a folded-page silhouette, mail-slot crossbar and peach/copper corner.
+No stock icon, external image service, Convey/Geary/GNOME/Ubuntu/Canonical logo
+or borrowed brand artwork was used. These are candidates, **not installed icons**.
 
-![Light/dark identity board and small-size studies](identity-board.png)
+![Griabuntu Mail tonal light/dark identity and small-size studies](identity-board.png)
 
-## Files
+## Editable sources and exports
 
-- `briefwerk-symbol-{light,dark,mono}.svg` + PNG: transparent 128px symbols.
-- `briefwerk-wordmark-{light,dark,mono}.svg` + PNG: transparent 560×128 lockups.
-- `briefwerk-app-icon.svg`: rounded petrol tile, warm-paper B, copper accent.
-  PNG exports: **16, 24, 32, 64, 128, 256, 512px**; no installation rules added.
-- `identity-board.svg` + PNG: light/dark presentation and 16–96px symbol studies.
-- [Synthetic feature hero](../docs/images/inbox-details.svg) + PNG.
+- `griabuntu-mail-symbol-{light,dark,mono}.svg` + transparent PNG: 128px symbols.
+- `griabuntu-mail-wordmark-{light,dark,mono}.svg` + transparent PNG: 840×128 lockups.
+- `griabuntu-mail-app-icon.svg`: pastel teal tile, deep petrol G, copper fold.
+  PNG exports: **16, 24, 32, 64, 128, 256, 512px**; no install rules added.
+- `identity-board.svg` + PNG: 1440×860 light/dark/mono and exact 16–96px studies.
+- [Synthetic feature hero](../docs/images/inbox-details.svg) + 1440×960 PNG.
 
-Petrol `#14555b`, deep petrol `#123e44`, warm paper `#f5f1e9`, copper `#bf6847`;
-dark-surface symbol uses pale teal `#a3dbd1` and warm copper `#e49a73`.
-Mono uses one colour and transparency, with no colour-only information.
-Maintain clear space of at least one stem width. The 16px silhouette matters
-more than the accent; don't add fine strokes or squeeze the counters.
+## Tonal design, native intent
 
-## Provenance and permissions
+Deep petrol `#174e55`, pastel teal `#c9e7dc`, soft teal `#e4eee5`, warm paper
+`#f3f6ef`, peach `#f2ddce` and muted copper `#cb947b`; icon accent `#b77860`.
+Dark-surface foreground uses pale teal `#c5e9df` and peach `#efbda3`.
+Dark text anchors light surfaces; the copper fold is not body text or the only
+source of meaning. Mono uses a single colour and transparency.
 
-All **new SVG artwork and PNG renders in this directory**, and the new
-`docs/images/inbox-details.{svg,png}`, are dedicated under **CC0-1.0** to the
-extent copyright/related rights exist. [Full text](../docs/licenses/CC0-1.0.txt).
-No warranty or trademark clearance is asserted, and no third-party trademark
-rights are granted. The existing upstream artwork is not covered by this grant.
+Keep clear space of at least one stem width. At 16px preserve the G opening and
+crossbar; the tiny fold may simplify. The symbol is an original folded-page G,
+not an envelope clipart outline or a circular Ubuntu-style motif.
 
-SVG is the editable source, made from new paths/basic shapes. Wordmark/labels use
-system **DejaVu Sans**, rendered by the system GdkPixbuf SVG loader; font files
-are not bundled and editable text may render differently with another fallback.
-PNG previews fix the intended appearance. No generated image model was used.
-All person names, example.org addresses, subjects and times in the hero are
-invented demonstration data. The hero is an illustration, not UI acceptance proof.
+Pastel/Material-inspired surfaces are a **future visual direction**, while actual
+controls should remain native GTK4/libadwaita and respect Ubuntu/GNOME behaviour,
+system theme, scaling and accessibility. This task does not redesign the running
+app; see [desktop direction](../docs/desktop-design-direction.md).
 
-Rendered SVGs and actual 16/24/32px exports were inspected locally. Final app
-icon adaptation, cross-desktop tests and trademark review remain separate gates.
+## Provenance and rights
+
+The **new SVG artwork and PNG renders in this directory**, and
+`docs/images/inbox-details.{svg,png}`, are dedicated under **CC0-1.0** to the extent
+copyright/related rights exist. [Full text](../docs/licenses/CC0-1.0.txt). This grant
+covers neither inherited assets/code nor third-party trademarks. No warranty or
+trademark clearance is asserted.
+
+Vectors use new geometric paths/basic shapes. Wordmark/labels use system
+**DejaVu Sans**, rendered locally with the system GdkPixbuf SVG loader; no font
+files are bundled. Editable text may vary with fallback fonts; PNG previews fix
+the intended appearance. No image-generation model was used. All hero names,
+example.org addresses, subjects, counts and times are synthetic.
+
+Actual renders and 16/24/32px exports were inspected. Six representative text/
+tonal-surface pairs measure **5.43–8.07:1** contrast; this is an artwork check, not
+acceptance of actual UI controls. Public-name clearance remains
+open, especially Canonical's similar-BUNTU/software-title policy; an independence
+disclaimer alone is insufficient. See [name findings](../docs/BRANDING.md) and
+[unsent permission draft](../docs/CANONICAL-NAME-PERMISSION-DRAFT.md). No permission
+was sought or obtained by this preparation, and no public release is authorised.
