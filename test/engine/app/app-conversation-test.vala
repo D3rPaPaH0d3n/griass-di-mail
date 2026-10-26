@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — synthetic conversation-summary deletion/undo regression case. */
 /*
  * Copyright 2017-2018 Michael Gratton <mike@vee.net>
  *

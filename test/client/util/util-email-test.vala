@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — synthetic recipient-alias, contact and markup cases. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *

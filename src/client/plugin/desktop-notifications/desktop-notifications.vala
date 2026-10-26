@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — mail-specific popup action targets and buttons. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>.

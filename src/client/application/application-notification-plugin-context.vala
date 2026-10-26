@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — session-new tray tracking; baseline flag handler retained. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>

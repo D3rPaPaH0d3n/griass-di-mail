@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Downstream modification: 2026-10-26 — recipient badges and expanded sender details. -->
 <interface>
   <template class="ConversationListRow" parent="GtkListBoxRow">
     <style>

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — notification reply/archive/trash action identifiers. */
 /*
  * Copyright 2019-2021 Michael Gratton <mike@vee.net>
  *

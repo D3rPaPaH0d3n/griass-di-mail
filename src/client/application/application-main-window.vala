@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — session-new tray state integration. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2016, 2019-2021 Michael Gratton <mike@vee.net>

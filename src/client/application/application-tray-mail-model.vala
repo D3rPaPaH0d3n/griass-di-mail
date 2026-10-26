@@ -1,3 +1,4 @@
+/* New downstream file: 2026-10-26. LGPL-2.1-or-later; see COPYING. */
 /* Licensed under LGPL-2.1-or-later. See COPYING. */
 
 /** Account-qualified, in-memory new-mail state. No account or network IO. */

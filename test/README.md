@@ -1,3 +1,4 @@
+<!-- Downstream modification: 2026-10-26 — document synthetic notification-flag regression suite and red baseline. -->
 
 Automated Test Infrastructure
 =============================

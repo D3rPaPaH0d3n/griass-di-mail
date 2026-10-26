@@ -1,3 +1,4 @@
+/* New downstream file: 2026-10-26. LGPL-2.1-or-later; see COPYING. */
 /* Licensed under LGPL-2.1-or-later. See COPYING. */
 
 /** Native SNI/DBusMenu integration; no GTK3 dependency or helper process. */

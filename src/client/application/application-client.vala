@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — native tray lifecycle and exact-message notification actions. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2021 Michael Gratton <mike@vee.net>

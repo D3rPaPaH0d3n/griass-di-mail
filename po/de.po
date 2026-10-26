@@ -1,3 +1,4 @@
+# Downstream modification: 2026-10-26 — German recipient/tray and notification-action strings.
 # po/convey.pot
 # PO message string template file for Convey email client
 # Copyright 2016 Software Freedom Conservancy Inc.

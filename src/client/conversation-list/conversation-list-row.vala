@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — recipient badges, local contact photos and full identities. */
 /*
  * Copyright © 2022 John Renner <john@jrenner.net>
  * Copyright © 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>

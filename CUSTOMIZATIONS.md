@@ -1,4 +1,5 @@
-# Convey — private downstream
+<!-- Downstream modification: 2026-10-26 — document downstream features, engineering baseline and Briefwerk presentation. -->
+# Briefwerk — independent Convey downstream
 
 Based on Convey 51.0 at `d24c1da859fc9cc2cfb19872b1d8e972d4dc1a20`.
 Upstream: https://github.com/donnybeelo/convey
@@ -54,7 +55,7 @@ exercises the tray menu and count changes. The focused executable is
 `test-recipient-aliases`; the fixture switch `--tray-fixture` uses synthetic mail
 only and must not be confused with real mail delivery validation.
 
-The notification-actions development snapshot passes the same 327 engine
+The notification-actions engineering snapshot was reported to pass the same 327 engine
 cases and 62 focused cases (18 new). The new cases cover actual GNotification
 button serialization on a private D-Bus, account/source validation, stale mail,
 cancellation, error cleanup and exact single-message archive/Trash moves through
@@ -67,6 +68,12 @@ entries. Its production handler is unchanged here; this is not a green release
 gate or a regression introduced by the new popup actions.
 
 Keep profiles, credentials, private operational notes, local build directories,
-bundles and signing keys outside version control. Signed installation packages
-are distributed separately; no signing secret or personal account configuration
-belongs in this repository.
+bundles and signing keys outside version control. No release package is published by this preparation; no signing secret or
+personal account configuration belongs in this repository.
+
+## Briefwerk presentation — 2026-10-26
+
+Markus selected Briefwerk as the downstream project name. This preparation adds
+original logo/hero assets and documentation only; technical IDs, installed icons,
+profile paths and repository name remain unchanged. See [BRANDING.md](docs/BRANDING.md)
+for a material adjacent-field name collision and the separate migration gates.

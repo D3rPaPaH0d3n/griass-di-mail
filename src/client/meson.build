@@ -1,3 +1,4 @@
+# Downstream modification: 2026-10-26 — downstream tray, model and notification-action sources.
 # Convey client
 
 client_package_name = 'convey-client'

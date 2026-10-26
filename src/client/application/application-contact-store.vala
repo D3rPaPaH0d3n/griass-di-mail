@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — read-only desktop contact-photo resolution. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *

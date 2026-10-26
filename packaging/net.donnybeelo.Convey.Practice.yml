@@ -1,3 +1,5 @@
+# New downstream manifest: 2026-10-26; licence-copy packaging added 2026-10-26.
+# LGPL-2.1-or-later for this recipe; dependencies retain their own terms.
 # User-authorized practice update, based on Convey 51.0 and the tested patch.
 # Original permissions plus read-only desktop contact-photo cache (no home access).
 app-id: net.donnybeelo.Convey
@@ -152,6 +154,7 @@ modules:
       - make libstemmer.a -j$FLATPAK_BUILDER_N_JOBS CFLAGS='-g -O2 -fPIC'
       - 'printf ''SB_STEMMER_0 {\n global: sb_stemmer_*;\n local: *;\n};\n'' > symbol.map'
       - gcc -shared -Wl,-soname,libstemmer.so.0 -Wl,--version-script,symbol.map -Wl,--whole-archive libstemmer.a -Wl,--no-whole-archive -o libstemmer.so.0.0.0
+      - install -Dm644 COPYING /app/share/licenses/snowball/COPYING
       - install -Dm644 include/libstemmer.h /app/include/libstemmer.h
       - install -Dm644 libstemmer.so.0.0.0 /app/lib/libstemmer.so.0.0.0
       - ln -s libstemmer.so.0.0.0 /app/lib/libstemmer.so.0

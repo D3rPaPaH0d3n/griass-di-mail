@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — absolute received timestamp with seconds/timezone. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This software is licensed under the GNU Lesser General Public License

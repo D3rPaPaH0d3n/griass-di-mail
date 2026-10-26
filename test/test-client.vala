@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — register downstream helper tests. */
 /*
  * Copyright 2016-2017 Michael Gratton <mike@vee.net>
  *

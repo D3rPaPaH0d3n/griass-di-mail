@@ -1,3 +1,4 @@
+# Downstream modification: 2026-10-26 — install the downstream tray icon.
 system_icons_dir = join_paths(data_dir, 'icons', 'hicolor')
 
 icon_files = files(

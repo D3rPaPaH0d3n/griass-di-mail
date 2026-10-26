@@ -1,3 +1,4 @@
+# Downstream modification: 2026-10-26 — focused synthetic downstream test targets.
 subdir('data')
 
 # Mock classes should be compiled into a stand-alone test lib for

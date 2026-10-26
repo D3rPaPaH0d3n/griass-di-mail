@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Downstream modification: 2026-10-26 — tray and conversation-list preference keys. -->
 <schemalist>
 
 <schema id="net.donnybeelo.Convey" path="/net/donnybeelo/Convey/" gettext-domain="convey">

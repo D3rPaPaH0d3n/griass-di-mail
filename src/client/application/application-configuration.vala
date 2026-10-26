@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — downstream conversation-list and tray preferences. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>

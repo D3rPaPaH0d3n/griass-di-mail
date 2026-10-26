@@ -1,3 +1,4 @@
+# Downstream modification: 2026-10-26 — exclude local build, package and private work artifacts.
 /.direnv
 /_test_build/
 /.flatpak-builder/
@@ -9,3 +10,7 @@
 *.asc
 /docs/validation.md
 /docs/recipient-alias-plan.md
+
+# Downstream modification: 2026-10-26 — ignore generated build/log output.
+/build/
+ct.out

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-26 — full participant identity formatting. */
 /*
  * Copyright © 2022 John Renner <john@jrenner.net>
  *

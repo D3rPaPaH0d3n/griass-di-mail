@@ -1,140 +1,89 @@
-Building and running Convey
-==========================
+<!-- Downstream modification: 2026-10-26 — fork-specific development, manifest and source-mapping guidance. -->
+# Building this independent downstream
 
-Convey uses the [Meson](http://mesonbuild.com) and
-[Ninja](https://ninja-build.org) build systems. You will need these
-and a number of other development libraries installed to build
-Convey. See the Dependencies section below for a list of packages to
-install.
+This is a source preview, not an independently installable public release.
+The inherited `net.donnybeelo.Convey` / `.Devel` IDs and profile locations still
+overlap upstream. Use a disposable test environment and synthetic data; do not
+launch it against a valuable existing account/profile. See [BRANDING.md](docs/BRANDING.md).
 
-Building, running, tests and documentation
-------------------------------------------
+## Native development
 
-To build Convey, run the following commands from the top-level
-directory of the source code repository:
+Use [Meson](https://mesonbuild.com/) ≥ 1.7, Ninja, Vala ≥ 0.56 and a recent
+Linux development environment. The complete dependency list and minimum
+versions are in [meson.build](meson.build): notably GLib ≥ 2.80, GTK ≥ 4.16,
+libadwaita ≥ 1.7 and WebKitGTK 6.0 ≥ 2.40. Older distro packages may not suffice.
+SQLite needs FTS3 and FTS5. Also install the development packages for the
+secondary libraries, gettext, itstool and desktop-file-utils.
 
-```
-meson build
-ninja -C build
-```
-
-Once built, Convey can be run directly from the build directory without
-being installed:
-
-```
-./build/src/convey
-```
-
-Note that certain desktop integration (such as being listed in an
-application menu) requires full installation to work correctly.
-
-To run the unit tests, use the Meson `test` command:
-
-```
-meson test -C build
-```
-
-API documentation will be built if `valadoc` is installed.
-
-Consult the Meson documentation for information about configuring the
-build, installing, and so on.
-
-Build profiles
---------------
-
-Convey can be built using a number of different build profiles, which
-determine things like the application id, the location of stored data,
-the name of the application, icon and other visual elements.
-
-These can be set at build configuration time using the Meson `setup`
-and `configure` commands, using the standard `-Dprofile=…` option. See
-the `profile` option in `meson_options.txt` for the current list of
-supported types.
-
-Maintainers must use the `release` build profile when packaging Convey,
-otherwise when run it will use branding and data locations intended
-for development only.
-
-Note that setting the profile does not alter such things as compiler
-options, use the standard Meson `--buildtype` argument for that.
-
-Consult the Meson documentation for more information about configuring
-options.
-
-Dependencies
-------------
-
-Building Convey requires the following major libraries and tools:
-
- * GTK 4
- * libadwaita 1
- * WebKitGTK (the GTK 4 / API 6.0 variant)
- * SQLite 3
- * Vala
-
-See the `meson.build` file in the top-level directory for the complete
-list of required dependencies and minimum versions.
-
-Convey requires SQLite is built with both FTS3 and FTS5 support. Ensure
-`--enable-fts5`, `-DSQLITE_ENABLE_FTS3` and
-`-DSQLITE_ENABLE_FTS3_PARENTHESIS` are passed to the SQLite configure
-script.
-
-All required libraries and tools are available from major Linux
-distribution's package repositories:
-
-Installing dependencies on Fedora
----------------------------------
-
-Install them by running this command:
-
-```
-sudo dnf install meson vala desktop-file-utils enchant2-devel \
-    folks-devel gcr-devel glib2-devel gmime30-devel \
-    gnome-online-accounts-devel gsound-devel \
-    gtk4-devel libadwaita-devel iso-codes-devel itstool json-glib-devel \
-    libgee-devel libpeas-devel libsecret-devel libicu-devel \
-    libstemmer-devel libunwind-devel libxml2-devel libytnef-devel \
-    sqlite-devel webkitgtk6.0-devel
-```
-
-Installing dependencies on Ubuntu/Debian
-----------------------------------------
-
-Install them by running this command:
-
-```
-sudo apt-get install meson build-essential valac \
-    desktop-file-utils iso-codes gettext itstool \
-    libenchant-2-dev libfolks-dev \
-    libgcr-4-dev libgee-0.8-dev libglib2.0-dev libgmime-3.0-dev \
-    libgoa-1.0-dev libgsound-dev libgtk-4-dev \
-    libjson-glib-dev libadwaita-1-dev libicu-dev libpeas-2-dev \
-    libsecret-1-dev libsqlite3-dev libstemmer-dev libunwind-dev \
-    libwebkitgtk-6.0-dev libxml2-dev libytnef0-dev
-```
-
-And for Ubuntu Messaging Menu integration:
-
-```
-sudo apt-get install libmessaging-menu-dev
-```
-
-Updating DarkReader plugin
---------------------------
-
-We're using [DarkReader API](https://github.com/darkreader/darkreader) for dark mode.
-
-To update it, download latest version from CDN and save as ui/darkreader.js
-
- - [unpkg](https://unpkg.com/darkreader/)
- - [jsDelivr](https://www.jsdelivr.com/package/npm/darkreader)
-
+From a clean checkout of the **chosen preparation commit**:
 
 ```sh
-curl https://cdn.jsdelivr.net/npm/darkreader/darkreader.js --output ui/darkreader.js
+meson setup build -Dprofile=development -Dlibunwind=disabled
+meson compile -C build
+meson test -C build --print-errorlogs
 ```
 
+The aggregate test run is currently expected to fail the four known
+notification-flag baseline cases, not to be fully green. See [test/README.md](test/README.md).
+Client tests need a display; engine and flag tests can run headless. Test
+infrastructure should isolate HOME/XDG, buses and network from personal mail.
+
+The built executable is `build/src/convey`. A full install is required for some
+desktop integrations, but **do not install this preview into an existing upstream
+profile or system prefix**. No new install/run action is performed by these docs.
+Meson's `development`, `beta` and `release` profiles affect identity/data paths;
+`meson.options` is the source of truth. `release` is not an approval to publish.
+
+## Flatpak practice build
+
+The current downstream manifest is
+[`packaging/net.donnybeelo.Convey.Practice.yml`](packaging/net.donnybeelo.Convey.Practice.yml).
+It uses GNOME Platform/SDK **51**, pins eight dependency sources and builds this
+checkout via `type: dir`, `path: ..`. Use the official Flatpak Builder already
+available in your chosen user/system scope; do not install duplicate SDKs.
+For a sandboxed build without installing or running the app:
+
+```sh
+flatpak-builder --user --force-clean build-flatpak packaging/net.donnybeelo.Convey.Practice.yml
+```
+
+`--force-clean` replaces only the designated build directory: choose a fresh one
+with no useful contents. The practice build retains the inherited app ID and
+is **not a release manifest**. Its local-directory source can include unwanted
+untracked files: build only from a reviewed clean export. Never bundle signing
+keys, profiles, logs or credentials. Runtime/SDK branch `51` is not an immutable
+commit; record both resolved commits for a candidate build.
+
+The top-level `net.donnybeelo.Convey.yml` is an inherited upstream template with
+`INSERT_COMMIT_SHA_HERE` and an upstream source URL; it does **not** build this
+fork. `net.donnybeelo.Convey.Devel.json` has moving dependencies/master runtime,
+broader permissions and test sandbox overrides; do not use it as a public
+release recipe. They are retained for history, not advertised as downloads.
+
+The practice sandbox adds read-only access to the desktop Evolution addressbook
+photo cache, not a new avatar provider. Review all final permissions, including
+network, desktop files and bus access, before distribution.
+
+## Before distributing any binary
+
+Use [RELEASE-CHECKLIST.md](RELEASE-CHECKLIST.md) and
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). Resolve the GPL-licensed
+`libytnef` combination or explicitly approved feature/build choice; preserve all
+original notices. Record the final source commit, manifest/build options,
+dependency revisions, runtime/SDK commits and binary hashes. Provide complete
+corresponding source with equivalent access next to the binary. Inspect the
+actual staged and exported package for installed notices and shipped libraries.
+No existing binary is certified by this source-preparation work.
+
+## Updating vendored Dark Reader
+
+`ui/darkreader.js` identifies Dark Reader 4.9.105. Do not replace it with an
+unversioned CDN download. Select a reviewed exact release, retain its MIT notice
+and source/build provenance, verify the generated API file and update
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). Correspondence of the existing
+vendored generated file to its claimed release remains an explicit audit gate.
+
 ---
+Original notices retained:
 Copyright © 2016 Software Freedom Conservancy Inc.
-Copyright © 2018-2020 Michael Gratton <mike@vee.net>
+Copyright © 2018–2020 Michael Gratton <mike@vee.net>
