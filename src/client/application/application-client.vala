@@ -3,8 +3,10 @@
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2021 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
@@ -559,7 +561,7 @@ public class Application.Client : Adw.Application {
             "comments", DESCRIPTION,
             "authors", AUTHORS,
             "copyright", string.join("\n", COPYRIGHT_1, COPYRIGHT_2, COPYRIGHT_3),
-            "license-type", Gtk.License.LGPL_2_1,
+            "license-type", Gtk.License.GPL_3_0_ONLY,
             "logo-icon-name", Config.APP_ID,
             "version", Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
             "website", "https://gitlab.gnome.org/donnybeelo/convey",

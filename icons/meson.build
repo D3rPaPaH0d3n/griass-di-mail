@@ -66,3 +66,8 @@ install_data(
   install_dir: join_paths(data_dir, 'icons', symbolic_dir),
   rename: '@0@-symbolic.svg'.format(convey_id)
 )
+
+# 2026-10-26: keep the untouched LGPL tray SVG's colocated COPYING reference valid.
+install_data(join_paths(scalable_dir, 'COPYING'),
+  install_dir: join_paths(data_dir, 'icons', scalable_dir),
+)

@@ -23,9 +23,10 @@ sensitive reports.
   change notices in modified inherited files. Do not invent authorship.
 - State source/licence/provenance for new dependencies and assets; no borrowed
   brand marks or external avatar service additions without explicit review.
-- Use the existing source licences; no blanket relicensing or unreviewed CLA is
-  introduced here. Proposed original code should be LGPL-2.1-or-later-compatible;
-  identify any exceptions before submission.
+- This separate application release copy is GPL-3.0-only under the recorded
+  LGPL §3 election; propose GPLv3-compatible contributions and identify exceptions.
+  Independent LGPL originals and third-party component grants remain intact; no
+  blanket asset relicensing or unreviewed CLA is introduced.
 - Run relevant tests from [BUILDING.md](BUILDING.md) and [test/README.md](test/README.md).
   Report the known four red notification-flag baseline cases separately; do not
   hide them by marking the whole suite green.

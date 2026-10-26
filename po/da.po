@@ -1,6 +1,8 @@
 # Danish translation for Convey.
 # Copyright (C) 2018 Software Freedom Conservancy Inc.
-# This file is distributed under the GNU LGPL, version 2.1.
+# This release copy is distributed under GNU GPL version 3 only.
+# Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+# Historical LGPL origin: docs/release/GPLV3-COPY.md.
 # Nikolaj64 <nikolajholmquist@gmail.com>, 2013, 2014.
 # Ask Hjorth Larsen <asklarsen@gmail.com>, 2016.
 # Alan Mortensen <over.tackiness223@passinbox.com>, 2016-20, 2022-24, 26.

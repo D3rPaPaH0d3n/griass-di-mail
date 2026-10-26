@@ -1,7 +1,8 @@
+# GPLv3 release-copy metadata/notice installation: 2026-10-26.
 # Downstream modification: 2026-10-26 — synthetic notification-flag test target and explicit licence installation.
 project('convey', [ 'vala', 'c' ],
   version: '51.0',
-  license: 'LGPL-2.1-or-later',
+  license: 'GPL-3.0-only',
   meson_version: '>= 1.7',
 )
 
@@ -162,13 +163,11 @@ web_extensions_dir = client_lib_dir / 'web-extensions'
 # Downstream licence packaging, prepared 2026-10-26.
 license_dir = data_dir / 'licenses' / convey_id
 install_data(
-  'COPYING', 'COPYING.icons', 'COPYING.sounds', 'AUTHORS', 'THANKS',
-  'THIRD-PARTY-NOTICES.md',
+  'COPYING', 'COPYING.LGPL-2.1-original', 'COPYING.icons', 'COPYING.sounds', 'AUTHORS', 'THANKS',
+  'THIRD-PARTY-NOTICES.md', 'docs/release/GPLV3-COPY.md',
   install_dir: license_dir,
 )
 install_subdir('docs/licenses', install_dir: license_dir)
-install_data('subprojects/vala-unit/COPYING',
-  rename: 'vala-unit-COPYING', install_dir: license_dir / 'licenses')
 
 # Ensure SQLite was built correctly
 if not cc.has_header_symbol('sqlite3.h', 'SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER', dependencies: sqlite)

@@ -8,12 +8,14 @@ distribution route and separates remaining release work from new permissions.
 
 ## Application and assets
 
-- Convey/Geary-derived application **source**: **LGPL-2.1-or-later**, as declared
-  by [COPYING](COPYING), Meson and AppStream. Consult individual headers and
-  [AUTHORS](AUTHORS)/[THANKS](THANKS); Griabuntu Mail does not own upstream work.
-  A binary linked to GPL libytnef must not be presented as LGPL-only; compatible
-  GPL combined-work distribution is possible without revoking the original
-  independent LGPL grants. See the decision below.
+- This **separate elected release-source copy** of the LGPL-derived application
+  is **GPL-3.0-only** under LGPL-2.1 §3, approved by Markus on 2026-10-26 at
+  19:56 UTC. [COPYING](COPYING), Meson, AppStream and About now agree. Copyright,
+  actual change dates and historical origin are retained; consult [AUTHORS](AUTHORS),
+  [THANKS](THANKS) and the [conversion inventory](docs/release/GPLV3-COPY.md).
+  `COPYING.LGPL-2.1-original` is an unchanged historical reference, not an
+  alternative grant for the elected copy. Independently preserved original
+  LGPL source/main and preparation commits remain under their original terms.
 - AppStream metadata separately declares **CC0-1.0**. Do not apply that to all
   application code or third-party resources.
 - [COPYING.icons](COPYING.icons) retains work-specific **CC-BY-3.0** attributions
@@ -22,7 +24,9 @@ distribution route and separates remaining release work from new permissions.
   exception. [COPYING.sounds](COPYING.sounds) credits **Ivica Bukvic** for
   `message.oga` under **CC-BY-SA-3.0**. Those lists are retained verbatim.
 - The new downstream tray SVG is original geometry introduced on 2026-10-26,
-  marked LGPL-2.1-or-later in-file. No inherited asset was modified for branding.
+  marked LGPL-2.1-or-later in-file and remains byte-identical. A colocated
+  `icons/hicolor/scalable/apps/COPYING` retains its correct LGPL reference and
+  is installed beside it. No logo or inherited artwork was modified.
 - New Griabuntu Mail brand vectors and synthetic hero artwork: **CC0-1.0**, explicitly
   limited to those new files; see [brand/README.md](brand/README.md) and
   [docs/images/README.md](docs/images/README.md). No trademark rights are granted
@@ -63,8 +67,8 @@ byte-identical to our prepared MIT text. The API recipe at that commit builds
 UMD from `src/api/index.ts`; the six-file API archive contains no extension
 fonts/assets. Although package.json lists Malevic, this API JS contains no
 Malevic/external module-loader reference. No downloaded build script was run.
-The provenance gate is closed; the JS is unchanged. Final package inclusion of
-its MIT copyright/permission notice still needs verification.
+The provenance gate is closed; the JS is unchanged. Actual new GPL-copy package verification is recorded in
+[VERIFICATION.md](docs/release/VERIFICATION.md), separately from older stages.
 
 ### ValaUnit
 
@@ -111,20 +115,11 @@ into the shared client. Nonexecuting `readelf` inspection of the existing stage
 confirms `NEEDED libytnef.so.0` and TNEF parser/initialise/free symbols. Dynamic
 linking is not mere aggregation.
 
-**Recommendation: keep TNEF and distribute the combined application under GPLv3
-with corresponding source and accurate notices/metadata.** LGPL-2.1 §3 expressly
-allows a GPLv2 or newer GPL copy; libytnef grants GPL-2.0-or-later. Both GPLv2 and
-GPLv3 are compatible for this pairing; GPLv3 is recommended, subject to the final
-dependency closure. Original separately available LGPL source grants remain.
-A release-copy conversion, if elected, must implement §3's notice rules; it does
-not relicense all assets/dependencies or the existing repository automatically.
-No new upstream permission is needed for an option already granted by licence.
-
-The alternative is owner-approved `-Dtnef=disabled` **and** removal of libytnef
-and its tools from that release package, followed by a clean build and feature/
-linkage verification. No feature disablement, licence conversion or metadata
-switch was made here. See [the sourced decision](docs/LICENSING-DECISION.md) for
-source-vs-binary, GPL versions, LGPL relinking, and exact remaining owner choices.
+**Owner election implemented: retain TNEF, GPL-3.0-only application release
+copy under LGPL-2.1 §3.** libytnef retains GPL-2.0-or-later; it is not relabelled.
+The combination uses its GPLv3 option, without revoking independent LGPL
+application copies. No feature was disabled and no new upstream permission is
+needed. See [the operative election](docs/release/GPLV3-COPY.md).
 
 ## What is prepared, and what still needs inspection
 
@@ -155,3 +150,19 @@ location. Deliver source with equivalent access at the binary's download point;
 a private branch unavailable to recipients is not source delivery. See
 [RELEASE-CHECKLIST.md](RELEASE-CHECKLIST.md). No package-content/source mapping was
 established by this preparation.
+
+## New release-copy evidence and exact unresolved provenance
+
+The original audit/stage paragraphs above remain historical input evidence,
+not certification of this copy. [GPLV3-COPY.md](docs/release/GPLV3-COPY.md) defines
+its component boundaries; [VERIFICATION.md](docs/release/VERIFICATION.md) records
+new baseline/build/test/export evidence and exact source mapping. The ValaUnit
+notice is now installed from a byte-identical standalone reference copy, because
+the original nested-subproject `install_data` rule fails Meson configuration.
+
+Unheaded `bindings/vapi/icu-uc.vapi` records Dino origin without an exact imported
+revision/file-specific grant. `util-imap-utf7.vala` records a Dovecot 2.1.15 MIT
+fragment but no accompanying original MIT text, with upstream's historical
+substantiality comment retained. These are precise remaining provenance checks,
+not licence grants invented here. The listed inherited icon/RTL/application-icon
+and screenshot gaps also remain open; not every asset is declared cleared.

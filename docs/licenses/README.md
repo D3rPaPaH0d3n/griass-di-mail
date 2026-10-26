@@ -26,3 +26,16 @@ The libpeas licence-change record is preserved verbatim. See
 [the inventory](../../THIRD-PARTY-NOTICES.md) and
 [distribution decision](../LICENSING-DECISION.md); final package compliance and
 corresponding-source mapping are separate from this input/text verification.
+
+
+## Separate elected GPLv3 copy
+
+Root `COPYING` is the unmodified official GPLv3 text (FSF, 29 June 2007), copied
+from the system `/usr/share/common-licenses/GPL-3`; its hash and operative
+**GPL-3.0-only** election are in [GPLV3-COPY.md](../release/GPLV3-COPY.md).
+Root `COPYING.LGPL-2.1-original` preserves the original whole root text verbatim,
+for historical origin only. `vala-unit-LGPL-2.1.txt` is byte-identical to
+`subprojects/vala-unit/COPYING` and retains that independent component's grant.
+The unmodified LGPL tray SVG uses its colocated `icons/hicolor/scalable/apps/COPYING`.
+Other dependency texts here are not converted. CC attribution and licence links
+remain in root COPYING.icons/COPYING.sounds; those lists are unchanged.

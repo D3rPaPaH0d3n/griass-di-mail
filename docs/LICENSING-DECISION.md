@@ -1,11 +1,17 @@
 # Licensing decision · 2026-10-26
 
-**Recommendation: keep TNEF and prepare a GPLv3-compliant combined application
+**Elected and implemented in this separate private release-source copy:** keep
+TNEF and use **GPL-3.0-only**, preserving independently available original LGPL
+copies. Markus approved this route on **2026-10-26, 19:56 UTC** (“Ja passt!”).
+See [the operative election and inventory](release/GPLV3-COPY.md).
+
+**Historical audit recommendation: keep TNEF and prepare a GPLv3-compliant combined application
 release; keep the independently available LGPL source grants.** Disabling
 winmail.dat support is an alternative product decision, not a legal necessity.
 This is a sourced technical/licence interpretation, not legal advice or release
-approval. No code, feature, operative licence declaration, installed app or
-branding has been changed by this audit.
+approval. The findings below describe the pre-election audit. That audit changed no
+operative grants; this separate follow-up changes licence notices/metadata and
+notice packaging, not feature behaviour, installed apps or branding.
 
 Scope: preparation source `9183cc8d3d49b2463ad033203719c08afbe19552`, derived
 from Convey `d24c1da859fc9cc2cfb19872b1d8e972d4dc1a20`. Earlier preparation
@@ -59,7 +65,7 @@ or the entire Flatpak runtime into GPL-only works. Original independently
 received LGPL grants remain available; [GPLv3 §5(c)][gpl3] does not invalidate
 separately received permissions.
 
-### Two practical release paths — owner chooses, neither implemented
+### Historical alternatives — route 1 is now elected and implemented here
 
 1. **Recommended: retain TNEF; distribute the combined application under GPLv3.**
    Keep the normal source repository's original LGPL notices/grants. Document
@@ -226,16 +232,16 @@ word containing “buntu” is automatically forbidden, nor does our independenc
 or a missing exact-name search result establish clearance. No comprehensive
 register/territory/domain clearance is claimed.
 
-Owner decisions remaining:
+Owner licence decision **completed**: retain TNEF, GPLv3 release-copy policy,
+implemented under LGPL §3 with exact **GPL-3.0-only** terms on this branch.
+Original source/main and LGPL preparation remain independent.
 
-1. Approve **TNEF-on / GPLv3 combined release policy** (recommended), or explicitly
-   accept TNEF-off and its feature loss. This is a product/licence-release choice,
-   not a request for new Convey/libytnef permission.
-2. Authorise sending the [unsent Canonical enquiry](CANONICAL-NAME-PERMISSION-DRAFT.md)
+Owner decisions remaining:
+1. Authorise sending the [unsent Canonical enquiry](CANONICAL-NAME-PERMISSION-DRAFT.md)
    for a written applicability/permission answer, **or choose another public name**.
    Only Canonical/qualified trademark assessment can settle that unresolved
    name question; this audit cannot promise an answer or legal guarantee.
-3. Separately approve eventual public source/binary destinations and identity
+2. Separately approve eventual public source/binary destinations and identity
    migration after the concrete package/source/asset gates are completed.
 
 Meanwhile private development and compliant source preparation may continue.

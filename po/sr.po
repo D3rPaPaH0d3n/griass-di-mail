@@ -1,7 +1,9 @@
 # Serbian translation of Convey email client
 # Courtesy of Prevod.org team (http://prevod.org/) -- 2012—2022.
 # Copyright © 2021 Software Freedom Conservancy Inc.
-# This file is distributed under the GNU LGPL, version 2.1.
+# This release copy is distributed under GNU GPL version 3 only.
+# Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+# Historical LGPL origin: docs/release/GPLV3-COPY.md.
 # igorpan <mazezamte@gmail.com>, 2012
 # Милош Поповић <gpopac@gmail.com>, 2015.
 # Мирослав Николић <miroslavnikolic@rocketmail.com>, 2014—2022.

@@ -2,7 +2,9 @@
 # PO message string template file for Convey email client
 # Copyright 2012-2013 Yorba Foundation
 # Copyright 2016-2019 Geary Development Team
-# This file is distributed under the GNU LGPL, version 2.1.
+# This release copy is distributed under GNU GPL version 3 only.
+# Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+# Historical LGPL origin: docs/release/GPLV3-COPY.md.
 #
 # Translators:
 # Daniele Napolitano <dnax88@gmail.com>, 2013

@@ -1,5 +1,10 @@
 # Private preparation record · 2026-10-26
 
+**Historical record for the independently preserved LGPL preparation below.**
+The current separate GPLv3 release-copy follow-up is recorded in
+[GPLV3-COPY.md](GPLV3-COPY.md) and [VERIFICATION.md](VERIFICATION.md); the old
+branch and its grants remain intact.
+
 This record describes source preparation only. It is not a release manifest,
 binary verification report or publication approval. Branch:
 `openclaw/convey-publication-prep`. Repository visibility stays private; no
@@ -109,3 +114,16 @@ checks, not real UI accessibility acceptance. No binary rebuild is needed for
 this presentation-only follow-up. All GPL-libytnef, dependency/assets, source-
 binary/runtime mapping, red flag-suite, UI acceptance, privacy/history and
 technical identity/publication gates above remain open.
+
+
+## Owner-elected separate GPLv3 follow-up · 2026-10-26
+
+Approval at 19:56 UTC selects GPLv3 with all functions, including TNEF. The new
+managed branch `openclaw/griabuntu-gplv3-release-prep` starts at corrected audit
+`465e0c6c15233009a7e84ab60a783a3a1fb4a4e0`, not by rewriting original source/main
+or LGPL preparation. It implements LGPL-2.1 §3 as GPL-3.0-only for this copy,
+retains original notices/provenance in clearly named references, and corrects
+Meson/AppStream/About/recipe metadata and licence installation. See the exact
+notice inventory, source-delivery instructions and fresh verification record.
+No artwork/logo, feature, production flag handler, app ID/profile, installed app,
+public visibility, repo name, signing configuration or Canonical contact changes.

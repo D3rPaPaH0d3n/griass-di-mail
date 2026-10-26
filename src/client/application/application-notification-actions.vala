@@ -1,6 +1,8 @@
+/* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /*
  * Private downstream notification actions, added 2026-10-26.
- * Licensed under LGPL-2.1-or-later. See COPYING.
+ * Licensed under GPL-3.0-only. See COPYING.
  */
 
 /** Shared, mail-specific notification target and stale-source checks. */

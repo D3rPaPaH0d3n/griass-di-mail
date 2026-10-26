@@ -20,12 +20,14 @@ remains private.
   source, translations, schemas, UI and build files; retain existing headers.
   History/operational notes establish that date; no unestablished authors/dates
   are invented. New source has explicit origin/LGPL notices.
-- [x] Confirm COPYING/Meson/AppStream declare LGPL-2.1-or-later, metadata CC0-1.0;
+- [x] Original preparation recorded LGPL-2.1-or-later; this separate owner-elected
+  copy now declares GPL-3.0-only in COPYING/Meson/AppStream/About, metadata CC0-1.0;
   preserve the additional CC-BY-3.0, CC-BY-SA-3.0 and work-specific public-domain
   notices in [COPYING.icons](COPYING.icons)/[COPYING.sounds](COPYING.sounds).
 - [x] Prepare explicit Meson install rules for COPYING*, AUTHORS, THANKS and
   third-party notices/texts; add Snowball COPYING installation to practice recipe.
-  **This checks the rules, not a staged or exported package.**
+  **Original audit checked rules only; actual follow-up evidence is in
+  [VERIFICATION.md](docs/release/VERIFICATION.md).**
 - [x] Include exact-reference MIT Dark Reader and manifest dependency licence
   texts, including GPL `libytnef`; document version/source references and limits
   in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
@@ -47,7 +49,8 @@ remains private.
 - [x] Establish a sourced [licensing decision](docs/LICENSING-DECISION.md):
   retaining TNEF permits compatible GPL combined-binary distribution; no new
   upstream conversion permission is needed. Recommendation: GPLv3 combined
-  release, preserving independent LGPL source grants. No licence switch made.
+  release, preserving independent LGPL source grants. **Follow-up: owner approved
+  at 19:56 UTC; this separate branch implements GPL-3.0-only under LGPL §3.**
 - [x] Verify exact cached dependency COPYING hashes and checksum-verified
   libical/GMime archive licence members. Verify Dark Reader JS/MIT byte-identical
   to official npm 4.9.105, matching registry integrity and source gitHead.
@@ -58,7 +61,10 @@ remains private.
   engineering change, then rerun all ten flag cases. Captured baseline has
   **4/10 failing** (starring still-unread mail can retire tray entries); production
   handler is unchanged by this preparation. Do not mark as expected-pass/green.
-- [ ] Fresh build/test from the exact final candidate commit in supported SDK.
+- [ ] Public-candidate acceptance remains open. Fresh private GPL-copy build/test
+  evidence is separated from baseline in [VERIFICATION.md](docs/release/VERIFICATION.md).
+  Do not infer all-suite or real-desktop acceptance from the focused checks.
+  Historical engineering report:
   Prior engineering report: **327 engine + 62 focused cases** passed in dev/
   release and against staged release client library. These are not new results
   for the preparation commit. No real mail was tested.
@@ -74,12 +80,11 @@ remains private.
 
 ## 2 · Licences, complete assets and package contents
 
-- [ ] **Owner choice, then implement:** retain TNEF with the documented GPLv3
-  combined-release/source/notice/metadata plan (recommended), or explicitly
-  approve TNEF-off plus removal of libytnef/tools and clean-build verification.
-  The legal compatibility route is established; this is not a request for new
-  upstream permission. Implement the elected release-copy/linking notice rules
-  without erasing original independent LGPL rights or third-party asset terms.
+- [x] Owner elected **TNEF-on / GPLv3** on 2026-10-26 at 19:56 UTC; implement
+  LGPL-2.1 §3 in this separate release-source copy as **GPL-3.0-only** (not later).
+  Original independent LGPL sources/history remain intact. Operative notices,
+  full text, metadata and component references are prepared; no feature/artwork
+  change or public release approval. See [GPLV3-COPY.md](docs/release/GPLV3-COPY.md).
 - [ ] Audit every shipped file/component, transitive dependency and exception.
   Practice sources are pinned: GOA 3.58.1, libical 3.0.20, EDS 3.60.2, folks
   0.15.12, GMime 3.2.15, libpeas 2.2.1, libytnef 1.9.3, Snowball 3.1.1.
@@ -89,9 +94,11 @@ remains private.
   exception into the final inventory; retain all component copyright headers,
   not just generic texts or a false uniform LGPL version. OpenLDAP backend is
   disabled in this manifest; full-source delivery still retains its terms.
-- [ ] Verify **installed/exported** Dark Reader MIT copyright/permission notice.
+- [ ] Public final export must retain the **installed/exported** Dark Reader
+  MIT copyright/permission notice verified in the private follow-up record.
   API provenance is resolved above; the inspected older stage lacks this notice.
-- [ ] Confirm ValaUnit is absent/test-only in the **final export** (install=false).
+- [ ] Public final export still needs its own check; the private follow-up
+  inspection is recorded separately. ValaUnit remains test-only (install=false).
   No test/ValaUnit-named payload was found in the inspected existing stage;
   account for any pieces actually shipped under their original LGPL/authorship.
 - [ ] Finish full inherited asset audit: icon/sound attribution, modification
@@ -157,9 +164,25 @@ remains private.
 
 ## Primary references
 
-[COPYING](COPYING), especially 0, 1, 2(b), 4 and where applicable 6;
+[COPYING](COPYING) (GPLv3), especially §§4–6; the preserved
+[COPYING.LGPL-2.1-original](COPYING.LGPL-2.1-original), especially §3 and
+applicable LGPL component obligations;
 [COPYING.icons](COPYING.icons), [COPYING.sounds](COPYING.sounds),
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md),
 [LICENSING-DECISION.md](docs/LICENSING-DECISION.md), [BUILDING.md](BUILDING.md),
 [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md), [test/README.md](test/README.md),
 [BRANDING.md](docs/BRANDING.md), [unsent permission enquiry](docs/CANONICAL-NAME-PERMISSION-DRAFT.md).
+
+
+## Separate private GPLv3 copy — evidence boundary
+
+The owner licence election is complete, not a pending upstream permission.
+See [conversion scope](docs/release/GPLV3-COPY.md),
+[fresh verification](docs/release/VERIFICATION.md) and
+[corresponding-source delivery controls](docs/release/CORRESPONDING-SOURCE.md).
+Baseline `465e0c6` has a real Meson nested-subproject notice-install failure;
+the follow-up corrects that packaging rule without changing ValaUnit's grant.
+The raw baseline failure, packaging-only baseline workaround and GPL results
+must be reported separately. Known 4/10 red flag cases remain unresolved.
+Add the exact Dino binding and historical Dovecot MIT-fragment provenance
+checks to the still-open inherited asset/component closure; no invented grant.

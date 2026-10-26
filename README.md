@@ -19,7 +19,7 @@ Conversation-based email for the Linux desktop, with useful details close at han
 
 </div>
 
-> **Development preview — no downstream public release yet.** Griabuntu Mail is the chosen **private working name**; Canonical name/permission review and a separate application ID are still pending. This branch prepares source and documentation; it is not a release, a support promise or a claim of completed licence compliance.
+> **Development preview — no downstream public release yet.** Griabuntu Mail is the chosen **private working name**; Canonical name/permission review and a separate application ID are still pending. This branch is a **separate GPL-3.0-only release-source copy**, elected under LGPL-2.1 §3 with TNEF retained; it is not a release, a support promise or a claim of completed licence compliance.
 
 <a id="features"></a>
 
@@ -57,14 +57,14 @@ There is **no published installer for this downstream**. Flathub's `net.donnybee
 
 ## 🚧 Development status
 
-The notification-actions engineering snapshot was reported to pass **327 engine cases + 62 focused cases**, in development and release builds and against the staged release client library. Those are engineering results, **not a fresh test run or release certification of this preparation branch**. Tests use synthetic mail; no real-mail acceptance was performed.
+Fresh baseline/GPL-copy checks and internal package evidence are recorded in [the verification record](docs/release/VERIFICATION.md). The unmodified audit baseline first exposes a Meson notice-install error; the record separates its packaging-only workaround from the elected GPL copy. Synthetic testing is not real-mail or visible desktop acceptance.
 
 Known gates:
 
 - The separate notification-flag suite is deliberately **4/10 red** on the captured baseline: starring still-unread mail can retire tray entries. The production handler is unchanged; its fix is not part of this preparation.
 - Visible popup buttons, opening the actual reply composer and end-to-end desktop mail moves still need explicit acceptance testing.
 - Shell support affects tray and notification actions; not all desktops expose every action.
-- Identity, dependency licensing, package contents and corresponding source remain release blockers. In particular, the pinned `libytnef` library has GPL-2.0-or-later file headers; the combined-binary implications must be resolved before distribution.
+- Identity, dependency licensing, package contents and corresponding source remain release blockers. The GPLv3/TNEF licence route is **elected and implemented** here; complete component/asset attribution and public-delivery gates remain.
 
 [Release checklist →](RELEASE-CHECKLIST.md) · [Test instructions →](test/README.md)
 
@@ -80,12 +80,12 @@ Please use this repository for downstream bugs and proposals, not upstream's tra
 
 This is an independent modification, **not official Convey or Geary**, and is not affiliated with or endorsed by their maintainers, the GNOME Foundation or Canonical. Original authors, copyright notices and full upstream history are retained; see [AUTHORS](AUTHORS), [THANKS](THANKS) and [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md).
 
-Application source is declared **LGPL-2.1-or-later** in [COPYING](COPYING); AppStream metadata declares CC0-1.0. Icons, sounds and bundled libraries have their own terms. [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) explains the prepared notices and unresolved checks. No blanket relicensing is intended. The new illustration is original CC0-1.0 artwork; [provenance and licence](docs/images/README.md).
+This separately prepared application copy is **GPL-3.0-only** in [COPYING](COPYING), exercising LGPL-2.1 §3 with the owner’s approval. The election is irreversible for this copy; [independent original LGPL sources and provenance](docs/release/GPLV3-COPY.md) are preserved. AppStream metadata remains CC0-1.0. Icons, sounds, MIT Dark Reader and libraries keep their own terms. [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) explains the component boundaries and remaining checks; this is no blanket asset/dependency relicensing. The new illustration is original CC0-1.0 artwork; [provenance and licence](docs/images/README.md).
 
 <details>
 <summary>Deutsch, kurz</summary>
 
-Ein unabhängiger Convey-Ableger mit Empfänger-Alias-Badges, lokalen Kontaktfotos, vollständigen Absenderdaten, sekundengenauer Empfangszeit und einem Tray für neue Nachrichten dieser Sitzung. Popup-Aktionen sind noch in Erprobung. **Griabuntu Mail** ist der gewählte private Arbeitsname; insbesondere die Canonical-Namens-/Erlaubnisfrage, eigene App-ID und öffentliche Veröffentlichung sind noch offen. Das Pastell-/Material-Konzept ist eine künftige native Designrichtung, keine bereits umgesetzte App-Neugestaltung. Es gibt noch keinen öffentlichen Download dieses Ablegers; bekannte Fehler und Lizenzprüfungen stehen in der Release-Checkliste.
+Ein unabhängiger Convey-Ableger mit Empfänger-Alias-Badges, lokalen Kontaktfotos, vollständigen Absenderdaten, sekundengenauer Empfangszeit und einem Tray für neue Nachrichten dieser Sitzung. Popup-Aktionen sind noch in Erprobung. **Griabuntu Mail** ist der gewählte private Arbeitsname; insbesondere die Canonical-Namens-/Erlaubnisfrage, eigene App-ID und öffentliche Veröffentlichung sind noch offen. Das Pastell-/Material-Konzept ist eine künftige native Designrichtung, keine bereits umgesetzte App-Neugestaltung. Diese separate Quellkopie setzt die genehmigte **GPLv3-only-Route mit allen Funktionen einschließlich TNEF** um; ursprüngliche LGPL-Kopien bleiben unabhängig erhalten. Kein öffentlicher Download, keine Installation oder Veröffentlichungsfreigabe; offene Prüfungen stehen in der Release-Checkliste.
 
 </details>
 

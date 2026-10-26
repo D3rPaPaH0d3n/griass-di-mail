@@ -1,5 +1,7 @@
-/* New downstream file: 2026-10-26. LGPL-2.1-or-later; see COPYING. */
-/* Licensed under LGPL-2.1-or-later. See COPYING. */
+/* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
+/* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
+/* Licensed under GPL-3.0-only. See COPYING. */
 public class Application.StatusIconTest : TestCase {
     /** Synthetic D-Bus endpoint: no GTK, application, accounts or mail IO. */
     public static int run_fixture() {

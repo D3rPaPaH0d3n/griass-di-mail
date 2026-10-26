@@ -1,6 +1,8 @@
 # Turkish translation for convey
 # Copyright 2016-2024 Software Freedom Conservancy Inc.
-# This file is distributed under the GNU LGPL, version 2.1.
+# This release copy is distributed under GNU GPL version 3 only.
+# Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+# Historical LGPL origin: docs/release/GPLV3-COPY.md.
 #
 # alperenelhan <alperen@elhan.org>, 2012
 # Ferhat Tunctan <ferhattnctn66@gmail.com>, 2012

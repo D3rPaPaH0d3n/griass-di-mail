@@ -2,8 +2,10 @@
  * Copyright © 2022 John Renner <john@jrenner.net>
  * Copyright © 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 // The whole goal of this class to wrap the ConversationMonitor with a view that presents a sorted list

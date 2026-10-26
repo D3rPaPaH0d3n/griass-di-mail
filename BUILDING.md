@@ -67,9 +67,9 @@ network, desktop files and bus access, before distribution.
 ## Before distributing any binary
 
 Use [RELEASE-CHECKLIST.md](RELEASE-CHECKLIST.md) and
-[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). Resolve the GPL-licensed
-`libytnef` combination or explicitly approved feature/build choice; preserve all
-original notices. Record the final source commit, manifest/build options,
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). The owner-approved GPL-3.0-only/TNEF-on release-copy election is implemented;
+preserve all application/component notices and close the remaining source/asset
+and package-delivery obligations. Record the final source commit, manifest/build options,
 dependency revisions, runtime/SDK commits and binary hashes. Provide complete
 corresponding source with equivalent access next to the binary. Inspect the
 actual staged and exported package for installed notices and shipped libraries.
@@ -80,10 +80,21 @@ No existing binary is certified by this source-preparation work.
 `ui/darkreader.js` identifies Dark Reader 4.9.105. Do not replace it with an
 unversioned CDN download. Select a reviewed exact release, retain its MIT notice
 and source/build provenance, verify the generated API file and update
-[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). Correspondence of the existing
-vendored generated file to its claimed release remains an explicit audit gate.
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). The existing JS is already verified byte-identical to official npm 4.9.105;
+retain that exact provenance when changing it.
 
 ---
 Original notices retained:
 Copyright © 2016 Software Freedom Conservancy Inc.
 Copyright © 2018–2020 Michael Gratton <mike@vee.net>
+
+
+## Separate GPLv3 release-copy preparation
+
+This branch is not the original LGPL preparation and does not certify the old
+private prototype bundles. See [GPLV3-COPY.md](docs/release/GPLV3-COPY.md),
+[VERIFICATION.md](docs/release/VERIFICATION.md) and
+[CORRESPONDING-SOURCE.md](docs/release/CORRESPONDING-SOURCE.md). TNEF is explicitly
+`enabled`; release metadata is GPL-3.0-only, metadata CC0 unchanged. The corrected
+notice-install rule copies ValaUnit's original COPYING into `docs/licenses/`
+without changing ValaUnit or trying to access files across Meson subproject scope.

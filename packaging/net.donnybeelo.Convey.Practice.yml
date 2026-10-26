@@ -1,5 +1,6 @@
 # New downstream manifest: 2026-10-26; licence-copy packaging added 2026-10-26.
-# LGPL-2.1-or-later for this recipe; dependencies retain their own terms.
+# GPL-3.0-only release copy: LGPL-2.1 section 3 election, 2026-10-26.
+# Original LGPL recipe preserved independently; dependencies retain their terms.
 # User-authorized practice update, based on Convey 51.0 and the tested patch.
 # Original permissions plus read-only desktop contact-photo cache (no home access).
 app-id: net.donnybeelo.Convey
@@ -165,7 +166,8 @@ modules:
     config-opts:
       - --libdir=lib
       - -Dprofile=release
-      - -Drevno=notification-actions-1
+      - -Drevno=gplv3-private-copy-1
+      - -Dtnef=enabled
       - -Dlibunwind=disabled
     sources:
       - type: dir
