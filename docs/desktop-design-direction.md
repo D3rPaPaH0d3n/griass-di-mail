@@ -20,7 +20,19 @@ brief and original presentation art only — **not a completed application redes
   cross-desktop acceptance. Do not copy Ubuntu/Canonical marks or trade dress,
   and do not imply their endorsement.
 
-## Current candidate, not installed UI
+## Latest owner feedback: more clearly mail
+
+The owner reviewed the folded-G study and asked for a stronger **mail/envelope**
+cue. A G with a small folded corner does not yet communicate a mail app clearly
+enough. Keep the agreed pastel petrol/teal and copper/peach family.
+
+We discussed a recognisable rounded envelope with a clear flap, possibly a G in
+its geometry/negative space, and closed versus open envelope. **No final variant
+or open/closed choice has been approved.** These are discussion directions, not
+a completed new logo. Keep the prior editable artwork for provenance/iteration;
+do not present it as final owner acceptance or install it silently.
+
+## Earlier candidate, not installed UI
 
 The [brand board](../brand/identity-board.png) and
 [synthetic hero](images/inbox-details.png) explore the visual direction. They use

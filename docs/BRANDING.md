@@ -40,6 +40,11 @@ borrowed trade dress is included in the new art.
 
 ## Original visual direction
 
+**Latest feedback supersedes acceptance of this candidate:** the owner wants
+a clearer envelope/mail cue. Closed/open envelope and the final replacement
+mark remain undecided; see the [current design feedback](desktop-design-direction.md).
+The following describes the existing study, not the final approved logo.
+
 A newly drawn **G** forms a folded-page outline with a mail-slot crossbar and a
 peach/copper corner. It replaces the old B-mark, not just its caption. Pastel
 teal surfaces, deep petrol foregrounds and restrained rounding give the private

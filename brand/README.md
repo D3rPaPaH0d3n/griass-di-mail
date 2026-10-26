@@ -1,5 +1,10 @@
 # Griabuntu Mail identity · 26 October 2026
 
+**Current status: earlier candidate, not final approval.** The owner's latest
+feedback asks for a more recognisable mail/envelope cue. Colours remain agreed;
+open versus closed envelope and a new mark are still under discussion. See the
+[latest design direction](../docs/desktop-design-direction.md) before iterating.
+
 Original artwork for Markus's chosen **private working name**, replacing the
 superseded Briefwerk B-study (preserved in Git history). A newly drawn **G**
 combines a folded-page silhouette, mail-slot crossbar and peach/copper corner.

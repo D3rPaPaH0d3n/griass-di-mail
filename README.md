@@ -1,4 +1,10 @@
 <!-- Downstream modification: 2026-10-26 — independent preparation README; original notices retained below. -->
+> **Continuing with an AI agent?** Use **`handoff/griabuntu-ai`** and start with
+> [AGENTS.md](AGENTS.md), the [current handoff](docs/AI-HANDOFF.md) and the
+> [ready-to-use next-agent prompt](docs/NEXT-AGENT-PROMPT.md). This branch bundles
+> the latest source, GPL election, original graphics and owner decisions. The
+> old default `main` is not the latest development state.
+
 <div align="center">
 
 # Griabuntu Mail
@@ -16,6 +22,9 @@ Conversation-based email for the Linux desktop, with useful details close at han
 <img src="docs/images/inbox-details.png" width="1120" alt="Original concept illustration: recipient badges, a full sender address, a received timestamp with seconds and a session-new tray list. Synthetic data only; not an application screenshot." />
 
 *Synthetic concept illustration — not an app screenshot or completed UI redesign.*
+
+*Latest logo feedback: make the mail/envelope cue more recognisable. The folded
+G shown here is an earlier candidate, not the final approved mark.*
 
 </div>
 
