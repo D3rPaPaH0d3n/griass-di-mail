@@ -26,6 +26,36 @@ The engine tests can be run headless (i.e. without an X11 or Wayland
 session), but the client tests require a functioning display since
 they execute GTK code.
 
+Synthetic notification flag regression
+--------------------------------------
+
+Build and run this separate, headless suite in the existing SDK environment:
+
+```
+meson compile -C build test-notification-flags
+meson test -C build --no-rebuild --print-errorlogs notification-flag-tests
+```
+
+It compiles the actual `application-notification-plugin-context.vala` and tray
+model, with the engine's flags, mock folder signals and production plugin
+interfaces. Only application/plugin-loader/contact boundaries are replaced by
+`mock/notification-context.vala`; the handler is not copied into the test.
+The target is declared at the repository root because Vala needs a common
+source root for the `src/` and `test/` inputs.
+
+No GTK application, accounts, contacts backend or real mail store is opened.
+Use a temporary HOME/XDG environment, memory GSettings, no network and no host
+session/system bus. Do not run the installed mail application for this test.
+
+Baseline `5834da28091fb951ba3f53dd610d2f30fa352135`: the ten cases compile;
+four deliberately fail (star on, star off, unrelated unread flag, mixed batch).
+For example, starring one of two synthetic unread arrivals incorrectly drops
+the tray count from 2 to 1. The six controls pass: read, deleted-unread, removed,
+no promotion of old/re-unread mail, notification visibility policy, and clearing
+session-new IDs when a recent conversation is visible even while still unread.
+This records the bug before the production fix is approved. The suite is
+intentionally red on that baseline, not marked as an expected failure.
+
 Integration tests
 -----------------
 

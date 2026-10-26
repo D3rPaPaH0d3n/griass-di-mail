@@ -65,6 +65,9 @@ public class Application.Client : Adw.Application {
         { Action.Application.INSPECT, on_activate_inspect},
         { Action.Application.MAILTO, on_activate_mailto, "s"},
         { Action.Application.NEW_WINDOW, on_activate_new_window },
+        { Action.Application.NOTIFICATION_REPLY, on_notification_reply, NotificationActions.TARGET_TYPE },
+        { Action.Application.NOTIFICATION_ARCHIVE, on_notification_archive, NotificationActions.TARGET_TYPE },
+        { Action.Application.NOTIFICATION_TRASH, on_notification_trash, NotificationActions.TARGET_TYPE },
         { Action.Application.PREFERENCES, on_activate_preferences},
         { Action.Application.QUIT, on_activate_quit},
         { Action.Application.SHOW_EMAIL, on_activate_show_email, "(sv)"},
@@ -230,6 +233,7 @@ public class Application.Client : Adw.Application {
     private Components.Inspector? inspector = null;
     private Convey.Nonblocking.Mutex controller_mutex = new Convey.Nonblocking.Mutex();
     private GLib.Notification? error_notification = null;
+    private Gee.Set<string> pending_notification_actions = new Gee.HashSet<string>();
 
 
     /**
@@ -1263,6 +1267,78 @@ public class Application.Client : Adw.Application {
     private void on_activate_show_email(GLib.SimpleAction action,
                                         GLib.Variant? target) {
         this.show_email.begin(target);
+    }
+
+    // Private downstream, 2026-10-26: exact single-message actions. No send or
+    // permanent-delete API is reachable from these notification callbacks.
+    private async void act_on_notification(NotificationActions.Kind kind,
+                                            GLib.Variant? target) {
+        GLib.Variant? email_target, folder_target;
+        if (!NotificationActions.parse(target, out email_target, out folder_target)) return;
+        string key = target.print(false);
+        if (!this.pending_notification_actions.add(key)) return;
+        hold();
+        try {
+            yield create_controller();
+            if (this.controller == null)
+                throw new Convey.EngineError.NOT_FOUND("Notification controller is unavailable");
+            var globals = this.controller.plugins.globals;
+            var context = globals.email.get_account_for_variant(email_target);
+            var id = globals.email.get_email_identifier_for_variant(email_target);
+            var source = globals.folders.get_folder_for_variant(folder_target);
+            if (context == null || id == null || source == null ||
+                source.account != context.account || context.cancellable.is_cancelled())
+                throw new Convey.EngineError.NOT_FOUND("Notification account, folder or mail is unavailable");
+            if (kind == REPLY) {
+                yield NotificationActions.check_source(source, id, context.cancellable);
+                var message = yield context.emails.fetch_email_async(
+                    id, Composer.Widget.REQUIRED_FIELDS, NONE, context.cancellable
+                );
+                yield this.present();
+                if (context.cancellable.is_cancelled()) return;
+                var composer = yield this.controller.compose_with_context(
+                    context, Composer.Widget.ContextType.REPLY_SENDER, message, null
+                );
+                if (composer == null) return;
+                this.controller.present_composer(composer);
+            } else {
+                var destination = kind == ARCHIVE
+                    ? (context.account.get_special_folder(Convey.Folder.SpecialUse.ALL_MAIL) ??
+                       context.account.get_special_folder(Convey.Folder.SpecialUse.ARCHIVE))
+                    : context.account.get_special_folder(Convey.Folder.SpecialUse.TRASH);
+                if (destination == null)
+                    throw new Convey.EngineError.NOT_FOUND("Notification destination is unavailable");
+                yield NotificationActions.move_message(
+                    source, destination, id, context.commands, context.cancellable
+                );
+            }
+            withdraw_notification("email-arrived-%s".printf(email_target.print(false)));
+        } catch (GLib.IOError.CANCELLED error) {
+            // Account/application closed; leave mail and notification untouched.
+        } catch (GLib.Error error) {
+            warning("Notification action was not completed: %s", error.message);
+            var notice = new GLib.Notification(_("Notification action failed"));
+            notice.set_body(_("Open Convey to check the message. No message was permanently deleted."));
+            notice.set_default_action_and_target_value(
+                Action.Application.prefix(Action.Application.SHOW_EMAIL), email_target
+            );
+            send_notification("notification-action-error", notice);
+        } finally {
+            this.pending_notification_actions.remove(key);
+            release();
+        }
+    }
+
+    private void on_notification_reply(GLib.SimpleAction action, GLib.Variant? target) {
+        act_on_notification.begin(NotificationActions.Kind.REPLY, target);
+    }
+
+    private void on_notification_archive(GLib.SimpleAction action, GLib.Variant? target) {
+        act_on_notification.begin(NotificationActions.Kind.ARCHIVE, target);
+    }
+
+    private void on_notification_trash(GLib.SimpleAction action, GLib.Variant? target) {
+        act_on_notification.begin(NotificationActions.Kind.TRASH, target);
     }
 
     private void on_activate_show_folder(GLib.SimpleAction action,

@@ -5184,5 +5184,18 @@ msgstr "Empfänger der zusammengefassten Nachricht: %s"
 #~ msgid "To: %s\n"
 #~ msgstr "An: %s\n"
 
+# Private downstream notification actions, added 2026-10-26.
+msgid "Archive Message"
+msgstr "Archivieren"
+
+msgid "Delete Message"
+msgstr "Löschen"
+
+msgid "Notification action failed"
+msgstr "Benachrichtigungsaktion fehlgeschlagen"
+
+msgid "Open Convey to check the message. No message was permanently deleted."
+msgstr "Öffne Convey, um die Nachricht zu prüfen. Es wurde keine Nachricht endgültig gelöscht."
+
 #~ msgid "Cc: %s\n"
 #~ msgstr "Kopie: %s\n"

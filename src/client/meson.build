@@ -30,6 +30,7 @@ client_vala_sources = files(
   'application/application-folder-store-factory.vala',
   'application/application-main-window.vala',
   'application/application-notification-plugin-context.vala',
+  'application/application-notification-actions.vala',
   'application/application-plugin-manager.vala',
   'application/application-startup-manager.vala',
   'application/application-status-icon.vala',

@@ -222,3 +222,39 @@ subdir('sql')
 subdir('ui')
 subdir('src')
 subdir('test')
+
+# This target spans src/ and test/; Vala requires their common source root.
+notification_mock_sources = []
+foreach source : libmock_sources
+  notification_mock_sources += files('test' / source)
+endforeach
+
+# Compile the real notification handler against in-memory application boundaries.
+# Do not link client_lib: that would duplicate those types and start pulling in
+# GTK/application setup. Folder signals, flags and the tray model remain real.
+test_notification_flags_bin = executable('test-notification-flags',
+  [
+    'test/test-case.vala',
+    'test/test-notification-flags.vala',
+    'test/client/application/application-notification-plugin-context-test.vala',
+    'test/mock/notification-context.vala',
+    'src/client/application/application-notification-plugin-context.vala',
+    'src/client/application/application-tray-mail-model.vala',
+    'src/client/plugin/plugin-account.vala',
+    'src/client/plugin/plugin-folder.vala',
+    'src/client/plugin/plugin-email.vala',
+    'src/client/plugin/plugin-error.vala',
+    'src/client/plugin/plugin-contact-store.vala',
+    'src/client/plugin/plugin-notification-extension.vala',
+  ] + notification_mock_sources,
+  dependencies: test_engine_dependencies,
+  vala_args: test_engine_vala_args,
+  c_args: convey_c_args,
+)
+
+test(
+  'notification-flag-tests',
+  test_notification_flags_bin,
+  args: [ '--keep-going' ],
+  depends: [ engine_lib ]
+)

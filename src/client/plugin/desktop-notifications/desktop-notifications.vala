@@ -378,7 +378,10 @@ public class Plugin.DesktopNotifications :
             body,
             icon,
             Action.Application.prefix(action),
-            target_param
+            target_param,
+            id == null ? null : global::Application.NotificationActions.target(
+                id.to_variant(), folder.to_variant()
+            )
         );
     }
 
@@ -387,7 +390,8 @@ public class Plugin.DesktopNotifications :
                                                  string body,
                                                  GLib.Icon icon,
                                                  string? action,
-                                                 GLib.Variant? action_target) {
+                                                 GLib.Variant? action_target,
+                                                 GLib.Variant? mail_target = null) {
         GLib.Notification notification = new GLib.Notification(summary);
         notification.set_body(body);
         notification.set_icon(icon);
@@ -404,6 +408,9 @@ public class Plugin.DesktopNotifications :
                 );
             }
 
+            if (mail_target != null) {
+                global::Application.NotificationActions.add_buttons(notification, mail_target);
+            }
             this.client_application.send_notification(id, notification);
             return notification;
         }

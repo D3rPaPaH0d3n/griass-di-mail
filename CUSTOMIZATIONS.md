@@ -22,8 +22,23 @@ fork-network member. Upstream updates must be deliberately merged and tested.
   summaries; overlapping folders are deduplicated by account-qualified ID.
 
 The tray counts session-new/unseen messages, not every historical unread mail.
-Its count starts empty after restarting the application. Popup notification
-Reply / Archive / Trash buttons are **not implemented**.
+Its count starts empty after restarting the application.
+
+## Notification actions — 2026-10-26
+
+Individual new-message popups offer Reply, Archive and Delete (German:
+Antworten / Archivieren / Löschen). Reply opens the existing reply-to-sender
+composer without sending. Archive moves only that message into an existing
+All Mail/archive folder; Delete moves it only into the existing Trash folder.
+No permanent-delete or archive/expunge fallback is used. The normal message
+move command stack is retained. Summary/group notifications have no destructive
+buttons; Unity's existing no-actions behavior is preserved.
+
+Targets bind account, stored message ID and original folder. Malformed,
+cross-account, cancelled, missing or moved-away targets fail closed, without
+falling back to the selected conversation. Repeated in-flight clicks are
+deduplicated. An error notification offers Open rather than silently pretending
+success. A missing archive or Trash folder is not created automatically.
 
 ## Build and verification
 
@@ -32,12 +47,24 @@ and official Flatpak Builder. Reuse whichever user/system scope already holds
 those tools; do not duplicate SDK installations. Standard build instructions
 remain in [BUILDING.md](BUILDING.md).
 
-The installed source snapshot passes 327 engine tests and 44 focused helper
+The prior installed tray snapshot passed 327 engine tests and 44 focused helper
 cases, including account scoping, late-result rejection, stable menu IDs,
 received-time/DST formatting and markup safety. A private D-Bus fixture also
 exercises the tray menu and count changes. The focused executable is
 `test-recipient-aliases`; the fixture switch `--tray-fixture` uses synthetic mail
 only and must not be confused with real mail delivery validation.
+
+The notification-actions development snapshot passes the same 327 engine
+cases and 62 focused cases (18 new). The new cases cover actual GNotification
+button serialization on a private D-Bus, account/source validation, stale mail,
+cancellation, error cleanup and exact single-message archive/Trash moves through
+the existing production command. No real mail or accounts are opened by these
+tests. Reply-composer and desktop acceptance are separate from these tests.
+
+The independent notification-flag suite records an existing baseline defect:
+four of ten cases fail because starring still-unread mail retires session-new
+entries. Its production handler is unchanged here; this is not a green release
+gate or a regression introduced by the new popup actions.
 
 Keep profiles, credentials, private operational notes, local build directories,
 bundles and signing keys outside version control. Signed installation packages

@@ -23,6 +23,9 @@ namespace Action {
         public const string HELP = "help";
         public const string MAILTO = "mailto";
         public const string NEW_WINDOW = "new-window";
+        public const string NOTIFICATION_REPLY = "notification-reply";
+        public const string NOTIFICATION_ARCHIVE = "notification-archive";
+        public const string NOTIFICATION_TRASH = "notification-trash";
         public const string PREFERENCES = "preferences";
         public const string SHOW_EMAIL = "show-email";
         public const string SHOW_FOLDER = "show-folder";

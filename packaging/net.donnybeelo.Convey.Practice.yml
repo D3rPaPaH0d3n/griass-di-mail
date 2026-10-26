@@ -162,7 +162,7 @@ modules:
     config-opts:
       - --libdir=lib
       - -Dprofile=release
-      - -Drevno=tray-new-mail-8
+      - -Drevno=notification-actions-1
       - -Dlibunwind=disabled
     sources:
       - type: dir
