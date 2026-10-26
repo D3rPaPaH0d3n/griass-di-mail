@@ -186,3 +186,20 @@ The raw baseline failure, packaging-only baseline workaround and GPL results
 must be reported separately. Known 4/10 red flag cases remain unresolved.
 Add the exact Dino binding and historical Dovecot MIT-fragment provenance
 checks to the still-open inherited asset/component closure; no invented grant.
+
+
+### Completed private follow-up checks (not public acceptance)
+
+- [x] Build the actual GPL copy from clean source commit `a4774cb9e390a3d55efa6636c9f2f3b12fcc3f88`
+  via SHA-pinned archive; preserve independent raw/baseline-workaround sources.
+- [x] Fresh baseline-workaround and GPL-copy 327 engine + 62 focused tests pass;
+  both keep the same 4/10 red flag cases. Exact staged-client retest also passes.
+- [x] Finish/export the same tested GPL stage into a separate unsigned repo;
+  inspect actual exported GPL/MIT/CC/component notices, metadata and TNEF.
+  Hash an internal unsigned inspection bundle separately from OSTree commits.
+- [x] Record exact source/archive/manifest/runtime identities, package contents
+  and source-delivery instructions. Static archives/tools remain in this
+  internal export; public cleanup/source/asset obligations are still open.
+
+The completed verification is a reporting-only descendant, not a false claim
+that the later report commit itself was compiled into the inspection bundle.
