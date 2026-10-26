@@ -163,12 +163,16 @@ if also distributing runtime binaries, account for their own sources/notices.
 - The resolved staged manifest records Platform commit
   `aed50acfdad2e6c6c05e1595ddbde3c9e642f967bde41bfa70e3a8d962408541`
   and SDK `8787593c4d75cbdd277a91945eab9185e18de537479eb8401f852d3f746c49c1`.
-  The current signed-bundle file measures SHA-256
-  `cd4f9d28e7cf635871020ac560c76740a71794d6d47f012e4a366c327f6c00a2`,
-  **different** from the previously reported installed `7cb988bb…` artifact.
-  No mail/account/profile data or installed application payload was read or
-  altered (only runtime revision metadata). Neither this stage nor that mutable
-  artifact is evidence of a binary built from `9183cc8d3`; no fresh
+  The signed `.flatpak` **file SHA-256** is
+  `cd4f9d28e7cf635871020ac560c76740a71794d6d47f012e4a366c327f6c00a2`.
+  The previously recorded exported/installed **Flatpak OSTree application commit**
+  is `7cb988bbfea070a42d0638a9bc132f02f2f007eac1216b48d42cd9f378548f8a`.
+  These identify different objects (bundle file versus application tree), were
+  recorded together and are consistent; comparing them is **not evidence of
+  artifact drift**. No mail/account/profile data or installed application payload
+  was read or altered by this audit (only runtime revision metadata). Neither
+  the earlier stage nor bundle proves a binary newly built from `9183cc8d3`;
+  exact-source mapping and final package inspection remain required. No fresh
   build, exported-package certification or new engineering acceptance is claimed.
 
 ## Assets and history: specific findings
