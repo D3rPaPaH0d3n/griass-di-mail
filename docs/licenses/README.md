@@ -39,3 +39,7 @@ for historical origin only. `vala-unit-LGPL-2.1.txt` is byte-identical to
 The unmodified LGPL tray SVG uses its colocated `icons/hicolor/scalable/apps/COPYING`.
 Other dependency texts here are not converted. CC attribution and licence links
 remain in root COPYING.icons/COPYING.sounds; those lists are unchanged.
+
+`libstemmer-vapi-BSD.txt` preserves the full original Giulio Paci BSD-style
+notice from `bindings/vapi/libstemmer.vapi` verbatim, including its binary-notice
+condition; installed conservatively with the binding/component notices.

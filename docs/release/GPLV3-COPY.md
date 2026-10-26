@@ -61,7 +61,8 @@ This is **not** a blanket relabelling of every repository file:
 - Dependency texts/options remain unchanged. In particular libytnef remains
   **GPL-2.0-or-later**; this combination uses the allowed GPLv3 route. LGPL-linked
   libraries retain their grants and replacement/relinking obligations.
-- `bindings/vapi/libstemmer.vapi` keeps its BSD-style copyright/terms;
+- `bindings/vapi/libstemmer.vapi` keeps its BSD-style copyright/terms; the exact
+  Giulio Paci notice is installed as `licenses/libstemmer-vapi-BSD.txt`;
   SQLite-origin code and its provenance in `imap-db-sqlite.c` are not relabelled.
   The historical Dovecot LGPL/MIT-origin comments in `util-imap-utf7.vala` stay
   historical; its application grant alone is elected under §3.

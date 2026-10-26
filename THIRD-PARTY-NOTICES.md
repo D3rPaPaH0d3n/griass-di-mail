@@ -160,6 +160,10 @@ new baseline/build/test/export evidence and exact source mapping. The ValaUnit
 notice is now installed from a byte-identical standalone reference copy, because
 the original nested-subproject `install_data` rule fails Meson configuration.
 
+The original Giulio Paci BSD-style binding notice from
+`bindings/vapi/libstemmer.vapi` is now reproduced verbatim as
+`docs/licenses/libstemmer-vapi-BSD.txt` and installed; no authorship is inferred.
+
 Unheaded `bindings/vapi/icu-uc.vapi` records Dino origin without an exact imported
 revision/file-specific grant. `util-imap-utf7.vala` records a Dovecot 2.1.15 MIT
 fragment but no accompanying original MIT text, with upstream's historical
