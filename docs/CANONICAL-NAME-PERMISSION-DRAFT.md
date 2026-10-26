@@ -31,10 +31,24 @@ We are seeking guidance before taking this private candidate name public.
 We can supply the candidate artwork and intended uses for review if requested
 and authorised.
 
-Please advise whether the name is acceptable for an independent mail
-application, which uses would be covered by any permission, and whether you need
-further information before making a decision. We will not represent this enquiry
-or any silence as approval.
+In particular, could you please confirm:
+
+1. Whether **Griabuntu**, including the compound title **Griabuntu Mail**, falls
+   within your policy's sufficiently similar BUNTU-ending/confusingly similar
+   marks provision for this independent email app; and whether the software-title
+   restriction applies to this proposed name, rather than only your listed marks.
+2. If permission is required, whether you would grant it in writing for the app
+   title, package/store listings, repository/documentation, original icon/wordmark
+   and a future domain; any territory, non-commercial/commercial-use, attribution,
+   disclaimer, design, duration or revocation conditions should be explicit.
+3. Whether we may accurately describe compatibility as “for Ubuntu and other
+   supported Linux desktops” without implying endorsement, and what additional
+   information you need to assess the proposal.
+
+Intended initial territories and commercial/non-commercial plans:
+[maintainer to confirm before sending; online source/binary access may be
+worldwide]. No domain registration or public launch is represented as completed. We understand a policy response is not general clearance against
+third-party rights. We will not represent this enquiry or any silence as approval.
 
 Thank you,
 

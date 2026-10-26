@@ -3,12 +3,17 @@
 Prepared **2026-10-26** for the private Griabuntu Mail preparation branch. This is an
 evidence-based inventory, not legal advice or a certificate for an existing or
 future binary. Original licences, notices, authorship and full history remain.
+The [licensing decision](docs/LICENSING-DECISION.md) establishes the TNEF/GPL
+distribution route and separates remaining release work from new permissions.
 
 ## Application and assets
 
-- Convey/Geary-derived application code: **LGPL-2.1-or-later**, as declared by
-  [COPYING](COPYING), Meson and AppStream. Consult individual headers and
+- Convey/Geary-derived application **source**: **LGPL-2.1-or-later**, as declared
+  by [COPYING](COPYING), Meson and AppStream. Consult individual headers and
   [AUTHORS](AUTHORS)/[THANKS](THANKS); Griabuntu Mail does not own upstream work.
+  A binary linked to GPL libytnef must not be presented as LGPL-only; compatible
+  GPL combined-work distribution is possible without revoking the original
+  independent LGPL grants. See the decision below.
 - AppStream metadata separately declares **CC0-1.0**. Do not apply that to all
   application code or third-party resources.
 - [COPYING.icons](COPYING.icons) retains work-specific **CC-BY-3.0** attributions
@@ -27,6 +32,13 @@ future binary. Original licences, notices, authorship and full history remain.
   been independently established. The inherited upstream application icons are
   also retained unchanged but not appropriated as Griabuntu Mail's brand. Finish the
   per-asset audit before choosing public screenshots or distributing packages.
+  Specifically, the current COPYING.icons list omits installed font/format/edit
+  icons, some RTL variants and Convey application icons. Historical contributor
+  commits are identified in the decision; they are not a complete path-to-grant
+  supplement. All inherited assets/sound are unchanged versus the upstream base.
+  CC-BY/CC-BY-SA 3.0 require supplied attribution/title/source/licence notices and
+  identification of adaptations; ShareAlike covers adapted assets, not
+  automatically the whole independent application collection.
 
 ## Vendored resources
 
@@ -42,10 +54,17 @@ Ltd.**, is now included verbatim and scheduled for installation. Source:
 https://github.com/darkreader/darkreader/blob/51f97ccd34ed0a70832421c2768a19bc46fcec4d/LICENSE
 
 The existing generated JS was introduced by upstream commit
-`efc10cd504f4506193acc12cc86ac966a0ca09a9` (2025-06-10). The version banner is
-not enough to establish exact build provenance: compare the vendored API output
-to the versioned source/build and check bundled subcomponents before release.
-The JS itself is unchanged here.
+`efc10cd504f4506193acc12cc86ac966a0ca09a9` (2025-06-10). It is now verified
+**byte-identical** to `package/darkreader.js` in the official npm 4.9.105
+[artifact](https://registry.npmjs.org/darkreader/-/darkreader-4.9.105.tgz).
+The [registry record](https://registry.npmjs.org/darkreader/4.9.105) has the same
+`gitHead`; downloaded bytes match its SHA-512 integrity. The npm LICENSE is also
+byte-identical to our prepared MIT text. The API recipe at that commit builds
+UMD from `src/api/index.ts`; the six-file API archive contains no extension
+fonts/assets. Although package.json lists Malevic, this API JS contains no
+Malevic/external module-loader reference. No downloaded build script was run.
+The provenance gate is closed; the JS is unchanged. Final package inclusion of
+its MIT copyright/permission notice still needs verification.
 
 ### ValaUnit
 
@@ -68,30 +87,44 @@ audit source-file exceptions, transitive content and what is actually shipped.
 | --- | --- | --- |
 | gnome-online-accounts 3.58.1 | `c1fd9e58b8e4559e690ab96a191304a6660fba97` | COPYING explicitly says LGPL-2.0-or-later with per-file headers; [text](docs/licenses/gnome-online-accounts-COPYING.txt) |
 | libical 3.0.20 | archive SHA-256 `e73de92f5a6ce84c1b00306446b290a2b08cdf0a80988eca0a2c9d5c3510b4c2` | Versioned LICENSE offers MPL-2.0 **or** LGPL-2.1; [choice notice](docs/licenses/libical-LICENSE.txt), [COPYING](docs/licenses/libical-COPYING.txt), [LGPL](docs/licenses/libical-LGPL21.txt), [MPL](docs/licenses/libical-MPL2.txt) |
-| evolution-data-server 3.60.2 | `242c81196daf074cdc4c224e48b7b4319985b589` | [COPYING](docs/licenses/evolution-data-server-COPYING.txt) contains LGPL-2.0 text; sampled e-source.c refers to LGPL without a version. Component/file/version-option audit remains open; do not blanket-label all EDS LGPL-2.1 |
+| evolution-data-server 3.60.2 | `242c81196daf074cdc4c224e48b7b4319985b589` | [COPYING](docs/licenses/evolution-data-server-COPYING.txt) contains LGPL-2.0 text; e-source.c/e-book-client.c/Camel have version-unspecified LGPL grants (version choice allowed), newer files SPDX LGPL-2.1-or-later or LGPL-2.0-or-later. OpenLDAP extract has separate terms, with its backend disabled by this recipe. Preserve individual headers; no uniform LGPL-2.0-only/2.1 label |
 | folks 0.15.12 | `1157825538e3d565a4e9c519ac5fedd97ea10d00` | Sampled folks/individual.vala says LGPL-2.1-or-later; [COPYING](docs/licenses/folks-COPYING.txt) |
 | GMime 3.2.15 | archive SHA-256 `84cd2a481a27970ec39b5c95f72db026722904a2ccf3fdbd57b280cf2d02b5c4` | Versioned gmime/gmime.c says LGPL-2.1-or-later; [COPYING](docs/licenses/GMime-COPYING.txt) |
-| libpeas 2.2.1 | `744430715e619069b3fcb6c994f2c09257700d05` | Sampled peas-engine.c SPDX LGPL-2.1-or-later; [COPYING](docs/licenses/libpeas-COPYING.txt) |
-| libytnef 1.9.3 | `d9b2f01d125c9b178f7a00ec397cc2a9f258e8e1` | **GPL-2.0-or-later** in lib/ytnef.c, copyright 2003 Randall E. Hand; [GPL text](docs/licenses/ytnef-GPL-2.0.txt). Critical combined-binary gate below |
+| libpeas 2.2.1 | `744430715e619069b3fcb6c994f2c09257700d05` | peas-engine.c LGPL-2.1-or-later; [COPYING](docs/licenses/libpeas-COPYING.txt), exact [upstream relicensing record](docs/licenses/libpeas-license_change.txt) retained verbatim |
+| libytnef 1.9.3 | `d9b2f01d125c9b178f7a00ec397cc2a9f258e8e1` | **GPL-2.0-or-later** in lib/ytnef.c and ytnef.h, Copyright (C) 2003 Randall E. Hand; [GPL text](docs/licenses/ytnef-GPL-2.0.txt). Compatible GPL combined-binary route below |
 | Snowball 3.1.1 | `cd195b51e948a902a4312f023f4a14392516a543` | [COPYING](docs/licenses/Snowball-COPYING.txt): 3-clause BSD-style terms, copyright Dr Martin Porter, Richard Boulton, Yoshiki Shibukawa and Olly Betts. Explicit notice install added for the manually built shared lib |
 
 Git-source URLs are in the manifest; corresponding upstream licence paths and
 version selectors are recorded in [docs/licenses/README.md](docs/licenses/README.md).
-Archive notices were checked at matching version tags, **not** independently
-extracted from freshly downloaded checksum-verified tarballs in this task.
-That archive/source correspondence is a remaining gate.
+The exact cached Git-pinned COPYING texts hash-match the prepared files,
+including EDS. The libical/GMime cached release archives were read without
+running them: their SHA-256 values match the manifest, and all five prepared
+archive licence files match the actual members byte-for-byte. Archive/notice
+correspondence is closed, not a remaining gate. This verifies these inputs/texts,
+not every transitive component in a future exported package.
 
-### libytnef is not LGPL
+### libytnef: GPL combination is distributable, not an LGPL-only binary
 
-The practice build enables TNEF by default; `src/engine/meson.build` adds
-`libytnef` and `WITH_TNEF_SUPPORT` when found. The exact library source header
-and GPL text were inspected, not inferred from package metadata. An LGPL label
-on our source is not a licence audit of a linked GPL combination. Before binary
-distribution, choose and review the applicable combined-work obligations and
-metadata/source delivery, or explicitly approve and test a TNEF-disabled build
-(`-Dtnef=disabled`, with corresponding manifest dependency removal). **No licence
-switch or feature disablement is silently made here.** Simply including GPL text
-does not settle this gate.
+`meson.options` defaults TNEF to **enabled**; Meson requires libytnef accordingly.
+The engine calls TNEFParseMemory and traverses library structures, and is linked
+into the shared client. Nonexecuting `readelf` inspection of the existing stage
+confirms `NEEDED libytnef.so.0` and TNEF parser/initialise/free symbols. Dynamic
+linking is not mere aggregation.
+
+**Recommendation: keep TNEF and distribute the combined application under GPLv3
+with corresponding source and accurate notices/metadata.** LGPL-2.1 §3 expressly
+allows a GPLv2 or newer GPL copy; libytnef grants GPL-2.0-or-later. Both GPLv2 and
+GPLv3 are compatible for this pairing; GPLv3 is recommended, subject to the final
+dependency closure. Original separately available LGPL source grants remain.
+A release-copy conversion, if elected, must implement §3's notice rules; it does
+not relicense all assets/dependencies or the existing repository automatically.
+No new upstream permission is needed for an option already granted by licence.
+
+The alternative is owner-approved `-Dtnef=disabled` **and** removal of libytnef
+and its tools from that release package, followed by a clean build and feature/
+linkage verification. No feature disablement, licence conversion or metadata
+switch was made here. See [the sourced decision](docs/LICENSING-DECISION.md) for
+source-vs-binary, GPL versions, LGPL relinking, and exact remaining owner choices.
 
 ## What is prepared, and what still needs inspection
 
@@ -99,8 +132,16 @@ Meson now installs application COPYING/COPYING.icons/COPYING.sounds, AUTHORS,
 THANKS, this notice and the prepared dependency licence texts under
 `share/licenses/<application-id>/`. The practice Snowball recipe separately
 installs its COPYING. This addresses the missing explicit top-level licence
-install rules; actual staging/export inspection remains mandatory.
+install rules; actual staging/export inspection of this preparation remains
+mandatory. The independently inspected existing stage has original COPYING
+texts but **no Dark Reader MIT notice**; its source export predates these rules.
+No test/ValaUnit-named payload was found in that stage, not a certified final
+export. Static archives/tools in staging may be removed by final cleanup.
 
+The existing staged manifest now establishes GNOME 51 Platform commit
+`aed50acfdad2e6c6c05e1595ddbde3c9e642f967bde41bfa70e3a8d962408541` and SDK
+`8787593c4d75cbdd277a91945eab9185e18de537479eb8401f852d3f746c49c1`;
+these are evidence for that build only, not for an unbuilt preparation release.
 The GNOME 51 runtime/SDK and transitive components are not completely identified
 by a branch label. Record resolved commits and enumerate shipped `/app` files,
 linked/shared libraries, plugin modules, web resources and any static/embedded

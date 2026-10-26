@@ -41,7 +41,16 @@ remains private.
 - [x] Prepare an **unsent** Canonical enquiry draft and future native/pastel
   desktop design brief; neither contact nor app redesign has occurred.
 - [x] Remove inherited tracked test log `ct.out` from the prepared current tree;
-  keep source/build files and preserve history. Historical privacy review is open.
+  keep source/build files and preserve history. Follow-up verifies the identical
+  blob is already public upstream, with build/test paths rather than newly
+  introduced owner secrets. Whole-history review remains distinct.
+- [x] Establish a sourced [licensing decision](docs/LICENSING-DECISION.md):
+  retaining TNEF permits compatible GPL combined-binary distribution; no new
+  upstream conversion permission is needed. Recommendation: GPLv3 combined
+  release, preserving independent LGPL source grants. No licence switch made.
+- [x] Verify exact cached dependency COPYING hashes and checksum-verified
+  libical/GMime archive licence members. Verify Dark Reader JS/MIT byte-identical
+  to official npm 4.9.105, matching registry integrity and source gitHead.
 
 ## 1 · Engineering acceptance — open, not all green
 
@@ -65,26 +74,33 @@ remains private.
 
 ## 2 · Licences, complete assets and package contents
 
-- [ ] **Critical: settle libytnef GPL-2.0-or-later combined-binary obligations.**
-  Its exact library header was inspected; it is not LGPL. Choose/review combined-
-  work terms/metadata/source delivery, or explicitly approve and test disabling
-  TNEF plus removing its module. No silent feature/licence change in this branch.
+- [ ] **Owner choice, then implement:** retain TNEF with the documented GPLv3
+  combined-release/source/notice/metadata plan (recommended), or explicitly
+  approve TNEF-off plus removal of libytnef/tools and clean-build verification.
+  The legal compatibility route is established; this is not a request for new
+  upstream permission. Implement the elected release-copy/linking notice rules
+  without erasing original independent LGPL rights or third-party asset terms.
 - [ ] Audit every shipped file/component, transitive dependency and exception.
   Practice sources are pinned: GOA 3.58.1, libical 3.0.20, EDS 3.60.2, folks
   0.15.12, GMime 3.2.15, libpeas 2.2.1, libytnef 1.9.3, Snowball 3.1.1.
-  Verify notices against actual checksum-verified archives/build inputs; top-
-  level licence texts alone do not establish all file/copyright obligations.
-- [ ] Establish EDS component/file version options and any exceptions; retain
-  all component copyright notices, not just generic LGPL/GPL texts.
-- [ ] Verify bundled Dark Reader 4.9.105 generated API file corresponds to exact
-  source/build and inspect bundled subcomponents; preserve MIT notice in source
-  and installed package. Record the vendored hash (inventory has current hash).
-- [ ] Confirm ValaUnit is test-only in the exported binary (install=false), or
-  account for any shipped pieces under its LGPL and original authorship.
+  Input/notice correspondence is verified above; top-level texts alone still
+  do not establish all file/copyright obligations of the final shipped closure.
+- [ ] Carry EDS's now-identified mixed LGPL version options and OpenLDAP-source
+  exception into the final inventory; retain all component copyright headers,
+  not just generic texts or a false uniform LGPL version. OpenLDAP backend is
+  disabled in this manifest; full-source delivery still retains its terms.
+- [ ] Verify **installed/exported** Dark Reader MIT copyright/permission notice.
+  API provenance is resolved above; the inspected older stage lacks this notice.
+- [ ] Confirm ValaUnit is absent/test-only in the **final export** (install=false).
+  No test/ValaUnit-named payload was found in the inspected existing stage;
+  account for any pieces actually shipped under their original LGPL/authorship.
 - [ ] Finish full inherited asset audit: icon/sound attribution, modification
   history, ShareAlike where applicable, application icons and legacy screenshots.
   Public README uses only new original art; unused historical images are not
-  thereby cleared. Verify public-data suitability before displaying them.
+  thereby cleared. Add path-to-author/licence coverage for installed font/format/
+  edit icons, RTL variants and inherited Convey application icons missing from
+  the old list. Mark adaptations and retain ShareAlike for adapted CC assets.
+  Verify legacy screenshots' public-data suitability before displaying them.
 - [ ] Inspect staged install and final exported package: accessible COPYING*,
   third-party texts/attributions, resource/plugin/shared-library inventory,
   Snowball notice and runtime licensing/source availability. Check relevant LGPL
@@ -98,7 +114,9 @@ remains private.
   Recheck every later changed/new file and dated notice.
 - [ ] Record package version, manifest, all build options, dependency revisions,
   resolved GNOME Platform/SDK **51 commit IDs**, architecture, build tool versions
-  and final binary/source hashes. A branch name or `-Drevno` string is not enough.
+  and final binary/source hashes for the **final release**. Existing stage's
+  resolved commits are now recorded in the decision, not recertified for this
+  unbuilt preparation. A branch name or `-Drevno` string is not enough.
 - [ ] Replace local `type: dir` with a reviewed immutable candidate source or
   clean export. Include all corresponding source, bindings/interface definitions,
   resources, subprojects and scripts controlling compilation/installation.
@@ -128,9 +146,10 @@ remains private.
   Do not silently distribute a new independent app as `net.donnybeelo.Convey`.
 - [ ] Review entire retained history for secrets/private data and legacy asset
   suitability before changing visibility. The inherited historical `ct.out`
-  contains personal path strings despite removal from this branch's tip;
-  preservation of history is not a completed privacy audit. Ask owner to decide
-  any remediation; do not rewrite or force-push history automatically.
+  blob is identical to the already-public upstream build/test log, not a newly
+  introduced owner secret. Its paths alone do not justify a history rewrite;
+  this narrow result is not a whole-history privacy audit. No sensitive values
+  are reproduced; do not rewrite or force-push history automatically.
 - [ ] Decide supported desktop scope and finish visible UI acceptance.
 - [ ] Obtain explicit owner go-ahead for **source visibility**, any **repository
   rename**, **release/tag** and **binary/source publication destination** separately.
@@ -140,6 +159,7 @@ remains private.
 
 [COPYING](COPYING), especially 0, 1, 2(b), 4 and where applicable 6;
 [COPYING.icons](COPYING.icons), [COPYING.sounds](COPYING.sounds),
-[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md), [BUILDING.md](BUILDING.md),
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md),
+[LICENSING-DECISION.md](docs/LICENSING-DECISION.md), [BUILDING.md](BUILDING.md),
 [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md), [test/README.md](test/README.md),
 [BRANDING.md](docs/BRANDING.md), [unsent permission enquiry](docs/CANONICAL-NAME-PERMISSION-DRAFT.md).
