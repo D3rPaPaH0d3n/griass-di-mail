@@ -78,6 +78,21 @@ msgstr "Mail;E-Mail;IMAP;GMail;Yahoo;Hotmail;Outlook;Post;Email;"
 msgid "Compose Message"
 msgstr "Nachricht verfassen"
 
+#: src/client/application/application-status-icon.vala
+msgid "Open Convey"
+msgstr "Convey öffnen"
+
+#: src/client/application/application-status-icon.vala
+msgid "No new mail"
+msgstr "Keine neuen E-Mails"
+
+#: src/client/application/application-status-icon.vala
+#, c-format
+msgid "%u new message"
+msgid_plural "%u new messages"
+msgstr[0] "%u neue E-Mail"
+msgstr[1] "%u neue E-Mails"
+
 #: desktop/net.donnybeelo.Convey.desktop.in.in:27
 msgid "New Window"
 msgstr "Neues Fenster"
@@ -4521,6 +4536,60 @@ msgstr "Passwort"
 #, fuzzy
 msgid "_Remember Password"
 msgstr "_Passwort speichern"
+
+#: desktop/net.donnybeelo.Convey.gschema.xml
+msgid "Display recipient aliases"
+msgstr "Empfänger-Aliasse anzeigen"
+
+#: desktop/net.donnybeelo.Convey.gschema.xml
+msgid "Show configured account addresses found in To/Cc of loaded conversation messages."
+msgstr "Eingerichtete Kontoadressen anzeigen, die in An/Kopie der geladenen Nachrichten einer Konversation vorkommen."
+
+#: ui/components-preferences-dialog.ui
+msgid "Show recipient _aliases"
+msgstr "Empfänger-_Aliasse anzeigen"
+
+#: ui/components-preferences-dialog.ui
+msgid "Show configured account addresses found in To/Cc of loaded messages"
+msgstr "Eingerichtete Kontoadressen anzeigen, die in An/Kopie geladener Nachrichten vorkommen"
+
+#. Translators: %s is a configured email address, optionally with +N.
+#: src/client/conversation-list/conversation-list-row.vala
+#, c-format
+msgid "To/Cc: %s"
+msgstr "An/Kopie: %s"
+
+#. Translators: %s lists all configured addresses matched in To/Cc.
+#: src/client/conversation-list/conversation-list-row.vala
+#, c-format
+msgid "Configured account addresses in To/Cc of loaded messages in this conversation, excluding drafts, deleted messages and apparent outgoing mail. Not a verified delivery address:\n%s"
+msgstr "Eingerichtete Kontoadressen in An/Kopie der geladenen Nachrichten dieser Konversation, ohne Entwürfe, gelöschte Nachrichten und offenbar ausgehende E-Mails. Keine bestätigte Zustelladresse:\n%s"
+
+#: desktop/net.donnybeelo.Convey.gschema.xml
+msgid "Display contact pictures"
+msgstr "Kontaktbilder anzeigen"
+
+#: desktop/net.donnybeelo.Convey.gschema.xml
+msgid "Show an existing contact picture or initials for the summary message's sender, or its first To/Cc recipient in outgoing folders."
+msgstr "Ein vorhandenes Kontaktbild oder Initialen für den Absender der zusammengefassten Nachricht anzeigen, in Ausgangsordnern für den ersten Empfänger unter An/Kopie."
+
+#: ui/components-preferences-dialog.ui
+msgid "Show contact _pictures"
+msgstr "Kontakt_bilder anzeigen"
+
+#: ui/components-preferences-dialog.ui
+msgid "Existing contact picture or initials for the summary sender; first To/Cc recipient in outgoing folders"
+msgstr "Vorhandenes Kontaktbild oder Initialen des Absenders der zusammengefassten Nachricht; in Ausgangsordnern des ersten Empfängers unter An/Kopie"
+
+#: src/client/conversation-list/conversation-list-row.vala
+#, c-format
+msgid "Sender of the summary message: %s"
+msgstr "Absender der zusammengefassten Nachricht: %s"
+
+#: src/client/conversation-list/conversation-list-row.vala
+#, c-format
+msgid "Recipient of the summary message: %s"
+msgstr "Empfänger der zusammengefassten Nachricht: %s"
 
 #~ msgid "Geary Development Team"
 #~ msgstr "Convey-Entwicklerteam"

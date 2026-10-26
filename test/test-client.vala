@@ -60,6 +60,8 @@ int main(string[] args) {
     client.add_suite(new Composer.WidgetTest().steal_suite());
     client.add_suite(new Util.Cache.Test().steal_suite());
     client.add_suite(new Util.Email.Test().steal_suite());
+    client.add_suite(new Util.Email.RecipientAliasesTest().steal_suite());
+    client.add_suite(new Util.Email.SummaryContactTest().steal_suite());
     client.add_suite(new Util.JS.Test().steal_suite());
 
     /*

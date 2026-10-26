@@ -475,3 +475,366 @@ public class Util.Email.Test : TestCase {
     }
 
 }
+
+
+/** Synthetic matching tests: no Configuration, engine, bus or mail store. */
+public class Util.Email.RecipientAliasesTest : TestCase {
+
+    private Convey.AccountInformation account;
+
+    public RecipientAliasesTest() {
+        base("Util.Email.RecipientAliasesTest");
+        add_test("to_and_cc", to_and_cc);
+        add_test("duplicates_case_and_display_names", duplicates_case_and_display_names);
+        add_test("whole_addresses_only", whole_addresses_only);
+        add_test("missing_fields", missing_fields);
+        add_test("bcc_and_raw_headers_ignored", bcc_and_raw_headers_ignored);
+        add_test("incoming_survives_own_reply", incoming_survives_own_reply);
+        add_test("own_originators_and_self_send", own_originators_and_self_send);
+        add_test("deleted_draft_and_outbox_sent", deleted_draft_and_outbox_sent);
+        add_test("known_outgoing_ids", known_outgoing_ids);
+        add_test("account_isolation", account_isolation);
+        add_test("stable_order", stable_order);
+        add_test("alias_edit_and_undo", alias_edit_and_undo);
+        add_test("loaded_union_append_and_trim", loaded_union_append_and_trim);
+        add_test("badge_colours_stable_and_unique", badge_colours_stable_and_unique);
+        add_test("badge_colours_duplicates_and_overflow", badge_colours_duplicates_and_overflow);
+    }
+
+    public override void set_up() {
+        this.account = new Convey.AccountInformation(
+            "alias-test", OTHER, new Mock.CredentialsMediator(),
+            new Convey.RFC822.MailboxAddress("Primary", "test@example.com")
+        );
+        this.account.append_sender(
+            new Convey.RFC822.MailboxAddress("Alias", "alias@example.com")
+        );
+    }
+
+    public override void tear_down() {
+        this.account = null;
+    }
+
+    public void to_and_cc() throws GLib.Error {
+        var to = new_email(1, "test@example.com");
+        assert_addresses(match(to), { "test@example.com" });
+
+        var cc = new_email(2, null, "alias@example.com");
+        assert_addresses(match(cc), { "alias@example.com" });
+
+        var both = new_email(3, "test@example.com", "alias@example.com");
+        assert_addresses(match(both), { "alias@example.com", "test@example.com" });
+    }
+
+    public void duplicates_case_and_display_names() throws GLib.Error {
+        var email = new_email(
+            1, "\"Untrusted <b>name</b>\" <ALIAS@EXAMPLE.COM>, alias@example.com",
+            "Other name <alias@example.com>, TEST@example.com"
+        );
+        var emails = new Gee.ArrayList<Convey.Email>();
+        emails.add(email);
+        emails.add(new_email(2, "Alias again <Alias@Example.Com>"));
+        var matches = get_recipient_aliases(emails, this.account.sender_mailboxes);
+        assert_addresses(matches, { "alias@example.com", "test@example.com" });
+        // Return the configured identity, not an untrusted recipient name.
+        assert_equal(matches[0].name, "Alias");
+    }
+
+    public void whole_addresses_only() throws GLib.Error {
+        var email = new_email(
+            1, "nottest@example.com, test@example.com.evil, test+tag@example.com, " +
+               "t.est@example.com, test@other.example, \"test@example.com\" <other@example.net>"
+        );
+        assert_collection(match(email)).is_empty();
+
+        // Plus tags and dots are literal identities, not normalised away.
+        this.account.append_sender(
+            new Convey.RFC822.MailboxAddress(null, "test+tag@example.com")
+        );
+        this.account.append_sender(
+            new Convey.RFC822.MailboxAddress(null, "t.est@example.com")
+        );
+        assert_addresses(match(email), { "t.est@example.com", "test+tag@example.com" });
+    }
+
+    public void missing_fields() throws GLib.Error {
+        var emails = new Gee.ArrayList<Convey.Email>();
+        assert_collection(get_recipient_aliases(emails, null)).is_empty();
+        assert_collection(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        )).is_empty();
+        emails.add(new Convey.Email(new Mock.EmailIdentifer(1)));
+        emails.add(new_email(2, "alias@example.com", null, null));
+        var empty_from = new_email(3, "alias@example.com", null, null);
+        empty_from.set_originators(
+            new Convey.RFC822.MailboxAddresses(), null,
+            new Convey.RFC822.MailboxAddresses.from_rfc822_string("outside@example.net")
+        );
+        emails.add(empty_from);
+        emails.add(new_email(4)); // Originator, but no recipients or flags.
+        assert_collection(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        )).is_empty();
+
+        var sender_only = new_email(5, "alias@example.com", null, null);
+        sender_only.set_originators(
+            null, new Convey.RFC822.MailboxAddress(null, "outside@example.net"), null
+        );
+        assert_addresses(match(sender_only), { "alias@example.com" });
+        assert_collection(get_recipient_aliases(
+            Convey.Collection.single(sender_only),
+            new Gee.ArrayList<Convey.RFC822.MailboxAddress>()
+        )).is_empty();
+    }
+
+    public void bcc_and_raw_headers_ignored() throws GLib.Error {
+        var email = new_email(1);
+        email.set_receivers(
+            null, null,
+            new Convey.RFC822.MailboxAddresses.from_rfc822_string("alias@example.com")
+        );
+        email.set_message_header(new Convey.RFC822.Header(
+            new Convey.Memory.StringBuffer(
+                "Delivered-To: alias@example.com\r\n" +
+                "X-Original-To: test@example.com\r\n" +
+                "To: alias@example.com\r\n\r\n"
+            )
+        ));
+        assert_collection(match(email)).is_empty();
+    }
+
+    public void incoming_survives_own_reply() throws GLib.Error {
+        var emails = new Gee.ArrayList<Convey.Email>();
+        var incoming = new_email(1, "alias@example.com");
+        emails.add(incoming);
+        // This reply must not add the primary identity or erase the alias.
+        var reply = new_email(2, "test@example.com", null, "alias@example.com");
+        emails.add(reply);
+        assert_addresses(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        ), { "alias@example.com" });
+        emails.clear();
+        emails.add(reply);
+        emails.add(incoming);
+        assert_addresses(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        ), { "alias@example.com" });
+    }
+
+    public void own_originators_and_self_send() throws GLib.Error {
+        assert_collection(match(new_email(
+            1, "test@example.com", null, "TEST@EXAMPLE.COM"
+        ))).is_empty();
+
+        var own_sender = new_email(2, "alias@example.com");
+        own_sender.set_originators(
+            own_sender.from,
+            new Convey.RFC822.MailboxAddress("Own sender", "test@example.com"),
+            null
+        );
+        assert_collection(match(own_sender)).is_empty();
+
+        var multiple_from = new_email(
+            3, "alias@example.com", null, "outside@example.net, test@example.com"
+        );
+        assert_collection(match(multiple_from)).is_empty();
+
+        var own_sender_only = new_email(4, "alias@example.com", null, null);
+        own_sender_only.set_originators(
+            null, new Convey.RFC822.MailboxAddress(null, "test@example.com"), null
+        );
+        assert_collection(match(own_sender_only)).is_empty();
+
+        // Reply-To is not an originator, and must not suppress a match.
+        var reply_to = new_email(5, "alias@example.com");
+        reply_to.set_originators(
+            reply_to.from, null,
+            new Convey.RFC822.MailboxAddresses.from_rfc822_string("test@example.com")
+        );
+        assert_addresses(match(reply_to), { "alias@example.com" });
+    }
+
+    public void deleted_draft_and_outbox_sent() throws GLib.Error {
+        var deleted = new_email(1, "alias@example.com");
+        deleted.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.DELETED));
+        var draft = new_email(2, "test@example.com");
+        draft.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.DRAFT));
+        var sent = new_email(3, "alias@example.com");
+        sent.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.OUTBOX_SENT));
+        var emails = new Gee.ArrayList<Convey.Email>();
+        emails.add(deleted);
+        emails.add(draft);
+        emails.add(sent);
+        assert_collection(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        )).is_empty();
+
+        // Recompute from the current flags, not from stale cached matches.
+        deleted.set_flags(new Convey.EmailFlags());
+        assert_addresses(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        ), { "alias@example.com" });
+        deleted.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.DELETED));
+        assert_collection(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        )).is_empty();
+    }
+
+    public void known_outgoing_ids() throws GLib.Error {
+        var emails = new Gee.ArrayList<Convey.Email>();
+        emails.add(new_email(1, "alias@example.com"));
+        // Even an external From is excluded if the model knows it is outgoing.
+        emails.add(new_email(2, "test@example.com"));
+        var excluded = new Gee.HashSet<Convey.EmailIdentifier>();
+        excluded.add(new Mock.EmailIdentifer(2));
+        assert_addresses(get_recipient_aliases(
+            emails, this.account.sender_mailboxes, excluded
+        ), { "alias@example.com" });
+    }
+
+    public void account_isolation() throws GLib.Error {
+        var other = new Convey.AccountInformation(
+            "other-test", OTHER, new Mock.CredentialsMediator(),
+            new Convey.RFC822.MailboxAddress(null, "other@example.com")
+        );
+        var emails = Convey.Collection.single(new_email(1, "other@example.com"));
+        assert_collection(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        )).is_empty();
+        assert_addresses(get_recipient_aliases(
+            emails, other.sender_mailboxes
+        ), { "other@example.com" });
+    }
+
+    public void stable_order() throws GLib.Error {
+        var emails = new Gee.ArrayList<Convey.Email>();
+        emails.add(new_email(1, "test@example.com"));
+        emails.add(new_email(2, "alias@example.com"));
+        var configured = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        configured.add_all(this.account.sender_mailboxes);
+        // Also handle duplicate configured addresses deterministically.
+        configured.add(new Convey.RFC822.MailboxAddress(null, "ALIAS@EXAMPLE.COM"));
+        string[] expected = { "ALIAS@EXAMPLE.COM", "test@example.com" };
+        assert_addresses(get_recipient_aliases(emails, configured), expected);
+        var reordered = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        foreach (var mailbox in configured) {
+            reordered.insert(0, mailbox);
+        }
+        var first = emails.remove_at(0);
+        emails.add(first);
+        assert_addresses(get_recipient_aliases(emails, reordered), expected);
+        // Input identity rank remains untouched.
+        assert_equal(this.account.primary_mailbox.address, "test@example.com");
+    }
+
+    public void alias_edit_and_undo() throws GLib.Error {
+        var email = new_email(1, "alias@example.com");
+        var original = this.account.sender_mailboxes[1];
+        this.account.replace_sender(
+            1, new Convey.RFC822.MailboxAddress(null, "edited@example.com")
+        );
+        assert_collection(match(email)).is_empty();
+        this.account.replace_sender(1, original);
+        assert_addresses(match(email), { "alias@example.com" });
+        this.account.remove_sender(original);
+        assert_collection(match(email)).is_empty();
+        this.account.append_sender(original);
+        assert_addresses(match(email), { "alias@example.com" });
+    }
+
+    public void loaded_union_append_and_trim() throws GLib.Error {
+        var emails = new Gee.ArrayList<Convey.Email>();
+        var primary = new_email(1, "test@example.com");
+        var alias = new_email(2, null, "alias@example.com");
+        emails.add(primary);
+        assert_addresses(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        ), { "test@example.com" });
+        emails.add(alias);
+        assert_addresses(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        ), { "alias@example.com", "test@example.com" });
+        emails.remove(primary);
+        assert_addresses(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        ), { "alias@example.com" });
+        emails.clear();
+        assert_collection(get_recipient_aliases(
+            emails, this.account.sender_mailboxes
+        )).is_empty();
+    }
+
+    public void badge_colours_stable_and_unique() throws GLib.Error {
+        var addresses = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        for (int i = 0; i < 12; i++) {
+            addresses.add(new Convey.RFC822.MailboxAddress(
+                "Name", "alias%d@example.com".printf(i)
+            ));
+        }
+        var reversed = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        for (int i = addresses.size - 1; i >= 0; i--) {
+            reversed.add(addresses[i]);
+        }
+        var colours = new Gee.HashSet<uint>();
+        foreach (var address in addresses) {
+            uint colour = get_recipient_alias_color(address, addresses);
+            assert_true(colour < 12);
+            assert_true(colours.add(colour));
+            assert_equal<uint?>(colour, get_recipient_alias_color(address, reversed));
+            var uppercase = new Convey.RFC822.MailboxAddress(
+                "Different name", address.address.up()
+            );
+            assert_equal<uint?>(colour, get_recipient_alias_color(uppercase, addresses));
+        }
+    }
+
+    public void badge_colours_duplicates_and_overflow() throws GLib.Error {
+        var addresses = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        var alias = new Convey.RFC822.MailboxAddress(null, "alias@example.com");
+        addresses.add(alias);
+        uint before = get_recipient_alias_color(alias, addresses);
+        addresses.add(new Convey.RFC822.MailboxAddress("Duplicate", "ALIAS@example.com"));
+        assert_equal<uint?>(before, get_recipient_alias_color(alias, addresses));
+        for (int i = 0; i < 30; i++) {
+            addresses.add(new Convey.RFC822.MailboxAddress(
+                null, "additional%d@example.com".printf(i)
+            ));
+        }
+        foreach (var address in addresses) {
+            assert_true(get_recipient_alias_color(address, addresses) < 12);
+        }
+        assert_true(get_recipient_alias_color(alias, null) < 12);
+    }
+
+    private Gee.List<Convey.RFC822.MailboxAddress> match(Convey.Email email) {
+        return get_recipient_aliases(
+            Convey.Collection.single(email), this.account.sender_mailboxes
+        );
+    }
+
+    private void assert_addresses(Gee.List<Convey.RFC822.MailboxAddress> matches,
+                                  string[] expected) throws GLib.Error {
+        assert_equal<int?>(matches.size, expected.length);
+        for (int i = 0; i < expected.length; i++) {
+            assert_equal(matches[i].address, expected[i]);
+        }
+    }
+
+    private Convey.Email new_email(int id,
+                                   string? to = null,
+                                   string? cc = null,
+                                   string? from = "outside@example.net")
+        throws GLib.Error {
+        var email = new Convey.Email(new Mock.EmailIdentifer(id));
+        email.set_originators(parse_addresses(from), null, null);
+        email.set_receivers(parse_addresses(to), parse_addresses(cc), null);
+        return email;
+    }
+
+    private Convey.RFC822.MailboxAddresses? parse_addresses(string? text)
+        throws GLib.Error {
+        return text != null
+            ? new Convey.RFC822.MailboxAddresses.from_rfc822_string(text)
+            : null;
+    }
+}

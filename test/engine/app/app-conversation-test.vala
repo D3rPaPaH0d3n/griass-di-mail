@@ -24,6 +24,7 @@ class Convey.App.ConversationTest : TestCase {
         add_test("get_emails_by_location", get_emails_by_location);
         add_test("get_emails_blacklist", get_emails_blacklist);
         add_test("get_emails_marked_for_deletion", get_emails_marked_for_deletion);
+        add_test("summary_switches_on_deleted_flags", summary_switches_on_deleted_flags);
         add_test("count_email_in_folder", count_email_in_folder);
     }
 
@@ -217,6 +218,44 @@ class Convey.App.ConversationTest : TestCase {
             this.test.get_emails(NONE, ANYWHERE),
             "Message marked for deletion still present in conversation"
         ).is_empty();
+    }
+
+    public void summary_switches_on_deleted_flags() throws GLib.Error {
+        var older = setup_email(1);
+        var newer = setup_email(2);
+        var received = new DateTime.now_local();
+        older.set_email_properties(new Mock.EmailProperties(received.add_minutes(-1)));
+        newer.set_email_properties(new Mock.EmailProperties(received));
+        older.set_originators(new RFC822.MailboxAddresses.single(
+            new RFC822.MailboxAddress("Older sender", "older@example.com")
+        ), null, null);
+        newer.set_originators(new RFC822.MailboxAddresses.single(
+            new RFC822.MailboxAddress("Newer sender", "newer@example.com")
+        ), null, null);
+        this.test.add(older, singleton(this.base_folder.path));
+        this.test.add(newer, singleton(this.base_folder.path));
+        assert_true(this.test.get_latest_recv_email(IN_FOLDER_OUT_OF_FOLDER) == newer);
+
+        // Reproduce the monitor's flags-only notification, without a GTK row
+        // or real account. Both text and contact selection must use this same
+        // representative message after deletion and after undo.
+        Email? selected = null;
+        uint notifications = 0;
+        ulong handler = this.test.email_flags_changed.connect((email) => {
+            notifications++;
+            selected = this.test.get_latest_recv_email(IN_FOLDER_OUT_OF_FOLDER);
+        });
+        newer.set_flags(new EmailFlags.with(EmailFlags.DELETED));
+        this.test.email_flags_changed(newer);
+        assert_true(selected == older);
+        assert_equal(selected.from[0].address, "older@example.com");
+
+        newer.set_flags(new EmailFlags());
+        this.test.email_flags_changed(newer);
+        assert_true(selected == newer);
+        assert_equal(selected.from[0].address, "newer@example.com");
+        assert_equal<uint?>(notifications, 2);
+        GLib.SignalHandler.disconnect(this.test, handler);
     }
 
     public void count_email_in_folder() throws GLib.Error {

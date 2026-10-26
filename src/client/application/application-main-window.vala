@@ -1593,8 +1593,13 @@ public class Application.MainWindow :
         // Conversation list
         this.conversation_list_box.append(this.conversation_list_info_bars);
 
+        var contact_controller = this.controller;
         this.conversation_list_view = new ConversationList.View(
-            this.application.config, this.application.decrypted_subjects
+            this.application.config, this.application.decrypted_subjects,
+            (account) => {
+                var context = contact_controller.get_context_for_account(account);
+                return context != null ? context.contacts : null;
+            }
         );
         this.conversation_list_view.mark_conversations.connect(on_mark_conversations);
         this.conversation_list_view.conversations_selected.connect(on_conversations_selected);

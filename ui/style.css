@@ -121,7 +121,10 @@ row.conversation-list.drag-n-drop {
 /* Scope to the row's own content box: context menu popovers are
  * widget children of the row, so a bare `label` rule would leak
  * into the menu items. */
-row.conversation-list > revealer > box label {
+/* Do not apply line spacing to the native avatar's internal initials. */
+row.conversation-list > revealer > box .details label,
+row.conversation-list > revealer > box label.date,
+row.conversation-list > revealer > box label.count-badge {
   margin-bottom: 0.4em;
 }
 
@@ -132,6 +135,83 @@ row.conversation-list .details {
 row.conversation-list .tertiary {
   opacity: 0.7;
   font-size: 0.8em;
+}
+
+/* Secondary address hints: subtle tints with theme-aware, muted text. */
+row.conversation-list .recipient-aliases {
+  padding: 0;
+}
+
+row.conversation-list .participants-line {
+  margin-bottom: 0.4em;
+}
+
+row.conversation-list .details .participants-line label {
+  margin: 0;
+}
+
+row.conversation-list .details label.recipient-alias-badge {
+  margin: 0;
+  padding: 2px 5px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: normal;
+  opacity: 1;
+}
+
+row.conversation-list .recipient-alias-badge.alias-colour-0 {
+  background: alpha(#3584e4, 0.08);
+  color: color-mix(in srgb, #3584e4 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-1 {
+  background: alpha(#2c9c62, 0.08);
+  color: color-mix(in srgb, #2c9c62 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-2 {
+  background: alpha(#c77729, 0.08);
+  color: color-mix(in srgb, #c77729 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-3 {
+  background: alpha(#9170c8, 0.08);
+  color: color-mix(in srgb, #9170c8 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-4 {
+  background: alpha(#c76a99, 0.08);
+  color: color-mix(in srgb, #c76a99 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-5 {
+  background: alpha(#299b8b, 0.08);
+  color: color-mix(in srgb, #299b8b 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-6 {
+  background: alpha(#b18d27, 0.08);
+  color: color-mix(in srgb, #b18d27 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-7 {
+  background: alpha(#2999b2, 0.08);
+  color: color-mix(in srgb, #2999b2 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-8 {
+  background: alpha(#c66c6c, 0.08);
+  color: color-mix(in srgb, #c66c6c 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-9 {
+  background: alpha(#6c7fc6, 0.08);
+  color: color-mix(in srgb, #6c7fc6 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-10 {
+  background: alpha(#7b9c39, 0.08);
+  color: color-mix(in srgb, #7b9c39 25%, @window_fg_color);
+}
+row.conversation-list .recipient-alias-badge.alias-colour-11 {
+  background: alpha(#ac6eb5, 0.08);
+  color: color-mix(in srgb, #ac6eb5 25%, @window_fg_color);
+}
+
+row.conversation-list .recipient-alias-badge.alias-overflow {
+  background: alpha(@window_fg_color, 0.05);
+  color: color-mix(in srgb, @window_fg_color 75%, @view_bg_color);
 }
 
 row.conversation-list .details > :nth-child(2) {

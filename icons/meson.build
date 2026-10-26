@@ -55,6 +55,12 @@ install_data(
 symbolic_dir = join_paths('hicolor', 'symbolic', 'apps')
 
 install_data(
+  join_paths(scalable_dir, 'net.donnybeelo.Convey-tray.svg'),
+  install_dir: join_paths(data_dir, 'icons', scalable_dir),
+  rename: '@0@-tray.svg'.format(convey_id),
+)
+
+install_data(
   join_paths(symbolic_dir, 'net.donnybeelo.Convey-symbolic.svg'),
   install_dir: join_paths(data_dir, 'icons', symbolic_dir),
   rename: '@0@-symbolic.svg'.format(convey_id)

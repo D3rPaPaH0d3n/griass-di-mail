@@ -13,6 +13,10 @@
 [GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-list-view.ui")]
 public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
+    public delegate Application.ContactStore? ContactStoreLookup(
+        Convey.AccountInformation account
+    );
+
     /**
      * The fields that must be available on any ConversationMonitor
      * passed to ConversationList.View
@@ -43,6 +47,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
     private Application.Configuration config;
     private Application.DecryptedSubjects decrypted_subjects;
+    private ContactStoreLookup? contact_stores;
 
     private Gtk.GestureLongPress long_press_gesture;
     private Gdk.ModifierType last_modifier_type;
@@ -57,9 +62,11 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     private Gtk.ListBoxRow? to_restore_row = null;
 
     public View(Application.Configuration config,
-                Application.DecryptedSubjects decrypted_subjects) {
+                Application.DecryptedSubjects decrypted_subjects,
+                owned ContactStoreLookup? contact_stores = null) {
         this.config = config;
         this.decrypted_subjects = decrypted_subjects;
+        this.contact_stores = (owned) contact_stores;
 
         var overlay = new Gtk.Overlay();
         Gtk.Widget scrolled = this.child;
@@ -310,8 +317,14 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
     private Gtk.Widget row_factory(Object convo_obj) {
         var convo = (Convey.App.Conversation) convo_obj;
+        // Resolve an already-existing store for this row's account, including
+        // All Inboxes. No contact lookup is performed by the factory.
+        var contacts = this.contact_stores != null
+            ? this.contact_stores(convo.base_folder.account.information)
+            : null;
         var row = new Row(
-            config, this.decrypted_subjects, convo, this.selection_mode_enabled
+            config, this.decrypted_subjects, convo, this.selection_mode_enabled,
+            contacts
         );
         row.toggle_flag.connect(on_toggle_flags);
         row.toggle_selection.connect(on_toggle_selection);

@@ -13,6 +13,8 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.SwitchRow display_preview_row;
     [GtkChild] private unowned Adw.SwitchRow display_participants_row;
     [GtkChild] private unowned Adw.SwitchRow display_subject_row;
+    [GtkChild] private unowned Adw.SwitchRow display_recipient_aliases_row;
+    [GtkChild] private unowned Adw.SwitchRow display_contact_pictures_row;
     [GtkChild] private unowned Adw.PreferencesGroup conversation_list_group;
     [GtkChild] private unowned Adw.NavigationPage conversation_list_subpage;
     [GtkChild] private unowned Gtk.Button conversation_list_reset_button;
@@ -226,6 +228,16 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             "active"
         );
         setup_conversation_list_order();
+        config.bind(
+            Application.Configuration.DISPLAY_RECIPIENT_ALIASES_KEY,
+            this.display_recipient_aliases_row,
+            "active"
+        );
+        config.bind(
+            Application.Configuration.DISPLAY_CONTACT_PICTURES_KEY,
+            this.display_contact_pictures_row,
+            "active"
+        );
         config.bind(
             Application.Configuration.SINGLE_KEY_SHORTCUTS,
             this.single_key_shortcuts_row,

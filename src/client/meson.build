@@ -32,6 +32,8 @@ client_vala_sources = files(
   'application/application-notification-plugin-context.vala',
   'application/application-plugin-manager.vala',
   'application/application-startup-manager.vala',
+  'application/application-status-icon.vala',
+  'application/application-tray-mail-model.vala',
   'application/goa-mediator.vala',
   'application/secret-mediator.vala',
 

@@ -1,1 +1,11 @@
 /.direnv
+/_test_build/
+/.flatpak-builder/
+/build-*/
+/repo-*/
+/private/
+*.flatpak
+*.gpg
+*.asc
+/docs/validation.md
+/docs/recipient-alias-plan.md

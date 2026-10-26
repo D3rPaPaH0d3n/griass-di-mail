@@ -14,37 +14,15 @@ internal class ConversationList.Participant : Convey.BaseObject, Gee.Hashable<Pa
     }
 
     public string get_full_markup(Gee.List<Convey.RFC822.MailboxAddress> account_mailboxes) {
-        return get_as_markup((address in account_mailboxes) ? ME : address.to_short_display());
+        return get_as_markup((address in account_mailboxes)
+            ? "%s %s".printf(ME, address.to_address_display())
+            : address.to_full_display());
     }
 
     public string get_short_markup(Gee.List<Convey.RFC822.MailboxAddress> account_mailboxes) {
-        if (address in account_mailboxes)
-            return get_as_markup(ME);
-
-        if (address.is_spoofed()) {
-            return get_full_markup(account_mailboxes);
-        }
-
-        string short_address = Markup.escape_text(address.to_short_display());
-
-        if (", " in short_address) {
-            // assume address is in Last, First format
-            string[] tokens = short_address.split(", ", 2);
-            short_address = tokens[1].strip();
-            if (Convey.String.is_empty(short_address))
-                return get_full_markup(account_mailboxes);
-        }
-
-        // use first name as delimited by a space
-        string[] tokens = short_address.split(" ", 2);
-        if (tokens.length < 1)
-            return get_full_markup(account_mailboxes);
-
-        string first_name = tokens[0].strip();
-        if (Convey.String.is_empty_or_whitespace(first_name))
-            return get_full_markup(account_mailboxes);
-
-        return get_as_markup(first_name);
+        // Keep actual addresses visible for every participant, including
+        // multi-sender threads. GtkLabel handles visual ellipsizing.
+        return get_full_markup(account_mailboxes);
     }
 
     private string get_as_markup(string participant) {

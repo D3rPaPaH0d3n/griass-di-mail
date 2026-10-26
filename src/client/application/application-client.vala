@@ -407,7 +407,20 @@ public class Application.Client : Adw.Application {
         // a window.
         hold();
 
-        // Finally, start the controller.
+        // Reopen the background app through the desktop's existing SNI host.
+        var connection = get_dbus_connection();
+        if (connection != null) {
+            try {
+                this.status_icon = new StatusIcon(connection, Config.APP_ID);
+                this.status_icon.item.open_requested.connect((token) => this.present.begin(token));
+                this.status_icon.item.compose_requested.connect(() => this.new_composer.begin());
+                this.status_icon.item.quit_requested.connect(() => this.quit.begin());
+                this.status_icon.item.email_requested.connect((target) => this.show_email.begin(target));
+            } catch (GLib.Error error) {
+                debug("Tray integration unavailable: %s", error.message);
+            }
+        }
+        // Tray exists before plugins can report their first new-mail events.
         this.create_controller.begin();
     }
 
@@ -420,6 +433,10 @@ public class Application.Client : Adw.Application {
     }
 
     public override void shutdown() {
+        if (this.status_icon != null) {
+            this.status_icon.close();
+            this.status_icon = null;
+        }
         bool controller_closed = false;
         this.destroy_controller.begin((obj, res) => {
                 this.destroy_controller.end(res);
@@ -905,9 +922,18 @@ public class Application.Client : Adw.Application {
 
     // Presents a main window, opening the controller and window if
     // needed.
-    private async MainWindow present() {
+    private StatusIcon? status_icon = null;
+
+    internal void update_tray_new_mail(string folder_key, Convey.Folder engine_folder,
+        Gee.Map<Convey.EmailIdentifier,GLib.Variant> targets) {
+        if (this.status_icon != null)
+            this.status_icon.update_new_mail.begin(folder_key, engine_folder, targets);
+    }
+
+    private async MainWindow present(string activation_token = "") {
         yield create_controller();
         MainWindow main = get_active_main_window();
+        if (activation_token != "") main.startup_id = activation_token;
         main.present();
         return main;
     }

@@ -1,4 +1,7 @@
 
+> Private downstream with recipient aliases, contact photos, exact received
+> timestamps and a new-mail tray. See [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md).
+
 <div align="center">
   <img src="./icons/hicolor/scalable/apps/net.donnybeelo.Convey.svg" />
   <h1>Convey: Send and receive email</h1>

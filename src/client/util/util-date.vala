@@ -211,6 +211,18 @@ public string pretty_print_verbose(DateTime datetime, ClockFormat clock_format) 
     return datetime.format(xlat_pretty_verbose_dates[clock_format.to_index()]);
 }
 
+/** Exact received date/time; two lines keep narrow conversation rows usable. */
+public string format_received(DateTime? datetime) {
+    return datetime != null
+        ? datetime.to_local().format("%d.%m.%Y\n%H:%M:%S") : "";
+}
+
+/** Include the offset so repeated daylight-saving hours are unambiguous. */
+public string format_received_tooltip(DateTime? datetime) {
+    return datetime != null
+        ? datetime.to_local().format("%d.%m.%Y %H:%M:%S %Z (%z)") : "";
+}
+
 public string get_clock_format(ClockFormat clock_format) {
     return xlat_pretty_clocks[clock_format.to_index()];
 }

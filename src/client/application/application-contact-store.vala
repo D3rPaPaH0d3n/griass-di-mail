@@ -45,6 +45,9 @@ public class Application.ContactStore : Convey.BaseObject {
 
     internal Folks.IndividualAggregator individuals;
 
+    /** Normalised addresses whose desktop-contact lookup must be repeated. */
+    internal signal void contacts_changed(Gee.Set<string> addresses);
+
     // Cache for storing Folks individuals by email address. Store
     // nulls so that negative lookups are cached as well.
     private Util.Cache.Lru<Folks.Individual?> folks_address_cache =
@@ -282,16 +285,37 @@ public class Application.ContactStore : Convey.BaseObject {
         return match;
     }
 
+    // Shared with the pure negative-cache regression cases; no account or
+    // Folks backend needs to be created to exercise cache invalidation.
+    internal static void invalidate_address_cache(
+        Util.Cache.Lru<Folks.Individual?> cache,
+        Gee.Collection<string> addresses
+    ) {
+        foreach (string address in addresses) {
+            cache.remove_entry(to_cache_key(address));
+        }
+    }
+
     private void on_individuals_changed(
         Gee.MultiMap<Folks.Individual?,Folks.Individual?> changes) {
-        foreach (Folks.Individual? individual in changes.get_keys()) {
+        var affected = new Gee.HashSet<string>();
+        var individuals = new Gee.ArrayList<Folks.Individual?>();
+        individuals.add_all(changes.get_keys());
+        individuals.add_all(changes.get_values());
+        // New individuals have a null old key: looking only at keys leaves
+        // earlier negative lookups cached when address books finish loading.
+        foreach (Folks.Individual? individual in individuals) {
             if (individual != null) {
                 this.contact_id_cache.remove_entry(individual.id);
                 foreach (Folks.EmailFieldDetails email in
                          individual.email_addresses) {
-                    this.folks_address_cache.remove_entry(email.value);
+                    affected.add(to_cache_key(email.value));
                 }
             }
+        }
+        invalidate_address_cache(this.folks_address_cache, affected);
+        if (!affected.is_empty) {
+            contacts_changed(affected);
         }
     }
 

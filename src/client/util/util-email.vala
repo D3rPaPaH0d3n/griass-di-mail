@@ -8,6 +8,147 @@
 
 namespace Util.Email {
 
+    /** Fixed CSS palette, with collisions resolved across account identities. */
+    public uint get_recipient_alias_color(
+        Convey.RFC822.MailboxAddress address,
+        Gee.Collection<Convey.RFC822.MailboxAddress>? own_addresses
+    ) {
+        const uint PALETTE_SIZE = 12;
+        string key = address.address.casefold();
+        var keys = new Gee.TreeSet<string>((a, b) => GLib.strcmp(a, b));
+        if (own_addresses != null) {
+            foreach (var own in own_addresses) {
+                keys.add(own.address.casefold());
+            }
+        }
+        // Independent of matching messages, identity order and display names.
+        bool[] used = new bool[PALETTE_SIZE];
+        foreach (string configured in keys) {
+            uint colour = GLib.str_hash(configured) % PALETTE_SIZE;
+            for (uint attempt = 0; attempt < PALETTE_SIZE; attempt++) {
+                if (!used[colour]) {
+                    break;
+                }
+                colour = (colour + 1) % PALETTE_SIZE;
+            }
+            used[colour] = true;
+            if (configured == key) {
+                return colour;
+            }
+        }
+        return GLib.str_hash(key) % PALETTE_SIZE;
+    }
+
+    /**
+     * Selects one contact for the row's chosen summary message, not the thread.
+     * Uses first From then Sender for incoming mail, or first To then Cc in
+     * outgoing folders. Reply-To and Bcc do not select the contact picture.
+     */
+    public Convey.RFC822.MailboxAddress? get_summary_contact_mailbox(
+        Convey.EmailHeaderSet? headers, bool outgoing
+    ) {
+        if (headers == null) {
+            return null;
+        }
+        if (outgoing) {
+            if (headers.to != null && !headers.to.is_empty) {
+                return headers.to[0];
+            }
+            if (headers.cc != null && !headers.cc.is_empty) {
+                return headers.cc[0];
+            }
+            return null;
+        }
+        if (headers.from != null && !headers.from.is_empty) {
+            return headers.from[0];
+        }
+        return headers.sender;
+    }
+
+    /**
+     * Finds configured own addresses in the cached To/Cc of loaded messages.
+     *
+     * This is a conversation summary, not an SMTP envelope or authenticated
+     * direction check. Own From/Sender and missing originators are skipped
+     * conservatively, so self-sends and spoofed own From can be omitted.
+     * Callers may exclude messages known to be in outgoing/draft folders.
+     * No headers are fetched or parsed, and Bcc is deliberately ignored.
+     * Results contain configured mailboxes, sorted by address rather than
+     * identity rank, and deduplicated using MailboxAddress.equal_to().
+     */
+    public Gee.List<Convey.RFC822.MailboxAddress> get_recipient_aliases(
+        Gee.Collection<Convey.Email> emails,
+        Gee.Collection<Convey.RFC822.MailboxAddress>? own_addresses,
+        Gee.Collection<Convey.EmailIdentifier>? excluded_ids = null
+    ) {
+        var matches = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        if (own_addresses == null || own_addresses.is_empty) {
+            return matches;
+        }
+
+        var configured = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        configured.add_all(own_addresses);
+        configured.sort((a, b) => {
+            int order = Convey.String.stri_cmp(a.address, b.address);
+            return order != 0 ? order : GLib.strcmp(a.address, b.address);
+        });
+
+        foreach (var email in emails) {
+            if (excluded_ids != null && excluded_ids.contains(email.id)) {
+                continue;
+            }
+            if (email.email_flags != null &&
+                (email.email_flags.is_deleted() ||
+                 email.email_flags.is_draft() ||
+                 email.email_flags.is_outbox_sent())) {
+                continue;
+            }
+
+            bool has_originator = email.sender != null ||
+                (email.from != null && !email.from.is_empty);
+            bool is_own = false;
+            foreach (var own in configured) {
+                if (email.sender != null && own.equal_to(email.sender)) {
+                    is_own = true;
+                    break;
+                }
+                if (contains_mailbox(email.from, own)) {
+                    is_own = true;
+                    break;
+                }
+            }
+            if (!has_originator || is_own) {
+                continue;
+            }
+
+            foreach (var own in configured) {
+                if ((contains_mailbox(email.to, own) ||
+                     contains_mailbox(email.cc, own)) &&
+                    !matches.any_match(match => match.equal_to(own))) {
+                    matches.add(own);
+                }
+            }
+        }
+
+        matches.sort((a, b) => {
+            int order = Convey.String.stri_cmp(a.address, b.address);
+            return order != 0 ? order : GLib.strcmp(a.address, b.address);
+        });
+        return matches;
+    }
+
+    private bool contains_mailbox(Convey.RFC822.MailboxAddresses? addresses,
+                                  Convey.RFC822.MailboxAddress own) {
+        if (addresses != null) {
+            foreach (var address in addresses) {
+                if (own.equal_to(address)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public int compare_conversation_ascending(Convey.App.Conversation a,
                                               Convey.App.Conversation b) {
         Convey.Email? a_latest = a.get_latest_recv_email(

@@ -51,6 +51,18 @@
       <description>True if we should display the subject of each conversation in the conversation list.</description>
     </key>
 
+    <key name="display-recipient-aliases" type="b">
+      <default>false</default>
+      <summary>Display recipient aliases</summary>
+      <description>Show configured account addresses found in To/Cc of loaded conversation messages.</description>
+    </key>
+
+    <key name="display-contact-pictures" type="b">
+      <default>false</default>
+      <summary>Display contact pictures</summary>
+      <description>Show an existing contact picture or initials for the summary message's sender, or its first To/Cc recipient in outgoing folders.</description>
+    </key>
+
     <key name="conversation-list-order" type="as">
       <default>['participants', 'subject', 'preview']</default>
       <summary>Conversation list line order</summary>

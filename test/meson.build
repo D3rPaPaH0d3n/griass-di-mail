@@ -95,6 +95,7 @@ test_client_sources = [
   'client/composer/composer-widget-test.vala',
   'client/util/util-cache-test.vala',
   'client/util/util-email-test.vala',
+  'client/util/util-email-summary-contact-test.vala',
   'client/util/util-js-test.vala',
 
   'js/components-page-state-test.vala',
@@ -171,6 +172,26 @@ test_client_bin = executable('test-client',
   build_rpath: client_build_dir,
 )
 
+# This runner instantiates only pure matching/summary-contact suites. It does not
+# initialise GTK, Configuration, Accounts.Manager, WebKit or a mail engine.
+test_recipient_aliases_bin = executable('test-recipient-aliases',
+  [
+    'test-case.vala',
+    'test-recipient-aliases.vala',
+    'client/conversation-list/conversation-list-participant-test.vala',
+    'client/util/util-date-received-test.vala',
+    'client/application/application-status-icon-test.vala',
+    'client/util/util-email-test.vala',
+    'client/util/util-email-summary-contact-test.vala',
+    'mock/mock-credentials-mediator.vala',
+    'mock/mock-email-identifier.vala',
+  ],
+  dependencies: test_client_dependencies,
+  vala_args: convey_vala_args,
+  c_args: convey_c_args,
+  build_rpath: client_build_dir,
+)
+
 test_js_dependencies = [
   config_dep,
   glib,
@@ -209,6 +230,11 @@ test(
   'engine-tests',
   test_engine_bin,
   depends: [ engine_lib ]
+)
+test(
+  'recipient-alias-tests',
+  test_recipient_aliases_bin,
+  depends: [ client_lib ]
 )
 test(
   'client-tests',

@@ -31,6 +31,8 @@ public class Application.Configuration : Convey.BaseObject {
     public const string DISPLAY_PREVIEW_KEY = "display-preview";
     public const string DISPLAY_PARTICIPANTS_KEY = "display-participants";
     public const string DISPLAY_SUBJECT_KEY = "display-subject";
+    public const string DISPLAY_RECIPIENT_ALIASES_KEY = "display-recipient-aliases";
+    public const string DISPLAY_CONTACT_PICTURES_KEY = "display-contact-pictures";
     public const string CONVERSATION_LIST_ORDER_KEY = "conversation-list-order";
     public const string UNSET_HTML_COLORS = "unset-html-colors";
     public const string FORMATTING_TOOLBAR_VISIBLE = "formatting-toolbar-visible";
@@ -127,6 +129,14 @@ public class Application.Configuration : Convey.BaseObject {
 
     public bool display_preview {
         get { return settings.get_boolean(DISPLAY_PREVIEW_KEY); }
+    }
+
+    public bool display_recipient_aliases {
+        get { return settings.get_boolean(DISPLAY_RECIPIENT_ALIASES_KEY); }
+    }
+
+    public bool display_contact_pictures {
+        get { return settings.get_boolean(DISPLAY_CONTACT_PICTURES_KEY); }
     }
 
     public bool unset_html_colors {

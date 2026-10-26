@@ -275,6 +275,22 @@ internal class Application.NotificationPluginContext :
             );
         }
         notify_property("total-new-messages");
+        update_tray(info);
+    }
+
+    private void update_tray(MonitorInformation info) {
+        // Both notification plugins monitor these folders. Publish only the
+        // auto-loaded desktop context, never sum duplicate monitors.
+        if (this.plugin.info.get_module_name() != "desktop-notifications") return;
+        var targets = new Gee.HashMap<Convey.EmailIdentifier,GLib.Variant>();
+        foreach (var plugin_id in this.globals.email.to_plugin_ids(info.recent_ids, info.context)) {
+            var id = plugin_id as EmailStoreFactory.IdImpl;
+            if (id != null) targets.set(id.backing, id.to_variant());
+        }
+        this.application.update_tray_new_mail(
+            info.folder.account.information.id + ":" + info.folder.path.to_variant().print(false),
+            info.folder, targets
+        );
     }
 
     private void remove_folder(Convey.Folder target) {
@@ -290,6 +306,8 @@ internal class Application.NotificationPluginContext :
             }
 
             this.folder_information.unset(target);
+            info.recent_ids.clear();
+            update_tray(info);
         }
 
     }

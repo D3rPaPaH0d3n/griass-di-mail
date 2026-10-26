@@ -190,6 +190,24 @@
                 </child>
               </object>
             </child>
+            <child>
+              <object class="AdwPreferencesGroup">
+                <child>
+                  <object class="AdwSwitchRow" id="display_recipient_aliases_row">
+                    <property name="title" translatable="yes">Show recipient _aliases</property>
+                    <property name="subtitle" translatable="yes">Show configured account addresses found in To/Cc of loaded messages</property>
+                    <property name="use-underline">True</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwSwitchRow" id="display_contact_pictures_row">
+                    <property name="title" translatable="yes">Show contact _pictures</property>
+                    <property name="subtitle" translatable="yes">Existing contact picture or initials for the summary sender; first To/Cc recipient in outgoing folders</property>
+                    <property name="use-underline">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </property>
       </object>
