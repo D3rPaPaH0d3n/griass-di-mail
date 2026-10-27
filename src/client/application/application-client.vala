@@ -62,6 +62,7 @@ public class Application.Client : Adw.Application {
 
     private const ActionEntry[] ACTION_ENTRIES = {
         { Action.Application.ABOUT, on_activate_about},
+        { Action.Application.PRIVACY, on_activate_privacy},
         { Action.Application.ACCOUNTS, on_activate_accounts},
         { Action.Application.COMPOSE, on_activate_compose},
         { Action.Application.HELP, on_activate_help},
@@ -575,9 +576,9 @@ public class Application.Client : Adw.Application {
             transient_for = get_active_window(),
             destroy_with_parent = true,
             program_name = NAME,
-            comments = DESCRIPTION,
-            authors = AUTHORS,
-            copyright = string.join("\n", COPYRIGHT_1, COPYRIGHT_2, COPYRIGHT_3),
+            comments = _("Native Linux email maintained by Markus Kainer (D3rPaPaH0d3n), based on Convey and Geary."),
+            authors = { "Markus Kainer (D3rPaPaH0d3n) <projekt@kainer.co.at>", null },
+            copyright = "Copyright © 2026 Markus Kainer",
             license_type = Gtk.License.GPL_3_0_ONLY,
             logo = banner,
             version = Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
@@ -589,6 +590,13 @@ public class Application.Client : Adw.Application {
             // <yamada.taro@example.com>
             translator_credits = _("translator-credits")
         };
+        about.add_credit_section(_("Original Convey and Geary authors"), AUTHORS);
+        about.add_credit_section(_("Original copyright notices"), {
+            COPYRIGHT_1, COPYRIGHT_2, COPYRIGHT_3, null
+        });
+        about.add_credit_section(_("Artwork provenance"), {
+            _("Closed-envelope icon and banner: generated with ChatGPT from text prompts by Markus Kainer. Technical exports retain the supplied originals."), null
+        });
         if (banner == null) {
             about.logo_icon_name = Config.APP_ID;
         } else {
@@ -1239,6 +1247,18 @@ public class Application.Client : Adw.Application {
             ? "griabuntu-mail"
             : "griabuntu-mail-" + Config.PROFILE
         );
+    }
+
+    private void on_activate_privacy() {
+        var dialog = new Adw.AlertDialog(_("Contact pictures and privacy"), null);
+        dialog.body_use_markup = true;
+        dialog.body = GLib.Markup.escape_text(_("Local contact photos take priority. External pictures are off by default. Gravatar receives an email-address SHA-256 hash and your connection IP address; with separate company-icon consent, DuckDuckGo receives the email domain and connection IP address. Hashes are not anonymous and pictures do not verify identity. No message content is sent. The app uses your proxy settings, keeps only a bounded memory cache, and cancels lookups and clears external pictures when you withdraw consent. Images inside emails keep their existing permissions.")) +
+            "\n\n<a href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail/blob/work/griabuntu-ubuntu-deb/docs/PRIVACY.md\">" +
+            GLib.Markup.escape_text(_("Full privacy policy and provider links")) + "</a>";
+        dialog.add_response("close", _("Close"));
+        dialog.default_response = "close";
+        dialog.close_response = "close";
+        dialog.present(get_active_window());
     }
 
     private void on_activate_about() {

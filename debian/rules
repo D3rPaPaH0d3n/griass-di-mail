@@ -23,6 +23,7 @@ override_dh_auto_configure:
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	python3 debian/run-tests.py obj-$(DEB_HOST_GNU_TYPE)
+	python3 debian/run-tests.py obj-$(DEB_HOST_GNU_TYPE) --pictures
 endif
 
 override_dh_shlibdeps:

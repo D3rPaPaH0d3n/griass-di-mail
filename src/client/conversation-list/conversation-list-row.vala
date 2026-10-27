@@ -79,6 +79,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
     private GriabuntuMail.Account? avatar_account = null;
     private Application.Contact? avatar_contact = null;
     private GLib.LoadableIcon? avatar_icon = null;
+    private Application.ContactPicture? sender_picture = null;
     private GLib.Cancellable? contact_cancellable = null;
     private GLib.Cancellable? image_cancellable = null;
     private uint avatar_generation = 0;
@@ -391,6 +392,8 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                 this.contact_changed_id = 0;
             }
         }
+        this.sender_picture?.close();
+        this.sender_picture = null;
         this.avatar_contact = null;
         this.avatar_icon = null;
         this.avatar_mailbox = null;
@@ -489,62 +492,24 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
             if (!GriabuntuMail.String.is_empty_or_whitespace(this.avatar_contact.display_name)) {
                 this.sender_avatar.text = this.avatar_contact.display_name;
             }
-            if (this.avatar_icon != this.avatar_contact.avatar) {
+            if (this.sender_picture == null || this.avatar_icon != this.avatar_contact.avatar) {
                 refresh_sender_image();
             }
         }
     }
 
     private void refresh_sender_image() {
-        this.image_cancellable?.cancel();
-        this.image_cancellable = null;
+        this.sender_picture?.close();
+        this.sender_picture = null;
         this.sender_avatar.custom_image = null;
         this.avatar_icon = this.avatar_contact != null ? this.avatar_contact.avatar : null;
         var mailbox = this.avatar_mailbox;
         var request = this.contact_cancellable;
-        var icon = this.avatar_icon;
-        if (mailbox != null && request != null && icon != null &&
+        if (mailbox != null && request != null &&
             is_current_sender(mailbox, this.avatar_generation, request)) {
-            var cancellable = new GLib.Cancellable();
-            this.image_cancellable = cancellable;
-            load_sender_image.begin(icon, mailbox, this.avatar_generation, request, cancellable);
-        }
-    }
-
-    private async void load_sender_image(GLib.LoadableIcon icon,
-                                         GriabuntuMail.RFC822.MailboxAddress mailbox,
-                                         uint generation,
-                                         GLib.Cancellable request,
-                                         GLib.Cancellable cancellable) {
-        GLib.InputStream? stream = null;
-        try {
-            stream = yield icon.load_async(this.sender_avatar.size, cancellable);
-            if (cancellable.is_cancelled()) {
-                return;
-            }
-            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(
-                stream, this.sender_avatar.size, this.sender_avatar.size, true, cancellable
+            this.sender_picture = new Application.ContactPicture(
+                this.sender_avatar, this.avatar_contact, mailbox, this.config
             );
-            if (is_current_sender(mailbox, generation, request) &&
-                !cancellable.is_cancelled() && this.image_cancellable == cancellable &&
-                this.avatar_icon == icon) {
-                this.sender_avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
-            }
-        } catch (GLib.IOError.CANCELLED err) {
-            // Keep initials, and never replace a newer sender's picture.
-        } catch (GLib.Error err) {
-            if (is_current_sender(mailbox, generation, request) &&
-                this.image_cancellable == cancellable) {
-                debug("Couldn't load summary contact picture: %s", err.message);
-            }
-        } finally {
-            if (stream != null) {
-                try {
-                    yield stream.close_async(GLib.Priority.DEFAULT, null);
-                } catch (GLib.Error err) {
-                    debug("Couldn't close contact picture stream: %s", err.message);
-                }
-            }
         }
     }
 

@@ -1,6 +1,25 @@
 <!-- Downstream modification: 2026-10-26 — extend preliminary audit into actionable Griabuntu Mail preparation gates. -->
 # Griabuntu Mail · release preparation checklist
 
+## Current development candidate · 2026-10-27
+
+This checklist retains the dated preparation history below. The current native
+candidate is `51.0+griabuntu20261027.6` on `work/griabuntu-ubuntu-deb`.
+Identity, selected owner envelope/banner, consent-controlled pictures, native
+teal/peach styling, bilingual presentation and package notices are implemented.
+See [current validation](docs/VALIDATION-20261027.md) for actual passing checks
+and their limits; historical red flag tests below were subsequently fixed.
+The owner authorised pushes, .deb creation, public visibility when complete,
+and setting the finished branch as default while preserving main/history.
+
+**Publication remains pending:** no written name permission or qualified name
+review exists, and inherited per-asset provenance gaps are recorded rather than
+certified away. The current candidate remains private; no external permission
+request has been sent. Original author/licence notices remain accessible.
+A passing engineering build is not a name clearance or full desktop acceptance.
+
+## Historical preparation record
+
 Prepared **2026-10-26**. **Private candidate only — no release approval or legal
 assurance.** Private working name selected by Markus: **Griabuntu Mail** (supersedes Briefwerk/Griabu). Repository name/visibility,
 technical IDs, installed profiles/icons and default branch remain unchanged.

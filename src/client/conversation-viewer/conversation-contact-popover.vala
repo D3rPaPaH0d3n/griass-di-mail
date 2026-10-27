@@ -45,6 +45,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
     private GLib.Cancellable load_cancellable = new GLib.Cancellable();
 
     private Application.Configuration config;
+    private Application.ContactPicture? contact_picture;
 
     [GtkChild] private unowned Gtk.Box contact_pane;
 
@@ -109,6 +110,8 @@ public class Conversation.ContactPopover : Gtk.Popover {
      */
     public override void dispose() {
         this.contact.changed.disconnect(this.on_contact_changed);
+        this.contact_picture?.close();
+        this.contact_picture = null;
         this.load_cancellable.cancel();
         base.dispose();
     }
@@ -184,23 +187,10 @@ public class Conversation.ContactPopover : Gtk.Popover {
     }
 
     private async void load_avatar() {
-        if (this.contact.avatar == null) {
-            this.avatar.custom_image = null;
-            return;
-        }
-
-        try {
-            GLib.InputStream stream = yield this.contact.avatar.load_async(
-                avatar.size, this.load_cancellable
-            );
-            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(
-                stream, avatar.size, avatar.size, true, load_cancellable
-            );
-            this.avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
-        } catch (GLib.Error err) {
-            debug("Couldn't load avatar for contact: %s", err.message);
-            this.avatar.custom_image = null;
-        }
+        this.contact_picture?.close();
+        this.contact_picture = new Application.ContactPicture(
+            this.avatar, this.contact, this.mailbox, this.config
+        );
     }
 
     private async void set_load_remote_resources(bool enabled) {

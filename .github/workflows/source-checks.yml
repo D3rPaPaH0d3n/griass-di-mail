@@ -1,0 +1,29 @@
+name: Source checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check identity and original icon exports
+        run: python3 build-aux/check-identity.py
+      - name: Check test-runner syntax
+        run: python3 -m py_compile debian/run-tests.py test/contact-picture-integration.py
+      - name: Check documentation links
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          for name in ['README.md', 'README.de.md', 'docs/PRIVACY.md', 'docs/UPGRADING.md']:
+              doc = Path(name)
+              for link in re.findall(r'\]\(([^)]+)\)', doc.read_text()):
+                  if ':' in link or link.startswith('#'):
+                      continue
+                  assert (doc.parent / link.split('#')[0]).exists(), (name, link)
+          PY

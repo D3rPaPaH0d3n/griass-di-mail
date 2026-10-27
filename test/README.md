@@ -115,3 +115,26 @@ If `PROVIDER` is `other`, then `HOSTNAME` is required.
 The easiest way to test against a number of different servers at the
 moment is to create a test account for each, then write a shell script
 or similar to execute the tests against each in turn.
+
+## Consent-controlled contact pictures (2026-10-27)
+
+The focused headless runner includes seven policy tests for default-off consent,
+separate company permission, SHA-256 normalisation, unsafe domains, free-mail
+providers, fresh settings and rejecting vector payloads.
+
+For the real client-library/GTK/HTTPS fixtures, with the build dependencies
+installed, run from the source root:
+
+```sh
+python3 debian/run-tests.py obj-x86_64-linux-gnu --pictures
+```
+
+The runner creates disposable HOME/XDG, a private bus/display and a loopback-only
+network namespace, with synthetic DNS and an ephemeral TLS trust/key fixture.
+A local HTTPS server behind a local HTTP CONNECT proxy exercises the real Soup
+transport, user proxy handling, Gravatar 404/company fallback, raster decoding,
+revocation, redirects, oversized/vector payloads and stale delayed responses.
+No external service or real mailbox is contacted. No TLS verification is disabled.
+The integration script refuses to run without the explicit fixture marker,
+memory settings and a loopback-only network namespace. Test keys are temporary
+and are never included in the repository or application package.

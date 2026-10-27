@@ -1,0 +1,29 @@
+name: Bug report / Fehler melden
+description: Help improve Griabuntu Mail / Griabuntu Mail verbessern
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you! Please use synthetic examples. Never attach passwords, personal emails or mail databases.
+        Danke! Bitte nur synthetische Beispiele. Keine Kennwörter, persönlichen Mailtexte oder Maildatenbanken hochladen.
+        Sensitive reports / Vertrauliche Meldungen: projekt@kainer.co.at
+  - type: input
+    id: version
+    attributes:
+      label: App and Ubuntu version / App- und Ubuntu-Version
+      placeholder: "Griabuntu Mail 51.0+griabuntu20261027.6, Ubuntu 26.10 amd64"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce / Schritte zum Nachstellen
+      description: Describe what happened and what you expected. / Was ist passiert, was wurde erwartet?
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional details / Weitere Angaben
+      description: Redact addresses and message content from screenshots and logs. / Adressen und Mailinhalte in Bildern und Logs schwärzen.

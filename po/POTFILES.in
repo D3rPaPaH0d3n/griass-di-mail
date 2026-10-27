@@ -469,3 +469,5 @@ ui/folder-popover.ui
 ui/gtk/help-overlay.ui
 ui/password-dialog.ui
 ui/problem-details-dialog.ui
+
+src/client/application/application-contact-picture.vala

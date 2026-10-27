@@ -168,6 +168,10 @@ install_data(
   install_dir: license_dir,
 )
 install_subdir('docs/licenses', install_dir: license_dir)
+install_data('docs/ARTWORK-PROVENANCE.md', 'docs/PRIVACY.md', 'docs/UPGRADING.md',
+  install_dir: license_dir,
+)
+
 
 # Ensure SQLite was built correctly
 if not cc.has_header_symbol('sqlite3.h', 'SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER', dependencies: sqlite)

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Downstream modification: 2026-10-27 — native compose emphasis and branded folder heading. -->
 <interface>
   <template class="ApplicationMainWindow" parent="AdwApplicationWindow">
     <property name="show_menubar">False</property>
@@ -205,6 +206,13 @@
                               <object class="AdwToolbarView" id="folder_box">
                                 <child type="top">
                                   <object class="AdwHeaderBar">
+                                    <property name="title-widget">
+                                      <object class="GtkLabel">
+                                        <property name="label">Griabuntu Mail</property>
+                                        <property name="ellipsize">end</property>
+                                        <style><class name="heading"/></style>
+                                      </object>
+                                    </property>
                                     <child>
                                       <object class="GtkButton" id="refresh_button">
                                         <property name="focus_on_click">False</property>
@@ -290,6 +298,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="compose_new_message_button">
+                                        <style><class name="suggested-action"/></style>
                                         <property name="focus_on_click">False</property>
                                         <property name="receives_default">False</property>
                                         <property name="tooltip_text" translatable="yes" context="tooltip">Compose Message</property>
@@ -470,6 +479,10 @@
         <attribute name="label" translatable="yes">_Help</attribute>
         <attribute name="action">app.help</attribute>
         <attribute name="accel">F1</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Contact pictures and privacy</attribute>
+        <attribute name="action">app.privacy</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">_About Griabuntu Mail</attribute>

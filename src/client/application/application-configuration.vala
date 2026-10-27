@@ -36,6 +36,11 @@ public class Application.Configuration : GriabuntuMail.BaseObject {
     public const string DISPLAY_PARTICIPANTS_KEY = "display-participants";
     public const string DISPLAY_SUBJECT_KEY = "display-subject";
     public const string DISPLAY_RECIPIENT_ALIASES_KEY = "display-recipient-aliases";
+    public const string REMOTE_CONTACT_PICTURES_KEY = "remote-contact-pictures";
+    public const string COMPANY_PICTURES_KEY = "company-pictures";
+    public bool remote_contact_pictures { get { return settings.get_boolean(REMOTE_CONTACT_PICTURES_KEY); } }
+    public bool company_pictures { get { return settings.get_boolean(COMPANY_PICTURES_KEY); } }
+
     public const string DISPLAY_CONTACT_PICTURES_KEY = "display-contact-pictures";
     public const string CONVERSATION_LIST_ORDER_KEY = "conversation-list-order";
     public const string UNSET_HTML_COLORS = "unset-html-colors";

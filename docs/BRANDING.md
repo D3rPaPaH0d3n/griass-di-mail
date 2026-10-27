@@ -1,4 +1,13 @@
-# Griabuntu Mail — private identity
+# Griabuntu Mail — identity and open name review
+
+**Current continuation, 2026-10-27:** The owner confirmed that no written
+Canonical permission or qualified name review exists. Public presentation and
+a finished development branch as default are authorised, but the name gate
+below remains unresolved. The selected closed-envelope art is now implemented;
+its originals and provenance are in [ARTWORK-PROVENANCE.md](ARTWORK-PROVENANCE.md).
+Native tonal styling is implemented and synthetic checks are recorded in
+[VALIDATION-20261027.md](VALIDATION-20261027.md). The older visual and migration
+sections below are historical proposals, not the current implementation.
 
 **Source update, 2026-10-27:** the owner has now requested and authorised the
 project-wide naming implementation. The current own application ID, executable,

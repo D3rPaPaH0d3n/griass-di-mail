@@ -1,3 +1,6 @@
+/* Downstream notice addition: 2026-10-27 — the original Dovecot MIT text
+ * is included in docs/licenses/Dovecot-2.1.15-MIT.txt and installed.
+ * Historical upstream comments below are retained for provenance. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright (c) 2008-2012 Dovecot authors

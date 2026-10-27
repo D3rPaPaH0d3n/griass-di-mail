@@ -30,3 +30,12 @@ The mistakenly substituted local envelope study is preserved under
 `history/superseded-envelope-20261027/`; the earlier folded-G study is under
 `history/folded-g-20261026/`. Their original provenance and grants remain intact.
 The `.3` package verification describes the superseded study, not this icon.
+
+## Confirmed provenance (2026-10-27)
+
+Markus Kainer confirmed these six originals were generated with ChatGPT from
+text descriptions only, without uploaded images, logos or font references.
+He selected the closed coloured envelope and banner and authorised their
+inclusion in Griabuntu Mail and its Debian package. This does not make them
+the older CC0 studies, establish exclusive human copyright, or clear trademarks.
+See [the current provenance record](../docs/ARTWORK-PROVENANCE.md).

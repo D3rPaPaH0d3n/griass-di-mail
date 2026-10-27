@@ -183,3 +183,28 @@ fragment but no accompanying original MIT text, with upstream's historical
 substantiality comment retained. These are precise remaining provenance checks,
 not licence grants invented here. The listed inherited icon/RTL/application-icon
 and screenshot gaps also remain open; not every asset is declared cleared.
+
+## Current native continuation · 2026-10-27
+
+Maintainer: Markus Kainer (D3rPaPaH0d3n), projekt@kainer.co.at.
+The supplied current envelope/banner provenance is confirmed in
+[ARTWORK-PROVENANCE.md](docs/ARTWORK-PROVENANCE.md), including the application
+licence treatment. Earlier CC0 studies remain separate.
+
+The exact Dovecot 2.1.15 MIT permission text is now installed, and a GPLv3
+Dino source/licence reference preceding the inherited ICU import is recorded
+in [Dino-ICU-PROVENANCE.md](docs/licenses/Dino-ICU-PROVENANCE.md). The exact
+historical imported Dino revision was not recorded upstream; this is not
+falsely described as an exact-source reconstruction.
+
+Gravatar and DuckDuckGo pictures are fetched only after separate user consent,
+not bundled, not re-licensed and not identity verification. See
+[PRIVACY.md](docs/PRIVACY.md) for data flows and provider links. Native Ubuntu
+libraries remain package-manager dependencies, not copied Flatpak binaries.
+
+The native Ubuntu 26.10 build resolves **libytnef 2.1.2-1build2**, separately
+from the historical Flatpak manifest's 1.9.3. The native source's `lib/ytnef.c`
+retains Randall E. Hand's 2003 copyright and explicit GPL-2.0-or-later grant;
+this is compatible with the elected GPLv3 application combination. The package
+uses the distribution shared library rather than embedding it. Preserve its
+original source and Debian copyright when supplying a dependency source copy.

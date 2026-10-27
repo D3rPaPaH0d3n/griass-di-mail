@@ -1,107 +1,98 @@
-<!-- Downstream modification: 2026-10-26 — independent preparation README; original notices retained below. -->
-> **Continuing with an AI agent?** Use **`handoff/griabuntu-ai`** and start with
-> [AGENTS.md](AGENTS.md), the [current handoff](docs/AI-HANDOFF.md) and the
-> [ready-to-use next-agent prompt](docs/NEXT-AGENT-PROMPT.md). This branch bundles
-> the latest source, GPL election, original graphics and owner decisions. The
-> old default `main` is not the latest development state.
-
 <div align="center">
 
-# Griabuntu Mail
+![Griabuntu Mail](design/owner-artwork-20261027/brand-banner.png)
 
-A little more clarity in your inbox.
+# A calmer place for your mail.
 
-**Independent Convey downstream · private working identity**
+**Griabuntu Mail · native Linux email · Ubuntu 26.10**
 
-Conversation-based email for the Linux desktop, with useful details close at hand.
+Pastel teal and warm peach. Clear conversations. Your contacts, your choice.
 
-[Envelope icon family](brand/README.md) · [Future native-desktop direction](docs/desktop-design-direction.md)
-
-[Features](#features) · [Build](BUILDING.md) · [Development status](#development-status) · [Licences](THIRD-PARTY-NOTICES.md)
-
-<img src="docs/images/inbox-details.png" width="1120" alt="Original concept illustration: recipient badges, a full sender address, a received timestamp with seconds and a session-new tray list. Synthetic data only; not an application screenshot." />
-
-*Synthetic concept illustration — not an app screenshot or completed UI redesign.*
-
-*Selected app icon: the owner-supplied closed coloured envelope. The folded G
-in the older UI concept above is historical.*
+[Deutsch](README.de.md) · [Build](BUILDING.md) · [Privacy](docs/PRIVACY.md) · [Contribute](CONTRIBUTING.md) · [Licences](THIRD-PARTY-NOTICES.md)
 
 </div>
 
-> **Development preview — no downstream public release yet.** Griabuntu Mail is the chosen **private working name**; The application ID is `io.github.d3rpapah0d3n.GriabuntuMail`. This branch is a **separate GPL-3.0-only release-source copy**, elected under LGPL-2.1 §3 with TNEF retained; it is not a release, a support promise or a claim of completed licence compliance.
+## Made for the Linux desktop
 
-<a id="features"></a>
+An independent **Convey/Geary fork**, built with GTK4 and libadwaita. Native
+menus, keyboard navigation and desktop integration, with restrained petrol/teal
+and copper/peach surfaces. System light, dark and high-contrast modes stay in control.
 
-## ✨ Small details that matter
+Maintained by **Markus Kainer · [D3rPaPaH0d3n](https://github.com/D3rPaPaH0d3n)**.
+Contact: **[projekt@kainer.co.at](mailto:projekt@kainer.co.at)** or
+[GitHub Issues](https://github.com/D3rPaPaH0d3n/griabuntu-mail/issues).
 
-Built on [Convey](https://github.com/donnybeelo/convey), itself a fork of [Geary](https://gitlab.gnome.org/GNOME/geary), this independent downstream explores a more informative conversation list and lightweight desktop integration.
+## Useful details, close at hand
 
-| Feature | What this snapshot does | Scope / caveat |
-| --- | --- | --- |
-| Recipient-alias badges | Up to two identity matches, then an overflow indicator | Matches cached To/Cc against configured identities; not proof of SMTP delivery |
-| Local contact photos | Uses existing desktop contact photos, or initials | No new external avatar or logo service; sandbox needs read-only addressbook-cache access |
-| Full sender details | Participant name and address, with literal-text tooltips | No shortened-address identity assurance |
-| Exact received time | Absolute date and time including seconds | IMAP INTERNALDATE in the desktop timezone; tooltip includes zone/UTC offset |
-| Native new-mail tray | Session-new/unseen count; up to five clickable sender/subject entries | Starts empty after restart; **not** historical unread count; needs a compatible StatusNotifierItem host |
-| Individual popup actions 🧪 | Reply opens a composer; Archive/Delete move the exact message | Work in progress; desktop/composer acceptance still pending |
+| Feature | What it does |
+| --- | --- |
+| Conversations | Read and write mail with native controls and WebKit rendering |
+| Contact pictures | Local photo → opt-in Gravatar → separately opt-in website icon → initials |
+| Recipient aliases | Show which configured identities appear in To/Cc, with overflow badges |
+| Precise received time | IMAP received timestamp with seconds and timezone details |
+| New-mail tray | Session-new arrivals, deduplicated across accounts and folders |
+| Attachments | TNEF/winmail.dat support remains enabled |
+| Native package | A `.deb` built against Ubuntu 26.10 libraries |
 
-Popup Reply never sends automatically. Archive uses an existing All Mail/archive folder; Delete uses existing Trash. There is no expunge/permanent-delete fallback and no automatic destination-folder creation. Targets bind account, message and original folder; stale targets are rejected and concurrent repeated clicks are deduplicated. Group notifications remain Open-only. See [the engineering notes](CUSTOMIZATIONS.md).
+External contact pictures are **off by default**. Separate consent switches
+explain what goes to Gravatar and DuckDuckGo; no message content is sent.
+Pictures do not verify a sender. Permissions for images inside email messages
+are unchanged. Read [the full picture policy](docs/PRIVACY.md).
 
-## 🎨 A softer direction, a native foundation
-
-The owner-selected closed envelope supplies the app/tray icon; its matching mono artwork supplies the symbolic mask. Earlier studies are archived. The broader pastel/Material-inspired control design remains a **future** direction. Actual buttons, icons, menus and dialogs should remain native GTK4/libadwaita, coherent with Ubuntu/GNOME and responsive to system light/dark, scaling and accessibility. **The new icons are included in the candidate package; the wider UI/theme redesign is not implemented.** [Design brief →](docs/desktop-design-direction.md)
-
-Griabuntu Mail is **not an Ubuntu/Canonical product**. The name may raise a confusing-similarity/permission question under Canonical’s current policy. The absence of exact-name search hits is not clearance; an independence disclaimer is not permission. [Name findings and release gate →](docs/BRANDING.md)
-
-## 🛠 Native Ubuntu build
-
-The primary local package is **griabuntu-mail** for Ubuntu 26.10/amd64. Build it
-with the standard Debian tooling documented in [debian/README](debian/README)
-and [BUILDING.md](BUILDING.md). There is no published binary installer or APT
-repository for this private preview.
-
-The executable is `griabuntu-mail`; its independent application ID is
-`io.github.d3rpapah0d3n.GriabuntuMail`. Desktop/D-Bus integration, GSettings,
-resources, gettext, help, private libraries and the `GriabuntuMail` engine
-namespace follow the same identity. See [the naming map](docs/IDENTITY.md).
-New data paths are separate from Convey; no personal profile is copied by
-installation. The current envelope icon family is included; the future control/theme design remains separate work.
-
-<a id="development-status"></a>
-
-## 🚧 Development status
-
-Fresh baseline/GPL-copy checks and internal package evidence are recorded in [the verification record](docs/release/VERIFICATION.md). The unmodified audit baseline first exposes a Meson notice-install error; the record separates its packaging-only workaround from the elected GPL copy. Synthetic testing is not real-mail or visible desktop acceptance.
-
-Known gates:
-
-- The historical flag baseline was **4/10 red**. The scoped 2026-10-27 fix passes all ten cases; the first renamed build passes **328 engine + 62 focused + 10 flag cases**. See [test evidence](test/README.md).
-- Visible popup buttons, opening the actual reply composer and end-to-end desktop mail moves still need explicit acceptance testing.
-- Shell support affects tray and notification actions; not all desktops expose every action.
-- Identity, dependency licensing, package contents and corresponding source remain release blockers. The GPLv3/TNEF licence route is **elected and implemented** here; complete component/asset attribution and public-delivery gates remain.
-
-[Release checklist →](RELEASE-CHECKLIST.md) · [Test instructions →](test/README.md)
-
-## 🤝 Contribute carefully
-
-Please use this repository for downstream bugs and proposals, not upstream's tracker for unverified fork-specific issues. Keep examples synthetic; never attach mail stores, credentials, contact caches or unredacted debug logs. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) first. No managed security-response SLA is offered.
-
-![Owner-supplied Griabuntu Mail banner](design/owner-artwork-20261027/brand-banner.png)
-
-[Original logo files and provenance →](brand/README.md) · [Name permission and identity plan →](docs/BRANDING.md)
-
-## 📜 Standing on good work
-
-This is an independent modification, **not official Convey or Geary**, and is not affiliated with or endorsed by their maintainers, the GNOME Foundation or Canonical. Original authors, copyright notices and full upstream history are retained; see [AUTHORS](AUTHORS), [THANKS](THANKS) and [CUSTOMIZATIONS.md](CUSTOMIZATIONS.md).
-
-This separately prepared application copy is **GPL-3.0-only** in [COPYING](COPYING), exercising LGPL-2.1 §3 with the owner’s approval. The election is irreversible for this copy; [independent original LGPL sources and provenance](docs/release/GPLV3-COPY.md) are preserved. AppStream metadata remains CC0-1.0. Icons, sounds, MIT Dark Reader and libraries keep their own terms. [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) explains the component boundaries and remaining checks; this is no blanket asset/dependency relicensing. The new illustration is original CC0-1.0 artwork; [provenance and licence](docs/images/README.md).
+The tray counts new mail this session, not all historical unread mail, and starts
+empty after restart. Reply opens a draft, never auto-sends. Archive and Delete
+target one message using existing archive/Trash folders. Shell support affects
+notification behaviour; synthetic tests do not establish personal-mail acceptance.
 
 <details>
-<summary>Deutsch, kurz</summary>
+<summary>See the contact-picture privacy settings</summary>
 
-Ein unabhängiger Convey-Ableger mit Empfänger-Alias-Badges, lokalen Kontaktfotos, vollständigen Absenderdaten, sekundengenauer Empfangszeit und einem Tray für neue Nachrichten dieser Sitzung. Popup-Aktionen sind noch in Erprobung. **Griabuntu Mail** ist der gewählte private Arbeitsname; insbesondere die Canonical-Namens-/Erlaubnisfrage, öffentliche Veröffentlichung und gegebenenfalls eine bewusste Übernahme bestehender Profile sind noch offen; die eigene App-ID ist `io.github.d3rpapah0d3n.GriabuntuMail`. Das Pastell-/Material-Konzept ist eine künftige native Designrichtung, keine bereits umgesetzte App-Neugestaltung. Diese separate Quellkopie setzt die genehmigte **GPLv3-only-Route mit allen Funktionen einschließlich TNEF** um; ursprüngliche LGPL-Kopien bleiben unabhängig erhalten. Kein öffentlicher Download oder Veröffentlichungsfreigabe; lokale Testpakete und ihre Installation werden gesondert geprüft; offene Prüfungen stehen in der Release-Checkliste.
+![Native contact-picture settings](docs/images/contact-picture-settings.png)
+
+*Native preferences template rendered with synthetic state; no real accounts.*
 
 </details>
+
+## Build and update
+
+Supported package target: **Ubuntu 26.10, amd64**. From the current development branch:
+
+```sh
+sudo apt-get build-dep .
+DEB_BUILD_OPTIONS=parallel=6 dpkg-buildpackage -b -us -uc
+```
+
+Install the inspected package with `sudo apt install ./griabuntu-mail_<version>_amd64.deb`.
+Close the app and back up its closed data before updating. Do not run it as root.
+The package does not start the app or copy accounts. Native Griabuntu Mail package,
+app-ID and profile paths remain stable; Convey/Geary/Flatpak migration is separate.
+
+[Build guide](BUILDING.md) · [Packaging](debian/README) · [Upgrading](docs/UPGRADING.md) ·
+[Current validation](docs/VALIDATION-20261027.md)
+
+This is a development preview. Review [release requirements](RELEASE-CHECKLIST.md)
+and provide corresponding source before distributing a binary.
+
+## A fork with its history intact
+
+Griabuntu Mail is **not official Convey, Geary or Ubuntu**, and does not claim
+endorsement by their authors, GNOME or Canonical. The elected application copy
+is **GPL-3.0-only**, with TNEF retained. Libraries, icons, sounds and vendored
+resources retain their individual terms. Original authors and full history remain.
+Maintainer credit does not replace upstream copyright.
+
+The current closed-envelope icon and banner were generated with ChatGPT from
+text prompts, as confirmed by the owner. [Artwork provenance](docs/ARTWORK-PROVENANCE.md).
+
+[COPYING](COPYING) · [AUTHORS](AUTHORS) · [Third-party notices](THIRD-PARTY-NOTICES.md) ·
+[Name and trademark review](docs/BRANDING.md) · [Source delivery](docs/release/CORRESPONDING-SOURCE.md)
+
+## Join in
+
+Bug reports, translations and scoped improvements are welcome. Include your
+Ubuntu/app version and a synthetic example. Never post credentials, personal
+messages or mail databases. See [CONTRIBUTING.md](CONTRIBUTING.md),
+[SECURITY.md](SECURITY.md) and, for coding agents, [AGENTS.md](AGENTS.md).
 
 ---
 Original README notices retained:
@@ -109,3 +100,4 @@ Original README notices retained:
 Copyright © 2016 Software Freedom Conservancy Inc.
 Copyright © 2017–2020 Michael Gratton <mike@vee.net>
 Copyright © 2026 Daniel Elia <d.elia@outlook.com>
+Downstream changes © 2026 Markus Kainer <projekt@kainer.co.at>

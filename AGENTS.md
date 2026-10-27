@@ -11,7 +11,7 @@ Geary or an Ubuntu/Canonical product. The product is **Griabuntu Mail**. The own
 identity change on 2026-10-27. Current executable/project/gettext domain:
 `griabuntu-mail`; application ID: `io.github.d3rpapah0d3n.GriabuntuMail`;
 engine namespace: `GriabuntuMail`. Read `docs/IDENTITY.md` before identity work.
-The private repository is now `D3rPaPaH0d3n/griabuntu-mail`.
+The repository is `D3rPaPaH0d3n/griabuntu-mail`.
 
 Native Ubuntu 26.10 .deb packaging is the current primary build route. Keep
 profiles, secret schemas and launchers separate from the historical Convey
@@ -20,8 +20,8 @@ Original author/licence texts and dated release evidence retain historical names
 
 ## Start here
 
-Use branch **`handoff/griabuntu-ai`**, not the old default `main`, for this
-consolidated continuation. Read:
+Current development branch: **`work/griabuntu-ubuntu-deb`**, based on
+`handoff/griabuntu-ai`; preserve the old `main` and complete history. Read:
 
 1. [AI handoff and current decisions](docs/AI-HANDOFF.md).
 2. [Current design direction](docs/desktop-design-direction.md).
@@ -76,3 +76,26 @@ Canonical, install/sign a package, migrate profiles/IDs or change production
 settings without explicit owner instruction. No credentials, personal mail,
 private machine access details or operational logs belong in commits.
 Report scoped changes, actual checks, unresolved failures and remaining gates.
+
+## Owner-authorised continuation (2026-10-27)
+
+The owner authorised work on a dedicated development branch: native pastel
+teal/peach UI, the supplied closed-envelope icon and banner, visible Griabuntu
+Mail branding, Markus Kainer (D3rPaPaH0d3n) as maintainer and
+projekt@kainer.co.at as public contact. Keep required upstream notices accessible.
+The six supplied graphics were generated with ChatGPT using text-only prompts.
+External pictures are authorised only behind explicit in-app consent, off by
+default, with local-photo → Gravatar → company/website icon → initials priority.
+Native Ubuntu 26.10 updates must retain existing Griabuntu Mail profiles.
+Commits/pushes, creating a .deb and a synthetic installation test on TerraLinux
+are authorised. Public repository visibility is authorised when finished and
+publication prerequisites are met. No personal mail/account access or contacting
+third parties is authorised. Keep actual validation and unresolved items honest.
+
+The owner also explicitly authorised setting the finished development branch
+as the GitHub default while preserving main and the full fork history.
+
+The owner confirmed there is no written Canonical permission or qualified name
+review. The public-name gate remains unresolved; do not claim clearance or
+contact Canonical without separate instruction. Private development and pushes
+continue under the existing authorisation.

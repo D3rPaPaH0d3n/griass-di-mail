@@ -1,7 +1,7 @@
 Source: griabuntu-mail
 Section: mail
 Priority: optional
-Maintainer: Griabuntu Mail local builds <local-build@example.invalid>
+Maintainer: Markus Kainer (D3rPaPaH0d3n) <projekt@kainer.co.at>
 Build-Depends:
  debhelper-compat (= 14),
  dh-sequence-single-binary,
@@ -10,6 +10,7 @@ Build-Depends:
  dbus-daemon,
  desktop-file-utils,
  gettext,
+ gsettings-desktop-schemas,
  iso-codes,
  itstool,
  libadwaita-1-dev (>= 1.7),
@@ -41,6 +42,10 @@ Build-Depends:
  ninja-build,
  pkgconf,
  python3,
+ python3-gi,
+ openssl,
+ xvfb,
+ xauth,
  valac (>= 0.56),
 Standards-Version: 4.7.2
 Rules-Requires-Root: no
@@ -53,6 +58,7 @@ Depends:
  dconf-gsettings-backend | gsettings-backend,
  default-dbus-session-bus | dbus-session-bus,
  iso-codes,
+ gsettings-desktop-schemas,
  librsvg2-common,
 Recommends:
  evolution-data-server,
@@ -60,9 +66,10 @@ Recommends:
  gstreamer1.0-plugins-good,
  libfolks-eds26,
 Provides: imap-client, mail-reader
-Description: private native build of the Griabuntu Mail desktop client
+Description: native Griabuntu Mail desktop email client
  Independent Convey/Geary-derived GTK email client with recipient aliases,
- local contact photos, precise received timestamps and a native new-mail tray.
+ contact pictures with opt-in external lookups, precise received timestamps
+ and a native new-mail tray.
  TNEF/winmail.dat support and the session-new notification flag fix are enabled.
  .
  This local Ubuntu 26.10 preview uses its own Griabuntu Mail executable,

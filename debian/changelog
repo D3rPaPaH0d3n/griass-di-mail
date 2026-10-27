@@ -1,3 +1,12 @@
+griabuntu-mail (51.0+griabuntu20261027.6) stonking; urgency=medium
+
+  * Add consent-controlled Gravatar pictures and company/website icons.
+  * Apply native pastel teal and peach surfaces with accessible appearance modes.
+  * Present Markus Kainer as maintainer while retaining upstream credits.
+  * Document artwork provenance, privacy, upgrade and corresponding-source terms.
+
+ -- Markus Kainer <projekt@kainer.co.at>  Tue, 27 Oct 2026 22:33:26 +0100
+
 griabuntu-mail (51.0+griabuntu20261027.5) stonking; urgency=medium
 
   * Embed the owner-supplied banner in the native About dialog.

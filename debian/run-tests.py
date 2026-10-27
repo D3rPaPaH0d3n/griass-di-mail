@@ -14,6 +14,7 @@ import tempfile
 def main():
     source = Path.cwd().resolve()
     build = (source / sys.argv[1]).resolve()
+    pictures = "--pictures" in sys.argv[2:]
     if source not in build.parents:
         raise SystemExit("Build directory must be inside the source snapshot")
 
@@ -33,8 +34,22 @@ def main():
         (etc / "group").write_text(f"fixture:x:{os.getgid()}:\n")
         (etc / "machine-id").write_text("0123456789abcdef0123456789abcdef\n")
 
+        if pictures:
+            certdir = etc / "ssl/certs"
+            certdir.mkdir(parents=True)
+            cert = certdir / "ca-certificates.crt"
+            key = etc / "ssl/test-key.pem"
+            subprocess.run([
+                "openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+                "-days", "1", "-subj", "/CN=Griabuntu synthetic fixture",
+                "-addext", "subjectAltName=DNS:www.gravatar.com,DNS:icons.duckduckgo.com",
+                "-keyout", str(key), "-out", str(cert),
+            ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            (etc / "hosts").write_text("127.0.0.1 localhost www.gravatar.com icons.duckduckgo.com\n")
+            (etc / "nsswitch.conf").write_text("hosts: files\npasswd: files\ngroup: files\n")
+
         command = [
-            "bwrap", "--die-with-parent", "--unshare-all", "--new-session",
+            "bwrap", "--die-with-parent", "--unshare-all", "--new-session", "--hostname", "griabuntu-fixture",
             "--ro-bind", "/usr", "/usr",
             "--symlink", "usr/bin", "/bin",
             "--symlink", "usr/sbin", "/sbin",
@@ -66,6 +81,7 @@ def main():
             "XDG_DATA_HOME": "/home/fixture/data",
             "XDG_RUNTIME_DIR": "/home/fixture/runtime",
             "GSETTINGS_BACKEND": "memory",
+            "GSETTINGS_SCHEMA_DIR": str(build / "desktop"),
             "GIO_USE_PROXY_RESOLVER": "dummy",
             "GNOTIFICATION_BACKEND": "gtk",
         }
@@ -77,6 +93,19 @@ def main():
             "engine-tests", "recipient-alias-tests", "notification-flag-tests",
             "desktop-file-validate", "io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml-validate",
         ]
+        if pictures:
+            # Replace the default headless test command; the isolation above
+            # is unchanged. No host network, buses, display or trust store.
+            start = command.index("dbus-run-session")
+            command = command[:start] + [
+                "--setenv", "GRIABUNTU_SYNTHETIC_NETWORK", "1",
+                "--setenv", "GRIABUNTU_TEST_BUILD", str(build),
+                "--setenv", "GRIABUNTU_TEST_CERT", "/etc/ssl/certs/ca-certificates.crt",
+                "--setenv", "GRIABUNTU_TEST_KEY", "/etc/ssl/test-key.pem",
+                "--setenv", "GTK_A11Y", "none", "--setenv", "GSK_RENDERER", "cairo",
+                "sh", "-ec", 'mkdir -p /tmp/.X11-unix; chmod 1777 /tmp/.X11-unix; exec xvfb-run -a dbus-run-session -- "$@"',
+                "sh", sys.executable, str(source / "test/contact-picture-integration.py"),
+            ]
         subprocess.run(command, check=True)
 
 

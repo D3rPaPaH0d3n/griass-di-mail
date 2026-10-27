@@ -113,6 +113,25 @@
 
         <child>
           <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">Contact pictures and privacy</property>
+            <property name="description" translatable="yes">Local contact photos take priority. External lookups are optional and do not change images inside emails. Pictures do not verify a sender's identity.</property>
+            <child>
+              <object class="AdwSwitchRow" id="remote_contact_pictures_row">
+                <property name="title" translatable="yes">Allow Gravatar contact pictures</property>
+                <property name="subtitle" translatable="yes">Send a SHA-256 hash of displayed email addresses to Gravatar. The service also receives your IP address. Off by default; turning off cancels lookups and clears the memory cache.</property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwSwitchRow" id="company_pictures_row">
+                <property name="title" translatable="yes">Allow company and website icons</property>
+                <property name="subtitle" translatable="yes">If no contact picture is found, send the email domain to DuckDuckGo's icon service. It also receives your IP address. These icons may be missing or inaccurate.</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <child>
+          <object class="AdwPreferencesGroup">
             <child>
               <object class="AdwSwitchRow" id="custom_proxy_row">
                 <!-- Translators: Preferences label -->

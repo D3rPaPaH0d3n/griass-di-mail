@@ -58,6 +58,16 @@
       <description>Show configured account addresses found in To/Cc of loaded conversation messages.</description>
     </key>
 
+    <key name="remote-contact-pictures" type="b">
+      <default>false</default>
+      <summary>Look up external contact pictures</summary>
+      <description>Explicit consent to send email-address SHA-256 hashes to Gravatar. Disabled by default; no mail content is transmitted.</description>
+    </key>
+    <key name="company-pictures" type="b">
+      <default>false</default>
+      <summary>Look up company and website icons</summary>
+      <description>With external contact pictures enabled, send the email domain to DuckDuckGo's icon service when no personal picture is found.</description>
+    </key>
     <key name="display-contact-pictures" type="b">
       <default>false</default>
       <summary>Display contact pictures</summary>

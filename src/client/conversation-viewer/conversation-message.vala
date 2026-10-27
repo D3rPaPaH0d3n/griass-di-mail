@@ -346,6 +346,7 @@ public class ConversationMessage : Gtk.Box, GriabuntuMail.BaseInterface {
     private GLib.DateTime? local_date = null;
 
     [GtkChild] private unowned Adw.Avatar avatar;
+    private Application.ContactPicture? sender_picture;
 
     [GtkChild] private unowned Gtk.Box compact_header;
     [GtkChild] private unowned Gtk.Box compact_from_header;
@@ -678,6 +679,8 @@ public class ConversationMessage : Gtk.Box, GriabuntuMail.BaseInterface {
         this.show_progress_timeout.reset();
         this.hide_progress_timeout.reset();
         this.progress_pulse.reset();
+        this.sender_picture?.close();
+        this.sender_picture = null;
         this.resources.clear();
         this.searchable_addresses.clear();
         base.dispose();
@@ -979,18 +982,10 @@ public class ConversationMessage : Gtk.Box, GriabuntuMail.BaseInterface {
                                                        "text",
                                                        BindingFlags.SYNC_CREATE);
 
-                    this.avatar.custom_image = null;
-                    if (this.primary_contact.avatar != null) {
-                        try {
-                            var icon_stream = yield this.primary_contact.avatar.load_async(48, cancellable);
-                            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(icon_stream, 48, 48, true, cancellable);
-                            this.avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
-                        } catch (GLib.IOError.CANCELLED err) {
-                            throw err;
-                        } catch (GLib.Error err) {
-                            debug("Couldn't load avatar for contact: %s", err.message);
-                        }
-                    }
+                    this.sender_picture?.close();
+                    this.sender_picture = new Application.ContactPicture(
+                        this.avatar, this.primary_contact, this.primary_originator, this.config
+                    );
                 }
             }
 

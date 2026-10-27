@@ -5203,3 +5203,53 @@ msgstr "Öffne Griabuntu Mail, um die Nachricht zu prüfen. Es wurde keine Nachr
 
 #~ msgid "Cc: %s\n"
 #~ msgstr "Kopie: %s\n"
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Contact pictures and privacy"
+msgstr "Kontaktbilder und Datenschutz"
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Local contact photos take priority. External lookups are optional and do not change images inside emails. Pictures do not verify a sender's identity."
+msgstr "Lokale Kontaktfotos haben Vorrang. Externe Abrufe sind freiwillig und ändern keine Bilder im Mailtext. Kontaktbilder bestätigen keine Identität."
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Allow Gravatar contact pictures"
+msgstr "Gravatar-Kontaktbilder erlauben"
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Send a SHA-256 hash of displayed email addresses to Gravatar. The service also receives your IP address. Off by default; turning off cancels lookups and clears the memory cache."
+msgstr "Übermittelt einen SHA-256-Hash angezeigter Mailadressen an Gravatar. Der Dienst erhält auch Ihre IP-Adresse. Standardmäßig aus; Abschalten bricht Abrufe ab und leert den Arbeitsspeicher-Cache."
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Allow company and website icons"
+msgstr "Firmen- und Website-Symbole erlauben"
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "If no contact picture is found, send the email domain to DuckDuckGo's icon service. It also receives your IP address. These icons may be missing or inaccurate."
+msgstr "Wenn kein Kontaktbild gefunden wird, die Maildomain an DuckDuckGos Symboldienst übermitteln. Er erhält auch Ihre IP-Adresse. Symbole können fehlen oder ungenau sein."
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Original Convey and Geary authors"
+msgstr "Ursprüngliche Convey- und Geary-Entwickler"
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Original copyright notices"
+msgstr "Ursprüngliche Urheberrechtshinweise"
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Artwork provenance"
+msgstr "Herkunft der Grafiken"
+
+#. Griabuntu Mail downstream, 2026-10-27
+msgid "Closed-envelope icon and banner: generated with ChatGPT from text prompts by Markus Kainer. Technical exports retain the supplied originals."
+msgstr "Geschlossener Umschlag und Banner: von Markus Kainer mit ChatGPT aus Textbeschreibungen erzeugt. Technische Exporte bewahren die gelieferten Originale."
+
+#. Downstream maintainer and fork identity
+msgid "Native Linux email maintained by Markus Kainer (D3rPaPaH0d3n), based on Convey and Geary."
+msgstr "Native Linux-Mail-App, gepflegt von Markus Kainer (D3rPaPaH0d3n), basierend auf Convey und Geary."
+
+msgid "Local contact photos take priority. External pictures are off by default. Gravatar receives an email-address SHA-256 hash and your connection IP address; with separate company-icon consent, DuckDuckGo receives the email domain and connection IP address. Hashes are not anonymous and pictures do not verify identity. No message content is sent. The app uses your proxy settings, keeps only a bounded memory cache, and cancels lookups and clears external pictures when you withdraw consent. Images inside emails keep their existing permissions."
+msgstr "Lokale Kontaktfotos haben Vorrang. Externe Bilder sind standardmäßig aus. Gravatar erhält einen SHA-256-Hash der Mailadresse und die IP-Adresse Ihrer Verbindung; nach gesonderter Freigabe für Firmensymbole erhält DuckDuckGo die Maildomain und die IP-Adresse. Hashes sind nicht anonym, Bilder bestätigen keine Identität. Mailinhalte werden nicht übertragen. Die App verwendet Ihre Proxy-Einstellungen und einen begrenzten Arbeitsspeicher-Cache. Beim Widerrufen werden Abrufe abgebrochen und externe Bilder entfernt. Die Bildfreigaben im Mailtext bleiben unverändert."
+
+msgid "Full privacy policy and provider links"
+msgstr "Vollständige Datenschutzhinweise und Anbieterlinks"

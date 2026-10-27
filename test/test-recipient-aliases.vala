@@ -25,6 +25,7 @@ int main(string[] args) {
     root.add_suite(new Util.Email.SummaryContactTest().steal_suite());
     root.add_suite(new ConversationList.ParticipantDisplayTest().steal_suite());
     root.add_suite(new Util.Date.ReceivedTimeTest().steal_suite());
+    root.add_suite(new Application.ContactPictureTest().steal_suite());
     root.add_suite(new Application.StatusIconTest().steal_suite());
     root.add_suite(new Application.NotificationActionsTest().steal_suite());
     return GLib.Test.run();

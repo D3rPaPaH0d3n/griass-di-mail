@@ -491,6 +491,11 @@ public class Application.MainWindow :
             add_css_class("devel");
         }
 
+        var appearance = Adw.StyleManager.get_default();
+        appearance.notify["dark"].connect(on_appearance_changed);
+        appearance.notify["high-contrast"].connect(on_appearance_changed);
+        on_appearance_changed();
+
         // Edit actions
         this.edit_actions.add_action_entries(EDIT_ACTIONS, this);
         insert_action_group(Action.Edit.GROUP_NAME, this.edit_actions);
@@ -581,6 +586,14 @@ public class Application.MainWindow :
 
     ~MainWindow() {
         base_unref();
+    }
+
+    private void on_appearance_changed() {
+        var appearance = Adw.StyleManager.get_default();
+        if (appearance.dark) add_css_class("griabuntu-dark");
+        else remove_css_class("griabuntu-dark");
+        if (appearance.high_contrast) add_css_class("griabuntu-high-contrast");
+        else remove_css_class("griabuntu-high-contrast");
     }
 
     /** Updates the window's title and headerbar titles. */

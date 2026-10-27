@@ -19,6 +19,8 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.SwitchRow display_subject_row;
     [GtkChild] private unowned Adw.SwitchRow display_recipient_aliases_row;
     [GtkChild] private unowned Adw.SwitchRow display_contact_pictures_row;
+    [GtkChild] private unowned Adw.SwitchRow remote_contact_pictures_row;
+    [GtkChild] private unowned Adw.SwitchRow company_pictures_row;
     [GtkChild] private unowned Adw.PreferencesGroup conversation_list_group;
     [GtkChild] private unowned Adw.NavigationPage conversation_list_subpage;
     [GtkChild] private unowned Gtk.Button conversation_list_reset_button;
@@ -231,6 +233,12 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             this.display_subject_row,
             "active"
         );
+        config.bind(Application.Configuration.REMOTE_CONTACT_PICTURES_KEY,
+                    this.remote_contact_pictures_row, "active");
+        config.bind(Application.Configuration.COMPANY_PICTURES_KEY,
+                    this.company_pictures_row, "active");
+        this.remote_contact_pictures_row.bind_property("active", this.company_pictures_row,
+                                                       "sensitive", SYNC_CREATE);
         setup_conversation_list_order();
         config.bind(
             Application.Configuration.DISPLAY_RECIPIENT_ALIASES_KEY,

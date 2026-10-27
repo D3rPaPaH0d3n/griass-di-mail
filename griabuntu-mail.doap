@@ -20,7 +20,7 @@ interface. Based on Convey and Geary; original authorship is retained.</descript
 
   <maintainer>
     <foaf:Person>
-      <foaf:name>Griabuntu Mail contributors</foaf:name>
+      <foaf:name>Markus Kainer (D3rPaPaH0d3n)</foaf:name>
       <foaf:homepage rdf:resource="https://github.com/D3rPaPaH0d3n/griabuntu-mail"/>
     </foaf:Person>
   </maintainer>

@@ -20,6 +20,7 @@ client_vala_sources = files(
   'application/application-command.vala',
   'application/application-configuration.vala',
   'application/application-contact-store.vala',
+  'application/application-contact-picture.vala',
   'application/application-contact.vala',
   'application/application-controller.vala',
   'application/application-database-manager.vala',

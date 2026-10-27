@@ -22,3 +22,7 @@ and pending release checks are tracked in [RELEASE-CHECKLIST.md](RELEASE-CHECKLI
 For upstream vulnerabilities, coordinate privately with the affected upstream
 maintainer once applicability is established; avoid implying that they maintain
 or support this downstream.
+
+Security contact: Markus Kainer (D3rPaPaH0d3n), projekt@kainer.co.at.
+Please describe a synthetic reproduction; do not email account passwords or
+private mail databases. No guaranteed response time is offered.
