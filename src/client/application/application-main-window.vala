@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — live native appearance classes for the tonal shell. */
 /* Downstream modification: 2026-10-26 — session-new tray state integration. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
@@ -490,6 +491,14 @@ public class Application.MainWindow :
             add_css_class("devel");
         }
 
+        // GTK 4.16 supports CSS variables but not appearance media queries.
+        // Named handlers are weak signal connections in Vala; closing a window
+        // does not retain it through the shared style manager.
+        var appearance = Adw.StyleManager.get_default();
+        appearance.notify["dark"].connect(on_appearance_changed);
+        appearance.notify["high-contrast"].connect(on_appearance_changed);
+        on_appearance_changed();
+
         // Edit actions
         this.edit_actions.add_action_entries(EDIT_ACTIONS, this);
         insert_action_group(Action.Edit.GROUP_NAME, this.edit_actions);
@@ -580,6 +589,20 @@ public class Application.MainWindow :
 
     ~MainWindow() {
         base_unref();
+    }
+
+    private void on_appearance_changed() {
+        var appearance = Adw.StyleManager.get_default();
+        if (appearance.dark) {
+            add_css_class("griabuntu-dark");
+        } else {
+            remove_css_class("griabuntu-dark");
+        }
+        if (appearance.high_contrast) {
+            add_css_class("griabuntu-high-contrast");
+        } else {
+            remove_css_class("griabuntu-high-contrast");
+        }
     }
 
     /** Updates the window's title and headerbar titles. */
