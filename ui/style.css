@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — native tonal shell, accessible cards and named field styling. */
 /* Downstream modification: 2026-10-26 — muted alias badges and downstream conversation-list layout. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
@@ -217,12 +218,12 @@ row.conversation-list .recipient-alias-badge.alias-overflow {
   color: color-mix(in srgb, @window_fg_color 75%, @view_bg_color);
 }
 
-row.conversation-list .details > :nth-child(2) {
+row.conversation-list .details .subject {
   font-size: 0.9em;
   padding-left: 0.5em;
 }
 
-row.conversation-list .details > :nth-child(3) {
+row.conversation-list .details .preview {
   opacity: 0.7;
   font-size: 0.8em;
   padding-left: 0.6em;
@@ -243,8 +244,8 @@ row.conversation-list .date {
 }
 
 /* Unread styling */
-row.conversation-list.unread .details > :nth-child(1),
-row.conversation-list.unread .details > :nth-child(2) {
+row.conversation-list.unread .details .participants,
+row.conversation-list.unread .details .subject {
   font-weight: bold;
 }
 
@@ -262,6 +263,184 @@ row.conversation-list check {
   border-radius: 50%;
   padding: 2px;
   margin: 6px;
+}
+
+/* Griabuntu Mail shell — native widgets, scoped to the main window.
+ * These variables are inherited, including in native popovers, but only the
+ * explicitly listed shell widgets receive tonal surfaces. Semantic and system
+ * accent colours remain libadwaita's. No styling enters the mail WebView.
+ * Appearance classes come from Adw.StyleManager (also on GTK 4.16).
+ */
+.convey-main-window {
+  --griabuntu-petrol: #215d58;
+  --griabuntu-copper: #a45b3f;
+  --griabuntu-sidebar: color-mix(in srgb, #8bc9bd 12%, var(--window-bg-color));
+  --griabuntu-list: color-mix(in srgb, #8bc9bd 5%, var(--view-bg-color));
+  --griabuntu-reader: color-mix(in srgb, #e6b99d 6%, var(--window-bg-color));
+  --griabuntu-unread: color-mix(in srgb, #8bc9bd 14%, var(--view-bg-color));
+}
+
+.convey-main-window.griabuntu-dark {
+  --griabuntu-petrol: #9bd4cc;
+  --griabuntu-copper: #e5ae92;
+  --griabuntu-sidebar: color-mix(in srgb, #8bc9bd 7%, var(--window-bg-color));
+  --griabuntu-list: color-mix(in srgb, #8bc9bd 3%, var(--view-bg-color));
+  --griabuntu-reader: color-mix(in srgb, #e6b99d 3%, var(--window-bg-color));
+  --griabuntu-unread: color-mix(in srgb, #8bc9bd 10%, var(--view-bg-color));
+}
+
+.convey-main-window #outer-split .conversation-list-page {
+  background-color: var(--griabuntu-list);
+}
+
+.convey-main-window #outer-split overlay-split-view > .sidebar-pane,
+.convey-main-window #outer-split overlay-split-view > .sidebar-pane:backdrop {
+  background-color: var(--griabuntu-sidebar);
+}
+
+.convey-main-window convey-conversation-viewer {
+  background-color: var(--griabuntu-reader);
+  color: var(--view-fg-color);
+}
+
+.convey-main-window conversation-list list {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.convey-main-window row.conversation-list {
+  margin: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background-color: var(--view-bg-color);
+  color: var(--view-fg-color);
+}
+
+.convey-main-window row.conversation-list > revealer > box {
+  padding: 10px 8px;
+}
+
+.convey-main-window row.conversation-list > revealer > box > avatar {
+  margin: 2px 0;
+}
+
+.convey-main-window row.conversation-list .details {
+  padding-left: 10px;
+  padding-right: 4px;
+}
+
+.convey-main-window row.conversation-list .details:dir(rtl) {
+  padding-right: 10px;
+  padding-left: 4px;
+}
+
+.convey-main-window row.conversation-list .details .subject {
+  font-size: 1em;
+  padding-left: 0;
+}
+
+.convey-main-window row.conversation-list .details .preview {
+  font-size: 0.9em;
+  padding-left: 0;
+  opacity: 0.8;
+}
+
+.convey-main-window row.conversation-list .details label.date {
+  margin: 2px 0 0;
+  font-size: 0.8em;
+  font-feature-settings: "tnum" 1;
+}
+
+.convey-main-window row.conversation-list.unread {
+  background-color: var(--griabuntu-unread);
+  box-shadow: inset 3px 0 var(--griabuntu-petrol);
+}
+
+.convey-main-window row.conversation-list.unread:dir(rtl) {
+  box-shadow: inset -3px 0 var(--griabuntu-petrol);
+}
+
+.convey-main-window row.conversation-list:hover {
+  border-color: var(--border-color);
+}
+
+.convey-main-window row.conversation-list:selected {
+  background-color: var(--accent-bg-color);
+  color: var(--accent-fg-color);
+  box-shadow: none;
+}
+
+.convey-main-window row.conversation-list:selected .details label.recipient-alias-badge,
+.convey-main-window row.conversation-list:selected .count-badge {
+  background-color: color-mix(in srgb, currentColor 16%, transparent);
+  color: inherit;
+}
+
+.convey-main-window row.conversation-list .count-badge {
+  background-color: color-mix(in srgb, var(--griabuntu-copper) 14%, var(--view-bg-color));
+  color: var(--view-fg-color);
+  padding: 1px 4px;
+}
+
+.convey-main-window row.conversation-list:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: -3px;
+}
+
+.convey-main-window row.conversation-list:selected:focus-visible {
+  outline-color: var(--accent-fg-color);
+}
+
+/* Cards provide separation; retain the separator widgets/animation hooks. */
+.convey-main-window separator.conversation-list-separator {
+  min-height: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+.convey-main-window listview.navigation-sidebar > row {
+  margin: 2px 4px;
+  border-radius: 10px;
+}
+
+.convey-main-window .conversation-subject {
+  padding: 16px 20px 10px;
+}
+
+.convey-main-window .conversation-listbox {
+  margin: 6px 12px 16px;
+}
+
+.convey-main-window .conversation-listbox > row {
+  margin-bottom: 10px;
+}
+
+/* High contrast uses system surfaces, explicit edges and full-strength text.
+ * Unread bold weight, keyboard outlines and selected colours remain distinct.
+ */
+.convey-main-window.griabuntu-high-contrast {
+  --griabuntu-petrol: var(--view-fg-color);
+  --griabuntu-copper: var(--view-fg-color);
+  --griabuntu-sidebar: var(--window-bg-color);
+  --griabuntu-list: var(--view-bg-color);
+  --griabuntu-reader: var(--window-bg-color);
+  --griabuntu-unread: var(--view-bg-color);
+}
+
+.convey-main-window.griabuntu-high-contrast row.conversation-list {
+  border-color: var(--view-fg-color);
+}
+
+.convey-main-window.griabuntu-high-contrast row.conversation-list .details label,
+.convey-main-window.griabuntu-high-contrast row.conversation-list .details .preview {
+  opacity: 1;
+}
+
+.convey-main-window.griabuntu-high-contrast row.conversation-list .details label.recipient-alias-badge,
+.convey-main-window.griabuntu-high-contrast row.conversation-list .count-badge {
+  background-color: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
 }
 
 /* FolderPopover */

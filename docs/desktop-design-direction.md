@@ -1,4 +1,10 @@
-# Future native desktop direction · 2026-10-26
+# Native desktop direction · brief 2026-10-26
+
+**Implementation update · 2026-10-27:** Markus requested implementation of this
+interface. A first native main-window/list/reader-shell implementation is now
+in source. See [scope, checks and remaining acceptance](UI-IMPLEMENTATION.md).
+The original brief below records the design decisions; the art remains a concept
+and this source change has not yet been built or accepted on a live desktop.
 
 Owner brief: **Griabuntu Mail** should eventually fit Ubuntu seamlessly, including
 icons, buttons, dialogs and interaction details. Retain petrol/teal and copper,
