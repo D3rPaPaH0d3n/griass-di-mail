@@ -19,6 +19,8 @@ a trademark clearance, or a production support promise. Base: `feaa8e26` from
 | Identity and original icon export checks | Passed |
 | Upgrade unpack transaction | Synthetic `.5` → `.6`; configuration, data and cache fixtures unchanged |
 | Installed native executable | Runs from the package payload with Ubuntu libraries |
+| Final package-library GTK/HTTPS fixtures | All eight scenarios passed with installed schemas |
+| Intended source snapshot secret scan | No detections |
 | Git history secret scan | Gitleaks 8.30.1 scanned 6,953 commits / about 56 MB; no detections |
 
 The HTTPS/widget fixtures exercise the actual client library and Soup transport,
@@ -73,3 +75,6 @@ any distributed binary; build controls and test sources are part of it.
 - Historical exact Dino import revision and inherited per-icon attribution
   inventory are documented precisely; the existing notices are retained and no
   new broad claim of legal certification is made.
+
+The exact final source/artifact mapping and private draft are recorded in
+[NATIVE-20261027.md](release/NATIVE-20261027.md).
