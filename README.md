@@ -1,3 +1,4 @@
+<!-- Downstream modification: 2026-10-27 — record the first native tonal-shell source implementation. -->
 <!-- Downstream modification: 2026-10-26 — independent preparation README; original notices retained below. -->
 > **Continuing with an AI agent?** Use **`handoff/griabuntu-ai`** and start with
 > [AGENTS.md](AGENTS.md), the [current handoff](docs/AI-HANDOFF.md) and the
@@ -49,7 +50,12 @@ Popup Reply never sends automatically. Archive uses an existing All Mail/archive
 
 ## 🎨 A softer direction, a native foundation
 
-The new folded-G mark and pastel teal/peach art explore a **future** Material-inspired tonal direction. Actual buttons, icons, menus and dialogs should remain native GTK4/libadwaita, coherent with Ubuntu/GNOME and responsive to system light/dark, scaling and accessibility. **No running app redesign, installed icon or runtime theme change is included here.** [Design brief →](docs/desktop-design-direction.md)
+**Native shell implementation started on 2026-10-27.** The main window now has
+teal/peach tonal surfaces, conversation cards, a dedicated received-time line and
+live dark/high-contrast styling in source. Build and visible desktop acceptance
+are pending. See [implementation scope and checks](docs/UI-IMPLEMENTATION.md).
+
+The new folded-G mark and pastel teal/peach art explore a **future** Material-inspired tonal direction. Actual buttons, icons, menus and dialogs should remain native GTK4/libadwaita, coherent with Ubuntu/GNOME and responsive to system light/dark, scaling and accessibility. **The native shell is implemented in source; the full redesign and visible acceptance remain in progress. No new app icon is installed.** [Design brief →](docs/desktop-design-direction.md)
 
 Griabuntu Mail is **not an Ubuntu/Canonical product**. The name may raise a confusing-similarity/permission question under Canonical’s current policy. The absence of exact-name search hits is not clearance; an independence disclaimer is not permission. [Name findings and release gate →](docs/BRANDING.md)
 
