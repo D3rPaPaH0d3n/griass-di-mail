@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>.
  *
@@ -28,7 +29,7 @@ public errordomain MailMerge.Csv.DataError {
  * To use this class, simply construct an instance start calling
  * {@link read_record}.
  */
-public class MailMerge.Csv.Reader : Convey.BaseObject {
+public class MailMerge.Csv.Reader : GriabuntuMail.BaseObject {
 
 
     // UTF byte prefixes indicating multi-byte codepoints

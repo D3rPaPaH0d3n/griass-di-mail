@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -44,7 +45,7 @@ public class Composer.Window : Gtk.ApplicationWindow, Container {
 
         // Use set_property to avoid the Vala name clash, see
         // b.g.o Bug 764622
-        set_property("name", "ConveyComposerWindow");
+        set_property("name", "GriabuntuMailComposerWindow");
 
         this.child = this.composer;
 

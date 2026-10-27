@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
@@ -11,9 +12,9 @@ public class Application.NotificationPluginContextTest : TestCase {
     private Mock.Account account;
     private Mock.Folder folder;
     private Plugin.Folder plugin_folder;
-    private Convey.EmailIdentifier first;
-    private Convey.EmailIdentifier second;
-    private Gee.Set<Convey.EmailIdentifier> seen;
+    private GriabuntuMail.EmailIdentifier first;
+    private GriabuntuMail.EmailIdentifier second;
+    private Gee.Set<GriabuntuMail.EmailIdentifier> seen;
     private int retired;
 
     public NotificationPluginContextTest() {
@@ -31,15 +32,15 @@ public class Application.NotificationPluginContextTest : TestCase {
     }
 
     public override void set_up() {
-        var info = new Convey.AccountInformation(
-            "synthetic", Convey.ServiceProvider.OTHER,
+        var info = new GriabuntuMail.AccountInformation(
+            "synthetic", GriabuntuMail.ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Convey.RFC822.MailboxAddress(null, "fixture@example.test")
+            new GriabuntuMail.RFC822.MailboxAddress(null, "fixture@example.test")
         );
         this.account = new Mock.Account(info);
         this.folder = new Mock.Folder(
             this.account, null,
-            new Convey.FolderRoot("#synthetic", false).get_child("Inbox"),
+            new GriabuntuMail.FolderRoot("#synthetic", false).get_child("Inbox"),
             INBOX, null
         );
         this.client = new Client();
@@ -52,7 +53,7 @@ public class Application.NotificationPluginContextTest : TestCase {
         this.context.start_monitoring_folder(this.plugin_folder);
         this.first = new Mock.EmailIdentifer(1);
         this.second = new Mock.EmailIdentifer(2);
-        this.seen = new Gee.HashSet<Convey.EmailIdentifier>();
+        this.seen = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
         this.retired = 0;
         this.context.email_seen.connect((source, ids) => {
             foreach (var id in ids) this.seen.add(((EmailStoreFactory.IdImpl) id).backing);
@@ -67,16 +68,16 @@ public class Application.NotificationPluginContextTest : TestCase {
     }
 
     private void append_new(bool first_starred = false) throws GLib.Error {
-        var one = new Convey.Email(this.first);
-        var flags = new Convey.EmailFlags.with(Convey.EmailFlags.UNREAD);
-        if (first_starred) flags.add(Convey.EmailFlags.FLAGGED);
+        var one = new GriabuntuMail.Email(this.first);
+        var flags = new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.UNREAD);
+        if (first_starred) flags.add(GriabuntuMail.EmailFlags.FLAGGED);
         one.set_flags(flags);
-        var two = new Convey.Email(this.second);
-        two.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.UNREAD));
+        var two = new GriabuntuMail.Email(this.second);
+        two.set_flags(new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.UNREAD));
         this.folder.expect_call("list_email_by_sparse_id_async")
-            .returns_object(new Gee.ArrayList<Convey.Email>.wrap({one, two}));
+            .returns_object(new Gee.ArrayList<GriabuntuMail.Email>.wrap({one, two}));
         this.folder.email_locally_appended(
-            new Gee.ArrayList<Convey.EmailIdentifier>.wrap({this.first, this.second})
+            new Gee.ArrayList<GriabuntuMail.EmailIdentifier>.wrap({this.first, this.second})
         );
         // Complete the mock async listing; no server or application is running.
         while (this.main_loop.pending()) this.main_loop.iteration(false);
@@ -91,7 +92,7 @@ public class Application.NotificationPluginContextTest : TestCase {
                            "total session-new count");
     }
 
-    private void assert_tray_contains(Convey.EmailIdentifier id, bool expected)
+    private void assert_tray_contains(GriabuntuMail.EmailIdentifier id, bool expected)
         throws GLib.Error {
         var target = new EmailStoreFactory.IdImpl(id).to_variant().print(false);
         bool found = false;
@@ -101,13 +102,13 @@ public class Application.NotificationPluginContextTest : TestCase {
         assert_equal<bool?>(found, expected, "tray target membership");
     }
 
-    private void change(Convey.EmailIdentifier id, Convey.EmailFlags flags) {
-        var updates = new Gee.HashMap<Convey.EmailIdentifier,Convey.EmailFlags>();
+    private void change(GriabuntuMail.EmailIdentifier id, GriabuntuMail.EmailFlags flags) {
+        var updates = new Gee.HashMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.EmailFlags>();
         updates.set(id, flags);
         this.folder.email_flags_changed(updates);
     }
 
-    private void assert_unread_update_keeps_new(Convey.EmailFlags flags) throws GLib.Error {
+    private void assert_unread_update_keeps_new(GriabuntuMail.EmailFlags flags) throws GLib.Error {
         append_new();
         change(this.first, flags);
         assert_counts(2);
@@ -118,15 +119,15 @@ public class Application.NotificationPluginContextTest : TestCase {
     }
 
     public void unread_star_added_stays_new() throws GLib.Error {
-        assert_unread_update_keeps_new(new Convey.EmailFlags.with(
-            Convey.EmailFlags.UNREAD, Convey.EmailFlags.FLAGGED
+        assert_unread_update_keeps_new(new GriabuntuMail.EmailFlags.with(
+            GriabuntuMail.EmailFlags.UNREAD, GriabuntuMail.EmailFlags.FLAGGED
         ));
     }
 
     public void unread_star_removed_stays_new() throws GLib.Error {
         // The synthetic arrival is already starred, so this isolates star-off.
         append_new(true);
-        change(this.first, new Convey.EmailFlags.with(Convey.EmailFlags.UNREAD));
+        change(this.first, new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.UNREAD));
         assert_counts(2);
         assert_tray_contains(this.first, true);
         assert_true(this.retired == 0);
@@ -134,28 +135,28 @@ public class Application.NotificationPluginContextTest : TestCase {
     }
 
     public void unread_other_flag_stays_new() throws GLib.Error {
-        assert_unread_update_keeps_new(new Convey.EmailFlags.with(
-            Convey.EmailFlags.UNREAD, Convey.EmailFlags.LOAD_REMOTE_IMAGES
+        assert_unread_update_keeps_new(new GriabuntuMail.EmailFlags.with(
+            GriabuntuMail.EmailFlags.UNREAD, GriabuntuMail.EmailFlags.LOAD_REMOTE_IMAGES
         ));
     }
 
     public void read_retires_only_read() throws GLib.Error {
         append_new();
-        change(this.first, new Convey.EmailFlags());
+        change(this.first, new GriabuntuMail.EmailFlags());
         assert_counts(1);
         assert_tray_contains(this.first, false);
         assert_tray_contains(this.second, true);
         assert_true(this.retired == 1);
         assert_true(this.seen.size == 1 && this.seen.contains(this.first));
-        change(this.first, new Convey.EmailFlags());
+        change(this.first, new GriabuntuMail.EmailFlags());
         assert_counts(1);
         assert_true(this.retired == 1);
     }
 
     public void deleted_unread_retires_only_deleted() throws GLib.Error {
         append_new();
-        change(this.first, new Convey.EmailFlags.with(
-            Convey.EmailFlags.UNREAD, Convey.EmailFlags.DELETED
+        change(this.first, new GriabuntuMail.EmailFlags.with(
+            GriabuntuMail.EmailFlags.UNREAD, GriabuntuMail.EmailFlags.DELETED
         ));
         assert_counts(1);
         assert_tray_contains(this.first, false);
@@ -166,7 +167,7 @@ public class Application.NotificationPluginContextTest : TestCase {
     public void removed_retires_only_removed() throws GLib.Error {
         append_new();
         this.folder.email_removed(
-            new Gee.ArrayList<Convey.EmailIdentifier>.wrap({this.first})
+            new Gee.ArrayList<GriabuntuMail.EmailIdentifier>.wrap({this.first})
         );
         assert_counts(1);
         assert_tray_contains(this.first, false);
@@ -177,14 +178,14 @@ public class Application.NotificationPluginContextTest : TestCase {
 
     public void mixed_flags_retire_only_read_or_deleted() throws GLib.Error {
         append_new();
-        var updates = new Gee.HashMap<Convey.EmailIdentifier,Convey.EmailFlags>();
-        updates.set(this.first, new Convey.EmailFlags.with(
-            Convey.EmailFlags.UNREAD, Convey.EmailFlags.FLAGGED
+        var updates = new Gee.HashMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.EmailFlags>();
+        updates.set(this.first, new GriabuntuMail.EmailFlags.with(
+            GriabuntuMail.EmailFlags.UNREAD, GriabuntuMail.EmailFlags.FLAGGED
         ));
-        updates.set(this.second, new Convey.EmailFlags());
+        updates.set(this.second, new GriabuntuMail.EmailFlags());
         var historical = new Mock.EmailIdentifer(99);
-        updates.set(historical, new Convey.EmailFlags.with(
-            Convey.EmailFlags.UNREAD, Convey.EmailFlags.DELETED
+        updates.set(historical, new GriabuntuMail.EmailFlags.with(
+            GriabuntuMail.EmailFlags.UNREAD, GriabuntuMail.EmailFlags.DELETED
         ));
         this.folder.email_flags_changed(updates);
         assert_counts(1);
@@ -197,14 +198,14 @@ public class Application.NotificationPluginContextTest : TestCase {
 
     public void flags_do_not_promote_old_unread() throws GLib.Error {
         assert_counts(0);
-        change(new Mock.EmailIdentifer(99), new Convey.EmailFlags.with(
-            Convey.EmailFlags.UNREAD, Convey.EmailFlags.FLAGGED
+        change(new Mock.EmailIdentifer(99), new GriabuntuMail.EmailFlags.with(
+            GriabuntuMail.EmailFlags.UNREAD, GriabuntuMail.EmailFlags.FLAGGED
         ));
         assert_counts(0);
         append_new();
-        change(this.first, new Convey.EmailFlags());
+        change(this.first, new GriabuntuMail.EmailFlags());
         // Re-unreading / un-deleting is not a new arrival in this session.
-        change(this.first, new Convey.EmailFlags.with(Convey.EmailFlags.UNREAD));
+        change(this.first, new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.UNREAD));
         assert_counts(1);
         assert_tray_contains(this.first, false);
         assert_tray_contains(this.second, true);
@@ -213,21 +214,21 @@ public class Application.NotificationPluginContextTest : TestCase {
 
     public void visible_recent_clears_session_new() throws GLib.Error {
         append_new();
-        var visible = new Gee.HashSet<Convey.App.Conversation>();
+        var visible = new Gee.HashSet<GriabuntuMail.App.Conversation>();
         this.context.clear_new_messages(this.folder, visible);
         assert_counts(2);
-        var conversation = new Convey.App.Conversation(this.folder);
-        var email = new Convey.Email(this.first);
-        email.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.UNREAD));
-        conversation.add(email, Convey.Collection.single(this.folder.path));
+        var conversation = new GriabuntuMail.App.Conversation(this.folder);
+        var email = new GriabuntuMail.Email(this.first);
+        email.set_flags(new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.UNREAD));
+        conversation.add(email, GriabuntuMail.Collection.single(this.folder.path));
         visible.add(conversation);
         // Existing policy clears ALL session-new IDs once a recent one is seen,
         // even though both messages remain unread. Do not make this unread-total.
         this.context.clear_new_messages(this.folder, visible);
         assert_counts(0);
         assert_true(email.email_flags.is_unread());
-        change(this.first, new Convey.EmailFlags.with(
-            Convey.EmailFlags.UNREAD, Convey.EmailFlags.FLAGGED
+        change(this.first, new GriabuntuMail.EmailFlags.with(
+            GriabuntuMail.EmailFlags.UNREAD, GriabuntuMail.EmailFlags.FLAGGED
         ));
         assert_counts(0);
     }

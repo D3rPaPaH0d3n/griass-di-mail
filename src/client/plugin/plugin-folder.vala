@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -12,7 +13,7 @@
  *
  * Instances of these may be obtained from {@link FolderStore}.
  */
-public interface Plugin.Folder : Convey.BaseObject {
+public interface Plugin.Folder : GriabuntuMail.BaseObject {
 
 
     /**
@@ -26,7 +27,7 @@ public interface Plugin.Folder : Convey.BaseObject {
     public abstract string display_name { get; }
 
     /** Returns the type of this folder. */
-    public abstract Convey.Folder.SpecialUse used_as { get; }
+    public abstract GriabuntuMail.Folder.SpecialUse used_as { get; }
 
     /** Returns the account the folder belongs to, if any. */
     public abstract Account? account { get; }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -15,7 +16,7 @@
  * complete, and to ease the implementation. See comments in {@link
  * MinimalFolder.close_async}.
  */
-private class Convey.ImapEngine.UserClose : Convey.ImapEngine.ReplayOperation {
+private class GriabuntuMail.ImapEngine.UserClose : GriabuntuMail.ImapEngine.ReplayOperation {
 
     /** Determines the state of the close operation. */
     public Trillian is_closing = Trillian.UNKNOWN;

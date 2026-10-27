@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -14,7 +15,7 @@
  * 20 charters at most) status message, and a possibly longer
  * explanation of what is happening.
  */
-public class Plugin.InfoBar : Convey.BaseObject {
+public class Plugin.InfoBar : GriabuntuMail.BaseObject {
 
 
     /** Emitted when the close button is activated. */

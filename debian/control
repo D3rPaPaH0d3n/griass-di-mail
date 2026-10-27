@@ -1,0 +1,70 @@
+Source: griabuntu-mail
+Section: mail
+Priority: optional
+Maintainer: Griabuntu Mail local builds <local-build@example.invalid>
+Build-Depends:
+ debhelper-compat (= 14),
+ dh-sequence-single-binary,
+ appstream,
+ bubblewrap,
+ dbus-daemon,
+ desktop-file-utils,
+ gettext,
+ iso-codes,
+ itstool,
+ libadwaita-1-dev (>= 1.7),
+ libenchant-2-dev,
+ libfolks-dev,
+ libgck-2-dev,
+ libgcr-4-dev,
+ libgee-0.8-dev,
+ libglib2.0-dev (>= 2.80),
+ libgirepository1.0-dev,
+ libgmime-3.0-dev (>= 3.2.4),
+ libgoa-1.0-dev,
+ libgstreamer-plugins-base1.0-dev,
+ libgstreamer-plugins-extra1.0-dev,
+ libgstreamer1.0-dev,
+ libgtk-4-dev (>= 4.16),
+ libicu-dev,
+ libjson-glib-dev,
+ libpeas-2-dev,
+ libsecret-1-dev,
+ libsoup-3.0-dev,
+ libsqlite3-dev,
+ libstemmer-dev,
+ libunwind-dev,
+ libwebkitgtk-6.0-dev (>= 2.40),
+ libxml2-dev,
+ libytnef0-dev (>= 1.9.3),
+ meson (>= 1.7),
+ ninja-build,
+ pkgconf,
+ python3,
+ valac (>= 0.56),
+Standards-Version: 4.7.2
+Rules-Requires-Root: no
+
+Package: griabuntu-mail
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ dconf-gsettings-backend | gsettings-backend,
+ default-dbus-session-bus | dbus-session-bus,
+ iso-codes,
+ librsvg2-common,
+Recommends:
+ evolution-data-server,
+ gnome-keyring,
+ gstreamer1.0-plugins-good,
+ libfolks-eds26,
+Provides: imap-client, mail-reader
+Description: private native build of the Griabuntu Mail desktop client
+ Independent Convey/Geary-derived GTK email client with recipient aliases,
+ local contact photos, precise received timestamps and a native new-mail tray.
+ TNEF/winmail.dat support and the session-new notification flag fix are enabled.
+ .
+ This local Ubuntu 26.10 preview uses its own Griabuntu Mail executable,
+ desktop identity and profile paths. It does not migrate existing Convey or
+ Flatpak profiles or start the application during installation.

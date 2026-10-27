@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -12,23 +13,23 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.4.2]]
  */
 
-public class Convey.Imap.Envelope : Convey.MessageData.AbstractMessageData, Convey.Imap.MessageData {
-    public Convey.RFC822.Date? sent { get; private set; }
-    public Convey.RFC822.Subject subject { get; private set; }
-    public Convey.RFC822.MailboxAddresses from { get; private set; }
-    public Convey.RFC822.MailboxAddresses sender { get; private set; }
-    public Convey.RFC822.MailboxAddresses reply_to { get; private set; }
-    public Convey.RFC822.MailboxAddresses? to { get; private set; }
-    public Convey.RFC822.MailboxAddresses? cc { get; private set; }
-    public Convey.RFC822.MailboxAddresses? bcc { get; private set; }
-    public Convey.RFC822.MessageIDList? in_reply_to { get; private set; }
-    public Convey.RFC822.MessageID? message_id { get; private set; }
+public class GriabuntuMail.Imap.Envelope : GriabuntuMail.MessageData.AbstractMessageData, GriabuntuMail.Imap.MessageData {
+    public GriabuntuMail.RFC822.Date? sent { get; private set; }
+    public GriabuntuMail.RFC822.Subject subject { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddresses from { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddresses sender { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddresses reply_to { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddresses? to { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddresses? cc { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddresses? bcc { get; private set; }
+    public GriabuntuMail.RFC822.MessageIDList? in_reply_to { get; private set; }
+    public GriabuntuMail.RFC822.MessageID? message_id { get; private set; }
 
-    public Envelope(Convey.RFC822.Date? sent, Convey.RFC822.Subject subject,
-        Convey.RFC822.MailboxAddresses from, Convey.RFC822.MailboxAddresses sender,
-        Convey.RFC822.MailboxAddresses reply_to, Convey.RFC822.MailboxAddresses? to,
-        Convey.RFC822.MailboxAddresses? cc, Convey.RFC822.MailboxAddresses? bcc,
-        Convey.RFC822.MessageIDList? in_reply_to, Convey.RFC822.MessageID? message_id) {
+    public Envelope(GriabuntuMail.RFC822.Date? sent, GriabuntuMail.RFC822.Subject subject,
+        GriabuntuMail.RFC822.MailboxAddresses from, GriabuntuMail.RFC822.MailboxAddresses sender,
+        GriabuntuMail.RFC822.MailboxAddresses reply_to, GriabuntuMail.RFC822.MailboxAddresses? to,
+        GriabuntuMail.RFC822.MailboxAddresses? cc, GriabuntuMail.RFC822.MailboxAddresses? bcc,
+        GriabuntuMail.RFC822.MessageIDList? in_reply_to, GriabuntuMail.RFC822.MessageID? message_id) {
         this.sent = sent;
         this.subject = subject;
         this.from = from;

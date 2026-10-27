@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -8,17 +9,17 @@
  */
 
 
-class Convey.ImapDB.AccountTest : TestCase {
+class GriabuntuMail.ImapDB.AccountTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
-    private Convey.AccountInformation? config = null;
+    private GriabuntuMail.AccountInformation? config = null;
     private Account? account = null;
     private FolderRoot? root = null;
 
 
     public AccountTest() {
-        base("Convey.ImapDB.AccountTest");
+        base("GriabuntuMail.ImapDB.AccountTest");
         add_test("create_base_folder", create_base_folder);
         add_test("create_child_folder", create_child_folder);
         add_test("list_folders", list_folders);
@@ -33,14 +34,14 @@ class Convey.ImapDB.AccountTest : TestCase {
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("convey-imap-db-account-test-XXXXXX")
+            GLib.DirUtils.make_tmp("griabuntu-mail-imap-db-account-test-XXXXXX")
         );
 
-        this.config = new Convey.AccountInformation(
+        this.config = new GriabuntuMail.AccountInformation(
             "test",
             ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Convey.RFC822.MailboxAddress(null, "test@example.com")
+            new GriabuntuMail.RFC822.MailboxAddress(null, "test@example.com")
         );
 
         this.account = new Account(
@@ -76,7 +77,7 @@ class Convey.ImapDB.AccountTest : TestCase {
             this.root.get_child("test"),
             new Imap.FolderProperties.selectable(
                 new Imap.MailboxAttributes(
-                    Gee.Collection.empty<Convey.Imap.MailboxAttribute>()
+                    Gee.Collection.empty<GriabuntuMail.Imap.MailboxAttribute>()
                 ),
                 new Imap.StatusData(
                     new Imap.MailboxSpecifier("test"),
@@ -97,7 +98,7 @@ class Convey.ImapDB.AccountTest : TestCase {
         );
         this.account.clone_folder_async.end(async_result());
 
-        Convey.Db.Result result = this.account.db.query(
+        GriabuntuMail.Db.Result result = this.account.db.query(
             "SELECT * FROM FolderTable;"
         );
         assert_false(result.finished, "Folder not created");
@@ -115,7 +116,7 @@ class Convey.ImapDB.AccountTest : TestCase {
             this.root.get_child("test").get_child("child"),
             new Imap.FolderProperties.selectable(
                 new Imap.MailboxAttributes(
-                    Gee.Collection.empty<Convey.Imap.MailboxAttribute>()
+                    Gee.Collection.empty<GriabuntuMail.Imap.MailboxAttribute>()
                 ),
                 new Imap.StatusData(
                     new Imap.MailboxSpecifier("test>child"),
@@ -136,7 +137,7 @@ class Convey.ImapDB.AccountTest : TestCase {
         );
         this.account.clone_folder_async.end(async_result());
 
-        Convey.Db.Result result = this.account.db.query(
+        GriabuntuMail.Db.Result result = this.account.db.query(
             "SELECT * FROM FolderTable WHERE id != 1;"
         );
         assert_false(result.finished, "Folder not created");
@@ -159,7 +160,7 @@ class Convey.ImapDB.AccountTest : TestCase {
             null,
             this.async_completion
         );
-        Gee.Collection<Convey.ImapDB.Folder> result =
+        Gee.Collection<GriabuntuMail.ImapDB.Folder> result =
             this.account.list_folders_async.end(async_result());
 
         Folder test1 = traverse(result).first();
@@ -326,7 +327,7 @@ class Convey.ImapDB.AccountTest : TestCase {
         );
 
         this.account.list_email.begin(
-            iterate_array<Convey.ImapDB.EmailIdentifier>({
+            iterate_array<GriabuntuMail.ImapDB.EmailIdentifier>({
                     new EmailIdentifier(1, null),
                     new EmailIdentifier(2, null)
                 }).to_linked_list(),

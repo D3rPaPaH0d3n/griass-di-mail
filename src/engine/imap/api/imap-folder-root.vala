@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>.
@@ -17,7 +18,7 @@
  * this class ensure certain requirements are held throughout the
  * library.
  */
-public class Convey.Imap.FolderRoot : Convey.FolderRoot {
+public class GriabuntuMail.Imap.FolderRoot : GriabuntuMail.FolderRoot {
 
 
    /**

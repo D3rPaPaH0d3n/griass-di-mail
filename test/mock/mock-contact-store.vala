@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -8,26 +9,26 @@
  */
 
 internal class Mock.ContactStore : GLib.Object,
-    Convey.ContactStore, ValaUnit.TestAssertions, ValaUnit.MockObject {
+    GriabuntuMail.ContactStore, ValaUnit.TestAssertions, ValaUnit.MockObject {
 
     protected Gee.Queue<ValaUnit.ExpectedCall> expected {
         get; set; default = new Gee.LinkedList<ValaUnit.ExpectedCall>();
     }
 
-    public async Convey.Contact? get_by_rfc822(Convey.RFC822.MailboxAddress address,
+    public async GriabuntuMail.Contact? get_by_rfc822(GriabuntuMail.RFC822.MailboxAddress address,
                                               GLib.Cancellable? cancellable)
         throws GLib.Error {
-        return object_call<Convey.Contact?>(
+        return object_call<GriabuntuMail.Contact?>(
             "get_by_rfc822", { address, cancellable }, null
         );
     }
 
-    public async Gee.Collection<Convey.Contact> search(string query,
+    public async Gee.Collection<GriabuntuMail.Contact> search(string query,
                                                       uint min_importance,
                                                       uint limit,
                                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        return object_call<Gee.Collection<Convey.Contact>>(
+        return object_call<Gee.Collection<GriabuntuMail.Contact>>(
             "search",
             {
                 box_arg(query),
@@ -35,11 +36,11 @@ internal class Mock.ContactStore : GLib.Object,
                 uint_arg(limit),
                 cancellable
             },
-            Gee.Collection.empty<Convey.Contact>()
+            Gee.Collection.empty<GriabuntuMail.Contact>()
         );
     }
 
-    public async void update_contacts(Gee.Collection<Convey.Contact> updated,
+    public async void update_contacts(Gee.Collection<GriabuntuMail.Contact> updated,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         void_call("update_contacts", { updated, cancellable });

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
@@ -13,7 +14,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-6.2.2]]
  */
-public class Convey.Imap.AuthenticateCommand : Command {
+public class GriabuntuMail.Imap.AuthenticateCommand : Command {
 
 
     public const string NAME = "authenticate";
@@ -29,7 +30,7 @@ public class Convey.Imap.AuthenticateCommand : Command {
     private bool sent_oauth2_token = false;
     private bool sent_oauth2_empty = false;
     private bool serialised = false;
-    private Convey.Nonblocking.Spinlock error_lock;
+    private GriabuntuMail.Nonblocking.Spinlock error_lock;
     private GLib.Cancellable error_cancellable = new GLib.Cancellable();
 
 
@@ -38,7 +39,7 @@ public class Convey.Imap.AuthenticateCommand : Command {
                                 GLib.Cancellable? should_send) {
         base(NAME, args, should_send);
         this.method = method;
-        this.error_lock = new Convey.Nonblocking.Spinlock(this.error_cancellable);
+        this.error_lock = new GriabuntuMail.Nonblocking.Spinlock(this.error_cancellable);
     }
 
     public AuthenticateCommand.oauth2(string user,
@@ -119,7 +120,7 @@ public class Convey.Imap.AuthenticateCommand : Command {
 
             if (!this.sent_oauth2_token) {
                 string? oauth2_token = this.oauth2_token;
-                if (Convey.String.is_empty(oauth2_token)) {
+                if (GriabuntuMail.String.is_empty(oauth2_token)) {
                     stop_serialisation();
                     throw new ImapError.INVALID(
                         "Missing OAUTH2 response for AUTHENTICATE"
@@ -127,7 +128,7 @@ public class Convey.Imap.AuthenticateCommand : Command {
                 }
                 this.sent_oauth2_token = true;
                 this.response_literal = new LiteralParameter(
-                    new Convey.Memory.StringBuffer((string) oauth2_token)
+                    new GriabuntuMail.Memory.StringBuffer((string) oauth2_token)
                 );
             } else if (!this.sent_oauth2_empty) {
                 // Continuation will be a Base64 encoded JSON blob and which
@@ -137,7 +138,7 @@ public class Convey.Imap.AuthenticateCommand : Command {
                 // error.
                 this.sent_oauth2_empty = true;
                 this.response_literal = new LiteralParameter(
-                    Convey.Memory.EmptyBuffer.instance
+                    GriabuntuMail.Memory.EmptyBuffer.instance
                 );
             } else {
                 stop_serialisation();

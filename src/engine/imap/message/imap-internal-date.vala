@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -18,7 +19,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-2.3.3]]
  */
 
-public class Convey.Imap.InternalDate : Convey.MessageData.AbstractMessageData, Convey.Imap.MessageData,
+public class GriabuntuMail.Imap.InternalDate : GriabuntuMail.MessageData.AbstractMessageData, GriabuntuMail.Imap.MessageData,
     Gee.Hashable<InternalDate>, Gee.Comparable<InternalDate> {
     // see get_en_us_mon() for explanation
     private const string[] EN_US_MON = {

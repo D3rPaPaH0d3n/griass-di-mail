@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,11 +7,11 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.ListEmailBySparseID : Convey.ImapEngine.AbstractListEmail {
+private class GriabuntuMail.ImapEngine.ListEmailBySparseID : GriabuntuMail.ImapEngine.AbstractListEmail {
     private Gee.HashSet<ImapDB.EmailIdentifier> ids = new Gee.HashSet<ImapDB.EmailIdentifier>();
 
     public ListEmailBySparseID(MinimalFolder owner, Gee.Collection<ImapDB.EmailIdentifier> ids,
-        Convey.Email.Field required_fields, Folder.ListFlags flags, Cancellable? cancellable) {
+        GriabuntuMail.Email.Field required_fields, Folder.ListFlags flags, Cancellable? cancellable) {
         base ("ListEmailBySparseID", owner, required_fields, flags, cancellable);
 
         this.ids.add_all(ids);
@@ -31,19 +32,19 @@ private class Convey.ImapEngine.ListEmailBySparseID : Convey.ImapEngine.Abstract
             return ReplayOperation.Status.CONTINUE;
         }
 
-        Gee.List<Convey.Email>? local_list = yield owner.local_folder.list_email_by_sparse_id_async(ids,
+        Gee.List<GriabuntuMail.Email>? local_list = yield owner.local_folder.list_email_by_sparse_id_async(ids,
             required_fields, ImapDB.Folder.ListFlags.PARTIAL_OK, cancellable);
 
         // Build list of emails fully fetched from local store and table of remaining emails by
         // their lack of completeness
-        Gee.List<Convey.Email> fulfilled = new Gee.ArrayList<Convey.Email>();
+        Gee.List<GriabuntuMail.Email> fulfilled = new Gee.ArrayList<GriabuntuMail.Email>();
         if (local_list != null && local_list.size > 0) {
-            Gee.Map<Convey.EmailIdentifier, Convey.Email>? map = Email.emails_to_map(local_list);
+            Gee.Map<GriabuntuMail.EmailIdentifier, GriabuntuMail.Email>? map = Email.emails_to_map(local_list);
             assert(map != null);
 
             // walk list of *requested* IDs to ensure that unknown are considering unfulfilled
             foreach (ImapDB.EmailIdentifier id in ids) {
-                Convey.Email? email = map.get(id);
+                GriabuntuMail.Email? email = map.get(id);
 
                 // if non-null, then the local_folder should've supplied a UID; if null, then
                 // it's simply not present in the local folder (since PARTIAL_OK is spec'd), so

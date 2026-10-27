@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -19,7 +20,7 @@
  *
  * This works around the GLib error system's lack of extensibility.
  */
-public class Convey.ErrorContext : BaseObject {
+public class GriabuntuMail.ErrorContext : BaseObject {
 
 
     /** Represents an individual stack frame in a call back-trace. */

@@ -2,7 +2,7 @@
 <!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
 <!-- Created with Cambalache 1.0.3 -->
 <cambalache-project version="1.0.0" target_tk="gtk-4.0">
-  <gresources filename="net.donnybeelo.Convey.gresource.xml" sha256="bc9c5d86ffc11aabac9f07d11b4bc82c397f3dcff64454088e4035f5d4b551b3"/>
+  <gresources filename="io.github.d3rpapah0d3n.GriabuntuMail.gresource.xml" sha256="bc9c5d86ffc11aabac9f07d11b4bc82c397f3dcff64454088e4035f5d4b551b3"/>
   <css priority="600" is_global="1" filename="composer-web-view.css" sha256="5835c67371db7aaf94fabde8146939f3be29242d67f4da95999d5d2c962759d6"/>
   <css priority="600" is_global="1" filename="conversation-web-view.css" sha256="1aa9cfbc398550f20a3074bde660d58fef004749f12177b7ee6d2eb0d6c4cea7"/>
   <css priority="600" is_global="1" filename="style.css" sha256="361b678ee702591c62ca77c8ed1d6f40ce2c434b4c6c169014cc82003123a5ab"/>

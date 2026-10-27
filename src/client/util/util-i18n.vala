@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
@@ -14,9 +15,9 @@
 namespace Util.I18n {
 
     /** Determines if an account presents its user folders as labels. */
-    public bool uses_labels(Convey.Account account) {
+    public bool uses_labels(GriabuntuMail.Account account) {
         return (
-            account.information.service_provider == Convey.ServiceProvider.GMAIL
+            account.information.service_provider == GriabuntuMail.ServiceProvider.GMAIL
         );
     }
 
@@ -32,7 +33,7 @@ namespace Util.I18n {
         Intl.textdomain(package_name);
     }
 
-    // TODO: Convey should be able to use langpacks from the build directory
+    // TODO: Griabuntu Mail should be able to use langpacks from the build directory
     private string get_langpack_dir_path(string program_path) {
         return Config.LANGUAGE_SUPPORT_DIRECTORY;
     }
@@ -145,8 +146,8 @@ namespace Util.I18n {
 
         var session = new Soup.Session();
         session.remove_feature_by_type(typeof(Soup.ContentDecoder));
-        if (Convey.Endpoint.proxy_resolver != null) {
-            session.proxy_resolver = Convey.Endpoint.proxy_resolver;
+        if (GriabuntuMail.Endpoint.proxy_resolver != null) {
+            session.proxy_resolver = GriabuntuMail.Endpoint.proxy_resolver;
         }
         foreach (string ext in new string[] { "aff", "dic" }) {
             var msg = new Soup.Message(
@@ -363,9 +364,9 @@ namespace Util.I18n {
      * to_folder_type_display_name} is returned, otherwise the last
      * folder path step is returned.
      */
-    public string? to_folder_display_name(Convey.Folder folder) {
+    public string? to_folder_display_name(GriabuntuMail.Folder folder) {
         var name = to_folder_type_display_name(folder.used_as);
-        if (Convey.String.is_empty_or_whitespace(name)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(name)) {
             name = folder.path.name;
         }
         return name;
@@ -374,7 +375,7 @@ namespace Util.I18n {
     /**
      * Returns the localised name for a specific folder type, if any.
      */
-    public unowned string? to_folder_type_display_name(Convey.Folder.SpecialUse use) {
+    public unowned string? to_folder_type_display_name(GriabuntuMail.Folder.SpecialUse use) {
         switch (use) {
             case INBOX:
                 return _("Inbox");

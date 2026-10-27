@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>.
@@ -22,7 +23,7 @@ public class Plugin.NotificationBadge :
     PluginBase, NotificationExtension, FolderExtension, TrustedExtension {
 
 
-    private const Convey.Folder.SpecialUse[] MONITORED_TYPES = {
+    private const GriabuntuMail.Folder.SpecialUse[] MONITORED_TYPES = {
         INBOX, NONE
     };
 

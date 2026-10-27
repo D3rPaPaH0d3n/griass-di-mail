@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2017-2019 Michael Gratton <mike@vee.net>.
@@ -8,7 +9,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
+private abstract class GriabuntuMail.ImapEngine.GenericAccount : GriabuntuMail.Account {
 
 
     /** Default IMAP session pool size. */
@@ -324,7 +325,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
      *
      * The account must have been opened before calling this method.
      */
-    public async Imap.FolderSession claim_folder_session(Convey.FolderPath path,
+    public async Imap.FolderSession claim_folder_session(GriabuntuMail.FolderPath path,
                                                          GLib.Cancellable? cancellable)
         throws Error {
         check_open();
@@ -471,11 +472,11 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
                     (parent != null && path_parent != null &&
                      path_parent.equal_to(parent)));
             })
-            .map<Convey.Folder>(p => folders.get(p))
+            .map<GriabuntuMail.Folder>(p => folders.get(p))
             .to_array_list();
     }
 
-    public override async Convey.Folder get_required_special_folder_async(
+    public override async GriabuntuMail.Folder get_required_special_folder_async(
         Folder.SpecialUse special,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
@@ -486,7 +487,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         }
         check_open();
 
-        Convey.Folder? folder = get_special_folder(special);
+        GriabuntuMail.Folder? folder = get_special_folder(special);
         if (folder == null) {
             var account = yield claim_account_session(cancellable);
             try {
@@ -668,7 +669,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         this.local_folders.unset(path);
     }
 
-    private ImapDB.EmailIdentifier check_id(Convey.EmailIdentifier id) throws EngineError {
+    private ImapDB.EmailIdentifier check_id(GriabuntuMail.EmailIdentifier id) throws EngineError {
         ImapDB.EmailIdentifier? imapdb_id = id as ImapDB.EmailIdentifier;
         if (imapdb_id == null)
             throw new EngineError.BAD_PARAMETERS("EmailIdentifier %s not from ImapDB folder", id.to_string());
@@ -676,9 +677,9 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         return imapdb_id;
     }
 
-    private Gee.Collection<ImapDB.EmailIdentifier> check_ids(Gee.Collection<Convey.EmailIdentifier> ids)
+    private Gee.Collection<ImapDB.EmailIdentifier> check_ids(Gee.Collection<GriabuntuMail.EmailIdentifier> ids)
         throws EngineError {
-        foreach (Convey.EmailIdentifier id in ids) {
+        foreach (GriabuntuMail.EmailIdentifier id in ids) {
             if (!(id is ImapDB.EmailIdentifier))
                 throw new EngineError.BAD_PARAMETERS("EmailIdentifier %s not from ImapDB folder", id.to_string());
         }
@@ -694,16 +695,16 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         return new FtsSearchQuery(expression, text, this.stemmer);
     }
 
-    public override async Gee.MultiMap<Convey.Email, Convey.FolderPath?>? local_search_message_id_async(
-        Convey.RFC822.MessageID message_id, Convey.Email.Field requested_fields, bool partial_ok,
-        Gee.Collection<Convey.FolderPath?>? folder_blacklist, Convey.EmailFlags? flag_blacklist,
+    public override async Gee.MultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?>? local_search_message_id_async(
+        GriabuntuMail.RFC822.MessageID message_id, GriabuntuMail.Email.Field requested_fields, bool partial_ok,
+        Gee.Collection<GriabuntuMail.FolderPath?>? folder_blacklist, GriabuntuMail.EmailFlags? flag_blacklist,
         Cancellable? cancellable = null) throws Error {
         return yield local.search_message_id_async(
             message_id, requested_fields, partial_ok, folder_blacklist, flag_blacklist, cancellable);
     }
 
-    public override async Convey.Email local_fetch_email_async(Convey.EmailIdentifier email_id,
-        Convey.Email.Field required_fields, Cancellable? cancellable = null) throws Error {
+    public override async GriabuntuMail.Email local_fetch_email_async(GriabuntuMail.EmailIdentifier email_id,
+        GriabuntuMail.Email.Field required_fields, Cancellable? cancellable = null) throws Error {
         return yield local.fetch_email_async(check_id(email_id), required_fields, cancellable);
     }
 
@@ -718,22 +719,22 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         );
     }
 
-    public override async Gee.Collection<Convey.EmailIdentifier>? local_search_async(Convey.SearchQuery query,
-        int limit = 100, int offset = 0, Gee.Collection<Convey.FolderPath?>? folder_blacklist = null,
-        Gee.Collection<Convey.EmailIdentifier>? search_ids = null, Cancellable? cancellable = null) throws Error {
+    public override async Gee.Collection<GriabuntuMail.EmailIdentifier>? local_search_async(GriabuntuMail.SearchQuery query,
+        int limit = 100, int offset = 0, Gee.Collection<GriabuntuMail.FolderPath?>? folder_blacklist = null,
+        Gee.Collection<GriabuntuMail.EmailIdentifier>? search_ids = null, Cancellable? cancellable = null) throws Error {
         if (offset < 0)
             throw new EngineError.BAD_PARAMETERS("Offset must not be negative");
 
         return yield local.search_async(query, limit, offset, folder_blacklist, search_ids, cancellable);
     }
 
-    public override async Gee.Set<string>? get_search_matches_async(Convey.SearchQuery query,
-        Gee.Collection<Convey.EmailIdentifier> ids, Cancellable? cancellable = null) throws Error {
+    public override async Gee.Set<string>? get_search_matches_async(GriabuntuMail.SearchQuery query,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids, Cancellable? cancellable = null) throws Error {
         return yield local.get_search_matches_async(query, check_ids(ids), cancellable);
     }
 
     public override async Gee.MultiMap<EmailIdentifier,FolderPath>?
-        get_containing_folders_async(Gee.Collection<Convey.EmailIdentifier> ids,
+        get_containing_folders_async(Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
         Gee.MultiMap<EmailIdentifier,FolderPath> map =
@@ -777,7 +778,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         if (!this.open) {
             return;
         }
-        var remote_starred_exists = traverse<Convey.Folder>(this.remote_folders.values)
+        var remote_starred_exists = traverse<GriabuntuMail.Folder>(this.remote_folders.values)
             .first_matching(f => f.used_as == FLAGGED) != null || !this.local_starred_folder;
 
         if (!remote_starred_exists && this.starred_folder == null) {
@@ -807,7 +808,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
      * equivalents need to exist beforehand — they are not created.
      *
      * If `are_existing` is true, the folders are assumed to have been
-     * seen before and the {@link Convey.Account.folders_created} signal is
+     * seen before and the {@link GriabuntuMail.Account.folders_created} signal is
      * not fired.
      */
     internal Gee.Collection<Folder> add_folders(Gee.Collection<ImapDB.Folder> db_folders,
@@ -847,9 +848,9 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
      *
      * This is functionally equivalent to {@link update_folders}.
      */
-    internal void update_folder(Convey.Folder folder) {
-        Gee.Collection<Convey.Folder> folders =
-            new Gee.LinkedList<Convey.Folder>();
+    internal void update_folder(GriabuntuMail.Folder folder) {
+        Gee.Collection<GriabuntuMail.Folder> folders =
+            new Gee.LinkedList<GriabuntuMail.Folder>();
         folders.add(folder);
         debug("Folder updated: %s", folder.path.to_string());
         this.sync.folders_contents_altered(folders);
@@ -860,7 +861,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
      *
      * This is functionally equivalent to {@link update_folder}.
      */
-    internal void update_folders(Gee.Collection<Convey.Folder> folders) {
+    internal void update_folders(Gee.Collection<GriabuntuMail.Folder> folders) {
         if (!folders.is_empty) {
             this.sync.folders_contents_altered(folders);
         }
@@ -870,7 +871,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
      * Marks a folder as a specific special folder type.
      */
     internal void promote_folders(Gee.Map<Folder.SpecialUse,Folder> specials) {
-        var changed = new Gee.HashSet<Convey.Folder>();
+        var changed = new Gee.HashSet<GriabuntuMail.Folder>();
         foreach (var special in specials.keys) {
             MinimalFolder? minimal = specials.get(special) as MinimalFolder;
             if (minimal.used_as != special) {
@@ -909,7 +910,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
         Gee.TreeSet<MinimalFolder> removed = new Gee.TreeSet<MinimalFolder>(
             Account.folder_path_comparator
         );
-        foreach(Convey.Folder folder in folders) {
+        foreach(GriabuntuMail.Folder folder in folders) {
             MinimalFolder? impl = this.remote_folders.get(folder.path);
             if (impl != null) {
                 this.remote_folders.unset(folder.path);
@@ -1019,7 +1020,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
                                              Gee.BidirSortedSet<Folder>? unavailable) {
         base.notify_folders_available_unavailable(available, unavailable);
         if (available != null) {
-            foreach (Convey.Folder folder in available) {
+            foreach (GriabuntuMail.Folder folder in available) {
                 folder.email_appended.connect(notify_email_appended);
                 folder.email_inserted.connect(notify_email_inserted);
                 folder.email_removed.connect(notify_email_removed);
@@ -1029,7 +1030,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
             }
         }
         if (unavailable != null) {
-            foreach (Convey.Folder folder in unavailable) {
+            foreach (GriabuntuMail.Folder folder in unavailable) {
                 folder.email_appended.disconnect(notify_email_appended);
                 folder.email_inserted.disconnect(notify_email_inserted);
                 folder.email_removed.disconnect(notify_email_removed);
@@ -1041,31 +1042,31 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_appended(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
+    protected override void notify_email_appended(GriabuntuMail.Folder folder, Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         base.notify_email_appended(folder, ids);
         schedule_unseen_update(folder);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_inserted(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
+    protected override void notify_email_inserted(GriabuntuMail.Folder folder, Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         base.notify_email_inserted(folder, ids);
         schedule_unseen_update(folder);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_removed(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
+    protected override void notify_email_removed(GriabuntuMail.Folder folder, Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         base.notify_email_removed(folder, ids);
         schedule_unseen_update(folder);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_locally_removed(Convey.Folder folder, Gee.Collection<Convey.EmailIdentifier> ids) {
+    protected override void notify_email_locally_removed(GriabuntuMail.Folder folder, Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         base.notify_email_locally_removed(folder, ids);
     }
 
     /** {@inheritDoc} */
-    protected override void notify_email_flags_changed(Convey.Folder folder,
-        Gee.Map<Convey.EmailIdentifier, Convey.EmailFlags> flag_map) {
+    protected override void notify_email_flags_changed(GriabuntuMail.Folder folder,
+        Gee.Map<GriabuntuMail.EmailIdentifier, GriabuntuMail.EmailFlags> flag_map) {
         base.notify_email_flags_changed(folder, flag_map);
         schedule_unseen_update(folder);
     }
@@ -1099,7 +1100,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
     /**
      * Hooks up and queues an {@link RefreshFolderUnseen} operation.
      */
-    private void schedule_unseen_update(Convey.Folder folder) {
+    private void schedule_unseen_update(GriabuntuMail.Folder folder) {
         MinimalFolder? impl = folder as MinimalFolder;
         if (impl != null) {
             impl.refresh_unseen();
@@ -1291,7 +1292,7 @@ private abstract class Convey.ImapEngine.GenericAccount : Convey.Account {
 /**
  * Account operation for loading local folders from the database.
  */
-internal class Convey.ImapEngine.LoadFolders : AccountOperation {
+internal class GriabuntuMail.ImapEngine.LoadFolders : AccountOperation {
 
 
     private weak ImapDB.Account local;
@@ -1342,7 +1343,7 @@ internal class Convey.ImapEngine.LoadFolders : AccountOperation {
 /**
  * Account operation for starting remote mail services.
  */
-internal class Convey.ImapEngine.StartServices : AccountOperation {
+internal class GriabuntuMail.ImapEngine.StartServices : AccountOperation {
 
 
     private Outbox.Folder outbox;
@@ -1367,7 +1368,7 @@ internal class Convey.ImapEngine.StartServices : AccountOperation {
 /**
  * Account operation for populating the full-text-search table.
  */
-internal class Convey.ImapEngine.PopulateSearchTable : AccountOperation {
+internal class GriabuntuMail.ImapEngine.PopulateSearchTable : AccountOperation {
 
 
     internal PopulateSearchTable(GenericAccount account) {
@@ -1387,7 +1388,7 @@ internal class Convey.ImapEngine.PopulateSearchTable : AccountOperation {
 /**
  * Account operation that updates folders from the remote.
  */
-internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
+internal class GriabuntuMail.ImapEngine.UpdateRemoteFolders : AccountOperation {
 
 
     private weak GenericAccount generic_account;
@@ -1414,7 +1415,7 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
             (a,b) => a.compare_to(b)
         );
 
-        Convey.traverse<Convey.Folder>(
+        GriabuntuMail.traverse<GriabuntuMail.Folder>(
             this.account.list_folders()
         ).add_all_to_map<FolderPath>(
             existing_folders, f => f.path
@@ -1453,7 +1454,7 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
 
     private async bool enumerate_remote_folders_async(Imap.AccountSession remote,
                                                       Gee.Map<FolderPath,Imap.Folder> folders,
-                                                      Convey.FolderPath? parent,
+                                                      GriabuntuMail.FolderPath? parent,
                                                       GLib.Cancellable? cancellable)
         throws Error {
         bool results_suspect = false;
@@ -1486,13 +1487,13 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
     }
 
     private async void update_folders_async(Imap.AccountSession remote,
-                                            Gee.Map<FolderPath,Convey.Folder> existing_folders,
+                                            Gee.Map<FolderPath,GriabuntuMail.Folder> existing_folders,
                                             Gee.Map<FolderPath,Imap.Folder> remote_folders,
                                             bool remote_folders_suspect,
                                             GLib.Cancellable? cancellable) {
         // update all remote folders properties in the local store and
         // active in the system
-        Gee.HashSet<Convey.FolderPath> altered_paths = new Gee.HashSet<Convey.FolderPath>();
+        Gee.HashSet<GriabuntuMail.FolderPath> altered_paths = new Gee.HashSet<GriabuntuMail.FolderPath>();
         foreach (Imap.Folder remote_folder in remote_folders.values) {
             MinimalFolder? minimal_folder = existing_folders.get(remote_folder.path)
                 as MinimalFolder;
@@ -1542,15 +1543,15 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
         }
 
         // If path in remote but not local, need to add it
-        Gee.ArrayList<Imap.Folder> to_add = Convey.traverse<Imap.Folder>(remote_folders.values)
+        Gee.ArrayList<Imap.Folder> to_add = GriabuntuMail.traverse<Imap.Folder>(remote_folders.values)
             .filter(f => !existing_folders.has_key(f.path))
             .to_array_list();
 
         // Remove if path in local but not remote
-        Gee.ArrayList<Convey.Folder> to_remove
-            = Convey.traverse<Gee.Map.Entry<FolderPath,Convey.Folder>>(existing_folders)
+        Gee.ArrayList<GriabuntuMail.Folder> to_remove
+            = GriabuntuMail.traverse<Gee.Map.Entry<FolderPath,GriabuntuMail.Folder>>(existing_folders)
             .filter(e => !remote_folders.has_key(e.key))
-            .map<Convey.Folder>(e => (Convey.Folder) e.value)
+            .map<GriabuntuMail.Folder>(e => (GriabuntuMail.Folder) e.value)
             .to_array_list();
 
         // For folders to add, clone them and their properties
@@ -1558,7 +1559,7 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
         var generic_account = (GenericAccount) this.account;
         var local = generic_account.local;
         Gee.ArrayList<ImapDB.Folder> to_build = new Gee.ArrayList<ImapDB.Folder>();
-        foreach (Convey.Imap.Folder remote_folder in to_add) {
+        foreach (GriabuntuMail.Imap.Folder remote_folder in to_add) {
             try {
                 to_build.add(
                     yield local.clone_folder_async(remote_folder, cancellable)
@@ -1595,7 +1596,7 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
 
             // Let the remote know as well
             remote.folders_removed(
-                Convey.traverse<Convey.Folder>(removed)
+                GriabuntuMail.traverse<GriabuntuMail.Folder>(removed)
                 .map<FolderPath>(f => f.path).to_array_list()
             );
         }
@@ -1604,8 +1605,8 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
             // Notify of updated folders only when already
             // connected. This will cause them to get refreshed.
             if (altered_paths.size > 0) {
-                Gee.ArrayList<Convey.Folder> altered = new Gee.ArrayList<Convey.Folder>();
-                foreach (Convey.FolderPath altered_path in altered_paths) {
+                Gee.ArrayList<GriabuntuMail.Folder> altered = new Gee.ArrayList<GriabuntuMail.Folder>();
+                foreach (GriabuntuMail.FolderPath altered_path in altered_paths) {
                     if (existing_folders.has_key(altered_path))
                         altered.add(existing_folders.get(altered_path));
                     else
@@ -1617,7 +1618,7 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
             // Notify all remote folders after re-connecting so they
             // get fully sync'ed
             if (remote_folders.size > 0) {
-                var remotes = new Gee.ArrayList<Convey.Folder>();
+                var remotes = new Gee.ArrayList<GriabuntuMail.Folder>();
                 foreach (var path in remote_folders.keys) {
                     if (existing_folders.has_key(path)) {
                         remotes.add(existing_folders.get(path));
@@ -1653,7 +1654,7 @@ internal class Convey.ImapEngine.UpdateRemoteFolders : AccountOperation {
  * This performs a IMAP STATUS on the folder, but only if it is not
  * open - if it is open it is already maintaining its unseen count.
  */
-internal class Convey.ImapEngine.RefreshFolderUnseen : FolderOperation {
+internal class GriabuntuMail.ImapEngine.RefreshFolderUnseen : FolderOperation {
 
 
     internal RefreshFolderUnseen(MinimalFolder folder,
@@ -1663,7 +1664,7 @@ internal class Convey.ImapEngine.RefreshFolderUnseen : FolderOperation {
 
     public override async void execute(GLib.Cancellable cancellable) throws GLib.Error {
         GenericAccount account = (GenericAccount) this.account;
-        if (this.folder.get_open_state() == Convey.Folder.OpenState.CLOSED) {
+        if (this.folder.get_open_state() == GriabuntuMail.Folder.OpenState.CLOSED) {
             Imap.AccountSession? remote = yield account.claim_account_session(
                 cancellable
             );

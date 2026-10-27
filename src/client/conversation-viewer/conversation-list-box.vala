@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016,2019 Michael Gratton <mike@vee.net>
@@ -12,24 +13,24 @@
  * A widget for displaying conversations as a list of emails.
  *
  * The view displays the current selected {@link
- * Convey.App.Conversation} from the conversation list. To do so, it
+ * GriabuntuMail.App.Conversation} from the conversation list. To do so, it
  * listens to signals from both the list and the current conversation
  * monitor, updating the email list as needed.
  *
  * Unlike ConversationListStore (which sorts by date received),
- * ConversationListBox sorts by the {@link Convey.Email.date} field
+ * ConversationListBox sorts by the {@link GriabuntuMail.Email.date} field
  * (the Date: header), as that's the date displayed to the user.
  */
-public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
+public class ConversationListBox : Adw.Bin, GriabuntuMail.BaseInterface {
 
     /** Fields that must be available for listing conversation email. */
-    public const Convey.Email.Field REQUIRED_FIELDS = (
+    public const GriabuntuMail.Email.Field REQUIRED_FIELDS = (
         // Sorting the conversation
-        Convey.Email.Field.DATE |
+        GriabuntuMail.Email.Field.DATE |
         // Determine unread/starred, etc
-        Convey.Email.Field.FLAGS |
+        GriabuntuMail.Email.Field.FLAGS |
         // Determine if the message is from the sender or not
-        Convey.Email.Field.ORIGINATORS
+        GriabuntuMail.Email.Field.ORIGINATORS
     );
 
     internal const string EMAIL_ACTION_GROUP_NAME = "eml";
@@ -68,7 +69,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     private const int MARK_READ_PADDING = 50;
 
     private const string ACTION_TARGET_TYPE = (
-        Convey.EmailIdentifier.BASE_VARIANT_TYPE
+        GriabuntuMail.EmailIdentifier.BASE_VARIANT_TYPE
     );
     private const ActionEntry[] email_action_entries = {
         { ACTION_DELETE, on_email_delete, ACTION_TARGET_TYPE },
@@ -91,14 +92,14 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
 
     /** Manages find/search term matching in a conversation. */
-    public class SearchManager : Convey.BaseObject {
+    public class SearchManager : GriabuntuMail.BaseObject {
 
 
         // The list that owns this manager
         private weak ConversationListBox list;
 
         // Conversation being managed
-        private Convey.App.Conversation conversation;
+        private GriabuntuMail.App.Conversation conversation;
 
         // Cached search terms to apply to new messages
         private Gee.Set<string>? terms = null;
@@ -115,7 +116,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
 
         internal SearchManager(ConversationListBox list,
-                               Convey.App.Conversation conversation) {
+                               GriabuntuMail.App.Conversation conversation) {
             this.list = list;
             this.conversation = conversation;
         }
@@ -124,7 +125,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         /**
          * Loads search term matches for this list's emails.
          */
-        public async void highlight_matching_email(Convey.SearchQuery query,
+        public async void highlight_matching_email(GriabuntuMail.SearchQuery query,
                                                    bool enable_scroll)
             throws GLib.Error {
             cancel();
@@ -133,8 +134,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             // changed out from underneath the execution of this method
             GLib.Cancellable cancellable = this.highlight_cancellable;
 
-            Convey.Account account = this.conversation.base_folder.account;
-            Gee.Collection<Convey.EmailIdentifier>? matching =
+            GriabuntuMail.Account account = this.conversation.base_folder.account;
+            Gee.Collection<GriabuntuMail.EmailIdentifier>? matching =
             yield account.local_search_async(
                 query,
                 this.conversation.get_count(),
@@ -161,7 +162,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
                     // Scroll to the first matching row first
                     EmailRow? first = null;
-                    foreach (Convey.EmailIdentifier id in matching) {
+                    foreach (GriabuntuMail.EmailIdentifier id in matching) {
                         EmailRow? row = this.list.get_email_row_by_id(id);
                         if (row != null &&
                             (first == null || row.get_index() < first.get_index())) {
@@ -173,7 +174,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
                     }
 
                     // Now expand them all
-                    foreach (Convey.EmailIdentifier id in matching) {
+                    foreach (GriabuntuMail.EmailIdentifier id in matching) {
                         EmailRow? row = this.list.get_email_row_by_id(id);
                         if (row != null) {
                             apply_terms(row, terms, cancellable);
@@ -274,14 +275,14 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
 
 
     // Base class for list rows in the list box
-    internal abstract class ConversationRow : Gtk.ListBoxRow, Convey.BaseInterface {
+    internal abstract class ConversationRow : Gtk.ListBoxRow, GriabuntuMail.BaseInterface {
 
 
-        protected const string EXPANDED_CLASS = "convey-expanded";
+        protected const string EXPANDED_CLASS = "griabuntu-mail-expanded";
 
 
         // The email being displayed by this row, if any
-        public Convey.Email? email { get; private set; default = null; }
+        public GriabuntuMail.Email? email { get; private set; default = null; }
 
         // Is the row showing the email's message body or just headers?
         public bool is_expanded {
@@ -302,10 +303,10 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         public signal void should_scroll();
 
         // Emitted when an email is loaded for the first time
-        public signal void email_loaded(Convey.Email email);
+        public signal void email_loaded(GriabuntuMail.Email email);
 
 
-        protected ConversationRow(Convey.Email? email) {
+        protected ConversationRow(GriabuntuMail.Email? email) {
             base_ref();
             this.email = email;
             add_css_class("card");
@@ -380,9 +381,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             var previous_sibling = get_prev_sibling();
             if (previous_sibling != null) {
                 if (this.is_expanded)
-                    previous_sibling.add_css_class("convey-expanded-previous-sibling");
+                    previous_sibling.add_css_class("griabuntu-mail-expanded-previous-sibling");
                 else
-                    previous_sibling.remove_css_class("convey-expanded-previous-sibling");
+                    previous_sibling.remove_css_class("griabuntu-mail-expanded-previous-sibling");
             }
         }
 
@@ -400,7 +401,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     internal class EmailRow : ConversationRow {
 
 
-        private const string MATCH_CLASS = "convey-matched";
+        private const string MATCH_CLASS = "griabuntu-mail-matched";
 
 
         // Has the row been temporarily expanded to show search matches?
@@ -458,7 +459,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     internal class LoadingRow : ConversationRow {
 
 
-        protected const string LOADING_CLASS = "convey-loading";
+        protected const string LOADING_CLASS = "griabuntu-mail-loading";
 
 
         public LoadingRow() {
@@ -521,8 +522,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     private static int on_sort(Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
-        Convey.Email? email1 = ((ConversationRow) row1).email;
-        Convey.Email? email2 = ((ConversationRow) row2).email;
+        GriabuntuMail.Email? email1 = ((ConversationRow) row1).email;
+        GriabuntuMail.Email? email2 = ((ConversationRow) row2).email;
 
         if (email1 == null) {
             return 1;
@@ -530,7 +531,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         if (email2 == null) {
             return -1;
         }
-        return Convey.Email.compare_sent_date_ascending(email1, email2);
+        return GriabuntuMail.Email.compare_sent_date_ascending(email1, email2);
     }
 
     internal Gtk.ListBox listbox { get; set; default = new Gtk.ListBox(); }
@@ -540,7 +541,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     public bool latest_has_list_post { get; private set; default = false; }
 
     /** Conversation being displayed. */
-    public Convey.App.Conversation conversation { get; private set; }
+    public GriabuntuMail.App.Conversation conversation { get; private set; }
 
     /** Search manager for highlighting search terms in this list. */
     public SearchManager search { get; private set; }
@@ -551,7 +552,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     // Used to load messages in conversation.
-    private Convey.App.EmailStore email_store;
+    private GriabuntuMail.App.EmailStore email_store;
 
     // Store from which to lookup contacts
     private Application.ContactStore contacts;
@@ -566,8 +567,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     private ConversationEmail? body_selected_view = null;
 
     // Maps displayed emails to their corresponding rows.
-    private Gee.Map<Convey.EmailIdentifier,EmailRow> email_rows =
-        new Gee.HashMap<Convey.EmailIdentifier,EmailRow>();
+    private Gee.Map<GriabuntuMail.EmailIdentifier,EmailRow> email_rows =
+        new Gee.HashMap<GriabuntuMail.EmailIdentifier,EmailRow>();
 
     private string? conversation_subject = null;
 
@@ -578,10 +579,10 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     private Adw.Animation? scroll_animation = null;
 
     // The id of the draft referred to by the current composer.
-    private Convey.EmailIdentifier? draft_id = null;
+    private GriabuntuMail.EmailIdentifier? draft_id = null;
 
     private bool suppress_mark_timer;
-    private Convey.TimeoutManager mark_read_timer;
+    private GriabuntuMail.TimeoutManager mark_read_timer;
 
     private GLib.SimpleActionGroup email_actions = new GLib.SimpleActionGroup();
 
@@ -665,41 +666,41 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Fired when an email is fully loaded in the list box. */
-    public signal void email_loaded(Convey.Email email);
+    public signal void email_loaded(GriabuntuMail.Email email);
 
     /** Fired when the user clicks "reply" in the message menu. */
-    public signal void reply_to_sender_email(Convey.Email email, string? quote);
+    public signal void reply_to_sender_email(GriabuntuMail.Email email, string? quote);
 
     /** Fired when the user clicks "reply all" in the message menu. */
-    public signal void reply_to_all_email(Convey.Email email, string? quote);
+    public signal void reply_to_all_email(GriabuntuMail.Email email, string? quote);
 
     /** Fired when the user clicks "reply to list" in the message menu. */
-    public signal void reply_to_list_email(Convey.Email email, string? quote);
+    public signal void reply_to_list_email(GriabuntuMail.Email email, string? quote);
 
     /** Fired when the user clicks "forward" in the message menu. */
-    public signal void forward_email(Convey.Email email, string? quote);
+    public signal void forward_email(GriabuntuMail.Email email, string? quote);
 
     /** Fired when the user clicks "unsubscribe" in the message header. */
-    public signal void unsubscribe_email(Convey.Email email);
+    public signal void unsubscribe_email(GriabuntuMail.Email email);
 
     /** Emitted when email message flags are to be updated. */
-    public signal void mark_email(Gee.Collection<Convey.EmailIdentifier> email,
-                                  Convey.NamedFlag? to_add,
-                                  Convey.NamedFlag? to_remove);
+    public signal void mark_email(Gee.Collection<GriabuntuMail.EmailIdentifier> email,
+                                  GriabuntuMail.NamedFlag? to_add,
+                                  GriabuntuMail.NamedFlag? to_remove);
 
     /** Fired when the user clicks "trash" in the message menu. */
-    public signal void trash_email(Convey.Email email);
+    public signal void trash_email(GriabuntuMail.Email email);
 
     /** Fired when the user clicks "delete" in the message menu. */
-    public signal void delete_email(Convey.Email email);
+    public signal void delete_email(GriabuntuMail.Email email);
 
 
     /**
      * Constructs a new conversation list box instance.
      */
-    public ConversationListBox(Convey.App.Conversation conversation,
+    public ConversationListBox(GriabuntuMail.App.Conversation conversation,
                                bool suppress_mark_timer,
-                               Convey.App.EmailStore email_store,
+                               GriabuntuMail.App.EmailStore email_store,
                                Application.ContactStore contacts,
                                Application.Configuration config,
                                Gtk.Adjustment adjustment) {
@@ -712,7 +713,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         this.search = new SearchManager(this, conversation);
 
         this.suppress_mark_timer = suppress_mark_timer;
-        this.mark_read_timer = new Convey.TimeoutManager.milliseconds(
+        this.mark_read_timer = new GriabuntuMail.TimeoutManager.milliseconds(
             MARK_READ_TIMEOUT_MSEC, this.check_mark_read
         );
 
@@ -775,41 +776,41 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             next = child.get_next_sibling() as ConversationRow;
 
             if (next.is_expanded) {
-                child.add_css_class("convey-expanded-previous-sibling");
+                child.add_css_class("griabuntu-mail-expanded-previous-sibling");
             } else {
-                child.remove_css_class("convey-expanded-previous-sibling");
+                child.remove_css_class("griabuntu-mail-expanded-previous-sibling");
             }
         }
     }
 
-    public async void load_conversation(Gee.Collection<Convey.EmailIdentifier> scroll_to,
-                                        Convey.SearchQuery? query)
+    public async void load_conversation(Gee.Collection<GriabuntuMail.EmailIdentifier> scroll_to,
+                                        GriabuntuMail.SearchQuery? query)
         throws GLib.Error {
         this.check_latest_list_post.begin();
         this.listbox.set_sort_func(null);
 
-        Gee.Collection<Convey.Email>? all_email = this.conversation.get_emails(
-            Convey.App.Conversation.Ordering.SENT_DATE_ASCENDING
+        Gee.Collection<GriabuntuMail.Email>? all_email = this.conversation.get_emails(
+            GriabuntuMail.App.Conversation.Ordering.SENT_DATE_ASCENDING
         );
 
         // Work out what the first interesting email is, and load it
         // before all of the email before and after that so we can
         // load them in an optimal order.
-        Gee.LinkedList<Convey.Email> uninteresting =
-            new Gee.LinkedList<Convey.Email>();
-        Convey.Email? first_interesting = null;
-        Gee.LinkedList<Convey.Email> post_interesting =
-            new Gee.LinkedList<Convey.Email>();
+        Gee.LinkedList<GriabuntuMail.Email> uninteresting =
+            new Gee.LinkedList<GriabuntuMail.Email>();
+        GriabuntuMail.Email? first_interesting = null;
+        Gee.LinkedList<GriabuntuMail.Email> post_interesting =
+            new Gee.LinkedList<GriabuntuMail.Email>();
 
         if (!scroll_to.is_empty) {
-            var valid_scroll_to = Convey.traverse(scroll_to).filter(
+            var valid_scroll_to = GriabuntuMail.traverse(scroll_to).filter(
                 id => this.conversation.contains_email_by_id(id)
             ).to_array_list();
             valid_scroll_to.sort((a, b) => a.natural_sort_comparator(b));
-            var first_scroll = Convey.Collection.first(valid_scroll_to);
+            var first_scroll = GriabuntuMail.Collection.first(valid_scroll_to);
 
             if (first_scroll != null) {
-                foreach (Convey.Email email in all_email) {
+                foreach (GriabuntuMail.Email email in all_email) {
                     if (first_interesting == null) {
                         if (email.id.equal_to(first_scroll)) {
                             first_interesting = email;
@@ -826,7 +827,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
 
         if (first_interesting == null) {
-            foreach (Convey.Email email in all_email) {
+            foreach (GriabuntuMail.Email email in all_email) {
                 if (first_interesting == null) {
                     if (is_interesting(email)) {
                         first_interesting = email;
@@ -877,7 +878,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Scrolls to the closest message in the current conversation. */
-    public void scroll_to_messages(Gee.Collection<Convey.EmailIdentifier> targets) {
+    public void scroll_to_messages(Gee.Collection<GriabuntuMail.EmailIdentifier> targets) {
         // Get the currently displayed email, allowing for some
         // padding at the top
         Gtk.ListBoxRow? current_child = this.listbox.get_row_at_y(32);
@@ -906,7 +907,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
                     ).abs();
                     if (distance < closest_distance ||
                         (distance == closest_distance &&
-                         Convey.Email.compare_sent_date_ascending(
+                         GriabuntuMail.Email.compare_sent_date_ascending(
                              target.email, best.email
                          ) < 0)) {
                         closest_distance = distance;
@@ -1019,7 +1020,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Adds an info bar to the given email, if any. */
-    public void add_email_info_bar(Convey.EmailIdentifier id,
+    public void add_email_info_bar(GriabuntuMail.EmailIdentifier id,
                                    Components.InfoBar info_bar) {
         var row = this.email_rows.get(id);
         if (row != null) {
@@ -1028,7 +1029,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Adds an info bar to the given email, if any. */
-    public void remove_email_info_bar(Convey.EmailIdentifier id,
+    public void remove_email_info_bar(GriabuntuMail.EmailIdentifier id,
                                       Components.InfoBar info_bar) {
         var row = this.email_rows.get(id);
         if (row != null) {
@@ -1089,19 +1090,19 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Returns the email row for the given id, if any. */
-    internal EmailRow? get_email_row_by_id(Convey.EmailIdentifier id) {
+    internal EmailRow? get_email_row_by_id(GriabuntuMail.EmailIdentifier id) {
         return this.email_rows.get(id);
     }
 
-    private async void finish_loading(Convey.SearchQuery? query,
+    private async void finish_loading(GriabuntuMail.SearchQuery? query,
                                       bool enable_query_scroll,
-                                      Gee.LinkedList<Convey.Email> to_insert,
-                                      Gee.LinkedList<Convey.Email> to_append)
+                                      Gee.LinkedList<GriabuntuMail.Email> to_insert,
+                                      Gee.LinkedList<GriabuntuMail.Email> to_append)
         throws GLib.Error {
         // Add emails to append first because if the first interesting
         // message was short, these will show up in the UI under it,
         // filling the empty space.
-        foreach (Convey.Email email in to_append) {
+        foreach (GriabuntuMail.Email email in to_append) {
             EmailRow row = add_email(email);
             yield row.view.load_contacts();
             if (is_interesting(email)) {
@@ -1127,7 +1128,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         // interesting message remains visible.
         Gtk.Adjustment listbox_adj = this.listbox.get_adjustment();
         int i_mail_loaded = 0;
-        foreach (Convey.Email email in to_insert) {
+        foreach (GriabuntuMail.Email email in to_insert) {
             EmailRow row = add_email(email, false);
             // Since uninteresting rows are inserted above the
             // first expanded, adjust the scrollbar as they are
@@ -1178,8 +1179,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
     }
 
-    private Convey.Email? get_latest_email() {
-        Convey.Email? latest = null;
+    private GriabuntuMail.Email? get_latest_email() {
+        GriabuntuMail.Email? latest = null;
         foreach (var email in this.conversation.get_emails(SENT_DATE_ASCENDING)) {
             latest = email;
         }
@@ -1187,7 +1188,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     private async void check_latest_list_post() {
-        Convey.Email? latest = get_latest_email();
+        GriabuntuMail.Email? latest = get_latest_email();
         if (latest == null) {
             return;
         }
@@ -1199,30 +1200,30 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             return;
         }
         this.latest_has_list_post =
-            Convey.RFC822.Utils.get_list_post_address(latest) != null;
+            GriabuntuMail.RFC822.Utils.get_list_post_address(latest) != null;
         notify_property("latest-has-list-post");
     }
 
-    private void on_row_email_loaded(Convey.Email loaded) {
-        Convey.Email? latest = get_latest_email();
+    private void on_row_email_loaded(GriabuntuMail.Email loaded) {
+        GriabuntuMail.Email? latest = get_latest_email();
         if (latest != null && loaded.id.equal_to(latest.id)) {
             this.latest_has_list_post =
-                Convey.RFC822.Utils.get_list_post_address(loaded) != null;
+                GriabuntuMail.RFC822.Utils.get_list_post_address(loaded) != null;
         }
         email_loaded(loaded);
     }
 
     // Loads full version of an email, adds it to the listbox
-    private async void load_full_email(Convey.EmailIdentifier id)
+    private async void load_full_email(GriabuntuMail.EmailIdentifier id)
         throws GLib.Error {
         // Even though it would save a around-trip, don't load the
         // full email here so that ConverationEmail can handle it if
         // the full email isn't actually available in the same way as
         // any other.
-        Convey.Email full_email = yield this.email_store.fetch_email_async(
+        GriabuntuMail.Email full_email = yield this.email_store.fetch_email_async(
             id,
             REQUIRED_FIELDS | ConversationEmail.REQUIRED_FOR_CONSTRUCT,
-            Convey.Folder.ListFlags.NONE,
+            GriabuntuMail.Folder.ListFlags.NONE,
             this.cancellable
         );
 
@@ -1240,7 +1241,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     // Constructs a row and view for an email, adds it to the listbox
-    private EmailRow add_email(Convey.Email email, bool append_row = true) {
+    private EmailRow add_email(GriabuntuMail.Email email, bool append_row = true) {
         // The initial conversation load and the conversation's
         // "appended" signal can race to add the same email — e.g. when
         // opening a just-arrived message from a notification — and the
@@ -1253,9 +1254,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
 
         bool is_sent = false;
-        Convey.Account account = this.conversation.base_folder.account;
+        GriabuntuMail.Account account = this.conversation.base_folder.account;
         if (email.from != null) {
-            foreach (Convey.RFC822.MailboxAddress from in email.from) {
+            foreach (GriabuntuMail.RFC822.MailboxAddress from in email.from) {
                 if (account.information.has_sender_mailbox(from)) {
                     is_sent = true;
                     break;
@@ -1296,7 +1297,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     // Removes the email's row from the listbox, if any
-    private void remove_email(Convey.Email email) {
+    private void remove_email(GriabuntuMail.Email email) {
         EmailRow? row = null;
         if (this.email_rows.unset(email.id, out row)) {
             remove(row);
@@ -1335,8 +1336,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
      * Finds any currently visible messages, marks them as being read.
      */
     private void check_mark_read() {
-        Gee.List<Convey.EmailIdentifier> email_ids =
-            new Gee.LinkedList<Convey.EmailIdentifier>();
+        Gee.List<GriabuntuMail.EmailIdentifier> email_ids =
+            new Gee.LinkedList<GriabuntuMail.EmailIdentifier>();
         Gtk.Adjustment adj = this.listbox.get_adjustment();
         int top_bound = (int) adj.value;
         int bottom_bound = top_bound + (int) adj.page_size;
@@ -1350,7 +1351,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
             // size of the body will be off, affecting the visibility
             // of emails further down the conversation.
             ConversationEmail? view = (row != null) ? row.view : null;
-            Convey.Email? email = (view != null) ? view.email : null;
+            GriabuntuMail.Email? email = (view != null) ? view.email : null;
             if (row != null &&
                 row.is_expanded &&
                 view.message_body_state == COMPLETED &&
@@ -1383,7 +1384,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
 
         if (email_ids.size > 0) {
-            mark_email(email_ids, null, Convey.EmailFlags.UNREAD);
+            mark_email(email_ids, null, GriabuntuMail.EmailFlags.UNREAD);
         }
     }
 
@@ -1408,7 +1409,7 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Determines if an email should be expanded by default. */
-    private inline bool is_interesting(Convey.Email email) {
+    private inline bool is_interesting(GriabuntuMail.Email email) {
         return (
             email.is_unread().is_certain() ||
             email.is_flagged().is_certain() ||
@@ -1417,11 +1418,11 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Determines if an email should be considered to be a draft. */
-    private inline bool is_draft(Convey.Email email) {
+    private inline bool is_draft(GriabuntuMail.Email email) {
         // Only emails in the drafts folder itself are editable;
         // ideally this would be more like "is in drafts folder" so
         // drafts could be edited from any conversation
-        Convey.Folder.SpecialUse use = this.conversation.base_folder.used_as;
+        GriabuntuMail.Folder.SpecialUse use = this.conversation.base_folder.used_as;
         bool is_in_folder = this.conversation.is_in_base_folder(email.id);
 
         return (
@@ -1431,23 +1432,23 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
     }
 
     private ConversationEmail action_target_to_view(GLib.Variant target) {
-        Convey.EmailIdentifier? id = null;
+        GriabuntuMail.EmailIdentifier? id = null;
         try {
             id = this.conversation.base_folder.account.to_email_identifier(target);
-        } catch (Convey.EngineError err) {
+        } catch (GriabuntuMail.EngineError err) {
             debug("Failed to get email id for action target: %s", err.message);
         }
         EmailRow? row = (id != null) ? this.email_rows[id] : null;
         return (row != null) ? row.view : null;
     }
 
-    private void on_conversation_appended(Convey.App.Conversation conversation,
-                                          Convey.Email email) {
+    private void on_conversation_appended(GriabuntuMail.App.Conversation conversation,
+                                          GriabuntuMail.Email email) {
         on_conversation_appended_async.begin(conversation, email);
     }
 
     private async void on_conversation_appended_async(
-        Convey.App.Conversation conversation, Convey.Email part_email) {
+        GriabuntuMail.App.Conversation conversation, GriabuntuMail.Email part_email) {
         // Don't add rows that are already present, or that are
         // currently being edited.
         if (!this.email_rows.has_key(part_email.id) &&
@@ -1465,11 +1466,11 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         }
     }
 
-    private void on_conversation_trimmed(Convey.Email email) {
+    private void on_conversation_trimmed(GriabuntuMail.Email email) {
         remove_email(email);
     }
 
-    private void on_update_flags(Convey.Email email) {
+    private void on_update_flags(GriabuntuMail.Email email) {
         if (!this.email_rows.has_key(email.id)) {
             return;
         }
@@ -1570,9 +1571,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         ConversationEmail? view = action_target_to_view(param);
         if (view != null) {
             mark_email(
-                Convey.Collection.single(view.email.id),
+                GriabuntuMail.Collection.single(view.email.id),
                 null,
-                Convey.EmailFlags.UNREAD
+                GriabuntuMail.EmailFlags.UNREAD
             );
         }
     }
@@ -1582,8 +1583,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         ConversationEmail? view = action_target_to_view(param);
         if (view != null) {
             mark_email(
-                Convey.Collection.single(view.email.id),
-                Convey.EmailFlags.UNREAD,
+                GriabuntuMail.Collection.single(view.email.id),
+                GriabuntuMail.EmailFlags.UNREAD,
                 null
             );
         }
@@ -1593,8 +1594,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
                                            GLib.Variant? param) {
         ConversationEmail? view = action_target_to_view(param);
         if (view != null) {
-            Convey.Email email = view.email;
-            var ids = new Gee.LinkedList<Convey.EmailIdentifier>();
+            GriabuntuMail.Email email = view.email;
+            var ids = new Gee.LinkedList<GriabuntuMail.EmailIdentifier>();
             ids.add(email.id);
             for (int i = 0; true; i++) {
                 unowned var row = this.listbox.get_row_at_index(i) as EmailRow;
@@ -1602,14 +1603,14 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
                     break;
 
                 if (row.visible) {
-                    Convey.Email other = row.view.email;
-                    if (Convey.Email.compare_sent_date_ascending(
+                    GriabuntuMail.Email other = row.view.email;
+                    if (GriabuntuMail.Email.compare_sent_date_ascending(
                             email, other) < 0) {
                         ids.add(other.id);
                     }
                 }
             }
-            mark_email(ids, Convey.EmailFlags.UNREAD, null);
+            mark_email(ids, GriabuntuMail.EmailFlags.UNREAD, null);
         }
     }
 
@@ -1618,8 +1619,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         ConversationEmail? view = action_target_to_view(param);
         if (view != null) {
             mark_email(
-                Convey.Collection.single(view.email.id),
-                Convey.EmailFlags.FLAGGED,
+                GriabuntuMail.Collection.single(view.email.id),
+                GriabuntuMail.EmailFlags.FLAGGED,
                 null
             );
         }
@@ -1630,9 +1631,9 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         ConversationEmail? view = action_target_to_view(param);
         if (view != null) {
             mark_email(
-                Convey.Collection.single(view.email.id),
+                GriabuntuMail.Collection.single(view.email.id),
                 null,
-                Convey.EmailFlags.FLAGGED
+                GriabuntuMail.EmailFlags.FLAGGED
             );
         }
     }
@@ -1642,8 +1643,8 @@ public class ConversationListBox : Adw.Bin, Convey.BaseInterface {
         ConversationEmail? view = action_target_to_view(param);
         if (view != null) {
             mark_email(
-                Convey.Collection.single(view.email.id),
-                Convey.EmailFlags.LOAD_REMOTE_IMAGES,
+                GriabuntuMail.Collection.single(view.email.id),
+                GriabuntuMail.EmailFlags.LOAD_REMOTE_IMAGES,
                 null
             );
         }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -7,10 +8,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.String.Test : TestCase {
+class GriabuntuMail.String.Test : TestCase {
 
     public Test() {
-        base("Convey.String.Test");
+        base("GriabuntuMail.String.Test");
         add_test("test_whitespace", test_whitespace);
         add_test("test_nonprinting", test_nonprinting);
         add_test("test_contains_any_char", test_contains_any_char);

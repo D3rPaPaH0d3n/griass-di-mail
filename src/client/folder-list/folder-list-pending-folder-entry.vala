@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * This release copy is licensed under the GNU General Public License
  * (version 3 only).  See the COPYING file in this distribution.
@@ -11,7 +12,7 @@
  * It is never selectable and always reports itself as busy, so the tree
  * renders it dimmed with a spinner until the real folder arrives.
  */
-public class FolderList.PendingFolderEntry : Convey.BaseObject, Sidebar.Entry {
+public class FolderList.PendingFolderEntry : GriabuntuMail.BaseObject, Sidebar.Entry {
 
     public string name { get; private set; }
 

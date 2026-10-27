@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -19,7 +20,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-6]]
  */
-public abstract class Convey.Imap.Command : BaseObject {
+public abstract class GriabuntuMail.Imap.Command : BaseObject {
 
     /**
      * Default timeout to wait for a server response for a command.
@@ -91,12 +92,12 @@ public abstract class Convey.Imap.Command : BaseObject {
      */
     protected TimeoutManager response_timer { get; private set; }
 
-    private Convey.Nonblocking.Semaphore complete_lock =
-        new Convey.Nonblocking.Semaphore();
+    private GriabuntuMail.Nonblocking.Semaphore complete_lock =
+        new GriabuntuMail.Nonblocking.Semaphore();
 
     private GLib.Error? cancelled_cause = null;
 
-    private Convey.Nonblocking.Spinlock? literal_spinlock = null;
+    private GriabuntuMail.Nonblocking.Spinlock? literal_spinlock = null;
     private GLib.Cancellable? literal_cancellable = null;
 
 
@@ -191,7 +192,7 @@ public abstract class Convey.Imap.Command : BaseObject {
                         // Lazily create these since they usually
                         // won't be needed
                         this.literal_cancellable = new GLib.Cancellable();
-                        this.literal_spinlock = new Convey.Nonblocking.Spinlock(
+                        this.literal_spinlock = new GriabuntuMail.Nonblocking.Spinlock(
                             this.literal_cancellable
                         );
                     }
@@ -304,7 +305,7 @@ public abstract class Convey.Imap.Command : BaseObject {
 
     public virtual string to_string() {
         string args = this.args.to_string();
-        return (Convey.String.is_empty(args))
+        return (GriabuntuMail.String.is_empty(args))
             ? "%s %s".printf(this.tag.to_string(), this.name)
             : "%s %s %s".printf(this.tag.to_string(), this.name, args);
     }

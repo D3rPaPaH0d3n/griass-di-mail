@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2025 Niels De Graef <nielsdegraef@gmail.com>
@@ -12,7 +13,7 @@
  * A widget that allows a user to create a list of email addresses
  * (for example a "CC" row).
  */
-public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
+public class Composer.AddressesRow : Adw.EntryRow, GriabuntuMail.BaseInterface {
 
     /**
      * The list of email addresses.
@@ -21,7 +22,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
      *
      * Manually setting this property will override any text that was there before.
      */
-    public Convey.RFC822.MailboxAddresses addresses {
+    public GriabuntuMail.RFC822.MailboxAddresses addresses {
         get { return this._addresses; }
         set {
             this._addresses = value;
@@ -29,7 +30,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
             this.text = value.to_full_display();
         }
     }
-    private Convey.RFC822.MailboxAddresses _addresses = new Convey.RFC822.MailboxAddresses();
+    private GriabuntuMail.RFC822.MailboxAddresses _addresses = new GriabuntuMail.RFC822.MailboxAddresses();
 
     /** Determines if the entry contains only valid email addresses (and is not empty) */
     public bool is_valid { get; private set; default = false; }
@@ -37,7 +38,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
     public bool is_empty {
         // Check the text rather than the parsed addresses so that
         // typed-but-invalid text doesn't count as empty
-        get { return Convey.String.is_empty_or_whitespace(this.text); }
+        get { return GriabuntuMail.String.is_empty_or_whitespace(this.text); }
     }
 
     // Text between the start of the entry or end of the previous email
@@ -152,7 +153,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
 
     private void validate_addresses() {
         bool is_valid = !this._addresses.is_empty;
-        foreach (Convey.RFC822.MailboxAddress address in this.addresses) {
+        foreach (GriabuntuMail.RFC822.MailboxAddress address in this.addresses) {
             if (!address.is_valid()) {
                 is_valid = false;
                 return;
@@ -225,16 +226,16 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
     }
 
     private void update_validity() {
-        if (Convey.String.is_empty_or_whitespace(text)) {
-            this._addresses = new Convey.RFC822.MailboxAddresses();
+        if (GriabuntuMail.String.is_empty_or_whitespace(text)) {
+            this._addresses = new GriabuntuMail.RFC822.MailboxAddresses();
             this.is_valid = false;
         } else {
             try {
                 this._addresses =
-                    new Convey.RFC822.MailboxAddresses.from_rfc822_string(text);
+                    new GriabuntuMail.RFC822.MailboxAddresses.from_rfc822_string(text);
                 this.is_valid = true;
-            } catch (Convey.RFC822.Error err) {
-                this._addresses = new Convey.RFC822.MailboxAddresses();
+            } catch (GriabuntuMail.RFC822.Error err) {
+                this._addresses = new GriabuntuMail.RFC822.MailboxAddresses();
                 this.is_valid = false;
             }
         }
@@ -276,7 +277,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
     }
 
     private void on_address_suggestion_selected(AddressSuggestionPopover popover,
-                                                Convey.RFC822.MailboxAddress address) {
+                                                GriabuntuMail.RFC822.MailboxAddress address) {
         this.inserting_suggestion = true;
         insert_address_at_cursor(address);
         this.inserting_suggestion = false;
@@ -287,7 +288,7 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
         this.popover.popdown();
     }
 
-    private void insert_address_at_cursor(Convey.RFC822.MailboxAddress mailbox) {
+    private void insert_address_at_cursor(GriabuntuMail.RFC822.MailboxAddress mailbox) {
         // Take care to do a delete then an insert here so that
         // Component.EntryUndo can combine the two into a single
         // undoable command.
@@ -345,10 +346,10 @@ public class Composer.AddressesRow : Adw.EntryRow, Convey.BaseInterface {
  */
 public class ContactAddressItem : GLib.Object {
     public Application.Contact contact { get; construct set; }
-    public Convey.RFC822.MailboxAddress address { get; construct set; }
+    public GriabuntuMail.RFC822.MailboxAddress address { get; construct set; }
 
     public ContactAddressItem(Application.Contact contact,
-                              Convey.RFC822.MailboxAddress address) {
+                              GriabuntuMail.RFC822.MailboxAddress address) {
         Object(contact: contact, address: address);
     }
 }
@@ -356,8 +357,8 @@ public class ContactAddressItem : GLib.Object {
 public class AddressSuggestionPopover : Gtk.Popover {
 
     // Minimum visibility for the contact to appear in autocompletion.
-    private const Convey.Contact.Importance VISIBILITY_THRESHOLD =
-        Convey.Contact.Importance.RECEIVED_FROM;
+    private const GriabuntuMail.Contact.Importance VISIBILITY_THRESHOLD =
+        GriabuntuMail.Contact.Importance.RECEIVED_FROM;
 
     public Application.ContactStore contacts { get; construct set; }
 
@@ -368,7 +369,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
     /**
      * Fired when the user has selected an address suggestion
      */
-    public signal void selected_address(Convey.RFC822.MailboxAddress address);
+    public signal void selected_address(GriabuntuMail.RFC822.MailboxAddress address);
 
     construct {
         // Present as a full-width dropdown list under the entry rather
@@ -504,7 +505,7 @@ public class AddressSuggestionPopover : Gtk.Popover {
             }
             foreach (Application.Contact contact in results) {
                 for (uint i = 0; i < contact.email_addresses.get_n_items(); i++) {
-                    var addr = (Convey.RFC822.MailboxAddress) contact.email_addresses.get_item(i);
+                    var addr = (GriabuntuMail.RFC822.MailboxAddress) contact.email_addresses.get_item(i);
                     model.append(new ContactAddressItem(contact, addr));
                 }
             }
@@ -559,7 +560,7 @@ private class AddressSuggestionRow : Gtk.Box {
         // take once inserted into the field.
         string address = contact_addr.address.address;
         string name = contact_addr.contact.display_name;
-        if (Convey.String.is_empty(name)) {
+        if (GriabuntuMail.String.is_empty(name)) {
             this.label.label = address;
         } else {
             this.label.label = "%s <%s>".printf(name, address);

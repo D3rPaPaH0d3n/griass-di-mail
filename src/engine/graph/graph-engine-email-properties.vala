@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.EmailProperties : Convey.EmailProperties {
+internal class GriabuntuMail.Graph.EmailProperties : GriabuntuMail.EmailProperties {
 
     public EmailProperties(GLib.DateTime date_received, int64 total_bytes) {
         base(date_received, total_bytes);

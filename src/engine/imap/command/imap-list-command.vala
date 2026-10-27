@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -19,7 +20,7 @@
  *
  * @see MailboxInformation
  */
-public class Convey.Imap.ListCommand : Command {
+public class GriabuntuMail.Imap.ListCommand : Command {
 
 
     public const string NAME = "LIST";

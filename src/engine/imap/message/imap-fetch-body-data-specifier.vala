@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -39,7 +40,7 @@
  * @see FetchDataSpecifier
  */
 
-public class Convey.Imap.FetchBodyDataSpecifier : BaseObject, Gee.Hashable<FetchBodyDataSpecifier> {
+public class GriabuntuMail.Imap.FetchBodyDataSpecifier : BaseObject, Gee.Hashable<FetchBodyDataSpecifier> {
     /**
      * Specifies which section (or partial section) is being requested with this identifier.
      */
@@ -310,7 +311,7 @@ public class Convey.Imap.FetchBodyDataSpecifier : BaseObject, Gee.Hashable<Fetch
     public static FetchBodyDataSpecifier deserialize_response(StringParameter stringp) throws ImapError {
         // * case-insensitive
         // * leading/trailing whitespace stripped
-        // * Remove quoting (some servers return field names quoted, some don't, Convey never uses them
+        // * Remove quoting (some servers return field names quoted, some don't, Griabuntu Mail never uses them
         //   when requesting)
         string strd = stringp.as_lower().replace("\"", "").strip();
 

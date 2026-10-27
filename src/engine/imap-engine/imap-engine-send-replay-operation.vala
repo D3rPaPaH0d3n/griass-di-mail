@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
 /**
  * A replay operation for a user-initiated operation.
  */
-private abstract class Convey.ImapEngine.SendReplayOperation : Convey.ImapEngine.ReplayOperation {
+private abstract class GriabuntuMail.ImapEngine.SendReplayOperation : GriabuntuMail.ImapEngine.ReplayOperation {
     protected SendReplayOperation(string name, ReplayOperation.OnError on_remote_error = OnError.THROW) {
         base (name, ReplayOperation.Scope.LOCAL_AND_REMOTE, on_remote_error);
     }

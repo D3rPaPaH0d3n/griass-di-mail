@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -13,7 +14,7 @@
  * See [[http://tools.ietf.org/html/rfc4616]]
  */
 
-public class Convey.Smtp.OAuth2Authenticator : Convey.Smtp.Authenticator {
+public class GriabuntuMail.Smtp.OAuth2Authenticator : GriabuntuMail.Smtp.Authenticator {
 
 
     private const string OAUTH2_RESP = "user=%s\001auth=Bearer %s\001\001";

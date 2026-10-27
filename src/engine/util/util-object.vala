@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,7 +7,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-namespace Convey.ObjectUtils {
+namespace GriabuntuMail.ObjectUtils {
 
 /**
  * Creates a set of property bindings from source to dest with the given binding flags.

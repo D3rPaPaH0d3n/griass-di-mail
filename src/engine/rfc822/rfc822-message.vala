@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -16,7 +17,7 @@
  * representation of an email message, and contain no information
  * other than what RFC-822 and its successor RFC documents specify.
  */
-public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
+public class GriabuntuMail.RFC822.Message : BaseObject, EmailHeaderSet {
 
 
     /**
@@ -223,7 +224,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
     public Message.from_buffer(Memory.Buffer full_email)
         throws Error {
-        this(new Convey.RFC822.Full(full_email));
+        this(new GriabuntuMail.RFC822.Full(full_email));
     }
 
     public Message.from_parts(Header header, Text body)
@@ -240,7 +241,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         GMime.Parser parser = new GMime.Parser.with_stream(stream_cat);
-        var message = parser.construct_message(Convey.RFC822.get_parser_options());
+        var message = parser.construct_message(GriabuntuMail.RFC822.get_parser_options());
         if (message == null) {
             throw new Error.INVALID("Unable to parse RFC 822 message");
         }
@@ -248,7 +249,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         this.from_gmime_message(message);
     }
 
-    public async Message.from_composed_email(Convey.ComposedEmail email,
+    public async Message.from_composed_email(GriabuntuMail.ComposedEmail email,
                                              string? message_id,
                                              GMime.EncodingConstraint constraint,
                                              GLib.Cancellable? cancellable)
@@ -310,27 +311,27 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             // `RFC822.MessageIDList` to `RFC822.MailboxAddresses`.
             this.message.set_header(HEADER_IN_REPLY_TO,
                                     email.in_reply_to.to_rfc822_string(),
-                                    Convey.RFC822.get_charset());
+                                    GriabuntuMail.RFC822.get_charset());
         }
 
         if (email.references != null) {
             this._references = email.references;
             this.message.set_header(HEADER_REFERENCES,
                                     email.references.to_rfc822_string(),
-                                    Convey.RFC822.get_charset());
+                                    GriabuntuMail.RFC822.get_charset());
         }
 
         if (email.subject != null) {
             this._subject = email.subject;
             this.message.set_subject(email.subject.value,
-                                     Convey.RFC822.get_charset());
+                                     GriabuntuMail.RFC822.get_charset());
         }
 
         // User-Agent
-        if (!Convey.String.is_empty(email.mailer)) {
+        if (!GriabuntuMail.String.is_empty(email.mailer)) {
             this.mailer = email.mailer;
             this.message.set_header(HEADER_MAILER, email.mailer,
-                                    Convey.RFC822.get_charset());
+                                    GriabuntuMail.RFC822.get_charset());
         }
 
         if (email.autocrypt && email.from != null && email.from.size > 0) {
@@ -349,7 +350,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                 this.message.set_header(
                     HEADER_AUTOCRYPT,
                     "addr=%s; keydata=%s".printf(address, chunks.str),
-                    Convey.RFC822.get_charset()
+                    GriabuntuMail.RFC822.get_charset()
                 );
             }
         }
@@ -412,7 +413,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                         inline_part = yield get_buffer_part(
                             email.cid_files[cid],
                             GLib.Path.get_basename(cid),
-                            Convey.Mime.DispositionType.INLINE,
+                            GriabuntuMail.Mime.DispositionType.INLINE,
                             cancellable
                         );
                     } catch (GLib.Error err) {
@@ -435,7 +436,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             // Then, treat parts that need to have Content Id
             // assigned.
             if (!inline_files.is_empty) {
-                const string CID_TEMPLATE = "inline_%02u@convey";
+                const string CID_TEMPLATE = "inline_%02u@griabuntu-mail";
                 uint cid_index = 0;
                 foreach (string name in inline_files.keys) {
                     string cid = "";
@@ -450,7 +451,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                             inline_part = yield get_buffer_part(
                                 inline_files[name],
                                 GLib.Path.get_basename(name),
-                                Convey.Mime.DispositionType.INLINE,
+                                GriabuntuMail.Mime.DispositionType.INLINE,
                                 cancellable
                             );
                         } catch (GLib.Error err) {
@@ -507,7 +508,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             try {
                 attachment_part = yield get_file_part(
                     file,
-                    Convey.Mime.DispositionType.ATTACHMENT,
+                    GriabuntuMail.Mime.DispositionType.ATTACHMENT,
                     cancellable
                 );
             } catch (GLib.Error err) {
@@ -530,10 +531,10 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             if (email.subject != null) {
                 main_part.set_content_type_parameter("protected-headers", "v1");
                 main_part.set_header("Subject", email.subject.value,
-                                     Convey.RFC822.get_charset());
+                                     GriabuntuMail.RFC822.get_charset());
                 this._subject = new Subject("...");
                 this.message.set_subject(this._subject.value,
-                                         Convey.RFC822.get_charset());
+                                         GriabuntuMail.RFC822.get_charset());
             }
             main_part = GMime.MultipartEncrypted.encrypt(
                 new GMime.GpgContext(), main_part, true, email.from.get(0).address,
@@ -551,7 +552,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         return node.get_header("Subject");
     }
 
-    private static GLib.GenericArray<string> get_pgp_recipients(Convey.ComposedEmail email) {
+    private static GLib.GenericArray<string> get_pgp_recipients(GriabuntuMail.ComposedEmail email) {
         var recipients = new GLib.GenericArray<string>();
         foreach (var list in new RFC822.MailboxAddresses?[] { email.from, email.to, email.cc, email.bcc }) {
             if (list != null) {
@@ -567,7 +568,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                                            string type) {
         GMime.Object? part = coalesce_parts(parts, "related");
         if (parts.size > 1) {
-            part.set_header("Type", type, Convey.RFC822.get_charset());
+            part.set_header("Type", type, GriabuntuMail.RFC822.get_charset());
         }
         return part;
     }
@@ -586,7 +587,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
     }
 
     private async GMime.Part? get_file_part(File file,
-                                            Convey.Mime.DispositionType disposition,
+                                            GriabuntuMail.Mime.DispositionType disposition,
                                             GLib.Cancellable? cancellable)
         throws GLib.Error {
         FileInfo file_info = yield file.query_info_async(
@@ -599,7 +600,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         part.set_filename(file.get_basename());
 
         GMime.ContentType content_type = GMime.ContentType.parse(
-            Convey.RFC822.get_parser_options(),
+            GriabuntuMail.RFC822.get_parser_options(),
             file_info.get_content_type()
         );
         part.set_content_type(content_type);
@@ -631,7 +632,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
      */
     private async GMime.Part? get_buffer_part(Memory.Buffer buffer,
                                               string basename,
-                                              Convey.Mime.DispositionType disposition,
+                                              GriabuntuMail.Mime.DispositionType disposition,
                                               GLib.Cancellable? cancellable)
         throws GLib.Error {
         Mime.ContentType? mime_type = Mime.ContentType.guess_type(
@@ -646,7 +647,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         GMime.ContentType? content_type = GMime.ContentType.parse(
-            Convey.RFC822.get_parser_options(),
+            GriabuntuMail.RFC822.get_parser_options(),
             mime_type.get_mime_type()
         );
 
@@ -709,7 +710,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         return (preview != null)
-            ? Convey.RFC822.Utils.to_preview_text(preview, format)
+            ? GriabuntuMail.RFC822.Utils.to_preview_text(preview, format)
             : "";
     }
 
@@ -899,7 +900,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             // GMime doesn't support writing content-only via the
             // public API, so suppress all headers in the message
             // instead.
-            GMime.FormatOptions options = Convey.RFC822.get_format_options().clone();
+            GMime.FormatOptions options = GriabuntuMail.RFC822.get_format_options().clone();
             GMime.HeaderList headers = message.get_header_list();
             int count = headers.get_count();
             for (int i = 0; i < count; i++) {
@@ -1157,7 +1158,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         if (body != null && html)
-            body = Convey.HTML.html_to_text(body);
+            body = GriabuntuMail.HTML.html_to_text(body);
 
         if (include_sub_messages) {
             foreach (Message sub_message in get_sub_messages()) {
@@ -1221,9 +1222,9 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         return attachments;
     }
 
-    public Gee.List<Convey.Attachment> save_decrypted_attachments(GLib.File dir)
+    public Gee.List<GriabuntuMail.Attachment> save_decrypted_attachments(GLib.File dir)
         throws Error {
-        var saved = new Gee.LinkedList<Convey.Attachment>();
+        var saved = new Gee.LinkedList<GriabuntuMail.Attachment>();
         int index = 0;
         foreach (Part part in get_attachments()) {
             index++;
@@ -1238,7 +1239,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
                     content.get_bytes().get_data(), null, false, PRIVATE, null
                 );
                 saved.add(
-                    new Convey.Graph.Attachment.from_part(part, file, (int64) content.size)
+                    new GriabuntuMail.Graph.Attachment.from_part(part, file, (int64) content.size)
                 );
             } catch (GLib.Error err) {
                 warning("Error saving decrypted attachment: %s", err.message);
@@ -1298,7 +1299,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
             if (requested_disposition == Mime.DispositionType.UNSPECIFIED || disposition == requested_disposition) {
                 GMime.Stream stream = new GMime.StreamMem();
-                message.write_to_stream(Convey.RFC822.get_format_options(), stream);
+                message.write_to_stream(GriabuntuMail.RFC822.get_format_options(), stream);
                 GMime.DataWrapper data = new GMime.DataWrapper.with_stream(stream,
                     GMime.ContentEncoding.BINARY);  // Equivalent to no encoding
                 GMime.Part part = new GMime.Part.with_type("message", "rfc822");
@@ -1360,15 +1361,15 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
 
         GMime.Part part = new GMime.Part.with_type("text", "plain");
         part.set_filename(filename);
-        part.set_content_type(GMime.ContentType.parse(Convey.RFC822.get_parser_options(), GLib.ContentType.guess(filename, data, null)));
+        part.set_content_type(GMime.ContentType.parse(GriabuntuMail.RFC822.get_parser_options(), GLib.ContentType.guess(filename, data, null)));
         part.set_content(new GMime.DataWrapper.with_stream(new GMime.StreamMem.with_buffer(data), GMime.ContentEncoding.BINARY));
         return part;
     }
 #endif
 
-    public Gee.List<Convey.RFC822.Message> get_sub_messages()
+    public Gee.List<GriabuntuMail.RFC822.Message> get_sub_messages()
         throws Error {
-        Gee.List<Convey.RFC822.Message> messages = new Gee.ArrayList<Convey.RFC822.Message>();
+        Gee.List<GriabuntuMail.RFC822.Message> messages = new Gee.ArrayList<GriabuntuMail.RFC822.Message>();
         find_sub_messages(messages, get_content_root());
         return messages;
     }
@@ -1415,7 +1416,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
             stream_filter.add(new GMime.FilterSmtpData());
         }
 
-        var format = Convey.RFC822.get_format_options();
+        var format = GriabuntuMail.RFC822.get_format_options();
         if (RFC822FormatOptions.SMTP_FORMAT in options) {
             format = format.clone();
             format.add_hidden_header("Bcc");
@@ -1443,7 +1444,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
     }
 
     public string to_string() {
-        return message.to_string(Convey.RFC822.get_format_options());
+        return message.to_string(GriabuntuMail.RFC822.get_format_options());
     }
 
     /**
@@ -1495,7 +1496,7 @@ public class Convey.RFC822.Message : BaseObject, EmailHeaderSet {
         }
 
         GMime.ContentType complete_type = GMime.ContentType.parse(
-                                              Convey.RFC822.get_parser_options(),
+                                              GriabuntuMail.RFC822.get_parser_options(),
                                               content_type
                                           );
         complete_type.set_parameter("charset", charset);

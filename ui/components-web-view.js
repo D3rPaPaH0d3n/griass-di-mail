@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016-2020 Michael Gratton <mike@vee.net>
  *
@@ -111,16 +112,16 @@ PageState.prototype = {
                 }
             }
             if (demoted.length > 0) {
-                el.dataset.conveyImportant = demoted.join(",");
+                el.dataset.griabuntuMailImportant = demoted.join(",");
             }
         }
     },
     restoreImportantInlineColors: function() {
-        for (const el of document.body.querySelectorAll("[data-convey-important]")) {
-            for (const prop of el.dataset.conveyImportant.split(",")) {
+        for (const el of document.body.querySelectorAll("[data-griabuntu-mail-important]")) {
+            for (const prop of el.dataset.griabuntuMailImportant.split(",")) {
                 el.style.setProperty(prop, el.style.getPropertyValue(prop), "important");
             }
-            delete el.dataset.conveyImportant;
+            delete el.dataset.griabuntuMailImportant;
         }
     },
     setUnsetHtmlColors: function(enabled, dark) {
@@ -136,9 +137,9 @@ PageState.prototype = {
             return;
         }
         if (theme != null) {
-            document.body.setAttribute("data-convey-theme", theme);
+            document.body.setAttribute("data-griabuntu-mail-theme", theme);
         } else {
-            document.body.removeAttribute("data-convey-theme");
+            document.body.removeAttribute("data-griabuntu-mail-theme");
         }
         if (theme === "dark") {
             this.demoteImportantInlineColors();
@@ -259,6 +260,6 @@ let MessageSender = function(name) {
         // Since typeof(arguments) == 'object', convert to an array so
         // that Components.WebView.MessageCallback callbacks get
         // arrays or tuples rather than dicts as arguments
-        _ConveyWebExtension.send(name, Array.from(arguments));
+        _GriabuntuMailWebExtension.send(name, Array.from(arguments));
     };
 };

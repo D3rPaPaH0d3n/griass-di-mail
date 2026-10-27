@@ -1,0 +1,26 @@
+Griabuntu Mail is an independent private downstream of Convey 51.0, itself
+derived from Geary. Original authorship, copyright and notices are retained
+in individual files, AUTHORS, THANKS and the original Git history.
+
+This elected application source copy and the new debian/ packaging are licensed
+under GNU GPL version 3 only. See COPYING and docs/release/GPLV3-COPY.md.
+On Debian/Ubuntu, the complete GPLv3 text is also available at
+/usr/share/common-licenses/GPL-3.
+
+This is not a blanket licence for every file. The repository's
+THIRD-PARTY-NOTICES.md, COPYING.icons, COPYING.sounds and docs/licenses/ retain
+component-specific copyright notices and licence texts. These are installed
+under /usr/share/licenses/io.github.d3rpapah0d3n.GriabuntuMail/ by the application build.
+The original LGPL reference is preserved as COPYING.LGPL-2.1-original.
+In particular, bundled Dark Reader is MIT, ValaUnit remains LGPL, the Snowball
+binding retains its BSD notice, and icon/sound/brand assets retain their
+individual CC or LGPL terms. System libraries are separate Ubuntu packages;
+their notices are available in their respective /usr/share/doc directories.
+
+This local preview does not close the inherited asset/source/provenance and
+public-name work listed in RELEASE-CHECKLIST.md. It is not a public release.
+
+The 2026-10-27 original Griabuntu Mail envelope icon family is CC0-1.0,
+with exact files/provenance listed in the installed Griabuntu-Mail-Artwork.md
+and full text in Griabuntu-Mail-Artwork-CC0-1.0.txt. Older inherited icon
+artwork remains in source history/archives under its original terms.

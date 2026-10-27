@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -10,7 +11,7 @@
 /**
  * A standard info bar widget with status message and description.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-info-bar.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-info-bar.ui")]
 public class Components.InfoBar : Gtk.Box {
     public signal void response(int response_id);
     /**
@@ -85,7 +86,7 @@ public class Components.InfoBar : Gtk.Box {
         attrs.change(Pango.attr_weight_new(BOLD));
         this.status.attributes = attrs;
 
-        if (!Convey.String.is_empty_or_whitespace(description)) {
+        if (!GriabuntuMail.String.is_empty_or_whitespace(description)) {
             // There is both a status and a description, so they
             // should be vertical-aligned next to each other in the
             // centre

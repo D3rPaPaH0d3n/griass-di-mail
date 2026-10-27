@@ -18,7 +18,7 @@
                 <property name="valign">baseline</property>
                 <property name="margin_bottom">12</property>
                 <property name="hexpand">True</property>
-                <property name="label" translatable="yes">If the problem is serious or persists, please save these details and attach it to a &lt;a href="https://gitlab.gnome.org/donnybeelo/convey/-/work_items/new"&gt;new bug report&lt;/a&gt;.</property>
+                <property name="label" translatable="yes">If the problem is serious or persists, please save these details and attach it to a &lt;a href="https://github.com/D3rPaPaH0d3n/griabuntu-mail/issues"&gt;new bug report&lt;/a&gt;.</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
                 <property name="xalign">0</property>

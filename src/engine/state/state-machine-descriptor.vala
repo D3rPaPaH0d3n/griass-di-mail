@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,9 +7,9 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public delegate string Convey.State.StateEventToString(uint state_or_event);
+public delegate string GriabuntuMail.State.StateEventToString(uint state_or_event);
 
-public class Convey.State.MachineDescriptor : BaseObject {
+public class GriabuntuMail.State.MachineDescriptor : BaseObject {
     public string name { get; private set; }
     public uint start_state { get; private set; }
     public uint state_count { get; private set; }

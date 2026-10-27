@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -8,11 +9,11 @@
  */
 
 
-class Convey.Graph.FolderTest : GraphTestCase {
+class GriabuntuMail.Graph.FolderTest : GraphTestCase {
 
 
     public FolderTest() {
-        base("Convey.Graph.FolderTest");
+        base("GriabuntuMail.Graph.FolderTest");
         add_test("refresh_async_populates_cache", refresh_async_populates_cache);
         add_test("list_email_orders_newest_first", list_email_orders_newest_first);
         add_test("fetch_email_returns_full_body_and_headers", fetch_email_returns_full_body_and_headers);
@@ -21,29 +22,29 @@ class Convey.Graph.FolderTest : GraphTestCase {
         add_test("list_messages_falls_back_to_simpler_query", list_messages_falls_back_to_simpler_query);
     }
 
-    private Convey.Graph.Account new_account() throws GLib.Error {
-        return new Convey.Graph.Account(
+    private GriabuntuMail.Graph.Account new_account() throws GLib.Error {
+        return new GriabuntuMail.Graph.Account(
             this.account,
-            new Convey.Endpoint(
+            new GriabuntuMail.Endpoint(
                 new GLib.NetworkAddress("localhost", 0),
-                Convey.TlsNegotiationMethod.TRANSPORT,
+                GriabuntuMail.TlsNegotiationMethod.TRANSPORT,
                 1
             ),
-            new Convey.Endpoint(
+            new GriabuntuMail.Endpoint(
                 new GLib.NetworkAddress("localhost", 0),
-                Convey.TlsNegotiationMethod.TRANSPORT,
+                GriabuntuMail.TlsNegotiationMethod.TRANSPORT,
                 1
             )
         );
     }
 
-    private Convey.Graph.Folder new_folder(Convey.Graph.Account account,
-                                          Convey.Graph.Client client) {
-        Convey.FolderPath path = new Convey.FolderRoot("$convey-graph", false)
+    private GriabuntuMail.Graph.Folder new_folder(GriabuntuMail.Graph.Account account,
+                                          GriabuntuMail.Graph.Client client) {
+        GriabuntuMail.FolderPath path = new GriabuntuMail.FolderRoot("$griabuntu-mail-graph", false)
             .get_child("Inbox");
-        return new Convey.Graph.Folder(
+        return new GriabuntuMail.Graph.Folder(
             account, client, path, "inbox-folder-id",
-            Convey.Folder.SpecialUse.INBOX
+            GriabuntuMail.Folder.SpecialUse.INBOX
         );
     }
 
@@ -77,10 +78,10 @@ class Convey.Graph.FolderTest : GraphTestCase {
     }
 
     /** Opens the folder and waits for its cache to load. */
-    private void open_and_refresh(Convey.Graph.Folder folder) throws GLib.Error {
+    private void open_and_refresh(GriabuntuMail.Graph.Folder folder) throws GLib.Error {
         bool done = false;
         folder.open_async.begin(
-            Convey.Folder.OpenFlags.NONE, null, (obj, res) => {
+            GriabuntuMail.Folder.OpenFlags.NONE, null, (obj, res) => {
                 try {
                     folder.open_async.end(res);
                 } catch (GLib.Error err) {
@@ -104,12 +105,12 @@ class Convey.Graph.FolderTest : GraphTestCase {
             ONE_MESSAGE_PAGE
         );
 
-        Convey.Graph.Account account = new_account();
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Folder folder = new_folder(account, client);
+        GriabuntuMail.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Folder folder = new_folder(account, client);
         bool done = false;
         folder.open_async.begin(
-            Convey.Folder.OpenFlags.NONE, null, (obj, res) => {
+            GriabuntuMail.Folder.OpenFlags.NONE, null, (obj, res) => {
                 try {
                     folder.open_async.end(res);
                 } catch (GLib.Error err) {
@@ -164,15 +165,15 @@ class Convey.Graph.FolderTest : GraphTestCase {
             "GET", "/me/mailFolders/inbox-folder-id/messages", 200, body
         );
 
-        Convey.Graph.Account account = new_account();
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Folder folder = new_folder(account, client);
+        GriabuntuMail.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Folder folder = new_folder(account, client);
         open_and_refresh(folder);
 
-        Gee.List<Convey.Email>? listed = null;
+        Gee.List<GriabuntuMail.Email>? listed = null;
         folder.list_email_by_id_async.begin(
-            null, 10, Convey.Email.Field.PREVIEW,
-            Convey.Folder.ListFlags.NONE, null, (obj, res) => {
+            null, 10, GriabuntuMail.Email.Field.PREVIEW,
+            GriabuntuMail.Folder.ListFlags.NONE, null, (obj, res) => {
                 try {
                     listed = folder.list_email_by_id_async.end(res);
                 } catch (GLib.Error err) {
@@ -187,11 +188,11 @@ class Convey.Graph.FolderTest : GraphTestCase {
         assert_non_null(listed);
         assert_true(listed.size == 3, "expected 3");
         assert_equal(
-            ((Convey.Graph.EmailIdentifier) listed[0].id).graph_id, "msg-newest",
+            ((GriabuntuMail.Graph.EmailIdentifier) listed[0].id).graph_id, "msg-newest",
             "Newest message should be first"
         );
         assert_equal(
-            ((Convey.Graph.EmailIdentifier) listed[2].id).graph_id, "msg-oldest",
+            ((GriabuntuMail.Graph.EmailIdentifier) listed[2].id).graph_id, "msg-oldest",
             "Oldest message should be last"
         );
     }
@@ -229,17 +230,17 @@ class Convey.Graph.FolderTest : GraphTestCase {
             "From: sender@example.com\r\nSubject: Hello\r\n\r\nhello"
         );
 
-        Convey.Graph.Account account = new_account();
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Folder folder = new_folder(account, client);
+        GriabuntuMail.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Folder folder = new_folder(account, client);
         open_and_refresh(folder);
 
-        Convey.Graph.EmailIdentifier id = new Convey.Graph.EmailIdentifier(
+        GriabuntuMail.Graph.EmailIdentifier id = new GriabuntuMail.Graph.EmailIdentifier(
             "msg-1", 0
         );
-        Convey.Email? fetched = null;
+        GriabuntuMail.Email? fetched = null;
         folder.fetch_email_async.begin(
-            id, Convey.Email.Field.BODY, Convey.Folder.ListFlags.NONE, null,
+            id, GriabuntuMail.Email.Field.BODY, GriabuntuMail.Folder.ListFlags.NONE, null,
             (obj, res) => {
                 try {
                     fetched = folder.fetch_email_async.end(res);
@@ -272,19 +273,19 @@ class Convey.Graph.FolderTest : GraphTestCase {
             "PATCH", "/me/messages/msg-1", 200, "{}"
         );
 
-        Convey.Graph.Account account = new_account();
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Folder folder = new_folder(account, client);
+        GriabuntuMail.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Folder folder = new_folder(account, client);
         open_and_refresh(folder);
 
-        Convey.Graph.EmailIdentifier id = new Convey.Graph.EmailIdentifier(
+        GriabuntuMail.Graph.EmailIdentifier id = new GriabuntuMail.Graph.EmailIdentifier(
             "msg-1", 0
         );
-        Gee.ArrayList<Convey.EmailIdentifier> ids =
-            new Gee.ArrayList<Convey.EmailIdentifier>();
+        Gee.ArrayList<GriabuntuMail.EmailIdentifier> ids =
+            new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         ids.add(id);
-        Convey.EmailFlags to_add = new Convey.EmailFlags();
-        to_add.add(Convey.EmailFlags.FLAGGED);
+        GriabuntuMail.EmailFlags to_add = new GriabuntuMail.EmailFlags();
+        to_add.add(GriabuntuMail.EmailFlags.FLAGGED);
 
         bool done = false;
         folder.mark_email_async.begin(
@@ -306,16 +307,16 @@ class Convey.Graph.FolderTest : GraphTestCase {
         }
 
         // After marking, the local cache should reflect the new flags
-        Gee.Collection<Convey.Email> cached = folder.list_cached_emails();
+        Gee.Collection<GriabuntuMail.Email> cached = folder.list_cached_emails();
         assert_true(cached.size == 1, "expected 1");
-        Convey.Email? cached_email = null;
-        foreach (Convey.Email e in cached) {
+        GriabuntuMail.Email? cached_email = null;
+        foreach (GriabuntuMail.Email e in cached) {
             cached_email = e;
             break;
         }
         assert_non_null(cached_email);
         assert_true(
-            cached_email.email_flags.contains(Convey.EmailFlags.FLAGGED),
+            cached_email.email_flags.contains(GriabuntuMail.EmailFlags.FLAGGED),
             "Email should now be marked as flagged"
         );
     }
@@ -351,8 +352,8 @@ class Convey.Graph.FolderTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Convey.Graph.Client client = new_client();
-        Gee.List<Convey.Graph.Client.Message>? messages = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        Gee.List<GriabuntuMail.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
             "inbox-folder-id", 10, 14, 0, null, null, (obj, res) => {
                 try {

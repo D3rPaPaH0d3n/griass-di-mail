@@ -43,48 +43,25 @@ falling back to the selected conversation. Repeated in-flight clicks are
 deduplicated. An error notification offers Open rather than silently pretending
 success. A missing archive or Trash folder is not created automatically.
 
-## Build and verification
+## Current build and identity
 
-Use the pinned `packaging/net.donnybeelo.Convey.Practice.yml` with GNOME SDK 51
-and official Flatpak Builder. Reuse whichever user/system scope already holds
-those tools; do not duplicate SDK installations. Standard build instructions
-remain in [BUILDING.md](BUILDING.md).
+Native Ubuntu 26.10 packaging is in `debian/`. The application is Griabuntu Mail,
+executable/gettext/data basename `griabuntu-mail`, independent ID
+`io.github.d3rpapah0d3n.GriabuntuMail`, engine namespace `GriabuntuMail`.
+See [IDENTITY.md](docs/IDENTITY.md) for all naming and provenance boundaries.
+The current candidate also installs the original CC0 envelope app/tray/symbolic
+icon family from `brand/`, with native raster sizes. The wider theme is separate.
+No personal data is copied by this source change or by package installation.
 
-The prior installed tray snapshot passed 327 engine tests and 44 focused helper
-cases, including account scoping, late-result rejection, stable menu IDs,
-received-time/DST formatting and markup safety. A private D-Bus fixture also
-exercises the tray menu and count changes. The focused executable is
-`test-recipient-aliases`; the fixture switch `--tray-fixture` uses synthetic mail
-only and must not be confused with real mail delivery validation.
+The original flag bug was reproduced and fixed on 2026-10-27: all ten unchanged
+flag cases pass. The first full renamed build passes 328 engine cases (including
+one new legacy-tokeniser alias case), 62 focused helpers and the ten flag cases,
+plus three desktop/AppStream validators. Synthetic tests are not personal-mail,
+composer or end-to-end desktop acceptance. Native GUI smoke checks use isolated
+state and a private virtual display; no installed personal profile is opened.
 
-The notification-actions engineering snapshot was reported to pass the same 327 engine
-cases and 62 focused cases (18 new). The new cases cover actual GNotification
-button serialization on a private D-Bus, account/source validation, stale mail,
-cancellation, error cleanup and exact single-message archive/Trash moves through
-the existing production command. No real mail or accounts are opened by these
-tests. Reply-composer and desktop acceptance are separate from these tests.
-
-The independent notification-flag suite records an existing baseline defect:
-four of ten cases fail because starring still-unread mail retires session-new
-entries. Its production handler is unchanged here; this is not a green release
-gate or a regression introduced by the new popup actions.
-
-Keep profiles, credentials, private operational notes, local build directories,
-bundles and signing keys outside version control. No release package is published by this preparation; no signing secret or
-personal account configuration belongs in this repository.
-
-## Griabuntu Mail presentation — 2026-10-26
-
-At 19:25 UTC Markus selected **Griabuntu Mail** as the private working identity,
-superseding the Briefwerk study and Griabu proposal. Original folded-G logo and
-synthetic hero assets now use pastel teal/petrol and peach/copper. The future
-interface direction is native GTK4/libadwaita integration coherent with Ubuntu/
-GNOME, with restrained Material-inspired tonal surfaces — **not a completed app
-redesign**. No runtime theme, installed icon, technical ID, profile path or
-repository name changed.
-
-Exact-name checks returned no results, but Canonical's current policy creates a
-material similar-BUNTU-mark/software-title permission question. No clearance is
-claimed and no contact was made. See [BRANDING.md](docs/BRANDING.md),
-[desktop direction](docs/desktop-design-direction.md) and the
-[unsent permission draft](docs/CANONICAL-NAME-PERMISSION-DRAFT.md).
+Earlier GPL-copy build/package evidence remains in `docs/release/VERIFICATION.md`
+with its original hashes, names and baseline failures. It does not certify this
+new identity build. Keep profiles, credentials, logs, local build directories,
+bundles and signing material outside version control. No public release or
+signing is authorised by this private refactor.

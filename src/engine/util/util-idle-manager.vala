@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
@@ -16,7 +17,7 @@
  * Note this class is not thread safe and should only be invoked from
  * the main loop.
  */
-public class Convey.IdleManager : BaseObject {
+public class GriabuntuMail.IdleManager : BaseObject {
 
 
     /** Specifies the priority the idle function should be given. */

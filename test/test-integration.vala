@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -14,11 +15,11 @@ private const int TIMEOUT = 10;
 
 public struct Integration.Configuration {
 
-    Convey.Protocol type;
-    Convey.ServiceProvider provider;
-    Convey.ServiceInformation service;
-    Convey.Endpoint target;
-    Convey.Credentials credentials;
+    GriabuntuMail.Protocol type;
+    GriabuntuMail.ServiceProvider provider;
+    GriabuntuMail.ServiceInformation service;
+    GriabuntuMail.Endpoint target;
+    GriabuntuMail.Credentials credentials;
 
 }
 
@@ -34,11 +35,11 @@ int main(string[] args) {
 
     Test.init(ref args);
 
-    Convey.RFC822.init();
-    Convey.HTML.init();
-    Convey.Logging.init();
-    Convey.Logging.log_to(stderr);
-    GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
+    GriabuntuMail.RFC822.init();
+    GriabuntuMail.HTML.init();
+    GriabuntuMail.Logging.init();
+    GriabuntuMail.Logging.log_to(stderr);
+    GLib.Log.set_writer_func(GriabuntuMail.Logging.default_log_writer);
 
     Integration.Configuration config = load_config(args);
 
@@ -80,11 +81,11 @@ int main(string[] args) {
 private Integration.Configuration load_config(string[] args) {
     int i = 1;
     try {
-        Convey.Protocol type = Convey.Protocol.for_value(args[i++]);
-        Convey.ServiceProvider provider = Convey.ServiceProvider.for_value(
+        GriabuntuMail.Protocol type = GriabuntuMail.Protocol.for_value(args[i++]);
+        GriabuntuMail.ServiceProvider provider = GriabuntuMail.ServiceProvider.for_value(
             args[i++]
         );
-        Convey.ServiceInformation service = new Convey.ServiceInformation(
+        GriabuntuMail.ServiceInformation service = new GriabuntuMail.ServiceInformation(
             type, provider
         );
 
@@ -93,13 +94,13 @@ private Integration.Configuration load_config(string[] args) {
             service.port = service.get_default_port();
         }
 
-        Convey.Credentials credentials = new Convey.Credentials(
+        GriabuntuMail.Credentials credentials = new GriabuntuMail.Credentials(
             PASSWORD, args[i++], args[i++]
         );
 
         provider.set_service_defaults(service);
 
-        Convey.Endpoint target = new Convey.Endpoint(
+        GriabuntuMail.Endpoint target = new GriabuntuMail.Endpoint(
             new NetworkAddress(service.host, service.port),
             service.transport_security,
             TIMEOUT
@@ -109,7 +110,7 @@ private Integration.Configuration load_config(string[] args) {
     } catch (GLib.Error err) {
         error(
             "Error loading config: %s",
-            (new Convey.ErrorContext(err)).format_full_error()
+            (new GriabuntuMail.ErrorContext(err)).format_full_error()
         );
     }
 

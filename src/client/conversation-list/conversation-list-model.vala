@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2022 John Renner <john@jrenner.net>
  * Copyright © 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
@@ -11,10 +12,10 @@
 // The whole goal of this class to wrap the ConversationMonitor with a view that presents a sorted list
 public class ConversationList.Model : Object, ListModel {
     private class Entry {
-        public Convey.App.Conversation conversation;
+        public GriabuntuMail.App.Conversation conversation;
         public bool leaving = false;
 
-        public Entry(Convey.App.Conversation conversation) {
+        public Entry(GriabuntuMail.App.Conversation conversation) {
             this.conversation = conversation;
         }
     }
@@ -24,7 +25,7 @@ public class ConversationList.Model : Object, ListModel {
     // More than one monitor when several inboxes are shown combined;
     // conversations from all of them are merged into a single date
     // ordered list.
-    internal Gee.Collection<Convey.App.ConversationMonitor> monitors {
+    internal Gee.Collection<GriabuntuMail.App.ConversationMonitor> monitors {
         get; private set;
     }
 
@@ -51,10 +52,10 @@ public class ConversationList.Model : Object, ListModel {
     }
     private bool _unread_only = false;
 
-    private Gee.Set<Convey.App.ConversationMonitor> unscanned =
-        new Gee.HashSet<Convey.App.ConversationMonitor>();
+    private Gee.Set<GriabuntuMail.App.ConversationMonitor> unscanned =
+        new Gee.HashSet<GriabuntuMail.App.ConversationMonitor>();
 
-    internal Model(Gee.Collection<Convey.App.ConversationMonitor> monitors) {
+    internal Model(Gee.Collection<GriabuntuMail.App.ConversationMonitor> monitors) {
         this.monitors = monitors;
         this.unscanned.add_all(monitors);
         GLib.Timeout.add(READY_TIMEOUT_MS, () => {
@@ -84,8 +85,8 @@ public class ConversationList.Model : Object, ListModel {
     }
 
     /** The folders being displayed. */
-    internal Gee.Collection<Convey.Folder> get_folders() {
-        var folders = new Gee.ArrayList<Convey.Folder>();
+    internal Gee.Collection<GriabuntuMail.Folder> get_folders() {
+        var folders = new Gee.ArrayList<GriabuntuMail.Folder>();
         foreach (var monitor in this.monitors) {
             folders.add(monitor.base_folder);
         }
@@ -95,11 +96,11 @@ public class ConversationList.Model : Object, ListModel {
     public signal void conversations_added(bool start);
     public signal void conversations_removed(bool start);
     public signal void conversations_loaded();
-    public signal void conversation_updated(Convey.App.Conversation convo);
+    public signal void conversation_updated(GriabuntuMail.App.Conversation convo);
     public signal void conversation_leaving(uint position);
     public signal void ready();
 
-    private static int compare(Convey.App.Conversation a, Convey.App.Conversation b) {
+    private static int compare(GriabuntuMail.App.Conversation a, GriabuntuMail.App.Conversation b) {
         return Util.Email.compare_conversation_descending(a, b);
     }
 
@@ -107,7 +108,7 @@ public class ConversationList.Model : Object, ListModel {
     //  Scanning and load_more
     // ------------------------
 
-    private void on_scan_started(Convey.App.ConversationMonitor source) {
+    private void on_scan_started(GriabuntuMail.App.ConversationMonitor source) {
         this.scanning++;
     }
 
@@ -118,7 +119,7 @@ public class ConversationList.Model : Object, ListModel {
         }
     }
 
-    private void on_scan_completed(Convey.App.ConversationMonitor source) {
+    private void on_scan_completed(GriabuntuMail.App.ConversationMonitor source) {
         this.unscanned.remove(source);
         if (this.unscanned.is_empty) {
             set_ready();
@@ -156,14 +157,14 @@ public class ConversationList.Model : Object, ListModel {
     }
 
     public Type get_item_type() {
-        return typeof(Convey.App.Conversation);
+        return typeof(GriabuntuMail.App.Conversation);
     }
 
     public uint get_n_items() {
         return this.entries.length;
     }
 
-    private bool is_valid(Convey.App.Conversation convo) {
+    private bool is_valid(GriabuntuMail.App.Conversation convo) {
         // The conversation may be bogus, if so don't do anything
         if (convo.get_latest_recv_email(ANYWHERE) == null) {
             debug("Cannot add conversation: last email is null");
@@ -172,7 +173,7 @@ public class ConversationList.Model : Object, ListModel {
         return true;
     }
 
-    private bool is_shown(Convey.App.Conversation convo) {
+    private bool is_shown(GriabuntuMail.App.Conversation convo) {
         return !this._unread_only || convo.is_unread();
     }
 
@@ -188,13 +189,13 @@ public class ConversationList.Model : Object, ListModel {
                 remove_later(leaving, true);
             }
         } else {
-            var listed = new Gee.HashSet<Convey.App.Conversation>();
+            var listed = new Gee.HashSet<GriabuntuMail.App.Conversation>();
             foreach (var entry in this.entries) {
                 if (!entry.leaving) {
                     listed.add(entry.conversation);
                 }
             }
-            var missing = new Gee.ArrayList<Convey.App.Conversation>();
+            var missing = new Gee.ArrayList<GriabuntuMail.App.Conversation>();
             foreach (var monitor in this.monitors) {
                 foreach (var convo in monitor.read_only_view) {
                     if (!listed.contains(convo)) {
@@ -208,7 +209,7 @@ public class ConversationList.Model : Object, ListModel {
         }
     }
 
-    private int find_live(Convey.App.Conversation convo) {
+    private int find_live(GriabuntuMail.App.Conversation convo) {
         for (int i = 0; i < this.entries.length; i++) {
             if (!this.entries[i].leaving && this.entries[i].conversation == convo) {
                 return i;
@@ -245,13 +246,13 @@ public class ConversationList.Model : Object, ListModel {
         });
     }
 
-    private void on_conversations_added(Gee.Collection<Convey.App.Conversation> conversations) {
+    private void on_conversations_added(Gee.Collection<GriabuntuMail.App.Conversation> conversations) {
         debug("Adding %d conversations.", conversations.size);
 
         conversations_added(true);
 
-        var added = new Gee.ArrayList<Convey.App.Conversation>();
-        foreach (Convey.App.Conversation convo in conversations) {
+        var added = new Gee.ArrayList<GriabuntuMail.App.Conversation>();
+        foreach (GriabuntuMail.App.Conversation convo in conversations) {
             if (is_shown(convo) && is_valid(convo)) {
                 added.add(convo);
             }
@@ -283,11 +284,11 @@ public class ConversationList.Model : Object, ListModel {
         debug("Added %d/%d conversations.", added.size, conversations.size);
     }
 
-    private void on_conversations_removed(Gee.Collection<Convey.App.Conversation> conversations) {
+    private void on_conversations_removed(Gee.Collection<GriabuntuMail.App.Conversation> conversations) {
         debug("Removing %d conversations.", conversations.size);
 
         var leaving = new Gee.ArrayList<Entry>();
-        foreach (Convey.App.Conversation convo in conversations) {
+        foreach (GriabuntuMail.App.Conversation convo in conversations) {
             int position = find_live(convo);
             if (position >= 0) {
                 leaving.add(this.entries[position]);
@@ -298,14 +299,14 @@ public class ConversationList.Model : Object, ListModel {
         }
     }
 
-    private void on_conversation_updated(Convey.App.ConversationMonitor sender, Convey.App.Conversation convo, Gee.Collection<Convey.Email> emails) {
+    private void on_conversation_updated(GriabuntuMail.App.ConversationMonitor sender, GriabuntuMail.App.Conversation convo, Gee.Collection<GriabuntuMail.Email> emails) {
         conversation_updated(convo);
 
         int position = find_live(convo);
         if (position < 0) {
             if (this._unread_only && convo.is_unread() &&
                 sender.read_only_view.contains(convo)) {
-                on_conversations_added(Convey.Collection.single(convo));
+                on_conversations_added(GriabuntuMail.Collection.single(convo));
             }
             return;
         }

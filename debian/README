@@ -1,0 +1,52 @@
+Native Ubuntu 26.10 preview
+==========================
+
+This packaging targets Ubuntu 26.10 (stonking), initially amd64. It uses the
+distribution's development/runtime libraries, not binaries copied from Flatpak.
+Other Ubuntu/Debian versions have not been accepted. TNEF is explicitly enabled;
+the elected application copy remains GPL-3.0-only with separate component terms.
+
+Build from a clean source snapshot containing debian/ and all intended patches:
+
+    sudo apt-get build-dep .
+    DEB_BUILD_OPTIONS=parallel=6 dpkg-buildpackage -b -us -uc
+
+The .deb, optional debug-symbol .ddeb, .buildinfo and .changes are written to the
+parent directory. No source/binary publication or APT repository is configured.
+The placeholder maintainer address deliberately identifies a local build only.
+
+The build runs the existing engine, focused helper and notification-flag tests,
+plus desktop/AppStream validation. debian/run-tests.py isolates HOME/XDG,
+network, process namespace and buses with Bubblewrap and a private D-Bus session.
+It intentionally excludes the GTK/WebKit/provider suites that require separate
+desktop acceptance. No real mail, contacts, accounts or keyring is used.
+
+The Ubuntu -Bsymbolic-functions linker option is removed in debian/rules:
+the inherited static engine is linked into both executables and the private
+client library, so local function binding duplicates GType registration.
+Normal symbol interposition avoids that error. Other hardening remains enabled.
+
+After inspecting the candidate and agreeing how existing accounts are handled,
+installation uses the ordinary local-package command:
+
+    sudo apt install ./griabuntu-mail_<version>_amd64.deb
+
+The package provides /usr/bin/griabuntu-mail, the independent desktop/D-Bus/
+schema identity io.github.d3rpapah0d3n.GriabuntuMail and the GriabuntuMail engine
+namespace. New release profiles use ~/.config/griabuntu-mail,
+~/.local/share/griabuntu-mail and ~/.cache/griabuntu-mail (or XDG equivalents).
+The secret schema is separate too. No package script opens, copies, links or
+removes an existing Convey/Flatpak profile or starts the application.
+
+An upgrade from the first native preview removes its old package-owned launch
+files. Per-user launcher overrides and any running old process must be handled
+when deploying. Preserve old profiles and backups until an explicitly chosen
+migration or fresh setup has been accepted; never copy a live mail database.
+
+See docs/IDENTITY.md for the complete naming map, historical lookup exceptions
+and old-path/new-path inventory. The current app/tray/symbolic envelope family is original CC0 artwork installed
+from brand/ at native raster sizes. Earlier art remains archived under its own
+terms. The broader UI/theme redesign remains separate.
+No public release, signing, source visibility change or automated publishing is
+performed by this packaging. Native GUI acceptance is recorded separately from
+headless regression tests.

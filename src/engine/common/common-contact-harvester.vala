@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -9,7 +10,7 @@
  */
 
 /** Denotes objects that extract contacts from email meages. */
-internal interface Convey.ContactHarvester : GLib.Object {
+internal interface GriabuntuMail.ContactHarvester : GLib.Object {
 
     public abstract async void harvest_from_email(Gee.Collection<Email> messages,
                                                   GLib.Cancellable? cancellable)
@@ -18,7 +19,7 @@ internal interface Convey.ContactHarvester : GLib.Object {
 }
 
 /** Default harvester that saves contacts in the contact store. */
-internal class Convey.ContactHarvesterImpl : BaseObject, ContactHarvester {
+internal class GriabuntuMail.ContactHarvesterImpl : BaseObject, ContactHarvester {
 
     private const Email.Field REQUIRED_FIELDS = ORIGINATORS | RECEIVERS;
 
@@ -119,7 +120,7 @@ internal class Convey.ContactHarvesterImpl : BaseObject, ContactHarvester {
             if (contact == null) {
                 contact = yield this.store.get_by_rfc822(address, cancellable);
                 if (contact == null) {
-                    contact = new Convey.Contact.from_rfc822_address(
+                    contact = new GriabuntuMail.Contact.from_rfc822_address(
                         address, importance
                     );
                 }

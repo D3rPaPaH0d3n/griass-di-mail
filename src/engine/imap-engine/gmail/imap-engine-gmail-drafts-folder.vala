@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -13,7 +14,7 @@
  * Gmail's drafts folders supports basic operations as well as true
  * removal of messages and creating new ones (IMAP APPEND).
  */
-private class Convey.ImapEngine.GmailDraftsFolder :
+private class GriabuntuMail.ImapEngine.GmailDraftsFolder :
     MinimalFolder, FolderSupport.Create, FolderSupport.Remove {
 
     public GmailDraftsFolder(GmailAccount account,

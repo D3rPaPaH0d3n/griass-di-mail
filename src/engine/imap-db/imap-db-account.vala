@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>.
@@ -8,17 +9,17 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapDB.Account : BaseObject {
+private class GriabuntuMail.ImapDB.Account : BaseObject {
 
     // Storage path names
-    private const string DB_FILENAME = "convey.db";
+    private const string DB_FILENAME = "griabuntu-mail.db";
     private const string ATTACHMENTS_DIR = "attachments";
 
 
-    private class FolderReference : Convey.SmartReference {
-        public Convey.FolderPath path;
+    private class FolderReference : GriabuntuMail.SmartReference {
+        public GriabuntuMail.FolderPath path;
 
-        public FolderReference(ImapDB.Folder folder, Convey.FolderPath path) {
+        public FolderReference(ImapDB.Folder folder, GriabuntuMail.FolderPath path) {
             base (folder);
 
             this.path = path;
@@ -36,7 +37,7 @@ private class Convey.ImapDB.Account : BaseObject {
      * @see list_folders_async
      */
     public Imap.FolderRoot imap_folder_root {
-        get; private set; default = new Imap.FolderRoot("$convey-imap");
+        get; private set; default = new Imap.FolderRoot("$griabuntu-mail-imap");
     }
 
     public SimpleProgressMonitor upgrade_monitor {
@@ -54,8 +55,8 @@ private class Convey.ImapDB.Account : BaseObject {
     private string name;
     private GLib.File db_file;
     private GLib.File attachments_dir;
-    private Gee.HashMap<Convey.FolderPath, FolderReference> folder_refs =
-        new Gee.HashMap<Convey.FolderPath, FolderReference>();
+    private Gee.HashMap<GriabuntuMail.FolderPath, FolderReference> folder_refs =
+        new Gee.HashMap<GriabuntuMail.FolderPath, FolderReference>();
     private Cancellable? background_cancellable = null;
 
     public Account(AccountInformation config,
@@ -163,15 +164,15 @@ private class Convey.ImapDB.Account : BaseObject {
         this.folder_refs.clear();
     }
 
-    public async Folder clone_folder_async(Convey.Imap.Folder imap_folder,
+    public async Folder clone_folder_async(GriabuntuMail.Imap.Folder imap_folder,
                                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
 
-        Convey.Imap.FolderProperties properties = imap_folder.properties;
-        Convey.FolderPath path = imap_folder.path;
+        GriabuntuMail.Imap.FolderProperties properties = imap_folder.properties;
+        GriabuntuMail.FolderPath path = imap_folder.path;
 
-        Convey.ImapDB.Folder? folder = get_local_folder(path);
+        GriabuntuMail.ImapDB.Folder? folder = get_local_folder(path);
         if (folder != null) {
             throw new EngineError.ALREADY_EXISTS(
                 "Folder with path already exists: %s", path.to_string()
@@ -219,7 +220,7 @@ private class Convey.ImapDB.Account : BaseObject {
         return yield fetch_folder_async(path, cancellable);
     }
 
-    public async void delete_folder_async(Convey.FolderPath path,
+    public async void delete_folder_async(GriabuntuMail.FolderPath path,
                                           GLib.Cancellable? cancellable)
         throws GLib.Error {
         check_open();
@@ -251,18 +252,18 @@ private class Convey.ImapDB.Account : BaseObject {
      * To list all top-level folders, pass in {@link imap_folder_root}
      * as the parent.
      */
-    public async Gee.Collection<Convey.ImapDB.Folder>
-        list_folders_async(Convey.FolderPath parent,
+    public async Gee.Collection<GriabuntuMail.ImapDB.Folder>
+        list_folders_async(GriabuntuMail.FolderPath parent,
                            GLib.Cancellable? cancellable)
         throws GLib.Error {
         check_open();
 
         // TODO: A better solution here would be to only pull the FolderProperties if the Folder
         // object itself doesn't already exist
-        Gee.HashMap<Convey.FolderPath, int64?> id_map = new Gee.HashMap<
-            Convey.FolderPath, int64?>();
-        Gee.HashMap<Convey.FolderPath, Convey.Imap.FolderProperties> prop_map = new Gee.HashMap<
-            Convey.FolderPath, Convey.Imap.FolderProperties>();
+        Gee.HashMap<GriabuntuMail.FolderPath, int64?> id_map = new Gee.HashMap<
+            GriabuntuMail.FolderPath, int64?>();
+        Gee.HashMap<GriabuntuMail.FolderPath, GriabuntuMail.Imap.FolderProperties> prop_map = new Gee.HashMap<
+            GriabuntuMail.FolderPath, GriabuntuMail.Imap.FolderProperties>();
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
             int64 parent_id = Db.INVALID_ROWID;
             if (!parent.is_root &&
@@ -288,9 +289,9 @@ private class Convey.ImapDB.Account : BaseObject {
             Db.Result result = stmt.exec(cancellable);
             while (!result.finished) {
                 string basename = result.string_for("name");
-                Convey.FolderPath path = parent.get_child(basename);
-                Convey.Imap.FolderProperties properties = new Convey.Imap.FolderProperties.from_imapdb(
-                    Convey.Imap.MailboxAttributes.deserialize(result.string_for("attributes")),
+                GriabuntuMail.FolderPath path = parent.get_child(basename);
+                GriabuntuMail.Imap.FolderProperties properties = new GriabuntuMail.Imap.FolderProperties.from_imapdb(
+                    GriabuntuMail.Imap.MailboxAttributes.deserialize(result.string_for("attributes")),
                     result.int_for("last_seen_total"),
                     result.int_for("unread_count"),
                     new Imap.UIDValidity(result.int64_for("uid_validity")),
@@ -320,9 +321,9 @@ private class Convey.ImapDB.Account : BaseObject {
             );
         }
 
-        Gee.Collection<Convey.ImapDB.Folder> folders = new Gee.ArrayList<Convey.ImapDB.Folder>();
-        foreach (Convey.FolderPath path in id_map.keys) {
-            Convey.ImapDB.Folder? folder = get_local_folder(path);
+        Gee.Collection<GriabuntuMail.ImapDB.Folder> folders = new Gee.ArrayList<GriabuntuMail.ImapDB.Folder>();
+        foreach (GriabuntuMail.FolderPath path in id_map.keys) {
+            GriabuntuMail.ImapDB.Folder? folder = get_local_folder(path);
             if (folder == null && id_map.has_key(path) && prop_map.has_key(path))
                 folder = create_local_folder(path, id_map.get(path), prop_map.get(path));
 
@@ -332,12 +333,12 @@ private class Convey.ImapDB.Account : BaseObject {
         return folders;
     }
 
-    public async Convey.ImapDB.Folder fetch_folder_async(Convey.FolderPath path, Cancellable? cancellable)
+    public async GriabuntuMail.ImapDB.Folder fetch_folder_async(GriabuntuMail.FolderPath path, Cancellable? cancellable)
         throws Error {
         check_open();
 
         // check references table first
-        Convey.ImapDB.Folder? folder = get_local_folder(path);
+        GriabuntuMail.ImapDB.Folder? folder = get_local_folder(path);
         if (folder != null)
             return folder;
 
@@ -358,7 +359,7 @@ private class Convey.ImapDB.Account : BaseObject {
             Db.Result results = stmt.exec(cancellable);
             if (!results.finished) {
                 properties = new Imap.FolderProperties.from_imapdb(
-                    Convey.Imap.MailboxAttributes.deserialize(results.string_for("attributes")),
+                    GriabuntuMail.Imap.MailboxAttributes.deserialize(results.string_for("attributes")),
                     results.int_for("last_seen_total"),
                     results.int_for("unread_count"),
                     new Imap.UIDValidity(results.int64_for("uid_validity")),
@@ -434,26 +435,26 @@ private class Convey.ImapDB.Account : BaseObject {
         }, cancellable);
     }
 
-    private Convey.ImapDB.Folder? get_local_folder(Convey.FolderPath path) {
+    private GriabuntuMail.ImapDB.Folder? get_local_folder(GriabuntuMail.FolderPath path) {
         FolderReference? folder_ref = folder_refs.get(path);
         if (folder_ref == null)
             return null;
 
-        ImapDB.Folder? folder = (Convey.ImapDB.Folder?) folder_ref.get_reference();
+        ImapDB.Folder? folder = (GriabuntuMail.ImapDB.Folder?) folder_ref.get_reference();
         if (folder == null)
             return null;
 
         return folder;
     }
 
-    private Convey.ImapDB.Folder create_local_folder(Convey.FolderPath path, int64 folder_id,
+    private GriabuntuMail.ImapDB.Folder create_local_folder(GriabuntuMail.FolderPath path, int64 folder_id,
         Imap.FolderProperties properties) throws Error {
         // return current if already created
         ImapDB.Folder? folder = get_local_folder(path);
         if (folder != null) {
             folder.set_properties(properties);
         } else {
-            folder = new Convey.ImapDB.Folder(
+            folder = new GriabuntuMail.ImapDB.Folder(
                 db,
                 path,
                 db.attachments_path,
@@ -474,24 +475,24 @@ private class Convey.ImapDB.Account : BaseObject {
         return folder;
     }
 
-    private void on_folder_reference_broken(Convey.SmartReference reference) {
+    private void on_folder_reference_broken(GriabuntuMail.SmartReference reference) {
         FolderReference folder_ref = (FolderReference) reference;
 
         // drop from folder references table, all cleaned up
         folder_refs.unset(folder_ref.path);
     }
 
-    public async Gee.MultiMap<Convey.Email, Convey.FolderPath?>? search_message_id_async(
-        Convey.RFC822.MessageID message_id, Convey.Email.Field requested_fields, bool partial_ok,
-        Gee.Collection<Convey.FolderPath?>? folder_blacklist, Convey.EmailFlags? flag_blacklist,
+    public async Gee.MultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?>? search_message_id_async(
+        GriabuntuMail.RFC822.MessageID message_id, GriabuntuMail.Email.Field requested_fields, bool partial_ok,
+        Gee.Collection<GriabuntuMail.FolderPath?>? folder_blacklist, GriabuntuMail.EmailFlags? flag_blacklist,
         Cancellable? cancellable = null) throws Error {
         check_open();
 
-        Gee.HashMultiMap<Convey.Email, Convey.FolderPath?> messages
-            = new Gee.HashMultiMap<Convey.Email, Convey.FolderPath?>();
+        Gee.HashMultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?> messages
+            = new Gee.HashMultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?>();
 
         if (flag_blacklist != null)
-            requested_fields = requested_fields | Convey.Email.Field.FLAGS;
+            requested_fields = requested_fields | GriabuntuMail.Email.Field.FLAGS;
 
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
             Db.Statement stmt = cx.prepare("SELECT id FROM MessageTable WHERE message_id = ? OR in_reply_to = ?");
@@ -501,23 +502,23 @@ private class Convey.ImapDB.Account : BaseObject {
             Db.Result result = stmt.exec(cancellable);
             while (!result.finished) {
                 int64 id = result.int64_at(0);
-                Convey.Email.Field db_fields;
-                MessageRow row = Convey.ImapDB.Folder.do_fetch_message_row(
+                GriabuntuMail.Email.Field db_fields;
+                MessageRow row = GriabuntuMail.ImapDB.Folder.do_fetch_message_row(
                     cx, id, requested_fields, out db_fields, cancellable);
 
                 // Ignore any messages that don't have the required fields.
                 if (partial_ok || row.fields.fulfills(requested_fields)) {
-                    Convey.Email email = row.to_email(new Convey.ImapDB.EmailIdentifier(id, null));
+                    GriabuntuMail.Email email = row.to_email(new GriabuntuMail.ImapDB.EmailIdentifier(id, null));
                     Attachment.add_attachments(
                         cx, this.db.attachments_path, email, id, cancellable
                     );
 
-                    Gee.Set<Convey.FolderPath>? folders = do_find_email_folders(cx, id, true, cancellable);
+                    Gee.Set<GriabuntuMail.FolderPath>? folders = do_find_email_folders(cx, id, true, cancellable);
                     if (folders == null) {
                         if (folder_blacklist == null || !folder_blacklist.contains(null))
                             messages.set(email, null);
                     } else {
-                        foreach (Convey.FolderPath path in folders) {
+                        foreach (GriabuntuMail.FolderPath path in folders) {
                             // If it's in a blacklisted folder, we don't report
                             // it at all.
                             if (folder_blacklist != null && folder_blacklist.contains(path)) {
@@ -558,16 +559,16 @@ private class Convey.ImapDB.Account : BaseObject {
         }
     }
 
-    private string? get_search_ids_sql(Gee.Collection<Convey.EmailIdentifier>? search_ids) throws Error {
+    private string? get_search_ids_sql(Gee.Collection<GriabuntuMail.EmailIdentifier>? search_ids) throws Error {
         if (search_ids == null)
             return null;
 
         Gee.ArrayList<int64?> ids = new Gee.ArrayList<int64?>();
-        foreach (Convey.EmailIdentifier id in search_ids) {
+        foreach (GriabuntuMail.EmailIdentifier id in search_ids) {
             ImapDB.EmailIdentifier? imapdb_id = id as ImapDB.EmailIdentifier;
             if (imapdb_id == null) {
                 throw new EngineError.BAD_PARAMETERS(
-                    "search_ids must contain only Convey.ImapDB.EmailIdentifiers");
+                    "search_ids must contain only GriabuntuMail.ImapDB.EmailIdentifiers");
             }
 
             ids.add(imapdb_id.message_id);
@@ -578,9 +579,9 @@ private class Convey.ImapDB.Account : BaseObject {
         return sql.str;
     }
 
-    public async Gee.Collection<Convey.EmailIdentifier>? search_async(Convey.SearchQuery q,
-        int limit = 100, int offset = 0, Gee.Collection<Convey.FolderPath?>? excluded_folders = null,
-        Gee.Collection<Convey.EmailIdentifier>? search_ids = null, Cancellable? cancellable = null)
+    public async Gee.Collection<GriabuntuMail.EmailIdentifier>? search_async(GriabuntuMail.SearchQuery q,
+        int limit = 100, int offset = 0, Gee.Collection<GriabuntuMail.FolderPath?>? excluded_folders = null,
+        Gee.Collection<GriabuntuMail.EmailIdentifier>? search_ids = null, Cancellable? cancellable = null)
         throws Error {
 
         debug("Search query: %s", q.to_string());
@@ -637,7 +638,7 @@ private class Convey.ImapDB.Account : BaseObject {
         return matching_ids.is_empty ? null : matching_ids;
     }
 
-    public async Gee.Set<string>? get_search_matches_async(Convey.SearchQuery q,
+    public async Gee.Set<string>? get_search_matches_async(GriabuntuMail.SearchQuery q,
         Gee.Collection<ImapDB.EmailIdentifier> ids, Cancellable? cancellable = null) throws Error {
         check_open();
         FtsSearchQuery query = check_search_query(q);
@@ -679,8 +680,8 @@ private class Convey.ImapDB.Account : BaseObject {
                     // TODO: once we have a way of deleting messages, we won't be able
                     // to assume that a row id will point to the same email outside of
                     // transactions, because SQLite will reuse row ids.
-                    Convey.Email.Field db_fields;
-                    MessageRow row = Convey.ImapDB.Folder.do_fetch_message_row(
+                    GriabuntuMail.Email.Field db_fields;
+                    MessageRow row = GriabuntuMail.ImapDB.Folder.do_fetch_message_row(
                         cx, id.message_id, required_fields, out db_fields, cancellable
                     );
                     if (!row.fields.fulfills(required_fields)) {
@@ -709,17 +710,17 @@ private class Convey.ImapDB.Account : BaseObject {
         return results;
     }
 
-    public async Convey.Email fetch_email_async(ImapDB.EmailIdentifier email_id,
-        Convey.Email.Field required_fields, Cancellable? cancellable = null) throws Error {
+    public async GriabuntuMail.Email fetch_email_async(ImapDB.EmailIdentifier email_id,
+        GriabuntuMail.Email.Field required_fields, Cancellable? cancellable = null) throws Error {
         check_open();
 
-        Convey.Email? email = null;
+        GriabuntuMail.Email? email = null;
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
             // TODO: once we have a way of deleting messages, we won't be able
             // to assume that a row id will point to the same email outside of
             // transactions, because SQLite will reuse row ids.
-            Convey.Email.Field db_fields;
-            MessageRow row = Convey.ImapDB.Folder.do_fetch_message_row(
+            GriabuntuMail.Email.Field db_fields;
+            MessageRow row = GriabuntuMail.ImapDB.Folder.do_fetch_message_row(
                 cx, email_id.message_id, required_fields, out db_fields, cancellable);
 
             if (!row.fields.fulfills(required_fields))
@@ -747,22 +748,22 @@ private class Convey.ImapDB.Account : BaseObject {
      * the email id not being found.
      */
     public async void
-        get_containing_folders_async(Gee.Collection<Convey.EmailIdentifier> ids,
-                                     Gee.MultiMap<Convey.EmailIdentifier,FolderPath>? map,
+        get_containing_folders_async(Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
+                                     Gee.MultiMap<GriabuntuMail.EmailIdentifier,FolderPath>? map,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
         check_open();
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx, cancellable) => {
-            foreach (Convey.EmailIdentifier id in ids) {
+            foreach (GriabuntuMail.EmailIdentifier id in ids) {
                 ImapDB.EmailIdentifier? imap_db_id = id as ImapDB.EmailIdentifier;
                 if (imap_db_id == null)
                     continue;
 
-                Gee.Set<Convey.FolderPath>? folders = do_find_email_folders(
+                Gee.Set<GriabuntuMail.FolderPath>? folders = do_find_email_folders(
                     cx, imap_db_id.message_id, false, cancellable);
                 if (folders != null) {
-                    Convey.Collection.multi_map_set_all<Convey.EmailIdentifier,
-                        Convey.FolderPath>(map, id, folders);
+                    GriabuntuMail.Collection.multi_map_set_all<GriabuntuMail.EmailIdentifier,
+                        GriabuntuMail.FolderPath>(map, id, folders);
                 }
             }
 
@@ -807,8 +808,8 @@ private class Convey.ImapDB.Account : BaseObject {
                     var stmt = cx.prepare(
                         "SELECT id FROM MessageTable WHERE (fields & ?) = ?"
                     );
-                    stmt.bind_uint(0, Convey.ImapDB.Folder.REQUIRED_FTS_FIELDS);
-                    stmt.bind_uint(1, Convey.ImapDB.Folder.REQUIRED_FTS_FIELDS);
+                    stmt.bind_uint(0, GriabuntuMail.ImapDB.Folder.REQUIRED_FTS_FIELDS);
+                    stmt.bind_uint(1, GriabuntuMail.ImapDB.Folder.REQUIRED_FTS_FIELDS);
                     result = stmt.exec(cancellable);
                     while (!result.finished) {
                         message_ids.add(result.rowid_at(0));
@@ -849,7 +850,7 @@ private class Convey.ImapDB.Account : BaseObject {
                 // the main thread to slow to a crawl.  This delay means the
                 // update takes more time, but leaves the main thread nice and
                 // snappy the whole time.
-                yield Convey.Scheduler.sleep_ms_async(50);
+                yield GriabuntuMail.Scheduler.sleep_ms_async(50);
             }
         } catch (Error e) {
             debug("%s: Error populating search table: %s", account_information.id, e.message);
@@ -883,16 +884,16 @@ private class Convey.ImapDB.Account : BaseObject {
                         );
 
                         Email.Field db_fields;
-                        MessageRow row = Convey.ImapDB.Folder.do_fetch_message_row(
+                        MessageRow row = GriabuntuMail.ImapDB.Folder.do_fetch_message_row(
                             cx, message_id, search_fields, out db_fields, cancellable
                         );
                         Email email = row.to_email(
-                            new Convey.ImapDB.EmailIdentifier(message_id, null)
+                            new GriabuntuMail.ImapDB.EmailIdentifier(message_id, null)
                         );
                         Attachment.add_attachments(
                             cx, this.db.attachments_path, email, message_id, cancellable
                         );
-                        Convey.ImapDB.Folder.do_add_email_to_search_table(
+                        GriabuntuMail.ImapDB.Folder.do_add_email_to_search_table(
                             cx, message_id, email, cancellable
                         );
                     } catch (GLib.Error e) {
@@ -947,7 +948,7 @@ private class Convey.ImapDB.Account : BaseObject {
     // there is a logical problem traversing it, returns false with
     // folder_id set to Db.INVALID_ROWID.
     internal bool do_fetch_folder_id(Db.Connection cx,
-                                     Convey.FolderPath path,
+                                     GriabuntuMail.FolderPath path,
                                      bool create,
                                      out int64 folder_id,
                                      GLib.Cancellable? cancellable)
@@ -1038,7 +1039,7 @@ private class Convey.ImapDB.Account : BaseObject {
 
     // For a message row id, return a set of all folders it's in, or null if
     // it's not in any folders.
-    private Gee.Set<Convey.FolderPath>?
+    private Gee.Set<GriabuntuMail.FolderPath>?
         do_find_email_folders(Db.Connection cx,
                               int64 message_id,
                               bool include_removed,
@@ -1054,10 +1055,10 @@ private class Convey.ImapDB.Account : BaseObject {
         if (result.finished)
             return null;
 
-        Gee.HashSet<Convey.FolderPath> folder_paths = new Gee.HashSet<Convey.FolderPath>();
+        Gee.HashSet<GriabuntuMail.FolderPath> folder_paths = new Gee.HashSet<GriabuntuMail.FolderPath>();
         while (!result.finished) {
             int64 folder_id = result.int64_at(0);
-            Convey.FolderPath? path = do_find_folder_path(cx, folder_id, cancellable);
+            GriabuntuMail.FolderPath? path = do_find_folder_path(cx, folder_id, cancellable);
             if (path != null)
                 folder_paths.add(path);
 
@@ -1070,7 +1071,7 @@ private class Convey.ImapDB.Account : BaseObject {
     // For a folder row id, return the folder path (constructed with default
     // separator and case sensitivity) of that folder, or null in the event
     // it's not found.
-    private Convey.FolderPath? do_find_folder_path(Db.Connection cx,
+    private GriabuntuMail.FolderPath? do_find_folder_path(Db.Connection cx,
                                                   int64 folder_id,
                                                   GLib.Cancellable? cancellable)
         throws GLib.Error {
@@ -1093,11 +1094,11 @@ private class Convey.ImapDB.Account : BaseObject {
             return null;
         }
 
-        Convey.FolderPath? path = null;
+        GriabuntuMail.FolderPath? path = null;
         if (parent_id <= 0) {
             path = this.imap_folder_root.get_child(name);
         } else {
-            Convey.FolderPath? parent_path = do_find_folder_path(
+            GriabuntuMail.FolderPath? parent_path = do_find_folder_path(
                 cx, parent_id, cancellable
             );
             if (parent_path != null) {
@@ -1115,11 +1116,11 @@ private class Convey.ImapDB.Account : BaseObject {
     // Updates unread count on all folders.
     private async void update_unread_async(ImapDB.Folder source, Gee.Map<ImapDB.EmailIdentifier, bool>
         unread_status, Cancellable? cancellable) throws Error {
-        Gee.Map<Convey.FolderPath, int> unread_change = new Gee.HashMap<Convey.FolderPath, int>();
+        Gee.Map<GriabuntuMail.FolderPath, int> unread_change = new Gee.HashMap<GriabuntuMail.FolderPath, int>();
 
         yield db.exec_transaction_async(Db.TransactionType.RW, (cx) => {
             foreach (ImapDB.EmailIdentifier id in unread_status.keys) {
-                Gee.Set<Convey.FolderPath>? paths = do_find_email_folders(
+                Gee.Set<GriabuntuMail.FolderPath>? paths = do_find_email_folders(
                     cx, id.message_id, true, cancellable);
                 if (paths == null)
                     continue;
@@ -1129,7 +1130,7 @@ private class Convey.ImapDB.Account : BaseObject {
                 if (paths.size == 0)
                     continue;
 
-                foreach (Convey.FolderPath path in paths) {
+                foreach (GriabuntuMail.FolderPath path in paths) {
                     int current_unread = unread_change.has_key(path) ? unread_change.get(path) : 0;
                     current_unread += unread_status.get(id) ? 1 : -1;
                     unread_change.set(path, current_unread);
@@ -1137,8 +1138,8 @@ private class Convey.ImapDB.Account : BaseObject {
             }
 
             // Update each folder's unread count in the database.
-            foreach (Convey.FolderPath path in unread_change.keys) {
-                Convey.ImapDB.Folder? folder = get_local_folder(path);
+            foreach (GriabuntuMail.FolderPath path in unread_change.keys) {
+                GriabuntuMail.ImapDB.Folder? folder = get_local_folder(path);
                 if (folder == null)
                     continue;
 
@@ -1149,8 +1150,8 @@ private class Convey.ImapDB.Account : BaseObject {
         }, cancellable);
 
         // Update each folder's unread count property.
-        foreach (Convey.FolderPath path in unread_change.keys) {
-            Convey.ImapDB.Folder? folder = get_local_folder(path);
+        foreach (GriabuntuMail.FolderPath path in unread_change.keys) {
+            GriabuntuMail.ImapDB.Folder? folder = get_local_folder(path);
             if (folder == null)
                 continue;
 
@@ -1232,7 +1233,7 @@ private class Convey.ImapDB.Account : BaseObject {
     // special case, if "folderless" or orphan emails are to be excluded,
     // set the out bool to true.
     private string do_get_excluded_folder_ids(
-        Gee.Collection<Convey.FolderPath?> excluded_folder,
+        Gee.Collection<GriabuntuMail.FolderPath?> excluded_folder,
         Db.Connection cx,
         out bool exclude_folderless,
         GLib.Cancellable? cancellable
@@ -1241,7 +1242,7 @@ private class Convey.ImapDB.Account : BaseObject {
 
         var ids = new GLib.StringBuilder();
         var is_first = true;
-        foreach (Convey.FolderPath? folder_path in excluded_folder) {
+        foreach (GriabuntuMail.FolderPath? folder_path in excluded_folder) {
             if (folder_path == null) {
                 exclude_folderless = true;
             } else {
@@ -1266,10 +1267,10 @@ private class Convey.ImapDB.Account : BaseObject {
         }
     }
 
-    private FtsSearchQuery check_search_query(Convey.SearchQuery q) throws Error {
+    private FtsSearchQuery check_search_query(GriabuntuMail.SearchQuery q) throws Error {
         var query = q as FtsSearchQuery;
         if (query == null) {
-            throw new EngineError.BAD_PARAMETERS("Convey.SearchQuery not associated with %s", name);
+            throw new EngineError.BAD_PARAMETERS("GriabuntuMail.SearchQuery not associated with %s", name);
         }
 
         return query;

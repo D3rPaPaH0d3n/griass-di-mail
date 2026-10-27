@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -7,11 +8,11 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.Outbox.EmailIdentifierTest : TestCase {
+public class GriabuntuMail.Outbox.EmailIdentifierTest : TestCase {
 
 
     public EmailIdentifierTest() {
-        base("Convey.Outbox.EmailIdentifierTest");
+        base("GriabuntuMail.Outbox.EmailIdentifierTest");
         add_test("variant_representation", variant_representation);
     }
 

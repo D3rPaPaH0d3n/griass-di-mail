@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -29,12 +30,12 @@ public class FolderList.AllInboxesBranch : Sidebar.RootOnlyBranch {
  * no folder of its own: it stands for the set of inboxes, which the
  * main window loads with one conversation monitor per account.
  */
-public class FolderList.AllInboxesEntry : Convey.BaseObject,
+public class FolderList.AllInboxesEntry : GriabuntuMail.BaseObject,
     Sidebar.Entry, Sidebar.SelectableEntry {
 
 
-    private Gee.Map<Convey.Account, Application.FolderContext> inboxes =
-        new Gee.HashMap<Convey.Account, Application.FolderContext>();
+    private Gee.Map<GriabuntuMail.Account, Application.FolderContext> inboxes =
+        new Gee.HashMap<GriabuntuMail.Account, Application.FolderContext>();
 
 
     public void add_inbox(Application.FolderContext context) {
@@ -46,7 +47,7 @@ public class FolderList.AllInboxesEntry : Convey.BaseObject,
         entry_changed();
     }
 
-    public void remove_inbox(Convey.Account account) {
+    public void remove_inbox(GriabuntuMail.Account account) {
         Application.FolderContext? context = this.inboxes.get(account);
         if (context == null) {
             return;
@@ -57,8 +58,8 @@ public class FolderList.AllInboxesEntry : Convey.BaseObject,
     }
 
     /** The inboxes this entry stands for. */
-    public Gee.Collection<Convey.Folder> get_inboxes() {
-        var folders = new Gee.ArrayList<Convey.Folder>();
+    public Gee.Collection<GriabuntuMail.Folder> get_inboxes() {
+        var folders = new Gee.ArrayList<GriabuntuMail.Folder>();
         foreach (var context in this.inboxes.values) {
             folders.add(context.folder);
         }
@@ -108,17 +109,17 @@ public class FolderList.AllInboxesEntry : Convey.BaseObject,
         var properties = context.folder.properties;
         if (connect) {
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL
             ].connect(on_counts_changed);
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_UNREAD
             ].connect(on_counts_changed);
         } else {
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL
             ].disconnect(on_counts_changed);
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_UNREAD
             ].disconnect(on_counts_changed);
         }
     }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapDB.Attachment : Convey.Attachment {
+private class GriabuntuMail.ImapDB.Attachment : GriabuntuMail.Attachment {
 
 
     public const Email.Field REQUIRED_FIELDS = Email.REQUIRED_FOR_MESSAGE;
@@ -42,7 +43,7 @@ private class Convey.ImapDB.Attachment : Convey.Attachment {
         Mime.ContentDisposition? disposition = part.content_disposition;
         if (disposition == null) {
             disposition = new Mime.ContentDisposition.simple(
-                Convey.Mime.DispositionType.UNSPECIFIED
+                GriabuntuMail.Mime.DispositionType.UNSPECIFIED
             );
         }
 
@@ -56,11 +57,11 @@ private class Convey.ImapDB.Attachment : Convey.Attachment {
         );
     }
 
-    internal Attachment.from_row(Convey.Db.Result result, File attachments_dir)
+    internal Attachment.from_row(GriabuntuMail.Db.Result result, File attachments_dir)
         throws Error {
         string? content_filename = result.string_for("filename");
         if (content_filename == ImapDB.Attachment.NULL_FILE_NAME) {
-            // Prior to 0.12, Convey would store the untranslated
+            // Prior to 0.12, Griabuntu Mail would store the untranslated
             // string "none" as the filename when none was
             // specified by the MIME content disposition. Check
             // for that and clean it up.
@@ -178,7 +179,7 @@ private class Convey.ImapDB.Attachment : Convey.Attachment {
         GLib.OutputStream target_stream = target.create(
             FileCreateFlags.NONE, cancellable
         );
-        GMime.Stream stream = new Convey.Stream.MimeOutputStream(
+        GMime.Stream stream = new GriabuntuMail.Stream.MimeOutputStream(
             target_stream
         );
         stream = new GMime.StreamBuffer(
@@ -256,7 +257,7 @@ private class Convey.ImapDB.Attachment : Convey.Attachment {
 
     internal static void add_attachments(Db.Connection cx,
                                          GLib.File attachments_path,
-                                         Convey.Email email,
+                                         GriabuntuMail.Email email,
                                          int64 message_id,
                                          Cancellable? cancellable = null)
         throws Error {

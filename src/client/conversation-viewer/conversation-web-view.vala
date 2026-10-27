@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2017-2020 Michael Gratton <mike@vee.net>
@@ -165,7 +166,7 @@ public class ConversationWebView : Components.WebView {
             });
 
         controller.search(
-            Convey.Collection.first(terms),
+            GriabuntuMail.Collection.first(terms),
             WebKit.FindOptions.CASE_INSENSITIVE |
             WebKit.FindOptions.WRAP_AROUND,
             128

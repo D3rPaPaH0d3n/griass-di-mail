@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>.
  *
@@ -19,7 +20,7 @@
  *
  * This class is ''not'' thread safe.
  */
-public abstract class Convey.Imap.SessionObject : BaseObject, Logging.Source {
+public abstract class GriabuntuMail.Imap.SessionObject : BaseObject, Logging.Source {
 
 
     /** Determines if this object has a valid session or not. */

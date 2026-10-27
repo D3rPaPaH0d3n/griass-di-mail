@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -10,7 +11,7 @@
 /**
  * See [[http://www.ietf.org/rfc/rfc2971.txt]]
  */
-public class Convey.Imap.IdCommand : Command {
+public class GriabuntuMail.Imap.IdCommand : Command {
 
     public const string NAME = "id";
 

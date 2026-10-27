@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,7 +7,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public errordomain Convey.NonblockingError {
+public errordomain GriabuntuMail.NonblockingError {
     /**
      * Indicates a call was made when it shouldn't have been; that the primitive was in such a
      * state that it cannot properly respond or account for the requested change.

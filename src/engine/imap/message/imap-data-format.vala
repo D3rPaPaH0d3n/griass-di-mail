@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Micahel Gratton <mike@vee.net>
@@ -11,7 +12,7 @@
 /**
  * IMAP protocol utility functions.
  */
-namespace Convey.Imap.DataFormat {
+namespace GriabuntuMail.Imap.DataFormat {
 
     // RFC 3501 §9:
     //

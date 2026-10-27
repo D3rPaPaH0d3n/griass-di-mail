@@ -15,7 +15,7 @@ A little more clarity in your inbox.
 
 Conversation-based email for the Linux desktop, with useful details close at hand.
 
-[Original folded-G identity](brand/README.md) · [Future native-desktop direction](docs/desktop-design-direction.md)
+[Envelope icon family](brand/README.md) · [Future native-desktop direction](docs/desktop-design-direction.md)
 
 [Features](#features) · [Build](BUILDING.md) · [Development status](#development-status) · [Licences](THIRD-PARTY-NOTICES.md)
 
@@ -23,12 +23,12 @@ Conversation-based email for the Linux desktop, with useful details close at han
 
 *Synthetic concept illustration — not an app screenshot or completed UI redesign.*
 
-*Latest logo feedback: make the mail/envelope cue more recognisable. The folded
-G shown here is an earlier candidate, not the final approved mark.*
+*Selected app icon: the owner-supplied closed coloured envelope. The folded G
+in the older UI concept above is historical.*
 
 </div>
 
-> **Development preview — no downstream public release yet.** Griabuntu Mail is the chosen **private working name**; Canonical name/permission review and a separate application ID are still pending. This branch is a **separate GPL-3.0-only release-source copy**, elected under LGPL-2.1 §3 with TNEF retained; it is not a release, a support promise or a claim of completed licence compliance.
+> **Development preview — no downstream public release yet.** Griabuntu Mail is the chosen **private working name**; The application ID is `io.github.d3rpapah0d3n.GriabuntuMail`. This branch is a **separate GPL-3.0-only release-source copy**, elected under LGPL-2.1 §3 with TNEF retained; it is not a release, a support promise or a claim of completed licence compliance.
 
 <a id="features"></a>
 
@@ -49,18 +49,23 @@ Popup Reply never sends automatically. Archive uses an existing All Mail/archive
 
 ## 🎨 A softer direction, a native foundation
 
-The new folded-G mark and pastel teal/peach art explore a **future** Material-inspired tonal direction. Actual buttons, icons, menus and dialogs should remain native GTK4/libadwaita, coherent with Ubuntu/GNOME and responsive to system light/dark, scaling and accessibility. **No running app redesign, installed icon or runtime theme change is included here.** [Design brief →](docs/desktop-design-direction.md)
+The owner-selected closed envelope supplies the app/tray icon; its matching mono artwork supplies the symbolic mask. Earlier studies are archived. The broader pastel/Material-inspired control design remains a **future** direction. Actual buttons, icons, menus and dialogs should remain native GTK4/libadwaita, coherent with Ubuntu/GNOME and responsive to system light/dark, scaling and accessibility. **The new icons are included in the candidate package; the wider UI/theme redesign is not implemented.** [Design brief →](docs/desktop-design-direction.md)
 
 Griabuntu Mail is **not an Ubuntu/Canonical product**. The name may raise a confusing-similarity/permission question under Canonical’s current policy. The absence of exact-name search hits is not clearance; an independence disclaimer is not permission. [Name findings and release gate →](docs/BRANDING.md)
 
-## 🛠 Try the source, not the upstream download
+## 🛠 Native Ubuntu build
 
-There is **no published installer for this downstream**. Flathub's `net.donnybeelo.Convey` and the upstream author's repository install upstream Convey, not these modifications.
+The primary local package is **griabuntu-mail** for Ubuntu 26.10/amd64. Build it
+with the standard Debian tooling documented in [debian/README](debian/README)
+and [BUILDING.md](BUILDING.md). There is no published binary installer or APT
+repository for this private preview.
 
-- Start with [BUILDING.md](BUILDING.md) for native development and the pinned local Flatpak practice manifest.
-- Use synthetic accounts/data for first-run testing. Do not point an experimental build at an important existing profile.
-- The inherited application IDs still overlap upstream. **Do not install this as a separate public app** until the [identity and migration plan](docs/BRANDING.md) is approved.
-- GNOME SDK 51 is the current practice environment; a final distribution needs exact runtime/SDK commit recording and a clean source-to-binary mapping.
+The executable is `griabuntu-mail`; its independent application ID is
+`io.github.d3rpapah0d3n.GriabuntuMail`. Desktop/D-Bus integration, GSettings,
+resources, gettext, help, private libraries and the `GriabuntuMail` engine
+namespace follow the same identity. See [the naming map](docs/IDENTITY.md).
+New data paths are separate from Convey; no personal profile is copied by
+installation. The current envelope icon family is included; the future control/theme design remains separate work.
 
 <a id="development-status"></a>
 
@@ -70,7 +75,7 @@ Fresh baseline/GPL-copy checks and internal package evidence are recorded in [th
 
 Known gates:
 
-- The separate notification-flag suite is deliberately **4/10 red** on the captured baseline: starring still-unread mail can retire tray entries. The production handler is unchanged; its fix is not part of this preparation.
+- The historical flag baseline was **4/10 red**. The scoped 2026-10-27 fix passes all ten cases; the first renamed build passes **328 engine + 62 focused + 10 flag cases**. See [test evidence](test/README.md).
 - Visible popup buttons, opening the actual reply composer and end-to-end desktop mail moves still need explicit acceptance testing.
 - Shell support affects tray and notification actions; not all desktops expose every action.
 - Identity, dependency licensing, package contents and corresponding source remain release blockers. The GPLv3/TNEF licence route is **elected and implemented** here; complete component/asset attribution and public-delivery gates remain.
@@ -81,7 +86,7 @@ Known gates:
 
 Please use this repository for downstream bugs and proposals, not upstream's tracker for unverified fork-specific issues. Keep examples synthetic; never attach mail stores, credentials, contact caches or unredacted debug logs. Read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) first. No managed security-response SLA is offered.
 
-![Griabuntu Mail original identity, light and dark](brand/identity-board.png)
+![Owner-supplied Griabuntu Mail banner](design/owner-artwork-20261027/brand-banner.png)
 
 [Original logo files and provenance →](brand/README.md) · [Name permission and identity plan →](docs/BRANDING.md)
 
@@ -94,7 +99,7 @@ This separately prepared application copy is **GPL-3.0-only** in [COPYING](COPYI
 <details>
 <summary>Deutsch, kurz</summary>
 
-Ein unabhängiger Convey-Ableger mit Empfänger-Alias-Badges, lokalen Kontaktfotos, vollständigen Absenderdaten, sekundengenauer Empfangszeit und einem Tray für neue Nachrichten dieser Sitzung. Popup-Aktionen sind noch in Erprobung. **Griabuntu Mail** ist der gewählte private Arbeitsname; insbesondere die Canonical-Namens-/Erlaubnisfrage, eigene App-ID und öffentliche Veröffentlichung sind noch offen. Das Pastell-/Material-Konzept ist eine künftige native Designrichtung, keine bereits umgesetzte App-Neugestaltung. Diese separate Quellkopie setzt die genehmigte **GPLv3-only-Route mit allen Funktionen einschließlich TNEF** um; ursprüngliche LGPL-Kopien bleiben unabhängig erhalten. Kein öffentlicher Download, keine Installation oder Veröffentlichungsfreigabe; offene Prüfungen stehen in der Release-Checkliste.
+Ein unabhängiger Convey-Ableger mit Empfänger-Alias-Badges, lokalen Kontaktfotos, vollständigen Absenderdaten, sekundengenauer Empfangszeit und einem Tray für neue Nachrichten dieser Sitzung. Popup-Aktionen sind noch in Erprobung. **Griabuntu Mail** ist der gewählte private Arbeitsname; insbesondere die Canonical-Namens-/Erlaubnisfrage, öffentliche Veröffentlichung und gegebenenfalls eine bewusste Übernahme bestehender Profile sind noch offen; die eigene App-ID ist `io.github.d3rpapah0d3n.GriabuntuMail`. Das Pastell-/Material-Konzept ist eine künftige native Designrichtung, keine bereits umgesetzte App-Neugestaltung. Diese separate Quellkopie setzt die genehmigte **GPLv3-only-Route mit allen Funktionen einschließlich TNEF** um; ursprüngliche LGPL-Kopien bleiben unabhängig erhalten. Kein öffentlicher Download oder Veröffentlichungsfreigabe; lokale Testpakete und ihre Installation werden gesondert geprüft; offene Prüfungen stehen in der Release-Checkliste.
 
 </details>
 

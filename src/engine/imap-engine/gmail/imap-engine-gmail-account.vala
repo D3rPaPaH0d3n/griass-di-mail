@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -8,7 +9,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.GmailAccount : Convey.ImapEngine.GenericAccount {
+private class GriabuntuMail.ImapEngine.GmailAccount : GriabuntuMail.ImapEngine.GenericAccount {
 
     // Archive is handled specially, so don't require it
     private const Folder.SpecialUse[] SUPPORTED_SPECIAL_FOLDERS = {
@@ -40,7 +41,7 @@ private class Convey.ImapEngine.GmailAccount : Convey.ImapEngine.GenericAccount 
     }
 
 
-    public GmailAccount(Convey.AccountInformation config,
+    public GmailAccount(GriabuntuMail.AccountInformation config,
                         ImapDB.Account local,
                         Endpoint incoming_remote,
                         Endpoint outgoing_remote) {

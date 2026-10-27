@@ -31,7 +31,7 @@
                 <property name="valign">start</property>
                 <signal name="row-activated" handler="on_row_activated"/>
                 <style>
-                  <class name="convey-folder-popover-list"/>
+                  <class name="griabuntu-mail-folder-popover-list"/>
                 </style>
               </object>
             </child>

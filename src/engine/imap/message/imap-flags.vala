@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,8 +11,8 @@
  * A generic collection of {@link Flags}.
  */
 
-public abstract class Convey.Imap.Flags : Convey.MessageData.AbstractMessageData, Convey.Imap.MessageData,
-    Gee.Hashable<Convey.Imap.Flags> {
+public abstract class GriabuntuMail.Imap.Flags : GriabuntuMail.MessageData.AbstractMessageData, GriabuntuMail.Imap.MessageData,
+    Gee.Hashable<GriabuntuMail.Imap.Flags> {
     public int size { get { return list.size; } }
 
     protected Gee.Set<Flag> list;
@@ -56,14 +57,14 @@ public abstract class Convey.Imap.Flags : Convey.MessageData.AbstractMessageData
         return listp;
     }
 
-    public bool equal_to(Convey.Imap.Flags other) {
+    public bool equal_to(GriabuntuMail.Imap.Flags other) {
         if (this == other)
             return true;
 
         if (other.size != size)
             return false;
 
-        return Convey.traverse<Flag>(list).all(f => other.contains(f));
+        return GriabuntuMail.traverse<Flag>(list).all(f => other.contains(f));
     }
 
     public override string to_string() {

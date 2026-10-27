@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
 *
 * This release copy is licensed under the GNU General Public License
@@ -7,7 +8,7 @@
 */
 
 // Filter to mark quoted text in plain (non-flowed) text
-private class Convey.RFC822.FilterPlain : GMime.Filter {
+private class GriabuntuMail.RFC822.FilterPlain : GMime.Filter {
     // Invariant: True iff we are either at the beginning of a line, or all characters seen so far
     // have been quote markers.
     private bool in_prefix;
@@ -40,7 +41,7 @@ private class Convey.RFC822.FilterPlain : GMime.Filter {
 
             if (in_prefix) {
                 if (c == '>') {
-                    outbuf[out_index++] = Convey.RFC822.Utils.QUOTE_MARKER;
+                    outbuf[out_index++] = GriabuntuMail.RFC822.Utils.QUOTE_MARKER;
                     continue;
                 }
 

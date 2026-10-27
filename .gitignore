@@ -3,6 +3,7 @@
 /_test_build/
 /.flatpak-builder/
 /build-*/
+!/build-aux/
 /repo-*/
 /private/
 *.flatpak
@@ -14,3 +15,16 @@
 # Downstream modification: 2026-10-26 — ignore generated build/log output.
 /build/
 ct.out
+
+# Native Debian package build output (2026-10-27).
+/obj-*/
+/debian/.debhelper/
+/debian/griabuntu-mail/
+/debian/griabuntu-mail-dbgsym/
+/debian/files
+/debian/*.substvars
+/debian/*.debhelper*
+*.deb
+*.ddeb
+*.buildinfo
+*.changes

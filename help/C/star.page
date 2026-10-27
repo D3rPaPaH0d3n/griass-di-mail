@@ -16,7 +16,7 @@
 	</section>
 	<section id="mark-read-unread">
 	<title>Mark messages as read or unread</title>
-	<p>Convey marks messages as read automatically as you read them.
+	<p>Griabuntu Mail marks messages as read automatically as you read them.
 	To manually toggle a conversation as read or unread, click the circle icon in the conversation list.</p>
 	
 	<p>Alternately, the <gui>Mark as Unread</gui> in the <gui>Mark</gui> menu on the toolbar can

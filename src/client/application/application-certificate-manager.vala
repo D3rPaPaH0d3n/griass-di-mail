@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -51,7 +52,7 @@ public class Application.CertificateManager : GLib.Object {
         bool has_uris = false;
         if (init_okay) {
             has_uris = (
-                !Convey.String.is_empty(Gcr.pkcs11_get_trust_store_uri()) &&
+                !GriabuntuMail.String.is_empty(Gcr.pkcs11_get_trust_store_uri()) &&
                 Gcr.pkcs11_get_trust_lookup_uris().length > 0
             );
             if (has_uris) {
@@ -96,14 +97,14 @@ public class Application.CertificateManager : GLib.Object {
             store_dir,
             use_gcr
         );
-        Convey.Endpoint.default_tls_database = this.pinning_database;
+        GriabuntuMail.Endpoint.default_tls_database = this.pinning_database;
     }
 
     /**
      * Destroys an instance, de-installs the pinning database.
      */
     ~CertificateManager() {
-        Convey.Endpoint.default_tls_database = null;
+        GriabuntuMail.Endpoint.default_tls_database = null;
     }
 
 
@@ -113,9 +114,9 @@ public class Application.CertificateManager : GLib.Object {
      * Returns true if the user accepted the certificate.
      */
     public async void prompt_pin_certificate(Gtk.Window parent,
-                                             Convey.AccountInformation account,
-                                             Convey.ServiceInformation service,
-                                             Convey.Endpoint endpoint,
+                                             GriabuntuMail.AccountInformation account,
+                                             GriabuntuMail.ServiceInformation service,
+                                             GriabuntuMail.Endpoint endpoint,
                                              bool is_validation,
                                              GLib.Cancellable? cancellable)
         throws CertificateManagerError {
@@ -163,7 +164,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
 
 
     /** A certificate and the identities it is trusted for. */
-    private class TrustContext : Convey.BaseObject {
+    private class TrustContext : GriabuntuMail.BaseObject {
 
 
         // Perform IO at high priority since UI and network
@@ -213,7 +214,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
                                string identity,
                                GLib.Cancellable? cancellable)
             throws GLib.Error {
-            yield Convey.Files.make_directory_with_parents(dir, cancellable);
+            yield GriabuntuMail.Files.make_directory_with_parents(dir, cancellable);
             GLib.File storage = dir.get_child(FILENAME_FORMAT.printf(identity));
             GLib.FileOutputStream f_out = yield storage.replace_async(
                 null, false, GLib.FileCreateFlags.NONE, IO_PRIO, cancellable
@@ -462,8 +463,8 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
                     } catch (GLib.IOError.NOT_FOUND err) {
                         // Cert was not found saved, so it not pinned
                     } catch (GLib.Error err) {
-                        Convey.ErrorContext err_context =
-                            new Convey.ErrorContext(err);
+                        GriabuntuMail.ErrorContext err_context =
+                            new GriabuntuMail.ErrorContext(err);
                         debug("Error loading pinned certificate: %s",
                               err_context.format_full_error());
                     }
@@ -478,7 +479,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
                                        GLib.Cancellable? cancellable)
         throws GLib.Error {
         bool pinned = false;
-        yield Convey.Nonblocking.Concurrent.global.schedule_async(() => {
+        yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(() => {
                 pinned = is_pinned(chain, identity, cancellable);
             }, cancellable);
         return pinned;
@@ -486,7 +487,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
 
     private TrustContext? lookup_id(string id) {
         lock (this.pinned_certs) {
-            return Convey.traverse(this.pinned_certs.values).first_matching(
+            return GriabuntuMail.traverse(this.pinned_certs.values).first_matching(
                 (ctx) => ctx.id == id
             );
         }
@@ -494,7 +495,7 @@ internal class Application.TlsDatabase : GLib.TlsDatabase {
 
     private TrustContext? lookup_tls_certificate(GLib.TlsCertificate cert) {
         lock (this.pinned_certs) {
-            return Convey.traverse(this.pinned_certs.values).first_matching(
+            return GriabuntuMail.traverse(this.pinned_certs.values).first_matching(
                 (ctx) => ctx.certificate.is_same(cert)
             );
         }

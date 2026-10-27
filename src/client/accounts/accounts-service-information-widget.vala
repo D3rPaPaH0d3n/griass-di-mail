@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
@@ -9,24 +10,24 @@
  */
 
 /**
- * A widget for editing a {@link Convey.ServiceInformation} object.
+ * A widget for editing a {@link GriabuntuMail.ServiceInformation} object.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-service-information-widget.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts-service-information-widget.ui")]
 internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
 
-    public Convey.ServiceInformation service {
+    public GriabuntuMail.ServiceInformation service {
         get { return this._service; }
         set {
             this._service = value;
-            this.service_mutable = new Convey.ServiceInformation.copy(value);
+            this.service_mutable = new GriabuntuMail.ServiceInformation.copy(value);
             update_details();
             value.notify.connect((obj, pspec) => { update_details(); });
         }
     }
-    private Convey.ServiceInformation _service;
+    private GriabuntuMail.ServiceInformation _service;
 
     // A copy of the original that can be without breaking the original
-    public Convey.ServiceInformation service_mutable { get ; private set; }
+    public GriabuntuMail.ServiceInformation service_mutable { get ; private set; }
 
     public Components.ValidatorGroup validators { get; construct set; }
 
@@ -60,11 +61,11 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
      * probably needs to enter separate credentials here.
      */
     public void require_custom_credentials() {
-        if (this.service_mutable.protocol != Convey.Protocol.SMTP) {
+        if (this.service_mutable.protocol != GriabuntuMail.Protocol.SMTP) {
             return;
         }
         this.service_mutable.credentials_requirement =
-            Convey.Credentials.Requirement.CUSTOM;
+            GriabuntuMail.Credentials.Requirement.CUSTOM;
         update_auth(this.service_mutable);
     }
 
@@ -89,11 +90,11 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         update_auth(this.service_mutable);
     }
 
-    private void update_host_row(Adw.EntryRow row, Convey.ServiceInformation service) {
+    private void update_host_row(Adw.EntryRow row, GriabuntuMail.ServiceInformation service) {
         row.title = host_label_for_protocol(service.protocol);
 
         row.text = service.host ?? "";
-        if (!Convey.String.is_empty(service.host)) {
+        if (!GriabuntuMail.String.is_empty(service.host)) {
             // Only show the port if it not the appropriate default port
             uint16 port = service.port;
             if (port != service.get_default_port()) {
@@ -102,14 +103,14 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         }
     }
 
-    private string host_label_for_protocol(Convey.Protocol protocol) {
+    private string host_label_for_protocol(GriabuntuMail.Protocol protocol) {
         switch (protocol) {
-        case Convey.Protocol.IMAP:
+        case GriabuntuMail.Protocol.IMAP:
             // Translators: This label describes the host name or IP
             // address and port used by an account's IMAP service.
             return _("IMAP Server");
 
-        case Convey.Protocol.SMTP:
+        case GriabuntuMail.Protocol.SMTP:
             // Translators: This label describes the host name or IP
             // address and port used by an account's SMTP service.
             return _("SMTP Server");
@@ -119,7 +120,7 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
     }
 
     private void update_login_name_row(Adw.EntryRow row,
-                                       Convey.ServiceInformation service) {
+                                       GriabuntuMail.ServiceInformation service) {
         // Translators: Label used when no auth scheme is used
         // by an account's IMAP or SMTP service.
         row.text = _("None");
@@ -127,11 +128,11 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         // If we have credentials, we can do better
         if (service.credentials != null) {
             switch (service.credentials.supported_method) {
-            case Convey.Credentials.Method.PASSWORD:
+            case GriabuntuMail.Credentials.Method.PASSWORD:
                 row.text = service.credentials.user;
                 break;
 
-            case Convey.Credentials.Method.OAUTH2:
+            case GriabuntuMail.Credentials.Method.OAUTH2:
                 // Add a suffix for OAuth2 auth so people know they
                 // shouldn't expect to be prompted for a password
 
@@ -144,15 +145,15 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         }
 
         // If we rely on the credentials of the incoming server, notify the user of that
-        if (service.protocol == Convey.Protocol.SMTP &&
+        if (service.protocol == GriabuntuMail.Protocol.SMTP &&
                    service.credentials_requirement ==
-                   Convey.Credentials.Requirement.USE_INCOMING) {
+                   GriabuntuMail.Credentials.Requirement.USE_INCOMING) {
             row.text = _("Use receiving server login");
         }
     }
 
     private void update_password_row(Adw.PasswordEntryRow row,
-                                     Convey.ServiceInformation service) {
+                                     GriabuntuMail.ServiceInformation service) {
         if (service.credentials != null) {
             row.text = service.credentials.token ?? "";
         } else {
@@ -192,13 +193,13 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
 
         this.service_mutable.transport_security = this.security_row.method;
 
-        if (this.service_mutable.protocol == Convey.Protocol.SMTP) {
+        if (this.service_mutable.protocol == GriabuntuMail.Protocol.SMTP) {
             this.service_mutable.credentials_requirement =
-                (Convey.Credentials.Requirement) this.credentials_requirement_row.selected;
+                (GriabuntuMail.Credentials.Requirement) this.credentials_requirement_row.selected;
             // When the outgoing service reuses the incoming login there
             // are no separate credentials to collect here.
             if (this.service_mutable.credentials_requirement ==
-                    Convey.Credentials.Requirement.USE_INCOMING) {
+                    GriabuntuMail.Credentials.Requirement.USE_INCOMING) {
                 return;
             }
         }
@@ -206,21 +207,21 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
         string user = this.login_name_row.get_text().strip();
         string token = this.password_row.get_text();
         if (user != "" && user != _("None")) {
-            this.service_mutable.credentials = new Convey.Credentials(
-                Convey.Credentials.Method.PASSWORD, user, token
+            this.service_mutable.credentials = new GriabuntuMail.Credentials(
+                GriabuntuMail.Credentials.Method.PASSWORD, user, token
             );
         }
     }
 
-    private void update_auth(Convey.ServiceInformation service) {
-        bool is_smtp = (service.protocol == Convey.Protocol.SMTP);
+    private void update_auth(GriabuntuMail.ServiceInformation service) {
+        bool is_smtp = (service.protocol == GriabuntuMail.Protocol.SMTP);
         this.credentials_requirement_row.visible = is_smtp;
 
         if (is_smtp) {
             this.credentials_requirement_row.selected = service.credentials_requirement;
 
             bool needs_login =
-                (service.credentials_requirement == Convey.Credentials.Requirement.CUSTOM);
+                (service.credentials_requirement == GriabuntuMail.Credentials.Requirement.CUSTOM);
             this.login_name_row.visible = needs_login;
             this.password_row.visible = needs_login;
         }
@@ -231,7 +232,7 @@ internal class Accounts.ServiceInformationWidget : Adw.PreferencesGroup {
 
     [GtkCallback]
     private static string outgoing_auth_to_string(Adw.EnumListItem item,
-                                                  Convey.Credentials.Requirement requirement) {
+                                                  GriabuntuMail.Credentials.Requirement requirement) {
         return requirement.to_string();
     }
 }

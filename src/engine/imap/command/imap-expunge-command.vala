@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -11,7 +12,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.4.3]] and
  * [[http://tools.ietf.org/html/rfc4315#section-2.1]]
  */
-public class Convey.Imap.ExpungeCommand : Command {
+public class GriabuntuMail.Imap.ExpungeCommand : Command {
 
     public const string NAME = "expunge";
     public const string UID_NAME = "uid expunge";

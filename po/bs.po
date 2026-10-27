@@ -1,3 +1,4 @@
+# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
 # Bosnian translation for bosnianuniversetranslation
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the bosnianuniversetranslation package.
@@ -20,552 +21,552 @@ msgstr ""
 "X-Generator: Poedit 1.7.4\n"
 "X-Launchpad-Export-Date: 2015-02-15 06:28+0000\n"
 
-#: desktop/convey-attach.contract.desktop.in:2
+#: desktop/griabuntu-mail-attach.contract.desktop.in:2
 msgid "Send by email"
 msgstr "Poslano e-poštom"
 
-#: desktop/convey-attach.contract.desktop.in:5
-msgid "Send files using Convey"
-msgstr "Šalji datoteke koristeći Convey"
+#: desktop/griabuntu-mail-attach.contract.desktop.in:5
+msgid "Send files using Griabuntu Mail"
+msgstr "Šalji datoteke koristeći Griabuntu Mail"
 
 #. Translators: The application name
-#: desktop/convey-autostart.desktop.in.in:2
-#: desktop/net.donnybeelo.Convey.desktop.in.in:2
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:11
+#: desktop/griabuntu-mail-autostart.desktop.in.in:2
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in:2
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:11
 #: src/client/application/application-main-window.vala:598
 #: ui/accounts_editor_servers_pane.ui:56
-msgid "Convey"
-msgstr "Convey"
+msgid "Griabuntu Mail"
+msgstr "Griabuntu Mail"
 
-#: desktop/convey-autostart.desktop.in.in:3
-#: desktop/net.donnybeelo.Convey.desktop.in.in:3
+#: desktop/griabuntu-mail-autostart.desktop.in.in:3
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in:3
 #, fuzzy
 msgid "Email"
 msgstr "Gmail"
 
 #. Translators: The application's summary / tagline
-#: desktop/convey-autostart.desktop.in.in:4
-#: desktop/net.donnybeelo.Convey.desktop.in.in:4
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:17
+#: desktop/griabuntu-mail-autostart.desktop.in.in:4
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in:4
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:17
 #: src/client/application/application-client.vala:18
 msgid "Send and receive email"
 msgstr "Šaljite i primajte e-poštu"
 
 #. Translators: These are desktop search terms. Do not translate semicolons, end line with a semicolon.
-#: desktop/convey-autostart.desktop.in.in:6
+#: desktop/griabuntu-mail-autostart.desktop.in.in:6
 msgid "Email;E-mail;Mail;"
 msgstr "Epošta;E-pošta;pošta;"
 
 #. Translators: These are desktop search terms. Do not translate semicolons, end line with a semicolon.
-#: desktop/net.donnybeelo.Convey.desktop.in.in:6
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in:6
 msgid "Mail;E-mail;email;IMAP;GMail;Yahoo;Hotmail;Outlook;"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.desktop.in.in:23
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in:23
 msgid "Compose Message"
 msgstr "Sastavi poruku"
 
-#: desktop/net.donnybeelo.Convey.desktop.in.in:27
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in:27
 msgid "New Window"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:8
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:8
 msgid "Maximize window"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:9
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:9
 msgid "True if the application window is maximized, false otherwise."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:14
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:14
 msgid "Width of window"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:15
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:15
 msgid "The last recorded width of the application window."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:20
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:20
 msgid "Height of window"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:21
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:21
 msgid "The last recorded height of the application window."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:26
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:26
 msgid "Show/hide formatting toolbar"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:27
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:27
 msgid "True if the formatting toolbar in the composer is shown."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:32
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:32
 #, fuzzy
 msgid "Autoselect next message"
 msgstr "_Automatski označi slijedeću poruku"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:33
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:33
 msgid "True if we should autoselect the next available conversation."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:38
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:38
 #, fuzzy
 msgid "Display message previews"
 msgstr "_Prikaži pregled konverzacija"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:39
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:39
 msgid "True if we should display a short preview of each message."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:44
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:44
 #, fuzzy
 msgid "Display conversation participants"
 msgstr "_Prikaži pregled konverzacija"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:45
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:45
 msgid ""
 "True if we should display the participants of each conversation in the "
 "conversation list."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:50
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:50
 #, fuzzy
 msgid "Display conversation subjects"
 msgstr "_Prikaži pregled konverzacija"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:51
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:51
 msgid ""
 "True if we should display the subject of each conversation in the "
 "conversation list."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:56
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:56
 #, fuzzy
 msgid "Conversation list line order"
 msgstr "Nema konverzacija u direktoriju."
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:57
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:57
 msgid ""
 "The order of the participants, subject and preview lines of each "
 "conversation in the conversation list."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:63
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:63
 msgid "Override colors in HTML emails"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:64
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:64
 #: ui/components-preferences-dialog.ui:93
 msgid ""
 "Overrides the original colors in HTML messages to integrate better with the "
 "app theme."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:69
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:69
 msgid "Move messages by default"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:70
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:70
 msgid "When tagging a message, move it to destination folder."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:75
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:75
 msgid "Use single key shortcuts"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:76
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:76
 msgid ""
 "Enables shortcuts for email actions that do not require pressing <Ctrl> to "
 "emulate those used by Gmail."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:83
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:83
 msgid "Languages that shall be used in the spell checker"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:84
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:84
 msgid ""
 "A list of POSIX locales, with the empty list disabling spell checking and "
 "the null list using desktop languages by default."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:91
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:91
 msgid "Languages that are displayed in the spell checker popover"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:92
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:92
 msgid ""
 "List of languages that are always displayed in the popover of the spell "
 "checker."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:97
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:97
 msgid "Run application in background on logon and when closed"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:98
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:98
 msgid "True to run application in background."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:103
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:103
 msgid "Ask when opening an attachment"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:104
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:104
 #, fuzzy
 msgid "True to ask when opening an attachment."
 msgstr "Da biste ih dodali kao privitke"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:109
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:109
 msgid "Whether to compose emails in HTML"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:110
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:110
 msgid "True to compose emails in HTML; false for plain text."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:115
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:115
 msgid "Advisory strategy for full-text searching"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:116
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:116
 msgid ""
 "Acceptable values are “exact”, “conservative”, “aggressive”, and “horizon”."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:121
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:121
 #, fuzzy
 msgid "Zoom of conversation viewer"
 msgstr "Nema konverzacija u direktoriju."
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:122
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:122
 msgid "The zoom to apply on the conservation view."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:127
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:127
 msgid "Sidebar width fraction"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:128
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:128
 msgid ""
 "Fraction of the window width used by the sidebar, or 0 for the default width."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:133
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:133
 msgid "Folder list width"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:134
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:134
 msgid "Width of the folder list in pixels, or 0 for the default width."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:139
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:139
 #, fuzzy
 msgid "Size of detached composer window"
 msgstr "Koristite %s da bi ste otvorili novi prozor za sastavljanje"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:140
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:140
 msgid "The last recorded size of the detached composer window."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:145
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:145
 msgid "Collapsed parts of the folder list"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:146
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:146
 msgid ""
 "Accounts and folder groups left collapsed in the folder list, so they stay "
 "that way between launches"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:152
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:152
 msgid "Reopen the inbox last viewed"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:153
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:153
 msgid ""
-"Open whichever inbox was last viewed when Convey starts, rather than a fixed "
+"Open whichever inbox was last viewed when Griabuntu Mail starts, rather than a fixed "
 "one"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:159
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:159
 msgid "Inbox to open at launch"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:160
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:160
 msgid ""
 "Identifier of the account whose inbox was last opened, or \"all\" for the "
 "combined view of every inbox"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:166
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:166
 #, fuzzy
 msgid "Always Show Starred Folder"
 msgstr "Uvijek prikaži od pošiljaoca"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:167
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:167
 #: ui/components-preferences-dialog.ui:42
 msgid ""
 "Show a local Starred folder for accounts whose server does not provide one"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:173
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:173
 msgid "Use Custom Proxy"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:174
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:174
 msgid ""
 "Route all connections through a custom proxy instead of the system proxy "
 "settings"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:180
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:180
 #, fuzzy
 msgid "Proxy Address"
 msgstr "Kopiraj adresu _e-pošte"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:181
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:181
 msgid "URI of the proxy to use"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:186
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:186
 msgid "Allow images for these domains"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:187
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:187
 msgid "Images from these domains will be trusted"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:192
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:192
 msgid "Load images from unverified senders"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:193
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:193
 msgid ""
 "Also load images when all images are trusted but the sender could not be "
 "verified with DKIM or DMARC"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:199
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:199
 #, fuzzy
 msgid "Undo sending email delay"
 msgstr "Greška u slanju e-pošte"
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:200
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:200
 msgid ""
 "The number of seconds to wait before sending an email. Set to zero or less "
 "to disable."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:206
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:206
 msgid "Brief notification display time"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:207
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:207
 msgid ""
 "The length of time in seconds for which brief notifications should be "
 "displayed."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:213
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:213
 msgid "List of optional plugins"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:214
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:214
 msgid "Plugins listed here will be loaded on startup."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:219
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:219
 msgid "Whether we migrated the old settings"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.gschema.xml:220
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:220
 msgid ""
 "False to check for the old “org.yorba.convey”-schema and copy its values."
 msgstr ""
 
 #. Translators: The developer's name
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:14
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:14
 msgid "Daniel Elia"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:19
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:19
 msgid ""
-"Convey is an email application built around conversations, for the GNOME "
+"Griabuntu Mail is an email application built around conversations, for the GNOME "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:24
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:24
 msgid ""
 "Conversations allow you to read a complete discussion without having to find "
 "and click from message to message."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:28
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:28
 msgid ""
-"Convey is a fork of Geary, originally developed by the Geary Development "
+"Griabuntu Mail is a fork of Geary, originally developed by the Geary Development "
 "Team and the Software Freedom Conservancy."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:32
-msgid "Convey’s features include:"
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:32
+msgid "Griabuntu Mail’s features include:"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:34
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:34
 msgid "Quick email account setup"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:35
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:35
 msgid "Shows related messages together in conversations"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:36
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:36
 msgid "Fast, full text and keyword search"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:37
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:37
 msgid "Full-featured HTML and plain text message composer"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:38
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:38
 #, fuzzy
 msgid "Desktop notification of new mail"
 msgstr "Prikaži _obavještenje za novu poštu"
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:39
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:39
 msgid "Compatible with GMail, Yahoo! Mail, Outlook.com and other IMAP servers"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:52
-msgid "Convey showing an inbox of conversations"
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:52
+msgid "Griabuntu Mail showing an inbox of conversations"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:56
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:56
 #, fuzzy
-msgid "Convey displaying a conversation"
+msgid "Griabuntu Mail displaying a conversation"
 msgstr "Pomjeri konverzaciju"
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:60
-msgid "Convey showing the rich text composer"
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:60
+msgid "Griabuntu Mail showing the rich text composer"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:82
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:82
 msgid "Show nested folders on Microsoft accounts"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:83
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:83
 msgid "Create subfolders from the folder list context menu within the app"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:84
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:84
 msgid "Open GNOME Online Accounts directly when adding an account"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:91
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:91
 msgid "Refreshed application icons, screenshots and branding colours"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:92
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:92
 msgid "Add a combined \"All Inboxes\" view spanning every account"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:93
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:93
 msgid "Reopen the inbox last viewed at launch, or a fixed one of your choosing"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:94
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:94
 msgid "Remember which parts of the folder list were left collapsed"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:95
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:95
 msgid "Add a Starred folder for Microsoft accounts, showing its total count"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:96
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:96
 msgid "Page through large folders on Graph accounts"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:103
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:103
 msgid "Persist folders from Graph accounts so they load offline"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:104
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:104
 msgid "Fix unpredictable folder keyboard navigation"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:105
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:105
 msgid "Deselect conversations on Escape, disable autoselect in Trash and Junk"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:106
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:106
 msgid "Fix dark mode rendering in certain emails"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:107
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:107
 msgid "Fix context menu positioning in the message body"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:108
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:108
 msgid "Replace libcanberra and gsound with GStreamer for notification sounds"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:109
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:109
 msgid "Drop the unused libspelling dependency"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:110
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:110
 msgid "Numerous user interface and styling fixes"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:116
-msgid "The first Convey release, forked from Geary 46.0."
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:116
+msgid "The first Griabuntu Mail release, forked from Geary 46.0."
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:117
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:117
 msgid "Enhancements included in this release:"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:119
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:119
 msgid "Ported the interface to GTK4 and libadwaita"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:120
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:120
 msgid "Added a Microsoft Graph backend for Outlook and Microsoft 365 accounts"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:121
-msgid "Rebranded as Convey, with new application icons"
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:121
+msgid "Rebranded as Griabuntu Mail, with new application icons"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:122
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:122
 msgid "Create, rename and delete folders from the sidebar"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:123
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:123
 msgid "Reworked conversation list with keyboard navigation between panes"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:124
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:124
 msgid ""
 "Message colours now follow the system light and dark preference immediately"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:125
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:125
 msgid "Redrawn notification avatars, rendered at the display's pixel density"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:126
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:126
 msgid "Reworked address completion as a navigable dropdown"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:127
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:127
 msgid "Ported plugins to libpeas-2 and migrated to gcr-4 and gck-2"
 msgstr ""
 
-#: desktop/net.donnybeelo.Convey.metainfo.xml.in.in:128
+#: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:128
 msgid "Numerous bug fixes and user interface improvements"
 msgstr ""
 
@@ -677,7 +678,7 @@ msgstr "Ukloni korisnički račun"
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:291
 msgid ""
-"This will remove it from Convey and delete locally cached email data from "
+"This will remove it from Griabuntu Mail and delete locally cached email data from "
 "your computer. Nothing will be deleted from your service provider."
 msgstr ""
 
@@ -874,7 +875,7 @@ msgstr ""
 #. by an account's IMAP or SMTP service.
 #: src/client/accounts/accounts-service-information-widget.vala:123
 #: src/client/accounts/accounts-service-information-widget.vala:206
-#: src/engine/api/convey-service-information.vala:85
+#: src/engine/api/griabuntu-mail-service-information.vala:85
 msgid "None"
 msgstr "Ništa"
 
@@ -1001,14 +1002,14 @@ msgstr "Prikaži verziju programa"
 #. / Application runtime information label
 #: src/client/application/application-client.vala:246
 #, fuzzy
-msgid "Convey version"
+msgid "Griabuntu Mail version"
 msgstr "Pomjeri konverzaciju"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:248
 #, fuzzy
-msgid "Convey revision"
-msgstr "Convey Mail"
+msgid "Griabuntu Mail revision"
+msgstr "Griabuntu Mail Mail"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:250
@@ -1056,7 +1057,7 @@ msgstr ""
 
 #: src/client/application/application-client.vala:544
 #, fuzzy
-msgid "Visit the Convey repository"
+msgid "Visit the Griabuntu Mail repository"
 msgstr "Posjeti Yorba internet stranicu"
 
 #: src/client/application/application-client.vala:545
@@ -1232,7 +1233,7 @@ msgstr[1] ""
 msgstr[2] ""
 
 #. Returns true if the caller should try opening the account again
-#. give the user two options: reset the Account local store, or exit Convey.  A third
+#. give the user two options: reset the Account local store, or exit GriabuntuMail.  A third
 #. could be done to leave the Account in an unopened state, but we don't currently
 #. have provisions for that.
 #: src/client/application/application-controller.vala:1344
@@ -1248,7 +1249,7 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-"Convey can rebuild the database and re-synchronize with the server or exit.\n"
+"Griabuntu Mail can rebuild the database and re-synchronize with the server or exit.\n"
 "\n"
 "Rebuilding the database will destroy all local email and its attachments. "
 "<b>The mail on the your server will not be affected.</b>"
@@ -1259,7 +1260,7 @@ msgstr ""
 "\n"
 "%s\n"
 "\n"
-"Convey može obnoviti bazu podataka i re-siknronizirati sa serverom ili "
+"Griabuntu Mail može obnoviti bazu podataka i re-siknronizirati sa serverom ili "
 "izaći.\n"
 "\n"
 "Obnavljanje baze podataka će uništiti svu lokalnu e-poštu i privitke.  <b>To "
@@ -1519,17 +1520,17 @@ msgstr ""
 #: src/client/application/application-main-window.vala:1965
 #, fuzzy
 msgid ""
-"This removes the label and all email in it from Convey and your email server."
+"This removes the label and all email in it from Griabuntu Mail and your email server."
 msgstr ""
-"Ovo uklanja elektronsku pošto iz Convey i vađeg servera za elektronsku poštu"
+"Ovo uklanja elektronsku pošto iz Griabuntu Mail i vađeg servera za elektronsku poštu"
 
 #: src/client/application/application-main-window.vala:1966
 #, fuzzy
 msgid ""
-"This removes the folder and all email in it from Convey and your email "
+"This removes the folder and all email in it from Griabuntu Mail and your email "
 "server."
 msgstr ""
-"Ovo uklanja elektronsku pošto iz Convey i vađeg servera za elektronsku poštu"
+"Ovo uklanja elektronsku pošto iz Griabuntu Mail i vađeg servera za elektronsku poštu"
 
 #: src/client/application/application-main-window.vala:1967
 #: src/client/application/application-main-window.vala:2005
@@ -1563,9 +1564,9 @@ msgid "Empty all email from your %s folder?"
 msgstr "Isprazniti svu elektronsku poštu iz vaše %s fascikle?"
 
 #: src/client/application/application-main-window.vala:2004
-msgid "This removes the email from Convey and your email server."
+msgid "This removes the email from Griabuntu Mail and your email server."
 msgstr ""
-"Ovo uklanja elektronsku pošto iz Convey i vađeg servera za elektronsku poštu"
+"Ovo uklanja elektronsku pošto iz Griabuntu Mail i vađeg servera za elektronsku poštu"
 
 #: src/client/application/application-main-window.vala:2008
 #, c-format
@@ -1609,7 +1610,7 @@ msgid "Unsubscribe from %s?"
 msgstr ""
 
 #: src/client/application/application-main-window.vala:3694
-msgid "Convey will ask the sender to stop sending you emails."
+msgid "Griabuntu Mail will ask the sender to stop sending you emails."
 msgstr ""
 
 #: src/client/application/application-main-window.vala:3695
@@ -1639,7 +1640,7 @@ msgid "Unsubscribe request sent to %s"
 msgstr ""
 
 #: src/client/application/application-startup-manager.vala:78
-msgid "Convey wants to run in background"
+msgid "Griabuntu Mail wants to run in background"
 msgstr ""
 
 #. Translators: The first argument will be a
@@ -1809,7 +1810,7 @@ msgstr "Korisnički računi"
 #. problem. String substitution is the account name.
 #: src/client/components/components-problem-report-info-bar.vala:40
 #, c-format
-msgid "Convey has encountered a problem with %s."
+msgid "Griabuntu Mail has encountered a problem with %s."
 msgstr ""
 
 #. Translators: Info bar sub-title for a generic
@@ -1817,7 +1818,7 @@ msgstr ""
 #. account name.
 #: src/client/components/components-problem-report-info-bar.vala:53
 #, c-format
-msgid "Convey encountered a problem checking mail for %s."
+msgid "Griabuntu Mail encountered a problem checking mail for %s."
 msgstr ""
 
 #. Translators: Tooltip label for Retry button
@@ -1830,7 +1831,7 @@ msgstr ""
 #. account name
 #: src/client/components/components-problem-report-info-bar.vala:65
 #, c-format
-msgid "Convey encountered a problem sending email for %s."
+msgid "Griabuntu Mail encountered a problem sending email for %s."
 msgstr ""
 
 #. Translators: Tooltip label for Retry button
@@ -1841,7 +1842,7 @@ msgstr ""
 #. Translators: Info bar title for a generic application
 #. problem.
 #: src/client/components/components-problem-report-info-bar.vala:76
-msgid "Convey has encountered a problem"
+msgid "Griabuntu Mail has encountered a problem"
 msgstr ""
 
 #. Translators: Info bar sub-title for a generic
@@ -2433,23 +2434,23 @@ msgstr ""
 #: src/client/dialogs/certificate-warning-dialog.vala:48
 #, fuzzy
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Convey not to access this "
+"Selecting “Don’t Trust This Server” will cause Griabuntu Mail not to access this "
 "server."
 msgstr ""
-"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Convey ne "
+"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Griabuntu Mail ne "
 "pristupa ovom serveru."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:50
-msgid "Convey will not add or update this email account."
-msgstr "Convey neće dodati ili ažururati ovaj korisnički račun e-pošte."
+msgid "Griabuntu Mail will not add or update this email account."
+msgstr "Griabuntu Mail neće dodati ili ažururati ovaj korisnički račun e-pošte."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:55
 #, fuzzy
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Convey to stop accessing this "
+"Selecting “Don’t Trust This Server” will cause Griabuntu Mail to stop accessing this "
 "account."
 msgstr ""
-"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Convey "
+"Označavanjem \"Ovaj server nije povjerljiv\" će uzrokovati da Griabuntu Mail "
 "prestane pristupati ovom korisničkom računu."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:61
@@ -2934,7 +2935,7 @@ msgstr "---------- Prosljeđena poruka ----------"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:605
 #, fuzzy
 msgctxt "Search operator"
@@ -2948,7 +2949,7 @@ msgstr "prilog"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:618
 #, fuzzy
 msgctxt "Search operator"
@@ -2962,7 +2963,7 @@ msgstr "bcc"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:630
 #, fuzzy
 msgctxt "Search operator"
@@ -2976,7 +2977,7 @@ msgstr "tijelo"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:642
 #, fuzzy
 msgctxt "Search operator"
@@ -2990,7 +2991,7 @@ msgstr "cc"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:654
 #, fuzzy
 msgctxt "Search operator"
@@ -3004,7 +3005,7 @@ msgstr "od"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:668
 #, fuzzy
 msgctxt "Search operator"
@@ -3018,7 +3019,7 @@ msgstr "tema"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:680
 #, fuzzy
 msgctxt "Search operator"
@@ -3032,7 +3033,7 @@ msgstr "za"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:691
 #, fuzzy
 msgctxt "Search operator value - mail addressed to the user"
@@ -3046,7 +3047,7 @@ msgstr "ja"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:704
 #, fuzzy
 msgctxt "Search operator value - mail sent by the user"
@@ -3062,7 +3063,7 @@ msgstr "ja"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:719
 msgctxt "Search operator"
 msgid "is"
@@ -3076,7 +3077,7 @@ msgstr ""
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:729
 #, fuzzy
 msgctxt "'is:' search operator value"
@@ -3091,7 +3092,7 @@ msgstr "%d nepročitana"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:739
 #, fuzzy
 msgctxt "'is:' search operator value"
@@ -3105,7 +3106,7 @@ msgstr "%d nepročitana"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Convey User Guide.
+#. / Griabuntu Mail User Guide.
 #: src/client/util/util-email.vala:749
 #, fuzzy
 msgctxt "'is:' search operator value"
@@ -3180,30 +3181,30 @@ msgstr "Arhiva"
 #. Translators: ComboBox value for source of SMTP
 #. authentication credentials (none) when adding a new
 #. account
-#: src/engine/api/convey-credentials.vala:103
+#: src/engine/api/griabuntu-mail-credentials.vala:103
 msgid "No login needed"
 msgstr ""
 
 #. Translators: ComboBox value for source of SMTP
 #. authentication credentials (use IMAP) when adding a new
 #. account
-#: src/engine/api/convey-credentials.vala:108
+#: src/engine/api/griabuntu-mail-credentials.vala:108
 msgid "Use same login as receiving"
 msgstr ""
 
 #. Translators: ComboBox value for source of SMTP
 #. authentication credentials (custom) when adding a new
 #. account
-#: src/engine/api/convey-credentials.vala:113
+#: src/engine/api/griabuntu-mail-credentials.vala:113
 msgid "Use a different login"
 msgstr ""
 
-#: src/engine/api/convey-service-information.vala:87
+#: src/engine/api/griabuntu-mail-service-information.vala:87
 #, fuzzy
 msgid "StartTLS"
 msgstr "_Dodaj zvijezdu"
 
-#: src/engine/api/convey-service-information.vala:89
+#: src/engine/api/griabuntu-mail-service-information.vala:89
 #, fuzzy
 msgid "TLS"
 msgstr "SSL/TLS"
@@ -3383,7 +3384,7 @@ msgstr ""
 
 #: ui/accounts_editor_edit_pane.ui:110
 #, fuzzy
-msgid "Remove this account from Convey"
+msgid "Remove this account from Griabuntu Mail"
 msgstr "Ukloni korisnički račun"
 
 #. This is a button in the account settings to show server settings.
@@ -3403,8 +3404,8 @@ msgstr "Dodaj korisnički račun"
 
 #: ui/accounts_editor_list_pane.ui:65
 #, fuzzy
-msgid "Welcome to Convey"
-msgstr "Dobrodošli u Convey."
+msgid "Welcome to Griabuntu Mail"
+msgstr "Dobrodošli u GriabuntuMail."
 
 #: ui/accounts_editor_list_pane.ui:82
 msgid "To get started, add an email provider above."
@@ -3414,7 +3415,7 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#. Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Convey
+#. Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Griabuntu Mail
 #: ui/accounts_editor_servers_pane.ui:55
 #, fuzzy
 msgid "Account Source"
@@ -3481,8 +3482,8 @@ msgstr ""
 
 #: ui/application-main-window.ui:475
 #, fuzzy
-msgid "_About Convey"
-msgstr "Convey"
+msgid "_About Griabuntu Mail"
+msgstr "Griabuntu Mail"
 
 #: ui/certificate-warning-dialog.ui:4
 msgid "Untrusted Connection"
@@ -3525,7 +3526,7 @@ msgid "_Watch for new mail when closed"
 msgstr "Uvijek _prati novu poštu"
 
 #: ui/components-preferences-dialog.ui:30
-msgid "Convey will keep running after all windows are closed"
+msgid "Griabuntu Mail will keep running after all windows are closed"
 msgstr ""
 
 #: ui/components-preferences-dialog.ui:41
@@ -3585,7 +3586,7 @@ msgid "Use _custom proxy"
 msgstr ""
 
 #: ui/components-preferences-dialog.ui:119
-msgid "Set a proxy for Convey to use for all network requests"
+msgid "Set a proxy for Griabuntu Mail to use for all network requests"
 msgstr ""
 
 #. Translators: Preferences label
@@ -3948,7 +3949,7 @@ msgstr ""
 #: ui/components-inspector-error-view.ui:21
 msgid ""
 "If the problem is serious or persists, please save these details and attach "
-"it to a <a href=\"https://gitlab.gnome.org/donnybeelo/convey/-/work_items/"
+"it to a <a href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail/issues/"
 "new\">new bug report</a>."
 msgstr ""
 
@@ -4622,7 +4623,7 @@ msgid "_Authenticate"
 msgstr "_Potvrdi identitet"
 
 #: ui/password-dialog.ui:23
-msgid "Convey requires your email password to continue"
+msgid "Griabuntu Mail requires your email password to continue"
 msgstr "Zupčinko zahtjeva vašu lozinku el. pošte da bi nastavio"
 
 #: ui/password-dialog.ui:31

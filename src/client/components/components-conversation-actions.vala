@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2017 Software Freedom Conservancy Inc.
  * Copyright © 2021 Michael Gratton <mike@vee.net>
@@ -11,7 +12,7 @@
 /**
  * A container of conversation-related actions.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-conversation-actions.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-conversation-actions.ui")]
 public class Components.ConversationActions : Gtk.Box {
 
     public enum RemoveMode {
@@ -67,10 +68,10 @@ public class Components.ConversationActions : Gtk.Box {
     public int selected_conversations { get; set; }
 
     /** The folder the selected conversations are currently in. */
-    public Convey.Folder? source_folder { get; set; }
+    public GriabuntuMail.Folder? source_folder { get; set; }
 
-    private Convey.Account _account;
-    public Convey.Account account {
+    private GriabuntuMail.Account _account;
+    public GriabuntuMail.Account account {
         get {
             return this._account;
         }
@@ -107,7 +108,7 @@ public class Components.ConversationActions : Gtk.Box {
     construct {
         // Assemble the mark menus
         Gtk.Builder menu_builder = new Gtk.Builder.from_resource(
-            "/net/donnybeelo/Convey/components-menu-conversation.ui"
+            "/io/github/d3rpapah0d3n/GriabuntuMail/components-menu-conversation.ui"
         );
         GLib.MenuModel mark_menu = (MenuModel) menu_builder.get_object(
             "mark_message_menu"

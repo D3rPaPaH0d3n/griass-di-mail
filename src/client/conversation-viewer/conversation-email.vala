@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016,2019 Michael Gratton <mike@vee.net>
@@ -11,36 +12,36 @@
 /**
  * A widget for displaying an email in a conversation.
  *
- * This view corresponds to {@link Convey.Email}, displaying the
- * email's primary message (a {@link Convey.RFC822.Message}), any
- * sub-messages (also instances of {@link Convey.RFC822.Message}) and
+ * This view corresponds to {@link GriabuntuMail.Email}, displaying the
+ * email's primary message (a {@link GriabuntuMail.RFC822.Message}), any
+ * sub-messages (also instances of {@link GriabuntuMail.RFC822.Message}) and
  * attachments. The RFC822 messages are themselves displayed by {@link
  * ConversationMessage}.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-email.ui")]
-public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-email.ui")]
+public class ConversationEmail : Gtk.Box, GriabuntuMail.BaseInterface {
     // This isn't a Gtk.Grid since when added to a Gtk.ListBoxRow the
     // hover style isn't applied to it.
 
-    private const string MANUAL_READ_CLASS = "convey-manual-read";
-    private const string SENT_CLASS = "convey-sent";
-    private const string STARRED_CLASS = "convey-starred";
-    private const string UNREAD_CLASS = "convey-unread";
+    private const string MANUAL_READ_CLASS = "griabuntu-mail-manual-read";
+    private const string SENT_CLASS = "griabuntu-mail-sent";
+    private const string STARRED_CLASS = "griabuntu-mail-starred";
+    private const string UNREAD_CLASS = "griabuntu-mail-unread";
 
     /** Fields that must be available for constructing the view. */
-    internal const Convey.Email.Field REQUIRED_FOR_CONSTRUCT = (
-        Convey.Email.Field.ENVELOPE |
-        Convey.Email.Field.PREVIEW |
-        Convey.Email.Field.FLAGS
+    internal const GriabuntuMail.Email.Field REQUIRED_FOR_CONSTRUCT = (
+        GriabuntuMail.Email.Field.ENVELOPE |
+        GriabuntuMail.Email.Field.PREVIEW |
+        GriabuntuMail.Email.Field.FLAGS
     );
 
     /** Fields that must be available for loading the body. */
-    internal const Convey.Email.Field REQUIRED_FOR_LOAD = (
+    internal const GriabuntuMail.Email.Field REQUIRED_FOR_LOAD = (
         // Include those needed by the constructor since we'll replace
         // the ctor's email arg value once the body has been fully
         // loaded
         REQUIRED_FOR_CONSTRUCT |
-        Convey.Email.REQUIRED_FOR_MESSAGE
+        GriabuntuMail.Email.REQUIRED_FOR_MESSAGE
     );
 
     // Time to wait loading the body before showing the progress meter
@@ -70,7 +71,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     private class MessageViewIterator :
         Gee.Traversable<ConversationMessage>,
         Gee.Iterator<ConversationMessage>,
-        Convey.BaseObject {
+        GriabuntuMail.BaseObject {
 
 
         public bool read_only {
@@ -140,7 +141,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
     static construct {
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/net/donnybeelo/Convey/conversation-email-menus.ui"
+            "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-email-menus.ui"
         );
         email_menu_template = (GLib.MenuModel) builder.get_object("email_menu");
         email_menu_trash_section  = (GLib.MenuModel) builder.get_object("email_menu_trash");
@@ -156,12 +157,12 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
      * testing or b) assumed to be the same over the life of this view
      * object.
      */
-    public Convey.Email email { get; private set; }
+    public GriabuntuMail.Email email { get; private set; }
 
     /** Determines if this email currently flagged as unread. */
     public bool is_unread {
         get {
-            Convey.EmailFlags? flags = this.email.email_flags;
+            GriabuntuMail.EmailFlags? flags = this.email.email_flags;
             return (flags != null && flags.is_unread());
         }
     }
@@ -169,7 +170,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     /** Determines if this email currently flagged as starred. */
     public bool is_starred {
         get {
-            Convey.EmailFlags? flags = this.email.email_flags;
+            GriabuntuMail.EmailFlags? flags = this.email.email_flags;
             return (flags != null && flags.is_flagged());
         }
     }
@@ -209,10 +210,10 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     /** Determines the message body loading state. */
     public LoadState message_body_state { get; private set; default = NOT_STARTED; }
 
-    public Convey.App.Conversation conversation;
+    public GriabuntuMail.App.Conversation conversation;
 
     // Store from which to load message content, if needed
-    private Convey.App.EmailStore email_store;
+    private GriabuntuMail.App.EmailStore email_store;
 
     // Store from which to lookup contacts
     private Application.ContactStore contacts;
@@ -222,18 +223,18 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
     private Application.Configuration config;
 
-    private Convey.TimeoutManager body_loading_timeout;
+    private GriabuntuMail.TimeoutManager body_loading_timeout;
 
     /** Determines if all message's web views have finished loading. */
-    private Convey.Nonblocking.Spinlock message_bodies_loaded_lock;
+    private GriabuntuMail.Nonblocking.Spinlock message_bodies_loaded_lock;
 
     // Message view with selected text, if any
     private ConversationMessage? body_selection_message = null;
 
     // A subset of the message's attachments that are displayed in the
     // attachments view
-    private Gee.List<Convey.Attachment> displayed_attachments =
-         new Gee.LinkedList<Convey.Attachment>();
+    private Gee.List<GriabuntuMail.Attachment> displayed_attachments =
+         new Gee.LinkedList<GriabuntuMail.Attachment>();
 
     // Tracks if Shift key handler has been installed on the main
     // window, for updating email menu trash/delete actions.
@@ -268,9 +269,9 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
      * the complete email, but does not attempt any possibly
      * long-running loading processes.
      */
-    public ConversationEmail(Convey.App.Conversation conversation,
-                             Convey.Email email,
-                             Convey.App.EmailStore email_store,
+    public ConversationEmail(GriabuntuMail.App.Conversation conversation,
+                             GriabuntuMail.Email email,
+                             GriabuntuMail.App.EmailStore email_store,
                              Application.ContactStore contacts,
                              Application.Configuration config,
                              bool is_sent,
@@ -285,7 +286,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         this.config = config;
         this.load_cancellable = load_cancellable;
         this.message_bodies_loaded_lock =
-            new Convey.Nonblocking.Spinlock(load_cancellable);
+            new GriabuntuMail.Nonblocking.Spinlock(load_cancellable);
 
         if (is_sent) {
             add_css_class(SENT_CLASS);
@@ -316,7 +317,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
         this.load_cancellable.cancelled.connect(on_load_cancelled);
 
-        this.body_loading_timeout = new Convey.TimeoutManager.milliseconds(
+        this.body_loading_timeout = new GriabuntuMail.TimeoutManager.milliseconds(
             BODY_LOAD_TIMEOUT_MSEC, this.on_body_loading_timeout
         );
 
@@ -342,7 +343,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         } catch (IOError.CANCELLED err) {
             // okay
         } catch (Error err) {
-            Convey.RFC822.MailboxAddress? from =
+            GriabuntuMail.RFC822.MailboxAddress? from =
                 this.primary_message.primary_originator;
             debug("Contact load failed for \"%s\": %s",
                   from != null ? from.to_string() : "<unknown>", err.message);
@@ -379,7 +380,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                 );
                 loaded = true;
                 this.body_loading_timeout.reset();
-            } catch (Convey.EngineError.INCOMPLETE_MESSAGE err) {
+            } catch (GriabuntuMail.EngineError.INCOMPLETE_MESSAGE err) {
                 // Don't have the complete message at the moment, so
                 // download it in the background. Don't reset the body
                 // load timeout here since this will attempt to fetch
@@ -457,7 +458,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     /**
      * Updates the current email's flags and dependent UI state.
      */
-    public void update_flags(Convey.Email email) {
+    public void update_flags(GriabuntuMail.Email email) {
         this.email.set_flags(email.email_flags);
         update_email_state();
     }
@@ -498,10 +499,10 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     public async void view_source() {
         var main = get_root() as Application.MainWindow;
         if (main != null) {
-            Convey.Email email = this.email;
+            GriabuntuMail.Email email = this.email;
             string? temporary_filename = null;
             try {
-                yield Convey.Nonblocking.Concurrent.global.schedule_async(
+                yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
                     () => {
                         string source = (
                             email.header.buffer.to_string() +
@@ -509,12 +510,12 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                         );
                         string dir = GLib.Path.build_filename(
                             GLib.Environment.get_user_cache_dir(),
-                            "convey", "source"
+                            "griabuntu-mail", "source"
                         );
                         GLib.DirUtils.create_with_parents(dir, 0700);
                         temporary_filename = GLib.Path.build_filename(
                             dir,
-                            "convey-message-%s.txt".printf(
+                            "griabuntu-mail-message-%s.txt".printf(
                                 GLib.Uuid.string_random()
                             )
                         );
@@ -537,7 +538,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                 yield launcher.launch(main, null);
             } catch (GLib.Error error) {
                 main.application.controller.report_problem(
-                    new Convey.ProblemReport(error)
+                    new GriabuntuMail.ProblemReport(error)
                 );
             }
         }
@@ -580,13 +581,13 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             // Translators: Human-readable version of the RFC 822 Subject header
             builder.set_member_name(_("Subject:"));
             builder.add_string_value(
-                Convey.RFC822.Utils.get_real_subject(this.email).to_string()
+                GriabuntuMail.RFC822.Utils.get_real_subject(this.email).to_string()
             );
         }
         builder.end_object();
         Json.Generator generator = new Json.Generator();
         generator.set_root(builder.get_root());
-        string js = "convey.addPrintHeaders(" + generator.to_data(null) + ");";
+        string js = "griabuntu_mail.addPrintHeaders(" + generator.to_data(null) + ");";
         yield this.primary_message.evaluate_javascript(js, null);
 
         Gtk.Window? window = get_root() as Gtk.Window;
@@ -598,20 +599,20 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         // RW filesystem override in place to allow printing to PDF to
         // work, when using that directory.
         var download_dir = GLib.Environment.get_user_special_dir(DOWNLOAD);
-        if (!Convey.String.is_empty_or_whitespace(download_dir)) {
+        if (!GriabuntuMail.String.is_empty_or_whitespace(download_dir)) {
             settings.set(Gtk.PRINT_SETTINGS_OUTPUT_DIR, download_dir);
         }
 
         if (this.email.subject != null) {
-            string file_name = Convey.String.reduce_whitespace(
-                Convey.RFC822.Utils.get_real_subject(this.email).value
+            string file_name = GriabuntuMail.String.reduce_whitespace(
+                GriabuntuMail.RFC822.Utils.get_real_subject(this.email).value
             );
             file_name = file_name.replace("/", "_");
             if (file_name.char_count() > 128) {
-                file_name = Convey.String.safe_byte_substring(file_name, 128);
+                file_name = GriabuntuMail.String.safe_byte_substring(file_name, 128);
             }
 
-            if (!Convey.String.is_empty(file_name)) {
+            if (!GriabuntuMail.String.is_empty(file_name)) {
                 settings.set(Gtk.PRINT_SETTINGS_OUTPUT_BASENAME, file_name);
             }
         }
@@ -648,7 +649,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                 this.body_loading_timeout.start();
             }
 
-            Convey.Email? loaded = null;
+            GriabuntuMail.Email? loaded = null;
             try {
                 debug("Downloading remote message: %s", this.email.to_string());
                 loaded = yield this.email_store.fetch_email_async(
@@ -685,7 +686,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
     private async void update_body()
         throws GLib.Error {
-        if (Convey.RFC822.Utils.get_list_unsubscribe_uri(
+        if (GriabuntuMail.RFC822.Utils.get_list_unsubscribe_uri(
                 this.email, { "https", "http", "mailto" }
             ) != null) {
             this.primary_message.show_unsubscribe(
@@ -695,10 +696,10 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             );
         }
 
-        Convey.RFC822.Message message = this.email.get_message();
+        GriabuntuMail.RFC822.Message message = this.email.get_message();
         bool encrypted = message.has_encrypted_body();
         bool inline_pgp = message.has_inline_encrypted_body();
-        yield Convey.Nonblocking.Concurrent.global.schedule_async(
+        yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
             () => { message.decrypt(); }, this.load_cancellable
         );
         this.primary_message.set_encrypted(encrypted, inline_pgp);
@@ -708,18 +709,18 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
         // Load all mime parts and construct CID resources from them
 
-        Gee.Map<string,Convey.Memory.Buffer> cid_resources =
-            new Gee.HashMap<string,Convey.Memory.Buffer>();
-        Gee.Collection<Convey.Attachment> attachments = email.attachments;
+        Gee.Map<string,GriabuntuMail.Memory.Buffer> cid_resources =
+            new Gee.HashMap<string,GriabuntuMail.Memory.Buffer>();
+        Gee.Collection<GriabuntuMail.Attachment> attachments = email.attachments;
         if (message.is_encrypted) {
-            yield Convey.Nonblocking.Concurrent.global.schedule_async(() => {
+            yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(() => {
                 var dir = GLib.File.new_for_path(
-                    GLib.DirUtils.make_tmp("convey-decrypted-XXXXXX")
+                    GLib.DirUtils.make_tmp("griabuntu-mail-decrypted-XXXXXX")
                 );
                 attachments = message.save_decrypted_attachments(dir);
             }, this.load_cancellable);
         }
-        foreach (Convey.Attachment attachment in attachments) {
+        foreach (GriabuntuMail.Attachment attachment in attachments) {
             // Assume all parts are attachments. As the primary and
             // secondary message bodies are loaded, any displayed
             // inline will be removed from the list.
@@ -728,7 +729,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             if (attachment.content_id != null) {
                 try {
                     cid_resources[attachment.content_id] =
-                        new Convey.Memory.FileBuffer(attachment.file, true);
+                        new GriabuntuMail.Memory.FileBuffer(attachment.file, true);
                 } catch (Error err) {
                     debug("Could not open attachment: %s", err.message);
                 }
@@ -743,11 +744,11 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             message, this.load_cancellable
         );
 
-        Gee.List<Convey.RFC822.Message> sub_messages = message.get_sub_messages();
+        Gee.List<GriabuntuMail.RFC822.Message> sub_messages = message.get_sub_messages();
         if (sub_messages.size > 0) {
             this.primary_message.body_container.append(this.sub_messages);
         }
-        foreach (Convey.RFC822.Message sub_message in sub_messages) {
+        foreach (GriabuntuMail.RFC822.Message sub_message in sub_messages) {
             ConversationMessage attached_message =
                 new ConversationMessage.from_message(
                     sub_message,
@@ -801,7 +802,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
         );
         bool supports_delete = (
             in_base_folder &&
-            this.conversation.base_folder is Convey.FolderSupport.Remove
+            this.conversation.base_folder is GriabuntuMail.FolderSupport.Remove
         );
         bool is_shift_down = false;
         var main = get_root() as Application.MainWindow;
@@ -836,7 +837,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
             ConversationListBox.ACTION_REPLY_LIST
         );
         bool show_reply_list =
-            Convey.RFC822.Utils.get_list_post_address(this.email) != null;
+            GriabuntuMail.RFC822.Utils.get_list_post_address(this.email) != null;
 
         bool show_trash = !is_shift_down && supports_trash;
         bool show_delete = !show_trash && supports_delete;
@@ -892,9 +893,9 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
         var main = get_root() as Application.MainWindow;
         if (main != null) {
-            Convey.AccountInformation account = this.email_store.account.information;
+            GriabuntuMail.AccountInformation account = this.email_store.account.information;
             main.application.controller.report_problem(
-                new Convey.ServiceProblemReport(account, account.incoming, error)
+                new GriabuntuMail.ServiceProblemReport(account, account.incoming, error)
             );
         }
     }
@@ -933,13 +934,13 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
 
     private void on_save_image(string uri,
                                string? alt_text,
-                               Convey.Memory.Buffer? content) {
+                               GriabuntuMail.Memory.Buffer? content) {
         var main = get_root() as Application.MainWindow;
         if (main != null) {
             if (uri.has_prefix(Components.WebView.CID_URL_PREFIX)) {
                 string cid = uri.substring(Components.WebView.CID_URL_PREFIX.length);
                 try {
-                    Convey.Attachment attachment = this.email.get_attachment_by_content_id(
+                    GriabuntuMail.Attachment attachment = this.email.get_attachment_by_content_id(
                         cid
                     );
                     main.attachments.save_attachment.begin(
@@ -957,7 +958,7 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
                 // from it directly. GIO seems to decode any %-encoded
                 // chars anyway.
                 string? display_name = source.get_basename();
-                if (Convey.String.is_empty_or_whitespace(display_name)) {
+                if (GriabuntuMail.String.is_empty_or_whitespace(display_name)) {
                     display_name = Application.AttachmentManager.untitled_file_name;
                 }
                 main.attachments.save_buffer.begin(
@@ -970,11 +971,11 @@ public class ConversationEmail : Gtk.Box, Convey.BaseInterface {
     }
 
     private void on_resource_loaded(string id) {
-        Gee.Iterator<Convey.Attachment> displayed =
+        Gee.Iterator<GriabuntuMail.Attachment> displayed =
             this.displayed_attachments.iterator();
         while (displayed.has_next()) {
             displayed.next();
-            Convey.Attachment? attachment = displayed.get();
+            GriabuntuMail.Attachment? attachment = displayed.get();
             if (attachment.content_id == id) {
                 displayed.remove();
             }

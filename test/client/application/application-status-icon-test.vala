@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
@@ -7,7 +8,7 @@ public class Application.StatusIconTest : TestCase {
     public static int run_fixture() {
         var loop = new GLib.MainLoop();
         StatusIcon? tray = null;
-        string name = "net.donnybeelo.Convey.TrayFixture";
+        string name = "io.github.d3rpapah0d3n.GriabuntuMail.TrayFixture";
         uint owner = GLib.Bus.own_name(SESSION, name, NONE, (connection) => {
             try {
                 tray = new StatusIcon(connection, name);
@@ -134,7 +135,7 @@ public class Application.StatusIconTest : TestCase {
         assert_equal(item.status, "Active");
         assert_equal(item.icon_name, Config.APP_ID + "-tray");
         assert_equal((string) item.menu, "/StatusNotifierItem/Menu");
-        assert_equal(item.tool_tip.title, "Convey");
+        assert_equal(item.tool_tip.title, "Griabuntu Mail");
     }
 
     private static GLib.Variant mail_target(string account, string id) {
@@ -231,6 +232,6 @@ public class Application.StatusIconTest : TestCase {
         assert_equal(item.x_ayatana_label, "999+");
         item.set_new_mail_count(-1);
         assert_equal(item.x_ayatana_label, "");
-        assert_equal(item.title, "Convey");
+        assert_equal(item.title, "Griabuntu Mail");
     }
 }

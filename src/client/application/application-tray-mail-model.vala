@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
@@ -62,8 +63,8 @@ internal class Application.TrayMailModel : GLib.Object {
         var entry = this.entries.get(key);
         if (state == null || state.generation != expected_generation ||
             !state.ids.contains(key) || entry == null) return false;
-        string clean_sender = Convey.String.reduce_whitespace(sender);
-        string clean_subject = Convey.String.reduce_whitespace(subject);
+        string clean_sender = GriabuntuMail.String.reduce_whitespace(sender);
+        string clean_subject = GriabuntuMail.String.reduce_whitespace(subject);
         string label = clean_sender != ""
             ? "%s — %s".printf(clean_sender, clean_subject) : clean_subject;
         if (entry.label != label || (received > 0 && entry.received != received)) {

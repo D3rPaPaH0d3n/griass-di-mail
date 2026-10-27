@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright (c) 2008-2012 Dovecot authors
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-namespace Convey.ImapUtf7 {
+namespace GriabuntuMail.ImapUtf7 {
 
 /* This file was modified from Dovecot's LGPLv2.1-licensed implementation in
  * dovecot-2.1.15/src/lib-imap/imap-utf7.c.

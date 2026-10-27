@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>
  *
@@ -123,7 +124,7 @@ public class Application.PluginManager : GLib.Object {
 
 
     /** A plugin-specific implementation of its Application object. */
-    internal class ApplicationImpl : Convey.BaseObject, Plugin.Application {
+    internal class ApplicationImpl : GriabuntuMail.BaseObject, Plugin.Application {
 
 
         internal weak Client backing;
@@ -168,10 +169,10 @@ public class Application.PluginManager : GLib.Object {
             if (id == null) {
                 throw new Plugin.Error.NOT_FOUND("Email id not found");
             }
-            Gee.Collection<Convey.Email>? email = null;
+            Gee.Collection<GriabuntuMail.Email>? email = null;
             try {
                 email = yield source_impl.backing.emails.list_email_by_sparse_id_async(
-                    Convey.Collection.single(id),
+                    GriabuntuMail.Collection.single(id),
                     Composer.Widget.REQUIRED_FIELDS,
                     NONE,
                     source_impl.backing.cancellable
@@ -184,7 +185,7 @@ public class Application.PluginManager : GLib.Object {
             if (email == null || email.is_empty) {
                 throw new Plugin.Error.NOT_FOUND("Email not found for id");
             }
-            var context = Convey.Collection.first(email);
+            var context = GriabuntuMail.Collection.first(email);
 
             var type = Composer.Widget.ContextType.NONE;
             switch (plugin_type) {
@@ -242,7 +243,7 @@ public class Application.PluginManager : GLib.Object {
         }
 
         public void show_folder(Plugin.Folder folder) {
-            Convey.Folder? target = this.globals.folders.to_engine_folder(folder);
+            GriabuntuMail.Folder? target = this.globals.folders.to_engine_folder(folder);
             if (target != null) {
                 MainWindow window = this.backing.get_active_main_window();
                 window.select_folder.begin(target, true);
@@ -258,7 +259,7 @@ public class Application.PluginManager : GLib.Object {
                );
            }
 
-           Convey.Folder? target = this.globals.folders.to_engine_folder(folder);
+           GriabuntuMail.Folder? target = this.globals.folders.to_engine_folder(folder);
            if (target != null) {
                if (!yield main.prompt_empty_folder(target.used_as)) {
                    throw new Plugin.Error.PERMISSION_DENIED(
@@ -274,7 +275,7 @@ public class Application.PluginManager : GLib.Object {
                            controller.empty_folder.end(res);
                        } catch (GLib.Error error) {
                            controller.report_problem(
-                               new Convey.AccountProblemReport(
+                               new GriabuntuMail.AccountProblemReport(
                                    target.account.information,
                                    error
                                )
@@ -285,7 +286,7 @@ public class Application.PluginManager : GLib.Object {
            }
         }
 
-        public void report_problem(Convey.ProblemReport problem) {
+        public void report_problem(GriabuntuMail.ProblemReport problem) {
             this.backing.controller.report_problem(problem);
         }
 
@@ -331,7 +332,7 @@ public class Application.PluginManager : GLib.Object {
     }
 
 
-    internal class AccountImpl : Convey.BaseObject, Plugin.Account {
+    internal class AccountImpl : GriabuntuMail.BaseObject, Plugin.Account {
 
 
         public string display_name {
@@ -351,7 +352,7 @@ public class Application.PluginManager : GLib.Object {
 
 
     /** An implementation of the plugin Composer interface. */
-    internal class ComposerImpl : Convey.BaseObject, Plugin.Composer {
+    internal class ComposerImpl : GriabuntuMail.BaseObject, Plugin.Composer {
 
 
         public bool can_send { get; set; default = false; }
@@ -629,18 +630,18 @@ public class Application.PluginManager : GLib.Object {
     }
 
     /** Returns the engine account for the given plugin account, if any. */
-    public Convey.Account? to_engine_account(Plugin.Account plugin) {
+    public GriabuntuMail.Account? to_engine_account(Plugin.Account plugin) {
         var impl = plugin as AccountImpl;
         return (impl != null) ? impl.backing.account : null;
     }
 
     /** Returns the engine folder for the given plugin folder, if any. */
-    public Convey.Folder? to_engine_folder(Plugin.Folder plugin) {
+    public GriabuntuMail.Folder? to_engine_folder(Plugin.Folder plugin) {
         return this.globals.folders.to_engine_folder(plugin);
     }
 
     /** Returns the engine email for the given plugin email, if any. */
-    public Convey.Email? to_engine_email(Plugin.Email plugin) {
+    public GriabuntuMail.Email? to_engine_email(Plugin.Email plugin) {
         return this.globals.email.to_engine_email(plugin);
     }
 

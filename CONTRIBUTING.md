@@ -28,8 +28,9 @@ sensitive reports.
   Independent LGPL originals and third-party component grants remain intact; no
   blanket asset relicensing or unreviewed CLA is introduced.
 - Run relevant tests from [BUILDING.md](BUILDING.md) and [test/README.md](test/README.md).
-  Report the known four red notification-flag baseline cases separately; do not
-  hide them by marking the whole suite green.
+  Distinguish the historical four red flag cases from the current fixed suite.
+  Identity changes must also pass `build-aux/check-identity.py`; keep provenance
+  and legacy lookup exceptions documented in `docs/IDENTITY.md`.
 
 Repository access, acceptance policy and maintainer capacity remain provisional
 until publication. No automatic merge, deployment or release process is enabled.

@@ -1,6 +1,6 @@
 # GPLv3 release-copy metadata/notice installation: 2026-10-26.
 # Downstream modification: 2026-10-26 — synthetic notification-flag test target and explicit licence installation.
-project('convey', [ 'vala', 'c' ],
+project('griabuntu-mail', [ 'vala', 'c' ],
   version: '51.0',
   license: 'GPL-3.0-only',
   meson_version: '>= 1.7',
@@ -28,11 +28,11 @@ elif profile != 'release'
 endif
 
 # Configurable install dirs
-convey_prefix = get_option('prefix')
-bin_dir = convey_prefix / get_option('bindir')
-data_dir = convey_prefix / get_option('datadir')
-lib_dir = convey_prefix / get_option('libdir')
-locale_dir = convey_prefix / get_option('localedir')
+griabuntu_mail_prefix = get_option('prefix')
+bin_dir = griabuntu_mail_prefix / get_option('bindir')
+data_dir = griabuntu_mail_prefix / get_option('datadir')
+lib_dir = griabuntu_mail_prefix / get_option('libdir')
+locale_dir = griabuntu_mail_prefix / get_option('localedir')
 
 # Source dirs
 metadata_dir = meson.project_source_root() / 'bindings'/ 'metadata'
@@ -144,8 +144,8 @@ libmessagingmenu_dep = dependency('messaging-menu', version: '>= 12.10', require
 #
 
 # Build variables
-convey_id = 'net.donnybeelo.Convey@0@'.format(appid_suffix)
-convey_version = meson.project_version()
+griabuntu_mail_id = 'io.github.d3rpapah0d3n.GriabuntuMail@0@'.format(appid_suffix)
+griabuntu_mail_version = meson.project_version()
 revno = get_option('revno')
 if revno == ''
   revno = run_command('build-aux/git_version.py', check: false).stdout().strip()
@@ -156,12 +156,12 @@ i18n = import('i18n')
 
 # Static install dirs
 dbus_services_dir = data_dir / 'dbus-1' / 'services'
-client_lib_dir = lib_dir / 'convey'
+client_lib_dir = lib_dir / 'griabuntu-mail'
 plugins_dir = client_lib_dir / 'plugins'
 web_extensions_dir = client_lib_dir / 'web-extensions'
 
 # Downstream licence packaging, prepared 2026-10-26.
-license_dir = data_dir / 'licenses' / convey_id
+license_dir = data_dir / 'licenses' / griabuntu_mail_id
 install_data(
   'COPYING', 'COPYING.LGPL-2.1-original', 'COPYING.icons', 'COPYING.sounds', 'AUTHORS', 'THANKS',
   'THIRD-PARTY-NOTICES.md', 'docs/release/GPLV3-COPY.md',
@@ -260,7 +260,7 @@ test_notification_flags_bin = executable('test-notification-flags',
   ] + notification_mock_sources,
   dependencies: test_engine_dependencies,
   vala_args: test_engine_vala_args,
-  c_args: convey_c_args,
+  c_args: griabuntu_mail_c_args,
 )
 
 test(

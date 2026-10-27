@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2017 Software Freedom Conservancy Inc.
  * Copyright © 2021 Michael Gratton <mike@vee.net>
@@ -15,7 +16,7 @@
  *
  * @see Application.MainWindow
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-headerbar-conversation.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-headerbar-conversation.ui")]
 public class Components.ConversationHeaderBar : Adw.Bin {
 
     public bool find_open { get; set; default = false; }

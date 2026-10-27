@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -14,7 +15,7 @@
  * implement any additional extension interfaces (such as {@link
  * NotificationExtension}) as required.
  */
-public abstract class Plugin.PluginBase : Convey.BaseObject {
+public abstract class Plugin.PluginBase : GriabuntuMail.BaseObject {
 
     /**
      * Returns an object for interacting with the client application.

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2020 Michael Gratton <mike@vee.net>
@@ -9,13 +10,13 @@
  */
 
 /** Manages progress when upgrading and rebuilding account databases. */
-internal class Application.DatabaseManager : Convey.BaseObject {
+internal class Application.DatabaseManager : GriabuntuMail.BaseObject {
 
 
     /* Progress monitor for database operations. */
-    public Convey.AggregateProgressMonitor monitor {
+    public GriabuntuMail.AggregateProgressMonitor monitor {
         public get; private set;
-        default = new Convey.AggregateProgressMonitor();
+        default = new GriabuntuMail.AggregateProgressMonitor();
     }
 
     /** Determines whether or not the database dialog is visible. */
@@ -42,7 +43,7 @@ internal class Application.DatabaseManager : Convey.BaseObject {
      *
      * Accounts should be added before being opened.
      */
-    public void add_account(Convey.Account account,
+    public void add_account(GriabuntuMail.Account account,
                             GLib.Cancellable? cancellable = null) {
         monitor.add(account.db_upgrade_monitor);
         monitor.add(account.db_vacuum_monitor);
@@ -54,7 +55,7 @@ internal class Application.DatabaseManager : Convey.BaseObject {
     /**
      * Stops an account from being monitored.
      */
-    public void remove_account(Convey.Account account) {
+    public void remove_account(GriabuntuMail.Account account) {
         monitor.remove(account.db_upgrade_monitor);
         monitor.remove(account.db_vacuum_monitor);
     }
@@ -78,7 +79,7 @@ internal class Application.DatabaseManager : Convey.BaseObject {
             modal = true,
             deletable = false
         };
-        this.dialog.add_css_class("convey-upgrade");
+        this.dialog.add_css_class("griabuntu-mail-upgrade");
         this.dialog.set_child(box);
         this.dialog.close_request.connect(on_close_request);
         this.dialog.present();

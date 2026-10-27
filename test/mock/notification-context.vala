@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
@@ -9,13 +10,13 @@
  * No GTK application, plugin loader, contacts backend or mail store is started.
  */
 namespace Plugin {
-    public abstract class PluginBase : Convey.BaseObject {}
+    public abstract class PluginBase : GriabuntuMail.BaseObject {}
 }
 
 namespace Application {
-    public class Contact : Convey.BaseObject {}
+    public class Contact : GriabuntuMail.BaseObject {}
 
-    public class ContactStore : Convey.BaseObject {
+    public class ContactStore : GriabuntuMail.BaseObject {
         public async Gee.Collection<Contact> search(
             string query, uint min_importance, uint limit,
             GLib.Cancellable? cancellable
@@ -23,20 +24,20 @@ namespace Application {
             throw new GLib.IOError.NOT_SUPPORTED("No contacts in this fixture");
         }
 
-        public async Contact load(Convey.RFC822.MailboxAddress mailbox,
+        public async Contact load(GriabuntuMail.RFC822.MailboxAddress mailbox,
                                   GLib.Cancellable? cancellable) throws GLib.Error {
             throw new GLib.IOError.NOT_SUPPORTED("No contacts in this fixture");
         }
     }
 
-    public class AccountContext : Convey.BaseObject {
+    public class AccountContext : GriabuntuMail.BaseObject {
         public GLib.Cancellable cancellable = new GLib.Cancellable();
         public ContactStore contacts = new ContactStore();
     }
 
     public class MainWindow : GLib.Object {
         public bool is_active = false;
-        public Convey.Folder? selected_folder = null;
+        public GriabuntuMail.Folder? selected_folder = null;
         public ConversationListView conversation_list_view = new ConversationListView();
     }
 
@@ -57,15 +58,15 @@ namespace Application {
         internal TrayMailModel tray = new TrayMailModel();
 
         internal void update_tray_new_mail(
-            string key, Convey.Folder folder,
-            Gee.Map<Convey.EmailIdentifier,GLib.Variant> targets
+            string key, GriabuntuMail.Folder folder,
+            Gee.Map<GriabuntuMail.EmailIdentifier,GLib.Variant> targets
         ) {
             this.tray.set_folder(key, targets.values.to_array());
         }
     }
 
     public class PluginManager : GLib.Object {
-        public class AccountImpl : Convey.BaseObject, Plugin.Account {
+        public class AccountImpl : GriabuntuMail.BaseObject, Plugin.Account {
             public string display_name { get { return "Synthetic account"; } }
             public AccountContext backing = new AccountContext();
         }
@@ -85,35 +86,35 @@ namespace Application {
     }
 
     public class FolderStoreFactory : GLib.Object {
-        public class FolderImpl : Convey.BaseObject, Plugin.Folder {
+        public class FolderImpl : GriabuntuMail.BaseObject, Plugin.Folder {
             public string persistent_id { get { return "synthetic:inbox"; } }
             public string display_name { get { return "Synthetic Inbox"; } }
-            public Convey.Folder.SpecialUse used_as { get { return INBOX; } }
+            public GriabuntuMail.Folder.SpecialUse used_as { get { return INBOX; } }
             public Plugin.Account? account { get { return this.owner; } }
-            public Convey.Folder backing;
+            public GriabuntuMail.Folder backing;
             private PluginManager.AccountImpl owner = new PluginManager.AccountImpl();
 
-            public FolderImpl(Convey.Folder backing) { this.backing = backing; }
+            public FolderImpl(GriabuntuMail.Folder backing) { this.backing = backing; }
             public GLib.Variant to_variant() { return this.backing.path.to_variant(); }
         }
 
         public FolderImpl? folder = null;
-        public Convey.Folder? to_engine_folder(Plugin.Folder folder) {
+        public GriabuntuMail.Folder? to_engine_folder(Plugin.Folder folder) {
             return ((FolderImpl) folder).backing;
         }
-        public Plugin.Folder? to_plugin_folder(Convey.Folder folder) {
+        public Plugin.Folder? to_plugin_folder(GriabuntuMail.Folder folder) {
             return this.folder != null && this.folder.backing == folder ? this.folder : null;
         }
     }
 
     public class EmailStoreFactory : GLib.Object {
-        public class IdImpl : Convey.BaseObject,
+        public class IdImpl : GriabuntuMail.BaseObject,
             Gee.Hashable<Plugin.EmailIdentifier>, Plugin.EmailIdentifier {
-            public Convey.EmailIdentifier backing;
+            public GriabuntuMail.EmailIdentifier backing;
             public Plugin.Account account { get { return this.owner; } }
             private PluginManager.AccountImpl owner = new PluginManager.AccountImpl();
 
-            public IdImpl(Convey.EmailIdentifier backing) { this.backing = backing; }
+            public IdImpl(GriabuntuMail.EmailIdentifier backing) { this.backing = backing; }
             public uint hash() { return this.backing.hash(); }
             public bool equal_to(Plugin.EmailIdentifier other) {
                 var id = other as IdImpl;
@@ -125,7 +126,7 @@ namespace Application {
         }
 
         public Gee.Collection<Plugin.EmailIdentifier> to_plugin_ids(
-            Gee.Collection<Convey.EmailIdentifier> ids, AccountContext context
+            Gee.Collection<GriabuntuMail.EmailIdentifier> ids, AccountContext context
         ) {
             var result = new Gee.ArrayList<Plugin.EmailIdentifier>();
             foreach (var id in ids) result.add(new IdImpl(id));

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,13 +7,13 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public delegate uint Convey.State.Transition(uint state, uint event, void *user = null,
+public delegate uint GriabuntuMail.State.Transition(uint state, uint event, void *user = null,
     Object? object = null, Error? err = null);
 
-public delegate void Convey.State.PostTransition(void *user = null, Object? object = null,
+public delegate void GriabuntuMail.State.PostTransition(void *user = null, Object? object = null,
     Error? err = null);
 
-public class Convey.State.Mapping : BaseObject {
+public class GriabuntuMail.State.Mapping : BaseObject {
     public uint state;
     public uint event;
     public unowned Transition transition;
@@ -24,7 +25,7 @@ public class Convey.State.Mapping : BaseObject {
     }
 }
 
-namespace Convey.State {
+namespace GriabuntuMail.State {
 
 // A utility Transition for nop transitions (i.e. it merely returns the state passed in).
 public uint nop(uint state, uint event) {

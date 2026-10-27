@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -9,7 +10,7 @@
 /**
  * An abstract base class representing a single task of asynchronous work.
  */
-public abstract class Convey.Nonblocking.BatchOperation : BaseObject {
+public abstract class GriabuntuMail.Nonblocking.BatchOperation : BaseObject {
     /**
      * Called by {@link Nonblocking.Batch} when execution should start.
      *
@@ -53,7 +54,7 @@ public abstract class Convey.Nonblocking.BatchOperation : BaseObject {
  * operations in smaller chunks (to avoid flooding the thread's MainLoop).  These may be added in
  * the future.
  */
-public class Convey.Nonblocking.Batch : BaseObject {
+public class GriabuntuMail.Nonblocking.Batch : BaseObject {
     /**
      * An invalid {@link BatchOperation} identifier.
      */

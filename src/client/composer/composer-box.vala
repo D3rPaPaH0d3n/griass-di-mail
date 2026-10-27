@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -17,7 +18,7 @@
 public class Composer.Box : Gtk.Frame, Composer.Container {
 
     static construct {
-        set_css_name("convey-composer-box");
+        set_css_name("griabuntu-mail-composer-box");
     }
 
 
@@ -43,7 +44,7 @@ public class Composer.Box : Gtk.Frame, Composer.Container {
         this.headerbar = headerbar;
         this.headerbar.set_conversation_header(composer.header.headerbar);
 
-        add_css_class("convey-composer-box");
+        add_css_class("griabuntu-mail-composer-box");
         this.halign = Gtk.Align.FILL;
         this.vexpand = true;
         this.vexpand_set = true;

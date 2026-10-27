@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -7,14 +8,14 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Imap.FetchCommandTest : TestCase {
+class GriabuntuMail.Imap.FetchCommandTest : TestCase {
 
 
     private MessageSet? msg_set = null;
 
 
     public FetchCommandTest() {
-        base("Convey.Imap.FetchCommandTest");
+        base("GriabuntuMail.Imap.FetchCommandTest");
         add_test("list_ctor_single_data_item", list_ctor_single_data_item);
         add_test("list_ctor_single_body_item", list_ctor_single_body_item);
         add_test("list_ctor_multiple_data_item", list_ctor_multiple_data_item);

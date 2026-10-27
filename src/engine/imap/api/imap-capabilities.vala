@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -8,7 +9,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.Imap.Capabilities : Convey.GenericCapabilities {
+public class GriabuntuMail.Imap.Capabilities : GriabuntuMail.GenericCapabilities {
 
 
     public const string AUTH = "AUTH";

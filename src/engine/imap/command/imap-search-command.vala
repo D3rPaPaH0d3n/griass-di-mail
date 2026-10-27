@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -12,7 +13,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-6.4.4]].
  */
-public class Convey.Imap.SearchCommand : Command {
+public class GriabuntuMail.Imap.SearchCommand : Command {
 
     public const string NAME = "search";
     public const string UID_NAME = "uid search";

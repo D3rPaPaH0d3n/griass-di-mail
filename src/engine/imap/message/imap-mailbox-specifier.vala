@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -14,7 +15,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-5.1]]
  */
-public class Convey.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpecifier>, Gee.Comparable<MailboxSpecifier> {
+public class GriabuntuMail.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpecifier>, Gee.Comparable<MailboxSpecifier> {
 
     /**
      * Canonical name used for the IMAP Inbox for an account.
@@ -67,7 +68,7 @@ public class Convey.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpec
     public MailboxSpecifier.from_parameter(StringParameter param) {
         string? name = null;
         try {
-            name = Convey.ImapUtf7.imap_utf7_to_utf8(param.ascii);
+            name = GriabuntuMail.ImapUtf7.imap_utf7_to_utf8(param.ascii);
         } catch (ConvertError err) {
             // Could no decode the name as IMAP modified UTF7, so per
             // https://imapwiki.org/ClientImplementation/MailboxList
@@ -83,7 +84,7 @@ public class Convey.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpec
     }
 
     /**
-     * Returns true if the {@link Convey.FolderPath} points to the IMAP Inbox.
+     * Returns true if the {@link GriabuntuMail.FolderPath} points to the IMAP Inbox.
      */
     public static bool folder_path_is_inbox(FolderPath path) {
         return path.is_top_level && is_inbox_name(path.name);
@@ -106,7 +107,7 @@ public class Convey.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpec
     /**
      * Returns true if the string is the ''canonical'' name of the IMAP Inbox.
      *
-     * For sanity reasons, the Convey engine uses {@link CANONICAL_INBOX_NAME} as the "canonical"
+     * For sanity reasons, the Griabuntu Mail engine uses {@link CANONICAL_INBOX_NAME} as the "canonical"
      * IMAP Inbox name.  This verifies that the string is truly canonical, i.e. a case-sensitive
      * comparison is made.
      *
@@ -238,12 +239,12 @@ public class Convey.Imap.MailboxSpecifier : BaseObject, Gee.Hashable<MailboxSpec
     }
 
     public Parameter to_parameter() {
-        string encoded= Convey.ImapUtf7.utf8_to_imap_utf7(this.name);
+        string encoded= GriabuntuMail.ImapUtf7.utf8_to_imap_utf7(this.name);
         Parameter? param = null;
         try {
             param = StringParameter.get_best_for(encoded);
         } catch (ImapError err) {
-            param = new LiteralParameter(new Convey.Memory.StringBuffer(encoded));
+            param = new LiteralParameter(new GriabuntuMail.Memory.StringBuffer(encoded));
         }
         return param;
     }

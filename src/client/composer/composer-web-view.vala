@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016 Michael Gratton <mike@vee.net>
@@ -14,11 +15,11 @@
 public class Composer.WebView : Components.WebView {
 
     /** HTML id used for the main text section of the message body. */
-    public const string BODY_HTML_ID = "convey-body";
+    public const string BODY_HTML_ID = "griabuntu-mail-body";
     /** HTML id used for the signature section of the message body. */
-    public const string SIGNATURE_HTML_ID = "convey-signature";
+    public const string SIGNATURE_HTML_ID = "griabuntu-mail-signature";
     /** HTML id used for the bottom-quote section of the message body. */
-    public const string QUOTE_HTML_ID = "convey-quote";
+    public const string QUOTE_HTML_ID = "griabuntu-mail-quote";
 
     // Markup fragments used when loading a new message.
     private const string HTML_PRE = """<html><body class="%s">""";
@@ -26,7 +27,7 @@ public class Composer.WebView : Components.WebView {
     private const string BODY_PRE = """
 <div id="%s" dir="auto">""";
     private const string BODY_POST = """</div>
-<div id="%s" class="convey-no-display" dir="auto"></div>
+<div id="%s" class="griabuntu-mail-no-display" dir="auto"></div>
 """;
     private const string QUOTE = """
 <div id="%s" dir="auto"><br />%s</div>
@@ -460,7 +461,7 @@ public class Composer.WebView : Components.WebView {
             // Determine quoting depth by counting the the number of
             // QUOTE_MARKERs present, and build a quote prefix for it.
             int quote_level = 0;
-            while (line[quote_level] == Convey.RFC822.Utils.QUOTE_MARKER)
+            while (line[quote_level] == GriabuntuMail.RFC822.Utils.QUOTE_MARKER)
                 quote_level += 1;
             line = line[quote_level:line.length];
             string prefix = quote_level > 0 ? string.nfill(quote_level, '>') + " " : "";
@@ -519,13 +520,13 @@ public class Composer.WebView : Components.WebView {
         html.append(HTML_PRE.printf(body_class));
         if (!body_complete) {
             html.append(BODY_PRE.printf(BODY_HTML_ID));
-            bool have_body = !Convey.String.is_empty(body);
+            bool have_body = !GriabuntuMail.String.is_empty(body);
             if (have_body) {
                 html.append(body);
                 html.append(SPACER);
             }
 
-            if (!top_posting && !Convey.String.is_empty(quote)) {
+            if (!top_posting && !GriabuntuMail.String.is_empty(quote)) {
                 html.append(quote);
                 html.append(SPACER);
             }
@@ -533,7 +534,7 @@ public class Composer.WebView : Components.WebView {
             html.append(CURSOR);
             html.append(BODY_POST.printf(SIGNATURE_HTML_ID));
 
-            if (top_posting && !Convey.String.is_empty(quote)) {
+            if (top_posting && !GriabuntuMail.String.is_empty(quote)) {
                 html.append_printf(QUOTE, QUOTE_HTML_ID, quote);
             }
         } else {

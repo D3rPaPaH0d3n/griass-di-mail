@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /*
@@ -62,43 +63,43 @@ public class Application.NotificationActions : GLib.Object {
     }
 
     /** Use only the existing exact-message move command, never archive fallbacks. */
-    public static async void move_message(Convey.Folder source,
-                                          Convey.Folder destination,
-                                          Convey.EmailIdentifier id,
+    public static async void move_message(GriabuntuMail.Folder source,
+                                          GriabuntuMail.Folder destination,
+                                          GriabuntuMail.EmailIdentifier id,
                                           CommandStack commands,
                                           GLib.Cancellable? cancellable)
         throws GLib.Error {
-        var movable = source as Convey.FolderSupport.Move;
+        var movable = source as GriabuntuMail.FolderSupport.Move;
         if (movable == null || source.account == null ||
             source.account != destination.account || source.path.equal_to(destination.path) ||
             !(destination.used_as == ARCHIVE || destination.used_as == ALL_MAIL || destination.used_as == TRASH))
-            throw new Convey.EngineError.BAD_PARAMETERS("Unsafe notification destination");
+            throw new GriabuntuMail.EngineError.BAD_PARAMETERS("Unsafe notification destination");
         yield check_source(source, id, cancellable);
-        var messages = new Gee.ArrayList<Convey.EmailIdentifier>();
+        var messages = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         messages.add(id);
         yield commands.execute(new MoveEmailCommand(
-            movable, destination, new Gee.ArrayList<Convey.App.Conversation>(), messages
+            movable, destination, new Gee.ArrayList<GriabuntuMail.App.Conversation>(), messages
         ), cancellable);
     }
 
     /** Never reinterpret a stale click against a different folder or message. */
-    public static async void check_source(Convey.Folder source,
-                                          Convey.EmailIdentifier id,
+    public static async void check_source(GriabuntuMail.Folder source,
+                                          GriabuntuMail.EmailIdentifier id,
                                           GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (source.used_as != INBOX && source.used_as != NONE)
-            throw new Convey.EngineError.BAD_PARAMETERS("Unsafe notification source");
+            throw new GriabuntuMail.EngineError.BAD_PARAMETERS("Unsafe notification source");
         if (cancellable != null) cancellable.set_error_if_cancelled();
         bool opened = false;
         try {
-            yield source.open_async(Convey.Folder.OpenFlags.NO_DELAY, cancellable);
+            yield source.open_async(GriabuntuMail.Folder.OpenFlags.NO_DELAY, cancellable);
             opened = true;
             var found = yield source.contains_identifiers(
-                Convey.Collection.single(id), cancellable
+                GriabuntuMail.Collection.single(id), cancellable
             );
             if (cancellable != null) cancellable.set_error_if_cancelled();
-            if (found.size != 1 || !Convey.Collection.first(found).equal_to(id))
-                throw new Convey.EngineError.NOT_FOUND("Notification mail is no longer in its source");
+            if (found.size != 1 || !GriabuntuMail.Collection.first(found).equal_to(id))
+                throw new GriabuntuMail.EngineError.NOT_FOUND("Notification mail is no longer in its source");
         } finally {
             if (opened) {
                 try { yield source.close_async(null); }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -13,21 +14,21 @@
  * one is present, which is why these elements are MessageData but not the elements within the
  * lists (Flag, Attribute).
  *
- * Also note that Imap.MessageData requires {@link Convey.MessageData.AbstractMessageData}.
+ * Also note that Imap.MessageData requires {@link GriabuntuMail.MessageData.AbstractMessageData}.
  *
  * TODO: Add an abstract to_parameter() method that can be used to serialize the message data.
  */
 
-public interface Convey.Imap.MessageData : Convey.MessageData.AbstractMessageData {
+public interface GriabuntuMail.Imap.MessageData : GriabuntuMail.MessageData.AbstractMessageData {
 }
 
-public class Convey.Imap.RFC822Size : Convey.MessageData.Int64MessageData, Convey.Imap.MessageData {
+public class GriabuntuMail.Imap.RFC822Size : GriabuntuMail.MessageData.Int64MessageData, GriabuntuMail.Imap.MessageData {
     public RFC822Size(int64 value) {
         base (value);
     }
 }
 
-public class Convey.Imap.RFC822Header : Convey.RFC822.Header, Convey.Imap.MessageData {
+public class GriabuntuMail.Imap.RFC822Header : GriabuntuMail.RFC822.Header, GriabuntuMail.Imap.MessageData {
     public RFC822Header(Memory.Buffer buffer)
         throws ImapError {
         try {
@@ -38,13 +39,13 @@ public class Convey.Imap.RFC822Header : Convey.RFC822.Header, Convey.Imap.Messag
     }
 }
 
-public class Convey.Imap.RFC822Text : Convey.RFC822.Text, Convey.Imap.MessageData {
+public class GriabuntuMail.Imap.RFC822Text : GriabuntuMail.RFC822.Text, GriabuntuMail.Imap.MessageData {
     public RFC822Text(Memory.Buffer buffer) {
         base (buffer);
     }
 }
 
-public class Convey.Imap.RFC822Full : Convey.RFC822.Full, Convey.Imap.MessageData {
+public class GriabuntuMail.Imap.RFC822Full : GriabuntuMail.RFC822.Full, GriabuntuMail.Imap.MessageData {
     public RFC822Full(Memory.Buffer buffer) {
         base (buffer);
     }

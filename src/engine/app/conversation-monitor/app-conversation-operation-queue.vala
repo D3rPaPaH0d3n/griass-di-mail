@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -7,16 +8,16 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.App.ConversationOperationQueue : BaseObject {
+private class GriabuntuMail.App.ConversationOperationQueue : BaseObject {
     public bool is_processing { get; private set; default = false; }
 
     /** Tracks progress running operations in this queue. */
-    public Convey.ProgressMonitor progress_monitor { get; private set; }
+    public GriabuntuMail.ProgressMonitor progress_monitor { get; private set; }
 
-    private Convey.Nonblocking.Queue<ConversationOperation> mailbox
-        = new Convey.Nonblocking.Queue<ConversationOperation>.fifo();
-    private Convey.Nonblocking.Spinlock processing_done_spinlock
-        = new Convey.Nonblocking.Spinlock();
+    private GriabuntuMail.Nonblocking.Queue<ConversationOperation> mailbox
+        = new GriabuntuMail.Nonblocking.Queue<ConversationOperation>.fifo();
+    private GriabuntuMail.Nonblocking.Spinlock processing_done_spinlock
+        = new GriabuntuMail.Nonblocking.Spinlock();
 
     /** Fired when an error occurs executing an operation. */
     public signal void operation_error(ConversationOperation op, Error err);

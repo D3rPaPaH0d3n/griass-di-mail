@@ -1,9 +1,10 @@
 <!-- Downstream modification: 2026-10-26 — document synthetic notification-flag regression suite and red baseline. -->
+<!-- Downstream modification: 2026-10-27 — record verified notification-flag fix. -->
 
 Automated Test Infrastructure
 =============================
 
-Convey currently supports three types of automated tests:
+Griabuntu Mail currently supports three types of automated tests:
 
  * Engine unit tests
  * Client (GTK and JavaScript) unit tests
@@ -57,10 +58,42 @@ session-new IDs when a recent conversation is visible even while still unread.
 This records the bug before the production fix is approved. The suite is
 intentionally red on that baseline, not marked as an expected failure.
 
+On **2026-10-27**, the unchanged handoff source `4f55c3c6` reproduced the same
+**6 passes / 4 failures**. With the production handler changed to retire only
+read or deleted IDs (`!is_unread() || is_deleted()`), **all 10 cases pass**.
+The tests and their expectations were unchanged. Star-on, star-off and other
+unread flag changes retain session-new entries; read/deleted/removed messages,
+mixed batches, old/re-unread messages and visibility policy retain their tested
+behaviour. The separate `email_seen` signal still selects only read messages.
+
+Both runs compiled the real handler and engine using GNOME SDK 51, with
+`profile=release`, TNEF enabled and libunwind disabled. Dependency development
+files/libraries were copied from the existing Griabuntu Mail Flatpak into a disposable
+build stage; the installed application was not launched or modified. Tests used
+temporary HOME/XDG directories, memory GSettings, no network, host buses or
+display. This is focused regression evidence, not a full app rebuild, new
+package verification or visible desktop/mail acceptance.
+
+Identity refactor (2026-10-27)
+------------------------------
+
+The first complete renamed build passes **328 engine + 62 focused + 10 flag
+cases**, plus both desktop-file validators and AppStream validation. The extra
+engine case exercises an old `convey_tokeniser` table and a new
+`griabuntu_mail_tokeniser` table against synthetic in-memory message text.
+Legacy names are lookup aliases, not a profile migration.
+
+`python3 build-aux/check-identity.py` checks identity wiring across Vala,
+GSettings, GResources, desktop/D-Bus launch commands, translation sources and
+product names, and the JavaScript/WebKit bridge. The native package test runner
+calls it before the isolated headless suites. See `docs/IDENTITY.md` for the
+current naming map and deliberately preserved provenance/compatibility names.
+The original baseline evidence above retains its original source commit.
+
 Integration tests
 -----------------
 
-Integration tests run Convey's network code against actual servers, to
+Integration tests run Griabuntu Mail's network code against actual servers, to
 ensure that the code also works in the real world.
 
 The integration tests are built by default, but not currently hooked

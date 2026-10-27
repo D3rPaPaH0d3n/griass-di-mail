@@ -1,13 +1,14 @@
-install:
-	killall convey || true
-	meson setup build-release --prefix=/usr/local
-	sudo ninja -C build-release install
+.PHONY: build test deb clean
 
-uninstall:
-	killall convey || true
-	sudo ninja -C build-release uninstall
+build:
+	meson setup build -Dprofile=development -Dlibunwind=disabled
+	meson compile -C build
 
-clear-cache:
-	rm -rf ~/.cache/convey-development
-	rm -rf ~/.local/share/convey-development
-	rm -rf ~/.config/convey-development
+test:
+	python3 debian/run-tests.py build
+
+deb:
+	dpkg-buildpackage -b -us -uc
+
+clean:
+	dh_clean

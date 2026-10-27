@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -7,15 +8,15 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.FolderProperties : Convey.FolderProperties {
+internal class GriabuntuMail.Graph.FolderProperties : GriabuntuMail.FolderProperties {
 
     public FolderProperties(int total, int unread) {
         base(
             total,
             unread,
-            Convey.Trillian.FALSE,
-            Convey.Trillian.FALSE,
-            Convey.Trillian.TRUE,
+            GriabuntuMail.Trillian.FALSE,
+            GriabuntuMail.Trillian.FALSE,
+            GriabuntuMail.Trillian.TRUE,
             false,
             false,
             false

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -547,11 +548,11 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         string? tooltip = entry.get_sidebar_tooltip();
         node.expander_widget.tooltip_markup =
-            tooltip != null ? Convey.HTML.escape_markup(tooltip) : null;
+            tooltip != null ? GriabuntuMail.HTML.escape_markup(tooltip) : null;
     }
 
     private string get_name_for_entry(Sidebar.Entry entry) {
-        string name = Convey.HTML.escape_markup(entry.get_sidebar_name());
+        string name = GriabuntuMail.HTML.escape_markup(entry.get_sidebar_name());
 
         Sidebar.EmphasizableEntry? emphasizable_entry = entry as Sidebar.EmphasizableEntry;
         if (emphasizable_entry != null && emphasizable_entry.is_emphasized())
@@ -1481,7 +1482,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
                                      GLib.Value value,
                                      double x, double y) {
         if (!value.holds(typeof(string)) ||
-            value.get_string() != "application/x-convey-mail") {
+            value.get_string() != "application/x-griabuntu-mail-mail") {
             return false;
         }
 

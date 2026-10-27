@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -15,7 +16,7 @@
  * @see FetchCommand
  * @see FetchedData
  */
-public class Convey.Imap.StoreCommand : Command {
+public class GriabuntuMail.Imap.StoreCommand : Command {
 
     public const string NAME = "STORE";
     public const string UID_NAME = "UID STORE";

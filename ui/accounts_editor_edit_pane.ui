@@ -3,7 +3,7 @@
   <template class="AccountsEditorEditPane" parent="AccountsEditorPane">
     <property name="title" translatable="yes">Edit Account</property>
     <style>
-      <class name="convey-accounts-editor-pane"/>
+      <class name="griabuntu-mail-accounts-editor-pane"/>
     </style>
 
     <property name="child">
@@ -69,7 +69,7 @@
               <object class="AdwPreferencesGroup" id="signature_bin">
                 <property name="title" translatable="yes">Signature</property>
                 <style>
-                  <class name="convey-settings"/>
+                  <class name="griabuntu-mail-settings"/>
                 </style>
               </object>
             </child>
@@ -99,7 +99,7 @@
                   </object>
                 </child>
                 <style>
-                  <class name="convey-settings"/>
+                  <class name="griabuntu-mail-settings"/>
                 </style>
               </object>
             </child>
@@ -107,7 +107,7 @@
               <object class="AdwPreferencesGroup">
                 <child>
                   <object class="GtkButton" id="remove_button">
-                    <property name="tooltip_text" translatable="yes">Remove this account from Convey</property>
+                    <property name="tooltip_text" translatable="yes">Remove this account from Griabuntu Mail</property>
                     <property name="icon_name">user-trash-symbolic</property>
                     <signal name="clicked" handler="on_remove_account_clicked"/>
                     <style>
@@ -126,7 +126,7 @@
                   </object>
                 </child>
                 <style>
-                  <class name="convey-settings"/>
+                  <class name="griabuntu-mail-settings"/>
                 </style>
               </object>
             </child>

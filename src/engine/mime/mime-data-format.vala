@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
  * Utility methods for manipulating and examining data particular to MIME.
  */
 
-namespace Convey.Mime.DataFormat {
+namespace GriabuntuMail.Mime.DataFormat {
 
 private const char[] CONTENT_TYPE_TOKEN_SPECIALS = {
     '(', ')', '<', '>', '@', ',', ';', ':', '\\', '"', '/', '[', ']', '?', '='

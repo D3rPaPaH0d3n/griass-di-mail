@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Mock.EmailProperties : Convey.EmailProperties {
+public class Mock.EmailProperties : GriabuntuMail.EmailProperties {
 
 
     public EmailProperties(GLib.DateTime received) {

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -8,7 +9,7 @@
  */
 
 /** A simple least-recently-used cache. */
-public class Util.Cache.Lru<T> : Convey.BaseObject {
+public class Util.Cache.Lru<T> : GriabuntuMail.BaseObject {
 
 
     private class CacheEntry<T> {

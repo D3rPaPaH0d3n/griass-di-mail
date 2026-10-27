@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
@@ -7,10 +8,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.RFC822.MessageDataTest : TestCase {
+class GriabuntuMail.RFC822.MessageDataTest : TestCase {
 
     public MessageDataTest() {
-        base("Convey.RFC822.MessageDataTest");
+        base("GriabuntuMail.RFC822.MessageDataTest");
         add_test("subject_from_rfc822", subject_from_rfc822);
         add_test("date_from_rfc822", date_from_rfc822);
         add_test("date_from_rfc822", date_from_rfc822);
@@ -35,47 +36,47 @@ class Convey.RFC822.MessageDataTest : TestCase {
 
     public void preview_text_with_header() throws GLib.Error {
         PreviewText plain_preview1 = new PreviewText.with_header(
-            new Convey.Memory.StringBuffer(PLAIN_BODY1_HEADERS),
-            new Convey.Memory.StringBuffer(PLAIN_BODY1_ENCODED)
+            new GriabuntuMail.Memory.StringBuffer(PLAIN_BODY1_HEADERS),
+            new GriabuntuMail.Memory.StringBuffer(PLAIN_BODY1_ENCODED)
         );
         assert_equal(plain_preview1.buffer.to_string(), PLAIN_BODY1_EXPECTED);
 
         PreviewText base64_preview = new PreviewText.with_header(
-            new Convey.Memory.StringBuffer(BASE64_BODY_HEADERS),
-            new Convey.Memory.StringBuffer(BASE64_BODY_ENCODED)
+            new GriabuntuMail.Memory.StringBuffer(BASE64_BODY_HEADERS),
+            new GriabuntuMail.Memory.StringBuffer(BASE64_BODY_ENCODED)
         );
         assert_equal(base64_preview.buffer.to_string(), BASE64_BODY_EXPECTED);
 
         string html_part_headers = "Content-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n";
 
         PreviewText html_preview1 = new PreviewText.with_header(
-            new Convey.Memory.StringBuffer(html_part_headers),
-            new Convey.Memory.StringBuffer(HTML_BODY1_ENCODED)
+            new GriabuntuMail.Memory.StringBuffer(html_part_headers),
+            new GriabuntuMail.Memory.StringBuffer(HTML_BODY1_ENCODED)
         );
         assert_equal(html_preview1.buffer.to_string(), HTML_BODY1_EXPECTED);
 
         PreviewText html_preview2 = new PreviewText.with_header(
-            new Convey.Memory.StringBuffer(html_part_headers),
-            new Convey.Memory.StringBuffer(HTML_BODY2_ENCODED)
+            new GriabuntuMail.Memory.StringBuffer(html_part_headers),
+            new GriabuntuMail.Memory.StringBuffer(HTML_BODY2_ENCODED)
         );
         assert_equal(html_preview2.buffer.to_string(), HTML_BODY2_EXPECTED);
     }
 
     public void preview_text_encrypted() throws GLib.Error {
         PreviewText pgp_mime = new PreviewText.with_header(
-            new Convey.Memory.StringBuffer(
+            new GriabuntuMail.Memory.StringBuffer(
                 "Content-Type: application/pgp-encrypted\r\n\r\n"
             ),
-            new Convey.Memory.StringBuffer("Version: 1\r\n")
+            new GriabuntuMail.Memory.StringBuffer("Version: 1\r\n")
         );
         assert_true(pgp_mime.is_encrypted);
         assert_false(pgp_mime.is_inline_encrypted);
 
         PreviewText inline_pgp = new PreviewText.with_header(
-            new Convey.Memory.StringBuffer(
+            new GriabuntuMail.Memory.StringBuffer(
                 "Content-Type: text/plain; charset=us-ascii\r\n\r\n"
             ),
-            new Convey.Memory.StringBuffer(
+            new GriabuntuMail.Memory.StringBuffer(
                 "-----BEGIN PGP MESSAGE-----\r\n\r\nhQEMA1234\r\n"
             )
         );

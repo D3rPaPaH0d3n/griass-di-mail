@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -9,7 +10,7 @@
  */
 
 /**
- * Base implementation of {@link Convey.Folder}.
+ * Base implementation of {@link GriabuntuMail.Folder}.
  *
  * This class maintains both a local database and a remote IMAP
  * session and mediates between the two using the replay queue. Events
@@ -27,8 +28,8 @@
  * from the IMAP stack, i.e. when connectivity to the server has been
  * restored.
  */
-private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupport.Copy,
-    Convey.FolderSupport.Mark, Convey.FolderSupport.Move {
+private class GriabuntuMail.ImapEngine.MinimalFolder : GriabuntuMail.Folder, GriabuntuMail.FolderSupport.Copy,
+    GriabuntuMail.FolderSupport.Mark, GriabuntuMail.FolderSupport.Move {
 
 
     private const int FLAG_UPDATE_TIMEOUT_SEC = 2;
@@ -56,8 +57,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     private Folder.SpecialUse _used_as;
 
     private ProgressMonitor _opening_monitor =
-        new Convey.ReentrantProgressMonitor(Convey.ProgressType.ACTIVITY);
-    public override Convey.ProgressMonitor opening_monitor {
+        new GriabuntuMail.ReentrantProgressMonitor(GriabuntuMail.ProgressType.ACTIVITY);
+    public override GriabuntuMail.ProgressMonitor opening_monitor {
         get {
             return _opening_monitor;
         }
@@ -70,8 +71,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     internal ContactHarvester harvester { get; private set; }
 
     private weak GenericAccount _account;
-    private Convey.AggregatedFolderProperties _properties =
-        new Convey.AggregatedFolderProperties(false, false);
+    private GriabuntuMail.AggregatedFolderProperties _properties =
+        new GriabuntuMail.AggregatedFolderProperties(false, false);
     private EmailPrefetcher email_prefetcher;
 
     private int open_count = 0;
@@ -111,10 +112,10 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
      * Some internal code (especially Revokables) mark messages for removal but delay the network
      * operation.  They need to know if the message is removed by another client, however.
      */
-    public signal void marked_email_removed(Gee.Collection<Convey.EmailIdentifier> removed);
+    public signal void marked_email_removed(Gee.Collection<GriabuntuMail.EmailIdentifier> removed);
 
     /** Emitted to notify the account that some problem has occurred. */
-    internal signal void report_problem(Convey.ProblemReport problem);
+    internal signal void report_problem(GriabuntuMail.ProblemReport problem);
 
 
     public MinimalFolder(GenericAccount account,
@@ -160,15 +161,15 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
      * ReplayOperations can directly fire the associated signals while within the queue.
      */
 
-    public void replay_notify_email_inserted(Gee.Collection<Convey.EmailIdentifier> ids) {
+    public void replay_notify_email_inserted(Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         notify_email_inserted(ids);
     }
 
-    public void replay_notify_email_locally_inserted(Gee.Collection<Convey.EmailIdentifier> ids) {
+    public void replay_notify_email_locally_inserted(Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         notify_email_locally_inserted(ids);
     }
 
-    public void replay_notify_email_removed(Gee.Collection<Convey.EmailIdentifier> ids) {
+    public void replay_notify_email_removed(Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         notify_email_removed(ids);
     }
 
@@ -176,7 +177,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         notify_email_count_changed(new_count, reason);
     }
 
-    public void replay_notify_email_flags_changed(Gee.Map<Convey.EmailIdentifier, Convey.EmailFlags> flag_map) {
+    public void replay_notify_email_flags_changed(Gee.Map<GriabuntuMail.EmailIdentifier, GriabuntuMail.EmailFlags> flag_map) {
         notify_email_flags_changed(flag_map);
     }
 
@@ -210,13 +211,13 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     }
 
     /** {@inheritDoc} */
-    public override Convey.Folder.OpenState get_open_state() {
+    public override GriabuntuMail.Folder.OpenState get_open_state() {
         if (this.open_count == 0)
-            return Convey.Folder.OpenState.CLOSED;
+            return GriabuntuMail.Folder.OpenState.CLOSED;
 
         return (this.remote_session != null)
-           ? Convey.Folder.OpenState.REMOTE
-           : Convey.Folder.OpenState.LOCAL;
+           ? GriabuntuMail.Folder.OpenState.REMOTE
+           : GriabuntuMail.Folder.OpenState.LOCAL;
     }
 
     /** {@inheritDoc} */
@@ -361,7 +362,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     // used by normalize_folders() during the normalization process; should not be used elsewhere
     private async void detach_all_emails_async(Cancellable? cancellable) throws Error {
         Gee.List<Email>? all = yield local_folder.list_email_by_id_async(null, -1,
-            Convey.Email.Field.NONE, ImapDB.Folder.ListFlags.NONE, cancellable);
+            GriabuntuMail.Email.Field.NONE, ImapDB.Folder.ListFlags.NONE, cancellable);
 
         yield local_folder.detach_all_emails_async(cancellable);
 
@@ -379,13 +380,13 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
      * See [[https://tools.ietf.org/html/rfc4549|RFC 4549]] for an
      * overview of the process
      */
-    private async void normalize_folders(Convey.Imap.FolderSession session,
+    private async void normalize_folders(GriabuntuMail.Imap.FolderSession session,
                                          Cancellable cancellable)
         throws Error {
         debug("Begin normalizing remote and local folders");
 
-        Convey.Imap.FolderProperties local_properties = this.local_folder.get_properties();
-        Convey.Imap.FolderProperties remote_properties = session.folder.properties;
+        GriabuntuMail.Imap.FolderProperties local_properties = this.local_folder.get_properties();
+        GriabuntuMail.Imap.FolderProperties remote_properties = session.folder.properties;
 
         /*
          * Step 1: Check UID validity. If there are any problems, we
@@ -594,13 +595,13 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
 
         // fetch from the server the local store's required flags for all appended/inserted messages
         // (which is simply equal to all remaining remote UIDs)
-        Gee.List<Convey.Email> to_create = new Gee.ArrayList<Convey.Email>();
+        Gee.List<GriabuntuMail.Email> to_create = new Gee.ArrayList<GriabuntuMail.Email>();
         if (remote_uids.size > 0) {
             // for new messages, get the local store's required fields (which provide duplicate
             // detection)
             Gee.List<Imap.MessageSet> msg_sets = Imap.MessageSet.uid_sparse(remote_uids);
             foreach (Imap.MessageSet msg_set in msg_sets) {
-                Gee.List<Convey.Email>? list = yield session.list_email_async(msg_set,
+                Gee.List<GriabuntuMail.Email>? list = yield session.list_email_async(msg_set,
                     ImapDB.Folder.REQUIRED_FIELDS, cancellable);
                 if (list != null && list.size > 0)
                     to_create.add_all(list);
@@ -856,7 +857,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
 
         // notify about the local open
         notify_opened(
-            Convey.Folder.OpenState.LOCAL,
+            GriabuntuMail.Folder.OpenState.LOCAL,
             this.local_folder.get_properties().email_total
         );
 
@@ -1036,7 +1037,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
             // When folder session is claimed, that can lock for some ms.
             // It can be tricky to debug issues happening during this small
             // random delay. Use this build option to force the delay.
-            yield Convey.Scheduler.sleep_async(1);
+            yield GriabuntuMail.Scheduler.sleep_async(1);
 #endif
             session = yield this._account.claim_folder_session(
                 this.path, cancellable
@@ -1154,7 +1155,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
 
         // notify any subscribers with similar information
         notify_opened(
-            Convey.Folder.OpenState.REMOTE,
+            GriabuntuMail.Folder.OpenState.REMOTE,
             session.folder.properties.email_total
         );
 
@@ -1168,7 +1169,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         this.update_flags_timer.start();
     }
 
-    private void on_email_complete(Gee.Collection<Convey.EmailIdentifier> email_ids) {
+    private void on_email_complete(Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids) {
         notify_email_locally_complete(email_ids);
     }
 
@@ -1229,8 +1230,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     }
 
     /** {@inheritDoc} */
-    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Convey.EmailIdentifier> ids,
+    public override async Gee.Collection<GriabuntuMail.EmailIdentifier> contains_identifiers(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
         check_open("contains_identifiers");
@@ -1241,8 +1242,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     // list email variants
     //
 
-    public override async Gee.List<Convey.Email>? list_email_by_id_async(Convey.EmailIdentifier? initial_id,
-        int count, Convey.Email.Field required_fields, Folder.ListFlags flags,
+    public override async Gee.List<GriabuntuMail.Email>? list_email_by_id_async(GriabuntuMail.EmailIdentifier? initial_id,
+        int count, GriabuntuMail.Email.Field required_fields, Folder.ListFlags flags,
         Cancellable? cancellable = null) throws Error {
         check_open("list_email_by_id_async");
         check_flags("list_email_by_id_async", flags);
@@ -1262,8 +1263,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         return !op.accumulator.is_empty ? op.accumulator : null;
     }
 
-    public async override Gee.List<Convey.Email>? list_email_by_sparse_id_async(
-        Gee.Collection<Convey.EmailIdentifier> ids, Convey.Email.Field required_fields, Folder.ListFlags flags,
+    public async override Gee.List<GriabuntuMail.Email>? list_email_by_sparse_id_async(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids, GriabuntuMail.Email.Field required_fields, Folder.ListFlags flags,
         Cancellable? cancellable = null) throws Error {
         check_open("list_email_by_sparse_id_async");
         check_flags("list_email_by_sparse_id_async", flags);
@@ -1283,8 +1284,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         return !op.accumulator.is_empty ? op.accumulator : null;
     }
 
-    public override async Convey.Email fetch_email_async(Convey.EmailIdentifier id,
-        Convey.Email.Field required_fields, Convey.Folder.ListFlags flags, Cancellable? cancellable = null)
+    public override async GriabuntuMail.Email fetch_email_async(GriabuntuMail.EmailIdentifier id,
+        GriabuntuMail.Email.Field required_fields, GriabuntuMail.Folder.ListFlags flags, Cancellable? cancellable = null)
         throws Error {
         check_open("fetch_email_async");
         check_flags("fetch_email_async", flags);
@@ -1307,7 +1308,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     // delete/archive question.  This method will mark the message as
     // deleted and expunge it.
     protected async void
-        expunge_email_async(Gee.Collection<Convey.EmailIdentifier> to_expunge,
+        expunge_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> to_expunge,
                             GLib.Cancellable? cancellable)
         throws GLib.Error {
         check_open("expunge_email_async");
@@ -1361,9 +1362,9 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     }
 
     public virtual async void
-        mark_email_async(Gee.Collection<Convey.EmailIdentifier> to_mark,
-                         Convey.EmailFlags? flags_to_add,
-                         Convey.EmailFlags? flags_to_remove,
+        mark_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> to_mark,
+                         GriabuntuMail.EmailFlags? flags_to_add,
+                         GriabuntuMail.EmailFlags? flags_to_remove,
                          GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open("mark_email_async");
@@ -1387,11 +1388,11 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     }
 
     public virtual async void
-        copy_email_async(Gee.Collection<Convey.EmailIdentifier> to_copy,
-                         Convey.FolderPath destination,
+        copy_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> to_copy,
+                         GriabuntuMail.FolderPath destination,
                          GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        Convey.Folder target = this._account.get_folder(destination);
+        GriabuntuMail.Folder target = this._account.get_folder(destination);
         yield copy_email_uids_async(to_copy, destination, cancellable);
         this._account.update_folder(target);
     }
@@ -1400,8 +1401,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
      * Returns the destination folder's UIDs for the copied messages.
      */
     protected async Gee.Set<Imap.UID>?
-        copy_email_uids_async(Gee.Collection<Convey.EmailIdentifier> to_copy,
-                              Convey.FolderPath destination,
+        copy_email_uids_async(Gee.Collection<GriabuntuMail.EmailIdentifier> to_copy,
+                              GriabuntuMail.FolderPath destination,
                               GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open("copy_email_uids_async");
@@ -1424,9 +1425,9 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         return copy.destination_uids.size > 0 ? copy.destination_uids : null;
     }
 
-    public virtual async Convey.Revokable? move_email_async(
-        Gee.Collection<Convey.EmailIdentifier> to_move,
-        Convey.FolderPath destination,
+    public virtual async GriabuntuMail.Revokable? move_email_async(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> to_move,
+        GriabuntuMail.FolderPath destination,
         Cancellable? cancellable = null)
     throws Error {
         check_open("move_email_async");
@@ -1446,7 +1447,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         if (prepare.prepared_for_move == null || prepare.prepared_for_move.size == 0)
             return null;
 
-        Convey.Folder target = this._account.get_folder(destination);
+        GriabuntuMail.Folder target = this._account.get_folder(destination);
         return new RevokableMove(
             _account, this, target, prepare.prepared_for_move
         );
@@ -1488,8 +1489,8 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
 
     // TODO: A proper public search mechanism; note that this always round-trips to the remote,
     // doesn't go through the replay queue, and doesn't deal with messages marked for deletion
-    internal async Convey.Email? find_earliest_email_async(DateTime datetime,
-        Convey.EmailIdentifier? before_id, Cancellable? cancellable) throws Error {
+    internal async GriabuntuMail.Email? find_earliest_email_async(DateTime datetime,
+        GriabuntuMail.EmailIdentifier? before_id, Cancellable? cancellable) throws Error {
         check_open("find_earliest_email_async");
         if (before_id != null)
             check_id("find_earliest_email_async", before_id);
@@ -1510,7 +1511,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
                 new Imap.MessageSet.uid_range(new Imap.UID(Imap.UID.MIN), before_uid.previous(true))));
         }
 
-        ServerSearchEmail op = new ServerSearchEmail(this, criteria, Convey.Email.Field.NONE,
+        ServerSearchEmail op = new ServerSearchEmail(this, criteria, GriabuntuMail.Email.Field.NONE,
             cancellable);
 
         // need to check again due to the yield in the above conditional block
@@ -1521,9 +1522,9 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         yield op.wait_for_ready_async(cancellable);
 
         // find earliest ID; because all Email comes from Folder, UID should always be present
-        Convey.Email? earliest = null;
+        GriabuntuMail.Email? earliest = null;
         ImapDB.EmailIdentifier? earliest_id = null;
-        foreach (Convey.Email email in op.accumulator) {
+        foreach (GriabuntuMail.Email email in op.accumulator) {
             ImapDB.EmailIdentifier email_id = (ImapDB.EmailIdentifier) email.id;
             if (earliest_id == null || email_id.uid.compare_to(earliest_id.uid) < 0) {
                 earliest = email;
@@ -1564,7 +1565,7 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
     }
 
     /** Fires a {@link marked_email_removed} signal for this folder. */
-    protected virtual void notify_marked_email_removed(Gee.Collection<Convey.EmailIdentifier> removed) {
+    protected virtual void notify_marked_email_removed(Gee.Collection<GriabuntuMail.EmailIdentifier> removed) {
         marked_email_removed(removed);
     }
 
@@ -1583,30 +1584,30 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
         // Update this to use CHANGEDSINCE FETCH when available, when
         // we support IMAP CONDSTORE (Bug 713117).
         int chunk_size = FLAG_UPDATE_START_CHUNK;
-        Convey.EmailIdentifier? lowest = null;
-        while (get_open_state() != Convey.Folder.OpenState.CLOSED) {
-            Gee.List<Convey.Email>? list_local = yield list_email_by_id_async(
+        GriabuntuMail.EmailIdentifier? lowest = null;
+        while (get_open_state() != GriabuntuMail.Folder.OpenState.CLOSED) {
+            Gee.List<GriabuntuMail.Email>? list_local = yield list_email_by_id_async(
                 lowest, chunk_size,
-                Convey.Email.Field.FLAGS,
-                Convey.Folder.ListFlags.LOCAL_ONLY,
+                GriabuntuMail.Email.Field.FLAGS,
+                GriabuntuMail.Folder.ListFlags.LOCAL_ONLY,
                 cancellable
             );
             if (list_local == null || list_local.is_empty)
                 break;
 
             // find the lowest for the next iteration
-            lowest = Convey.EmailIdentifier.sort_emails(list_local).first().id;
+            lowest = GriabuntuMail.EmailIdentifier.sort_emails(list_local).first().id;
 
             // Get all email identifiers in the local folder mapped to their EmailFlags
-            Gee.HashMap<Convey.EmailIdentifier, Convey.EmailFlags> local_map =
-                new Gee.HashMap<Convey.EmailIdentifier, Convey.EmailFlags>();
-            foreach (Convey.Email e in list_local)
+            Gee.HashMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.EmailFlags> local_map =
+                new Gee.HashMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.EmailFlags>();
+            foreach (GriabuntuMail.Email e in list_local)
                 local_map.set(e.id, e.email_flags);
 
             // Fetch e-mail from folder using force update, which will cause the cache to be bypassed
             // and the latest to be gotten from the server (updating the cache in the process)
             debug("Fetching %d flags", local_map.keys.size);
-            Gee.List<Convey.Email>? list_remote = yield list_email_by_sparse_id_async(
+            Gee.List<GriabuntuMail.Email>? list_remote = yield list_email_by_sparse_id_async(
                 local_map.keys,
                 Email.Field.FLAGS,
                 Folder.ListFlags.FORCE_UPDATE,
@@ -1616,9 +1617,9 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
                 break;
 
             // Build map of emails that have changed.
-            Gee.HashMap<Convey.EmailIdentifier, Convey.EmailFlags> changed_map =
-                new Gee.HashMap<Convey.EmailIdentifier, Convey.EmailFlags>();
-            foreach (Convey.Email e in list_remote) {
+            Gee.HashMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.EmailFlags> changed_map =
+                new Gee.HashMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.EmailFlags>();
+            foreach (GriabuntuMail.Email e in list_remote) {
                 if (!local_map.has_key(e.id))
                     continue;
 
@@ -1681,9 +1682,9 @@ private class Convey.ImapEngine.MinimalFolder : Convey.Folder, Convey.FolderSupp
 
         // Need to close the remote session immediately to avoid a
         // race with it opening again
-        Convey.Folder.CloseReason remote_reason = is_error
-            ? Convey.Folder.CloseReason.REMOTE_ERROR
-            : Convey.Folder.CloseReason.REMOTE_CLOSE;
+        GriabuntuMail.Folder.CloseReason remote_reason = is_error
+            ? GriabuntuMail.Folder.CloseReason.REMOTE_ERROR
+            : GriabuntuMail.Folder.CloseReason.REMOTE_CLOSE;
         this.close_remote_session.begin(
             remote_reason,
             (obj, res) => {

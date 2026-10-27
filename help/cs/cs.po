@@ -1,11 +1,12 @@
-# Czech translation for convey.
+# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Czech translation for griabuntu_mail.
 # Copyright (C) 2014 convey's COPYRIGHT HOLDER
-# This file is distributed under the same license as the convey package.
+# This file is distributed under the same license as the griabuntu-mail package.
 # Marek Černocký <marek@manet.cz>, 2014, 2015, 2016, 2017, 2018, 2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: convey\n"
+"Project-Id-Version: griabuntu-mail\n"
 "POT-Creation-Date: 2020-06-25 02:39+0000\n"
 "PO-Revision-Date: 2019-10-01 17:41+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
@@ -36,13 +37,13 @@ msgstr "Editor účtů"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Convey’s application menu button "
+"<em>accounts editor</em>. To open it, click Griabuntu Mail’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
 "Poštovní účty můžete přidávat, měnit a odebírat pomocí <em>editoru účtů</"
 "em>. Když jej chcete otevřít, zmáčkněte tlačítko nabídky v hlavním okně "
-"aplikace Convey na seznamem složek a vyberte v rozbalené nabídce položku "
+"aplikace Griabuntu Mail na seznamem složek a vyberte v rozbalené nabídce položku "
 "<gui>Účty</gui>."
 
 #. (itstool) path: section/p
@@ -67,15 +68,15 @@ msgstr "Přidávání účtů"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Convey will automatically use any email accounts you have added via the "
+"Griabuntu Mail will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not "
 "have any accounts added to <app>Online Accounts</app>, you will be prompted "
-"to add an account the first time you run Convey."
+"to add an account the first time you run GriabuntuMail."
 msgstr ""
-"Convey bude automaticky používat libovolný poštovní účet, který jste přidali "
+"Griabuntu Mail bude automaticky používat libovolný poštovní účet, který jste přidali "
 "přes panel <app>Účty on-line</app> v <app>Nastaveních GNOME</app>. Pokud v "
 "<app>Účtech on-line</app> žádný účet přidaný nemáte, budete na přidání účtu "
-"dotázáni při prvním spuštění aplikace Convey."
+"dotázáni při prvním spuštění aplikace GriabuntuMail."
 
 #. (itstool) path: section/p
 #: C/accounts.page:37
@@ -85,14 +86,14 @@ msgid ""
 "providers supported by <app>Online Accounts</app>, <app>GNOME Settings</app> "
 "will be opened and you will be asked for your account information there. For "
 "other email providers, you will be asked for your account information by "
-"Convey. Once entered, click <gui>Create</gui> and the account information "
+"GriabuntuMail. Once entered, click <gui>Create</gui> and the account information "
 "will be checked and then added."
 msgstr ""
 "Když chcete přidat další účet, otevřete editor účtů a pak zvolte v seznamu v "
 "dolní části okna příslušného poskytovatele e-mailu. Pro poskytovatele "
 "podporované v <app>Účtech on-line</app> bude otevřeno <app>Nastaveních "
 "GNOME</app> a k zadání údajů budete vyzváni tam. Pro ostatní poskytovatele e-"
-"mailu budete na údaje dotázáni přímo aplikací Convey. Až je zadáte, zmáčkněte "
+"mailu budete na údaje dotázáni přímo aplikací GriabuntuMail. Až je zadáte, zmáčkněte "
 "<gui>Vytvořit</gui> a údaje budou zkontrolovány a přidány."
 
 #. (itstool) path: section/title
@@ -104,12 +105,12 @@ msgstr "Změna stávajících účtů"
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account "
-"you wish to update. Convey will display settings for the account. From there, "
+"you wish to update. Griabuntu Mail will display settings for the account. From there, "
 "you can add and remove additional sender email addresses, edit your email "
 "signature, and various other settings."
 msgstr ""
 "Když chcete změnit stávající účet, otevřete editor účtů a vyberte požadovaný "
-"účet. Convey zobrazí jeho nastavení a vy pak můžete přidávat a odebírat "
+"účet. Griabuntu Mail zobrazí jeho nastavení a vy pak můžete přidávat a odebírat "
 "dodatečné e-mailové adresy odesilatele, upravovat podpis e-mailu a měnit "
 "různá jiná nastavení."
 
@@ -117,11 +118,11 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Convey will download and store locally. Convey can only use locally available "
+"Griabuntu Mail will download and store locally. Griabuntu Mail can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
-"Nastavení <gui>Stahovat e-maily</gui> umožňuje určit, kolik zpráv bude Convey "
-"stahovat a uchovávat místně. Jen místně uložené zprávy může Convey zobrazovat "
+"Nastavení <gui>Stahovat e-maily</gui> umožňuje určit, kolik zpráv bude Griabuntu Mail "
+"stahovat a uchovávat místně. Jen místně uložené zprávy může Griabuntu Mail zobrazovat "
 "a vyhledávat pro konverzace."
 
 #. (itstool) path: section/p
@@ -130,7 +131,7 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Convey will check the settings, then update the account. Note that "
+"and Griabuntu Mail will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
@@ -138,7 +139,7 @@ msgstr ""
 "Když chcete upravit nastavení serveru pro daný účet, posuňte se do spodní "
 "části okna a zmáčkněte <gui>Nastavení serveru</gui>. Zobrazí se nastavení "
 "serveru a klikáním je můžete měnit. Až máte vše podle požadavku, zmáčkněte "
-"<gui>Použít</gui> a Convey nastavení zkontroluje a po té aktualizuje účet. "
+"<gui>Použít</gui> a Griabuntu Mail nastavení zkontroluje a po té aktualizuje účet. "
 "Upozorňujeme, že u účtů přidaných přes panel <app>Účty on-line</app> v "
 "<app>Nastaveních GNOME</app> nelze měnit jejich název, zabezpečení, "
 "přihlašovací jméno a heslo."
@@ -159,13 +160,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Convey "
+"The <gui>Save sent email on server</gui> checkbox controls whether Griabuntu Mail "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder. "
 "If de-selected, you will no be able to see any email messages you have sent, "
 "unless your server automatically saves them for you."
 msgstr ""
 "Zaškrtávací políčko <gui>Ukládat odeslané zprávy na serveru</gui> řídí, "
-"jestli Convey bude ukládat kopie zpráv, které odešly, do složky "
+"jestli Griabuntu Mail bude ukládat kopie zpráv, které odešly, do složky "
 "<gui>Odeslané</gui>. Pokud políčko není zaškrtnuté, nebudete si moci "
 "prohlížet zprávy, které jste odeslali, ledaže je automaticky ukládá server."
 
@@ -189,16 +190,16 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Convey, open the accounts editor and choose "
-"the account you wish to remove. Convey will display settings for the account. "
+"To remove an account added via Griabuntu Mail, open the accounts editor and choose "
+"the account you wish to remove. Griabuntu Mail will display settings for the account. "
 "Scroll to the bottom of the window and click <gui>Remove Account</gui>. You "
 "will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
 "<gui>Undo</gui> in the popup notification, or by typing <keyseq><key>Ctrl</"
 "key><key>U</key></keyseq>."
 msgstr ""
-"Když chcete odebrat účet přidaný přímo v Convey, otevřete editor účtů a "
-"zvolte účet, jenž si přejete odebrat. Convey zobrazí jeho nastavení. Posuňte "
+"Když chcete odebrat účet přidaný přímo v Griabuntu Mail, otevřete editor účtů a "
+"zvolte účet, jenž si přejete odebrat. Griabuntu Mail zobrazí jeho nastavení. Posuňte "
 "se do spodní části okna a zmáčkněte <gui>Odebrat účet</gui>."
 
 #. (itstool) path: page/title
@@ -209,13 +210,13 @@ msgstr "Archivování, vyhazování a mazání zpráv"
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Convey lets you archive messages if your server supports it. Clicking the "
+"Griabuntu Mail lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
 "email organised by moving old and replied-to email out of the way."
 msgstr ""
-"Convey vám dává možnost si zprávy archivovat, pokud to podporuje server. "
+"Griabuntu Mail vám dává možnost si zprávy archivovat, pokud to podporuje server. "
 "Kliknutím na tlačítko <gui style=\"button\">Archivovat</gui> na nástrojové "
 "liště přesunete konverzaci z aktuální složky do složky <gui>Archiv</gui> (u "
 "většiny poštovních služeb) nebo <gui>Všechny zprávy</gui> (GMAil). "
@@ -277,8 +278,8 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/bugs.page:10
-msgid "Need help with Convey?"
-msgstr "Potřebujete s Convey pomoct?"
+msgid "Need help with Griabuntu Mail?"
+msgstr "Potřebujete s Griabuntu Mail pomoct?"
 
 #. (itstool) path: section/title
 #: C/bugs.page:13
@@ -288,12 +289,12 @@ msgstr "Získání podpory"
 #. (itstool) path: section/p
 #: C/bugs.page:15
 msgid ""
-"If you are having trouble using Convey, please <link href=\"https://wiki."
+"If you are having trouble using Griabuntu Mail, please <link href=\"https://wiki."
 "gnome.org/Apps/Geary/Contact\">get in touch</link> with the Geary community "
 "about the problem."
 msgstr ""
 "Pokud máte s používáním Geary problémy, <link href=\"https://wiki.gnome.org/"
-"Apps/Convey/Contact\">dejte o tom prosím vědět</link> komunitě okolo Convey."
+"Apps/Griabuntu Mail/Contact\">dejte o tom prosím vědět</link> komunitě okolo GriabuntuMail."
 
 #. (itstool) path: section/title
 #: C/bugs.page:21
@@ -303,12 +304,12 @@ msgstr "Hlášení chyb"
 #. (itstool) path: section/p
 #: C/bugs.page:23
 msgid ""
-"If you suspect you have found a bug in Convey, please follow the <link href="
-"\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">bug reporting "
+"If you suspect you have found a bug in Griabuntu Mail, please follow the <link href="
+"\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">bug reporting "
 "guidelines</link> so the problem can be diagnosed and fixed."
 msgstr ""
-"Jestliže předpokládáte, že jste v Convey našli chybu, postupujte prosím podle "
-"<link href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">návodu k "
+"Jestliže předpokládáte, že jste v Griabuntu Mail našli chybu, postupujte prosím podle "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">návodu k "
 "hlášení chyb</link>, aby bylo možné problém diagnostikovat a opravit."
 
 #. (itstool) path: section/p
@@ -322,9 +323,9 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:32
-msgid "Convey version and installation method (Package? Flathub? Source code?)"
+msgid "Griabuntu Mail version and installation method (Package? Flathub? Source code?)"
 msgstr ""
-"Verze aplikace Convey a způsob její instalace (distribuční balíček, Flathub, "
+"Verze aplikace Griabuntu Mail a způsob její instalace (distribuční balíček, Flathub, "
 "zdrojový kód, …)"
 
 #. (itstool) path: item/p
@@ -361,69 +362,69 @@ msgstr "Co jste očekávali, že se má stát"
 #. (itstool) path: section/p
 #: C/bugs.page:44
 msgid ""
-"Log files can be accessed via the Convey Inspector, press <keyseq><key>Alt</"
+"Log files can be accessed via the Griabuntu Mail Inspector, press <keyseq><key>Alt</"
 "key><key>I</key></keyseq> to open it, select and save any relevant log "
 "files, and attach them to the bug report."
 msgstr ""
-"K souborům se záznamy se dostanete pomocí Inspektora Convey. Otevřete jej "
+"K souborům se záznamy se dostanete pomocí Inspektora GriabuntuMail. Otevřete jej "
 "zmáčknutím <keyseq><key>Alt</key><key>I</key></keyseq>, vyberte a uložte "
 "příslušný soubor se záznamy a připojte jej k hlášení chyby."
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Convey"
-msgstr "Přispívání do Convey"
+msgid "Contribute to Griabuntu Mail"
+msgstr "Přispívání do Griabuntu Mail"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Convey? There are a number of ways you can contribute:"
+"Want to help improve Griabuntu Mail? There are a number of ways you can contribute:"
 msgstr ""
-"Chcete pomáhat vylepšovat aplikaci Convey? Zde je několik způsobů, jak můžete "
+"Chcete pomáhat vylepšovat aplikaci Griabuntu Mail? Zde je několik způsobů, jak můžete "
 "přispět:"
 
 #. (itstool) path: item/p
 #: C/contributing.page:16
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">Bug "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Bug "
 "reporting</link>—report new bugs or request new features"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">Hlášení chyb</"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Hlášení chyb</"
 "link> — hlaste nové chyby nebo navrhujte novou funkcionalitu"
 
 #. (itstool) path: item/p
 #: C/contributing.page:19
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Translating</"
-"link>—translate Convey’s user interface and user manual into new languages"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Translating</"
+"link>—translate Griabuntu Mail’s user interface and user manual into new languages"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Překládání</"
-"link> — překládejte uživatelské rozhraní aplikace Convey a její uživatelskou "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Překládání</"
+"link> — překládejte uživatelské rozhraní aplikace Griabuntu Mail a její uživatelskou "
 "příručku do svého rodného jazyka"
 
 #. (itstool) path: item/p
 #: C/contributing.page:20
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Development\">Development</"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Development</"
 "link>—fix bugs and add new features"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Development\">Programátorský "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Programátorský "
 "vývoj</link> — opravujte chyby a přidávejte nové funkce"
 
 #. (itstool) path: page/p
 #: C/contributing.page:23
 msgid ""
-"See <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">the wiki</"
+"See <link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">the wiki</"
 "link> for more information and options for contributing financially to "
-"Convey's development."
+"Griabuntu Mail's development."
 msgstr ""
-"Více informací a možností finančního přispívání na vývoj Convey viz <link href="
-"\"https://wiki.gnome.org/Apps/Geary/Contribute\">wiki</link>"
+"Více informací a možností finančního přispívání na vývoj Griabuntu Mail viz <link href="
+"\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">wiki</link>"
 
 #. (itstool) path: page/title
 #: C/index.page:6
-msgid "<_:media-1/> <span>Convey</span>"
-msgstr "<_:media-1/> <span>Convey</span>"
+msgid "<_:media-1/> <span>Griabuntu Mail</span>"
+msgstr "<_:media-1/> <span>Griabuntu Mail</span>"
 
 #. (itstool) path: section/title
 #: C/index.page:12
@@ -432,8 +433,8 @@ msgstr "Úvod"
 
 #. (itstool) path: section/title
 #: C/index.page:16
-msgid "Using Convey"
-msgstr "Používání Convey"
+msgid "Using Griabuntu Mail"
+msgstr "Používání Griabuntu Mail"
 
 #. (itstool) path: section/title
 #: C/index.page:20
@@ -453,12 +454,12 @@ msgstr "Přidělení štítku konverzaci"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Convey lets you apply one or more <em>labels</em> to each conversation. Convey "
+"Griabuntu Mail lets you apply one or more <em>labels</em> to each conversation. Griabuntu Mail "
 "labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
-"Convey umožňuje každé konverzaci přidělit jeden nebo i více <em>štítků</em>. "
-"Štítky jsou u Convey to stejné jako štítky u Gmailu nebo běžné složky u "
+"Griabuntu Mail umožňuje každé konverzaci přidělit jeden nebo i více <em>štítků</em>. "
+"Štítky jsou u Griabuntu Mail to stejné jako štítky u Gmailu nebo běžné složky u "
 "jiných poštovních služeb."
 
 #. (itstool) path: section/p
@@ -530,28 +531,28 @@ msgstr "Omezení"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Convey is still in early development. Convey supports IMAP and has been tested "
+"Griabuntu Mail is still in early development. Griabuntu Mail supports IMAP and has been tested "
 "with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Convey may not yet work well with some IMAP "
-"servers. At this time Convey is still missing numerous features including "
+"for Outlook.com is provided. Griabuntu Mail may not yet work well with some IMAP "
+"servers. At this time Griabuntu Mail is still missing numerous features including "
 "offline mode."
 msgstr ""
-"Convey je prozatím ve stádiu ranného vývoje. Podporuje IMAP a byl testován "
+"Griabuntu Mail je prozatím ve stádiu ranného vývoje. Podporuje IMAP a byl testován "
 "vůči poštovním serverům Gmail, Yahoo a svobodnému Dovecotu. Pokusně je "
 "poskytována podpora pro Outlook.com. S některými jinými servery IMAP nemusí "
-"Convey pracovat úplně správně. V současnosti schází také řada různých funkcí, "
+"Griabuntu Mail pracovat úplně správně. V současnosti schází také řada různých funkcí, "
 "včetně práce při odpojení od sítě."
 
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Convey, "
+"To learn more about the features we're working on and the future of Griabuntu Mail, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
 "Jestli se chcete dozvědět více od funkcích, na kterých se pracuje a o "
 "budoucnosti Geary, navštivte <link href=\"https://wiki.gnome.org/Apps/Geary"
-"\">wikistránku</link> projektu Convey."
+"\">wikistránku</link> projektu GriabuntuMail."
 
 #. (itstool) path: page/title
 #. (itstool) path: section/title
@@ -562,11 +563,11 @@ msgstr "Přehled"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Convey is an email application built around conversations, for the GNOME 3 "
+"Griabuntu Mail is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Convey je e-mailová aplikace pro uživatelské prostředí GNOME, postavená na "
+"Griabuntu Mail je e-mailová aplikace pro uživatelské prostředí GNOME, postavená na "
 "konverzacích. Umožňuje číst, vyhledávat a posílat e-maily přímočarým "
 "způsobem a v moderním rozhraní."
 
@@ -582,10 +583,10 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Convey window is divided into several areas: The folder list, the "
+"The main Griabuntu Mail window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
-"Hlavní okno Convey je rozděleno na několik částí: seznam složek, seznam "
+"Hlavní okno Griabuntu Mail je rozděleno na několik částí: seznam složek, seznam "
 "konverzací a zobrazení konverzací."
 
 #. (itstool) path: section/title
@@ -597,11 +598,11 @@ msgstr "Seznam složek"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Convey uses the term <em>label</em> for any folder "
+"for your email accounts. Griabuntu Mail uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "<em>Seznam složek</em> zobrazuje všechny <em>složky</em> a <em>štítky</em> "
-"ve vašem poštovním účtu. Convey používá výraz <em>štítek</em> pro libovolnou "
+"ve vašem poštovním účtu. Griabuntu Mail používá výraz <em>štítek</em> pro libovolnou "
 "složku, kterou jste vytvořili za účelem roztřídění svých zpráv. "
 
 #. (itstool) path: section/p
@@ -631,38 +632,38 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Convey displays a count "
+"sender. If a conversation has more than one message, Griabuntu Mail displays a count "
 "of messages in the conversation."
 msgstr ""
 "Jméno každého odesilatele, od kterého máte nějakou nepřečtenou zprávu, se "
-"zobrazí tučně. Pokud je v konverzaci více než jedna zpráva, zobrazí Convey "
+"zobrazí tučně. Pokud je v konverzaci více než jedna zpráva, zobrazí Griabuntu Mail "
 "počet zpráv v konverzaci."
 
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Convey does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Convey "
+"Griabuntu Mail does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Griabuntu Mail "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Convey will fetch more messages "
+"simply scroll down the conversation list and Griabuntu Mail will fetch more messages "
 "automatically."
 msgstr ""
-"Convey automaticky nestahuje všechny zprávy ve všech vašich poštovních "
+"Griabuntu Mail automaticky nestahuje všechny zprávy ve všech vašich poštovních "
 "složkách. Když poprvé navštívíte svoji složku s doručenou poštou (nebo "
-"nějakou jinou), Convey stáhne nejnovější zprávy ve složce. Abyste viděli více "
+"nějakou jinou), Griabuntu Mail stáhne nejnovější zprávy ve složce. Abyste viděli více "
 "zpráv, stačí se v seznamu konverzace posouvat dolů a další zprávy se boudou "
 "automaticky získávat."
 
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Convey can act on a group of conversations. To select "
+"Some commands in Griabuntu Mail can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the "
 "last conversation."
 msgstr ""
-"Některé příkazy lze v Convey použít na skupinu konverzací. Abyste označili "
+"Některé příkazy lze v Griabuntu Mail použít na skupinu konverzací. Abyste označili "
 "více konverzací, držte zmáčknutou klávesu <key>Ctrl</key> a postupně v "
 "seznamu konverzací klikněte na každou konverzaci, kterou chcete vybrat. "
 "Případně můžete označit celý blok tak, že kliknete na první konverzaci, "
@@ -685,11 +686,11 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Convey collapses messages that you’ve already "
+"When you view a conversation, Griabuntu Mail collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
-"Když si zobrazíte konverzaci, Convey sbalí zprávy, které jste již četli. "
+"Když si zobrazíte konverzaci, Griabuntu Mail sbalí zprávy, které jste již četli. "
 "Kliknutím na sbalené zprávy je rozbalíte. Kliknutím na hlavičku rozbalené "
 "zprávy je sbalíte."
 
@@ -723,12 +724,12 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Convey will display the first starred message in a conversation "
+"starred, and Griabuntu Mail will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "Kliknutím na hvězdičku u jednotlivých zpráv je označíte, případně zrušíte "
 "jejich označení, jako s hvězdičkou. Zpráva s hvězdičkou způsobí, že je celá "
-"konverzace s hvězdičkou a při návratu do konverzace Convey zobrazí právě "
+"konverzace s hvězdičkou a při návratu do konverzace Griabuntu Mail zobrazí právě "
 "první zprávu s hvězdičkou."
 
 #. (itstool) path: section/p
@@ -762,13 +763,13 @@ msgstr "Předvolby"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Convey allows you to customise how it works via its <gui style=\"group"
+"Griabuntu Mail allows you to customise how it works via its <gui style=\"group"
 "\">Preferences</gui> window. To open the window, select <gui style=\"menuitem"
 "\">Preferences</gui> from the application menu on the main window's toolbar. "
 "You can change the following options:"
 msgstr ""
 "Pomocí okna <gui style=\"group\">Předvolby</gui> si můžete přizpůsobit, jak "
-"má pošťák Convey fungovat. <gui style=\"menuitem\">Předvolby</gui> otevřete "
+"má pošťák Griabuntu Mail fungovat. <gui style=\"menuitem\">Předvolby</gui> otevřete "
 "pomocí nabídky aplikace v záhlavní liště. Měnit můžete následující věci:"
 
 #. (itstool) path: item/title
@@ -779,12 +780,12 @@ msgstr "<gui>Automaticky vybrat další zprávu</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Convey automatically selects the latest message "
+"When this option is enabled, Griabuntu Mail automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Convey automatically selects an adjacent message."
+"message, Griabuntu Mail automatically selects an adjacent message."
 msgstr ""
-"Když je tato volba zapnutá, Convey, po té co vstoupíte do složky, automaticky "
-"vybere nejnovější zprávu. Navíc po archivaci zprávy, vybere Convey "
+"Když je tato volba zapnutá, Griabuntu Mail, po té co vstoupíte do složky, automaticky "
+"vybere nejnovější zprávu. Navíc po archivaci zprávy, vybere Griabuntu Mail "
 "automaticky sousední zprávu."
 
 #. (itstool) path: item/title
@@ -841,11 +842,11 @@ msgstr "<gui>Sledovat novou poštu při zavřené aplikaci</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:45
 msgid ""
-"Convey will watch your accounts for new mail even when the main window is not "
+"Griabuntu Mail will watch your accounts for new mail even when the main window is not "
 "open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
-"Convey bude sledovat vaše účty ohledně nové pošty, i když není otevřeno "
+"Griabuntu Mail bude sledovat vaše účty ohledně nové pošty, i když není otevřeno "
 "hlavní okno. Aby to mohl dělat, bude tiše spuštěn jakmile se přihlásíte k "
 "počítači a bude pokračovat v běhu i po té, co zavřete všechna okna."
 
@@ -857,12 +858,12 @@ msgstr "Hledání"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Convey supports a per-account full text search. To start a search, select a "
+"Griabuntu Mail supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) and start typing. Results will appear after a brief delay."
 msgstr ""
-"Convey podporuje vyhledávání v úplně všech textech v jednotlivých účtech. "
+"Griabuntu Mail podporuje vyhledávání v úplně všech textech v jednotlivých účtech. "
 "Když chcete vyhledávat, vyberte složku patřící k účtu, ve kterém si přejete "
 "hledat. Pak klikněte na vyhledávací pole na nástrojové liště (nebo zmáčkněte "
 "<keyseq><key>Ctrl</key><key>S</key></keyseq>) a začněte psát. Po chvilce se "
@@ -880,12 +881,12 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Convey "
+"Keywords that match your search are highlighted in the message view. Griabuntu Mail "
 "will match different forms of the same word, for example searching for \"walk"
 "\" will also match \"walking\" and \"walked.\""
 msgstr ""
 "Klíčová slova, která vyhovují vašemu hledání, se v zobrazení zprávy "
-"zvýrazní. Convey umí rozpoznat i různé varianty téhož slova, například při "
+"zvýrazní. Griabuntu Mail umí rozpoznat i různé varianty téhož slova, například při "
 "hledání „oběd“ bude vyhovovat i „obědvat“ a „obědový“."
 
 #. (itstool) path: section/title
@@ -895,8 +896,8 @@ msgstr "Operátory vyhledávání"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Convey supports the following operators to limit the scope of searches:"
-msgstr "Convey podporuje následující operátory omezující rozsah vyhledávání:"
+msgid "Griabuntu Mail supports the following operators to limit the scope of searches:"
+msgstr "Griabuntu Mail podporuje následující operátory omezující rozsah vyhledávání:"
 
 #. (itstool) path: td/p
 #: C/search.page:27
@@ -1030,12 +1031,12 @@ msgstr "Klávesové zkratky"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Convey has keyboard shortcuts for most common operations. Use the built-in "
+"Griabuntu Mail has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the "
 "main window's toolbar, or using the keyboard shortcuts listed below."
 msgstr ""
-"Convey má pro nejpoužívanější operace klávesové zkratky. Jejich seznam "
+"Griabuntu Mail má pro nejpoužívanější operace klávesové zkratky. Jejich seznam "
 "najdete v zabudované nápovědě. Tu otevřete pomocí <gui style=\"menuitem\">"
 "Klávesové zkratky</gui> v nabídce aplikace na nástrojové liště hlavního okna, "
 "nebo pomocí níže uvedené klávesové zkratky."
@@ -1044,10 +1045,10 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Convey:"
+"Griabuntu Mail:"
 msgstr ""
 "Následující klávesové zkratky můžete použít pro přístup k nápovědě on-line z "
-"aplikace Convey:"
+"aplikace Griabuntu Mail:"
 
 #. (itstool) path: td/p
 #: C/shortcuts.page:24
@@ -1134,11 +1135,11 @@ msgstr "Označování zpráv, jako přečtené nebo nepřečtené"
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Convey marks messages as read automatically as you read them. To manually "
+"Griabuntu Mail marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
-"Convey označuje zprávy automaticky jako přečtené, když si je přečtete. Když "
+"Griabuntu Mail označuje zprávy automaticky jako přečtené, když si je přečtete. Když "
 "chcete zprávu jako přečtenou či nepřečtenou označit ručně, klikněte na ikonu "
 "kolečka v seznamu konverzace."
 
@@ -1200,13 +1201,13 @@ msgstr "Zrušení odesílání"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Convey will wait 5 seconds before delivering the "
+"When sending an email, Griabuntu Mail will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui style=\"button"
 "\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
 "more changes to it."
 msgstr ""
-"Při odesílání e-mailu Convey čeká 5 sekund před tím, než zprávu skutečně "
+"Při odesílání e-mailu Griabuntu Mail čeká 5 sekund před tím, než zprávu skutečně "
 "doručí. Během této doby máte šanci odeslání zastavit kliknutím na <gui style="
 "\"button\">Zpět</gui> ve vyskakovacím upozornění, které se objeví, nebo "
 "zmáčknutím <keyseq><key>Ctrl</key><key>Z</key></keyseq>. Zpráva se znovu "
@@ -1235,12 +1236,12 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/write.page:41
 msgid ""
-"When entering an email address into any of these fields, Convey will provide "
+"When entering an email address into any of these fields, Griabuntu Mail will provide "
 "suggestions from your desktop address book and from previously sent and "
 "received email messages. To choose one of these suggestions, simply click on "
 "it."
 msgstr ""
-"Když zadáváte e-mailovou adresu do některého z těchto polí, Convey vám bude "
+"Když zadáváte e-mailovou adresu do některého z těchto polí, Griabuntu Mail vám bude "
 "nabízet návrhy z vašeho adresáře a z dříve odeslaných a přijatých e-mailových "
 "zpráv. Pokud se pro některý z návrhů rozhodnete, stačí na něj kliknout."
 
@@ -1293,12 +1294,12 @@ msgstr "Formátování textu, obrázky a přílohy"
 #. (itstool) path: section/p
 #: C/write.page:68
 msgid ""
-"Convey's email composer lets you use text styles such as <em>bold</em> and "
+"Griabuntu Mail's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it, and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar "
 "at the bottom of the composer area."
 msgstr ""
-"V Convey v editoru zpráv můžete používat různé styly textu, jako <em>tučný"
+"V Griabuntu Mail v editoru zpráv můžete používat různé styly textu, jako <em>tučný"
 "</em> nebo <em>kurzíva</em>, odsazení citací a odkazy na webové stránky. "
 "Stačí text vybrat a pak kliknout na příslušné tlačítko na nástrojové liště v "
 "dolní části editoru."
@@ -1376,12 +1377,12 @@ msgstr "Kontrola pravopisu"
 #. (itstool) path: section/p
 #: C/write.page:106
 msgid ""
-"Convey supports spell-checking your composed email in one or more languages, "
+"Griabuntu Mail supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
 msgstr ""
-"Convey podporuje kontrolu pravopisu během psaní e-mailu v jednom či více "
+"Griabuntu Mail podporuje kontrolu pravopisu během psaní e-mailu v jednom či více "
 "jazycích. Když ji chcete zapnout, nejprve si ověřte, že máte v počítači "
 "nainstalované slovníky pro kontrolu pravopisu v požadovaných jazycích. Pokud "
 "je nemáte, najdete v nápovědě svého systému, jak slovníky nainstalovat."
@@ -1413,7 +1414,7 @@ msgstr "Ukládání konceptů a obnovování zahozených zpráv"
 #. (itstool) path: section/p
 #: C/write.page:125
 msgid ""
-"For mail servers that support drafts, Convey will automatically save the "
+"For mail servers that support drafts, Griabuntu Mail will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
 "Na poštovních serverech, které podporují koncepty, ukládá Gerary zprávy "
@@ -1432,8 +1433,8 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:133
-msgid "Convey will delete the draft when you send the message."
-msgstr "Po odeslání zprávy Convey koncept smaže."
+msgid "Griabuntu Mail will delete the draft when you send the message."
+msgstr "Po odeslání zprávy Griabuntu Mail koncept smaže."
 
 #. (itstool) path: note/p
 #: C/write.page:136
@@ -1459,18 +1460,18 @@ msgstr "Čistě textové zprávy"
 #. (itstool) path: section/p
 #: C/write.page:148
 msgid ""
-"Convey can also send plain text messages. Press the <gui style=\"button"
+"Griabuntu Mail can also send plain text messages. Press the <gui style=\"button"
 "\">More options</gui> button at the end of the bottom toolbar, then choose "
 "\"Rich Text\" or \"Plain Text\". Plain text mode is useful when sending "
 "email to mailing lists that prohibit rich text (HTML) messages, or when "
-"sending email to people that do no use modern clients like Convey."
+"sending email to people that do no use modern clients like GriabuntuMail."
 msgstr ""
-"Convey může odesílat také zprávy v podobě prostého textu. Zmáčkněte tlačítko "
+"Griabuntu Mail může odesílat také zprávy v podobě prostého textu. Zmáčkněte tlačítko "
 "<gui style=\"button\">Další volby</gui> na konci dolní nástrojové lišty a pak "
 "si vyberte mezi „Formátovaným textem“ nebo „Prostým textem“. Prostý text se "
 "hodí, když posíláte e-mail do poštovní konference, které často zprávy s "
 "formátovaným textem (HTML) zakazují, nebo když posíláte zprávy lidem, kteří "
-"nemají takový moderní poštovní program, jako je Convey."
+"nemají takový moderní poštovní program, jako je GriabuntuMail."
 
 #. (itstool) path: section/p
 #: C/write.page:155

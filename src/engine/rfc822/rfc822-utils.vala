@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2021 Michael Gratton <mike@vee.net>
@@ -9,7 +10,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-namespace Convey.RFC822.Utils {
+namespace GriabuntuMail.RFC822.Utils {
 
     // We use DEL to mark quote levels, since it's unlikely to be in
     // email bodies, is a single byte in UTF-8, and is unmolested by
@@ -222,7 +223,7 @@ namespace Convey.RFC822.Utils {
             bool in_inline_pgp_header = false;
             foreach (string line in all_lines) {
                 if (in_inline_pgp_header) {
-                    if (Convey.String.is_empty(line)) {
+                    if (GriabuntuMail.String.is_empty(line)) {
                         in_inline_pgp_header = false;
                     }
                     continue;
@@ -245,7 +246,7 @@ namespace Convey.RFC822.Utils {
                 if (line.has_prefix("~~~~"))
                     continue;
 
-                if (Convey.String.is_empty_or_whitespace(line)) {
+                if (GriabuntuMail.String.is_empty_or_whitespace(line)) {
                     buf.append("\n");
                     continue;
                 }
@@ -256,13 +257,13 @@ namespace Convey.RFC822.Utils {
 
             preview = buf.str;
         } else if (format == TextFormat.HTML) {
-            preview = Convey.HTML.html_to_text(text, false);
+            preview = GriabuntuMail.HTML.html_to_text(text, false);
         }
 
         // Call make_valid here to avoid segfaults in the regex
         // engine on invalid char data. See issue #186 for the
         // proper fix.
-        return Convey.String.reduce_whitespace(preview.make_valid());
+        return GriabuntuMail.String.reduce_whitespace(preview.make_valid());
     }
 
     /**

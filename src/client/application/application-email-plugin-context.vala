@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -11,7 +12,7 @@
  * Implementation of the email plugin extension context.
  */
 internal class Application.EmailPluginContext :
-    Convey.BaseObject, Plugin.EmailContext {
+    GriabuntuMail.BaseObject, Plugin.EmailContext {
 
 
     private unowned Client application;
@@ -39,7 +40,7 @@ internal class Application.EmailPluginContext :
     public void add_email_info_bar(Plugin.EmailIdentifier displayed,
                                     Plugin.InfoBar info_bar,
                                     uint priority) {
-        Convey.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
+        GriabuntuMail.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
         if (id != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.conversation_viewer.current_list != null) {
@@ -59,7 +60,7 @@ internal class Application.EmailPluginContext :
 
     public void remove_email_info_bar(Plugin.EmailIdentifier displayed,
                                       Plugin.InfoBar info_bar) {
-        Convey.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
+        GriabuntuMail.EmailIdentifier? id = this.globals.email.to_engine_id(displayed);
         if (id != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.conversation_viewer.current_list != null) {
@@ -76,8 +77,8 @@ internal class Application.EmailPluginContext :
         }
     }
 
-    internal void email_displayed(Convey.AccountInformation account,
-                                  Convey.Email email) {
+    internal void email_displayed(GriabuntuMail.AccountInformation account,
+                                  GriabuntuMail.Email email) {
         AccountContext? context =
             this.application.controller.get_context_for_account(account);
         if (context != null) {
@@ -87,8 +88,8 @@ internal class Application.EmailPluginContext :
         }
     }
 
-    internal void email_sent(Convey.AccountInformation account,
-                             Convey.Email email) {
+    internal void email_sent(GriabuntuMail.AccountInformation account,
+                             GriabuntuMail.Email email) {
         AccountContext? context =
             this.application.controller.get_context_for_account(account);
         if (context != null) {

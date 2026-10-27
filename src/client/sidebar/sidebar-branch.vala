@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -8,7 +9,7 @@
 
 public delegate bool Locator<G>(G item);
 
-public class Sidebar.Branch : Convey.BaseObject {
+public class Sidebar.Branch : GriabuntuMail.BaseObject {
     [Flags]
     public enum Options {
         NONE = 0,

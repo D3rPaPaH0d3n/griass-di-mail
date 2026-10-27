@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -7,10 +8,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.Account : Convey.Account,
-    Convey.AccountSupport.QueueSend {
+internal class GriabuntuMail.Graph.Account : GriabuntuMail.Account,
+    GriabuntuMail.AccountSupport.QueueSend {
 
-    private const string REMOTE_ROOT_LABEL = "$convey-graph";
+    private const string REMOTE_ROOT_LABEL = "$griabuntu-mail-graph";
     private const uint POLL_INTERVAL_SEC = 30;
     // Every Nth poll tick runs a full sync instead of the fast poll: the
     // folder list is re-synced and all folders are refreshed, not just the
@@ -53,23 +54,23 @@ internal class Convey.Graph.Account : Convey.Account,
         "sync issues",
     };
 
-    private Convey.FolderRoot remote_folder_root =
-        new Convey.FolderRoot(REMOTE_ROOT_LABEL, false);
-    private Gee.TreeMap<Convey.FolderPath,Convey.Folder> remote_folders =
-        new Gee.TreeMap<Convey.FolderPath,Convey.Folder>((a, b) => a.compare_to(b));
-    private Gee.TreeMap<Convey.FolderPath,Convey.Folder> local_folders =
-        new Gee.TreeMap<Convey.FolderPath,Convey.Folder>((a, b) => a.compare_to(b));
-    private Gee.HashMap<Convey.Folder.SpecialUse,Convey.Graph.Folder> special_folders =
-        new Gee.HashMap<Convey.Folder.SpecialUse,Convey.Graph.Folder>();
+    private GriabuntuMail.FolderRoot remote_folder_root =
+        new GriabuntuMail.FolderRoot(REMOTE_ROOT_LABEL, false);
+    private Gee.TreeMap<GriabuntuMail.FolderPath,GriabuntuMail.Folder> remote_folders =
+        new Gee.TreeMap<GriabuntuMail.FolderPath,GriabuntuMail.Folder>((a, b) => a.compare_to(b));
+    private Gee.TreeMap<GriabuntuMail.FolderPath,GriabuntuMail.Folder> local_folders =
+        new Gee.TreeMap<GriabuntuMail.FolderPath,GriabuntuMail.Folder>((a, b) => a.compare_to(b));
+    private Gee.HashMap<GriabuntuMail.Folder.SpecialUse,GriabuntuMail.Graph.Folder> special_folders =
+        new Gee.HashMap<GriabuntuMail.Folder.SpecialUse,GriabuntuMail.Graph.Folder>();
 
-    private Gee.ArrayList<Convey.Folder> get_remote_folder_snapshot() {
-        Gee.ArrayList<Convey.Folder> folders = new Gee.ArrayList<Convey.Folder>();
+    private Gee.ArrayList<GriabuntuMail.Folder> get_remote_folder_snapshot() {
+        Gee.ArrayList<GriabuntuMail.Folder> folders = new Gee.ArrayList<GriabuntuMail.Folder>();
         folders.add_all(this.remote_folders.values);
         return folders;
     }
 
-    private Convey.Graph.Client client;
-    private Convey.TimeoutManager poll_timer;
+    private GriabuntuMail.Graph.Client client;
+    private GriabuntuMail.TimeoutManager poll_timer;
     private uint poll_tick = 0;
     private uint poll_stride = 1;
     private bool screen_locked = false;
@@ -79,36 +80,36 @@ internal class Convey.Graph.Account : Convey.Account,
     private bool is_account_open = false;
     private bool prefetch_refresh_running = false;
     private bool prefetch_refresh_pending = false;
-    private Convey.App.SearchFolder? starred_folder = null;
+    private GriabuntuMail.App.SearchFolder? starred_folder = null;
 
 
-    public Account(Convey.AccountInformation information,
-                   Convey.Endpoint incoming_remote,
-                   Convey.Endpoint outgoing_remote) {
+    public Account(GriabuntuMail.AccountInformation information,
+                   GriabuntuMail.Endpoint incoming_remote,
+                   GriabuntuMail.Endpoint outgoing_remote) {
         base(
             information,
-            new Convey.Graph.Service(information, information.incoming, incoming_remote),
-            new Convey.Graph.Service(information, information.outgoing, outgoing_remote)
+            new GriabuntuMail.Graph.Service(information, information.incoming, incoming_remote),
+            new GriabuntuMail.Graph.Service(information, information.outgoing, outgoing_remote)
         );
-        this.contact_store = new Convey.Graph.SentContactStore(this);
-        this.background_progress = new Convey.ReentrantProgressMonitor(
-            Convey.ProgressType.ACTIVITY
+        this.contact_store = new GriabuntuMail.Graph.SentContactStore(this);
+        this.background_progress = new GriabuntuMail.ReentrantProgressMonitor(
+            GriabuntuMail.ProgressType.ACTIVITY
         );
-        this.db_upgrade_monitor = new Convey.ReentrantProgressMonitor(
-            Convey.ProgressType.ACTIVITY
+        this.db_upgrade_monitor = new GriabuntuMail.ReentrantProgressMonitor(
+            GriabuntuMail.ProgressType.ACTIVITY
         );
-        this.db_vacuum_monitor = new Convey.ReentrantProgressMonitor(
-            Convey.ProgressType.ACTIVITY
+        this.db_vacuum_monitor = new GriabuntuMail.ReentrantProgressMonitor(
+            GriabuntuMail.ProgressType.ACTIVITY
         );
-        this.client = new Convey.Graph.Client(information);
+        this.client = new GriabuntuMail.Graph.Client(information);
         this.client.response_received.connect(
-            ((Convey.Graph.Service) this.incoming).notify_response_received
+            ((GriabuntuMail.Graph.Service) this.incoming).notify_response_received
         );
-        this.poll_timer = new Convey.TimeoutManager.seconds(
+        this.poll_timer = new GriabuntuMail.TimeoutManager.seconds(
             POLL_INTERVAL_SEC,
             on_poll_tick
         );
-        this.poll_timer.repetition = Convey.TimeoutManager.Repeat.FOREVER;
+        this.poll_timer.repetition = GriabuntuMail.TimeoutManager.Repeat.FOREVER;
         this.poll_timer.start();
         this.information.notify["prefetch-period-days"].connect((obj, pspec) => {
             queue_prefetch_refresh();
@@ -116,25 +117,25 @@ internal class Convey.Graph.Account : Convey.Account,
 
         this.notify["local-starred-folder"].connect(() => register_starred_folder());
 
-        add_folder("Inbox", "inbox", Convey.Folder.SpecialUse.INBOX);
-        add_folder("Sent", "sentitems", Convey.Folder.SpecialUse.SENT);
-        add_folder("Drafts", "drafts", Convey.Folder.SpecialUse.DRAFTS);
-        add_folder("Trash", "deleteditems", Convey.Folder.SpecialUse.TRASH);
-        add_folder("Junk", "junkemail", Convey.Folder.SpecialUse.JUNK);
-        add_folder("Archive", "archive", Convey.Folder.SpecialUse.ARCHIVE);
-        add_folder("Outbox", "outbox", Convey.Folder.SpecialUse.OUTBOX);
+        add_folder("Inbox", "inbox", GriabuntuMail.Folder.SpecialUse.INBOX);
+        add_folder("Sent", "sentitems", GriabuntuMail.Folder.SpecialUse.SENT);
+        add_folder("Drafts", "drafts", GriabuntuMail.Folder.SpecialUse.DRAFTS);
+        add_folder("Trash", "deleteditems", GriabuntuMail.Folder.SpecialUse.TRASH);
+        add_folder("Junk", "junkemail", GriabuntuMail.Folder.SpecialUse.JUNK);
+        add_folder("Archive", "archive", GriabuntuMail.Folder.SpecialUse.ARCHIVE);
+        add_folder("Outbox", "outbox", GriabuntuMail.Folder.SpecialUse.OUTBOX);
     }
 
     private void register_starred_folder() throws GLib.Error {
         if (this.local_starred_folder && this.starred_folder == null) {
-            this.starred_folder = new Convey.App.SearchFolder(
+            this.starred_folder = new GriabuntuMail.App.SearchFolder(
                 this,
                 this.local_folder_root,
-                Convey.App.SearchFolder.STARRED_BASENAME,
-                Convey.Folder.SpecialUse.FLAGGED
+                GriabuntuMail.App.SearchFolder.STARRED_BASENAME,
+                GriabuntuMail.Folder.SpecialUse.FLAGGED
             );
-            var terms = new Gee.ArrayList<Convey.SearchQuery.Term>();
-            terms.add(new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.FLAGGED));
+            var terms = new Gee.ArrayList<GriabuntuMail.SearchQuery.Term>();
+            terms.add(new GriabuntuMail.SearchQuery.EmailFlagTerm(GriabuntuMail.EmailFlags.FLAGGED));
             this.starred_folder.update_query(new_search_query(terms, "is:starred"));
             register_local_folder(this.starred_folder);
         } else if (!this.local_starred_folder && this.starred_folder != null) {
@@ -174,22 +175,22 @@ internal class Convey.Graph.Account : Convey.Account,
             }
         });
         notify_opened();
-        Convey.Graph.Folder? inbox =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.INBOX);
+        GriabuntuMail.Graph.Folder? inbox =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.INBOX);
         if (inbox != null) {
             inbox.load_persisted_cache();
         }
         // Load Junk as well so its unread counter is available without
         // manually opening the folder.
-        Convey.Graph.Folder? junk =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.JUNK);
+        GriabuntuMail.Graph.Folder? junk =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.JUNK);
         if (junk != null) {
             junk.load_persisted_cache();
         }
         // Load Sent so conversation threading can see our own replies
         // without the folder ever being opened.
-        Convey.Graph.Folder? sent =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.SENT);
+        GriabuntuMail.Graph.Folder? sent =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.SENT);
         if (sent != null) {
             sent.load_persisted_cache();
         }
@@ -203,8 +204,8 @@ internal class Convey.Graph.Account : Convey.Account,
             return;
         }
 
-        foreach (Convey.Folder folder in list_folders()) {
-            if (folder.get_open_state() != Convey.Folder.OpenState.CLOSED) {
+        foreach (GriabuntuMail.Folder folder in list_folders()) {
+            if (folder.get_open_state() != GriabuntuMail.Folder.OpenState.CLOSED) {
                 yield folder.close_async(cancellable);
             }
         }
@@ -283,13 +284,13 @@ internal class Convey.Graph.Account : Convey.Account,
         throws GLib.Error {
     }
 
-    public override Convey.EmailIdentifier to_email_identifier(GLib.Variant serialised)
-        throws Convey.EngineError.BAD_PARAMETERS {
-        return new Convey.Graph.EmailIdentifier.from_variant(serialised);
+    public override GriabuntuMail.EmailIdentifier to_email_identifier(GLib.Variant serialised)
+        throws GriabuntuMail.EngineError.BAD_PARAMETERS {
+        return new GriabuntuMail.Graph.EmailIdentifier.from_variant(serialised);
     }
 
-    public override Convey.FolderPath to_folder_path(GLib.Variant serialised)
-        throws Convey.EngineError.BAD_PARAMETERS {
+    public override GriabuntuMail.FolderPath to_folder_path(GLib.Variant serialised)
+        throws GriabuntuMail.EngineError.BAD_PARAMETERS {
         string root = serialised.get_child_value(0).get_string();
         if (root == this.local_folder_root.label) {
             return this.local_folder_root.from_variant(serialised);
@@ -297,43 +298,43 @@ internal class Convey.Graph.Account : Convey.Account,
         if (root == this.remote_folder_root.label) {
             return this.remote_folder_root.from_variant(serialised);
         }
-        throw new Convey.EngineError.BAD_PARAMETERS(
+        throw new GriabuntuMail.EngineError.BAD_PARAMETERS(
             "Invalid serialised folder root label: %s", root
         );
     }
 
-    public override Convey.Folder get_folder(Convey.FolderPath path)
-        throws Convey.EngineError.NOT_FOUND {
-        Convey.Folder? folder = this.remote_folders.get(path);
+    public override GriabuntuMail.Folder get_folder(GriabuntuMail.FolderPath path)
+        throws GriabuntuMail.EngineError.NOT_FOUND {
+        GriabuntuMail.Folder? folder = this.remote_folders.get(path);
         if (folder == null) {
             folder = this.local_folders.get(path);
         }
         if (folder == null) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "Unknown folder: %s", path.to_string()
             );
         }
         return folder;
     }
 
-    public override Gee.Collection<Convey.Folder> list_folders() {
-        Gee.ArrayList<Convey.Folder> folders = get_remote_folder_snapshot();
+    public override Gee.Collection<GriabuntuMail.Folder> list_folders() {
+        Gee.ArrayList<GriabuntuMail.Folder> folders = get_remote_folder_snapshot();
         folders.add_all(this.local_folders.values);
         return folders.read_only_view;
     }
 
-    public override Gee.Collection<Convey.Folder> list_matching_folders(Convey.FolderPath? parent)
-        throws Convey.EngineError.NOT_FOUND {
+    public override Gee.Collection<GriabuntuMail.Folder> list_matching_folders(GriabuntuMail.FolderPath? parent)
+        throws GriabuntuMail.EngineError.NOT_FOUND {
         if (parent == null) {
             return list_folders();
         }
         if (!this.remote_folders.has_key(parent) && !this.local_folders.has_key(parent)) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "Unknown parent folder: %s", parent.to_string()
             );
         }
-        Gee.ArrayList<Convey.Folder> matched = new Gee.ArrayList<Convey.Folder>();
-        foreach (Convey.Folder folder in list_folders()) {
+        Gee.ArrayList<GriabuntuMail.Folder> matched = new Gee.ArrayList<GriabuntuMail.Folder>();
+        foreach (GriabuntuMail.Folder folder in list_folders()) {
             if (folder.path != parent && folder.path.is_descendant(parent)) {
                 matched.add(folder);
             }
@@ -341,58 +342,58 @@ internal class Convey.Graph.Account : Convey.Account,
         return matched.read_only_view;
     }
 
-    public override async Convey.Folder get_required_special_folder_async(
-        Convey.Folder.SpecialUse special,
+    public override async GriabuntuMail.Folder get_required_special_folder_async(
+        GriabuntuMail.Folder.SpecialUse special,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Convey.Graph.Folder? folder = this.special_folders.get(special);
+        GriabuntuMail.Graph.Folder? folder = this.special_folders.get(special);
         if (folder == null) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "No Graph folder for special use: %s",
-                Convey.ObjectUtils.to_enum_nick(typeof(Convey.Folder.SpecialUse), special)
+                GriabuntuMail.ObjectUtils.to_enum_nick(typeof(GriabuntuMail.Folder.SpecialUse), special)
             );
         }
         return folder;
     }
 
-    public override async Convey.Folder create_personal_folder(
+    public override async GriabuntuMail.Folder create_personal_folder(
         string name,
-        Convey.Folder.SpecialUse use = Convey.Folder.SpecialUse.NONE,
+        GriabuntuMail.Folder.SpecialUse use = GriabuntuMail.Folder.SpecialUse.NONE,
         GLib.Cancellable? cancellable = null,
-        Convey.Folder? parent = null
+        GriabuntuMail.Folder? parent = null
     ) throws GLib.Error {
         if (!this.is_account_open) {
-            throw new Convey.EngineError.OPEN_REQUIRED("Account not open");
+            throw new GriabuntuMail.EngineError.OPEN_REQUIRED("Account not open");
         }
-        if (use != Convey.Folder.SpecialUse.NONE) {
-            throw new Convey.EngineError.UNSUPPORTED(
+        if (use != GriabuntuMail.Folder.SpecialUse.NONE) {
+            throw new GriabuntuMail.EngineError.UNSUPPORTED(
                 "Setting special-use on create is not supported for Graph accounts"
             );
         }
-        Convey.Graph.Folder? graph_parent = parent as Convey.Graph.Folder;
+        GriabuntuMail.Graph.Folder? graph_parent = parent as GriabuntuMail.Graph.Folder;
         if (parent != null && graph_parent == null) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "Parent folder is not a Graph folder"
             );
         }
-        Convey.FolderPath parent_path = (graph_parent != null)
+        GriabuntuMail.FolderPath parent_path = (graph_parent != null)
             ? graph_parent.path
             : this.remote_folder_root;
-        Convey.Graph.Client.MailFolder created =
+        GriabuntuMail.Graph.Client.MailFolder created =
             yield this.client.create_mail_folder(
                 name,
                 (graph_parent != null) ? graph_parent.graph_folder_id : null,
                 cancellable
             );
-        Convey.FolderPath path = parent_path.get_child(created.display_name);
-        Convey.Graph.Folder? existing = this.remote_folders.get(path) as Convey.Graph.Folder;
+        GriabuntuMail.FolderPath path = parent_path.get_child(created.display_name);
+        GriabuntuMail.Graph.Folder? existing = this.remote_folders.get(path) as GriabuntuMail.Graph.Folder;
         if (existing != null) {
             return existing;
         }
-        Convey.Graph.Folder folder = add_folder(
+        GriabuntuMail.Graph.Folder folder = add_folder(
             created.display_name,
             created.id,
-            Convey.Folder.SpecialUse.NONE,
+            GriabuntuMail.Folder.SpecialUse.NONE,
             parent_path
         );
         notify_folders_available_unavailable(
@@ -403,35 +404,35 @@ internal class Convey.Graph.Account : Convey.Account,
         return folder;
     }
 
-    public override async void delete_folder(Convey.Folder folder,
+    public override async void delete_folder(GriabuntuMail.Folder folder,
                                              GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        Convey.Graph.Folder target = check_folder_is_mutable(folder);
+        GriabuntuMail.Graph.Folder target = check_folder_is_mutable(folder);
         yield this.client.delete_mail_folder(target.graph_folder_id, cancellable);
         remove_folder(target.path);
     }
 
-    public override async Convey.Folder rename_folder(Convey.Folder folder,
+    public override async GriabuntuMail.Folder rename_folder(GriabuntuMail.Folder folder,
                                                       string new_name,
                                                       GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        Convey.Graph.Folder target = check_folder_is_mutable(folder);
-        Convey.FolderPath path = this.remote_folder_root.get_child(new_name);
+        GriabuntuMail.Graph.Folder target = check_folder_is_mutable(folder);
+        GriabuntuMail.FolderPath path = this.remote_folder_root.get_child(new_name);
         if (this.remote_folders.has_key(path)) {
-            throw new Convey.EngineError.ALREADY_EXISTS(
+            throw new GriabuntuMail.EngineError.ALREADY_EXISTS(
                 "Folder already exists: %s", path.to_string()
             );
         }
 
-        Convey.Graph.Client.MailFolder renamed = yield this.client.rename_mail_folder(
+        GriabuntuMail.Graph.Client.MailFolder renamed = yield this.client.rename_mail_folder(
             target.graph_folder_id, new_name, cancellable
         );
 
         remove_folder(target.path);
-        Convey.Graph.Folder created = add_folder(
+        GriabuntuMail.Graph.Folder created = add_folder(
             renamed.display_name,
             renamed.id,
-            Convey.Folder.SpecialUse.NONE
+            GriabuntuMail.Folder.SpecialUse.NONE
         );
         notify_folders_available_unavailable(
             sort_by_path(Collection.single(created)),
@@ -444,36 +445,36 @@ internal class Convey.Graph.Account : Convey.Account,
     /**
      * Returns the folder unless it is special-use or not ours.
      */
-    private Convey.Graph.Folder check_folder_is_mutable(Convey.Folder folder)
+    private GriabuntuMail.Graph.Folder check_folder_is_mutable(GriabuntuMail.Folder folder)
         throws GLib.Error {
         if (!this.is_account_open) {
-            throw new Convey.EngineError.OPEN_REQUIRED("Account not open");
+            throw new GriabuntuMail.EngineError.OPEN_REQUIRED("Account not open");
         }
-        Convey.Graph.Folder? target =
-            this.remote_folders.get(folder.path) as Convey.Graph.Folder;
+        GriabuntuMail.Graph.Folder? target =
+            this.remote_folders.get(folder.path) as GriabuntuMail.Graph.Folder;
         if (target == null || target != folder) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "Not a remote folder for this account: %s", folder.path.to_string()
             );
         }
-        if (target.used_as != Convey.Folder.SpecialUse.NONE) {
-            throw new Convey.EngineError.UNSUPPORTED(
+        if (target.used_as != GriabuntuMail.Folder.SpecialUse.NONE) {
+            throw new GriabuntuMail.EngineError.UNSUPPORTED(
                 "Cannot modify special folder: %s", folder.path.to_string()
             );
         }
         return target;
     }
 
-    public override void register_local_folder(Convey.Folder local)
+    public override void register_local_folder(GriabuntuMail.Folder local)
         throws GLib.Error {
-        Convey.FolderPath path = local.path;
+        GriabuntuMail.FolderPath path = local.path;
         if (this.local_folders.has_key(path)) {
-            throw new Convey.EngineError.ALREADY_EXISTS(
+            throw new GriabuntuMail.EngineError.ALREADY_EXISTS(
                 "Folder already registered: %s", path.to_string()
             );
         }
         if (!this.local_folder_root.is_descendant(path)) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "Not a descendant of local folder root: %s", path.to_string()
             );
         }
@@ -481,11 +482,11 @@ internal class Convey.Graph.Account : Convey.Account,
         notify_folders_available_unavailable(sort_by_path(Collection.single(local)), null);
     }
 
-    public override void deregister_local_folder(Convey.Folder local)
+    public override void deregister_local_folder(GriabuntuMail.Folder local)
         throws GLib.Error {
-        Convey.FolderPath path = local.path;
+        GriabuntuMail.FolderPath path = local.path;
         if (!this.local_folders.has_key(path)) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "Unknown local folder: %s", path.to_string()
             );
         }
@@ -493,48 +494,48 @@ internal class Convey.Graph.Account : Convey.Account,
         this.local_folders.unset(path);
     }
 
-    public override async Gee.MultiMap<Convey.Email, Convey.FolderPath?>? local_search_message_id_async(
-        Convey.RFC822.MessageID message_id,
-        Convey.Email.Field requested_fields,
+    public override async Gee.MultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?>? local_search_message_id_async(
+        GriabuntuMail.RFC822.MessageID message_id,
+        GriabuntuMail.Email.Field requested_fields,
         bool partial_ok,
-        Gee.Collection<Convey.FolderPath?>? folder_blacklist,
-        Convey.EmailFlags? flag_blacklist,
+        Gee.Collection<GriabuntuMail.FolderPath?>? folder_blacklist,
+        GriabuntuMail.EmailFlags? flag_blacklist,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Convey.Email.Field required = requested_fields;
+        GriabuntuMail.Email.Field required = requested_fields;
         if (flag_blacklist != null) {
-            required = required | Convey.Email.Field.FLAGS;
+            required = required | GriabuntuMail.Email.Field.FLAGS;
         }
 
-        Gee.HashMultiMap<Convey.Email, Convey.FolderPath?> matches =
-            new Gee.HashMultiMap<Convey.Email, Convey.FolderPath?>();
+        Gee.HashMultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?> matches =
+            new Gee.HashMultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?>();
         string needle = message_id.to_rfc822_string();
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
             if (folder_blacklist != null && folder_blacklist.contains(folder.path)) {
                 continue;
             }
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph == null) {
                 continue;
             }
             if (!graph.is_cache_loaded &&
-                folder.used_as == Convey.Folder.SpecialUse.SENT) {
+                folder.used_as == GriabuntuMail.Folder.SpecialUse.SENT) {
                 graph.load_persisted_cache();
             }
             if (!graph.is_cache_loaded) {
                 continue;
             }
-            foreach (Convey.Email cached in graph.list_cached_emails()) {
+            foreach (GriabuntuMail.Email cached in graph.list_cached_emails()) {
                 if (!matches_message_id(cached, needle)) {
                     continue;
                 }
-                Convey.Email email = cached;
+                GriabuntuMail.Email email = cached;
                 if (!partial_ok && !email.fields.fulfills(required)) {
-                    if (graph.get_open_state() != Convey.Folder.OpenState.CLOSED) {
+                    if (graph.get_open_state() != GriabuntuMail.Folder.OpenState.CLOSED) {
                         email = yield graph.fetch_email_async(
                             cached.id,
                             required,
-                            Convey.Folder.ListFlags.NONE,
+                            GriabuntuMail.Folder.ListFlags.NONE,
                             cancellable
                         );
                     } else {
@@ -555,70 +556,70 @@ internal class Convey.Graph.Account : Convey.Account,
         return matches.size > 0 ? matches : null;
     }
 
-    public override async Convey.Email local_fetch_email_async(
-        Convey.EmailIdentifier email_id,
-        Convey.Email.Field required_fields,
+    public override async GriabuntuMail.Email local_fetch_email_async(
+        GriabuntuMail.EmailIdentifier email_id,
+        GriabuntuMail.Email.Field required_fields,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph != null && graph.has_cached_identifier(email_id)) {
                 return yield graph.fetch_email_async(
                     email_id,
                     required_fields,
-                    Convey.Folder.ListFlags.NONE,
+                    GriabuntuMail.Folder.ListFlags.NONE,
                     cancellable
                 );
             }
         }
-        throw new Convey.EngineError.NOT_FOUND(
+        throw new GriabuntuMail.EngineError.NOT_FOUND(
             "Unknown Graph email identifier: %s", email_id.to_string()
         );
     }
 
-    public override async Gee.List<Convey.Email> list_local_email_async(
-        Gee.Collection<Convey.EmailIdentifier> ids,
-        Convey.Email.Field required_fields,
+    public override async Gee.List<GriabuntuMail.Email> list_local_email_async(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
+        GriabuntuMail.Email.Field required_fields,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Gee.ArrayList<Convey.Email> listed = new Gee.ArrayList<Convey.Email>();
-        foreach (Convey.EmailIdentifier id in ids) {
+        Gee.ArrayList<GriabuntuMail.Email> listed = new Gee.ArrayList<GriabuntuMail.Email>();
+        foreach (GriabuntuMail.EmailIdentifier id in ids) {
             listed.add(yield local_fetch_email_async(id, required_fields, cancellable));
         }
         return listed;
     }
 
-    public override Convey.SearchQuery new_search_query(
-        Gee.List<Convey.SearchQuery.Term> expression,
+    public override GriabuntuMail.SearchQuery new_search_query(
+        Gee.List<GriabuntuMail.SearchQuery.Term> expression,
         string text
     ) throws GLib.Error {
-        return new Convey.Graph.SearchQuery(expression, text);
+        return new GriabuntuMail.Graph.SearchQuery(expression, text);
     }
 
-    public override async Gee.Collection<Convey.EmailIdentifier>? local_search_async(
-        Convey.SearchQuery query,
+    public override async Gee.Collection<GriabuntuMail.EmailIdentifier>? local_search_async(
+        GriabuntuMail.SearchQuery query,
         int limit = 100,
         int offset = 0,
-        Gee.Collection<Convey.FolderPath?>? folder_blacklist = null,
-        Gee.Collection<Convey.EmailIdentifier>? search_ids = null,
+        Gee.Collection<GriabuntuMail.FolderPath?>? folder_blacklist = null,
+        Gee.Collection<GriabuntuMail.EmailIdentifier>? search_ids = null,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Gee.Set<Convey.EmailIdentifier>? search_scope = null;
+        Gee.Set<GriabuntuMail.EmailIdentifier>? search_scope = null;
         if (search_ids != null) {
-            search_scope = new Gee.HashSet<Convey.EmailIdentifier>();
+            search_scope = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
             search_scope.add_all(search_ids);
         }
 
-        Gee.ArrayList<Convey.Email> matched = new Gee.ArrayList<Convey.Email>();
-        Gee.Set<Convey.EmailIdentifier> seen = new Gee.HashSet<Convey.EmailIdentifier>();
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
+        Gee.ArrayList<GriabuntuMail.Email> matched = new Gee.ArrayList<GriabuntuMail.Email>();
+        Gee.Set<GriabuntuMail.EmailIdentifier> seen = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
             if (cancellable != null && cancellable.is_cancelled()) {
                 throw new GLib.IOError.CANCELLED("Graph search cancelled");
             }
             if (folder_blacklist != null && folder_blacklist.contains(folder.path)) {
                 continue;
             }
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph == null) {
                 continue;
             }
@@ -628,7 +629,7 @@ internal class Convey.Graph.Account : Convey.Account,
             if (!graph.is_cache_loaded) {
                 continue;
             }
-            foreach (Convey.Email email in graph.list_cached_emails()) {
+            foreach (GriabuntuMail.Email email in graph.list_cached_emails()) {
                 if (search_scope != null && !search_scope.contains(email.id)) {
                     continue;
                 }
@@ -644,7 +645,7 @@ internal class Convey.Graph.Account : Convey.Account,
         if (matched.is_empty) {
             return null;
         }
-        matched.sort((a, b) => Convey.Email.compare_recv_date_descending(a, b));
+        matched.sort((a, b) => GriabuntuMail.Email.compare_recv_date_descending(a, b));
 
         int start = int.max(0, offset);
         int max_results = (limit > 0) ? limit : matched.size;
@@ -652,8 +653,8 @@ internal class Convey.Graph.Account : Convey.Account,
             return null;
         }
 
-        Gee.ArrayList<Convey.EmailIdentifier> ids =
-            new Gee.ArrayList<Convey.EmailIdentifier>();
+        Gee.ArrayList<GriabuntuMail.EmailIdentifier> ids =
+            new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         for (int i = start; i < matched.size && ids.size < max_results; i++) {
             ids.add(matched[i].id);
         }
@@ -661,19 +662,19 @@ internal class Convey.Graph.Account : Convey.Account,
     }
 
     public override async Gee.Set<string>? get_search_matches_async(
-        Convey.SearchQuery query,
-        Gee.Collection<Convey.EmailIdentifier> ids,
+        GriabuntuMail.SearchQuery query,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Gee.Set<Convey.EmailIdentifier> id_set = new Gee.HashSet<Convey.EmailIdentifier>();
+        Gee.Set<GriabuntuMail.EmailIdentifier> id_set = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
         id_set.add_all(ids);
 
         Gee.Set<string> matches = new Gee.HashSet<string>();
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
             if (cancellable != null && cancellable.is_cancelled()) {
                 throw new GLib.IOError.CANCELLED("Graph search matches cancelled");
             }
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph == null) {
                 continue;
             }
@@ -683,7 +684,7 @@ internal class Convey.Graph.Account : Convey.Account,
             if (!graph.is_cache_loaded) {
                 continue;
             }
-            foreach (Convey.Email email in graph.list_cached_emails()) {
+            foreach (GriabuntuMail.Email email in graph.list_cached_emails()) {
                 if (!id_set.contains(email.id)) {
                     continue;
                 }
@@ -696,18 +697,18 @@ internal class Convey.Graph.Account : Convey.Account,
         return matches.is_empty ? null : matches;
     }
 
-    public override async Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>? get_containing_folders_async(
-        Gee.Collection<Convey.EmailIdentifier> ids,
+    public override async Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>? get_containing_folders_async(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
-        Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath> containing =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+        Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> containing =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph == null || !graph.is_cache_loaded) {
                 continue;
             }
-            foreach (Convey.EmailIdentifier id in ids) {
+            foreach (GriabuntuMail.EmailIdentifier id in ids) {
                 if (graph.has_cached_identifier(id)) {
                     containing.set(id, folder.path);
                 }
@@ -721,7 +722,7 @@ internal class Convey.Graph.Account : Convey.Account,
     }
 
     public override async void send_composed_email(
-        Convey.ComposedEmail composed,
+        GriabuntuMail.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         string message_id = yield save_email(composed, cancellable);
@@ -736,20 +737,20 @@ internal class Convey.Graph.Account : Convey.Account,
      * to remove it (undo).
      */
     public async string save_email(
-        Convey.ComposedEmail composed,
+        GriabuntuMail.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         string message_id =
             yield this.client.create_message_in_outbox(composed, cancellable);
         // Refresh Drafts and Outbox so the staged message moves cleanly in
         // the folder views once the draft is relocated.
-        Convey.Graph.Folder? drafts =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.DRAFTS);
+        GriabuntuMail.Graph.Folder? drafts =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.DRAFTS);
         if (drafts != null && drafts.is_cache_loaded) {
             yield drafts.refresh_async(true, cancellable);
         }
-        Convey.Graph.Folder? outbox =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.OUTBOX);
+        GriabuntuMail.Graph.Folder? outbox =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.OUTBOX);
         if (outbox != null && outbox.is_cache_loaded) {
             yield outbox.refresh_async(true, cancellable);
         }
@@ -769,15 +770,15 @@ internal class Convey.Graph.Account : Convey.Account,
         email_sent();
         // Refresh Sent so the newly-delivered message shows up in threads,
         // loading it first if this session hasn't touched it yet.
-        Convey.Graph.Folder? sent =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.SENT);
+        GriabuntuMail.Graph.Folder? sent =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.SENT);
         if (sent != null) {
             sent.load_persisted_cache();
             yield sent.refresh_async(true, cancellable);
         }
         // Refresh Outbox so the now-sent message disappears
-        Convey.Graph.Folder? outbox =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.OUTBOX);
+        GriabuntuMail.Graph.Folder? outbox =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.OUTBOX);
         if (outbox != null && outbox.is_cache_loaded) {
             yield outbox.refresh_async(true, cancellable);
         }
@@ -791,20 +792,20 @@ internal class Convey.Graph.Account : Convey.Account,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         yield this.client.delete_message(message_id, cancellable);
-        Convey.Graph.Folder? outbox =
-            this.get_graph_special_folder(Convey.Folder.SpecialUse.OUTBOX);
+        GriabuntuMail.Graph.Folder? outbox =
+            this.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.OUTBOX);
         if (outbox != null && outbox.is_cache_loaded) {
             yield outbox.refresh_async(true, cancellable);
         }
     }
 
     protected override void
-        notify_folders_available_unavailable(Gee.BidirSortedSet<Convey.Folder>? available,
-                                             Gee.BidirSortedSet<Convey.Folder>? unavailable) {
+        notify_folders_available_unavailable(Gee.BidirSortedSet<GriabuntuMail.Folder>? available,
+                                             Gee.BidirSortedSet<GriabuntuMail.Folder>? unavailable) {
         base.notify_folders_available_unavailable(available, unavailable);
         if (available != null) {
-            foreach (Convey.Folder folder in available) {
-                if (!(folder is Convey.Graph.Folder)) {
+            foreach (GriabuntuMail.Folder folder in available) {
+                if (!(folder is GriabuntuMail.Graph.Folder)) {
                     continue;
                 }
                 folder.email_appended.connect(notify_email_appended);
@@ -816,8 +817,8 @@ internal class Convey.Graph.Account : Convey.Account,
             }
         }
         if (unavailable != null) {
-            foreach (Convey.Folder folder in unavailable) {
-                if (!(folder is Convey.Graph.Folder)) {
+            foreach (GriabuntuMail.Folder folder in unavailable) {
+                if (!(folder is GriabuntuMail.Graph.Folder)) {
                     continue;
                 }
                 folder.email_appended.disconnect(notify_email_appended);
@@ -830,21 +831,21 @@ internal class Convey.Graph.Account : Convey.Account,
         }
     }
 
-    internal Convey.Graph.Folder? get_graph_folder(Convey.FolderPath path) {
-        return this.remote_folders.get(path) as Convey.Graph.Folder;
+    internal GriabuntuMail.Graph.Folder? get_graph_folder(GriabuntuMail.FolderPath path) {
+        return this.remote_folders.get(path) as GriabuntuMail.Graph.Folder;
     }
 
-    internal Convey.Graph.Folder? get_graph_special_folder(Convey.Folder.SpecialUse use) {
+    internal GriabuntuMail.Graph.Folder? get_graph_special_folder(GriabuntuMail.Folder.SpecialUse use) {
         return this.special_folders.get(use);
     }
 
-    private Convey.Graph.Folder add_folder(string name,
+    private GriabuntuMail.Graph.Folder add_folder(string name,
                                           string graph_id,
-                                          Convey.Folder.SpecialUse use,
+                                          GriabuntuMail.Folder.SpecialUse use,
                                           FolderPath? parent = null) {
         FolderPath root = parent ?? this.remote_folder_root;
-        Convey.FolderPath path = root.get_child(name);
-        Convey.Graph.Folder folder = new Convey.Graph.Folder(
+        GriabuntuMail.FolderPath path = root.get_child(name);
+        GriabuntuMail.Graph.Folder folder = new GriabuntuMail.Graph.Folder(
             this,
             this.client,
             path,
@@ -852,14 +853,14 @@ internal class Convey.Graph.Account : Convey.Account,
             use
         );
         this.remote_folders.set(path, folder);
-        if (use != Convey.Folder.SpecialUse.NONE) {
+        if (use != GriabuntuMail.Folder.SpecialUse.NONE) {
             this.special_folders.set(use, folder);
         }
         return folder;
     }
 
-    private void remove_folder(Convey.FolderPath path) {
-        Convey.Folder? folder = this.remote_folders.get(path);
+    private void remove_folder(GriabuntuMail.FolderPath path) {
+        GriabuntuMail.Folder? folder = this.remote_folders.get(path);
         if (folder == null) {
             return;
         }
@@ -871,9 +872,9 @@ internal class Convey.Graph.Account : Convey.Account,
         notify_folders_deleted(sort_by_path(Collection.single(folder)));
     }
 
-    private Convey.Graph.Folder? find_folder_by_graph_id(string graph_id) {
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+    private GriabuntuMail.Graph.Folder? find_folder_by_graph_id(string graph_id) {
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph != null && graph.graph_folder_id == graph_id) {
                 return graph;
             }
@@ -884,9 +885,9 @@ internal class Convey.Graph.Account : Convey.Account,
     private async void sync_custom_folders_async(
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
-        Gee.HashMap<string,Convey.FolderPath> seen =
-            new Gee.HashMap<string,Convey.FolderPath>();
-        Gee.ArrayList<Convey.Folder> added = new Gee.ArrayList<Convey.Folder>();
+        Gee.HashMap<string,GriabuntuMail.FolderPath> seen =
+            new Gee.HashMap<string,GriabuntuMail.FolderPath>();
+        Gee.ArrayList<GriabuntuMail.Folder> added = new Gee.ArrayList<GriabuntuMail.Folder>();
         Gee.HashMap<string,string> builtin_ids = new Gee.HashMap<string,string>();
         foreach (string name in BUILTIN_WELL_KNOWN_NAMES) {
             try {
@@ -901,10 +902,10 @@ internal class Convey.Graph.Account : Convey.Account,
         yield walk_folders(null, this.remote_folder_root, seen, added, builtin_ids, cancellable);
 
         // Remove folders that no longer exist on the server
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph != null &&
-                graph.used_as == Convey.Folder.SpecialUse.NONE &&
+                graph.used_as == GriabuntuMail.Folder.SpecialUse.NONE &&
                 !seen.has_key(graph.graph_folder_id)) {
                 debug("Graph: Removing custom folder '%s' (no longer on server)",
                     folder.path.to_string());
@@ -932,13 +933,13 @@ internal class Convey.Graph.Account : Convey.Account,
      * registered; folders that aren't shown have their subtree skipped.
      */
     private async void walk_folders(string? parent_id,
-                                    Convey.FolderPath parent_path,
-                                    Gee.Map<string,Convey.FolderPath> seen,
-                                    Gee.List<Convey.Folder> added,
+                                    GriabuntuMail.FolderPath parent_path,
+                                    Gee.Map<string,GriabuntuMail.FolderPath> seen,
+                                    Gee.List<GriabuntuMail.Folder> added,
                                     Gee.Map<string,string> builtin_ids,
                                     GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Gee.List<Convey.Graph.Client.MailFolder> children;
+        Gee.List<GriabuntuMail.Graph.Client.MailFolder> children;
         try {
             children = yield this.client.list_mail_folders(parent_id, cancellable);
         } catch (GLib.Error err) {
@@ -950,7 +951,7 @@ internal class Convey.Graph.Account : Convey.Account,
             return;
         }
 
-        foreach (Convey.Graph.Client.MailFolder mf in children) {
+        foreach (GriabuntuMail.Graph.Client.MailFolder mf in children) {
             if (mf.is_hidden || String.is_empty(mf.display_name)) {
                 continue;
             }
@@ -959,9 +960,9 @@ internal class Convey.Graph.Account : Convey.Account,
             if (String.is_empty(well_known)) {
                 well_known = builtin_ids.get(mf.id) ?? "";
             }
-            Convey.FolderPath path;
+            GriabuntuMail.FolderPath path;
             if (well_known in BUILTIN_WELL_KNOWN_NAMES) {
-                Convey.Graph.Folder? builtin = find_folder_by_graph_id(well_known);
+                GriabuntuMail.Graph.Folder? builtin = find_folder_by_graph_id(well_known);
                 if (builtin == null) {
                     continue;
                 }
@@ -971,7 +972,7 @@ internal class Convey.Graph.Account : Convey.Account,
                 continue;
             } else {
                 path = parent_path.get_child(mf.display_name);
-                Convey.Graph.Folder? tracked = find_folder_by_graph_id(mf.id);
+                GriabuntuMail.Graph.Folder? tracked = find_folder_by_graph_id(mf.id);
                 if (tracked != null && !tracked.path.equal_to(path)) {
                     remove_folder(tracked.path);
                     tracked = null;
@@ -985,7 +986,7 @@ internal class Convey.Graph.Account : Convey.Account,
                     added.add(add_folder(
                         mf.display_name,
                         mf.id,
-                        Convey.Folder.SpecialUse.NONE,
+                        GriabuntuMail.Folder.SpecialUse.NONE,
                         parent_path
                     ));
                     debug("Graph: Added custom folder '%s' (%s)",
@@ -1002,11 +1003,11 @@ internal class Convey.Graph.Account : Convey.Account,
 
     private string folders_cache_path() {
         GLib.File? data_dir = this.information.data_dir;
-        // Fallback to ~/.local/share/convey if account data_dir isn't set.
+        // Fallback to ~/.local/share/griabuntu-mail if account data_dir isn't set.
         if (data_dir == null) {
             data_dir = GLib.File.new_for_path(
                 GLib.Path.build_filename(
-                    Environment.get_home_dir(), ".local", "share", "convey"
+                    Environment.get_home_dir(), ".local", "share", "griabuntu-mail"
                 )
             );
         }
@@ -1054,7 +1055,7 @@ internal class Convey.Graph.Account : Convey.Account,
                 if (parts.get_length() == 0) {
                     continue;
                 }
-                Convey.FolderPath parent = this.remote_folder_root;
+                GriabuntuMail.FolderPath parent = this.remote_folder_root;
                 for (uint p = 0; p + 1 < parts.get_length(); p++) {
                     parent = parent.get_child(parts.get_string_element(p));
                 }
@@ -1064,7 +1065,7 @@ internal class Convey.Graph.Account : Convey.Account,
                 if (this.remote_folders.has_key(parent.get_child(name))) {
                     continue;
                 }
-                add_folder(name, id, Convey.Folder.SpecialUse.NONE, parent);
+                add_folder(name, id, GriabuntuMail.Folder.SpecialUse.NONE, parent);
             }
         } catch (GLib.Error err) {
             warning("Error loading Graph folder cache: %s", err.message);
@@ -1080,10 +1081,10 @@ internal class Convey.Graph.Account : Convey.Account,
             builder.begin_object();
             builder.set_member_name("folders");
             builder.begin_array();
-            foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
-                Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+            foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
+                GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
                 if (graph == null ||
-                    graph.used_as != Convey.Folder.SpecialUse.NONE) {
+                    graph.used_as != GriabuntuMail.Folder.SpecialUse.NONE) {
                     continue;
                 }
                 builder.begin_object();
@@ -1110,16 +1111,16 @@ internal class Convey.Graph.Account : Convey.Account,
         }
     }
 
-    private static bool matches_message_id(Convey.Email email, string needle) {
+    private static bool matches_message_id(GriabuntuMail.Email email, string needle) {
         if (email.message_id != null &&
             email.message_id.to_rfc822_string() == needle) {
             return true;
         }
-        Gee.Set<Convey.RFC822.MessageID>? ancestors = email.get_ancestors();
+        Gee.Set<GriabuntuMail.RFC822.MessageID>? ancestors = email.get_ancestors();
         if (ancestors == null) {
             return false;
         }
-        foreach (Convey.RFC822.MessageID candidate in ancestors) {
+        foreach (GriabuntuMail.RFC822.MessageID candidate in ancestors) {
             if (candidate.to_rfc822_string() == needle) {
                 return true;
             }
@@ -1127,16 +1128,16 @@ internal class Convey.Graph.Account : Convey.Account,
         return false;
     }
 
-    private static bool email_matches_query(Convey.Email email, Convey.SearchQuery query) {
+    private static bool email_matches_query(GriabuntuMail.Email email, GriabuntuMail.SearchQuery query) {
         if (query.expression.is_empty) {
             return !String.is_empty(query.raw) &&
                 matches_text_term(
                     email,
-                    Convey.SearchQuery.EmailTextTerm.Property.ALL,
+                    GriabuntuMail.SearchQuery.EmailTextTerm.Property.ALL,
                     query.raw
                 );
         }
-        foreach (Convey.SearchQuery.Term term in query.expression) {
+        foreach (GriabuntuMail.SearchQuery.Term term in query.expression) {
             if (!matches_query_term(email, term)) {
                 return false;
             }
@@ -1144,22 +1145,22 @@ internal class Convey.Graph.Account : Convey.Account,
         return true;
     }
 
-    private static Gee.Set<string>? get_query_matches(Convey.Email email, Convey.SearchQuery query) {
+    private static Gee.Set<string>? get_query_matches(GriabuntuMail.Email email, GriabuntuMail.SearchQuery query) {
         Gee.Set<string> matches = new Gee.HashSet<string>();
         if (query.expression.is_empty) {
             if (!String.is_empty(query.raw) &&
                 matches_text_term(
                     email,
-                    Convey.SearchQuery.EmailTextTerm.Property.ALL,
+                    GriabuntuMail.SearchQuery.EmailTextTerm.Property.ALL,
                     query.raw
                 )) {
                 matches.add(query.raw);
             }
             return matches.is_empty ? null : matches;
         }
-        foreach (Convey.SearchQuery.Term term in query.expression) {
-            Convey.SearchQuery.EmailTextTerm? text =
-                term as Convey.SearchQuery.EmailTextTerm;
+        foreach (GriabuntuMail.SearchQuery.Term term in query.expression) {
+            GriabuntuMail.SearchQuery.EmailTextTerm? text =
+                term as GriabuntuMail.SearchQuery.EmailTextTerm;
             if (text == null || term.is_negated) {
                 continue;
             }
@@ -1172,9 +1173,9 @@ internal class Convey.Graph.Account : Convey.Account,
         return matches.is_empty ? null : matches;
     }
 
-    private static bool matches_query_term(Convey.Email email, Convey.SearchQuery.Term term) {
-        Convey.SearchQuery.EmailTextTerm? text =
-            term as Convey.SearchQuery.EmailTextTerm;
+    private static bool matches_query_term(GriabuntuMail.Email email, GriabuntuMail.SearchQuery.Term term) {
+        GriabuntuMail.SearchQuery.EmailTextTerm? text =
+            term as GriabuntuMail.SearchQuery.EmailTextTerm;
         if (text != null) {
             bool any = false;
             foreach (string value in text.terms) {
@@ -1186,8 +1187,8 @@ internal class Convey.Graph.Account : Convey.Account,
             return term.is_negated ? !any : any;
         }
 
-        Convey.SearchQuery.EmailFlagTerm? flag =
-            term as Convey.SearchQuery.EmailFlagTerm;
+        GriabuntuMail.SearchQuery.EmailFlagTerm? flag =
+            term as GriabuntuMail.SearchQuery.EmailFlagTerm;
         if (flag != null) {
             bool set = (email.email_flags != null &&
                         email.email_flags.contains(flag.value));
@@ -1196,29 +1197,29 @@ internal class Convey.Graph.Account : Convey.Account,
         return true;
     }
 
-    private static bool matches_text_term(Convey.Email email,
-                                          Convey.SearchQuery.EmailTextTerm.Property target,
+    private static bool matches_text_term(GriabuntuMail.Email email,
+                                          GriabuntuMail.SearchQuery.EmailTextTerm.Property target,
                                           string term) {
         if (String.is_empty(term)) {
             return false;
         }
         string needle = term.down();
         switch (target) {
-        case Convey.SearchQuery.EmailTextTerm.Property.TO:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.TO:
             return matches_addresses_text(email.to, needle);
-        case Convey.SearchQuery.EmailTextTerm.Property.CC:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.CC:
             return matches_addresses_text(email.cc, needle);
-        case Convey.SearchQuery.EmailTextTerm.Property.BCC:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.BCC:
             return matches_addresses_text(email.bcc, needle);
-        case Convey.SearchQuery.EmailTextTerm.Property.FROM:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.FROM:
             return matches_addresses_text(email.from, needle);
-        case Convey.SearchQuery.EmailTextTerm.Property.SUBJECT:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.SUBJECT:
             return matches_subject_text(email.subject, needle);
-        case Convey.SearchQuery.EmailTextTerm.Property.BODY:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.BODY:
             return matches_preview_text(email.preview, needle);
-        case Convey.SearchQuery.EmailTextTerm.Property.ATTACHMENT_NAME:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.ATTACHMENT_NAME:
             return matches_string_text(email.get_searchable_attachment_list(), needle);
-        case Convey.SearchQuery.EmailTextTerm.Property.ALL:
+        case GriabuntuMail.SearchQuery.EmailTextTerm.Property.ALL:
             return (
                 matches_subject_text(email.subject, needle) ||
                 matches_addresses_text(email.from, needle) ||
@@ -1233,11 +1234,11 @@ internal class Convey.Graph.Account : Convey.Account,
         }
     }
 
-    private static bool matches_subject_text(Convey.RFC822.Subject? value, string needle) {
+    private static bool matches_subject_text(GriabuntuMail.RFC822.Subject? value, string needle) {
         return value != null && value.to_searchable_string().down().contains(needle);
     }
 
-    private static bool matches_preview_text(Convey.RFC822.Text? value, string needle) {
+    private static bool matches_preview_text(GriabuntuMail.RFC822.Text? value, string needle) {
         if (value == null) {
             return false;
         }
@@ -1245,7 +1246,7 @@ internal class Convey.Graph.Account : Convey.Account,
         return haystack.contains(needle);
     }
 
-    private static bool matches_addresses_text(Convey.RFC822.MailboxAddresses? value, string needle) {
+    private static bool matches_addresses_text(GriabuntuMail.RFC822.MailboxAddresses? value, string needle) {
         return value != null && value.to_searchable_string().down().contains(needle);
     }
 
@@ -1316,17 +1317,17 @@ internal class Convey.Graph.Account : Convey.Account,
                                             GLib.Cancellable? cancellable)
         throws GLib.Error {
         bool found_changes = false;
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
             if (cancellable != null && cancellable.is_cancelled()) {
                 return;
             }
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph == null) {
                 continue;
             }
             bool is_open =
-                graph.get_open_state() != Convey.Folder.OpenState.CLOSED;
-            if (graph.used_as == Convey.Folder.SpecialUse.INBOX) {
+                graph.get_open_state() != GriabuntuMail.Folder.OpenState.CLOSED;
+            if (graph.used_as == GriabuntuMail.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
             } else if (!is_open && !(include_cached && graph.is_cache_loaded)) {
                 // The regular poll only covers the inbox and open folders;
@@ -1391,17 +1392,17 @@ internal class Convey.Graph.Account : Convey.Account,
         // folders for proper synchronization.
         bool background_mode = !this.is_account_open;
 
-        foreach (Convey.Folder folder in get_remote_folder_snapshot()) {
-            Convey.Graph.Folder? graph = folder as Convey.Graph.Folder;
+        foreach (GriabuntuMail.Folder folder in get_remote_folder_snapshot()) {
+            GriabuntuMail.Graph.Folder? graph = folder as GriabuntuMail.Graph.Folder;
             if (graph == null) {
                 continue;
             }
 
-            if (background_mode && graph.used_as != Convey.Folder.SpecialUse.INBOX) {
+            if (background_mode && graph.used_as != GriabuntuMail.Folder.SpecialUse.INBOX) {
                 continue;
             }
 
-            if (graph.used_as == Convey.Folder.SpecialUse.INBOX) {
+            if (graph.used_as == GriabuntuMail.Folder.SpecialUse.INBOX) {
                 graph.load_persisted_cache();
             }
 
@@ -1425,29 +1426,29 @@ internal class Convey.Graph.Account : Convey.Account,
 
 }
 
-internal class Convey.Graph.SentContactStore : Convey.BaseObject, Convey.ContactStore {
+internal class GriabuntuMail.Graph.SentContactStore : GriabuntuMail.BaseObject, GriabuntuMail.ContactStore {
 
-    private unowned Convey.Graph.Account account;
+    private unowned GriabuntuMail.Graph.Account account;
 
-    public SentContactStore(Convey.Graph.Account account) {
+    public SentContactStore(GriabuntuMail.Graph.Account account) {
         this.account = account;
     }
 
-    public async Convey.Contact? get_by_rfc822(
-        Convey.RFC822.MailboxAddress address,
+    public async GriabuntuMail.Contact? get_by_rfc822(
+        GriabuntuMail.RFC822.MailboxAddress address,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
         return null;
     }
 
-    public async Gee.Collection<Convey.Contact> search(
+    public async Gee.Collection<GriabuntuMail.Contact> search(
         string query,
         uint min_importance,
         uint limit,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
-        var contacts = new Gee.HashMap<string,Convey.Contact>();
-        var sent = this.account.get_graph_special_folder(Convey.Folder.SpecialUse.SENT);
+        var contacts = new Gee.HashMap<string,GriabuntuMail.Contact>();
+        var sent = this.account.get_graph_special_folder(GriabuntuMail.Folder.SpecialUse.SENT);
         if (sent == null) {
             return contacts.values;
         }
@@ -1456,7 +1457,7 @@ internal class Convey.Graph.SentContactStore : Convey.BaseObject, Convey.Contact
         }
 
         string text = query.replace("%", "").casefold();
-        foreach (Convey.Email email in sent.list_cached_emails()) {
+        foreach (GriabuntuMail.Email email in sent.list_cached_emails()) {
             add_matches(contacts, email.to, text);
             add_matches(contacts, email.cc, text);
             add_matches(contacts, email.bcc, text);
@@ -1464,25 +1465,25 @@ internal class Convey.Graph.SentContactStore : Convey.BaseObject, Convey.Contact
         return contacts.values;
     }
 
-    private void add_matches(Gee.Map<string,Convey.Contact> contacts,
-                             Convey.RFC822.MailboxAddresses? addresses,
+    private void add_matches(Gee.Map<string,GriabuntuMail.Contact> contacts,
+                             GriabuntuMail.RFC822.MailboxAddresses? addresses,
                              string text) {
         if (addresses == null) {
             return;
         }
-        foreach (Convey.RFC822.MailboxAddress address in addresses) {
+        foreach (GriabuntuMail.RFC822.MailboxAddress address in addresses) {
             string name = address.name ?? "";
             if (text in address.address.casefold() || text in name.casefold()) {
-                contacts[Convey.Contact.normalise_email(address.address)] =
-                    new Convey.Contact.from_rfc822_address(
-                        address, Convey.Contact.Importance.SENT_TO
+                contacts[GriabuntuMail.Contact.normalise_email(address.address)] =
+                    new GriabuntuMail.Contact.from_rfc822_address(
+                        address, GriabuntuMail.Contact.Importance.SENT_TO
                     );
             }
         }
     }
 
     public async void update_contacts(
-        Gee.Collection<Convey.Contact> updated,
+        Gee.Collection<GriabuntuMail.Contact> updated,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
     }

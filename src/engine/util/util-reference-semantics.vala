@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -36,7 +37,7 @@
  * override this signal and move the object to a closed or broken state, or merely drop their own
  * reference to the SmartReference.
  */
-public interface Convey.ReferenceSemantics : BaseObject {
+public interface GriabuntuMail.ReferenceSemantics : BaseObject {
     protected abstract int manual_ref_count { get; protected set; }
 
     /**
@@ -71,7 +72,7 @@ public interface Convey.ReferenceSemantics : BaseObject {
  * A SmartReference holds a reference to a ReferenceSemantics object.  See that class for more
  * information on the operation of these two classes.
  */
-public abstract class Convey.SmartReference : BaseObject {
+public abstract class GriabuntuMail.SmartReference : BaseObject {
     private ReferenceSemantics? reffed;
 
     /**

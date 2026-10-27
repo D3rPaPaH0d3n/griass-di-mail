@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -27,11 +28,11 @@ public class FolderList.InboxFolderEntry : FolderList.FolderEntry {
         return this.display_name;
     }
 
-    public Convey.AccountInformation get_account_information() {
+    public GriabuntuMail.AccountInformation get_account_information() {
         return folder.account.information;
     }
 
-    private void on_information_changed(Convey.AccountInformation config) {
+    private void on_information_changed(GriabuntuMail.AccountInformation config) {
         if (this.display_name != config.display_name) {
             this.display_name = config.display_name;
             entry_changed();

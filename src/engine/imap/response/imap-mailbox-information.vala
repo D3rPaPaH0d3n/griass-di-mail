@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -16,7 +17,7 @@
  * @see ListCommand
  */
 
-public class Convey.Imap.MailboxInformation : BaseObject {
+public class GriabuntuMail.Imap.MailboxInformation : BaseObject {
     /**
      * Name of the mailbox.
      */
@@ -79,7 +80,7 @@ public class Convey.Imap.MailboxInformation : BaseObject {
         // Inbox name, otherwise decode it
         MailboxSpecifier? specifier =
             (canonical_inbox &&
-             Convey.Imap.MailboxAttribute.XLIST_INBOX in attributes)
+             GriabuntuMail.Imap.MailboxAttribute.XLIST_INBOX in attributes)
             ? MailboxSpecifier.inbox
             : new MailboxSpecifier.from_parameter(mailbox);
 

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
@@ -35,14 +36,14 @@
  * equal_to} method to specify which instances are considered to be
  * duplicates.
  */
-public abstract class Convey.ImapEngine.AccountOperation : BaseObject, Logging.Source {
+public abstract class GriabuntuMail.ImapEngine.AccountOperation : BaseObject, Logging.Source {
 
 
     /** {@inheritDoc} */
     public Logging.Source? logging_parent { get { return account; } }
 
     /** The account this operation applies to. */
-    protected weak Convey.Account account { get; private set; }
+    protected weak GriabuntuMail.Account account { get; private set; }
 
 
     /**
@@ -51,7 +52,7 @@ public abstract class Convey.ImapEngine.AccountOperation : BaseObject, Logging.S
      * The passed in `account` will be the account the operation will
      * apply to.
      */
-    protected AccountOperation(Convey.Account account) {
+    protected AccountOperation(GriabuntuMail.Account account) {
         this.account = account;
     }
 
@@ -124,11 +125,11 @@ public abstract class Convey.ImapEngine.AccountOperation : BaseObject, Logging.S
  * considered equal, for the purpose of not en-queuing duplicate
  * operations.
  */
-public abstract class Convey.ImapEngine.FolderOperation : AccountOperation {
+public abstract class GriabuntuMail.ImapEngine.FolderOperation : AccountOperation {
 
 
     /** The folder this operation applies to. */
-    protected weak Convey.Folder folder { get; private set; }
+    protected weak GriabuntuMail.Folder folder { get; private set; }
 
 
     /**
@@ -137,7 +138,7 @@ public abstract class Convey.ImapEngine.FolderOperation : AccountOperation {
      * The passed in `folder` and `account` will be the objects the
      * operation will apply to.
      */
-    protected FolderOperation(Convey.Account account, Convey.Folder folder) {
+    protected FolderOperation(GriabuntuMail.Account account, GriabuntuMail.Folder folder) {
         base(account);
         this.folder = folder;
     }

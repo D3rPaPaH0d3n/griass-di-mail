@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Imap.ClientSessionTest : TestCase {
+class GriabuntuMail.Imap.ClientSessionTest : TestCase {
 
     // Seconds. Kept generous: CI runners are shared and loaded, and two
     // seconds was tight enough to fail intermittently there. The timeout
@@ -18,7 +19,7 @@ class Convey.Imap.ClientSessionTest : TestCase {
 
 
     public ClientSessionTest() {
-        base("Convey.Imap.ClientSessionTest");
+        base("GriabuntuMail.Imap.ClientSessionTest");
         add_test("connect_disconnect", connect_disconnect);
         add_test("connect_with_capabilities", connect_with_capabilities);
         if (GLib.Test.slow()) {

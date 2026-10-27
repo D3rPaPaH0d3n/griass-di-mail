@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -23,11 +24,11 @@
  * and {@link completed_upgrade} to be notified of the upgrade process
  * starting and finishing.
  */
-public class Convey.Db.VersionedDatabase : Convey.Db.Database {
+public class GriabuntuMail.Db.VersionedDatabase : GriabuntuMail.Db.Database {
 
 
-    private static Convey.Nonblocking.Mutex upgrade_mutex =
-        new Convey.Nonblocking.Mutex();
+    private static GriabuntuMail.Nonblocking.Mutex upgrade_mutex =
+        new GriabuntuMail.Nonblocking.Mutex();
 
 
     public File schema_dir { get; private set; }
@@ -142,7 +143,7 @@ public class Convey.Db.VersionedDatabase : Convey.Db.Database {
 
             // Since these upgrades run in a background thread,
             // there's a possibility they can run in parallel.  That
-            // leads to Convey absolutely taking over the machine, with
+            // leads to Griabuntu Mail absolutely taking over the machine, with
             // potentially several threads all doing heavy database
             // manipulation at once.  So, we wrap this bit in a mutex
             // lock so that only one database is updating at once.  It

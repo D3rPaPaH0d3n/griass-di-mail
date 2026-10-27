@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -23,7 +24,7 @@ public class Composer.WidgetTest : TestCase {
         }
 
 
-        internal Application.AccountContext? get_context_for_account(Convey.AccountInformation account)  {
+        internal Application.AccountContext? get_context_for_account(GriabuntuMail.AccountInformation account)  {
             try {
                 return object_call<Application.AccountContext?>(
                     "get_account_contexts",
@@ -49,7 +50,7 @@ public class Composer.WidgetTest : TestCase {
             }
         }
 
-        public void report_problem(Convey.ProblemReport report) {
+        public void report_problem(GriabuntuMail.ProblemReport report) {
             try {
                 void_call("report_problem", {report});
             } catch (GLib.Error err) {
@@ -83,7 +84,7 @@ public class Composer.WidgetTest : TestCase {
 
         internal GLib.File get_web_cache_dir() {
             try {
-                return File.new_for_path(DirUtils.make_tmp("convey-widget-test-XXXXXX"));
+                return File.new_for_path(DirUtils.make_tmp("griabuntu-mail-widget-test-XXXXXX"));
             } catch (GLib.Error err) {
                 // We'll assert later
             }
@@ -119,20 +120,20 @@ public class Composer.WidgetTest : TestCase {
 
         this.config = new Application.Configuration(Application.Client.SCHEMA_ID);
 
-        var info = new Convey.AccountInformation(
+        var info = new GriabuntuMail.AccountInformation(
             "account_01",
-            Convey.ServiceProvider.OTHER,
+            GriabuntuMail.ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Convey.RFC822.MailboxAddress(null, "test1@example.com")
+            new GriabuntuMail.RFC822.MailboxAddress(null, "test1@example.com")
         );
         var mock_account = new Mock.Account(info);
         this.account = new Application.AccountContext(
             mock_account,
-            new Convey.App.SearchFolder(
+            new GriabuntuMail.App.SearchFolder(
                 mock_account,
-                new Convey.FolderRoot("", false)
+                new GriabuntuMail.FolderRoot("", false)
             ),
-            new Convey.App.EmailStore(mock_account),
+            new GriabuntuMail.App.EmailStore(mock_account),
             new Application.ContactStore(
                 mock_account,
                 Folks.IndividualAggregator.dup()
@@ -156,7 +157,7 @@ public class Composer.WidgetTest : TestCase {
     public void load_empty_body_to() throws GLib.Error {
         var widget = new Widget(this.application, this.config, this.account);
         widget.load_empty_body.begin(
-            new Convey.RFC822.MailboxAddress(null, "empty_to@example.com"),
+            new GriabuntuMail.RFC822.MailboxAddress(null, "empty_to@example.com"),
             this.async_completion
         );
         widget.load_empty_body.end(async_result());
@@ -194,7 +195,7 @@ public class Composer.WidgetTest : TestCase {
         widget.load_context.end(async_result());
 
         mock_account.assert_expectations();
-        var search_arg = search_call.called_arg<Convey.RFC822.MessageID>(0);
+        var search_arg = search_call.called_arg<GriabuntuMail.RFC822.MessageID>(0);
         assert_equal(
             search_arg.to_rfc822_string(),
             "<1234@local.machine.example>"
@@ -263,7 +264,7 @@ public class Composer.WidgetTest : TestCase {
         // If the message's To includes the account's primary mailbox,
         // then that should not be included in the CC
         this.account.account.information.replace_sender(
-            0, new Convey.RFC822.MailboxAddress("Charlie", "charlie@example.net")
+            0, new GriabuntuMail.RFC822.MailboxAddress("Charlie", "charlie@example.net")
         );
 
         var widget = new Widget(this.application, this.config, this.account);
@@ -291,7 +292,7 @@ public class Composer.WidgetTest : TestCase {
         // If the message's CC includes the account's primary mailbox,
         // then that should not be included in the CC either
         this.account.account.information.replace_sender(
-            0, new Convey.RFC822.MailboxAddress("Dave", "dave@example.net")
+            0, new GriabuntuMail.RFC822.MailboxAddress("Dave", "dave@example.net")
         );
 
         var widget = new Widget(this.application, this.config, this.account);
@@ -395,7 +396,7 @@ public class Composer.WidgetTest : TestCase {
         mock_account.assert_expectations();
 
         widget.to_composed_email.begin(null, false, this.async_completion);
-        Convey.ComposedEmail composed = widget.to_composed_email.end(async_result());
+        GriabuntuMail.ComposedEmail composed = widget.to_composed_email.end(async_result());
 
         assert_equal(
             composed.to.to_rfc822_string(),
@@ -432,12 +433,12 @@ public class Composer.WidgetTest : TestCase {
         );
     }
 
-    private Convey.Email load_email(string text)
+    private GriabuntuMail.Email load_email(string text)
         throws GLib.Error {
-        var message = new Convey.RFC822.Message.from_buffer(
-            new Convey.Memory.StringBuffer(text.replace("\n","\r\n"))
+        var message = new GriabuntuMail.RFC822.Message.from_buffer(
+            new GriabuntuMail.Memory.StringBuffer(text.replace("\n","\r\n"))
         );
-        return new Convey.Email.from_message(
+        return new GriabuntuMail.Email.from_message(
             new Mock.EmailIdentifer(0), message
         );
     }
@@ -452,7 +453,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example> <5678@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griabuntu Mail Test Suite 1.0
 
 This is the first line.
 
@@ -471,7 +472,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example> <5678@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griabuntu Mail Test Suite 1.0
 
 This is the first line.
 

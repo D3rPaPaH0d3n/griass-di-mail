@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -8,14 +9,14 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.App.ExternalAppendOperation : BatchOperation<EmailIdentifier> {
+private class GriabuntuMail.App.ExternalAppendOperation : BatchOperation<EmailIdentifier> {
 
 
-    private Convey.Folder folder;
+    private GriabuntuMail.Folder folder;
 
 
     public ExternalAppendOperation(ConversationMonitor monitor,
-                                   Convey.Folder folder,
+                                   GriabuntuMail.Folder folder,
                                    Gee.Collection<EmailIdentifier> appended_ids) {
         base(monitor, appended_ids);
         this.folder = folder;
@@ -30,7 +31,7 @@ private class Convey.App.ExternalAppendOperation : BatchOperation<EmailIdentifie
                   this.folder.to_string());
 
             yield this.monitor.external_load_by_sparse_id(
-                this.folder, batch, Convey.Folder.ListFlags.NONE
+                this.folder, batch, GriabuntuMail.Folder.ListFlags.NONE
             );
         }
     }

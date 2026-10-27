@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -10,7 +11,7 @@
 /**
  * A view that displays system and library information.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-inspector-system-view.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-inspector-system-view.ui")]
 public class Components.InspectorSystemView : Gtk.Box {
 
 

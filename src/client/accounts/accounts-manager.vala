@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -10,7 +11,7 @@
 
 
 /**
- * Manages email account lifecycle for Convey.
+ * Manages email account lifecycle for GriabuntuMail.
  *
  * This class is responsible for creating, loading, saving and
  * removing accounts and their persisted data (configuration,
@@ -26,8 +27,8 @@
 public class Accounts.Manager : GLib.Object {
 
 
-    /** The name of the Convey configuration file. */
-    public const string SETTINGS_FILENAME = "convey.ini";
+    /** The name of the Griabuntu Mail configuration file. */
+    public const string SETTINGS_FILENAME = "griabuntu-mail.ini";
 
     private const string LOCAL_ID_PREFIX = "account_";
     private const string LOCAL_ID_FORMAT = "account_%02u";
@@ -59,14 +60,14 @@ public class Accounts.Manager : GLib.Object {
         REMOVED;
 
         public static Status for_value(string value)
-        throws Convey.EngineError {
-            return Convey.ObjectUtils.from_enum_nick<Status>(
+        throws GriabuntuMail.EngineError {
+            return GriabuntuMail.ObjectUtils.from_enum_nick<Status>(
                 typeof(Status), value.ascii_down()
             );
         }
 
         public string to_value() {
-            return Convey.ObjectUtils.to_enum_nick<Status>(
+            return GriabuntuMail.ObjectUtils.to_enum_nick<Status>(
                 typeof(Status), this
             );
         }
@@ -78,7 +79,7 @@ public class Accounts.Manager : GLib.Object {
 
 
         /** The account represented by this object. */
-        public Convey.AccountInformation account { get; private set; }
+        public GriabuntuMail.AccountInformation account { get; private set; }
 
         /** Determines the account's overall state. */
         public Status status {
@@ -101,7 +102,7 @@ public class Accounts.Manager : GLib.Object {
         public bool available { get; set; default = true; }
 
 
-        internal AccountState(Convey.AccountInformation account) {
+        internal AccountState(GriabuntuMail.AccountInformation account) {
             this.account = account;
         }
 
@@ -121,29 +122,29 @@ public class Accounts.Manager : GLib.Object {
     private Gee.Map<string,AccountState> accounts =
         new Gee.HashMap<string,AccountState>();
 
-    private Gee.LinkedList<Convey.AccountInformation> removed =
-        new Gee.LinkedList<Convey.AccountInformation>();
+    private Gee.LinkedList<GriabuntuMail.AccountInformation> removed =
+        new Gee.LinkedList<GriabuntuMail.AccountInformation>();
 
 
-    private Convey.CredentialsMediator local_mediator;
+    private GriabuntuMail.CredentialsMediator local_mediator;
     private Goa.Client? goa_service = null;
 
 
     /** Fired when a new account is created. */
-    public signal void account_added(Convey.AccountInformation added, Status status);
+    public signal void account_added(GriabuntuMail.AccountInformation added, Status status);
 
     /** Fired when an existing account's state has changed. */
-    public signal void account_status_changed(Convey.AccountInformation changed,
+    public signal void account_status_changed(GriabuntuMail.AccountInformation changed,
                                               Status new_status);
 
     /** Fired when an account is deleted. */
-    public signal void account_removed(Convey.AccountInformation removed);
+    public signal void account_removed(GriabuntuMail.AccountInformation removed);
 
     /** Emitted to notify an account problem has occurred. */
-    public signal void report_problem(Convey.ProblemReport problem);
+    public signal void report_problem(GriabuntuMail.ProblemReport problem);
 
 
-    public Manager(Convey.CredentialsMediator local_mediator,
+    public Manager(GriabuntuMail.CredentialsMediator local_mediator,
                    GLib.File config_dir,
                    GLib.File data_dir) {
         this.local_mediator = local_mediator;
@@ -160,22 +161,22 @@ public class Accounts.Manager : GLib.Object {
     }
 
     /** Returns the account with the given id. */
-    public Convey.AccountInformation? get_account(string id) {
+    public GriabuntuMail.AccountInformation? get_account(string id) {
         AccountState? state = this.accounts.get(id);
         return (state != null) ? state.account : null;
     }
 
     /** Returns the status for the given account. */
-    public Status get_status(Convey.AccountInformation account) {
+    public Status get_status(GriabuntuMail.AccountInformation account) {
         AccountState? state = this.accounts.get(account.id);
         return (state != null) ? state.status : Status.UNAVAILABLE;
     }
 
     /** Returns a read-only iterable of all currently known accounts. */
-    public Convey.Iterable<Convey.AccountInformation> iterable() {
-        return Convey.traverse<AccountState>(
+    public GriabuntuMail.Iterable<GriabuntuMail.AccountInformation> iterable() {
+        return GriabuntuMail.traverse<AccountState>(
             this.accounts.values
-        ).map<Convey.AccountInformation>(
+        ).map<GriabuntuMail.AccountInformation>(
             ((state) => { return state.account; })
         );
     }
@@ -185,7 +186,7 @@ public class Accounts.Manager : GLib.Object {
      */
     public string? get_account_name() {
         string? name = Environment.get_real_name();
-        if (Convey.String.is_empty(name) || name == "Unknown") {
+        if (GriabuntuMail.String.is_empty(name) || name == "Unknown") {
             name = null;
         }
         return name;
@@ -194,12 +195,12 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Returns a new account, not yet stored on disk.
      */
-    public async Convey.AccountInformation
-        new_orphan_account(Convey.ServiceProvider provider,
-                           Convey.RFC822.MailboxAddress primary_mailbox,
+    public async GriabuntuMail.AccountInformation
+        new_orphan_account(GriabuntuMail.ServiceProvider provider,
+                           GriabuntuMail.RFC822.MailboxAddress primary_mailbox,
                            GLib.Cancellable? cancellable) {
         string id = yield next_id(cancellable);
-        return new Convey.AccountInformation(
+        return new GriabuntuMail.AccountInformation(
             id, provider, this.local_mediator, primary_mailbox
         );
     }
@@ -207,7 +208,7 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Creates new account's disk and credential storage as needed.
      */
-    public async void create_account(Convey.AccountInformation account,
+    public async void create_account(GriabuntuMail.AccountInformation account,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
         yield create_account_dirs(account, cancellable);
@@ -250,7 +251,7 @@ public class Accounts.Manager : GLib.Object {
                 if (file.get_file_type() == FileType.DIRECTORY) {
                     string id = file.get_name();
                     try {
-                        Convey.AccountInformation info = yield load_account(
+                        GriabuntuMail.AccountInformation info = yield load_account(
                             id, cancellable
                         );
                         set_enabled(info, true);
@@ -262,7 +263,7 @@ public class Accounts.Manager : GLib.Object {
                         // load_account.
                     } catch (GLib.Error err) {
                         debug("Error loading account %s", id);
-                        report_problem(new Convey.ProblemReport(err));
+                        report_problem(new GriabuntuMail.ProblemReport(err));
                     }
                 }
             }
@@ -278,7 +279,7 @@ public class Accounts.Manager : GLib.Object {
             GLib.List<Goa.Object> list = this.goa_service.get_accounts();
             for (int i=0; i < list.length() && !cancellable.is_cancelled(); i++) {
                 Goa.Object account = list.nth_data(i);
-                string id = to_convey_id(account);
+                string id = to_griabuntu_mail_id(account);
                 if (!this.accounts.has_key(id)) {
                     yield this.create_goa_account(account, cancellable);
                 }
@@ -292,7 +293,7 @@ public class Accounts.Manager : GLib.Object {
      * This keeps the account in the known set, but marks it as being
      * unavailable.
      */
-    public void disable_account(Convey.AccountInformation account) {
+    public void disable_account(GriabuntuMail.AccountInformation account) {
         if (this.accounts.has_key(account.id)) {
             set_available(account, false);
         }
@@ -307,7 +308,7 @@ public class Accounts.Manager : GLib.Object {
      * and until then the account can be re-added using {@link
      * restore_account}.
      */
-    public async void remove_account(Convey.AccountInformation account,
+    public async void remove_account(GriabuntuMail.AccountInformation account,
                                      GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.accounts.unset(account.id);
@@ -325,7 +326,7 @@ public class Accounts.Manager : GLib.Object {
      * long as {@link expunge_accounts} has not been called since
      * he account was removed.
      */
-    public async void restore_account(Convey.AccountInformation account,
+    public async void restore_account(GriabuntuMail.AccountInformation account,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (this.removed.remove(account)) {
@@ -347,7 +348,7 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Saves an account's configuration data to disk.
      */
-    public async void save_account(Convey.AccountInformation info,
+    public async void save_account(GriabuntuMail.AccountInformation info,
                                    GLib.Cancellable? cancellable)
         throws GLib.Error {
         // Ensure only one async task is saving an info at once, since
@@ -370,9 +371,9 @@ public class Accounts.Manager : GLib.Object {
     }
 
     /** Updates a local account service's credentials. */
-    public async void update_local_credentials(Convey.AccountInformation account,
-                                               Convey.ServiceInformation old_service,
-                                               Convey.ServiceInformation new_service,
+    public async void update_local_credentials(GriabuntuMail.AccountInformation account,
+                                               GriabuntuMail.ServiceInformation old_service,
+                                               GriabuntuMail.ServiceInformation new_service,
                                                GLib.Cancellable? cancellable)
         throws GLib.Error {
         SecretMediator? mediator = account.mediator as SecretMediator;
@@ -393,7 +394,7 @@ public class Accounts.Manager : GLib.Object {
     /**
      * Determines if an account is a GOA account or not.
      */
-    public bool is_goa_account(Convey.AccountInformation account) {
+    public bool is_goa_account(GriabuntuMail.AccountInformation account) {
         return (account.mediator is GoaMediator);
     }
 
@@ -418,15 +419,15 @@ public class Accounts.Manager : GLib.Object {
      * Throws an error if it was not possible to open GNOME Settings,
      * or if the given type is not supported for by GOA.
      */
-    public async void add_goa_account(Convey.ServiceProvider type,
+    public async void add_goa_account(GriabuntuMail.ServiceProvider type,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         switch (type) {
-        case Convey.ServiceProvider.GMAIL:
+        case GriabuntuMail.ServiceProvider.GMAIL:
             yield open_goa_settings("add", "google", cancellable);
             break;
 
-        case Convey.ServiceProvider.OUTLOOK:
+        case GriabuntuMail.ServiceProvider.OUTLOOK:
             yield open_goa_settings("add", "windows_live", cancellable);
             break;
 
@@ -441,7 +442,7 @@ public class Accounts.Manager : GLib.Object {
      * Throws an error if it was not possible to open GNOME Settings,
      * or if the given account is not backed by GOA.
      */
-    public async void show_goa_account(Convey.AccountInformation account,
+    public async void show_goa_account(GriabuntuMail.AccountInformation account,
                                        GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (!is_goa_account(account)) {
@@ -475,9 +476,9 @@ public class Accounts.Manager : GLib.Object {
         // Check for existing directories that might conflict
         string id = LOCAL_ID_FORMAT.printf(next_id);
         try {
-            while ((yield Convey.Files.query_exists_async(
+            while ((yield GriabuntuMail.Files.query_exists_async(
                         this.config_dir.get_child(id), cancellable)) ||
-                   (yield Convey.Files.query_exists_async(
+                   (yield GriabuntuMail.Files.query_exists_async(
                        this.data_dir.get_child(id), cancellable))) {
                 next_id++;
                 id = LOCAL_ID_FORMAT.printf(next_id);
@@ -496,13 +497,13 @@ public class Accounts.Manager : GLib.Object {
      * Throws an error if the config file was not found, could not be
      * parsed, or doesn't have all required fields.
      */
-    private async Convey.AccountInformation
+    private async GriabuntuMail.AccountInformation
         load_account(string id, GLib.Cancellable? cancellable)
         throws ConfigError {
         GLib.File config_dir = this.config_dir.get_child(id);
         GLib.File data_dir = this.data_dir.get_child(id);
 
-        Convey.ConfigFile config = new Convey.ConfigFile(
+        GriabuntuMail.ConfigFile config = new GriabuntuMail.ConfigFile(
             config_dir.get_child(SETTINGS_FILENAME)
         );
 
@@ -514,7 +515,7 @@ public class Accounts.Manager : GLib.Object {
             throw new ConfigError.IO(err.message);
         }
 
-        Convey.ConfigFile.Group metadata_config =
+        GriabuntuMail.ConfigFile.Group metadata_config =
             config.get_group(GROUP_METADATA);
         int version = metadata_config.get_int(METADATA_VERSION, 0);
         Status status = Status.ENABLED;
@@ -523,7 +524,7 @@ public class Accounts.Manager : GLib.Object {
                 metadata_config.get_string(
                     METADATA_STATUS, status.to_value()
                 ));
-        } catch (Convey.EngineError err) {
+        } catch (GriabuntuMail.EngineError err) {
             throw new ConfigError.SYNTAX("%s: Invalid status value", id);
         }
 
@@ -540,8 +541,8 @@ public class Accounts.Manager : GLib.Object {
 
         Goa.Object? goa_handle = null;
         GoaMediator? goa_mediator = null;
-        Convey.ServiceProvider? default_provider = null;
-        Convey.CredentialsMediator mediator = this.local_mediator;
+        GriabuntuMail.ServiceProvider? default_provider = null;
+        GriabuntuMail.CredentialsMediator mediator = this.local_mediator;
 
         if (is_goa) {
             if (this.goa_service == null) {
@@ -563,7 +564,7 @@ public class Accounts.Manager : GLib.Object {
                 // Use the default mediator since we can't create a
                 // GOA equiv, but set a dummy default provider so we
                 // don't get an error loading the config
-                default_provider = Convey.ServiceProvider.OTHER;
+                default_provider = GriabuntuMail.ServiceProvider.OTHER;
             }
         }
 
@@ -586,7 +587,7 @@ public class Accounts.Manager : GLib.Object {
             );
         }
 
-        Convey.AccountInformation? account = null;
+        GriabuntuMail.AccountInformation? account = null;
         try {
             account = accounts.load(
                 config,
@@ -626,7 +627,7 @@ public class Accounts.Manager : GLib.Object {
 
             if (!is_valid_goa_account(goa_handle)) {
                 // If we get here, the GOA account's mail service used
-                // to exist (we just loaded Convey's config for it) but
+                // to exist (we just loaded Griabuntu Mail's config for it) but
                 // no longer does. This indicates the mail service has
                 // been disabled, so set it as disabled.
                 set_available(account, false);
@@ -646,7 +647,7 @@ public class Accounts.Manager : GLib.Object {
         return account;
     }
 
-    private async void save_account_locked(Convey.AccountInformation account,
+    private async void save_account_locked(GriabuntuMail.AccountInformation account,
                                            GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (account.config_dir == null) {
@@ -655,7 +656,7 @@ public class Accounts.Manager : GLib.Object {
             );
         }
 
-        Convey.ConfigFile config = new Convey.ConfigFile(
+        GriabuntuMail.ConfigFile config = new GriabuntuMail.ConfigFile(
             account.config_dir.get_child(SETTINGS_FILENAME)
         );
 
@@ -667,7 +668,7 @@ public class Accounts.Manager : GLib.Object {
             debug("Could not load existing config file: %s", err.message);
         }
 
-        Convey.ConfigFile.Group metadata_config =
+        GriabuntuMail.ConfigFile.Group metadata_config =
             config.get_group(GROUP_METADATA);
         metadata_config.set_int(
             METADATA_VERSION, CONFIG_VERSION
@@ -694,7 +695,7 @@ public class Accounts.Manager : GLib.Object {
         yield config.save(cancellable);
     }
 
-    private async void delete_account(Convey.AccountInformation info,
+    private async void delete_account(GriabuntuMail.AccountInformation info,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         // If it's a local account, try clearing the passwords. Keep
@@ -716,7 +717,7 @@ public class Accounts.Manager : GLib.Object {
         }
 
         if (info.data_dir != null) {
-            yield Convey.Files.recursive_delete_async(
+            yield GriabuntuMail.Files.recursive_delete_async(
                 info.data_dir, GLib.Priority.LOW, cancellable
             );
         }
@@ -724,13 +725,13 @@ public class Accounts.Manager : GLib.Object {
         // Delete config last so if there are any errors above, it
         // will be re-tried at next startup.
         if (info.config_dir != null) {
-            yield Convey.Files.recursive_delete_async(
+            yield GriabuntuMail.Files.recursive_delete_async(
                 info.config_dir, GLib.Priority.LOW, cancellable
             );
         }
     }
 
-    private inline AccountState lookup_state(Convey.AccountInformation account) {
+    private inline AccountState lookup_state(GriabuntuMail.AccountInformation account) {
         AccountState? state = this.accounts.get(account.id);
         if (state == null) {
             state = new AccountState(account);
@@ -739,7 +740,7 @@ public class Accounts.Manager : GLib.Object {
         return state;
     }
 
-    private bool set_enabled(Convey.AccountInformation account, bool is_enabled) {
+    private bool set_enabled(GriabuntuMail.AccountInformation account, bool is_enabled) {
         bool was_added = !this.accounts.has_key(account.id);
         AccountState state = lookup_state(account);
         Status existing_status = state.status;
@@ -757,7 +758,7 @@ public class Accounts.Manager : GLib.Object {
         return ret;
     }
 
-    private bool set_available(Convey.AccountInformation account, bool is_available) {
+    private bool set_available(GriabuntuMail.AccountInformation account, bool is_available) {
         bool was_added = !this.accounts.has_key(account.id);
         AccountState state = lookup_state(account);
         Status existing_status = state.status;
@@ -775,19 +776,19 @@ public class Accounts.Manager : GLib.Object {
         return ret;
     }
 
-    private async void create_account_dirs(Convey.AccountInformation info,
+    private async void create_account_dirs(GriabuntuMail.AccountInformation info,
                                           Cancellable? cancellable)
         throws GLib.Error {
         GLib.File config = this.config_dir.get_child(info.id);
         GLib.File data = this.data_dir.get_child(info.id);
 
-        yield Convey.Files.make_directory_with_parents(config, cancellable);
-        yield Convey.Files.make_directory_with_parents(data, cancellable);
+        yield GriabuntuMail.Files.make_directory_with_parents(config, cancellable);
+        yield GriabuntuMail.Files.make_directory_with_parents(data, cancellable);
 
         info.set_account_directories(config, data);
     }
 
-    private inline string to_convey_id(Goa.Object account) {
+    private inline string to_griabuntu_mail_id(Goa.Object account) {
         return GOA_ID_PREFIX + account.get_account().id;
     }
 
@@ -808,13 +809,13 @@ public class Accounts.Manager : GLib.Object {
             handle.get_oauth2_based() != null ||
             handle.get_password_based() != null
         );
-        bool has_identity = !Convey.String.is_empty_or_whitespace(
+        bool has_identity = !GriabuntuMail.String.is_empty_or_whitespace(
             account.presentation_identity
         );
         if (mail != null) {
             bool has_mail_endpoints = (
-                !Convey.String.is_empty(mail.imap_host) &&
-                !Convey.String.is_empty(mail.smtp_host)
+                !GriabuntuMail.String.is_empty(mail.imap_host) &&
+                !GriabuntuMail.String.is_empty(mail.smtp_host)
             );
             if (has_mail_endpoints) {
                 return (
@@ -847,7 +848,7 @@ public class Accounts.Manager : GLib.Object {
                 ? mail.email_address
                 : goa_account.presentation_identity
             );
-            if (Convey.String.is_empty_or_whitespace(mailbox)) {
+            if (GriabuntuMail.String.is_empty_or_whitespace(mailbox)) {
                 debug(
                     "Ignoring GOA %s account %s, mailbox identity missing",
                     goa_account.provider_type,
@@ -856,20 +857,20 @@ public class Accounts.Manager : GLib.Object {
                 return;
             }
             string? name = (mail != null) ? mail.name : null;
-            if (Convey.String.is_empty_or_whitespace(name)) {
+            if (GriabuntuMail.String.is_empty_or_whitespace(name)) {
                 name = get_account_name();
             }
 
             GoaMediator mediator = new GoaMediator(account);
-            Convey.AccountInformation info = new Convey.AccountInformation(
-                to_convey_id(account),
+            GriabuntuMail.AccountInformation info = new GriabuntuMail.AccountInformation(
+                to_griabuntu_mail_id(account),
                 mediator.get_service_provider(),
                 mediator,
-                new Convey.RFC822.MailboxAddress(name, mailbox)
+                new GriabuntuMail.RFC822.MailboxAddress(name, mailbox)
             );
 
             info.account_backend = mediator.get_account_backend();
-            info.ordinal = Convey.AccountInformation.next_ordinal++;
+            info.ordinal = GriabuntuMail.AccountInformation.next_ordinal++;
             info.service_label = mediator.get_service_label();
             info.label = goa_account.presentation_identity;
 
@@ -878,7 +879,7 @@ public class Accounts.Manager : GLib.Object {
                 yield save_account(info, cancellable);
                 yield mediator.update(info, cancellable);
             } catch (GLib.Error err) {
-                report_problem(new Convey.ProblemReport(err));
+                report_problem(new GriabuntuMail.ProblemReport(err));
             }
 
             set_enabled(info, true);
@@ -891,7 +892,7 @@ public class Accounts.Manager : GLib.Object {
         }
     }
 
-    private async void update_goa_account(Convey.AccountInformation account,
+    private async void update_goa_account(GriabuntuMail.AccountInformation account,
                                           bool is_available,
                                           GLib.Cancellable? cancellable) {
         GoaMediator mediator = (GoaMediator) account.mediator;
@@ -906,7 +907,7 @@ public class Accounts.Manager : GLib.Object {
                 yield account.load_incoming_credentials(cancellable);
             }
         } catch (GLib.Error err) {
-            report_problem(new Convey.AccountProblemReport(account, err));
+            report_problem(new GriabuntuMail.AccountProblemReport(account, err));
         }
 
         set_available(account, is_available);
@@ -975,7 +976,7 @@ public class Accounts.Manager : GLib.Object {
 
     private void on_goa_account_changed(Goa.Object account) {
         debug("GOA account changed: %s", account.get_account().id);
-        AccountState? state = this.accounts.get(to_convey_id(account));
+        AccountState? state = this.accounts.get(to_griabuntu_mail_id(account));
         // No cancellable, as per on_goa_account_added
         if (state != null) {
             ((GoaMediator) state.account.mediator).handle = account;
@@ -996,7 +997,7 @@ public class Accounts.Manager : GLib.Object {
 
     private void on_goa_account_removed(Goa.Object account) {
         debug("GOA account removed: %s", account.get_account().id);
-        AccountState? state = this.accounts.get(to_convey_id(account));
+        AccountState? state = this.accounts.get(to_griabuntu_mail_id(account));
         if (state != null) {
             // Just disabled it for now in case the GOA daemon as just
             // shutting down.
@@ -1004,14 +1005,14 @@ public class Accounts.Manager : GLib.Object {
         }
     }
 
-    private void on_account_changed(Convey.AccountInformation account) {
+    private void on_account_changed(GriabuntuMail.AccountInformation account) {
         this.save_account.begin(
             account, null,
             (obj, res) => {
                 try {
                     this.save_account.end(res);
                 } catch (GLib.Error err) {
-                    report_problem(new Convey.AccountProblemReport(account, err));
+                    report_problem(new GriabuntuMail.AccountProblemReport(account, err));
                 }
             }
         );
@@ -1023,17 +1024,17 @@ public class Accounts.Manager : GLib.Object {
 public interface Accounts.AccountConfig : GLib.Object {
 
     /** Loads a supported account from a config file. */
-    public abstract Convey.AccountInformation
-        load(Convey.ConfigFile config,
+    public abstract GriabuntuMail.AccountInformation
+        load(GriabuntuMail.ConfigFile config,
              string id,
-             Convey.CredentialsMediator mediator,
-             Convey.ServiceProvider? default_provider,
+             GriabuntuMail.CredentialsMediator mediator,
+             GriabuntuMail.ServiceProvider? default_provider,
              string? default_name)
         throws ConfigError, GLib.KeyFileError;
 
     /** Saves an account to a config file. */
-    public abstract void save(Convey.AccountInformation account,
-                              Convey.ConfigFile config);
+    public abstract void save(GriabuntuMail.AccountInformation account,
+                              GriabuntuMail.ConfigFile config);
 
 }
 
@@ -1042,15 +1043,15 @@ public interface Accounts.AccountConfig : GLib.Object {
 public interface Accounts.ServiceConfig : GLib.Object {
 
     /** Loads a service from a config file. */
-    public abstract void load(Convey.ConfigFile config,
-                              Convey.AccountInformation account,
-                              Convey.ServiceInformation service)
+    public abstract void load(GriabuntuMail.ConfigFile config,
+                              GriabuntuMail.AccountInformation account,
+                              GriabuntuMail.ServiceInformation service)
         throws ConfigError, GLib.KeyFileError;
 
     /** Saves a service to a config file. */
-    public abstract void save(Convey.AccountInformation account,
-                              Convey.ServiceInformation service,
-                              Convey.ConfigFile config);
+    public abstract void save(GriabuntuMail.AccountInformation account,
+                              GriabuntuMail.ServiceInformation service,
+                              GriabuntuMail.ConfigFile config);
 
 }
 
@@ -1100,24 +1101,24 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         this.is_managed = is_managed;
     }
 
-    public  Convey.AccountInformation load(Convey.ConfigFile config,
+    public  GriabuntuMail.AccountInformation load(GriabuntuMail.ConfigFile config,
                                           string id,
-                                          Convey.CredentialsMediator mediator,
-                                          Convey.ServiceProvider? default_provider,
+                                          GriabuntuMail.CredentialsMediator mediator,
+                                          GriabuntuMail.ServiceProvider? default_provider,
                                           string? default_name)
         throws ConfigError, GLib.KeyFileError {
-        Convey.ConfigFile.Group account_config =
+        GriabuntuMail.ConfigFile.Group account_config =
             config.get_group(GROUP_ACCOUNT);
 
-        Gee.List<Convey.RFC822.MailboxAddress> senders =
-            new Gee.LinkedList<Convey.RFC822.MailboxAddress>();
+        Gee.List<GriabuntuMail.RFC822.MailboxAddress> senders =
+            new Gee.LinkedList<GriabuntuMail.RFC822.MailboxAddress>();
         foreach (string sender in
                  account_config.get_required_string_list(ACCOUNT_SENDERS)) {
             try {
                 senders.add(
-                    new Convey.RFC822.MailboxAddress.from_rfc822_string(sender)
+                    new GriabuntuMail.RFC822.MailboxAddress.from_rfc822_string(sender)
                 );
-            } catch (Convey.RFC822.Error err) {
+            } catch (GriabuntuMail.RFC822.Error err) {
                 throw new ConfigError.SYNTAX(
                     "%s: Invalid sender address: %s", id, sender
                 );
@@ -1128,27 +1129,27 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
             throw new ConfigError.SYNTAX("%s: No sender addresses found", id);
         }
 
-        Convey.ServiceProvider provider = (
+        GriabuntuMail.ServiceProvider provider = (
             default_provider != null
             ? default_provider
-            : account_config.parse_required_value<Convey.ServiceProvider>(
+            : account_config.parse_required_value<GriabuntuMail.ServiceProvider>(
                 ACCOUNT_PROVIDER,
                 (value) => {
                     try {
-                        return Convey.ServiceProvider.for_value(value);
-                    } catch (Convey.EngineError err) {
+                        return GriabuntuMail.ServiceProvider.for_value(value);
+                    } catch (GriabuntuMail.EngineError err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
                 }
             )
         );
 
-        Convey.AccountInformation account = new Convey.AccountInformation(
+        GriabuntuMail.AccountInformation account = new GriabuntuMail.AccountInformation(
             id, provider, mediator, senders.remove_at(0)
         );
 
         account.ordinal = account_config.get_int(
-            ACCOUNT_ORDINAL, Convey.AccountInformation.next_ordinal++
+            ACCOUNT_ORDINAL, GriabuntuMail.AccountInformation.next_ordinal++
         );
         account.label = account_config.get_string(
             ACCOUNT_LABEL, account.label
@@ -1171,7 +1172,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         account.signature = account_config.get_string(
             ACCOUNT_SIG, account.signature
         );
-        foreach (Convey.RFC822.MailboxAddress sender in senders) {
+        foreach (GriabuntuMail.RFC822.MailboxAddress sender in senders) {
             account.append_sender(sender);
         }
         Gee.List<string> sender_sigs =
@@ -1184,7 +1185,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
             );
         }
 
-        Convey.ConfigFile.Group folder_config =
+        GriabuntuMail.ConfigFile.Group folder_config =
             config.get_group(GROUP_FOLDERS);
         account.set_folder_steps_for_use(
             ARCHIVE, folder_config.get_string_list(FOLDER_ARCHIVE)
@@ -1214,9 +1215,9 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
     }
 
     /** Saves an account to a config file. */
-    public void save(Convey.AccountInformation account,
-                     Convey.ConfigFile config) {
-        Convey.ConfigFile.Group account_config =
+    public void save(GriabuntuMail.AccountInformation account,
+                     GriabuntuMail.ConfigFile config) {
+        GriabuntuMail.ConfigFile.Group account_config =
             config.get_group(GROUP_ACCOUNT);
         account_config.set_int(ACCOUNT_ORDINAL, account.ordinal);
         account_config.set_string(ACCOUNT_LABEL, account.label);
@@ -1230,13 +1231,13 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         account_config.set_string(ACCOUNT_SIG, account.signature);
         account_config.set_string_list(
             ACCOUNT_SENDERS,
-            Convey.traverse(account.sender_mailboxes)
+            GriabuntuMail.traverse(account.sender_mailboxes)
             .map<string>((sender) => sender.to_rfc822_string())
             .to_array_list()
         );
         account_config.set_string_list(
             ACCOUNT_SENDER_SIGS,
-            Convey.traverse(account.sender_mailboxes)
+            GriabuntuMail.traverse(account.sender_mailboxes)
             .map<string>((sender) => account.get_sender_signature(sender))
             .to_array_list()
         );
@@ -1247,7 +1248,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
             );
         }
 
-        Convey.ConfigFile.Group folder_config =
+        GriabuntuMail.ConfigFile.Group folder_config =
             config.get_group(GROUP_FOLDERS);
         save_folder(
             folder_config,
@@ -1276,7 +1277,7 @@ public class Accounts.AccountConfigV1 : AccountConfig, GLib.Object {
         );
     }
 
-    private inline void save_folder(Convey.ConfigFile.Group config,
+    private inline void save_folder(GriabuntuMail.ConfigFile.Group config,
                                     string key,
                                     Gee.List<string>? steps) {
         if (steps != null) {
@@ -1314,43 +1315,43 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
     private const string USE_EMAIL_SIGNATURE_KEY = "use_email_signature";
 
 
-    public Convey.AccountInformation load(Convey.ConfigFile config_file,
+    public GriabuntuMail.AccountInformation load(GriabuntuMail.ConfigFile config_file,
                                          string id,
-                                         Convey.CredentialsMediator mediator,
-                                         Convey.ServiceProvider? default_provider,
+                                         GriabuntuMail.CredentialsMediator mediator,
+                                         GriabuntuMail.ServiceProvider? default_provider,
                                          string? default_name)
         throws ConfigError, GLib.KeyFileError {
-        Convey.ConfigFile.Group config = config_file.get_group(GROUP);
+        GriabuntuMail.ConfigFile.Group config = config_file.get_group(GROUP);
 
         string primary_email = config.get_required_string(PRIMARY_EMAIL_KEY);
         string real_name = config.get_string(REAL_NAME_KEY, default_name);
 
-        Convey.ServiceProvider provider = (
+        GriabuntuMail.ServiceProvider provider = (
             default_provider != null
             ? default_provider
-            : config.parse_required_value<Convey.ServiceProvider>(
+            : config.parse_required_value<GriabuntuMail.ServiceProvider>(
                 SERVICE_PROVIDER_KEY,
                 (value) => {
                     try {
-                        return Convey.ServiceProvider.for_value(value);
-                    } catch (Convey.EngineError err) {
+                        return GriabuntuMail.ServiceProvider.for_value(value);
+                    } catch (GriabuntuMail.EngineError err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
                 }
             )
         );
 
-        Convey.AccountInformation info = new Convey.AccountInformation(
+        GriabuntuMail.AccountInformation info = new GriabuntuMail.AccountInformation(
             id, provider, mediator,
-            new Convey.RFC822.MailboxAddress(real_name, primary_email)
+            new GriabuntuMail.RFC822.MailboxAddress(real_name, primary_email)
         );
 
         info.ordinal = config.get_int(ORDINAL_KEY, info.ordinal);
-        if (info.ordinal >= Convey.AccountInformation.next_ordinal) {
-            Convey.AccountInformation.next_ordinal = info.ordinal + 1;
+        if (info.ordinal >= GriabuntuMail.AccountInformation.next_ordinal) {
+            GriabuntuMail.AccountInformation.next_ordinal = info.ordinal + 1;
         }
 
-        info.append_sender(new Convey.RFC822.MailboxAddress(
+        info.append_sender(new GriabuntuMail.RFC822.MailboxAddress(
             config.get_string(REAL_NAME_KEY), primary_email
         ));
 
@@ -1362,11 +1363,11 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
         );
         foreach (string alt_email in alt_email_list) {
             try {
-                var mailboxes = new Convey.RFC822.MailboxAddresses.from_rfc822_string(alt_email);
-                foreach (Convey.RFC822.MailboxAddress mailbox in mailboxes.get_all()) {
+                var mailboxes = new GriabuntuMail.RFC822.MailboxAddresses.from_rfc822_string(alt_email);
+                foreach (GriabuntuMail.RFC822.MailboxAddress mailbox in mailboxes.get_all()) {
                     info.append_sender(mailbox);
                 }
-            } catch (Convey.RFC822.Error error) {
+            } catch (GriabuntuMail.RFC822.Error error) {
                 throw new ConfigError.SYNTAX(
                     "Invalid alternate email: %s", error.message
                 );
@@ -1407,10 +1408,10 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
         return info;
     }
 
-    public void save(Convey.AccountInformation info,
-                     Convey.ConfigFile config_file) {
+    public void save(GriabuntuMail.AccountInformation info,
+                     GriabuntuMail.ConfigFile config_file) {
 
-        Convey.ConfigFile.Group config = config_file.get_group(GROUP);
+        GriabuntuMail.ConfigFile.Group config = config_file.get_group(GROUP);
 
         config.set_string(REAL_NAME_KEY, info.primary_mailbox.name ?? "");
         config.set_string(PRIMARY_EMAIL_KEY, info.primary_mailbox.address);
@@ -1422,13 +1423,13 @@ public class Accounts.AccountConfigLegacy : AccountConfig, GLib.Object {
         config.set_bool(USE_EMAIL_SIGNATURE_KEY, info.use_signature);
         config.set_string(EMAIL_SIGNATURE_KEY, info.signature);
         if (info.has_sender_aliases) {
-            Gee.List<Convey.RFC822.MailboxAddress> alts = info.sender_mailboxes;
+            Gee.List<GriabuntuMail.RFC822.MailboxAddress> alts = info.sender_mailboxes;
             // Don't include the primary in the list
             alts.remove_at(0);
 
             config.set_string_list(
                 ALTERNATE_EMAILS_KEY,
-                Convey.traverse(alts)
+                GriabuntuMail.traverse(alts)
                 .map<string>((alt) => alt.to_rfc822_string())
                 .to_array_list()
             );
@@ -1487,18 +1488,18 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
 
 
     /** Loads a supported service from a config file. */
-    public void load(Convey.ConfigFile config,
-                     Convey.AccountInformation account,
-                     Convey.ServiceInformation service)
+    public void load(GriabuntuMail.ConfigFile config,
+                     GriabuntuMail.AccountInformation account,
+                     GriabuntuMail.ServiceInformation service)
         throws ConfigError, GLib.KeyFileError {
-        Convey.ConfigFile.Group service_config = config.get_group(
+        GriabuntuMail.ConfigFile.Group service_config = config.get_group(
             service.protocol == IMAP ? GROUP_INCOMING : GROUP_OUTGOING
         );
 
         string? login = service_config.get_string(LOGIN, null);
         if (login != null) {
-            service.credentials = new Convey.Credentials(
-                Convey.Credentials.Method.PASSWORD, login
+            service.credentials = new GriabuntuMail.Credentials(
+                GriabuntuMail.Credentials.Method.PASSWORD, login
             );
         }
         service.remember_password = service_config.get_bool(
@@ -1506,16 +1507,16 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
         );
 
 
-        if (account.service_provider == Convey.ServiceProvider.OTHER) {
+        if (account.service_provider == GriabuntuMail.ServiceProvider.OTHER) {
             service.host = service_config.get_required_string(HOST);
             service.port = (uint16) service_config.get_int(PORT, service.port);
 
             service.transport_security = service_config.parse_required_value
-            <Convey.TlsNegotiationMethod>(
+            <GriabuntuMail.TlsNegotiationMethod>(
                 SECURITY,
                 (value) => {
                     try {
-                        return Convey.TlsNegotiationMethod.for_value(value);
+                        return GriabuntuMail.TlsNegotiationMethod.for_value(value);
                     } catch (GLib.Error err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
@@ -1523,11 +1524,11 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
             );
 
             service.credentials_requirement = service_config.parse_required_value
-            <Convey.Credentials.Requirement>(
+            <GriabuntuMail.Credentials.Requirement>(
                 CREDENTIALS,
                 (value) => {
                     try {
-                        return Convey.Credentials.Requirement.for_value(value);
+                        return GriabuntuMail.Credentials.Requirement.for_value(value);
                     } catch (GLib.Error err) {
                         throw new GLib.KeyFileError.INVALID_VALUE(err.message);
                     }
@@ -1541,10 +1542,10 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
     }
 
     /** Saves an service to a config file. */
-    public void save(Convey.AccountInformation account,
-                     Convey.ServiceInformation service,
-                     Convey.ConfigFile config) {
-        Convey.ConfigFile.Group service_config = config.get_group(
+    public void save(GriabuntuMail.AccountInformation account,
+                     GriabuntuMail.ServiceInformation service,
+                     GriabuntuMail.ConfigFile config) {
+        GriabuntuMail.ConfigFile.Group service_config = config.get_group(
             service.protocol == IMAP ? GROUP_INCOMING : GROUP_OUTGOING
         );
 
@@ -1553,7 +1554,7 @@ public class Accounts.ServiceConfigV1 : ServiceConfig, GLib.Object {
         }
         service_config.set_bool(REMEMBER_PASSWORD, service.remember_password);
 
-        if (account.service_provider == Convey.ServiceProvider.OTHER) {
+        if (account.service_provider == GriabuntuMail.ServiceProvider.OTHER) {
             service_config.set_string(HOST, service.host);
             service_config.set_int(PORT, service.port);
             service_config.set_string(
@@ -1587,49 +1588,49 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
 
 
     /** Loads a supported service from a config file. */
-    public void load(Convey.ConfigFile config,
-                     Convey.AccountInformation account,
-                     Convey.ServiceInformation service)
+    public void load(GriabuntuMail.ConfigFile config,
+                     GriabuntuMail.AccountInformation account,
+                     GriabuntuMail.ServiceInformation service)
         throws ConfigError, GLib.KeyFileError {
-        Convey.ConfigFile.Group service_config =
+        GriabuntuMail.ConfigFile.Group service_config =
             config.get_group(AccountConfigLegacy.GROUP);
 
-        string prefix = service.protocol == Convey.Protocol.IMAP
+        string prefix = service.protocol == GriabuntuMail.Protocol.IMAP
             ? "imap_" :  "smtp_";
 
         string? login = service_config.get_string(
             prefix + USERNAME, account.primary_mailbox.address
         );
         if (login != null) {
-            service.credentials = new Convey.Credentials(
-                Convey.Credentials.Method.PASSWORD, login
+            service.credentials = new GriabuntuMail.Credentials(
+                GriabuntuMail.Credentials.Method.PASSWORD, login
             );
         }
         service.remember_password = service_config.get_bool(
             prefix + REMEMBER_PASSWORD, service.remember_password
         );
 
-        if (account.service_provider == Convey.ServiceProvider.OTHER) {
+        if (account.service_provider == GriabuntuMail.ServiceProvider.OTHER) {
             service.host = service_config.get_string(prefix + HOST, service.host);
             service.port = (uint16) service_config.get_int(
                 prefix + PORT, service.port
             );
 
             bool use_tls = service_config.get_bool(
-                prefix + SSL, service.protocol == Convey.Protocol.IMAP
+                prefix + SSL, service.protocol == GriabuntuMail.Protocol.IMAP
             );
             bool use_starttls = service_config.get_bool(
                 prefix + STARTTLS, true
             );
             if (use_tls) {
-                service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
             } else if (use_starttls) {
-                service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.START_TLS;
             } else {
-                service.transport_security = Convey.TlsNegotiationMethod.NONE;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.NONE;
             }
 
-            if (service.protocol == Convey.Protocol.SMTP) {
+            if (service.protocol == GriabuntuMail.Protocol.SMTP) {
                 bool use_imap = service_config.get_bool(
                     SMTP_USE_IMAP_CREDENTIALS, service.credentials != null
                 );
@@ -1638,23 +1639,23 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
                 );
                 if (use_imap) {
                     service.credentials_requirement =
-                        Convey.Credentials.Requirement.USE_INCOMING;
+                        GriabuntuMail.Credentials.Requirement.USE_INCOMING;
                 } else if (!no_auth) {
                     service.credentials_requirement =
-                        Convey.Credentials.Requirement.CUSTOM;
+                        GriabuntuMail.Credentials.Requirement.CUSTOM;
                 } else {
                     service.credentials_requirement =
-                        Convey.Credentials.Requirement.NONE;
+                        GriabuntuMail.Credentials.Requirement.NONE;
                 }
             }
         }
     }
 
     /** Saves an service to a config file. */
-    public void save(Convey.AccountInformation account,
-                     Convey.ServiceInformation service,
-                     Convey.ConfigFile config) {
-        Convey.ConfigFile.Group service_config =
+    public void save(GriabuntuMail.AccountInformation account,
+                     GriabuntuMail.ServiceInformation service,
+                     GriabuntuMail.ConfigFile config) {
+        GriabuntuMail.ConfigFile.Group service_config =
             config.get_group(AccountConfigLegacy.GROUP);
 
         string prefix = service.protocol.to_value().ascii_down() + "_";
@@ -1668,7 +1669,7 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
             prefix + REMEMBER_PASSWORD, service.remember_password
         );
 
-        if (account.service_provider == Convey.ServiceProvider.OTHER) {
+        if (account.service_provider == GriabuntuMail.ServiceProvider.OTHER) {
             service_config.set_string(prefix + HOST, service.host);
             service_config.set_int(prefix + PORT, service.port);
 
@@ -1689,7 +1690,7 @@ public class Accounts.ServiceConfigLegacy : ServiceConfig, GLib.Object {
                 break;
             }
 
-            if (service.protocol == Convey.Protocol.SMTP) {
+            if (service.protocol == GriabuntuMail.Protocol.SMTP) {
                 switch (service.credentials_requirement) {
                 case NONE:
                     service_config.set_bool(SMTP_USE_IMAP_CREDENTIALS, false);

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
@@ -11,7 +12,7 @@
  * A simple dialog that allows adding/editing Mailboxes (e.g. when configuring
  * sender addresses).
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-mailbox-editor-dialog.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts-mailbox-editor-dialog.ui")]
 internal class Accounts.MailboxEditorDialog : Adw.Dialog {
 
 
@@ -34,7 +35,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
 
 
     /** Fired if the user pressed "Add"/"Apply" with the new details */
-    public signal void apply(Convey.RFC822.MailboxAddress mailbox,
+    public signal void apply(GriabuntuMail.RFC822.MailboxAddress mailbox,
                              string signature);
 
     /** Fired if the user requested to remove the address */
@@ -79,7 +80,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
         action_set_enabled("remove", false);
     }
 
-    public MailboxEditorDialog.for_existing(Convey.RFC822.MailboxAddress mailbox,
+    public MailboxEditorDialog.for_existing(GriabuntuMail.RFC822.MailboxAddress mailbox,
                                             bool can_remove,
                                             Composer.Editor signature_editor) {
         Object(
@@ -131,7 +132,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
             return;
         }
 
-        var mailbox = new Convey.RFC822.MailboxAddress(
+        var mailbox = new GriabuntuMail.RFC822.MailboxAddress(
             this.display_name, this.address
         );
         this.signature_editor.body.get_body_html.begin((obj, res) => {

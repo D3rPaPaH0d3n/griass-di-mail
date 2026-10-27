@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -8,17 +9,17 @@
  */
 
 
-class Convey.Db.VersionedDatabaseTest : TestCase {
+class GriabuntuMail.Db.VersionedDatabaseTest : TestCase {
 
 
     public VersionedDatabaseTest() {
-        base("Convey.Db.VersionedDatabaseTest");
+        base("GriabuntuMail.Db.VersionedDatabaseTest");
         add_test("open_new", open_new);
     }
 
     public void open_new() throws Error {
         GLib.File tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("convey-db-database-test-XXXXXX")
+            GLib.DirUtils.make_tmp("griabuntu-mail-db-database-test-XXXXXX")
         );
 
         GLib.File sql1 = tmp_dir.get_child("version-001.sql");
@@ -36,11 +37,11 @@ class Convey.Db.VersionedDatabaseTest : TestCase {
         );
 
         db.open.begin(
-            Convey.Db.DatabaseFlags.CREATE_FILE, null, this.async_completion
+            GriabuntuMail.Db.DatabaseFlags.CREATE_FILE, null, this.async_completion
         );
         db.open.end(async_result());
 
-        Convey.Db.Result result = db.query("SELECT * FROM TestTable;");
+        GriabuntuMail.Db.Result result = db.query("SELECT * FROM TestTable;");
         assert_false(result.finished, "Row not inserted");
         assert_equal(result.string_for("col"), "value");
         assert_false(result.next(), "Multiple rows inserted");

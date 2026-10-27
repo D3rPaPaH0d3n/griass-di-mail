@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016 Michael James Gratton <mike@vee.net>
@@ -14,11 +15,11 @@
  * This class assumes that CRLF sequences have been replaced with a
  * single LF character.
  *
- * The character `Convey.RFC822.Utils.QUOTE_MARKER` will be output as the
+ * The character `GriabuntuMail.RFC822.Utils.QUOTE_MARKER` will be output as the
  * quote character instead of `>` if the `to_html` constructor
  * argument is set to `true`.
  */
-private class Convey.RFC822.FilterFlowed : GMime.Filter {
+private class GriabuntuMail.RFC822.FilterFlowed : GMime.Filter {
 
     private char quote_marker;
     private bool delsp;
@@ -37,7 +38,7 @@ private class Convey.RFC822.FilterFlowed : GMime.Filter {
     private uint sig_level = 0;
 
     public FilterFlowed(bool to_html, bool delsp) {
-        this.quote_marker = to_html ? Convey.RFC822.Utils.QUOTE_MARKER : '>';
+        this.quote_marker = to_html ? GriabuntuMail.RFC822.Utils.QUOTE_MARKER : '>';
         this.delsp = delsp;
     }
 
@@ -49,7 +50,7 @@ private class Convey.RFC822.FilterFlowed : GMime.Filter {
     }
 
     public override GMime.Filter copy() {
-        FilterFlowed new_filter = new FilterFlowed(quote_marker == Convey.RFC822.Utils.QUOTE_MARKER, delsp);
+        FilterFlowed new_filter = new FilterFlowed(quote_marker == GriabuntuMail.RFC822.Utils.QUOTE_MARKER, delsp);
 
         new_filter.saw_space = this.saw_space;
         new_filter.in_prefix = this.in_prefix;

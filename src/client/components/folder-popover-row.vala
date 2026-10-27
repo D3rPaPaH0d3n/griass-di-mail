@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,7 +7,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/folder-popover-row.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/folder-popover-row.ui")]
 public class FolderPopoverRow : Gtk.ListBoxRow {
 
     [GtkChild] private unowned Gtk.Image image;

@@ -54,11 +54,11 @@ hr {
 
 /* Recolouring the message's own elements is part of the colour override,
  * so it follows the same preference. */
-body[data-convey-theme] a {
+body[data-griabuntu-mail-theme] a {
   color: #08c;
 }
 
-body[data-convey-theme] hr {
+body[data-griabuntu-mail-theme] hr {
   background-color: #999;
 }
 
@@ -77,19 +77,19 @@ pre {
  * Message chrome style.
  */
 
-.convey-signature {
+.griabuntu-mail-signature {
     color: #777;
     display: inline;
 }
 
-.convey-signature a,
-.convey-quote-container a {
+.griabuntu-mail-signature a,
+.griabuntu-mail-quote-container a {
     color: #5fb2e7;
 }
 
 @media screen {
 
-  .convey_replaced_inline_image {
+  .griabuntu_mail_replaced_inline_image {
     display: block;
     max-width: 100%;
     margin: 1em 0;
@@ -97,7 +97,7 @@ pre {
 
   /* Inline collapsible quote blocks */
 
-  .convey-quote-container {
+  .griabuntu-mail-quote-container {
     position: relative;
     /* Split 1em of top/bottom margin between here and the default
     blockquote style, so if a message specifies 0px margin and padding
@@ -109,11 +109,11 @@ pre {
     color: var(--quote-container-fg);
     background-color: var(--quote-container-bg);/* recv-quoted */
   }
-  .convey-sent .convey-quote-container {
+  .griabuntu-mail-sent .griabuntu-mail-quote-container {
     background-color: var(--quote-container-bg);/* sent-quoted */
   }
 
-  .convey-quote-container > .convey-quote {
+  .griabuntu-mail-quote-container > .griabuntu-mail-quote {
     position: relative;
     padding: 0;
     border: 0;
@@ -121,18 +121,18 @@ pre {
     overflow: hidden;
     z-index: 0;
   }
-  .convey-quote-container.convey-controllable.convey-hide > .convey-quote {
+  .griabuntu-mail-quote-container.griabuntu-mail-controllable.griabuntu-mail-hide > .griabuntu-mail-quote {
     /* Use a fraction value to cut the last visible line off half way. */
     max-height: calc(6em - 8px);
   }
 
-  .convey-quote-container.convey-controllable > .convey-quote > blockquote {
+  .griabuntu-mail-quote-container.griabuntu-mail-controllable > .griabuntu-mail-quote > blockquote {
     /* Add space between the quote and the hider button */
     margin-bottom: 18px;
   }
 
-  .convey-quote-container > .convey-shower,
-  .convey-quote-container > .convey-hider {
+  .griabuntu-mail-quote-container > .griabuntu-mail-shower,
+  .griabuntu-mail-quote-container > .griabuntu-mail-hider {
     position: absolute;
     display: none;
     left: 0;
@@ -143,15 +143,15 @@ pre {
     -webkit-user-drag: none;
   }
 
-  .convey-quote-container.convey-controllable.convey-hide > .convey-hider {
+  .griabuntu-mail-quote-container.griabuntu-mail-controllable.griabuntu-mail-hide > .griabuntu-mail-hider {
     display: none;
   }
-  .convey-quote-container.convey-controllable.convey-hide > .convey-shower,
-  .convey-quote-container.convey-controllable > .convey-hider {
+  .griabuntu-mail-quote-container.griabuntu-mail-controllable.griabuntu-mail-hide > .griabuntu-mail-shower,
+  .griabuntu-mail-quote-container.griabuntu-mail-controllable > .griabuntu-mail-hider {
     display: block;
   }
 
-  .convey-quote-container .convey-button {
+  .griabuntu-mail-quote-container .griabuntu-mail-button {
     display: block;
     width: 100%;
     height: 16px;
@@ -181,7 +181,7 @@ pre {
     text-shadow: 0 1px var(--button-text-shadow-color);
     box-shadow: inset 0 1px var(--button-box-shadow-color);
   }
-  .convey-quote-container .convey-button:hover {
+  .griabuntu-mail-quote-container .griabuntu-mail-button:hover {
     /* Likewise the properties below also workaround WK Bug 166648,
      * and taken from gtk/theme/Adwaita/gtk-contained.css. */
     color: var(--hover-button-color);
@@ -195,25 +195,25 @@ pre {
 
   /* Highlight search terms */
 
-  .convey_search_coloring *::selection {
+  .griabuntu_mail_search_coloring *::selection {
     background-color: #00ddff;
   }
 }
 
-#convey-message-headers {
+#griabuntu-mail-message-headers {
   display: none !important;
 }
 
 @media print {
-  .convey-button {
+  .griabuntu-mail-button {
     display: none;
   }
 
-  #convey-message-headers, #convey-message-headers * {
+  #griabuntu-mail-message-headers, #griabuntu-mail-message-headers * {
     all: initial !important;
   }
 
-  #convey-message-headers {
+  #griabuntu-mail-message-headers {
     display: table !important;
     width: 100% !important;
     transition: height 2s !important;
@@ -222,21 +222,21 @@ pre {
     margin-bottom: 0.75em !important;
   }
 
-  #convey-message-headers tr {
+  #griabuntu-mail-message-headers tr {
     display: table-row !important;
   }
 
-  #convey-message-headers th, #convey-message-headers td {
+  #griabuntu-mail-message-headers th, #griabuntu-mail-message-headers td {
     display: table-cell !important;
     line-height: 1.5em !important;
   }
 
-  #convey-message-headers th {
+  #griabuntu-mail-message-headers th {
     font-weight: bold !important;
     padding-right: 2ex !important;
   }
 
-  #convey-message-headers td {
+  #griabuntu-mail-message-headers td {
     width: 100% !important;
   }
 }

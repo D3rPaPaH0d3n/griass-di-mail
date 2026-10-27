@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2016-2020 Michael Gratton <mike@vee.net>
@@ -9,18 +10,18 @@
  */
 
 /**
- * Base class for all WebKit2 WebView instances used by the Convey client.
+ * Base class for all WebKit2 WebView instances used by the Griabuntu Mail client.
  *
  * This provides common functionality expected by the client for
  * displaying HTML, such as common WebKit settings, desktop font
  * integration, Inspector support, and remote and inline resource
  * handling for content such as images and videos.
  */
-public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface {
+public abstract class Components.WebView : WebKit.WebView, GriabuntuMail.BaseInterface {
 
 
     /** URI Scheme and delimiter for internal resource loads. */
-    public const string INTERNAL_URL_PREFIX = "convey:";
+    public const string INTERNAL_URL_PREFIX = "griabuntu-mail:";
 
     /** URI for internal message body page loads. */
     public const string INTERNAL_URL_BODY = INTERNAL_URL_PREFIX + "body";
@@ -28,7 +29,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     /** URI Scheme and delimiter for resources loaded by Content-ID. */
     public const string CID_URL_PREFIX = "cid:";
 
-    // Keep these in sync with ConveyWebExtension
+    // Keep these in sync with GriabuntuMailWebExtension
     private const string MESSAGE_ENABLE_REMOTE_LOAD = "__enable_remote_load__";
     private const string MESSAGE_EXCEPTION = "__exception__";
     private const string MESSAGE_RETURN_VALUE = "__return__";
@@ -80,7 +81,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
                     view.handle_cid_request(req);
                 }
             });
-        context.register_uri_scheme("convey", (req) => {
+        context.register_uri_scheme("griabuntu-mail", (req) => {
                 WebView? view = req.get_web_view() as WebView;
                 if (view != null) {
                     view.handle_internal_request(req);
@@ -150,7 +151,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     /** Loads a user stylesheet from disk. */
     protected static WebKit.UserStyleSheet? load_user_stylesheet(GLib.File name)
         throws GLib.Error {
-        Convey.Memory.FileBuffer buf = new Convey.Memory.FileBuffer(name, true);
+        GriabuntuMail.Memory.FileBuffer buf = new GriabuntuMail.Memory.FileBuffer(name, true);
         return new WebKit.UserStyleSheet(
             buf.get_valid_utf8(),
             WebKit.UserContentInjectedFrames.ALL_FRAMES,
@@ -284,8 +285,8 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
 
     private Application.Configuration config;
 
-    private Gee.Map<string,Convey.Memory.Buffer> internal_resources =
-        new Gee.HashMap<string,Convey.Memory.Buffer>();
+    private Gee.Map<string,GriabuntuMail.Memory.Buffer> internal_resources =
+        new Gee.HashMap<string,GriabuntuMail.Memory.Buffer>();
 
     private Gee.Map<string,MessageCallable> message_handlers =
         new Gee.HashMap<string,MessageCallable>();
@@ -453,12 +454,12 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     /**
      * Adds an resource that may be accessed from the view via a URL.
      *
-     * Internal resources may be access via both the internal `convey`
+     * Internal resources may be access via both the internal `griabuntu-mail`
      * scheme (for resources such as an image inserted via the
      * composer) or via the `cid` scheme (for standard HTML email IMG
      * elements).
      */
-    public void add_internal_resource(string id, Convey.Memory.Buffer buf) {
+    public void add_internal_resource(string id, GriabuntuMail.Memory.Buffer buf) {
         this.internal_resources[id] = buf;
     }
 
@@ -467,11 +468,11 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
      *
      * @see add_internal_resource
      */
-    public void add_internal_resources(Gee.Map<string,Convey.Memory.Buffer> res) {
+    public void add_internal_resources(Gee.Map<string,GriabuntuMail.Memory.Buffer> res) {
         this.internal_resources.set_all(res);
     }
 
-    public Gee.Map<string,Convey.Memory.Buffer> get_internal_resources() {
+    public Gee.Map<string,GriabuntuMail.Memory.Buffer> get_internal_resources() {
         return this.internal_resources;
     }
 
@@ -547,7 +548,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     /**
      * Invokes a {@link Util.JS.Callable} on this web view.
      *
-     * This calls the given callable on the `convey` object for the
+     * This calls the given callable on the `griabuntu-mail` object for the
      * current view, any returned value are ignored.
      */
     protected async void call_void(Util.JS.Callable target,
@@ -559,7 +560,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     /**
      * Invokes a {@link Util.JS.Callable} on this web view.
      *
-     * This calls the given callable on the `convey` object for the
+     * This calls the given callable on the `griabuntu-mail` object for the
      * current view. The value returned by the call is returned by
      * this method.
      *
@@ -770,7 +771,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
 
     private void handle_internal_request(WebKit.URISchemeRequest request) {
         if (request.get_uri() == INTERNAL_URL_BODY) {
-            Convey.Memory.Buffer buf = new Convey.Memory.StringBuffer(this.body);
+            GriabuntuMail.Memory.Buffer buf = new GriabuntuMail.Memory.StringBuffer(this.body);
             request.finish(buf.get_input_stream(), buf.size, null);
         } else if (!handle_internal_response(request)) {
             request.finish_error(new FileError.NOENT("Unknown internal URL"));
@@ -779,7 +780,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
 
     private bool handle_internal_response(WebKit.URISchemeRequest request) {
         string name = GLib.Uri.unescape_string(request.get_path());
-        Convey.Memory.Buffer? buf = this.internal_resources[name];
+        GriabuntuMail.Memory.Buffer? buf = this.internal_resources[name];
         bool handled = false;
         if (buf != null) {
             request.finish(buf.get_input_stream(), buf.size, null);
@@ -792,7 +793,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
     // This method is called only when determining if something should
     // be loaded for display in the web view as the primary
     // resource. It is not used to determine if sub-resources such as
-    // images or JS will be loaded. So we only allow convey:body loads,
+    // images or JS will be loaded. So we only allow griabuntu-mail:body loads,
     // and notify but ignore if the user attempts to click on a link,
     // and deny everything else.
     private bool on_decide_policy(WebKit.WebView view,
@@ -821,7 +822,7 @@ public abstract class Components.WebView : WebKit.WebView, Convey.BaseInterface 
                 // to unblock the WebKit WebProcess, otherwise the
                 // call chain for mailto links will cause the
                 // WebProcess to deadlock, and the resulting composer
-                // will be useless. See Convey Bug 771504
+                // will be useless. See Griabuntu Mail Bug 771504
                 // <https://bugzilla.gnome.org/show_bug.cgi?id=771504>
                 // and WebKitGTK Bug 182528
                 // <https://bugs.webkit.org/show_bug.cgi?id=182528>

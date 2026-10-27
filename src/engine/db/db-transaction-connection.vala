@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
@@ -11,7 +12,7 @@
 /**
  * A connection to the database for transactions.
  */
-internal class Convey.Db.TransactionConnection : BaseObject, Connection {
+internal class GriabuntuMail.Db.TransactionConnection : BaseObject, Connection {
 
 
     /** {@inheritDoc} */

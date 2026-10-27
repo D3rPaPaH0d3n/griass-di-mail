@@ -7,21 +7,21 @@
     <link type="next" xref="limits"/>
   </info>
 
-  <title>Need help with Convey?</title>
+  <title>Need help with Griabuntu Mail?</title>
 
   <section id="getting-support">
     <title>Getting support</title>
 
-    <p>If you are having trouble using Convey, please <link
-    href="https://wiki.gnome.org/Apps/Geary/Contact">get in
-    touch</link> with the Convey community about the problem.</p>
+    <p>If you are having trouble using Griabuntu Mail, please <link
+    href="https://github.com/D3rPaPaH0d3n/griabuntu-mail">get in
+    touch</link> with the Griabuntu Mail community about the problem.</p>
   </section>
 
   <section id="reporting-bugs">
     <title>Reporting bugs</title>
 
-    <p>If you suspect you have found a bug in Convey, please follow the
-    <link href="https://wiki.gnome.org/Apps/Geary/ReportingABug">bug
+    <p>If you suspect you have found a bug in Griabuntu Mail, please follow the
+    <link href="https://github.com/D3rPaPaH0d3n/griabuntu-mail">bug
     reporting guidelines</link> so the problem can be diagnosed and
     fixed.</p>
 
@@ -29,7 +29,7 @@
     include the following information:</p>
 
     <list>
-      <item><p>Convey version and installation method (Package?
+      <item><p>Griabuntu Mail version and installation method (Package?
       Flathub?  Source code?)</p></item>
       <item><p>Your desktop (GNOME? KDE? Something else?)</p></item>
       <item><p>Your operating system and version (Ubuntu 16.04? Fedora
@@ -41,7 +41,7 @@
       <item><p>What did you expect to happen?</p></item>
     </list>
 
-    <p>Log files can be accessed via the Convey Inspector, press
+    <p>Log files can be accessed via the Griabuntu Mail Inspector, press
     <keyseq><key>Alt</key><key>I</key></keyseq> to open it, select and
     save any relevant log files, and attach them to the bug
     report.</p>

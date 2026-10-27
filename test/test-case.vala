@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2020 Michael Gratton <mike@vee.net>
  *
@@ -7,11 +8,11 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-/** Base class for Convey unit tests. */
+/** Base class for Griabuntu Mail unit tests. */
 public class TestCase : ValaUnit.TestCase {
 
     /** GLib.File URI for resources in test/data. */
-    public const string RESOURCE_URI = "resource:///net/donnybeelo/ConveyTest";
+    public const string RESOURCE_URI = "resource:///io/github/d3rpapah0d3n/GriabuntuMailTest";
 
 
     public TestCase(string name) {

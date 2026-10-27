@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -16,7 +17,7 @@
  * visible until {@link present} is called, allowing it to be
  * configured via calls to this interface first, if required.
  */
-public interface Plugin.Composer : Convey.BaseObject {
+public interface Plugin.Composer : GriabuntuMail.BaseObject {
 
 
     /**

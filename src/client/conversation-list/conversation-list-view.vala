@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Downstream modification: 2026-10-26 — downstream row configuration and updates. */
 /*
  * Copyright © 2022 John Renner <john@jrenner.net>
@@ -13,21 +14,21 @@
  * Represents in folder conversations list.
  *
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-list-view.ui")]
-public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-list-view.ui")]
+public class ConversationList.View : Adw.Bin, GriabuntuMail.BaseInterface {
 
     public delegate Application.ContactStore? ContactStoreLookup(
-        Convey.AccountInformation account
+        GriabuntuMail.AccountInformation account
     );
 
     /**
      * The fields that must be available on any ConversationMonitor
      * passed to ConversationList.View
      */
-    public const Convey.Email.Field REQUIRED_FIELDS = (
-        Convey.Email.Field.ENVELOPE |
-        Convey.Email.Field.FLAGS |
-        Convey.Email.Field.PROPERTIES
+    public const GriabuntuMail.Email.Field REQUIRED_FIELDS = (
+        GriabuntuMail.Email.Field.ENVELOPE |
+        GriabuntuMail.Email.Field.FLAGS |
+        GriabuntuMail.Email.Field.PROPERTIES
     );
 
     [CCode(notify = false)]
@@ -44,8 +45,8 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         }
     }
 
-    public Gee.Set<Convey.App.Conversation> selected {
-        get; set; default = new Gee.HashSet<Convey.App.Conversation>();
+    public Gee.Set<GriabuntuMail.App.Conversation> selected {
+        get; set; default = new Gee.HashSet<GriabuntuMail.App.Conversation>();
     }
 
     private Application.Configuration config;
@@ -190,7 +191,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      * Conversations from every monitor are merged into a single date
      * ordered list, as used by the combined inbox view.
      */
-    public void set_monitors(Gee.Collection<Convey.App.ConversationMonitor>? monitors) {
+    public void set_monitors(Gee.Collection<GriabuntuMail.App.ConversationMonitor>? monitors) {
         if (this.model != null && this.list.opacity > 0) {
             fade_out_old_list();
         }
@@ -319,7 +320,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     }
 
     private Gtk.Widget row_factory(Object convo_obj) {
-        var convo = (Convey.App.Conversation) convo_obj;
+        var convo = (GriabuntuMail.App.Conversation) convo_obj;
         // Resolve an already-existing store for this row's account, including
         // All Inboxes. No contact lookup is performed by the factory.
         var contacts = this.contact_stores != null
@@ -398,7 +399,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         return null;
     }
 
-    private Row? find_live_row(Convey.App.Conversation conversation) {
+    private Row? find_live_row(GriabuntuMail.App.Conversation conversation) {
         int i = 0;
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {
@@ -542,19 +543,19 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     /**
      * Emitted when one or more conversations are selected
      */
-    public signal void conversations_selected(Gee.Set<Convey.App.Conversation> selected);
+    public signal void conversations_selected(Gee.Set<GriabuntuMail.App.Conversation> selected);
 
     /**
      * Emitted when one conversation is activated
      */
-    public signal void conversation_activated(Convey.App.Conversation activated,
+    public signal void conversation_activated(GriabuntuMail.App.Conversation activated,
                                               uint button);
 
     /**
      * Gets the conversations represented by the current selection in the ListBox
      */
-    public Gee.Set<Convey.App.Conversation> get_selected_conversations() {
-        var selected = new Gee.HashSet<Convey.App.Conversation>();
+    public Gee.Set<GriabuntuMail.App.Conversation> get_selected_conversations() {
+        var selected = new Gee.HashSet<GriabuntuMail.App.Conversation>();
 
         foreach (var row in this.list.get_selected_rows()) {
             selected.add(((Row) row).conversation);
@@ -567,11 +568,11 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      *
      * If a conversation is not present in the ListBox, it is ignored.
      */
-    public void select_conversations(Gee.Collection<Convey.App.Conversation> selection) {
+    public void select_conversations(Gee.Collection<GriabuntuMail.App.Conversation> selection) {
         int i = 0;
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {
-            Convey.App.Conversation conversation = row.conversation;
+            GriabuntuMail.App.Conversation conversation = row.conversation;
             if (!row.leaving && selection.contains(conversation)) {
                 this.list.select_row(row);
             }
@@ -586,7 +587,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
      * If more than one selected, activate the first one
      */
     public void activate_selected() {
-        Gee.Set<Convey.App.Conversation> conversations = get_selected_conversations();
+        Gee.Set<GriabuntuMail.App.Conversation> conversations = get_selected_conversations();
         if (!conversations.is_empty) {
             conversation_activated(conversations.to_array()[0], 1);
         }
@@ -608,12 +609,12 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         this.list.unselect_all();
     }
 
-    private bool selection_changed(Gee.Set<Convey.App.Conversation> selection) {
+    private bool selection_changed(Gee.Set<GriabuntuMail.App.Conversation> selection) {
         bool changed = this.selected.size != selection.size;
         if (changed) {
             return true;
         }
-        foreach (Convey.App.Conversation conversation in selection) {
+        foreach (GriabuntuMail.App.Conversation conversation in selection) {
             if (!this.selected.contains(conversation)) {
                 changed = true;
             }
@@ -640,15 +641,15 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     /**
      * Emitted when the user expresses intent to update the flags on a set of conversations
      */
-    public signal void mark_conversations(Gee.Collection<Convey.App.Conversation> conversations,
-                                          Convey.NamedFlag flag);
+    public signal void mark_conversations(Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                                          GriabuntuMail.NamedFlag flag);
 
 
-    private void on_toggle_flags(ConversationList.Row row, Convey.NamedFlag flag) {
+    private void on_toggle_flags(ConversationList.Row row, GriabuntuMail.NamedFlag flag) {
         if (row.is_selected()) {
             mark_conversations(this.selected, flag);
         } else {
-            mark_conversations(Convey.Collection.single(row.conversation), flag);
+            mark_conversations(GriabuntuMail.Collection.single(row.conversation), flag);
         }
     }
 
@@ -694,8 +695,8 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     /**
      * The set of all conversations currently displayed in the viewport
      */
-    public Gee.Set<Convey.App.Conversation> visible_conversations {get; private set; default = new Gee.HashSet<Convey.App.Conversation>(); }
-    private Convey.Scheduler.Scheduled? scheduled_visible_update;
+    public Gee.Set<GriabuntuMail.App.Conversation> visible_conversations {get; private set; default = new Gee.HashSet<GriabuntuMail.App.Conversation>(); }
+    private GriabuntuMail.Scheduler.Scheduled? scheduled_visible_update;
 
     /**
      * Called on scroll to update the set of visible conversations
@@ -705,8 +706,8 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
             scheduled_visible_update.cancel();
         }
 
-        scheduled_visible_update = Convey.Scheduler.after_msec(VISIBILITY_UPDATE_DELAY_MS, () => {
-            var visible = new Gee.HashSet<Convey.App.Conversation>();
+        scheduled_visible_update = GriabuntuMail.Scheduler.after_msec(VISIBILITY_UPDATE_DELAY_MS, () => {
+            var visible = new Gee.HashSet<GriabuntuMail.App.Conversation>();
             Gtk.ListBoxRow? first = this.list.get_row_at_y((int) this.scrolled_window.vadjustment.value);
 
             if (first == null) {
@@ -723,7 +724,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
 
             for (uint i = start_index; i < end_index; i++) {
                 visible_conversations.add(
-                    this.model.get_item(i) as Convey.App.Conversation
+                    this.model.get_item(i) as GriabuntuMail.App.Conversation
                 );
             }
 
@@ -865,7 +866,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
     /*
      * Update conversation row
      */
-    internal void on_conversation_updated(Convey.App.Conversation convo) {
+    internal void on_conversation_updated(GriabuntuMail.App.Conversation convo) {
         int i = 0;
         Row? row = this.list.get_row_at_index(0) as Row;
         while (row != null) {
@@ -959,7 +960,7 @@ public class ConversationList.View : Adw.Bin, Convey.BaseInterface {
         // The dragged conversations are the list's selection; the
         // content is just a marker the folder list recognises.
         var marker = GLib.Value(typeof(string));
-        marker.set_string("application/x-convey-mail");
+        marker.set_string("application/x-griabuntu-mail-mail");
         return new Gdk.ContentProvider.for_value(marker);
     }
 

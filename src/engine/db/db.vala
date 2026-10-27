@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -10,7 +11,7 @@
 /**
  * A simple database access layer.
  *
- * Convey.Db is a simple wrapper around SQLite to make it more
+ * GriabuntuMail.Db is a simple wrapper around SQLite to make it more
  * GObject-ish and easier to code in Vala.  It also uses threads and
  * some concurrency features of SQLite to allow for asynchronous
  * access to the database.
@@ -29,7 +30,7 @@ extern const int SQLITE_OPEN_URI;
 
 extern int sqlite3_enable_shared_cache(int enabled);
 
-namespace Convey.Db {
+namespace GriabuntuMail.Db {
 
 public const int64 INVALID_ROWID = -1;
 

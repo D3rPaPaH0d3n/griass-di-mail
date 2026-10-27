@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -11,7 +12,7 @@ class Integration.Smtp.ClientSession : TestCase {
 
 
     private Configuration config;
-    private Convey.Smtp.ClientSession? session;
+    private GriabuntuMail.Smtp.ClientSession? session;
 
 
     public ClientSession(Configuration config) {
@@ -32,7 +33,7 @@ class Integration.Smtp.ClientSession : TestCase {
     }
 
     public override void set_up() {
-        this.session = new Convey.Smtp.ClientSession(
+        this.session = new GriabuntuMail.Smtp.ClientSession(
             this.config.target
         );
     }
@@ -48,7 +49,7 @@ class Integration.Smtp.ClientSession : TestCase {
     }
 
     public void login_password_invalid() throws GLib.Error {
-        Convey.Credentials password_creds = new Convey.Credentials(
+        GriabuntuMail.Credentials password_creds = new GriabuntuMail.Credentials(
             PASSWORD,
             "automated-integration-test",
             "deliberately-invalid-password"
@@ -59,13 +60,13 @@ class Integration.Smtp.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
+        } catch (GriabuntuMail.SmtpError.AUTHENTICATION_FAILED err) {
             // All good
         }
     }
 
     public void login_oauth2_invalid() throws GLib.Error {
-        Convey.Credentials oauth2_creds = new Convey.Credentials(
+        GriabuntuMail.Credentials oauth2_creds = new GriabuntuMail.Credentials(
             OAUTH2,
             "automated-integration-test",
             "deliberately-invalid-token"
@@ -76,7 +77,7 @@ class Integration.Smtp.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
+        } catch (GriabuntuMail.SmtpError.AUTHENTICATION_FAILED err) {
             // All good
         }
     }
@@ -88,20 +89,20 @@ class Integration.Smtp.ClientSession : TestCase {
     public void send_basic_email() throws GLib.Error {
         do_connect();
 
-        Convey.RFC822.MailboxAddress return_path =
-            new Convey.RFC822.MailboxAddress(
+        GriabuntuMail.RFC822.MailboxAddress return_path =
+            new GriabuntuMail.RFC822.MailboxAddress(
                 null, this.config.credentials.user
             );
 
         this.new_message.begin(
             return_path,
-            new Convey.RFC822.MailboxAddress(
-                "Convey integration test",
+            new GriabuntuMail.RFC822.MailboxAddress(
+                "Griabuntu Mail integration test",
                 this.config.credentials.user
             ),
             this.async_completion
         );
-        Convey.RFC822.Message message = new_message.end(async_result());
+        GriabuntuMail.RFC822.Message message = new_message.end(async_result());
 
         this.session.send_email_async.begin(
             return_path,
@@ -119,20 +120,20 @@ class Integration.Smtp.ClientSession : TestCase {
         this.session.login_async.end(async_result());
     }
 
-    private async Convey.RFC822.Message new_message(Convey.RFC822.MailboxAddress from,
-                                                   Convey.RFC822.MailboxAddress to)
-        throws Convey.RFC822.Error {
-        Convey.ComposedEmail composed = new Convey.ComposedEmail(
+    private async GriabuntuMail.RFC822.Message new_message(GriabuntuMail.RFC822.MailboxAddress from,
+                                                   GriabuntuMail.RFC822.MailboxAddress to)
+        throws GriabuntuMail.RFC822.Error {
+        GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(from)
+            new GriabuntuMail.RFC822.MailboxAddresses.single(from)
         ).set_to(
-            new Convey.RFC822.MailboxAddresses.single(to)
+            new GriabuntuMail.RFC822.MailboxAddresses.single(to)
         ).set_subject(
-            "Convey integration test subject"
+            "Griabuntu Mail integration test subject"
         );
-        composed.body_text = "Convey integration test message";
+        composed.body_text = "Griabuntu Mail integration test message";
 
-        return yield new Convey.RFC822.Message.from_composed_email(
+        return yield new GriabuntuMail.RFC822.Message.from_composed_email(
             composed,
             GMime.utils_generate_message_id(from.domain),
             GMime.EncodingConstraint.7BIT,

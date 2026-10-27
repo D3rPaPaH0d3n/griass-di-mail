@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,19 +7,19 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-namespace Convey {
+namespace GriabuntuMail {
     /**
-     * Take a Gee object and return a Convey.Iterable for convenience.
+     * Take a Gee object and return a GriabuntuMail.Iterable for convenience.
      */
-    public Convey.Iterable<G> traverse<G>(Gee.Iterable<G> i) {
-        return new Convey.Iterable<G>(i.iterator());
+    public GriabuntuMail.Iterable<G> traverse<G>(Gee.Iterable<G> i) {
+        return new GriabuntuMail.Iterable<G>(i.iterator());
     }
 
     /**
      * Take some non-null items (all must be of type G) and return a
-     * Convey.Iterable for convenience.
+     * GriabuntuMail.Iterable for convenience.
      */
-    public Convey.Iterable<G> iterate<G>(G g, ...) {
+    public GriabuntuMail.Iterable<G> iterate<G>(G g, ...) {
         va_list args = va_list();
         G arg = g;
 
@@ -29,18 +30,18 @@ namespace Convey {
             list.add(arg);
         } while((arg = args.arg()) != null);
 
-        return Convey.traverse<G>(list);
+        return GriabuntuMail.traverse<G>(list);
     }
 
     /**
-     * Take an array of items and return a Convey.Iterable for convenience.
+     * Take an array of items and return a GriabuntuMail.Iterable for convenience.
      */
-    public Convey.Iterable<G> iterate_array<G>(G[] a, owned Gee.EqualDataFunc<G>? equal_func = null) {
+    public GriabuntuMail.Iterable<G> iterate_array<G>(G[] a, owned Gee.EqualDataFunc<G>? equal_func = null) {
         // Use a linked list since we will only ever be iterating over
         // it
         var list = new Gee.LinkedList<G>((owned) equal_func);
         list.add_all_array(a);
-        return Convey.traverse<G>(list);
+        return GriabuntuMail.traverse<G>(list);
     }
 }
 
@@ -54,9 +55,9 @@ namespace Convey {
  * works in foreach.
  */
 
-public class Convey.Iterable<G> : BaseObject {
+public class GriabuntuMail.Iterable<G> : BaseObject {
     /**
-     * A private class that lets us take a Convey.Iterable and convert it back
+     * A private class that lets us take a GriabuntuMail.Iterable and convert it back
      * into a Gee.Iterable.
      */
     private class GeeIterable<G> : Gee.Traversable<G>, Gee.Iterable<G>, BaseObject {

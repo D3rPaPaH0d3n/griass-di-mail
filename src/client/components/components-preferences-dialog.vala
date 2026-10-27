@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Downstream modification: 2026-10-26 — downstream preference controls. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
@@ -9,7 +10,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-preferences-dialog.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-preferences-dialog.ui")]
 public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     [GtkChild] private unowned Adw.SwitchRow autoselect_row;
@@ -312,7 +313,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     }
 
     private void setup_startup_inbox_row() {
-        var accounts = new Gee.ArrayList<Convey.AccountInformation>();
+        var accounts = new Gee.ArrayList<GriabuntuMail.AccountInformation>();
         try {
             foreach (var account in this.application.engine.get_accounts()) {
                 accounts.add(account.information);

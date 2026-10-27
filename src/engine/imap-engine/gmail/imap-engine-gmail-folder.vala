@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.GmailFolder : MinimalFolder, FolderSupport.Archive,
+private class GriabuntuMail.ImapEngine.GmailFolder : MinimalFolder, FolderSupport.Archive,
     FolderSupport.Create, FolderSupport.Remove {
     public GmailFolder(GmailAccount account,
                        ImapDB.Folder local_folder,
@@ -26,14 +27,14 @@ private class Convey.ImapEngine.GmailFolder : MinimalFolder, FolderSupport.Archi
         );
     }
 
-    public async Convey.Revokable?
-        archive_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
+    public async GriabuntuMail.Revokable?
+        archive_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids,
                             GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         // Use move_email_async("All Mail") here; Gmail will do the right thing and report
         // it was copied with the pre-existing All Mail UID (in other words, no actual copy is
         // performed).  This allows for undoing an archive with the same code path as a move.
-        Convey.Folder? all_mail = account.get_special_folder(ALL_MAIL);
+        GriabuntuMail.Folder? all_mail = account.get_special_folder(ALL_MAIL);
         if (all_mail != null)
             return yield move_email_async(email_ids, all_mail.path, cancellable);
 
@@ -46,7 +47,7 @@ private class Convey.ImapEngine.GmailFolder : MinimalFolder, FolderSupport.Archi
     }
 
     public async void
-        remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
+        remove_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         yield true_remove_email_async(this, email_ids, cancellable);
@@ -58,16 +59,16 @@ private class Convey.ImapEngine.GmailFolder : MinimalFolder, FolderSupport.Archi
      *
      * TODO: Because the steps after copy don't go through the ReplayQueue, they won't be recorded
      * in the database directly.  This is important when/if offline mode is coded, as if there's
-     * no connection (or the connection dies) there's no record that Convey needs to perform the
+     * no connection (or the connection dies) there's no record that Griabuntu Mail needs to perform the
      * final remove when a connection is reestablished.
      */
     public static async void
         true_remove_email_async(MinimalFolder folder,
-                                Gee.Collection<Convey.EmailIdentifier> email_ids,
+                                Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids,
                                 GLib.Cancellable? cancellable)
         throws GLib.Error {
         // Get path to Trash folder
-        Convey.Folder? trash = folder.account.get_special_folder(TRASH);
+        GriabuntuMail.Folder? trash = folder.account.get_special_folder(TRASH);
         if (trash == null)
             throw new EngineError.NOT_FOUND("%s: Trash folder not found for removal", folder.to_string());
 

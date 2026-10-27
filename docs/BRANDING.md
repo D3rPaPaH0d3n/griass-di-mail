@@ -1,4 +1,11 @@
-# Griabuntu Mail — private working identity
+# Griabuntu Mail — private identity
+
+**Source update, 2026-10-27:** the owner has now requested and authorised the
+project-wide naming implementation. The current own application ID, executable,
+namespace and packaging are in [IDENTITY.md](IDENTITY.md). The migration plan
+below records the earlier proposal; source changes and a private repository
+rename do not imply that personal profiles have been migrated or that the
+separate public-name/Canonical gate has been resolved.
 
 **Owner decision: 2026-10-26, 19:25 UTC.** Use **Griabuntu Mail**, with that exact
 spelling/case, for this private presentation candidate. This supersedes the

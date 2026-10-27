@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016,2019 Michael Gratton <mike@vee.net>
@@ -11,8 +12,8 @@
 /**
  * Displays the messages in a conversation and in-window composers.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-viewer.ui")]
-public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-viewer.ui")]
+public class ConversationViewer : Adw.Bin, GriabuntuMail.BaseInterface {
 
     /**
      * The current conversation listbox, if any.
@@ -37,7 +38,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     private Application.Configuration config;
     private Application.DecryptedSubjects decrypted_subjects;
 
-    private Gee.Set<Convey.App.Conversation>? selection_while_composing = null;
+    private Gee.Set<GriabuntuMail.App.Conversation>? selection_while_composing = null;
     private GLib.Cancellable? find_cancellable = null;
 
     [GtkChild] public unowned Components.ConversationHeaderBar headerbar;
@@ -78,7 +79,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     public Adw.StatusPage? empty_page { get; private set; default = null; }
 
     static construct {
-        set_css_name("convey-conversation-viewer");
+        set_css_name("griabuntu-mail-conversation-viewer");
     }
 
     /**
@@ -133,7 +134,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
      * Puts the view into composer mode, showing an embedded composer.
      */
     public void do_compose_embedded(Composer.Widget composer,
-                                    Convey.Email? referred) {
+                                    GriabuntuMail.Email? referred) {
         this.current_composer = composer;
         Composer.Embed embed = new Composer.Embed(
             referred,
@@ -207,9 +208,9 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     /**
      * Shows a conversation in the viewer.
      */
-    public async void load_conversation(Convey.App.Conversation conversation,
-                                        Gee.Collection<Convey.EmailIdentifier> scroll_to,
-                                        Convey.App.EmailStore store,
+    public async void load_conversation(GriabuntuMail.App.Conversation conversation,
+                                        Gee.Collection<GriabuntuMail.EmailIdentifier> scroll_to,
+                                        GriabuntuMail.App.EmailStore store,
                                         Application.ContactStore contacts,
                                         bool start_mark_timer)
         throws GLib.Error {
@@ -238,7 +239,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
                 // Gtk.SearchEntry no longer has an icon API, so
                 // indicate no-match with the error style instead
                 if (found ||
-                    Convey.String.is_empty(this.conversation_find_entry.text)) {
+                    GriabuntuMail.String.is_empty(this.conversation_find_entry.text)) {
                     this.conversation_find_entry.remove_css_class("error");
                 } else {
                     this.conversation_find_entry.add_css_class("error");
@@ -254,7 +255,7 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
         // from the search folder if that's where we are at
         var query = get_find_search_query(conversation.base_folder.account);
         if (query == null) {
-            var search_folder = conversation.base_folder as Convey.App.SearchFolder;
+            var search_folder = conversation.base_folder as GriabuntuMail.App.SearchFolder;
             if (search_folder != null) {
                 query = search_folder.query;
             }
@@ -265,8 +266,8 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
     }
 
     public void update_subject() {
-        Convey.Email? email = this.current_list?.conversation.get_latest_recv_email(
-            Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
+        GriabuntuMail.Email? email = this.current_list?.conversation.get_latest_recv_email(
+            GriabuntuMail.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
         );
         this.conversation_subject.visible = email != null;
         if (email != null) {
@@ -366,9 +367,9 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
         }
     }
 
-    private Convey.SearchQuery? get_find_search_query(Convey.Account account)
+    private GriabuntuMail.SearchQuery? get_find_search_query(GriabuntuMail.Account account)
         throws GLib.Error {
-        Convey.SearchQuery? query = null;
+        GriabuntuMail.SearchQuery? query = null;
         if (this.conversation_find_bar.get_search_mode()) {
             string text = this.conversation_find_entry.get_text().strip();
             // Require find string of at least two chars to avoid
@@ -407,13 +408,13 @@ public class ConversationViewer : Adw.Bin, Convey.BaseInterface {
             } else {
                 // Find became disabled, re-show search terms if any
                 this.current_list.search.unmark_terms();
-                Convey.App.SearchFolder? search_folder = (
+                GriabuntuMail.App.SearchFolder? search_folder = (
                     this.current_list.conversation.base_folder
-                    as Convey.App.SearchFolder
+                    as GriabuntuMail.App.SearchFolder
                 );
                 this.conversation_find_undo.reset();
                 if (search_folder != null) {
-                    Convey.SearchQuery? query = search_folder.query;
+                    GriabuntuMail.SearchQuery? query = search_folder.query;
                     if (query != null) {
                         this.current_list.search.highlight_matching_email.begin(
                             query,

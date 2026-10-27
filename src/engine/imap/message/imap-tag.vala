@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -17,7 +18,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-2.2.1]]
  */
 
-public class Convey.Imap.Tag : AtomParameter, Gee.Hashable<Convey.Imap.Tag> {
+public class GriabuntuMail.Imap.Tag : AtomParameter, Gee.Hashable<GriabuntuMail.Imap.Tag> {
     public const string UNTAGGED_VALUE = "*";
     public const string CONTINUATION_VALUE = "+";
     public const string UNASSIGNED_VALUE = "----";
@@ -104,7 +105,7 @@ public class Convey.Imap.Tag : AtomParameter, Gee.Hashable<Convey.Imap.Tag> {
         return Ascii.str_hash(ascii);
     }
 
-    public bool equal_to(Convey.Imap.Tag tag) {
+    public bool equal_to(GriabuntuMail.Imap.Tag tag) {
         if (this == tag)
             return true;
 

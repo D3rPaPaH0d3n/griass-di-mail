@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2017-2021 Michael Gratton <mike@vee.net>
@@ -8,8 +9,8 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.AccountSynchronizer :
-    Convey.BaseObject, Logging.Source {
+private class GriabuntuMail.ImapEngine.AccountSynchronizer :
+    GriabuntuMail.BaseObject, Logging.Source {
 
 
     private enum Reason {
@@ -159,7 +160,7 @@ private class Convey.ImapEngine.AccountSynchronizer :
 /**
  * Base class for folder synchronisation account operations.
  */
-private abstract class Convey.ImapEngine.FolderSync : FolderOperation {
+private abstract class GriabuntuMail.ImapEngine.FolderSync : FolderOperation {
 
 
     protected GLib.DateTime sync_max_epoch { get; private set; }
@@ -179,7 +180,7 @@ private abstract class Convey.ImapEngine.FolderSync : FolderOperation {
     }
 
     ~FolderSync() {
-        weak Convey.Folder? folder = this.folder;
+        weak GriabuntuMail.Folder? folder = this.folder;
         if (folder != null) {
             this.folder.closed.disconnect(on_folder_close);
         }
@@ -281,7 +282,7 @@ private abstract class Convey.ImapEngine.FolderSync : FolderOperation {
  * for it to finish opening for normalisation and pre-fetching to
  * complete, then closes it again.
  */
-private class Convey.ImapEngine.RefreshFolderSync : FolderSync {
+private class GriabuntuMail.ImapEngine.RefreshFolderSync : FolderSync {
 
 
     internal RefreshFolderSync(GenericAccount account,
@@ -310,7 +311,7 @@ private class Convey.ImapEngine.RefreshFolderSync : FolderSync {
  * It also truncates email that extends past the epoch, ensuring no
  * more email is stored than is desired.
  */
-private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
+private class GriabuntuMail.ImapEngine.FullFolderSync : RefreshFolderSync {
 
 
 
@@ -327,7 +328,7 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
 
         // Detach older emails outside the prefetch window
         if (this.account.information.prefetch_period_days >= 0) {
-            Gee.Collection<Convey.EmailIdentifier>? detached_ids =
+            Gee.Collection<GriabuntuMail.EmailIdentifier>? detached_ids =
                 yield local_folder.detach_emails_before_timestamp(max_epoch,
                                                                   cancellable);
             if (detached_ids != null) {
@@ -345,7 +346,7 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
 
         // get oldest local email and its time, as well as number
         // of messages in local store
-        Gee.List<Convey.Email>? list = yield local_folder.list_email_by_id_async(
+        Gee.List<GriabuntuMail.Email>? list = yield local_folder.list_email_by_id_async(
             null,
             1,
             Email.Field.PROPERTIES,
@@ -353,7 +354,7 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
             cancellable
         );
 
-        Convey.Email? current_oldest = null;
+        GriabuntuMail.Email? current_oldest = null;
         if (list != null && list.size > 0) {
             current_oldest = list[0];
         }
@@ -407,8 +408,8 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
         }
     }
 
-    private async Convey.Email? expand_vector(DateTime next_epoch,
-                                             Convey.Email? current_oldest,
+    private async GriabuntuMail.Email? expand_vector(DateTime next_epoch,
+                                             GriabuntuMail.Email? current_oldest,
                                              Cancellable cancellable)
         throws Error {
         debug("Expanding vector to %s", next_epoch.to_string());
@@ -419,7 +420,7 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
         );
     }
 
-    private async void expand_to_previous(Convey.Email? current_oldest,
+    private async void expand_to_previous(GriabuntuMail.Email? current_oldest,
                                           Cancellable cancellable)
         throws Error {
         // there's nothing between the oldest local and the epoch,
@@ -430,7 +431,7 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
         // works if id is null, as that means the local folder is
         // empty and so we should at least pull the first one to get a
         // marker of age
-        Convey.EmailIdentifier? id =
+        GriabuntuMail.EmailIdentifier? id =
             (current_oldest != null) ? current_oldest.id : null;
         debug(
             "Unable to locate epoch messages on remote folder%s, fetching one past oldest...",
@@ -439,8 +440,8 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
         yield this.folder.list_email_by_id_async(
             id,
             1,
-            Convey.Email.Field.NONE,
-            Convey.Folder.ListFlags.NONE,
+            GriabuntuMail.Email.Field.NONE,
+            GriabuntuMail.Folder.ListFlags.NONE,
             cancellable
         );
     }
@@ -463,8 +464,8 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
         yield this.folder.list_email_by_id_async(
             null,
             int.MAX,
-            Convey.Email.Field.NONE,
-            Convey.Folder.ListFlags.NONE,
+            GriabuntuMail.Email.Field.NONE,
+            GriabuntuMail.Folder.ListFlags.NONE,
             cancellable
         );
     }
@@ -479,7 +480,7 @@ private class Convey.ImapEngine.FullFolderSync : RefreshFolderSync {
  * does not extend pass the epoch, ensuring no more email is stored
  * than is desired.
  */
-private class Convey.ImapEngine.TruncateToEpochFolderSync : FolderSync {
+private class GriabuntuMail.ImapEngine.TruncateToEpochFolderSync : FolderSync {
 
 
     private IdleGarbageCollection? post_idle_detach_op;
@@ -500,7 +501,7 @@ private class Convey.ImapEngine.TruncateToEpochFolderSync : FolderSync {
 
         // Detach older emails outside the prefetch window
         if (this.account.information.prefetch_period_days >= 0) {
-            Gee.Collection<Convey.EmailIdentifier>? detached_ids =
+            Gee.Collection<GriabuntuMail.EmailIdentifier>? detached_ids =
                 yield local_folder.detach_emails_before_timestamp(max_epoch,
                                                                   cancellable);
             if (detached_ids != null) {
@@ -522,7 +523,7 @@ private class Convey.ImapEngine.TruncateToEpochFolderSync : FolderSync {
  * storage operations, which are handled instead by the
  * {@link IdleGarbageCollection}.
  */
-private class Convey.ImapEngine.ForegroundGarbageCollection: AccountOperation {
+private class GriabuntuMail.ImapEngine.ForegroundGarbageCollection: AccountOperation {
 
     internal ForegroundGarbageCollection(GenericAccount account) {
         base(account);
@@ -554,10 +555,10 @@ private class Convey.ImapEngine.ForegroundGarbageCollection: AccountOperation {
  * app is idle in the background. Vacuuming will be permitted and if
  * messages have been removed a reap will be forced.
  */
-private class Convey.ImapEngine.IdleGarbageCollection: AccountOperation {
+private class GriabuntuMail.ImapEngine.IdleGarbageCollection: AccountOperation {
 
     // Vacuum is allowed as we're running in the background
-    private Convey.ImapDB.Database.GarbageCollectionOptions options = ALLOW_VACUUM;
+    private GriabuntuMail.ImapDB.Database.GarbageCollectionOptions options = ALLOW_VACUUM;
 
     internal IdleGarbageCollection(GenericAccount account) {
         base(account);

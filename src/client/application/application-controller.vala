@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2016-2020 Michael Gratton <mike@vee.net>
@@ -16,7 +17,7 @@
  * when the primary application instance is started.
  */
 internal class Application.Controller :
-    Convey.BaseObject, AccountInterface, Composer.ApplicationInterface {
+    GriabuntuMail.BaseObject, AccountInterface, Composer.ApplicationInterface {
 
 
     private const uint MAX_AUTH_ATTEMPTS = 3;
@@ -24,28 +25,28 @@ internal class Application.Controller :
     private const uint CLEANUP_CHECK_AFTER_IDLE_BACKGROUND_MINUTES = 5;
 
     /** Determines if conversations can be trashed from the given folder. */
-    public static bool does_folder_support_trash(Convey.Folder? target) {
+    public static bool does_folder_support_trash(GriabuntuMail.Folder? target) {
         return (
             target != null &&
             target.used_as != TRASH &&
             !target.properties.is_local_only &&
-            (target as Convey.FolderSupport.Move) != null
+            (target as GriabuntuMail.FolderSupport.Move) != null
         );
     }
 
     /** Determines if folders should be added to main windows. */
-    private static bool should_add_folder(Gee.Collection<Convey.Folder>? all,
-                                          Convey.Folder folder) {
+    private static bool should_add_folder(Gee.Collection<GriabuntuMail.Folder>? all,
+                                          GriabuntuMail.Folder folder) {
         // if folder is openable, add it
-        if (folder.properties.is_openable != Convey.Trillian.FALSE)
+        if (folder.properties.is_openable != GriabuntuMail.Trillian.FALSE)
             return true;
-        else if (folder.properties.has_children == Convey.Trillian.FALSE)
+        else if (folder.properties.has_children == GriabuntuMail.Trillian.FALSE)
             return false;
 
         // if folder contains children, we must ensure that there is
         // at least one of the same type
-        Convey.Folder.SpecialUse type = folder.used_as;
-        foreach (Convey.Folder other in all) {
+        GriabuntuMail.Folder.SpecialUse type = folder.used_as;
+        foreach (GriabuntuMail.Folder other in all) {
             if (other.used_as == type && other.path.parent == folder.path)
                 return true;
         }
@@ -76,8 +77,8 @@ internal class Application.Controller :
     }
 
     // Primary collection of the application's open accounts
-    private Gee.Map<Convey.AccountInformation,AccountContext> accounts =
-        new Gee.HashMap<Convey.AccountInformation,AccountContext>();
+    private Gee.Map<GriabuntuMail.AccountInformation,AccountContext> accounts =
+        new Gee.HashMap<GriabuntuMail.AccountInformation,AccountContext>();
     private bool is_loading_accounts = true;
 
     // Cancelled if the controller is closed
@@ -94,7 +95,7 @@ internal class Application.Controller :
     private Gee.List<string?> pending_mailtos = new Gee.ArrayList<string>();
 
     // Timeout to do work in idle after all windows have been sent to the background
-    private Convey.TimeoutManager all_windows_backgrounded_timeout;
+    private GriabuntuMail.TimeoutManager all_windows_backgrounded_timeout;
 
     private GLib.Cancellable? storage_cleanup_cancellable;
 
@@ -144,7 +145,7 @@ internal class Application.Controller :
         ConversationWebView.load_resources();
 
         this.all_windows_backgrounded_timeout =
-            new Convey.TimeoutManager.seconds(CLEANUP_CHECK_AFTER_IDLE_BACKGROUND_MINUTES * 60, on_unfocused_idle);
+            new GriabuntuMail.TimeoutManager.seconds(CLEANUP_CHECK_AFTER_IDLE_BACKGROUND_MINUTES * 60, on_unfocused_idle);
 
         this.folks = Folks.IndividualAggregator.dup();
         if (!this.folks.is_prepared) {
@@ -190,7 +191,7 @@ internal class Application.Controller :
         // above, so remove it if found. This can be pulled out post
         // v40.
         try {
-            yield Convey.Files.recursive_delete_async(
+            yield GriabuntuMail.Files.recursive_delete_async(
                 config_dir.get_child("pinned-certs")
             );
         } catch (GLib.IOError.NOT_FOUND err) {
@@ -256,7 +257,7 @@ internal class Application.Controller :
         // Close any open composers up-front before anything else is
         // shut down so any pending operations have a chance to
         // complete.
-        var composer_barrier = new Convey.Nonblocking.CountingSemaphore(null);
+        var composer_barrier = new GriabuntuMail.Nonblocking.CountingSemaphore(null);
         // Take a copy of the collection of composers since
         // closing any will cause the underlying collection to change.
         var composers = new Gee.LinkedList<Composer.Widget>();
@@ -288,7 +289,7 @@ internal class Application.Controller :
         // Release folder and conversations in main windows before
         // closing them so we know they are released before closing
         // the accounts
-        var window_barrier = new Convey.Nonblocking.CountingSemaphore(null);
+        var window_barrier = new GriabuntuMail.Nonblocking.CountingSemaphore(null);
         foreach (MainWindow window in this.application.get_main_windows()) {
             window_barrier.acquire();
             window.select_folder.begin(
@@ -321,7 +322,7 @@ internal class Application.Controller :
         // explode if accounts are removed while iterating.
         var closing_accounts = new Gee.LinkedList<AccountContext>();
         closing_accounts.add_all(this.accounts.values);
-        var account_barrier = new Convey.Nonblocking.CountingSemaphore(null);
+        var account_barrier = new GriabuntuMail.Nonblocking.CountingSemaphore(null);
         foreach (AccountContext context in closing_accounts) {
             account_barrier.acquire();
             this.close_account.begin(
@@ -346,7 +347,7 @@ internal class Application.Controller :
      * Opens a composer for writing a new, blank message.
      */
     public async Composer.Widget compose_blank(AccountContext send_context,
-                                               Convey.RFC822.MailboxAddress? to = null) {
+                                               GriabuntuMail.RFC822.MailboxAddress? to = null) {
         MainWindow main = this.application.get_active_main_window();
         Composer.Widget composer = main.conversation_viewer.current_composer;
         if (composer == null ||
@@ -364,7 +365,7 @@ internal class Application.Controller :
         try {
             yield composer.load_empty_body(to);
         } catch (GLib.Error err) {
-            report_problem(new Convey.ProblemReport(err));
+            report_problem(new GriabuntuMail.ProblemReport(err));
         }
         return composer;
     }
@@ -382,7 +383,7 @@ internal class Application.Controller :
      */
     public async Composer.Widget? compose_with_context(AccountContext send_context,
                                                        Composer.Widget.ContextType type,
-                                                       Convey.Email context,
+                                                       GriabuntuMail.Email context,
                                                        string? quote) {
         MainWindow main = this.application.get_active_main_window();
         Composer.Widget? composer = null;
@@ -414,8 +415,8 @@ internal class Application.Controller :
                         existing.append_to_email(context, quote, type);
                         composer = existing;
                         break;
-                    } catch (Convey.EngineError error) {
-                        report_problem(new Convey.ProblemReport(error));
+                    } catch (GriabuntuMail.EngineError error) {
+                        report_problem(new GriabuntuMail.ProblemReport(error));
                     }
                 }
             }
@@ -443,7 +444,7 @@ internal class Application.Controller :
             try {
                 yield composer.load_context(type, context, quote);
             } catch (GLib.Error err) {
-                report_problem(new Convey.ProblemReport(err));
+                report_problem(new GriabuntuMail.ProblemReport(err));
             }
         }
         return composer;
@@ -460,7 +461,7 @@ internal class Application.Controller :
             context = this.accounts.get(window.selected_account.information);
         }
         if (context == null && window != null) {
-            context = Convey.Collection.first(get_account_contexts());
+            context = GriabuntuMail.Collection.first(get_account_contexts());
             ambiguous = get_account_contexts().size > 1;
         }
         if (context != null &&
@@ -479,7 +480,7 @@ internal class Application.Controller :
             try {
                 yield composer.load_mailto(mailto);
             } catch (GLib.Error err) {
-                report_problem(new Convey.ProblemReport(err));
+                report_problem(new GriabuntuMail.ProblemReport(err));
             }
         } else {
             // Schedule the send for after we have an account open.
@@ -488,7 +489,7 @@ internal class Application.Controller :
     }
 
     /** Displays a problem report when an error has been encountered. */
-    public void report_problem(Convey.ProblemReport report) {
+    public void report_problem(GriabuntuMail.ProblemReport report) {
         debug("Problem reported: %s", report.to_string());
 
         if (report.error == null ||
@@ -498,8 +499,8 @@ internal class Application.Controller :
             this.application.get_active_main_window().show_info_bar(info_bar);
         }
 
-        Convey.ServiceProblemReport? service_report =
-            report as Convey.ServiceProblemReport;
+        GriabuntuMail.ServiceProblemReport? service_report =
+            report as GriabuntuMail.ServiceProblemReport;
         if (service_report != null && service_report.service.protocol == SMTP) {
             this.application.send_error_notification(
                 /// Notification title.
@@ -520,29 +521,29 @@ internal class Application.Controller :
      * will remove the flag if not set on all conversations or else
      * add it.
      */
-    public async void mark_conversations(Convey.Folder location,
-                                         Gee.Collection<Convey.App.Conversation> conversations,
-                                         Convey.NamedFlag flag,
+    public async void mark_conversations(GriabuntuMail.Folder location,
+                                         Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                                         GriabuntuMail.NamedFlag flag,
                                          bool prefer_adding)
         throws GLib.Error {
-        Convey.Iterable<Convey.App.Conversation> selecting =
-            Convey.traverse(conversations);
-        Convey.EmailFlags flags = new Convey.EmailFlags();
+        GriabuntuMail.Iterable<GriabuntuMail.App.Conversation> selecting =
+            GriabuntuMail.traverse(conversations);
+        GriabuntuMail.EmailFlags flags = new GriabuntuMail.EmailFlags();
 
-        if (flag.equal_to(Convey.EmailFlags.UNREAD)) {
+        if (flag.equal_to(GriabuntuMail.EmailFlags.UNREAD)) {
             selecting = selecting.filter(c => prefer_adding ^ c.is_unread());
-            flags.add(Convey.EmailFlags.UNREAD);
-        } else if (flag.equal_to(Convey.EmailFlags.FLAGGED)) {
+            flags.add(GriabuntuMail.EmailFlags.UNREAD);
+        } else if (flag.equal_to(GriabuntuMail.EmailFlags.FLAGGED)) {
             selecting = selecting.filter(c => prefer_adding ^ c.is_flagged());
-            flags.add(Convey.EmailFlags.FLAGGED);
+            flags.add(GriabuntuMail.EmailFlags.FLAGGED);
         } else {
-            throw new Convey.EngineError.UNSUPPORTED(
+            throw new GriabuntuMail.EngineError.UNSUPPORTED(
                 "Marking as %s is not supported", flag.to_string()
             );
         }
 
-        Gee.Collection<Convey.EmailIdentifier>? messages = null;
-        Gee.Collection<Convey.App.Conversation> selected =
+        Gee.Collection<GriabuntuMail.EmailIdentifier>? messages = null;
+        Gee.Collection<GriabuntuMail.App.Conversation> selected =
             selecting.to_linked_list();
 
         bool do_add = prefer_adding ^ selected.is_empty;
@@ -554,14 +555,14 @@ internal class Application.Controller :
             // Only apply to the latest in-folder message in
             // conversations that don't already have the flag, since
             // we don't want to flag every message in the conversation
-            messages = Convey.traverse(selected).map<Convey.EmailIdentifier>(
+            messages = GriabuntuMail.traverse(selected).map<GriabuntuMail.EmailIdentifier>(
                 c => c.get_latest_recv_email(IN_FOLDER_OUT_OF_FOLDER).id
             ).to_linked_list();
         } else {
             // Remove the flag from those that have it
-            messages = new Gee.LinkedList<Convey.EmailIdentifier>();
-            foreach (Convey.App.Conversation convo in selected) {
-                foreach (Convey.Email email in
+            messages = new Gee.LinkedList<GriabuntuMail.EmailIdentifier>();
+            foreach (GriabuntuMail.App.Conversation convo in selected) {
+                foreach (GriabuntuMail.Email email in
                          convo.get_emails(RECV_DATE_DESCENDING)) {
                     if (email.email_flags != null &&
                         email.email_flags.contains(flag)) {
@@ -588,11 +589,11 @@ internal class Application.Controller :
      * rather than when working with whole conversations. In that
      * case, use {@link mark_conversations}.
      */
-    public async void mark_messages(Convey.Folder location,
-                                    Gee.Collection<Convey.App.Conversation> conversations,
-                                    Gee.Collection<Convey.EmailIdentifier> messages,
-                                    Convey.EmailFlags? to_add,
-                                    Convey.EmailFlags? to_remove)
+    public async void mark_messages(GriabuntuMail.Folder location,
+                                    Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                                    Gee.Collection<GriabuntuMail.EmailIdentifier> messages,
+                                    GriabuntuMail.EmailFlags? to_add,
+                                    GriabuntuMail.EmailFlags? to_remove)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(location.account.information);
         if (context != null) {
@@ -622,9 +623,9 @@ internal class Application.Controller :
         }
     }
 
-    public async void move_conversations(Convey.FolderSupport.Move source,
-                                         Convey.Folder destination,
-                                         Gee.Collection<Convey.App.Conversation> conversations)
+    public async void move_conversations(GriabuntuMail.FolderSupport.Move source,
+                                         GriabuntuMail.Folder destination,
+                                         Gee.Collection<GriabuntuMail.App.Conversation> conversations)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
@@ -656,14 +657,14 @@ internal class Application.Controller :
         }
     }
 
-    public async void move_conversations_special(Convey.Folder source,
-                                                 Convey.Folder.SpecialUse destination,
-                                                 Gee.Collection<Convey.App.Conversation> conversations)
+    public async void move_conversations_special(GriabuntuMail.Folder source,
+                                                 GriabuntuMail.Folder.SpecialUse destination,
+                                                 Gee.Collection<GriabuntuMail.App.Conversation> conversations)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
             Command? command = null;
-            Gee.Collection<Convey.EmailIdentifier> messages =
+            Gee.Collection<GriabuntuMail.EmailIdentifier> messages =
                 to_in_folder_email_ids(conversations);
             /// Translators: Label for in-app notification. String
             /// substitution is the name of the destination folder.
@@ -674,11 +675,11 @@ internal class Application.Controller :
             ).printf(Util.I18n.to_folder_display_name(source));
 
             if (destination == ARCHIVE) {
-                Convey.FolderSupport.Archive? archive_source = (
-                    source as Convey.FolderSupport.Archive
+                GriabuntuMail.FolderSupport.Archive? archive_source = (
+                    source as GriabuntuMail.FolderSupport.Archive
                 );
                 if (archive_source == null) {
-                    throw new Convey.EngineError.UNSUPPORTED(
+                    throw new GriabuntuMail.EngineError.UNSUPPORTED(
                         "Folder does not support archiving: %s",
                         source.to_string()
                     );
@@ -696,20 +697,20 @@ internal class Application.Controller :
                     undone_tooltip
                 );
             } else {
-                Convey.FolderSupport.Move? move_source = (
-                    source as Convey.FolderSupport.Move
+                GriabuntuMail.FolderSupport.Move? move_source = (
+                    source as GriabuntuMail.FolderSupport.Move
                 );
                 if (move_source == null) {
-                    throw new Convey.EngineError.UNSUPPORTED(
+                    throw new GriabuntuMail.EngineError.UNSUPPORTED(
                         "Folder does not support moving: %s",
                         source.to_string()
                     );
                 }
-                Convey.Folder? dest = source.account.get_special_folder(
+                GriabuntuMail.Folder? dest = source.account.get_special_folder(
                     destination
                 );
                 if (dest == null) {
-                    throw new Convey.EngineError.NOT_FOUND(
+                    throw new GriabuntuMail.EngineError.NOT_FOUND(
                         "No folder found for: %s", destination.to_string()
                     );
                 }
@@ -734,10 +735,10 @@ internal class Application.Controller :
         }
     }
 
-    public async void move_messages_special(Convey.Folder source,
-                                            Convey.Folder.SpecialUse destination,
-                                            Gee.Collection<Convey.App.Conversation> conversations,
-                                            Gee.Collection<Convey.EmailIdentifier> messages)
+    public async void move_messages_special(GriabuntuMail.Folder source,
+                                            GriabuntuMail.Folder.SpecialUse destination,
+                                            Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                                            Gee.Collection<GriabuntuMail.EmailIdentifier> messages)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
@@ -751,11 +752,11 @@ internal class Application.Controller :
             ).printf(Util.I18n.to_folder_display_name(source));
 
             if (destination == ARCHIVE) {
-                Convey.FolderSupport.Archive? archive_source = (
-                    source as Convey.FolderSupport.Archive
+                GriabuntuMail.FolderSupport.Archive? archive_source = (
+                    source as GriabuntuMail.FolderSupport.Archive
                 );
                 if (archive_source == null) {
-                    throw new Convey.EngineError.UNSUPPORTED(
+                    throw new GriabuntuMail.EngineError.UNSUPPORTED(
                         "Folder does not support archiving: %s",
                         source.to_string()
                     );
@@ -773,21 +774,21 @@ internal class Application.Controller :
                     undone_tooltip
                 );
             } else {
-                Convey.FolderSupport.Move? move_source = (
-                    source as Convey.FolderSupport.Move
+                GriabuntuMail.FolderSupport.Move? move_source = (
+                    source as GriabuntuMail.FolderSupport.Move
                 );
                 if (move_source == null) {
-                    throw new Convey.EngineError.UNSUPPORTED(
+                    throw new GriabuntuMail.EngineError.UNSUPPORTED(
                         "Folder does not support moving: %s",
                         source.to_string()
                     );
                 }
 
-                Convey.Folder? dest = source.account.get_special_folder(
+                GriabuntuMail.Folder? dest = source.account.get_special_folder(
                     destination
                 );
                 if (dest == null) {
-                    throw new Convey.EngineError.NOT_FOUND(
+                    throw new GriabuntuMail.EngineError.NOT_FOUND(
                         "No folder found for: %s", destination.to_string()
                     );
                 }
@@ -813,9 +814,9 @@ internal class Application.Controller :
         }
     }
 
-    public async void copy_conversations(Convey.FolderSupport.Copy source,
-                                         Convey.Folder destination,
-                                         Gee.Collection<Convey.App.Conversation> conversations)
+    public async void copy_conversations(GriabuntuMail.FolderSupport.Copy source,
+                                         GriabuntuMail.Folder destination,
+                                         Gee.Collection<GriabuntuMail.App.Conversation> conversations)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(source.account.information);
         if (context != null) {
@@ -847,8 +848,8 @@ internal class Application.Controller :
         }
     }
 
-    public async void delete_conversations(Convey.FolderSupport.Remove target,
-                                           Gee.Collection<Convey.App.Conversation> conversations)
+    public async void delete_conversations(GriabuntuMail.FolderSupport.Remove target,
+                                           Gee.Collection<GriabuntuMail.App.Conversation> conversations)
         throws GLib.Error {
         var messages = target.properties.is_virtual
             ? to_all_email_ids(conversations)
@@ -856,9 +857,9 @@ internal class Application.Controller :
         yield delete_messages(target, conversations, messages);
     }
 
-    public async void delete_messages(Convey.FolderSupport.Remove target,
-                                      Gee.Collection<Convey.App.Conversation> conversations,
-                                      Gee.Collection<Convey.EmailIdentifier> messages)
+    public async void delete_messages(GriabuntuMail.FolderSupport.Remove target,
+                                      Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                                      Gee.Collection<GriabuntuMail.EmailIdentifier> messages)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(target.account.information);
         if (context != null) {
@@ -872,15 +873,15 @@ internal class Application.Controller :
         }
     }
 
-    public async void empty_folder(Convey.Folder target)
+    public async void empty_folder(GriabuntuMail.Folder target)
         throws GLib.Error {
         AccountContext? context = this.accounts.get(target.account.information);
         if (context != null) {
-            Convey.FolderSupport.Empty? emptyable = (
-                target as Convey.FolderSupport.Empty
+            GriabuntuMail.FolderSupport.Empty? emptyable = (
+                target as GriabuntuMail.FolderSupport.Empty
             );
             if (emptyable == null) {
-                throw new Convey.EngineError.UNSUPPORTED(
+                throw new GriabuntuMail.EngineError.UNSUPPORTED(
                     "Emptying folder not supported %s", target.path.to_string()
                 );
             }
@@ -889,7 +890,7 @@ internal class Application.Controller :
             command.executed.connect(
                 // Not quite accurate, but close enough
                 () => context.controller_stack.folders_removed(
-                    Convey.Collection.single(emptyable)
+                    GriabuntuMail.Collection.single(emptyable)
                 )
             );
             yield context.commands.execute(command, context.cancellable);
@@ -897,7 +898,7 @@ internal class Application.Controller :
     }
 
     /** Returns a context for an account, if any. */
-    internal AccountContext? get_context_for_account(Convey.AccountInformation account) {
+    internal AccountContext? get_context_for_account(GriabuntuMail.AccountInformation account) {
         return this.accounts.get(account);
     }
 
@@ -933,7 +934,7 @@ internal class Application.Controller :
                 context.cancellable
             );
         } catch (GLib.Error err) {
-            report_problem(new Convey.ProblemReport(err));
+            report_problem(new GriabuntuMail.ProblemReport(err));
         }
     }
 
@@ -949,7 +950,7 @@ internal class Application.Controller :
                 context.cancellable
             );
         } catch (GLib.Error err) {
-            report_problem(new Convey.ProblemReport(err));
+            report_problem(new GriabuntuMail.ProblemReport(err));
         }
     }
 
@@ -962,7 +963,7 @@ internal class Application.Controller :
                 context.cancellable
             );
         } catch (GLib.Error err) {
-            report_problem(new Convey.ProblemReport(err));
+            report_problem(new GriabuntuMail.ProblemReport(err));
         }
     }
 
@@ -975,30 +976,30 @@ internal class Application.Controller :
         try {
             yield this.account_manager.expunge_accounts(this.controller_open);
         } catch (GLib.Error err) {
-            report_problem(new Convey.ProblemReport(err));
+            report_problem(new GriabuntuMail.ProblemReport(err));
         }
     }
 
     private void update_proxy() {
-        Convey.Endpoint.proxy_resolver = this.application.config.get_proxy_resolver();
+        GriabuntuMail.Endpoint.proxy_resolver = this.application.config.get_proxy_resolver();
         Components.WebView.proxy_uri = this.application.config.get_custom_proxy_uri();
     }
 
-    private void add_account(Convey.AccountInformation added) {
+    private void add_account(GriabuntuMail.AccountInformation added) {
         try {
             this.application.engine.add_account(added);
-        } catch (Convey.EngineError.ALREADY_EXISTS err) {
+        } catch (GriabuntuMail.EngineError.ALREADY_EXISTS err) {
             // all good
         } catch (GLib.Error err) {
-            report_problem(new Convey.AccountProblemReport(added, err));
+            report_problem(new GriabuntuMail.AccountProblemReport(added, err));
         }
     }
 
-    private async void open_account(Convey.Account account) {
+    private async void open_account(GriabuntuMail.Account account) {
         AccountContext context = new AccountContext(
             account,
-            new Convey.App.SearchFolder(account, account.local_folder_root),
-            new Convey.App.EmailStore(account),
+            new GriabuntuMail.App.SearchFolder(account, account.local_folder_root),
+            new GriabuntuMail.App.EmailStore(account),
             new Application.ContactStore(account, this.folks)
         );
         this.accounts.set(account.information, context);
@@ -1015,15 +1016,15 @@ internal class Application.Controller :
         account.folders_available_unavailable.connect(on_folders_available_unavailable);
         account.report_problem.connect(on_report_problem);
 
-        Convey.Smtp.ClientService? smtp = (
-            account.outgoing as Convey.Smtp.ClientService
+        GriabuntuMail.Smtp.ClientService? smtp = (
+            account.outgoing as GriabuntuMail.Smtp.ClientService
         );
         if (smtp != null) {
             smtp.email_sent.connect(on_sent);
         }
 
-        Convey.AccountSupport.QueueSend? queue_send = (
-            account as Convey.AccountSupport.QueueSend
+        GriabuntuMail.AccountSupport.QueueSend? queue_send = (
+            account as GriabuntuMail.AccountSupport.QueueSend
         );
         if (queue_send != null) {
             queue_send.email_sent.connect(on_graph_sent);
@@ -1048,13 +1049,13 @@ internal class Application.Controller :
             } catch (GLib.Error open_err) {
                 debug("Unable to open account %s: %s", account.to_string(), open_err.message);
 
-                if (open_err is Convey.EngineError.CORRUPT) {
+                if (open_err is GriabuntuMail.EngineError.CORRUPT) {
                     retry = yield account_database_error_async(account);
                 }
 
                 if (!retry) {
                     report_problem(
-                        new Convey.AccountProblemReport(
+                        new GriabuntuMail.AccountProblemReport(
                             account.information,
                             open_err
                         )
@@ -1069,25 +1070,25 @@ internal class Application.Controller :
         update_account_status();
     }
 
-    private async void remove_account(Convey.AccountInformation removed) {
+    private async void remove_account(GriabuntuMail.AccountInformation removed) {
         yield close_account(removed, false);
         try {
             this.application.engine.remove_account(removed);
-        } catch (Convey.EngineError.NOT_FOUND err) {
+        } catch (GriabuntuMail.EngineError.NOT_FOUND err) {
             // all good
         } catch (GLib.Error err) {
             report_problem(
-                new Convey.AccountProblemReport(removed, err)
+                new GriabuntuMail.AccountProblemReport(removed, err)
             );
         }
     }
 
-    private async void close_account(Convey.AccountInformation config,
+    private async void close_account(GriabuntuMail.AccountInformation config,
                                      bool is_shutdown) {
         AccountContext? context = this.accounts.get(config);
         if (context != null) {
             debug("Closing account: %s", context.account.information.id);
-            Convey.Account account = context.account;
+            GriabuntuMail.Account account = context.account;
 
             account_unavailable(context, is_shutdown);
 
@@ -1109,15 +1110,15 @@ internal class Application.Controller :
 
             account.folders_available_unavailable.disconnect(on_folders_available_unavailable);
 
-            Convey.Smtp.ClientService? smtp = (
-                account.outgoing as Convey.Smtp.ClientService
+            GriabuntuMail.Smtp.ClientService? smtp = (
+                account.outgoing as GriabuntuMail.Smtp.ClientService
             );
             if (smtp != null) {
                 smtp.email_sent.disconnect(on_sent);
             }
 
-            Convey.AccountSupport.QueueSend? queue_send = (
-                account as Convey.AccountSupport.QueueSend
+            GriabuntuMail.AccountSupport.QueueSend? queue_send = (
+                account as GriabuntuMail.AccountSupport.QueueSend
             );
             if (queue_send != null) {
                 queue_send.email_sent.disconnect(on_graph_sent);
@@ -1135,7 +1136,7 @@ internal class Application.Controller :
             context.cancellable.cancel();
 
             // Explicitly close the inbox since we explicitly open it
-            Convey.Folder? inbox = context.inbox;
+            GriabuntuMail.Folder? inbox = context.inbox;
             if (inbox != null) {
                 try {
                     yield inbox.close_async(null);
@@ -1159,14 +1160,14 @@ internal class Application.Controller :
         // Start off assuming all accounts are online and error free
         // (i.e. no status issues to indicate) and proceed until
         // proven incorrect.
-        Convey.Account.Status effective_status = ONLINE;
+        GriabuntuMail.Account.Status effective_status = ONLINE;
         bool has_auth_error = false;
         bool has_cert_error = false;
-        Convey.Account? service_problem_source = null;
+        GriabuntuMail.Account? service_problem_source = null;
         foreach (AccountContext context in this.accounts.values) {
-            Convey.Account.Status status = context.get_effective_status();
+            GriabuntuMail.Account.Status status = context.get_effective_status();
             if (!status.is_online()) {
-                effective_status &= ~Convey.Account.Status.ONLINE;
+                effective_status &= ~GriabuntuMail.Account.Status.ONLINE;
             }
             if (status.has_service_problem()) {
                 effective_status |= SERVICE_PROBLEM;
@@ -1200,10 +1201,10 @@ internal class Application.Controller :
     }
 
     private async void prompt_for_password(AccountContext context,
-                                           Convey.ServiceInformation service) {
-        Convey.AccountInformation account = context.account.information;
+                                           GriabuntuMail.ServiceInformation service) {
+        GriabuntuMail.AccountInformation account = context.account.information;
         bool is_incoming = (service == account.incoming);
-        Convey.Credentials credentials = is_incoming
+        GriabuntuMail.Credentials credentials = is_incoming
             ? account.incoming.credentials
             : account.get_outgoing_credentials();
 
@@ -1224,7 +1225,7 @@ internal class Application.Controller :
                 // Bail out right away, but probably should be opening
                 // the GOA control panel.
                 handled = false;
-                report_problem(new Convey.AccountProblemReport(account, err));
+                report_problem(new GriabuntuMail.AccountProblemReport(account, err));
             }
             context.authentication_prompting = false;
         } else {
@@ -1243,7 +1244,7 @@ internal class Application.Controller :
             if (password != null) {
                 // The update the credentials for the service that the
                 // credentials actually came from
-                Convey.ServiceInformation creds_service =
+                GriabuntuMail.ServiceInformation creds_service =
                     (credentials == account.incoming.credentials)
                     ? account.incoming
                     : account.outgoing;
@@ -1273,7 +1274,7 @@ internal class Application.Controller :
                     // all good
                 } catch (GLib.Error err) {
                     report_problem(
-                        new Convey.ServiceProblemReport(account, service, err)
+                        new GriabuntuMail.ServiceProblemReport(account, service, err)
                     );
                 }
 
@@ -1292,7 +1293,7 @@ internal class Application.Controller :
                 );
             } catch (GLib.Error err) {
                 report_problem(
-                    new Convey.ServiceProblemReport(account, service, err)
+                    new GriabuntuMail.ServiceProblemReport(account, service, err)
                 );
             }
         } else {
@@ -1303,8 +1304,8 @@ internal class Application.Controller :
     }
 
     private async void prompt_untrusted_host(AccountContext context,
-                                             Convey.ServiceInformation service,
-                                             Convey.Endpoint endpoint,
+                                             GriabuntuMail.ServiceInformation service,
+                                             GriabuntuMail.Endpoint endpoint,
                                              GLib.TlsConnection cx) {
         context.tls_validation_prompting = true;
         try {
@@ -1325,7 +1326,7 @@ internal class Application.Controller :
             // since the cert may not have been saved
             context.tls_validation_failed = false;
             report_problem(
-                new Convey.ServiceProblemReport(
+                new GriabuntuMail.ServiceProblemReport(
                     context.account.information,
                     service,
                     err
@@ -1338,15 +1339,15 @@ internal class Application.Controller :
     }
 
     // Returns true if the caller should try opening the account again
-    private async bool account_database_error_async(Convey.Account account) {
-        // give the user two options: reset the Account local store, or exit Convey.  A third
+    private async bool account_database_error_async(GriabuntuMail.Account account) {
+        // give the user two options: reset the Account local store, or exit GriabuntuMail.  A third
         // could be done to leave the Account in an unopened state, but we don't currently
         // have provisions for that.
         var dialog = new Adw.AlertDialog(
             _("Unable to open the database for %s").printf(account.information.id),
             null);
         dialog.format_body_markup(
-            _("There was an error opening the local mail database for this account. This is possibly due to corruption of the database file in this directory:\n\n%s\n\nConvey can rebuild the database and re-synchronize with the server or exit.\n\nRebuilding the database will destroy all local email and its attachments. <b>The mail on the your server will not be affected.</b>"),
+            _("There was an error opening the local mail database for this account. This is possibly due to corruption of the database file in this directory:\n\n%s\n\nGriabuntu Mail can rebuild the database and re-synchronize with the server or exit.\n\nRebuilding the database will destroy all local email and its attachments. <b>The mail on the your server will not be affected.</b>"),
             account.information.data_dir.get_path());
         dialog.add_response("exit", _("E_xit"));
         dialog.add_response("rebuild", _("_Rebuild"));
@@ -1374,9 +1375,9 @@ internal class Application.Controller :
     }
 
     private void on_folders_available_unavailable(
-        Convey.Account account,
-        Gee.BidirSortedSet<Convey.Folder>? available,
-        Gee.BidirSortedSet<Convey.Folder>? unavailable) {
+        GriabuntuMail.Account account,
+        Gee.BidirSortedSet<GriabuntuMail.Folder>? available,
+        Gee.BidirSortedSet<GriabuntuMail.Folder>? unavailable) {
         var account_context = this.accounts.get(account.information);
 
         if (available != null && available.size > 0) {
@@ -1402,12 +1403,12 @@ internal class Application.Controller :
         }
 
         if (unavailable != null) {
-            Gee.BidirIterator<Convey.Folder> unavailable_iterator =
+            Gee.BidirIterator<GriabuntuMail.Folder> unavailable_iterator =
                 unavailable.bidir_iterator();
             bool has_prev = unavailable_iterator.last();
             var removed_contexts = new Gee.LinkedList<FolderContext>();
             while (has_prev) {
-                Convey.Folder folder = unavailable_iterator.get();
+                GriabuntuMail.Folder folder = unavailable_iterator.get();
 
                 if (folder.used_as == INBOX) {
                     account_context.inbox = null;
@@ -1430,8 +1431,8 @@ internal class Application.Controller :
     }
 
     /** Clears new message counts in notification plugin contexts. */
-    internal void clear_new_messages(Convey.Folder source,
-                                     Gee.Set<Convey.App.Conversation> visible) {
+    internal void clear_new_messages(GriabuntuMail.Folder source,
+                                     Gee.Set<GriabuntuMail.App.Conversation> visible) {
         foreach (MainWindow window in this.application.get_main_windows()) {
             window.folder_list.set_has_new(source, false);
         }
@@ -1442,8 +1443,8 @@ internal class Application.Controller :
     }
 
     /** Notifies plugins of new email being displayed. */
-    internal void email_loaded(Convey.AccountInformation account,
-                               Convey.Email loaded) {
+    internal void email_loaded(GriabuntuMail.AccountInformation account,
+                               GriabuntuMail.Email loaded) {
         foreach (EmailPluginContext plugin in
                  this.plugins.get_email_contexts()) {
             plugin.email_displayed(account, loaded);
@@ -1465,7 +1466,7 @@ internal class Application.Controller :
             foreach (AccountContext context in this.accounts.values) {
                 context.cancellable.cancelled.disconnect(this.storage_cleanup_cancellable.cancel);
 
-                Convey.Account account = context.account;
+                GriabuntuMail.Account account = context.account;
                 account.last_storage_cleanup = null;
             }
             this.storage_cleanup_cancellable = null;
@@ -1521,7 +1522,7 @@ internal class Application.Controller :
         }
     }
 
-    private void on_graph_sent(Convey.AccountSupport.QueueSend account) {
+    private void on_graph_sent(GriabuntuMail.AccountSupport.QueueSend account) {
         /// Translators: The label for an in-app notification.
         string message = _("Email sent");
         foreach (MainWindow window in this.application.get_main_windows()) {
@@ -1536,8 +1537,8 @@ internal class Application.Controller :
         }
     }
 
-    private void on_sent(Convey.Smtp.ClientService service,
-                         Convey.Email sent) {
+    private void on_sent(GriabuntuMail.Smtp.ClientService service,
+                         GriabuntuMail.Email sent) {
         /// Translators: The label for an in-app notification.
         string message = _("Email sent");
         var toast = new Adw.Toast(message);
@@ -1555,12 +1556,12 @@ internal class Application.Controller :
         }
     }
 
-    private Gee.Collection<Convey.EmailIdentifier>
-        to_in_folder_email_ids(Gee.Collection<Convey.App.Conversation> conversations) {
-        Gee.Collection<Convey.EmailIdentifier> messages =
-            new Gee.LinkedList<Convey.EmailIdentifier>();
-        foreach (Convey.App.Conversation conversation in conversations) {
-            foreach (Convey.Email email in
+    private Gee.Collection<GriabuntuMail.EmailIdentifier>
+        to_in_folder_email_ids(Gee.Collection<GriabuntuMail.App.Conversation> conversations) {
+        Gee.Collection<GriabuntuMail.EmailIdentifier> messages =
+            new Gee.LinkedList<GriabuntuMail.EmailIdentifier>();
+        foreach (GriabuntuMail.App.Conversation conversation in conversations) {
+            foreach (GriabuntuMail.Email email in
                      conversation.get_emails(RECV_DATE_ASCENDING, IN_FOLDER)) {
                 // A message shown once may be several copies in this
                 // folder; all of them are in scope, none elsewhere
@@ -1574,24 +1575,24 @@ internal class Application.Controller :
         return messages;
     }
 
-    private Gee.Collection<Convey.EmailIdentifier>
-        to_all_email_ids(Gee.Collection<Convey.App.Conversation> conversations) {
-        Gee.Collection<Convey.EmailIdentifier> messages =
-            new Gee.LinkedList<Convey.EmailIdentifier>();
-        foreach (Convey.App.Conversation conversation in conversations) {
-            foreach (Convey.Email email in conversation.get_emails(NONE)) {
+    private Gee.Collection<GriabuntuMail.EmailIdentifier>
+        to_all_email_ids(Gee.Collection<GriabuntuMail.App.Conversation> conversations) {
+        Gee.Collection<GriabuntuMail.EmailIdentifier> messages =
+            new Gee.LinkedList<GriabuntuMail.EmailIdentifier>();
+        foreach (GriabuntuMail.App.Conversation conversation in conversations) {
+            foreach (GriabuntuMail.Email email in conversation.get_emails(NONE)) {
                 messages.add(email.id);
             }
         }
         return messages;
     }
 
-    private void on_account_available(Convey.AccountInformation info) {
-        Convey.Account? account = null;
+    private void on_account_available(GriabuntuMail.AccountInformation info) {
+        GriabuntuMail.Account? account = null;
         try {
             account = this.application.engine.get_account(info);
         } catch (GLib.Error error) {
-            report_problem(new Convey.ProblemReport(error));
+            report_problem(new GriabuntuMail.ProblemReport(error));
             warning(
                 "Error creating account %s instance: %s",
                 info.id,
@@ -1604,14 +1605,14 @@ internal class Application.Controller :
         }
     }
 
-    private void on_account_added(Convey.AccountInformation added,
+    private void on_account_added(GriabuntuMail.AccountInformation added,
                                   Accounts.Manager.Status status) {
         if (status == Accounts.Manager.Status.ENABLED) {
             this.add_account(added);
         }
     }
 
-    private void on_account_status_changed(Convey.AccountInformation changed,
+    private void on_account_status_changed(GriabuntuMail.AccountInformation changed,
                                            Accounts.Manager.Status status) {
         switch (status) {
         case Accounts.Manager.Status.ENABLED:
@@ -1629,26 +1630,26 @@ internal class Application.Controller :
         }
     }
 
-    private void on_account_removed(Convey.AccountInformation removed) {
+    private void on_account_removed(GriabuntuMail.AccountInformation removed) {
         this.remove_account.begin(removed);
     }
 
-    private void on_report_problem(Convey.ProblemReport problem) {
+    private void on_report_problem(GriabuntuMail.ProblemReport problem) {
         report_problem(problem);
     }
 
     private void on_retry_problem(Components.ProblemReportInfoBar info_bar) {
-        Convey.ServiceProblemReport? service_report =
-            info_bar.report as Convey.ServiceProblemReport;
+        GriabuntuMail.ServiceProblemReport? service_report =
+            info_bar.report as GriabuntuMail.ServiceProblemReport;
         if (service_report != null) {
             AccountContext? context = this.accounts.get(service_report.account);
             if (context != null && context.account.is_open()) {
                 switch (service_report.service.protocol) {
-                case Convey.Protocol.IMAP:
+                case GriabuntuMail.Protocol.IMAP:
                     context.account.incoming.restart.begin(context.cancellable);
                     break;
 
-                case Convey.Protocol.SMTP:
+                case GriabuntuMail.Protocol.SMTP:
                     context.account.outgoing.restart.begin(context.cancellable);
                     break;
                 }
@@ -1660,17 +1661,17 @@ internal class Application.Controller :
         update_account_status();
     }
 
-    private void on_authentication_failure(Convey.AccountInformation account,
-                                           Convey.ServiceInformation service) {
+    private void on_authentication_failure(GriabuntuMail.AccountInformation account,
+                                           GriabuntuMail.ServiceInformation service) {
         AccountContext? context = this.accounts.get(account);
         if (context != null && !is_currently_prompting()) {
             this.prompt_for_password.begin(context, service);
         }
     }
 
-    private void on_untrusted_host(Convey.AccountInformation account,
-                                   Convey.ServiceInformation service,
-                                   Convey.Endpoint endpoint,
+    private void on_untrusted_host(GriabuntuMail.AccountInformation account,
+                                   GriabuntuMail.ServiceInformation service,
+                                   GriabuntuMail.Endpoint endpoint,
                                    TlsConnection cx) {
         AccountContext? context = this.accounts.get(account);
         if (context != null && !is_currently_prompting()) {
@@ -1678,15 +1679,15 @@ internal class Application.Controller :
         }
     }
 
-    private void on_retry_service_problem(Convey.ClientService.Status type) {
+    private void on_retry_service_problem(GriabuntuMail.ClientService.Status type) {
         bool has_restarted = false;
         foreach (AccountContext context in this.accounts.values) {
-            Convey.Account account = context.account;
+            GriabuntuMail.Account account = context.account;
             if (account.current_status.has_service_problem() &&
                 (account.incoming.current_status == type ||
                  account.outgoing.current_status == type)) {
 
-                Convey.ClientService service =
+                GriabuntuMail.ClientService service =
                     (account.incoming.current_status == type)
                         ? account.incoming
                         : account.outgoing;
@@ -1744,12 +1745,12 @@ internal class Application.Controller :
         this.storage_cleanup_cancellable = new GLib.Cancellable();
 
         foreach (AccountContext context in this.accounts.values) {
-            Convey.Account account = context.account;
+            GriabuntuMail.Account account = context.account;
             context.cancellable.cancelled.connect(this.storage_cleanup_cancellable.cancel);
             try {
                 yield account.cleanup_storage(this.storage_cleanup_cancellable);
             } catch (GLib.Error err) {
-                report_problem(new Convey.ProblemReport(err));
+                report_problem(new GriabuntuMail.ProblemReport(err));
             }
             context.cancellable.cancelled.disconnect(this.storage_cleanup_cancellable.cancel);
             if (this.storage_cleanup_cancellable.is_cancelled())
@@ -1766,11 +1767,11 @@ internal class Application.ControllerCommandStack : CommandStack {
 
 
     private EmailCommand? last_executed = null;
-    private Convey.TimeoutManager last_executed_timeout;
+    private GriabuntuMail.TimeoutManager last_executed_timeout;
 
 
     public ControllerCommandStack() {
-        this.last_executed_timeout = new Convey.TimeoutManager.milliseconds(
+        this.last_executed_timeout = new GriabuntuMail.TimeoutManager.milliseconds(
             250,
             () => { this.last_executed = null; }
         );
@@ -1812,7 +1813,7 @@ internal class Application.ControllerCommandStack : CommandStack {
      * to un-recoverable changes, e.g. when the server notifies that a
      * folder has been removed.
      */
-    internal void folders_removed(Gee.Collection<Convey.Folder> removed) {
+    internal void folders_removed(Gee.Collection<GriabuntuMail.Folder> removed) {
         Gee.Iterator<Command> commands = this.undo_stack.iterator();
         while (commands.next()) {
             EmailCommand? email = commands.get() as EmailCommand;
@@ -1835,8 +1836,8 @@ internal class Application.ControllerCommandStack : CommandStack {
      * removed as a result of some other client removing it, or the
      * message being deleted completely.
      */
-    internal void email_removed(Convey.Folder location,
-                                Gee.Collection<Convey.EmailIdentifier> targets) {
+    internal void email_removed(GriabuntuMail.Folder location,
+                                Gee.Collection<GriabuntuMail.EmailIdentifier> targets) {
         Gee.Iterator<Command> commands = this.undo_stack.iterator();
         while (commands.next()) {
             EmailCommand? email = commands.get() as EmailCommand;
@@ -1871,7 +1872,7 @@ public abstract class Application.EmailCommand : Command {
      * This is used by the main window to return to the folder where
      * the command was first carried out.
      */
-    public Convey.Folder location {
+    public GriabuntuMail.Folder location {
         get; protected set;
     }
 
@@ -1881,7 +1882,7 @@ public abstract class Application.EmailCommand : Command {
      * This is used by the main window to return to the conversation where
      * the command was first carried out.
      */
-    public Gee.Collection<Convey.App.Conversation> conversations {
+    public Gee.Collection<GriabuntuMail.App.Conversation> conversations {
         get; private set;
     }
 
@@ -1891,17 +1892,17 @@ public abstract class Application.EmailCommand : Command {
      * This is used by the main window to return to the conversation where
      * the command was first carried out.
      */
-    public Gee.Collection<Convey.EmailIdentifier> email {
+    public Gee.Collection<GriabuntuMail.EmailIdentifier> email {
         get; private set;
     }
 
-    private Gee.Collection<Convey.App.Conversation> mutable_conversations;
-    private Gee.Collection<Convey.EmailIdentifier> mutable_email;
+    private Gee.Collection<GriabuntuMail.App.Conversation> mutable_conversations;
+    private Gee.Collection<GriabuntuMail.EmailIdentifier> mutable_email;
 
 
-    protected EmailCommand(Convey.Folder location,
-                           Gee.Collection<Convey.App.Conversation> conversations,
-                           Gee.Collection<Convey.EmailIdentifier> email) {
+    protected EmailCommand(GriabuntuMail.Folder location,
+                           Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                           Gee.Collection<GriabuntuMail.EmailIdentifier> email) {
         this.location = location;
         this.conversations = conversations.read_only_view;
         this.email = email.read_only_view;
@@ -1946,7 +1947,7 @@ public abstract class Application.EmailCommand : Command {
      * longer valid and hence must be removed.
      */
     internal virtual StateChangePolicy folders_removed(
-        Gee.Collection<Convey.Folder> removed
+        Gee.Collection<GriabuntuMail.Folder> removed
     ) {
         return (
             this.location in removed
@@ -1967,15 +1968,15 @@ public abstract class Application.EmailCommand : Command {
      * longer valid and hence must be removed.
      */
     internal virtual StateChangePolicy email_removed(
-        Convey.Folder location,
-        Gee.Collection<Convey.EmailIdentifier> targets
+        GriabuntuMail.Folder location,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> targets
     ) {
         StateChangePolicy ret = IGNORE;
         if (this.location == location) {
             // Any removed email should have already been removed from
             // their conversations by the time we here, so just remove
             // any conversations that don't have any messages left.
-            Gee.Iterator<Convey.App.Conversation> conversations =
+            Gee.Iterator<GriabuntuMail.App.Conversation> conversations =
                 this.mutable_conversations.iterator();
             while (conversations.next()) {
                 var conversation = conversations.get();
@@ -2015,17 +2016,17 @@ public interface Application.TrivialCommand : Command {
 private class Application.MarkEmailCommand : TrivialCommand, EmailCommand {
 
 
-    private Convey.App.EmailStore store;
-    private Convey.EmailFlags? to_add;
-    private Convey.EmailFlags? to_remove;
+    private GriabuntuMail.App.EmailStore store;
+    private GriabuntuMail.EmailFlags? to_add;
+    private GriabuntuMail.EmailFlags? to_remove;
 
 
-    public MarkEmailCommand(Convey.Folder location,
-                            Gee.Collection<Convey.App.Conversation> conversations,
-                            Gee.Collection<Convey.EmailIdentifier> messages,
-                            Convey.App.EmailStore store,
-                            Convey.EmailFlags? to_add,
-                            Convey.EmailFlags? to_remove,
+    public MarkEmailCommand(GriabuntuMail.Folder location,
+                            Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                            Gee.Collection<GriabuntuMail.EmailIdentifier> messages,
+                            GriabuntuMail.App.EmailStore store,
+                            GriabuntuMail.EmailFlags? to_add,
+                            GriabuntuMail.EmailFlags? to_remove,
                             string? executed_label = null,
                             string? undone_label = null) {
         base(location, conversations, messages);
@@ -2081,12 +2082,12 @@ private abstract class Application.RevokableCommand : EmailCommand {
         get { return this.revokable != null && this.revokable.valid; }
     }
 
-    private Convey.Revokable? revokable = null;
+    private GriabuntuMail.Revokable? revokable = null;
 
 
-    protected RevokableCommand(Convey.Folder location,
-                               Gee.Collection<Convey.App.Conversation> conversations,
-                               Gee.Collection<Convey.EmailIdentifier> email) {
+    protected RevokableCommand(GriabuntuMail.Folder location,
+                               Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                               Gee.Collection<GriabuntuMail.EmailIdentifier> email) {
         base(location, conversations, email);
     }
 
@@ -2101,7 +2102,7 @@ private abstract class Application.RevokableCommand : EmailCommand {
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (this.revokable == null) {
-            throw new Convey.EngineError.UNSUPPORTED(
+            throw new GriabuntuMail.EngineError.UNSUPPORTED(
                 "Cannot undo command, no revokable available"
             );
         }
@@ -2110,11 +2111,11 @@ private abstract class Application.RevokableCommand : EmailCommand {
         set_revokable(null);
     }
 
-    protected abstract async Convey.Revokable
+    protected abstract async GriabuntuMail.Revokable
         execute_impl(GLib.Cancellable cancellable)
         throws GLib.Error;
 
-    private void set_revokable(Convey.Revokable? updated) {
+    private void set_revokable(GriabuntuMail.Revokable? updated) {
         if (this.revokable != null) {
             this.revokable.committed.disconnect(on_revokable_committed);
         }
@@ -2126,7 +2127,7 @@ private abstract class Application.RevokableCommand : EmailCommand {
         }
     }
 
-    private void on_revokable_committed(Convey.Revokable? updated) {
+    private void on_revokable_committed(GriabuntuMail.Revokable? updated) {
         set_revokable(updated);
     }
 
@@ -2136,14 +2137,14 @@ private abstract class Application.RevokableCommand : EmailCommand {
 private class Application.MoveEmailCommand : RevokableCommand {
 
 
-    private Convey.FolderSupport.Move source;
-    private Convey.Folder destination;
+    private GriabuntuMail.FolderSupport.Move source;
+    private GriabuntuMail.Folder destination;
 
 
-    public MoveEmailCommand(Convey.FolderSupport.Move source,
-                            Convey.Folder destination,
-                            Gee.Collection<Convey.App.Conversation> conversations,
-                            Gee.Collection<Convey.EmailIdentifier> messages,
+    public MoveEmailCommand(GriabuntuMail.FolderSupport.Move source,
+                            GriabuntuMail.Folder destination,
+                            Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                            Gee.Collection<GriabuntuMail.EmailIdentifier> messages,
                             string? executed_label = null,
                             string? undone_label = null) {
         base(source, conversations, messages);
@@ -2156,7 +2157,7 @@ private class Application.MoveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy folders_removed(
-        Gee.Collection<Convey.Folder> removed
+        Gee.Collection<GriabuntuMail.Folder> removed
     ) {
         return (
             this.destination in removed
@@ -2166,8 +2167,8 @@ private class Application.MoveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy email_removed(
-        Convey.Folder location,
-        Gee.Collection<Convey.EmailIdentifier> targets
+        GriabuntuMail.Folder location,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> targets
     ) {
         // With the current revokable mechanism we can't determine if
         // specific messages removed from the destination are
@@ -2180,13 +2181,13 @@ private class Application.MoveEmailCommand : RevokableCommand {
         );
     }
 
-    protected override async Convey.Revokable
+    protected override async GriabuntuMail.Revokable
         execute_impl(GLib.Cancellable cancellable)
         throws GLib.Error {
         bool open = false;
         try {
             yield this.source.open_async(
-                Convey.Folder.OpenFlags.NO_DELAY, cancellable
+                GriabuntuMail.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             return yield this.source.move_email_async(
@@ -2212,26 +2213,26 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
 
 
     /** {@inheritDoc} */
-    public Convey.Folder command_location {
+    public GriabuntuMail.Folder command_location {
         get; protected set;
     }
 
     /** {@inheritDoc} */
-    public Gee.Collection<Convey.EmailIdentifier> command_conversations {
+    public Gee.Collection<GriabuntuMail.EmailIdentifier> command_conversations {
         get; protected set;
     }
 
     /** {@inheritDoc} */
-    public Gee.Collection<Convey.EmailIdentifier> command_email {
+    public Gee.Collection<GriabuntuMail.EmailIdentifier> command_email {
         get; protected set;
     }
 
-    private Convey.FolderSupport.Archive source;
+    private GriabuntuMail.FolderSupport.Archive source;
 
 
-    public ArchiveEmailCommand(Convey.FolderSupport.Archive source,
-                               Gee.Collection<Convey.App.Conversation> conversations,
-                               Gee.Collection<Convey.EmailIdentifier> messages,
+    public ArchiveEmailCommand(GriabuntuMail.FolderSupport.Archive source,
+                               Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                               Gee.Collection<GriabuntuMail.EmailIdentifier> messages,
                                string? executed_label = null,
                                string? undone_label = null) {
         base(source, conversations, messages);
@@ -2242,7 +2243,7 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy folders_removed(
-        Gee.Collection<Convey.Folder> removed
+        Gee.Collection<GriabuntuMail.Folder> removed
     ) {
         EmailCommand.StateChangePolicy ret = base.folders_removed(removed);
         if (ret == IGNORE) {
@@ -2261,8 +2262,8 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
     }
 
     internal override EmailCommand.StateChangePolicy email_removed(
-        Convey.Folder location,
-        Gee.Collection<Convey.EmailIdentifier> targets
+        GriabuntuMail.Folder location,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> targets
     ) {
         // With the current revokable mechanism we can't determine if
         // specific messages removed from the destination are
@@ -2275,13 +2276,13 @@ private class Application.ArchiveEmailCommand : RevokableCommand {
         );
     }
 
-    protected override async Convey.Revokable
+    protected override async GriabuntuMail.Revokable
         execute_impl(GLib.Cancellable cancellable)
         throws GLib.Error {
         bool open = false;
         try {
             yield this.source.open_async(
-                Convey.Folder.OpenFlags.NO_DELAY, cancellable
+                GriabuntuMail.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             return yield this.source.archive_email_async(
@@ -2309,14 +2310,14 @@ private class Application.CopyEmailCommand : EmailCommand {
         get { return false; }
     }
 
-    private Convey.FolderSupport.Copy source;
-    private Convey.Folder destination;
+    private GriabuntuMail.FolderSupport.Copy source;
+    private GriabuntuMail.Folder destination;
 
 
-    public CopyEmailCommand(Convey.FolderSupport.Copy source,
-                            Convey.Folder destination,
-                            Gee.Collection<Convey.App.Conversation> conversations,
-                            Gee.Collection<Convey.EmailIdentifier> messages,
+    public CopyEmailCommand(GriabuntuMail.FolderSupport.Copy source,
+                            GriabuntuMail.Folder destination,
+                            Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                            Gee.Collection<GriabuntuMail.EmailIdentifier> messages,
                             string? executed_label = null,
                             string? undone_label = null) {
         base(source, conversations, messages);
@@ -2332,7 +2333,7 @@ private class Application.CopyEmailCommand : EmailCommand {
         bool open = false;
         try {
             yield this.source.open_async(
-                Convey.Folder.OpenFlags.NO_DELAY, cancellable
+                GriabuntuMail.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             yield this.source.copy_email_async(
@@ -2351,13 +2352,13 @@ private class Application.CopyEmailCommand : EmailCommand {
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        throw new Convey.EngineError.UNSUPPORTED(
+        throw new GriabuntuMail.EngineError.UNSUPPORTED(
             "Cannot undo copy, not yet supported"
         );
     }
 
     internal override EmailCommand.StateChangePolicy folders_removed(
-        Gee.Collection<Convey.Folder> removed
+        Gee.Collection<GriabuntuMail.Folder> removed
     ) {
         return (
             this.destination in removed
@@ -2367,8 +2368,8 @@ private class Application.CopyEmailCommand : EmailCommand {
     }
 
     internal override EmailCommand.StateChangePolicy email_removed(
-        Convey.Folder location,
-        Gee.Collection<Convey.EmailIdentifier> targets
+        GriabuntuMail.Folder location,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> targets
     ) {
         // With the current revokable mechanism we can't determine if
         // specific messages removed from the destination are
@@ -2391,12 +2392,12 @@ private class Application.DeleteEmailCommand : EmailCommand {
         get { return false; }
     }
 
-    private Convey.FolderSupport.Remove target;
+    private GriabuntuMail.FolderSupport.Remove target;
 
 
-    public DeleteEmailCommand(Convey.FolderSupport.Remove target,
-                              Gee.Collection<Convey.App.Conversation> conversations,
-                              Gee.Collection<Convey.EmailIdentifier> email) {
+    public DeleteEmailCommand(GriabuntuMail.FolderSupport.Remove target,
+                              Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                              Gee.Collection<GriabuntuMail.EmailIdentifier> email) {
         base(target, conversations, email);
         this.target = target;
     }
@@ -2406,7 +2407,7 @@ private class Application.DeleteEmailCommand : EmailCommand {
         bool open = false;
         try {
             yield this.target.open_async(
-                Convey.Folder.OpenFlags.NO_DELAY, cancellable
+                GriabuntuMail.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             yield this.target.remove_email_async(this.email, cancellable);
@@ -2423,7 +2424,7 @@ private class Application.DeleteEmailCommand : EmailCommand {
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        throw new Convey.EngineError.UNSUPPORTED(
+        throw new GriabuntuMail.EngineError.UNSUPPORTED(
             "Cannot undo emptying a folder: %s",
             this.target.path.to_string()
         );
@@ -2439,10 +2440,10 @@ private class Application.EmptyFolderCommand : Command {
         get { return false; }
     }
 
-    private Convey.FolderSupport.Empty target;
+    private GriabuntuMail.FolderSupport.Empty target;
 
 
-    public EmptyFolderCommand(Convey.FolderSupport.Empty target) {
+    public EmptyFolderCommand(GriabuntuMail.FolderSupport.Empty target) {
         this.target = target;
     }
 
@@ -2451,7 +2452,7 @@ private class Application.EmptyFolderCommand : Command {
         bool open = false;
         try {
             yield this.target.open_async(
-                Convey.Folder.OpenFlags.NO_DELAY, cancellable
+                GriabuntuMail.Folder.OpenFlags.NO_DELAY, cancellable
             );
             open = true;
             yield this.target.empty_folder_async(cancellable);
@@ -2468,7 +2469,7 @@ private class Application.EmptyFolderCommand : Command {
 
     public override async void undo(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        throw new Convey.EngineError.UNSUPPORTED(
+        throw new GriabuntuMail.EngineError.UNSUPPORTED(
             "Cannot undo emptying a folder: %s",
             this.target.path.to_string()
         );
@@ -2521,10 +2522,10 @@ private class Application.SendComposerCommand : ComposerCommand {
 
     private Client application;
     private AccountContext context;
-    private Convey.Smtp.ClientService? smtp;
-    private Convey.AccountSupport.QueueSend? queue_send;
-    private Convey.TimeoutManager commit_timer;
-    private Convey.EmailIdentifier? saved = null;
+    private GriabuntuMail.Smtp.ClientService? smtp;
+    private GriabuntuMail.AccountSupport.QueueSend? queue_send;
+    private GriabuntuMail.TimeoutManager commit_timer;
+    private GriabuntuMail.EmailIdentifier? saved = null;
     private string? saved_graph_message_id = null;
 
 
@@ -2534,11 +2535,11 @@ private class Application.SendComposerCommand : ComposerCommand {
         base(composer);
         this.application = application;
         this.context = context;
-        this.smtp = context.account.outgoing as Convey.Smtp.ClientService;
-        this.queue_send = context.account as Convey.AccountSupport.QueueSend;
+        this.smtp = context.account.outgoing as GriabuntuMail.Smtp.ClientService;
+        this.queue_send = context.account as GriabuntuMail.AccountSupport.QueueSend;
 
         int send_delay = this.application.config.undo_send_delay;
-        this.commit_timer = new Convey.TimeoutManager.seconds(
+        this.commit_timer = new GriabuntuMail.TimeoutManager.seconds(
             send_delay > 0 ? send_delay : 0,
             on_commit_timeout
         );
@@ -2546,7 +2547,7 @@ private class Application.SendComposerCommand : ComposerCommand {
 
     public override async void execute(GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Convey.ComposedEmail email = yield this.composer.to_composed_email();
+        GriabuntuMail.ComposedEmail email = yield this.composer.to_composed_email();
         if (this.can_undo) {
             /// Translators: The label for an in-app notification. The
             /// string substitution is a list of recipients of the email.
@@ -2576,7 +2577,7 @@ private class Application.SendComposerCommand : ComposerCommand {
         this.commit_timer.reset();
         if (this.smtp != null) {
             yield this.smtp.outbox.remove_email_async(
-                Convey.Collection.single(this.saved),
+                GriabuntuMail.Collection.single(this.saved),
                 cancellable
             );
             this.saved = null;
@@ -2615,7 +2616,7 @@ private class Application.SendComposerCommand : ComposerCommand {
             this.queue_send.queue_email.end(res);
         } catch (GLib.Error err) {
             this.application.controller.report_problem(
-                new Convey.ProblemReport(err)
+                new GriabuntuMail.ProblemReport(err)
             );
         }
     }
@@ -2634,7 +2635,7 @@ private class Application.SaveComposerCommand : ComposerCommand {
 
     private Controller controller;
 
-    private Convey.TimeoutManager destroy_timer;
+    private GriabuntuMail.TimeoutManager destroy_timer;
 
 
     public SaveComposerCommand(Controller controller,
@@ -2642,7 +2643,7 @@ private class Application.SaveComposerCommand : ComposerCommand {
         base(composer);
         this.controller = controller;
 
-        this.destroy_timer = new Convey.TimeoutManager.seconds(
+        this.destroy_timer = new GriabuntuMail.TimeoutManager.seconds(
             DESTROY_TIMEOUT_SEC,
             on_destroy_timeout
         );
@@ -2688,7 +2689,7 @@ private class Application.DiscardComposerCommand : ComposerCommand {
 
     private Controller controller;
 
-    private Convey.TimeoutManager destroy_timer;
+    private GriabuntuMail.TimeoutManager destroy_timer;
 
 
     public DiscardComposerCommand(Controller controller,
@@ -2696,7 +2697,7 @@ private class Application.DiscardComposerCommand : ComposerCommand {
         base(composer);
         this.controller = controller;
 
-        this.destroy_timer = new Convey.TimeoutManager.seconds(
+        this.destroy_timer = new GriabuntuMail.TimeoutManager.seconds(
             DESTROY_TIMEOUT_SEC,
             on_destroy_timeout
         );

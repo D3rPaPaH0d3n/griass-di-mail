@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -56,7 +57,7 @@ internal interface Application.AccountInterface : GLib.Object {
     );
 
     /** Returns a context for an account, if any. */
-    internal abstract AccountContext? get_context_for_account(Convey.AccountInformation account);
+    internal abstract AccountContext? get_context_for_account(GriabuntuMail.AccountInformation account);
 
     /** Returns a read-only collection of contexts each active account. */
     internal abstract Gee.Collection<AccountContext> get_account_contexts();

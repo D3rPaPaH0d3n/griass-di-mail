@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -11,7 +12,7 @@
  * ensuring the entire folder is emptied even if only a portion of it is synchronized locally.
  */
 
-private class Convey.ImapEngine.EmptyFolder : Convey.ImapEngine.SendReplayOperation {
+private class GriabuntuMail.ImapEngine.EmptyFolder : GriabuntuMail.ImapEngine.SendReplayOperation {
     private MinimalFolder engine;
     private Cancellable? cancellable;
     private Gee.Set<ImapDB.EmailIdentifier>? removed_ids = null;
@@ -40,7 +41,7 @@ private class Convey.ImapEngine.EmptyFolder : Convey.ImapEngine.SendReplayOperat
 
             int new_count = Numeric.int_floor(original_count - removed_ids.size, 0);
             if (new_count != original_count)
-                engine.replay_notify_email_count_changed(new_count, Convey.Folder.CountChangeReason.REMOVED);
+                engine.replay_notify_email_count_changed(new_count, GriabuntuMail.Folder.CountChangeReason.REMOVED);
             return ReplayOperation.Status.CONTINUE;
         }
 
@@ -66,7 +67,7 @@ private class Convey.ImapEngine.EmptyFolder : Convey.ImapEngine.SendReplayOperat
             engine.replay_notify_email_inserted(removed_ids);
         }
 
-        engine.replay_notify_email_count_changed(original_count, Convey.Folder.CountChangeReason.INSERTED);
+        engine.replay_notify_email_count_changed(original_count, GriabuntuMail.Folder.CountChangeReason.INSERTED);
     }
 
     public override string describe_state() {

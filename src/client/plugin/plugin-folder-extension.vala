@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -32,13 +33,13 @@ public interface Plugin.FolderExtension : PluginBase {
  * Provides a context for folder plugins.
  *
  * The context provides an interface for folder plugins to interface
- * with the Convey client application. Plugins that implement the
+ * with the Griabuntu Mail client application. Plugins that implement the
  * {@link FolderExtension} interface will be given an instance of this
  * class.
  *
  * @see Plugin.FolderExtension.folders
  */
-public interface Plugin.FolderContext : Convey.BaseObject {
+public interface Plugin.FolderContext : GriabuntuMail.BaseObject {
 
 
     /**

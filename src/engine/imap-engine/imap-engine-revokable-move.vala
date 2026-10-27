@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -7,7 +8,7 @@
  */
 
 /**
- * A @{link Convey.Revokable} for {@link MinimalFolder} move operations.
+ * A @{link GriabuntuMail.Revokable} for {@link MinimalFolder} move operations.
  *
  * This will delay executing the move until (a) the source Folder is closed or (b) a timeout passes.
  * Even then, it will fire its "committed" signal with a {@link RevokableCommittedMove} to allow
@@ -15,15 +16,15 @@
  * and move the mail back.
  */
 
-private class Convey.ImapEngine.RevokableMove : Revokable {
+private class GriabuntuMail.ImapEngine.RevokableMove : Revokable {
     private const int COMMIT_TIMEOUT_SEC = 5;
 
     private GenericAccount account;
     private MinimalFolder source;
-    private Convey.Folder destination;
+    private GriabuntuMail.Folder destination;
     private Gee.Set<ImapDB.EmailIdentifier> move_ids;
 
-    public RevokableMove(GenericAccount account, MinimalFolder source, Convey.Folder destination,
+    public RevokableMove(GenericAccount account, MinimalFolder source, GriabuntuMail.Folder destination,
         Gee.Set<ImapDB.EmailIdentifier> move_ids) {
         base (COMMIT_TIMEOUT_SEC);
 
@@ -132,7 +133,7 @@ private class Convey.ImapEngine.RevokableMove : Revokable {
         // Capture these for the closure below, since once it gets
         // invoked, this instance may no longer exist.
         GenericAccount account = this.account;
-        Convey.Folder destination = this.destination;
+        GriabuntuMail.Folder destination = this.destination;
         op.wait_for_ready_async.begin(null, (obj, res) => {
                 try {
                     op.wait_for_ready_async.end(res);

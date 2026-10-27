@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -13,7 +14,7 @@
  * Instances of these may be obtained from their respective {@link
  * Folder} objects.
  */
-public interface Plugin.Account : Convey.BaseObject {
+public interface Plugin.Account : GriabuntuMail.BaseObject {
 
 
     /** Returns the human-readable name of this account. */

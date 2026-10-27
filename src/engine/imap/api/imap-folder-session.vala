@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2018, 2020 Michael Gratton <mike@vee.net>.
@@ -13,17 +14,17 @@
  * An interface between the high-level engine API and an IMAP mailbox.
  *
  * Because of the complexities of the IMAP protocol, class takes
- * common operations that a Convey.Folder implementation would need
- * (in particular, {@link Convey.ImapEngine.MinimalFolder}) and makes
+ * common operations that a GriabuntuMail.Folder implementation would need
+ * (in particular, {@link GriabuntuMail.ImapEngine.MinimalFolder}) and makes
  * them into simple async calls.
  *
  * When constructed, this class will issue an IMAP SELECT command for
  * the mailbox represented by this folder, placing the session in the
  * Selected state.
  */
-private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
+private class GriabuntuMail.Imap.FolderSession : GriabuntuMail.Imap.SessionObject {
 
-    private const Convey.Email.Field BASIC_FETCH_FIELDS = Email.Field.ENVELOPE | Email.Field.DATE
+    private const GriabuntuMail.Email.Field BASIC_FETCH_FIELDS = Email.Field.ENVELOPE | Email.Field.DATE
         | Email.Field.ORIGINATORS | Email.Field.RECEIVERS | Email.Field.REFERENCES
         | Email.Field.SUBJECT | Email.Field.HEADER;
 
@@ -259,7 +260,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
                         // whatever is used by home.pl (dovecot?)
                         // sends UIDNEXT 0. Just ignore these since
                         // there nothing else that can be done. See
-                        // GNOME/convey#711
+                        // GNOME/griabuntu-mail#711
                         if (response_code.get_as_string(1).as_int64() == 0) {
                             warning("Ignoring bad UIDNEXT 0 from server");
                         } else {
@@ -348,7 +349,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
 
         Gee.Set<Imap.UID> search_results = new Gee.HashSet<Imap.UID>();
         yield exec_commands_async(
-            Convey.iterate<Command>(cmd).to_array_list(),
+            GriabuntuMail.iterate<Command>(cmd).to_array_list(),
             null,
             search_results,
             cancellable
@@ -359,7 +360,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
 
     private Gee.Collection<FetchCommand> assemble_list_commands(
         Imap.MessageSet msg_set,
-        Convey.Email.Field fields,
+        GriabuntuMail.Email.Field fields,
         GLib.Cancellable? cancellable,
         out FetchBodyDataSpecifier[]? header_specifiers,
         out FetchBodyDataSpecifier? body_specifier,
@@ -375,7 +376,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         // pulled down, not a guarantee); if request is for NONE, that guarantees that the
         // EmailIdentifier will be set, and so fetch UIDs (which looks funny but works when
         // listing a range for contents: UID FETCH x:y UID)
-        if (!msg_set.is_uid || fields == Convey.Email.Field.NONE) {
+        if (!msg_set.is_uid || fields == GriabuntuMail.Email.Field.NONE) {
             cmds.add(
                 new FetchCommand.data_type(
                     msg_set, FetchDataSpecifier.UID, cancellable
@@ -473,7 +474,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
             // the first MIME section
 
             preview_specifier = new FetchBodyDataSpecifier.peek(FetchBodyDataSpecifier.SectionPart.NONE,
-                { 1 }, 0, Convey.Email.MAX_PREVIEW_BYTES, null);
+                { 1 }, 0, GriabuntuMail.Email.MAX_PREVIEW_BYTES, null);
             cmds.add(
                 new FetchCommand.body_data_type(
                     msg_set, preview_specifier, cancellable
@@ -497,12 +498,12 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         if (fields.requires_any(Email.Field.PROPERTIES | Email.Field.FLAGS)) {
             Gee.List<FetchDataSpecifier> data_types = new Gee.ArrayList<FetchDataSpecifier>();
 
-            if (fields.require(Convey.Email.Field.PROPERTIES)) {
+            if (fields.require(GriabuntuMail.Email.Field.PROPERTIES)) {
                 data_types.add(FetchDataSpecifier.INTERNALDATE);
                 data_types.add(FetchDataSpecifier.RFC822_SIZE);
             }
 
-            if (fields.require(Convey.Email.Field.FLAGS))
+            if (fields.require(GriabuntuMail.Email.Field.FLAGS))
                 data_types.add(FetchDataSpecifier.FLAGS);
 
             cmds.add(new FetchCommand(msg_set, data_types, null, cancellable));
@@ -512,8 +513,8 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
     }
 
     // Returns a no-message-id ImapDB.EmailIdentifier with the UID stored in it.
-    public async Gee.List<Convey.Email>? list_email_async(MessageSet msg_set,
-                                                         Convey.Email.Field fields,
+    public async Gee.List<GriabuntuMail.Email>? list_email_async(MessageSet msg_set,
+                                                         GriabuntuMail.Email.Field fields,
                                                          Cancellable? cancellable)
         throws Error {
         Gee.HashMap<SequenceNumber, FetchedData> fetched =
@@ -559,9 +560,9 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         if (fetched.size == 0)
             return null;
 
-        // Convert fetched data into Convey.Email objects
+        // Convert fetched data into GriabuntuMail.Email objects
         // because this could be for a lot of email, do in a background thread
-        Gee.List<Convey.Email> email_list = new Gee.ArrayList<Convey.Email>();
+        Gee.List<GriabuntuMail.Email> email_list = new Gee.ArrayList<GriabuntuMail.Email>();
         yield Nonblocking.Concurrent.global.schedule_async(() => {
             foreach (SequenceNumber seq_num in fetched.keys) {
                 FetchedData fetched_data = fetched.get(seq_num);
@@ -577,7 +578,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
                 }
 
                 try {
-                    Convey.Email email = fetched_data_to_email(
+                    GriabuntuMail.Email email = fetched_data_to_email(
                         uid,
                         fetched_data,
                         fields,
@@ -685,8 +686,8 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         yield exec_commands_async(cmds, null, null, cancellable);
     }
 
-    public async void mark_email_async(Gee.List<MessageSet> msg_sets, Convey.EmailFlags? flags_to_add,
-        Convey.EmailFlags? flags_to_remove, Cancellable? cancellable) throws Error {
+    public async void mark_email_async(Gee.List<MessageSet> msg_sets, GriabuntuMail.EmailFlags? flags_to_add,
+        GriabuntuMail.EmailFlags? flags_to_remove, Cancellable? cancellable) throws Error {
         Gee.List<MessageFlag> msg_flags_add = new Gee.ArrayList<MessageFlag>();
         Gee.List<MessageFlag> msg_flags_remove = new Gee.ArrayList<MessageFlag>();
         MessageFlag.from_email_flags(flags_to_add, flags_to_remove, out msg_flags_add,
@@ -737,7 +738,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         CopyCommand cmd = new CopyCommand(msg_set, mailbox, cancellable);
 
         Gee.Map<Command, StatusResponse>? responses = yield exec_commands_async(
-            Convey.iterate<Command>(cmd).to_array_list(), null, null, cancellable);
+            GriabuntuMail.iterate<Command>(cmd).to_array_list(), null, null, cancellable);
 
         if (!responses.has_key(cmd))
             return null;
@@ -796,7 +797,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
 
     // NOTE: If fields are added or removed from this method, BASIC_FETCH_FIELDS *must* be updated
     // as well
-    private void fields_to_fetch_data_types(Convey.Email.Field fields,
+    private void fields_to_fetch_data_types(GriabuntuMail.Email.Field fields,
                                             Gee.List<FetchDataSpecifier> basic_types,
                                             Gee.List<string> header_fields) {
         // The assumption here is that because ENVELOPE is such a common fetch command, the
@@ -804,53 +805,53 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         // envelope separately, the server has to chunk harder parsing the RFC822 header ... have
         // to add References because IMAP ENVELOPE doesn't return them for some reason (but does
         // return Message-ID and In-Reply-To)
-        if (fields.is_all_set(Convey.Email.Field.ENVELOPE)) {
+        if (fields.is_all_set(GriabuntuMail.Email.Field.ENVELOPE)) {
             basic_types.add(FetchDataSpecifier.ENVELOPE);
             header_fields.add("References");
 
             // remove those flags and process any remaining
-            fields = fields.clear(Convey.Email.Field.ENVELOPE);
+            fields = fields.clear(GriabuntuMail.Email.Field.ENVELOPE);
         }
 
-        foreach (Convey.Email.Field field in Convey.Email.Field.all()) {
+        foreach (GriabuntuMail.Email.Field field in GriabuntuMail.Email.Field.all()) {
             switch (fields & field) {
-                case Convey.Email.Field.DATE:
+                case GriabuntuMail.Email.Field.DATE:
                     header_fields.add("Date");
                 break;
 
-                case Convey.Email.Field.ORIGINATORS:
+                case GriabuntuMail.Email.Field.ORIGINATORS:
                     header_fields.add("From");
                     header_fields.add("Sender");
                     header_fields.add("Reply-To");
                 break;
 
-                case Convey.Email.Field.RECEIVERS:
+                case GriabuntuMail.Email.Field.RECEIVERS:
                     header_fields.add("To");
                     header_fields.add("Cc");
                     header_fields.add("Bcc");
                 break;
 
-                case Convey.Email.Field.REFERENCES:
+                case GriabuntuMail.Email.Field.REFERENCES:
                     header_fields.add("References");
                     header_fields.add("Message-ID");
                     header_fields.add("In-Reply-To");
                 break;
 
-                case Convey.Email.Field.SUBJECT:
+                case GriabuntuMail.Email.Field.SUBJECT:
                     header_fields.add("Subject");
                 break;
 
-                case Convey.Email.Field.HEADER:
+                case GriabuntuMail.Email.Field.HEADER:
                     // TODO: If the entire header is being pulled, then no need to pull down partial
                     // headers; simply get them all and decode what is needed directly
                     basic_types.add(FetchDataSpecifier.RFC822_HEADER);
                 break;
 
-                case Convey.Email.Field.NONE:
-                case Convey.Email.Field.BODY:
-                case Convey.Email.Field.PROPERTIES:
-                case Convey.Email.Field.FLAGS:
-                case Convey.Email.Field.PREVIEW:
+                case GriabuntuMail.Email.Field.NONE:
+                case GriabuntuMail.Email.Field.BODY:
+                case GriabuntuMail.Email.Field.PROPERTIES:
+                case GriabuntuMail.Email.Field.FLAGS:
+                case GriabuntuMail.Email.Field.PREVIEW:
                     // not set or fetched separately
                 break;
 
@@ -860,10 +861,10 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         }
     }
 
-    private Convey.Email fetched_data_to_email(
+    private GriabuntuMail.Email fetched_data_to_email(
         UID uid,
         FetchedData fetched_data,
-        Convey.Email.Field required_fields,
+        GriabuntuMail.Email.Field required_fields,
         FetchBodyDataSpecifier[]? header_specifiers,
         FetchBodyDataSpecifier? body_specifier,
         FetchBodyDataSpecifier? preview_specifier,
@@ -872,7 +873,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         // note the use of INVALID_ROWID, as the rowid for this email (if one is present in the
         // database) is unknown at this time; this means ImapDB *must* create a new EmailIdentifier
         // for this email after create/merge is completed
-        Convey.Email email = new Convey.Email(new ImapDB.EmailIdentifier.no_message_id(uid));
+        GriabuntuMail.Email email = new GriabuntuMail.Email(new ImapDB.EmailIdentifier.no_message_id(uid));
 
         // accumulate these to submit Imap.EmailProperties all at once
         InternalDate? internaldate = null;
@@ -928,14 +929,14 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
                 break;
 
                 default:
-                    // everything else dropped on the floor (not applicable to Convey.Email)
+                    // everything else dropped on the floor (not applicable to GriabuntuMail.Email)
                 break;
             }
         }
 
         // Only set PROPERTIES if all have been found
         if (internaldate != null && rfc822_size != null)
-            email.set_email_properties(new Convey.Imap.EmailProperties(internaldate, rfc822_size));
+            email.set_email_properties(new GriabuntuMail.Imap.EmailProperties(internaldate, rfc822_size));
 
         // if any headers were requested, convert its fields now
         if (header_specifiers != null) {
@@ -968,7 +969,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
             }
 
             // When setting email properties below, the relevant
-            // Convey.Email setter needs to be called regardless of
+            // GriabuntuMail.Email setter needs to be called regardless of
             // whether the value being set is null, since the setter
             // will update the email's flags so we know the email has
             // the field set and it is null.
@@ -1022,7 +1023,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
             }
 
             // SUBJECT
-            if (required_but_not_set(Convey.Email.Field.SUBJECT, required_fields, email)) {
+            if (required_but_not_set(GriabuntuMail.Email.Field.SUBJECT, required_fields, email)) {
                 RFC822.Subject? subject = null;
                 string? value = headers.get("Subject");
                 if (value != null) {
@@ -1034,7 +1035,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
 
         // It's possible for all these fields to be null even though they were requested from
         // the server, so use requested fields for determination
-        if (required_but_not_set(Convey.Email.Field.REFERENCES, required_fields, email))
+        if (required_but_not_set(GriabuntuMail.Email.Field.REFERENCES, required_fields, email))
             email.set_full_references(message_id, in_reply_to, references);
 
         // if preview was requested, get it now ... both identifiers
@@ -1066,14 +1067,14 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         // here from the body if possible since for HTML messages at
         // least there's a lot of boilerplate HTML to wade through to
         // get some actual preview text, which usually requires more
-        // than Convey.Email.MAX_PREVIEW_BYTES will allow for
+        // than GriabuntuMail.Email.MAX_PREVIEW_BYTES will allow for
         if (body_specifier != null) {
             if (fetched_data.body_data_map.has_key(body_specifier)) {
-                email.set_message_body(new Convey.RFC822.Text(
+                email.set_message_body(new GriabuntuMail.RFC822.Text(
                     fetched_data.body_data_map.get(body_specifier)));
 
                 // Try to set the preview
-                Convey.RFC822.Message? message = null;
+                GriabuntuMail.RFC822.Message? message = null;
                 try {
                     message = email.get_message();
                 } catch (EngineError.INCOMPLETE_MESSAGE err) {
@@ -1083,9 +1084,9 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
                 }
                 if (message != null) {
                     string preview = message.get_preview();
-                    if (preview.length > Convey.Email.MAX_PREVIEW_BYTES) {
-                        preview = Convey.String.safe_byte_substring(
-                            preview, Convey.Email.MAX_PREVIEW_BYTES
+                    if (preview.length > GriabuntuMail.Email.MAX_PREVIEW_BYTES) {
+                        preview = GriabuntuMail.String.safe_byte_substring(
+                            preview, GriabuntuMail.Email.MAX_PREVIEW_BYTES
                         );
                     }
                     email.set_message_preview(
@@ -1115,8 +1116,8 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
      * atomicity's sake, callers need to remove the returned email ID
      * if a cancel occurred.
     */
-    public async Convey.EmailIdentifier? create_email_async(RFC822.Message message,
-                                                           Convey.EmailFlags? flags,
+    public async GriabuntuMail.EmailIdentifier? create_email_async(RFC822.Message message,
+                                                           GriabuntuMail.EmailFlags? flags,
                                                            GLib.DateTime? date_received)
         throws GLib.Error {
         MessageFlags? msg_flags = null;
@@ -1124,7 +1125,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
             Imap.EmailFlags imap_flags = Imap.EmailFlags.from_api_email_flags(flags);
             msg_flags = imap_flags.message_flags;
         } else {
-            msg_flags = new MessageFlags(Convey.iterate<MessageFlag>(MessageFlag.SEEN).to_array_list());
+            msg_flags = new MessageFlags(GriabuntuMail.iterate<MessageFlag>(MessageFlag.SEEN).to_array_list());
         }
 
         InternalDate? internaldate = null;
@@ -1140,7 +1141,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         );
 
         Gee.Map<Command, StatusResponse> responses = yield exec_commands_async(
-            Convey.iterate<AppendCommand>(cmd).to_array_list(), null, null, null
+            GriabuntuMail.iterate<AppendCommand>(cmd).to_array_list(), null, null, null
         );
 
         // Grab the response and parse out the UID, if available.
@@ -1238,7 +1239,7 @@ private class Convey.Imap.FolderSession : Convey.Imap.SessionObject {
         }
     }
 
-    private static bool required_but_not_set(Convey.Email.Field check, Convey.Email.Field users_fields, Convey.Email email) {
+    private static bool required_but_not_set(GriabuntuMail.Email.Field check, GriabuntuMail.Email.Field users_fields, GriabuntuMail.Email email) {
         return users_fields.require(check) ? !email.fields.is_all_set(check) : false;
     }
 

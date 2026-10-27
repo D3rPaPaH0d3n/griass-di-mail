@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -10,7 +11,7 @@
 /**
  * Loads a specific email all the way to the end of the vector.
  */
-private class Convey.App.LoadOperation : ConversationOperation {
+private class GriabuntuMail.App.LoadOperation : ConversationOperation {
 
 
     private EmailIdentifier to_load;
@@ -27,7 +28,7 @@ private class Convey.App.LoadOperation : ConversationOperation {
 
     public override async void execute_async()
         throws GLib.Error {
-        Convey.EmailIdentifier? lowest_known = this.monitor.window_lowest;
+        GriabuntuMail.EmailIdentifier? lowest_known = this.monitor.window_lowest;
         if (lowest_known == null ||
             this.to_load.natural_sort_comparator(lowest_known) < 0) {
             // Note the further back to_load is, the more expensive

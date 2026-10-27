@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.1.3]]
  */
 
-public class Convey.Imap.LogoutCommand : Command {
+public class GriabuntuMail.Imap.LogoutCommand : Command {
 
     public const string NAME = "logout";
 

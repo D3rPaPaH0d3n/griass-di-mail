@@ -1,4 +1,6 @@
-/* Downstream modification: 2026-10-26 — session-new tray tracking; baseline flag handler retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — session-new tray tracking. */
+/* Downstream modification: 2026-10-27 — retain unread arrivals on unrelated flag changes. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>
@@ -13,13 +15,13 @@
  * Implementation of the notification plugin extension context.
  */
 internal class Application.NotificationPluginContext :
-    Convey.BaseObject, Plugin.NotificationContext {
+    GriabuntuMail.BaseObject, Plugin.NotificationContext {
 
 
-    private const Convey.Email.Field REQUIRED_FIELDS  = FLAGS;
+    private const GriabuntuMail.Email.Field REQUIRED_FIELDS  = FLAGS;
 
 
-    private class ContactStoreImpl : Convey.BaseObject, Plugin.ContactStore {
+    private class ContactStoreImpl : GriabuntuMail.BaseObject, Plugin.ContactStore {
 
 
         private Application.ContactStore backing;
@@ -39,7 +41,7 @@ internal class Application.NotificationPluginContext :
             );
         }
 
-        public async Contact load(Convey.RFC822.MailboxAddress mailbox,
+        public async Contact load(GriabuntuMail.RFC822.MailboxAddress mailbox,
                                   GLib.Cancellable? cancellable
         ) throws GLib.Error {
             return yield this.backing.load(mailbox, cancellable);
@@ -48,15 +50,15 @@ internal class Application.NotificationPluginContext :
     }
 
 
-    private class MonitorInformation : Convey.BaseObject {
+    private class MonitorInformation : GriabuntuMail.BaseObject {
 
-        public Convey.Folder folder;
+        public GriabuntuMail.Folder folder;
         public AccountContext context;
         public GLib.Cancellable? cancellable = null;
-        public Gee.Set<Convey.EmailIdentifier> recent_ids =
-            new Gee.HashSet<Convey.EmailIdentifier>();
+        public Gee.Set<GriabuntuMail.EmailIdentifier> recent_ids =
+            new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
 
-        public MonitorInformation(Convey.Folder folder,
+        public MonitorInformation(GriabuntuMail.Folder folder,
                                   AccountContext context,
                                   GLib.Cancellable? cancellable) {
             this.folder = folder;
@@ -68,8 +70,8 @@ internal class Application.NotificationPluginContext :
     public int total_new_messages { get { return this._total_new_messages; } }
     public int _total_new_messages = 0;
 
-    private Gee.Map<Convey.Folder,MonitorInformation> folder_information =
-        new Gee.HashMap<Convey.Folder,MonitorInformation>();
+    private Gee.Map<GriabuntuMail.Folder,MonitorInformation> folder_information =
+        new Gee.HashMap<GriabuntuMail.Folder,MonitorInformation>();
 
     private unowned Client application;
     private PluginManager.PluginGlobals globals;
@@ -86,7 +88,7 @@ internal class Application.NotificationPluginContext :
 
     public async Plugin.ContactStore get_contacts_for_folder(Plugin.Folder source)
         throws Plugin.Error.NOT_FOUND, Plugin.Error.PERMISSION_DENIED {
-        Convey.Folder? folder = this.globals.folders.to_engine_folder(source);
+        GriabuntuMail.Folder? folder = this.globals.folders.to_engine_folder(source);
         AccountContext? context = null;
         if (folder != null) {
             context = to_account_context(source);
@@ -113,7 +115,7 @@ internal class Application.NotificationPluginContext :
         // conversations are visible. That is, if there is a main
         // window, it's focused, the folder is selected, and the
         // conversation list is at the top.
-        Convey.Folder? folder = this.globals.folders.to_engine_folder(target);
+        GriabuntuMail.Folder? folder = this.globals.folders.to_engine_folder(target);
         if (folder == null || !this.folder_information.has_key(folder)) {
             return false;
         }
@@ -134,7 +136,7 @@ internal class Application.NotificationPluginContext :
      */
     public int get_new_message_count(Plugin.Folder target)
         throws Plugin.Error.NOT_FOUND {
-        Convey.Folder? folder = this.globals.folders.to_engine_folder(target);
+        GriabuntuMail.Folder? folder = this.globals.folders.to_engine_folder(target);
         MonitorInformation? info = null;
         if (folder != null) {
             info = folder_information.get(folder);
@@ -154,7 +156,7 @@ internal class Application.NotificationPluginContext :
      * recording new messages for a specific folder.
      */
     public void start_monitoring_folder(Plugin.Folder target) {
-        Convey.Folder? folder = this.globals.folders.to_engine_folder(target);
+        GriabuntuMail.Folder? folder = this.globals.folders.to_engine_folder(target);
         AccountContext? context = null;
         if (folder != null) {
             context = to_account_context(target);
@@ -174,7 +176,7 @@ internal class Application.NotificationPluginContext :
 
     /** Stops monitoring a folder for new messages. */
     public void stop_monitoring_folder(Plugin.Folder target) {
-        Convey.Folder? folder = this.globals.folders.to_engine_folder(target);
+        GriabuntuMail.Folder? folder = this.globals.folders.to_engine_folder(target);
         if (folder != null) {
             remove_folder(folder);
         }
@@ -189,21 +191,21 @@ internal class Application.NotificationPluginContext :
 
     internal void destroy() {
         // Get an array so the loop does not blow up when removing values.
-        foreach (Convey.Folder monitored in this.folder_information.keys.to_array()) {
+        foreach (GriabuntuMail.Folder monitored in this.folder_information.keys.to_array()) {
             remove_folder(monitored);
         }
     }
 
-    internal void clear_new_messages(Convey.Folder location,
-                                     Gee.Set<Convey.App.Conversation>? visible) {
+    internal void clear_new_messages(GriabuntuMail.Folder location,
+                                     Gee.Set<GriabuntuMail.App.Conversation>? visible) {
         MonitorInformation? info = this.folder_information.get(location);
         if (info != null) {
-            foreach (Convey.App.Conversation conversation in visible) {
-                if (Convey.traverse(
+            foreach (GriabuntuMail.App.Conversation conversation in visible) {
+                if (GriabuntuMail.traverse(
                         conversation.get_email_ids()
                     ).any((id) => info.recent_ids.contains(id))) {
-                    Gee.Set<Convey.EmailIdentifier> old_ids = info.recent_ids;
-                    info.recent_ids = new Gee.HashSet<Convey.EmailIdentifier>();
+                    Gee.Set<GriabuntuMail.EmailIdentifier> old_ids = info.recent_ids;
+                    info.recent_ids = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
                     update_count(info, false, old_ids);
                     break;
                 }
@@ -212,10 +214,10 @@ internal class Application.NotificationPluginContext :
     }
 
     private void new_messages(MonitorInformation info,
-                              Gee.Collection<Convey.Email> emails) {
-        Gee.Collection<Convey.EmailIdentifier> added =
-            new Gee.HashSet<Convey.EmailIdentifier>();
-        foreach (Convey.Email email in emails) {
+                              Gee.Collection<GriabuntuMail.Email> emails) {
+        Gee.Collection<GriabuntuMail.EmailIdentifier> added =
+            new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
+        foreach (GriabuntuMail.Email email in emails) {
             if (email.email_flags.is_unread() &&
                 info.recent_ids.add(email.id)) {
                 added.add(email.id);
@@ -226,13 +228,13 @@ internal class Application.NotificationPluginContext :
         }
     }
 
-    private void retire_new_messages(Convey.Folder folder,
-        Gee.Collection<Convey.EmailIdentifier> email_ids
+    private void retire_new_messages(GriabuntuMail.Folder folder,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids
     ) {
         MonitorInformation info = folder_information.get(folder);
-        Gee.Collection<Convey.EmailIdentifier> removed =
-            new Gee.HashSet<Convey.EmailIdentifier>();
-        foreach (Convey.EmailIdentifier email_id in email_ids) {
+        Gee.Collection<GriabuntuMail.EmailIdentifier> removed =
+            new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
+        foreach (GriabuntuMail.EmailIdentifier email_id in email_ids) {
             if (info.recent_ids.remove(email_id)) {
                 removed.add(email_id);
             }
@@ -248,8 +250,8 @@ internal class Application.NotificationPluginContext :
         return account != null ? account.backing : null;
     }
 
-    private void emit_email_seen(Convey.Folder folder,
-                                 Gee.Collection<Convey.EmailIdentifier> email_ids) {
+    private void emit_email_seen(GriabuntuMail.Folder folder,
+                                 Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids) {
         MonitorInformation? info = this.folder_information.get(folder);
         if (info != null && !email_ids.is_empty) {
             email_seen(
@@ -261,7 +263,7 @@ internal class Application.NotificationPluginContext :
 
     private void update_count(MonitorInformation info,
                               bool arrived,
-                              Gee.Collection<Convey.EmailIdentifier> delta) {
+                              Gee.Collection<GriabuntuMail.EmailIdentifier> delta) {
         Plugin.Folder folder =
             this.globals.folders.to_plugin_folder(info.folder);
         if (arrived) {
@@ -285,7 +287,7 @@ internal class Application.NotificationPluginContext :
         // Both notification plugins monitor these folders. Publish only the
         // auto-loaded desktop context, never sum duplicate monitors.
         if (this.plugin.info.get_module_name() != "desktop-notifications") return;
-        var targets = new Gee.HashMap<Convey.EmailIdentifier,GLib.Variant>();
+        var targets = new Gee.HashMap<GriabuntuMail.EmailIdentifier,GLib.Variant>();
         foreach (var plugin_id in this.globals.email.to_plugin_ids(info.recent_ids, info.context)) {
             var id = plugin_id as EmailStoreFactory.IdImpl;
             if (id != null) targets.set(id.backing, id.to_variant());
@@ -296,7 +298,7 @@ internal class Application.NotificationPluginContext :
         );
     }
 
-    private void remove_folder(Convey.Folder target) {
+    private void remove_folder(GriabuntuMail.Folder target) {
         MonitorInformation? info = this.folder_information.get(target);
         if (info != null) {
             target.email_locally_appended.disconnect(on_email_locally_appended);
@@ -316,12 +318,12 @@ internal class Application.NotificationPluginContext :
     }
 
     private async void do_process_new_email(
-        Convey.Folder folder,
-        Gee.Collection<Convey.EmailIdentifier> email_ids
+        GriabuntuMail.Folder folder,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids
     ) {
         MonitorInformation info = this.folder_information.get(folder);
         if (info != null) {
-            Gee.List<Convey.Email>? list = null;
+            Gee.List<GriabuntuMail.Email>? list = null;
             try {
                 list = yield folder.list_email_by_sparse_id_async(
                     email_ids,
@@ -339,9 +341,9 @@ internal class Application.NotificationPluginContext :
                 return;
             }
 
-            Gee.Collection<Convey.EmailIdentifier> added =
-                new Gee.HashSet<Convey.EmailIdentifier>();
-            foreach (Convey.EmailIdentifier id in email_ids) {
+            Gee.Collection<GriabuntuMail.EmailIdentifier> added =
+                new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
+            foreach (GriabuntuMail.EmailIdentifier id in email_ids) {
                 if (info.recent_ids.add(id)) {
                     added.add(id);
                 }
@@ -357,24 +359,30 @@ internal class Application.NotificationPluginContext :
         }
     }
 
-    private void on_email_locally_appended(Convey.Folder folder,
-        Gee.Collection<Convey.EmailIdentifier> email_ids) {
+    private void on_email_locally_appended(GriabuntuMail.Folder folder,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids) {
         do_process_new_email.begin(folder, email_ids);
     }
 
-    private void on_email_flags_changed(Convey.Folder folder,
-        Gee.Map<Convey.EmailIdentifier, Convey.EmailFlags> ids) {
-        retire_new_messages(folder, ids.keys);
+    private void on_email_flags_changed(GriabuntuMail.Folder folder,
+        Gee.Map<GriabuntuMail.EmailIdentifier, GriabuntuMail.EmailFlags> ids) {
+        // Star and other flag changes do not make an unread arrival old.
+        retire_new_messages(
+            folder,
+            GriabuntuMail.traverse(ids.keys).filter(
+                (id) => !ids.get(id).is_unread() || ids.get(id).is_deleted()
+            ).to_array_list()
+        );
         emit_email_seen(
             folder,
-            Convey.traverse(ids.keys).filter(
+            GriabuntuMail.traverse(ids.keys).filter(
                 (id) => !ids.get(id).is_unread()
             ).to_array_list()
         );
     }
 
-    private void on_email_removed(Convey.Folder folder,
-                                  Gee.Collection<Convey.EmailIdentifier> ids) {
+    private void on_email_removed(GriabuntuMail.Folder folder,
+                                  Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         retire_new_messages(folder, ids);
         emit_email_seen(folder, ids);
     }

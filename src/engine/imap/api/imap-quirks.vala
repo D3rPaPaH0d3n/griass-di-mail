@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -10,7 +11,7 @@
 /**
  * A set of quirks for a specific IMAP service.
  */
-public class Convey.Imap.Quirks : BaseObject {
+public class GriabuntuMail.Imap.Quirks : BaseObject {
 
 
     /**

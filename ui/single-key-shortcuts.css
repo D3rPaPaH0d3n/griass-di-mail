@@ -36,6 +36,6 @@
   bind "j" { "navigate" (step-down) };
 }
 
-window.convey-main-window {
+window.griabuntu-mail-main-window {
   -gtk-key-bindings: SingleKeyShortcuts;
 }

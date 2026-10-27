@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Downstream modification: 2026-10-26 — read-only desktop contact-photo resolution. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -16,7 +17,7 @@
  * to be obtained, and uses caches to minimise performance impact of
  * re-using recently used contacts.
  */
-public class Application.ContactStore : Convey.BaseObject {
+public class Application.ContactStore : GriabuntuMail.BaseObject {
 
 
     // Keep caches small to keep lookups fast and memory overhead
@@ -44,7 +45,7 @@ public class Application.ContactStore : Convey.BaseObject {
 
 
     /** The account this store aggregates data for. */
-    public Convey.Account account { get; private set; }
+    public GriabuntuMail.Account account { get; private set; }
 
     internal Folks.IndividualAggregator individuals;
 
@@ -61,12 +62,12 @@ public class Application.ContactStore : Convey.BaseObject {
         new Util.Cache.Lru<Contact>(LRU_CACHE_MAX);
 
     // Cache for engine contacts by email address.
-    private Util.Cache.Lru<Convey.Contact> engine_address_cache =
-        new Util.Cache.Lru<Convey.Contact>(LRU_CACHE_MAX);
+    private Util.Cache.Lru<GriabuntuMail.Contact> engine_address_cache =
+        new Util.Cache.Lru<GriabuntuMail.Contact>(LRU_CACHE_MAX);
 
 
     /** Constructs a new contact store for an account. */
-    internal ContactStore(Convey.Account account,
+    internal ContactStore(GriabuntuMail.Account account,
                           Folks.IndividualAggregator individuals) {
         this.account = account;
         this.individuals = individuals;
@@ -89,7 +90,7 @@ public class Application.ContactStore : Convey.BaseObject {
      * returned, so if no matching contact already exists a new,
      * non-persistent contact will be returned.
      */
-    public async Contact load(Convey.RFC822.MailboxAddress mailbox,
+    public async Contact load(GriabuntuMail.RFC822.MailboxAddress mailbox,
                               GLib.Cancellable? cancellable)
         throws GLib.Error {
         Folks.Individual? individual = null;
@@ -133,7 +134,7 @@ public class Application.ContactStore : Convey.BaseObject {
                     individual, null, cancellable
                 );
                 for (uint i = 0; i < result.email_addresses.get_n_items(); i++) {
-                    var mailbox = (Convey.RFC822.MailboxAddress) result.email_addresses.get_item(i);
+                    var mailbox = (GriabuntuMail.RFC822.MailboxAddress) result.email_addresses.get_item(i);
                     seen.add(to_cache_key(mailbox.address));
                 }
                 results.add(result);
@@ -147,7 +148,7 @@ public class Application.ContactStore : Convey.BaseObject {
                     individual, null, cancellable
                 );
                 for (uint i = 0; i < result.email_addresses.get_n_items(); i++) {
-                    var mailbox = (Convey.RFC822.MailboxAddress) result.email_addresses.get_item(i);
+                    var mailbox = (GriabuntuMail.RFC822.MailboxAddress) result.email_addresses.get_item(i);
                     seen.add(to_cache_key(mailbox.address));
                 }
                 results.add(result);
@@ -162,18 +163,18 @@ public class Application.ContactStore : Convey.BaseObject {
 
         // Step 2: Search the engine for matching contacts
 
-        Gee.Collection<Convey.Contact> engine_results =
+        Gee.Collection<GriabuntuMail.Contact> engine_results =
             yield this.account.contact_store.search(
                 "%".concat(query, "%"), min_importance, limit, cancellable
             );
-        foreach (Convey.Contact contact in engine_results) {
+        foreach (GriabuntuMail.Contact contact in engine_results) {
             string email_key = to_cache_key(contact.email);
             if (!seen.contains(email_key)) {
                 Contact result = yield load(
                     contact.get_rfc822_address(), cancellable
                 );
                 for (uint i = 0; i < result.email_addresses.get_n_items(); i++) {
-                    var mailbox = (Convey.RFC822.MailboxAddress) result.email_addresses.get_item(i);
+                    var mailbox = (GriabuntuMail.RFC822.MailboxAddress) result.email_addresses.get_item(i);
                     seen.add(to_cache_key(mailbox.address));
                 }
                 results.add(result);
@@ -189,20 +190,20 @@ public class Application.ContactStore : Convey.BaseObject {
         this.engine_address_cache.clear();
     }
 
-    internal async Convey.Contact
-        lookup_engine_contact(Convey.RFC822.MailboxAddress mailbox,
+    internal async GriabuntuMail.Contact
+        lookup_engine_contact(GriabuntuMail.RFC822.MailboxAddress mailbox,
                               GLib.Cancellable? cancellable)
         throws GLib.Error {
         string email_key = to_cache_key(mailbox.address);
-        Convey.Contact contact = this.engine_address_cache.get_entry(email_key);
+        GriabuntuMail.Contact contact = this.engine_address_cache.get_entry(email_key);
         if (contact == null) {
             contact = yield this.account.contact_store.get_by_rfc822(
                 mailbox, cancellable
             );
             if (contact == null) {
-                contact = new Convey.Contact.from_rfc822_address(mailbox, 0);
+                contact = new GriabuntuMail.Contact.from_rfc822_address(mailbox, 0);
                 yield this.account.contact_store.update_contacts(
-                    Convey.Collection.single(contact), cancellable
+                    GriabuntuMail.Collection.single(contact), cancellable
                 );
             }
             this.engine_address_cache.set_entry(email_key, contact);
@@ -211,7 +212,7 @@ public class Application.ContactStore : Convey.BaseObject {
     }
 
     private async Contact get_contact(Folks.Individual? individual,
-                                      Convey.RFC822.MailboxAddress? mailbox,
+                                      GriabuntuMail.RFC822.MailboxAddress? mailbox,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
         Contact? contact = null;
@@ -222,7 +223,7 @@ public class Application.ContactStore : Convey.BaseObject {
                 this.contact_id_cache.set_entry(individual.id, contact);
             }
         } else if (mailbox != null) {
-            Convey.Contact engine = yield lookup_engine_contact(
+            GriabuntuMail.Contact engine = yield lookup_engine_contact(
                 mailbox, cancellable
             );
             // Despite the engine's contact having a display name, use
@@ -230,7 +231,7 @@ public class Application.ContactStore : Convey.BaseObject {
             // Gitlab will use the sender's name but the service's
             // email address, so the name from the engine probably
             // won't match the name on the email
-            string name = (!Convey.String.is_empty_or_whitespace(mailbox.name) &&
+            string name = (!GriabuntuMail.String.is_empty_or_whitespace(mailbox.name) &&
                            !mailbox.is_spoofed())
                ? mailbox.name
                : mailbox.mailbox;
@@ -238,7 +239,7 @@ public class Application.ContactStore : Convey.BaseObject {
                 this, name, engine
             );
         } else {
-            throw new Convey.EngineError.BAD_PARAMETERS(
+            throw new GriabuntuMail.EngineError.BAD_PARAMETERS(
                 "Requires either an individual or a mailbox"
             );
         }

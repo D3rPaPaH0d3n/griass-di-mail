@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
@@ -82,15 +83,15 @@ internal class Application.StatusIcon : GLib.Object {
         this.menu.set_new_mail(this.new_mail.total, this.new_mail.latest());
     }
 
-    internal async void update_new_mail(string key, Convey.Folder folder,
-        Gee.Map<Convey.EmailIdentifier,GLib.Variant> targets) {
+    internal async void update_new_mail(string key, GriabuntuMail.Folder folder,
+        Gee.Map<GriabuntuMail.EmailIdentifier,GLib.Variant> targets) {
         var old = this.requests.get(key);
         if (old != null) old.cancel();
         this.requests.unset(key);
         if (this.cancellable.is_cancelled()) return;
         uint64 generation = this.new_mail.set_folder(key, targets.values.to_array());
         if (targets.is_empty) return;
-        var ids = new Gee.ArrayList<Convey.EmailIdentifier>();
+        var ids = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         ids.add_all(targets.keys);
         ids.sort((a, b) => b.natural_sort_comparator(a));
         while (ids.size > 5) ids.remove_at(ids.size - 1);
@@ -99,8 +100,8 @@ internal class Application.StatusIcon : GLib.Object {
         try {
             // Metadata only, at most five locally cached messages/folder.
             var emails = yield folder.list_email_by_sparse_id_async(
-                ids, Convey.Email.Field.ORIGINATORS | Convey.Email.Field.SUBJECT |
-                Convey.Email.Field.PROPERTIES, LOCAL_ONLY, request
+                ids, GriabuntuMail.Email.Field.ORIGINATORS | GriabuntuMail.Email.Field.SUBJECT |
+                GriabuntuMail.Email.Field.PROPERTIES, LOCAL_ONLY, request
             );
             if (!request.is_cancelled() && emails != null) {
                 foreach (var email in emails) {
@@ -155,7 +156,7 @@ internal class Application.TrayItem : GLib.Object {
     public string category { owned get { return "Communications"; } }
     public string id { owned get { return Config.APP_ID; } }
     public string title { owned get {
-        return this.new_mail_count > 0 ? "Convey — " + count_description() : "Convey";
+        return this.new_mail_count > 0 ? "Griabuntu Mail — " + count_description() : "Griabuntu Mail";
     } }
     public string status { owned get { return "Active"; } }
     public int window_id { get { return 0; } }
@@ -170,7 +171,7 @@ internal class Application.TrayItem : GLib.Object {
     public bool item_is_menu { get { return false; } }
     public GLib.ObjectPath menu { owned get { return new GLib.ObjectPath("/StatusNotifierItem/Menu"); } }
     public TrayTooltip tool_tip { owned get {
-        return { this.icon_name, {}, "Convey", count_description() };
+        return { this.icon_name, {}, "Griabuntu Mail", count_description() };
     } }
     public string x_ayatana_label { owned get {
         return this.new_mail_count > 999 ? "999+"
@@ -316,7 +317,7 @@ internal class Application.TrayMenu : GLib.Object {
             all.insert("label", new GLib.Variant.string(label.replace("_", "__")));
             all.insert("icon-name", new GLib.Variant.string("mail-unread-symbolic"));
         } else {
-            string label = id == 1 ? _("Open Convey")
+            string label = id == 1 ? _("Open Griabuntu Mail")
                 : id == 2 ? _("New Message") : _("_Quit");
             all.insert("label", new GLib.Variant.string(label));
             all.insert("icon-name", new GLib.Variant.string(id == 1

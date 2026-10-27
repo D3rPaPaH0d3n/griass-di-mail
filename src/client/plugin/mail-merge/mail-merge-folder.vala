@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>.
  *
@@ -10,10 +11,10 @@
 /**
  * Plugin to Fill in and send email templates using a spreadsheet.
  */
-public class MailMerge.Folder : Convey.AbstractLocalFolder {
+public class MailMerge.Folder : GriabuntuMail.AbstractLocalFolder {
 
 
-    private class EmailIdentifier : Convey.EmailIdentifier {
+    private class EmailIdentifier : GriabuntuMail.EmailIdentifier {
 
 
         private const string VARIANT_TYPE = "(y(x))";
@@ -26,9 +27,9 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
         }
 
         internal EmailIdentifier.from_variant(GLib.Variant serialised)
-            throws Convey.EngineError.BAD_PARAMETERS {
+            throws GriabuntuMail.EngineError.BAD_PARAMETERS {
             if (serialised.get_type_string() != VARIANT_TYPE) {
-                throw new Convey.EngineError.BAD_PARAMETERS(
+                throw new GriabuntuMail.EngineError.BAD_PARAMETERS(
                     "Invalid serialised id type: %s", serialised.get_type_string()
                 );
             }
@@ -43,7 +44,7 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
         }
 
         /** {@inheritDoc} */
-        public override bool equal_to(Convey.EmailIdentifier other) {
+        public override bool equal_to(GriabuntuMail.EmailIdentifier other) {
             return (
                 this.get_type() == other.get_type() &&
                 this.message_id == ((EmailIdentifier) other).message_id
@@ -55,7 +56,7 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
             return "%s(%lld)".printf(this.get_type().name(), this.message_id);
         }
 
-        public override int natural_sort_comparator(Convey.EmailIdentifier o) {
+        public override int natural_sort_comparator(GriabuntuMail.EmailIdentifier o) {
             EmailIdentifier? other = o as EmailIdentifier;
             if (other == null) {
                 return 1;
@@ -75,12 +76,12 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
     }
 
 
-    private class FolderProperties : Convey.FolderProperties {
+    private class FolderProperties : GriabuntuMail.FolderProperties {
 
         public FolderProperties() {
             base(
                 0, 0,
-                Convey.Trillian.FALSE, Convey.Trillian.FALSE, Convey.Trillian.TRUE,
+                GriabuntuMail.Trillian.FALSE, GriabuntuMail.Trillian.FALSE, GriabuntuMail.Trillian.TRUE,
                 true, false, false
             );
         }
@@ -93,28 +94,28 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
 
 
     /** {@inheritDoc} */
-    public override Convey.Account account {
+    public override GriabuntuMail.Account account {
         get { return this._account; }
     }
-    private Convey.Account _account;
+    private GriabuntuMail.Account _account;
 
     /** {@inheritDoc} */
-    public override Convey.FolderProperties properties {
+    public override GriabuntuMail.FolderProperties properties {
         get { return _properties; }
     }
     private FolderProperties _properties = new FolderProperties();
 
     /** {@inheritDoc} */
-    public override Convey.FolderPath path {
+    public override GriabuntuMail.FolderPath path {
         get { return _path; }
     }
-    private Convey.FolderPath _path;
+    private GriabuntuMail.FolderPath _path;
 
     /** {@inheritDoc} */
-    public override Convey.Folder.SpecialUse used_as {
+    public override GriabuntuMail.Folder.SpecialUse used_as {
         get { return this._used_as; }
     }
-    Convey.Folder.SpecialUse _used_as = NONE;
+    GriabuntuMail.Folder.SpecialUse _used_as = NONE;
 
     /** The source data file used the folder. */
     public GLib.File data_location { get; private set; }
@@ -132,13 +133,13 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
     public bool is_sending { get; private set; default = false; }
 
 
-    private Gee.List<Convey.EmailIdentifier> ids =
-        new Gee.ArrayList<Convey.EmailIdentifier>();
-    private Gee.Map<Convey.EmailIdentifier,Convey.ComposedEmail> composed =
-        new Gee.HashMap<Convey.EmailIdentifier,Convey.ComposedEmail>();
-    private Gee.Map<Convey.EmailIdentifier,Convey.Email> email =
-        new Gee.HashMap<Convey.EmailIdentifier,Convey.Email>();
-    private Convey.Email template;
+    private Gee.List<GriabuntuMail.EmailIdentifier> ids =
+        new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
+    private Gee.Map<GriabuntuMail.EmailIdentifier,GriabuntuMail.ComposedEmail> composed =
+        new Gee.HashMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.ComposedEmail>();
+    private Gee.Map<GriabuntuMail.EmailIdentifier,GriabuntuMail.Email> email =
+        new Gee.HashMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.Email>();
+    private GriabuntuMail.Email template;
     private Csv.Reader data;
     private GLib.Cancellable loading = new GLib.Cancellable();
     private GLib.Cancellable sending = new GLib.Cancellable();
@@ -148,9 +149,9 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
     public signal void send_error(GLib.Error error);
 
 
-    public async Folder(Convey.Account account,
-                        Convey.FolderRoot root,
-                        Convey.Email template,
+    public async Folder(GriabuntuMail.Account account,
+                        GriabuntuMail.FolderRoot root,
+                        GriabuntuMail.Email template,
                         GLib.File data_location,
                         Csv.Reader data)
         throws GLib.Error {
@@ -197,54 +198,54 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
     }
 
     /** {@inheritDoc} */
-    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Convey.EmailIdentifier> ids,
+    public override async Gee.Collection<GriabuntuMail.EmailIdentifier> contains_identifiers(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
-        return Convey.traverse(
+        return GriabuntuMail.traverse(
             ids
         ).filter(
             (id) => this.email.has_key(id)
         ).to_hash_set();
     }
 
-    public override async Convey.Email
-        fetch_email_async(Convey.EmailIdentifier id,
-                          Convey.Email.Field required_fields,
-                          Convey.Folder.ListFlags flags,
+    public override async GriabuntuMail.Email
+        fetch_email_async(GriabuntuMail.EmailIdentifier id,
+                          GriabuntuMail.Email.Field required_fields,
+                          GriabuntuMail.Folder.ListFlags flags,
                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
         var email = this.email.get(id);
         if (email == null) {
-            throw new Convey.EngineError.NOT_FOUND(
+            throw new GriabuntuMail.EngineError.NOT_FOUND(
                 "No email with ID %s in merge", id.to_string()
             );
         }
         return email;
     }
 
-    public override async Gee.List<Convey.Email>?
-        list_email_by_id_async(Convey.EmailIdentifier? initial_id,
+    public override async Gee.List<GriabuntuMail.Email>?
+        list_email_by_id_async(GriabuntuMail.EmailIdentifier? initial_id,
                                int count,
-                               Convey.Email.Field required_fields,
-                               Convey.Folder.ListFlags flags,
+                               GriabuntuMail.Email.Field required_fields,
+                               GriabuntuMail.Folder.ListFlags flags,
                                GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
 
         var initial = initial_id as EmailIdentifier;
         if (initial_id != null && initial == null) {
-            throw new Convey.EngineError.BAD_PARAMETERS(
+            throw new GriabuntuMail.EngineError.BAD_PARAMETERS(
                 "EmailIdentifier %s not from merge",
                 initial_id.to_string()
             );
         }
 
-        Gee.List<Convey.Email> list = new Gee.ArrayList<Convey.Email>();
+        Gee.List<GriabuntuMail.Email> list = new Gee.ArrayList<GriabuntuMail.Email>();
         if (!this.ids.is_empty && count > 0) {
             int incr = 1;
-            if (Convey.Folder.ListFlags.OLDEST_TO_NEWEST in flags) {
+            if (GriabuntuMail.Folder.ListFlags.OLDEST_TO_NEWEST in flags) {
                 incr = -1;
             }
             int next_index = -1;
@@ -256,7 +257,7 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
                 );
                 next_index = (int) initial.message_id;
             } else {
-                if (Convey.Folder.ListFlags.INCLUDING_ID in flags) {
+                if (GriabuntuMail.Folder.ListFlags.INCLUDING_ID in flags) {
                     list.add(this.email.get(this.ids[(int) initial.message_id]));
                 }
                 next_index = (int) initial.message_id;
@@ -274,18 +275,18 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
         return (list.size > 0) ? list : null;
     }
 
-    public override async Gee.List<Convey.Email>?
-        list_email_by_sparse_id_async(Gee.Collection<Convey.EmailIdentifier> ids,
-                                      Convey.Email.Field required_fields,
-                                      Convey.Folder.ListFlags flags,
+    public override async Gee.List<GriabuntuMail.Email>?
+        list_email_by_sparse_id_async(Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
+                                      GriabuntuMail.Email.Field required_fields,
+                                      GriabuntuMail.Folder.ListFlags flags,
                                       GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
-        Gee.List<Convey.Email> list = new Gee.ArrayList<Convey.Email>();
+        Gee.List<GriabuntuMail.Email> list = new Gee.ArrayList<GriabuntuMail.Email>();
         foreach (var id in ids) {
             var email = this.email.get(id);
             if (email == null) {
-                throw new Convey.EngineError.NOT_FOUND(
+                throw new GriabuntuMail.EngineError.NOT_FOUND(
                     "No email with ID %s in merge", id.to_string()
                 );
             }
@@ -295,11 +296,11 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
     }
 
     public override void set_used_as_custom(bool enabled)
-        throws Convey.EngineError.UNSUPPORTED {
+        throws GriabuntuMail.EngineError.UNSUPPORTED {
         this._used_as = (
             enabled
-            ? Convey.Folder.SpecialUse.CUSTOM
-            : Convey.Folder.SpecialUse.NONE
+            ? GriabuntuMail.Folder.SpecialUse.CUSTOM
+            : GriabuntuMail.Folder.SpecialUse.NONE
         );
     }
 
@@ -309,8 +310,8 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
         int64 next_id = 0;
         try {
             var template = yield load_template(cancellable);
-            Convey.Memory.Buffer? raw_rfc822 = null;
-            yield Convey.Nonblocking.Concurrent.global.schedule_async(
+            GriabuntuMail.Memory.Buffer? raw_rfc822 = null;
+            yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
                 (c) => {
                     raw_rfc822 = template.get_message().get_rfc822_buffer();
                 },
@@ -327,17 +328,17 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
                 }
                 var processor = new Processor(this.template);
                 var composed = processor.merge(fields);
-                var message = yield new Convey.RFC822.Message.from_composed_email(
+                var message = yield new GriabuntuMail.RFC822.Message.from_composed_email(
                     composed, null, GMime.EncodingConstraint.7BIT, cancellable
                 );
 
                 var id = new EmailIdentifier(next_id++);
-                var email = new Convey.Email.from_message(id, message);
+                var email = new GriabuntuMail.Email.from_message(id, message);
                 // Don't set a date since it would be re-set on send,
                 // and we don't want to give people the wrong idea of
                 // what it will be
                 email.set_send_date(null);
-                email.set_flags(new Convey.EmailFlags());
+                email.set_flags(new GriabuntuMail.EmailFlags());
 
                 // Update folder state then notify about the new email
                 this.ids.add(id);
@@ -346,7 +347,7 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
                 this._properties.set_total((int) next_id);
                 this.email_total = (uint) next_id;
 
-                notify_email_inserted(Convey.Collection.single(id));
+                notify_email_inserted(GriabuntuMail.Collection.single(id));
                 record = yield this.data.read_record();
             }
         } catch (GLib.Error err) {
@@ -354,13 +355,13 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
         }
     }
 
-    private async Convey.Email load_template(GLib.Cancellable? cancellable)
+    private async GriabuntuMail.Email load_template(GLib.Cancellable? cancellable)
         throws GLib.Error {
         var template = this.template;
-        if (!template.fields.fulfills(Convey.Email.REQUIRED_FOR_MESSAGE)) {
+        if (!template.fields.fulfills(GriabuntuMail.Email.REQUIRED_FOR_MESSAGE)) {
             template = yield this.account.local_fetch_email_async(
                 template.id,
-                Convey.Email.REQUIRED_FOR_MESSAGE,
+                GriabuntuMail.Email.REQUIRED_FOR_MESSAGE,
                 cancellable
             );
         }
@@ -369,7 +370,7 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
 
     private async void send_loop() {
         var cancellable = this.sending;
-        var smtp = this._account.outgoing as Convey.Smtp.ClientService;
+        var smtp = this._account.outgoing as GriabuntuMail.Smtp.ClientService;
         if (smtp != null) {
             while (!this.ids.is_empty && !this.sending.is_cancelled()) {
                 var last = this.ids.size - 1;
@@ -386,7 +387,7 @@ public class MailMerge.Folder : Convey.AbstractLocalFolder {
                     this.email.unset(id);
                     this.composed.unset(id);
                     this._properties.set_total(last);
-                    notify_email_removed(Convey.Collection.single(id));
+                    notify_email_removed(GriabuntuMail.Collection.single(id));
 
                     // Rate limit to ~30/minute for now
                     GLib.Timeout.add_seconds(2, this.send_loop.callback);

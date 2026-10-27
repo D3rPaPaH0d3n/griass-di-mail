@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
  * Allows for a plain block of bytes to be represented as an {@link Buffer}.
  */
 
-public class Convey.Memory.ByteBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
+public class GriabuntuMail.Memory.ByteBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
     /**
      * {@inheritDoc}
      */

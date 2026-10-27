@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -21,7 +22,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.3]]
  */
 
-public abstract class Convey.Imap.StringParameter : Convey.Imap.Parameter {
+public abstract class GriabuntuMail.Imap.StringParameter : GriabuntuMail.Imap.Parameter {
     /**
      * The unquoted, decoded string as 7-bit ASCII.
      */

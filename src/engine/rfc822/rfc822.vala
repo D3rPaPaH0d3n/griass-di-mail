@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,10 +7,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-namespace Convey.RFC822 {
+namespace GriabuntuMail.RFC822 {
 
     /**
-     * Common text formats supported by {@link Convey.RFC822}.
+     * Common text formats supported by {@link GriabuntuMail.RFC822}.
      */
     public enum TextFormat {
         PLAIN,
@@ -57,7 +58,7 @@ namespace Convey.RFC822 {
     }
 
     public GMime.ParserOptions get_parser_options() {
-        return Convey.RFC822.gmime_parser_options;
+        return GriabuntuMail.RFC822.gmime_parser_options;
     }
 
     public string? get_charset() {

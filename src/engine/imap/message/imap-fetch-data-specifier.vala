@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -18,7 +19,7 @@
  * @see FetchBodyDataSpecifier
  */
 
-public enum Convey.Imap.FetchDataSpecifier {
+public enum GriabuntuMail.Imap.FetchDataSpecifier {
     UID,
     FLAGS,
     INTERNALDATE,

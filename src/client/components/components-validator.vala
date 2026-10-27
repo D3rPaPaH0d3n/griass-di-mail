@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -103,7 +104,7 @@ public class Components.Validator : GLib.Object {
     // Determines if the value has changed since last validation
     private bool target_changed = false;
 
-    private Convey.TimeoutManager ui_update_timer;
+    private GriabuntuMail.TimeoutManager ui_update_timer;
 
 
     /** Fired when the validation state changes. */
@@ -120,7 +121,7 @@ public class Components.Validator : GLib.Object {
 
 
     construct {
-        this.ui_update_timer = new Convey.TimeoutManager.seconds(
+        this.ui_update_timer = new GriabuntuMail.TimeoutManager.seconds(
             1, on_update_ui
         );
 
@@ -244,7 +245,7 @@ public class Components.Validator : GLib.Object {
     private void validate_entry(Trigger reason) {
         string value = this.target.get_text();
         Validity new_state = this.state;
-        if (Convey.String.is_empty_or_whitespace(value)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(value)) {
             new_state = this.is_required ? Validity.EMPTY : Validity.VALID;
         } else {
             new_state = do_validate(value, reason);
@@ -436,7 +437,7 @@ public class Components.EmailValidator : Validator {
 
     protected override Validator.Validity do_validate(string value,
                                                       Validator.Trigger reason) {
-        return Convey.RFC822.MailboxAddress.is_valid_address(value)
+        return GriabuntuMail.RFC822.MailboxAddress.is_valid_address(value)
             ? Validator.Validity.VALID : Validator.Validity.INVALID;
     }
 
@@ -510,7 +511,7 @@ public class Components.NetworkAddressValidator : Validator {
         if (address != null) {
             // Re-validate if previously invalid or the host has
             // changed
-            if (Convey.Endpoint.proxy_resolver != null) {
+            if (GriabuntuMail.Endpoint.proxy_resolver != null) {
                 this.validated_address = address;
                 ret = Validator.Validity.VALID;
             } else if (this.validated_address == null ||

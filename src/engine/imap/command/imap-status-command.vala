@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -14,7 +15,7 @@
  *
  * @see StatusData
  */
-public class Convey.Imap.StatusCommand : Command {
+public class GriabuntuMail.Imap.StatusCommand : Command {
 
 
     public const string NAME = "STATUS";

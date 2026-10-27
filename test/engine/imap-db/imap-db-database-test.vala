@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -8,23 +9,24 @@
  */
 
 
-class Convey.ImapDB.DatabaseTest : TestCase {
+class GriabuntuMail.ImapDB.DatabaseTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
 
 
     public DatabaseTest() {
-        base("Convey.ImapDb.DatabaseTest");
+        base("GriabuntuMail.ImapDb.DatabaseTest");
         add_test("open_new", open_new);
         add_test("upgrade_0_6", upgrade_0_6);
         add_test("utf8_case_insensitive_collation",
                  utf8_case_insensitive_collation);
+        add_test("legacy_fts_tokeniser_alias", legacy_fts_tokeniser_alias);
     }
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("convey-imap-db-database-test-XXXXXX")
+            GLib.DirUtils.make_tmp("griabuntu-mail-imap-db-database-test-XXXXXX")
         );
     }
 
@@ -38,12 +40,12 @@ class Convey.ImapDB.DatabaseTest : TestCase {
             this.tmp_dir.get_child("test.db"),
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             this.tmp_dir.get_child("attachments"),
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_UPGRADE),
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_VACUUM)
         );
 
         db.open.begin(
-            Convey.Db.DatabaseFlags.CREATE_FILE, null,
+            GriabuntuMail.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         db.open.end(async_result());
@@ -98,12 +100,12 @@ class Convey.ImapDB.DatabaseTest : TestCase {
             db_file,
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             attachments_dir,
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_UPGRADE),
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_VACUUM)
         );
 
         db.open.begin(
-            Convey.Db.DatabaseFlags.CREATE_FILE, null,
+            GriabuntuMail.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         db.open.end(async_result());
@@ -132,12 +134,12 @@ class Convey.ImapDB.DatabaseTest : TestCase {
             this.tmp_dir.get_child("test.db"),
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             this.tmp_dir.get_child("attachments"),
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_UPGRADE),
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_VACUUM)
         );
 
         db.open.begin(
-            Convey.Db.DatabaseFlags.CREATE_FILE, null,
+            GriabuntuMail.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         db.open.end(async_result());
@@ -165,6 +167,33 @@ class Convey.ImapDB.DatabaseTest : TestCase {
         assert_true(i == expected.length, "Not enough rows");
 
         // Need to close it again to stop the GC process running
+        db.close();
+    }
+
+    public void legacy_fts_tokeniser_alias() throws GLib.Error {
+        Database db = new Database(
+            this.tmp_dir.get_child("test.db"),
+            GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
+            this.tmp_dir.get_child("attachments"),
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_UPGRADE),
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_VACUUM)
+        );
+        db.open.begin(GriabuntuMail.Db.DatabaseFlags.CREATE_FILE, null,
+                      this.async_completion);
+        db.open.end(async_result());
+        db.exec("""
+            CREATE VIRTUAL TABLE LegacySearch USING fts5(body, tokenize='convey_tokeniser');
+            CREATE VIRTUAL TABLE CurrentSearch USING fts5(body, tokenize='griabuntu_mail_tokeniser');
+            INSERT INTO LegacySearch(body) VALUES ('Synthetic identity fixture');
+            INSERT INTO CurrentSearch(body) VALUES ('Synthetic identity fixture');
+        """);
+        foreach (string table in new string[] { "LegacySearch", "CurrentSearch" }) {
+            Db.Result result = db.query(
+                "SELECT rowid FROM %s WHERE %s MATCH 'identity'".printf(table, table)
+            );
+            assert_false(result.finished, "FTS alias should find the synthetic row");
+            assert_equal<int64?>(result.int64_at(0), 1);
+        }
         db.close();
     }
 

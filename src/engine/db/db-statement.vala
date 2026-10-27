@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -7,7 +8,7 @@
  */
 
 
-public class Convey.Db.Statement : Context {
+public class GriabuntuMail.Db.Statement : Context {
 
 
     public string sql { get; private set; }
@@ -105,7 +106,7 @@ public class Convey.Db.Statement : Context {
     public int get_column_index(string name) {
         // prepare column map only if names requested
         if (column_map == null) {
-            column_map = new Gee.HashMap<string, int>(Convey.String.stri_hash, Convey.String.stri_equal);
+            column_map = new Gee.HashMap<string, int>(GriabuntuMail.String.stri_hash, GriabuntuMail.String.stri_equal);
 
             int cols = stmt.column_count();
             for (int ctr = 0; ctr < cols; ctr++) {

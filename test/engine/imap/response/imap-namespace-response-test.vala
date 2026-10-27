@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
@@ -7,11 +8,11 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Imap.NamespaceResponseTest : TestCase {
+class GriabuntuMail.Imap.NamespaceResponseTest : TestCase {
 
 
     public NamespaceResponseTest() {
-        base("Convey.Imap.NamespaceResponseTest");
+        base("GriabuntuMail.Imap.NamespaceResponseTest");
         add_test("minimal", minimal);
         add_test("complete", complete);
         add_test("cyrus", cyrus);

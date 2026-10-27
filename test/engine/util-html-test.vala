@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
@@ -7,10 +8,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.HTML.UtilTest : TestCase {
+class GriabuntuMail.HTML.UtilTest : TestCase {
 
     public UtilTest() {
-        base("Convey.HTML.Util");
+        base("GriabuntuMail.HTML.Util");
         add_test("preserve_whitespace", preserve_whitespace);
         add_test("smart_escape_div", smart_escape_div);
         add_test("smart_escape_no_closing_tag", smart_escape_no_closing_tag);

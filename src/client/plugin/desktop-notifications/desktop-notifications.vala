@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Downstream modification: 2026-10-26 — mail-specific popup action targets and buttons. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
@@ -29,7 +30,7 @@ public class Plugin.DesktopNotifications :
     TrustedExtension {
 
 
-    private const Convey.Folder.SpecialUse[] MONITORED_TYPES = {
+    private const GriabuntuMail.Folder.SpecialUse[] MONITORED_TYPES = {
         INBOX, NONE
     };
 
@@ -127,7 +128,7 @@ public class Plugin.DesktopNotifications :
     ) throws GLib.Error {
         string title = to_notitication_title(folder.account, 1);
         GLib.Icon? icon = null;
-        Convey.RFC822.MailboxAddress? originator = email.get_primary_originator();
+        GriabuntuMail.RFC822.MailboxAddress? originator = email.get_primary_originator();
         if (originator != null) {
             ContactStore contacts =
                 yield this.notifications.get_contacts_for_folder(folder);

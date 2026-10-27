@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
  * Stores a map of name-values pairs as ''ASCII'' (i.e. 7-bit) strings.
  */
 
-public class Convey.GenericCapabilities : BaseObject {
+public class GriabuntuMail.GenericCapabilities : BaseObject {
     public string name_separator { get; private set; }
     public string? value_separator { get; private set; }
 

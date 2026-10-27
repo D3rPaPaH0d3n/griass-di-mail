@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -16,7 +17,7 @@
  * The ByteArray that is returned should ''not'' be modified or freed by the caller.
  */
 
-public interface Convey.Memory.UnownedByteArrayBuffer : Memory.Buffer {
+public interface GriabuntuMail.Memory.UnownedByteArrayBuffer : Memory.Buffer {
     /**
      * Returns an unowned pointer to the backing ByteArray.
      *

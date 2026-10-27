@@ -1,52 +1,30 @@
-# Startprompt für den nächsten KI-Agenten
+<!-- Current icon correction, 2026-10-27: The owner selected the CLOSED COLOURED
+ENVELOPE in design/owner-artwork-20261027/. Active exports in brand/ preserve
+that supplied PNG. The previously installed .3 icon study was a mistaken
+substitution and is superseded. Do not reuse its CC0 claim for owner originals.
+See brand/README.md. Broader UI theming remains separate. -->
 
-Den folgenden Text zusammen mit dem privaten Repository-Zugang übergeben.
-Keine Zugangsdaten oder persönlichen Maildaten in den Prompt ergänzen.
+# Continue Griabuntu Mail
 
----
+Use the private repository `D3rPaPaH0d3n/griabuntu-mail` and branch
+`handoff/griabuntu-ai`. Read root AGENTS.md, docs/IDENTITY.md, BUILDING.md,
+debian/README and the dated verification records before editing.
 
-Ich möchte unsere unabhängige Linux-Mail-App **Griabuntu Mail** weiterentwickeln.
-Repository: **D3rPaPaH0d3n/convey** auf GitHub, weiterhin privat.
-Aktueller zusammengeführter Arbeitsstand: Branch **handoff/griabuntu-ai**.
-Der alte Standardbranch main ist nicht der aktuelle Entwicklungsstand.
+The owner explicitly requested a project-wide naming change. The product is
+Griabuntu Mail, binary/project/gettext/data basename griabuntu-mail, app ID
+io.github.d3rpapah0d3n.GriabuntuMail, Vala engine namespace GriabuntuMail.
+Native Ubuntu 26.10 .deb packaging is primary. Keep TNEF and GPL-3.0-only;
+original attribution, independent LGPL copies and third-party terms remain.
 
-Bitte orientiere dich zuerst selbstständig im Repository: lies die lokalen
-Agentenanweisungen, die Dokumente „AI handoff — Griabuntu Mail“, „Native desktop
-direction“, den frischen GPL-Prüfbericht und die Release-Checkliste. Prüfe den
-aktuellen Git-/GitHub-Zustand, relevante Implementierungen und Tests. Entscheide,
-welcher vorgeschlagene nächste Schritt noch aktuell, sinnvoll und ausreichend
-klein ist; benenne veraltete Annahmen, bessere Alternativen und echte Blocker.
-Der Handoff ersetzt deine eigene Prüfung nicht, verlangt aber keine erneute
-Vollprüfung aller bereits belegten Themen für eine kleine Änderung.
+Current source fixes the session-new notification flag bug. The original red
+baseline and old package hashes are historical. Run the identity consistency
+check and relevant synthetic suites; report actual source/artifact evidence.
+Use isolated HOME/XDG, buses/network and a private display for GUI checks.
+Do not use real accounts, mail, contacts or keyrings for validation.
 
-Festgelegt ist:
-- Exakter privater Arbeitsname **Griabuntu Mail**; die öffentliche Namens-/Canonical-
-  Freigabe ist noch offen. Die Anfrage wurde nicht versendet.
-- Native Ubuntu-/GNOME-Integration mit GTK4/libadwaita, passenden Icons, Buttons,
-  Menüs und Dialogen. Petrol/Türkis und Kupfer bleiben, künftig pastellig und
-  Material-inspiriert, mit System-Hell-/Dunkelmodus und Barrierefreiheit.
-- Beim Logo fehlt noch ein deutlicher Mail-/Kuvertbezug. Das bisherige G mit
-  Falte ist nur ein Kandidat. Offen oder geschlossen und die endgültige Form
-  wurden noch nicht gewählt. Es wurde noch kein echtes UI-Redesign umgesetzt.
-- Der Eigentümer hat GPLv3 mit **allen Funktionen einschließlich TNEF** genehmigt.
-  Dieser getrennte Release-Quellstand ist GPL-3.0-only; ursprüngliche LGPL-Kopien
-  und alle fremden Komponentenrechte bleiben erhalten. Diese Entscheidung ist
-  nicht erneut offen und rechtfertigt keine pauschale Umlizenzierung fremder Werke.
-
-Der frisch gebaute GPL-Quellstand hat 327 Engine- und 62 fokussierte Fälle bestanden.
-Vier bekannte Flag-Regressionsfälle bleiben rot; die vollständige App gilt nicht
-als veröffentlichungsfertig. Im Handoff stehen die exakten Quell-/Paketbelege und
-weitere offene Asset-, Quellenlieferungs-, Namens- und Desktop-Abnahmen.
-
-Bitte beginne mit deinen Befunden und einer Empfehlung für den nächsten begrenzten
-Schritt und besprich ihn mit mir. Wenn wir eine Änderung angehen, halte sie klein
-und belege sie mit passenden synthetischen Tests beziehungsweise echten Rendern.
-Keine persönlichen Mails/Konten/Profile für Tests öffnen oder verändern. Kein
-automatischer Versand, keine endgültige Löschung, kein stilles TNEF-Abschalten
-oder Umschalten der Zählersemantik auf alle historischen Ungelesenen.
-
-Ohne ausdrücklichen Auftrag nichts öffentlich machen, keine Canonical-Anfrage
-versenden, keinen main-Merge, keine Installation/Signierung, keine technische
-App-ID-/Profilmigration und keine fremden System-/Kontoeinstellungen ändern.
-Auch Pushes, PRs, Kommentare, Labels oder Release-Aktionen brauchen einen passenden
-Auftrag. Gib am Ende Änderungen, tatsächliche Prüfergebnisse und offene Punkte an.
+Profile migration, installation and process shutdown must respect the owner's
+current instructions. Never copy a live database, auto-send, permanently delete
+mail or silently reuse an old profile under a new identity. Preserve a rollback.
+Public releases/visibility, signing and Canonical contact remain separate.
+The owner selected the supplied closed coloured envelope; see brand/README.md.
+The broader pastel control theme remains future work.

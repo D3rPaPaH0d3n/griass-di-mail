@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
 n * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -14,7 +15,7 @@ errordomain CommandException {
 
 const int IMAP_TIMEOUT_SEC = 60 * 15;
 
-[GtkTemplate (ui = "/net/donnybeelo/ConveyConsole/imap-console.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMailConsole/imap-console.ui")]
 class ImapConsole : Adw.ApplicationWindow {
     private const int KEEPALIVE_SEC = 60 * 10;
 
@@ -22,10 +23,10 @@ class ImapConsole : Adw.ApplicationWindow {
     [GtkChild] private unowned Gtk.Entry cmdline;
     [GtkChild] private unowned Gtk.Label statusbar;
 
-    private Convey.Imap.ClientConnection? cx = null;
-    private Gee.HashMap<Convey.Imap.Tag, Convey.Imap.StatusResponse> status_responses = new Gee.HashMap<
-        Convey.Imap.Tag, Convey.Imap.StatusResponse>();
-    private Convey.Nonblocking.Event recvd_response_event = new Convey.Nonblocking.Event();
+    private GriabuntuMail.Imap.ClientConnection? cx = null;
+    private Gee.HashMap<GriabuntuMail.Imap.Tag, GriabuntuMail.Imap.StatusResponse> status_responses = new Gee.HashMap<
+        GriabuntuMail.Imap.Tag, GriabuntuMail.Imap.StatusResponse>();
+    private GriabuntuMail.Nonblocking.Event recvd_response_event = new GriabuntuMail.Nonblocking.Event();
 
     public ImapConsole(Adw.Application app) {
         Object(application: app);
@@ -104,7 +105,7 @@ class ImapConsole : Adw.ApplicationWindow {
                 string arg = tokens[ctr].strip();
                 if (arg == "\"\"") {
                     args += "";
-                } else if (!Convey.String.is_empty(arg)) {
+                } else if (!GriabuntuMail.String.is_empty(arg)) {
                     args += arg;
                 }
             }
@@ -266,13 +267,13 @@ class ImapConsole : Adw.ApplicationWindow {
     private void capabilities(string cmd, string[] args) throws Error {
         check_connected(cmd, args, 0, null);
 
-        this.cx.send_command(new Convey.Imap.CapabilityCommand(null));
+        this.cx.send_command(new GriabuntuMail.Imap.CapabilityCommand(null));
     }
 
     private void noop(string cmd, string[] args) throws GLib.Error {
         check_connected(cmd, args, 0, null);
 
-        this.cx.send_command(new Convey.Imap.NoopCommand(null));
+        this.cx.send_command(new GriabuntuMail.Imap.NoopCommand(null));
     }
 
     private void connect_cmd(string cmd, string[] args) throws Error {
@@ -281,18 +282,18 @@ class ImapConsole : Adw.ApplicationWindow {
 
         check_args(cmd, args, 1, "hostname[:port]");
 
-        Convey.TlsNegotiationMethod method = Convey.TlsNegotiationMethod.TRANSPORT;
+        GriabuntuMail.TlsNegotiationMethod method = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
         if (cmd == "unsecure") {
-            method = Convey.TlsNegotiationMethod.START_TLS;
+            method = GriabuntuMail.TlsNegotiationMethod.START_TLS;
         }
 
-        cx = new Convey.Imap.ClientConnection(
-            new Convey.Endpoint(
-                new GLib.NetworkAddress(args[0], Convey.Imap.IMAP_TLS_PORT),
+        cx = new GriabuntuMail.Imap.ClientConnection(
+            new GriabuntuMail.Endpoint(
+                new GLib.NetworkAddress(args[0], GriabuntuMail.Imap.IMAP_TLS_PORT),
                 method,
                 IMAP_TIMEOUT_SEC
             ),
-            new Convey.Imap.Quirks()
+            new GriabuntuMail.Imap.Quirks()
         );
 
         cx.sent_command.connect(on_sent_command);
@@ -346,11 +347,11 @@ class ImapConsole : Adw.ApplicationWindow {
     }
 
     private async void do_starttls_async() throws Error {
-        Convey.Imap.StarttlsCommand cmd = new Convey.Imap.StarttlsCommand(null);
+        GriabuntuMail.Imap.StarttlsCommand cmd = new GriabuntuMail.Imap.StarttlsCommand(null);
         this.cx.send_command(cmd);
 
-        Convey.Imap.StatusResponse response = yield wait_for_response_async(cmd.tag);
-        if (response.status == Convey.Imap.Status.OK) {
+        GriabuntuMail.Imap.StatusResponse response = yield wait_for_response_async(cmd.tag);
+        if (response.status == GriabuntuMail.Imap.Status.OK) {
             yield cx.starttls_async(null);
             status("STARTTLS completed");
         } else {
@@ -371,7 +372,7 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Logging in...");
         this.cx.send_command(
-            new Convey.Imap.LoginCommand(args[0], args[1], null)
+            new GriabuntuMail.Imap.LoginCommand(args[0], args[1], null)
         );
     }
 
@@ -380,7 +381,7 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Logging out...");
         this.cx.send_command(
-            new Convey.Imap.LogoutCommand(null)
+            new GriabuntuMail.Imap.LogoutCommand(null)
         );
     }
 
@@ -390,11 +391,11 @@ class ImapConsole : Adw.ApplicationWindow {
         status("Retrieving ID...");
 
         Gee.HashMap<string, string> fields = new Gee.HashMap<string, string>();
-        fields.set("name", "convey-console");
+        fields.set("name", "griabuntu-mail-console");
         fields.set("version", Config.VERSION);
 
         this.cx.send_command(
-            new Convey.Imap.IdCommand(fields, null)
+            new GriabuntuMail.Imap.IdCommand(fields, null)
         );
     }
 
@@ -402,22 +403,22 @@ class ImapConsole : Adw.ApplicationWindow {
         check_connected(cmd, args, 0, null);
 
         status("Retrieving NAMESPACE...");
-        this.cx.send_command(new Convey.Imap.NamespaceCommand(null));
+        this.cx.send_command(new GriabuntuMail.Imap.NamespaceCommand(null));
     }
 
     private void list(string cmd, string[] args) throws Error {
         check_min_connected(cmd, args, 2, "<reference> <mailbox> [special-use]");
 
         status("Listing...");
-        Convey.Imap.ListReturnParameter? return_param = null;
+        GriabuntuMail.Imap.ListReturnParameter? return_param = null;
         if (args.length >= 3 && args[2] == "special-use") {
-            return_param = new Convey.Imap.ListReturnParameter();
+            return_param = new GriabuntuMail.Imap.ListReturnParameter();
             return_param.add_special_use();
         }
         this.cx.send_command(
-            new Convey.Imap.ListCommand.wildcarded(
+            new GriabuntuMail.Imap.ListCommand.wildcarded(
                 args[0],
-                new Convey.Imap.MailboxSpecifier(args[1]),
+                new GriabuntuMail.Imap.MailboxSpecifier(args[1]),
                 (cmd.down() == "xlist"),
                 return_param,
                 null
@@ -430,8 +431,8 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Opening %s read-only".printf(args[0]));
         this.cx.send_command(
-            new Convey.Imap.ExamineCommand(
-                new Convey.Imap.MailboxSpecifier(args[0]),
+            new GriabuntuMail.Imap.ExamineCommand(
+                new GriabuntuMail.Imap.MailboxSpecifier(args[0]),
                 null
             )
         );
@@ -442,8 +443,8 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Creating %s".printf(args[0]));
         this.cx.send_command(
-            new Convey.Imap.CreateCommand(
-                new Convey.Imap.MailboxSpecifier(args[0]),
+            new GriabuntuMail.Imap.CreateCommand(
+                new GriabuntuMail.Imap.MailboxSpecifier(args[0]),
                 null
             )
         );
@@ -454,8 +455,8 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Deleting %s".printf(args[0]));
         this.cx.send_command(
-            new Convey.Imap.DeleteCommand(
-                new Convey.Imap.MailboxSpecifier(args[0]),
+            new GriabuntuMail.Imap.DeleteCommand(
+                new GriabuntuMail.Imap.MailboxSpecifier(args[0]),
                 null
             )
         );
@@ -466,19 +467,19 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Fetching %s".printf(args[0]));
 
-        Convey.Imap.MessageSet msg_set = (cmd.down() == "fetch")
-            ? new Convey.Imap.MessageSet.custom(args[0])
-            : new Convey.Imap.MessageSet.uid_custom(args[0]);
+        GriabuntuMail.Imap.MessageSet msg_set = (cmd.down() == "fetch")
+            ? new GriabuntuMail.Imap.MessageSet.custom(args[0])
+            : new GriabuntuMail.Imap.MessageSet.uid_custom(args[0]);
 
-        Gee.ArrayList<Convey.Imap.FetchDataSpecifier> data_items = new Gee.ArrayList<Convey.Imap.FetchDataSpecifier>();
+        Gee.ArrayList<GriabuntuMail.Imap.FetchDataSpecifier> data_items = new Gee.ArrayList<GriabuntuMail.Imap.FetchDataSpecifier>();
         for (int ctr = 1; ctr < args.length; ctr++) {
-            Convey.Imap.StringParameter stringp = Convey.Imap.StringParameter.get_best_for(args[ctr]);
-            Convey.Imap.FetchDataSpecifier data_type = Convey.Imap.FetchDataSpecifier.from_parameter(stringp);
+            GriabuntuMail.Imap.StringParameter stringp = GriabuntuMail.Imap.StringParameter.get_best_for(args[ctr]);
+            GriabuntuMail.Imap.FetchDataSpecifier data_type = GriabuntuMail.Imap.FetchDataSpecifier.from_parameter(stringp);
             data_items.add(data_type);
         }
 
         this.cx.send_command(
-            new Convey.Imap.FetchCommand(msg_set, data_items, null, null)
+            new GriabuntuMail.Imap.FetchCommand(msg_set, data_items, null, null)
         );
     }
 
@@ -487,15 +488,15 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Fetching fields %s".printf(args[0]));
 
-        Convey.Imap.FetchBodyDataSpecifier fields = new Convey.Imap.FetchBodyDataSpecifier(
-            Convey.Imap.FetchBodyDataSpecifier.SectionPart.HEADER_FIELDS, null, -1, -1, args[1:args.length]);
+        GriabuntuMail.Imap.FetchBodyDataSpecifier fields = new GriabuntuMail.Imap.FetchBodyDataSpecifier(
+            GriabuntuMail.Imap.FetchBodyDataSpecifier.SectionPart.HEADER_FIELDS, null, -1, -1, args[1:args.length]);
 
-        Gee.List<Convey.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<Convey.Imap.FetchBodyDataSpecifier>();
+        Gee.List<GriabuntuMail.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<GriabuntuMail.Imap.FetchBodyDataSpecifier>();
         list.add(fields);
 
         this.cx.send_command(
-            new Convey.Imap.FetchCommand(
-                new Convey.Imap.MessageSet.custom(args[0]), null, list, null
+            new GriabuntuMail.Imap.FetchCommand(
+                new GriabuntuMail.Imap.MessageSet.custom(args[0]), null, list, null
             )
         );
     }
@@ -506,11 +507,11 @@ class ImapConsole : Adw.ApplicationWindow {
         status("Appending %s to %s".printf(args[1], args[0]));
 
         this.cx.send_command(
-            new Convey.Imap.AppendCommand(
-                new Convey.Imap.MailboxSpecifier(args[0]),
+            new GriabuntuMail.Imap.AppendCommand(
+                new GriabuntuMail.Imap.MailboxSpecifier(args[0]),
                 null,
                 null,
-                new Convey.Memory.FileBuffer(File.new_for_path(args[1]), true),
+                new GriabuntuMail.Memory.FileBuffer(File.new_for_path(args[1]), true),
                 null
             )
         );
@@ -521,15 +522,15 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Searching");
 
-        Convey.Imap.SearchCriteria criteria = new Convey.Imap.SearchCriteria();
+        GriabuntuMail.Imap.SearchCriteria criteria = new GriabuntuMail.Imap.SearchCriteria();
         foreach (string arg in args)
-            criteria.and(new Convey.Imap.SearchCriterion.simple(arg));
+            criteria.and(new GriabuntuMail.Imap.SearchCriterion.simple(arg));
 
-        Convey.Imap.SearchCommand search;
+        GriabuntuMail.Imap.SearchCommand search;
         if (cmd == "uid-search")
-            search = new Convey.Imap.SearchCommand.uid(criteria, null);
+            search = new GriabuntuMail.Imap.SearchCommand.uid(criteria, null);
         else
-            search = new Convey.Imap.SearchCommand(criteria, null);
+            search = new GriabuntuMail.Imap.SearchCommand(criteria, null);
 
         this.cx.send_command(search);
     }
@@ -540,7 +541,7 @@ class ImapConsole : Adw.ApplicationWindow {
         status("Closing");
 
         this.cx.send_command(
-            new Convey.Imap.CloseCommand(null)
+            new GriabuntuMail.Imap.CloseCommand(null)
         );
     }
 
@@ -549,15 +550,15 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Status %s".printf(args[0]));
 
-        Convey.Imap.StatusDataType[] data_items = new Convey.Imap.StatusDataType[0];
+        GriabuntuMail.Imap.StatusDataType[] data_items = new GriabuntuMail.Imap.StatusDataType[0];
         for (int ctr = 1; ctr < args.length; ctr++) {
-            Convey.Imap.StringParameter stringp = Convey.Imap.StringParameter.get_best_for(args[ctr]);
-            data_items += Convey.Imap.StatusDataType.from_parameter(stringp);
+            GriabuntuMail.Imap.StringParameter stringp = GriabuntuMail.Imap.StringParameter.get_best_for(args[ctr]);
+            data_items += GriabuntuMail.Imap.StatusDataType.from_parameter(stringp);
         }
 
         this.cx.send_command(
-            new Convey.Imap.StatusCommand(
-                new Convey.Imap.MailboxSpecifier(args[0]),
+            new GriabuntuMail.Imap.StatusCommand(
+                new GriabuntuMail.Imap.MailboxSpecifier(args[0]),
                 data_items,
                 null
             )
@@ -569,16 +570,16 @@ class ImapConsole : Adw.ApplicationWindow {
 
         status("Preview %s".printf(args[0]));
 
-        Convey.Imap.FetchBodyDataSpecifier preview_data_type = new Convey.Imap.FetchBodyDataSpecifier.peek(
-            Convey.Imap.FetchBodyDataSpecifier.SectionPart.NONE, { 1 }, 0, Convey.Email.MAX_PREVIEW_BYTES,
+        GriabuntuMail.Imap.FetchBodyDataSpecifier preview_data_type = new GriabuntuMail.Imap.FetchBodyDataSpecifier.peek(
+            GriabuntuMail.Imap.FetchBodyDataSpecifier.SectionPart.NONE, { 1 }, 0, GriabuntuMail.Email.MAX_PREVIEW_BYTES,
             null);
 
-        Gee.ArrayList<Convey.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<Convey.Imap.FetchBodyDataSpecifier>();
+        Gee.ArrayList<GriabuntuMail.Imap.FetchBodyDataSpecifier> list = new Gee.ArrayList<GriabuntuMail.Imap.FetchBodyDataSpecifier>();
         list.add(preview_data_type);
 
         this.cx.send_command(
-            new Convey.Imap.FetchCommand(
-                new Convey.Imap.MessageSet.custom(args[0]), null, list, null
+            new GriabuntuMail.Imap.FetchCommand(
+                new GriabuntuMail.Imap.MessageSet.custom(args[0]), null, list, null
             )
         );
     }
@@ -623,13 +624,13 @@ class ImapConsole : Adw.ApplicationWindow {
         append_to_console("\n");
     }
 
-    private void on_sent_command(Convey.Imap.Command cmd) {
+    private void on_sent_command(GriabuntuMail.Imap.Command cmd) {
         append_to_console("[L] ");
         append_to_console(cmd.to_string());
         append_to_console("\n");
     }
 
-    private void on_received_status_response(Convey.Imap.StatusResponse status_response) {
+    private void on_received_status_response(GriabuntuMail.Imap.StatusResponse status_response) {
         append_to_console("[R] ");
         append_to_console(status_response.to_string());
         append_to_console("\n");
@@ -640,9 +641,9 @@ class ImapConsole : Adw.ApplicationWindow {
         recvd_response_event.blind_notify();
     }
 
-    private async Convey.Imap.StatusResponse wait_for_response_async(Convey.Imap.Tag tag) throws Error {
+    private async GriabuntuMail.Imap.StatusResponse wait_for_response_async(GriabuntuMail.Imap.Tag tag) throws Error {
         for (;;) {
-            Convey.Imap.StatusResponse? response = status_responses.get(tag);
+            GriabuntuMail.Imap.StatusResponse? response = status_responses.get(tag);
             if (response != null)
                 return response;
 
@@ -650,13 +651,13 @@ class ImapConsole : Adw.ApplicationWindow {
         }
     }
 
-    private void on_received_server_data(Convey.Imap.ServerData server_data) {
+    private void on_received_server_data(GriabuntuMail.Imap.ServerData server_data) {
         append_to_console("[D] ");
         append_to_console(server_data.to_string());
         append_to_console("\n");
     }
 
-    private void on_received_bad_response(Convey.Imap.RootParameters root, Convey.ImapError err) {
+    private void on_received_bad_response(GriabuntuMail.Imap.RootParameters root, GriabuntuMail.ImapError err) {
         append_to_console("[E] ");
         append_to_console(err.message);
         append_to_console(": ");
@@ -672,8 +673,8 @@ class ImapConsole : Adw.ApplicationWindow {
 }
 
 int main(string[] args) {
-    Convey.Logging.init();
-    Convey.Logging.log_to(stdout);
+    GriabuntuMail.Logging.init();
+    GriabuntuMail.Logging.log_to(stdout);
 
     Adw.Application app = new Adw.Application(null, GLib.ApplicationFlags.DEFAULT_FLAGS);
 

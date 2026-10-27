@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>.
@@ -12,18 +13,18 @@
  * An interface between the high-level engine API and the IMAP stack.
  *
  * Because of the complexities of the IMAP protocol, class takes
- * common operations that a Convey.Account implementation would need
- * (in particular, {@link Convey.ImapEngine.GenericAccount}) and makes
+ * common operations that a GriabuntuMail.Account implementation would need
+ * (in particular, {@link GriabuntuMail.ImapEngine.GenericAccount}) and makes
  * them into simple async calls.
  *
- * Convey.Imap.Account manages the {@link Imap.Folder} objects it
+ * GriabuntuMail.Imap.Account manages the {@link Imap.Folder} objects it
  * returns, but only in the sense that it will not create new
  * instances repeatedly.  Otherwise, it does not refresh or update the
  * Imap.Folders themselves (such as update their {@link
  * Imap.StatusData} periodically). That's the responsibility of the
  * higher layers of the stack.
  */
-internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
+internal class GriabuntuMail.Imap.AccountSession : GriabuntuMail.Imap.SessionObject {
 
     private FolderRoot root;
     private Gee.HashMap<FolderPath,Imap.Folder> folders =
@@ -60,7 +61,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
             prefix = prefix.substring(0, prefix.length - delim.length);
         }
 
-        return Convey.String.is_empty(prefix)
+        return GriabuntuMail.String.is_empty(prefix)
             ? this.root
             : this.root.get_child(prefix);
     }
@@ -93,7 +94,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
      * used to specify the type of the new folder.
      */
     public async void create_folder_async(FolderPath path,
-                                          Convey.Folder.SpecialUse? use,
+                                          GriabuntuMail.Folder.SpecialUse? use,
                                           Cancellable? cancellable)
     throws Error {
         ClientSession session = get_session();
@@ -426,7 +427,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
             filtered.set(information.mailbox.name, information);
         }
 
-        return Convey.traverse(filtered.values).to_array_list();
+        return GriabuntuMail.traverse(filtered.values).to_array_list();
     }
 
     private async StatusData send_status_async(ClientSession session,
@@ -466,7 +467,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
         Cancellable? cancellable) throws Error {
         Gee.Map<Command, StatusResponse> responses = yield send_multiple_async(
             session,
-            Convey.iterate<Command>(cmd).to_array_list(),
+            GriabuntuMail.iterate<Command>(cmd).to_array_list(),
             list_results,
             status_results,
             cancellable
@@ -518,7 +519,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
     }
 
     [NoReturn]
-    private void throw_not_found(Convey.FolderPath? path) throws EngineError {
+    private void throw_not_found(GriabuntuMail.FolderPath? path) throws EngineError {
         throw new EngineError.NOT_FOUND(
             "Folder not found: %s",
             (path != null) ? path.to_string() : "[root]"

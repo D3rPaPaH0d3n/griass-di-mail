@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -13,10 +14,10 @@
  * This class provides a common implementation that shares folder
  * objects between different plugin context instances.
  */
-internal class Application.FolderStoreFactory : Convey.BaseObject {
+internal class Application.FolderStoreFactory : GriabuntuMail.BaseObject {
 
 
-    private class FolderStoreImpl : Convey.BaseObject, Plugin.FolderStore {
+    private class FolderStoreImpl : GriabuntuMail.BaseObject, Plugin.FolderStore {
 
 
         public override GLib.VariantType folder_variant_type {
@@ -45,9 +46,9 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
             var id = target as EmailStoreFactory.IdImpl;
             if (id != null) {
                 var context = id.account_impl.backing;
-                Gee.MultiMap<Convey.EmailIdentifier,Convey.FolderPath>? multi_folders =
+                Gee.MultiMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.FolderPath>? multi_folders =
                     yield context.account.get_containing_folders_async(
-                        Convey.Collection.single(id.backing),
+                        GriabuntuMail.Collection.single(id.backing),
                         cancellable
                     );
                 if (multi_folders != null) {
@@ -69,12 +70,12 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
             if (account == null) {
                 throw new Plugin.Error.NOT_SUPPORTED("Invalid account object");
             }
-            Convey.Folder engine = yield account.backing.account.create_personal_folder(
+            GriabuntuMail.Folder engine = yield account.backing.account.create_personal_folder(
                 name, NONE, cancellable
             );
             var folder = this.factory.to_plugin_folder(engine);
             if (folder == null) {
-                throw new Convey.EngineError.NOT_FOUND(
+                throw new GriabuntuMail.EngineError.NOT_FOUND(
                     "No plugin folder found for the created folder"
                 );
             }
@@ -93,7 +94,7 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
     }
 
 
-    private class FolderImpl : Convey.BaseObject, Plugin.Folder {
+    private class FolderImpl : GriabuntuMail.BaseObject, Plugin.Folder {
 
 
         // These constants are used to determine the persistent id of
@@ -111,7 +112,7 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
             get { return this.backing.display_name; }
         }
 
-        public Convey.Folder.SpecialUse used_as {
+        public GriabuntuMail.Folder.SpecialUse used_as {
             get { return this.backing.folder.used_as; }
         }
 
@@ -136,7 +137,7 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
         }
 
         public GLib.Variant to_variant() {
-            Convey.Folder folder = this.backing.folder;
+            GriabuntuMail.Folder folder = this.backing.folder;
             return new GLib.Variant.tuple({
                     folder.account.information.id,
                         new GLib.Variant.variant(folder.path.to_variant())
@@ -152,8 +153,8 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
 
 
     private Gee.Map<AccountContext,PluginManager.AccountImpl> accounts;
-    private Gee.Map<Convey.Folder,FolderImpl> folders =
-        new Gee.HashMap<Convey.Folder,FolderImpl>();
+    private Gee.Map<GriabuntuMail.Folder,FolderImpl> folders =
+        new Gee.HashMap<GriabuntuMail.Folder,FolderImpl>();
     private Gee.Set<FolderStoreImpl> stores =
         new Gee.HashSet<FolderStoreImpl>();
 
@@ -191,12 +192,12 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
     }
 
     /** Returns the plugin folder for the given engine folder. */
-    public Plugin.Folder? to_plugin_folder(Convey.Folder engine) {
+    public Plugin.Folder? to_plugin_folder(GriabuntuMail.Folder engine) {
         return this.folders.get(engine);
     }
 
     /** Returns the engine folder for the given plugin folder. */
-    public Convey.Folder? to_engine_folder(Plugin.Folder plugin) {
+    public GriabuntuMail.Folder? to_engine_folder(Plugin.Folder plugin) {
         FolderImpl? impl = plugin as FolderImpl;
         return (impl != null) ? impl.backing.folder : null;
     }
@@ -208,7 +209,7 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
     }
 
     /** Returns the folder context for the given plugin folder id. */
-    public Convey.Folder? get_folder_for_variant(GLib.Variant target) {
+    public GriabuntuMail.Folder? get_folder_for_variant(GLib.Variant target) {
         string id = (string) target.get_child_value(0);
         AccountContext? context = null;
         foreach (var key in this.accounts.keys) {
@@ -217,10 +218,10 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
                 break;
             }
         }
-        Convey.Folder? folder = null;
+        GriabuntuMail.Folder? folder = null;
         if (context != null) {
             try {
-                Convey.FolderPath? path = context.account.to_folder_path(
+                GriabuntuMail.FolderPath? path = context.account.to_folder_path(
                     target.get_child_value(1).get_variant()
                 );
                 folder = context.account.get_folder(path);
@@ -263,7 +264,7 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
                 new FolderImpl(context, this.accounts.get(account))
             );
         }
-        var folder_impls = Convey.traverse(
+        var folder_impls = GriabuntuMail.traverse(
             to_add
         ).map<FolderImpl>(
             (context => this.folders.get(context.folder))
@@ -275,7 +276,7 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
 
     private void remove_folders(AccountContext account,
                                 Gee.Collection<FolderContext> to_remove) {
-        var folder_impls = Convey.traverse(
+        var folder_impls = GriabuntuMail.traverse(
             to_remove
         ).map<FolderImpl>(
             (context => this.folders.get(context.folder))
@@ -289,9 +290,9 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
     }
 
     private Gee.Collection<FolderImpl> to_plugin_folders(
-        Gee.Collection<Convey.Folder> folders
+        Gee.Collection<GriabuntuMail.Folder> folders
     ) {
-        return Convey.traverse(
+        return GriabuntuMail.traverse(
             folders
         ).map<FolderImpl>(
             (f) => this.folders.get(f)
@@ -308,8 +309,8 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
         remove_folders(account, unavailable);
     }
 
-    private void on_folders_use_changed(Convey.Account account,
-                                        Gee.Collection<Convey.Folder> changed) {
+    private void on_folders_use_changed(GriabuntuMail.Account account,
+                                        Gee.Collection<GriabuntuMail.Folder> changed) {
         var folders = to_plugin_folders(changed);
         foreach (FolderImpl folder in folders) {
             folder.folder_type_changed();
@@ -322,7 +323,7 @@ internal class Application.FolderStoreFactory : Convey.BaseObject {
     private void on_folder_selected(GLib.Object object, GLib.ParamSpec param) {
         var main = object as MainWindow;
         if (main != null) {
-            Convey.Folder? selected = main.selected_folder;
+            GriabuntuMail.Folder? selected = main.selected_folder;
             if (selected != null) {
                 var plugin = to_plugin_folder(selected);
                 if (plugin != null) {

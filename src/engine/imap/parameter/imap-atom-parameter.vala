@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -19,7 +20,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-4.1]]
  */
-public class Convey.Imap.AtomParameter : Convey.Imap.UnquotedStringParameter {
+public class GriabuntuMail.Imap.AtomParameter : GriabuntuMail.Imap.UnquotedStringParameter {
 
     public AtomParameter(string value) {
         base (value);

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
  *
@@ -19,8 +20,8 @@ internal class Accounts.AutoConfigValues {
     // incomingServer[type="imap"].port
     public string imap_port { get; set; default = ""; }
     // incomingServer[type="imap"].socketType
-    public Convey.TlsNegotiationMethod imap_tls_method {
-        get; set; default = Convey.TlsNegotiationMethod.TRANSPORT;
+    public GriabuntuMail.TlsNegotiationMethod imap_tls_method {
+        get; set; default = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
     }
 
     // outgoingServer[type="smtp"].hostname
@@ -28,8 +29,8 @@ internal class Accounts.AutoConfigValues {
     // outgoingServer[type="smtp"].port
     public string smtp_port { get; set; default = ""; }
     // outgoingServer[type="smtp"].socketType
-    public Convey.TlsNegotiationMethod smtp_tls_method {
-        get; set; default = Convey.TlsNegotiationMethod.TRANSPORT;
+    public GriabuntuMail.TlsNegotiationMethod smtp_tls_method {
+        get; set; default = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
     }
 
 }
@@ -52,8 +53,8 @@ internal class Accounts.AutoConfig {
     internal AutoConfig(GLib.Cancellable auto_config_cancellable) {
         cancellable = auto_config_cancellable;
         session = new Soup.Session();
-        if (Convey.Endpoint.proxy_resolver != null) {
-            session.proxy_resolver = Convey.Endpoint.proxy_resolver;
+        if (GriabuntuMail.Endpoint.proxy_resolver != null) {
+            session.proxy_resolver = GriabuntuMail.Endpoint.proxy_resolver;
         }
     }
 
@@ -166,14 +167,14 @@ internal class Accounts.AutoConfig {
         return node.get_content();
     }
 
-    private Convey.TlsNegotiationMethod get_tls_method(string method) {
+    private GriabuntuMail.TlsNegotiationMethod get_tls_method(string method) {
         switch (method) {
         case "SSL":
-            return Convey.TlsNegotiationMethod.TRANSPORT;
+            return GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
         case "STARTTLS":
-            return Convey.TlsNegotiationMethod.START_TLS;
+            return GriabuntuMail.TlsNegotiationMethod.START_TLS;
         default:
-            return Convey.TlsNegotiationMethod.NONE;
+            return GriabuntuMail.TlsNegotiationMethod.NONE;
         }
     }
 }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.Attachment : Convey.Attachment {
+internal class GriabuntuMail.Graph.Attachment : GriabuntuMail.Attachment {
 
     internal Attachment(Mime.ContentType content_type,
                         string? content_id,
@@ -20,13 +21,13 @@ internal class Convey.Graph.Attachment : Convey.Attachment {
         set_file_info(file, file_size);
     }
 
-    internal Attachment.from_part(Convey.RFC822.Part part,
+    internal Attachment.from_part(GriabuntuMail.RFC822.Part part,
                                   GLib.File file,
                                   int64 file_size) {
         Mime.ContentDisposition? disposition = part.content_disposition;
         if (disposition == null) {
             disposition = new Mime.ContentDisposition.simple(
-                Convey.Mime.DispositionType.UNSPECIFIED
+                GriabuntuMail.Mime.DispositionType.UNSPECIFIED
             );
         }
         this(

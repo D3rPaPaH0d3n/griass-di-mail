@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
@@ -10,7 +11,7 @@
 /**
  * An account editor pane for adding a new account.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_add_pane.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts_editor_add_pane.ui")]
 internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
 
@@ -27,10 +28,10 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
     protected override weak Accounts.Editor editor { get; set; }
 
-    private Convey.ServiceProvider provider;
+    private GriabuntuMail.ServiceProvider provider;
 
     private Manager accounts;
-    private Convey.Engine engine;
+    private GriabuntuMail.Engine engine;
 
 
 
@@ -68,7 +69,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     internal EditorAddPane(Editor editor) {
         Object(editor: editor);
 
-        this.provider = Convey.ServiceProvider.OTHER;
+        this.provider = GriabuntuMail.ServiceProvider.OTHER;
 
         this.accounts = editor.application.controller.account_manager;
         this.engine = editor.application.engine;
@@ -98,10 +99,10 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         string? message = null;
         Gtk.Widget? to_focus = null;
 
-        Convey.AccountInformation account =
+        GriabuntuMail.AccountInformation account =
             yield this.accounts.new_orphan_account(
                 this.provider,
-                new Convey.RFC822.MailboxAddress(
+                new GriabuntuMail.RFC822.MailboxAddress(
                     this.name_row.text.strip(),
                     this.email_row.text.strip()
                 ),
@@ -117,7 +118,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         account.outgoing = this.sending_service_widget.service_mutable;
         account.untrusted_host.connect(on_untrusted_host);
 
-        if (this.provider == Convey.ServiceProvider.OTHER &&
+        if (this.provider == GriabuntuMail.ServiceProvider.OTHER &&
                 !this.did_auto_config) {
             bool imap_valid = false;
             bool smtp_valid = false;
@@ -127,7 +128,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                     account, account.incoming, cancellable
                 );
                 imap_valid = true;
-            } catch (Convey.ImapError.UNAUTHENTICATED err) {
+            } catch (GriabuntuMail.ImapError.UNAUTHENTICATED err) {
                 debug("Error authenticating IMAP service: %s", err.message);
                 to_focus = this.receiving_service_widget;
                 // Translators: In-app notification label
@@ -140,7 +141,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                 // Nothing to do here, someone just cancelled
                 debug("IMAP validation was cancelled: %s", err.message);
             } catch (GLib.Error err) {
-                Convey.ErrorContext context = new Convey.ErrorContext(err);
+                GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(err);
                 debug("Error validating IMAP service: %s",
                       context.format_full_error());
                 // Reveal the server rows so the user can correct
@@ -161,7 +162,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                         cancellable
                     );
                     smtp_valid = true;
-                } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
+                } catch (GriabuntuMail.SmtpError.AUTHENTICATION_FAILED err) {
                     debug("Error authenticating SMTP service: %s", err.message);
                     // There was an SMTP auth error, but IMAP already
                     // succeeded, so the user probably needs to
@@ -177,7 +178,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                     // Nothing to do here, someone just cancelled
                     debug("SMTP validation was cancelled: %s", err.message);
                 } catch (GLib.Error err) {
-                    Convey.ErrorContext context = new Convey.ErrorContext(err);
+                    GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(err);
                     debug("Error validating SMTP service: %s",
                           context.format_full_error());
                     to_focus = this.sending_service_widget;
@@ -193,7 +194,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                     account, account.incoming, cancellable
                 );
                 is_valid = true;
-            } catch (Convey.ImapError.UNAUTHENTICATED err) {
+            } catch (GriabuntuMail.ImapError.UNAUTHENTICATED err) {
                 debug("Error authenticating provider: %s", err.message);
                 to_focus = this.email_row;
                 // Translators: In-app notification label
@@ -203,7 +204,7 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
                 // handler will be dealing with it
                 debug("Error validating SMTP certificate: %s", err.message);
             } catch (GLib.Error err) {
-                Convey.ErrorContext context = new Convey.ErrorContext(err);
+                GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(err);
                 debug("Error validating SMTP service: %s",
                       context.format_full_error());
                 is_valid = false;
@@ -246,19 +247,19 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         }
     }
 
-    private Convey.ServiceInformation new_imap_service() {
-        var service = new Convey.ServiceInformation(
-            Convey.Protocol.IMAP, this.provider
+    private GriabuntuMail.ServiceInformation new_imap_service() {
+        var service = new GriabuntuMail.ServiceInformation(
+            GriabuntuMail.Protocol.IMAP, this.provider
         );
-        service.credentials = new Convey.Credentials(
-            Convey.Credentials.Method.PASSWORD, ""
+        service.credentials = new GriabuntuMail.Credentials(
+            GriabuntuMail.Credentials.Method.PASSWORD, ""
         );
         return service;
     }
 
-    private Convey.ServiceInformation new_smtp_service() {
-        return new Convey.ServiceInformation(
-            Convey.Protocol.SMTP, this.provider
+    private GriabuntuMail.ServiceInformation new_smtp_service() {
+        return new GriabuntuMail.ServiceInformation(
+            GriabuntuMail.Protocol.SMTP, this.provider
         );
     }
 
@@ -299,8 +300,8 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
             throws Accounts.AutoConfigError {
         AutoConfigValues auto_config_values = auto_config.get_config.end(res);
 
-        Convey.ServiceInformation imap_service = this.receiving_service_widget.service;
-        Convey.ServiceInformation smtp_service = this.sending_service_widget.service;
+        GriabuntuMail.ServiceInformation imap_service = this.receiving_service_widget.service;
+        GriabuntuMail.ServiceInformation smtp_service = this.sending_service_widget.service;
 
         imap_service.host = auto_config_values.imap_server;
         imap_service.port = (uint16) uint.parse(auto_config_values.imap_port);
@@ -317,20 +318,20 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
 
         switch (auto_config_values.id) {
         case "googlemail.com":
-            this.provider = Convey.ServiceProvider.GMAIL;
+            this.provider = GriabuntuMail.ServiceProvider.GMAIL;
             break;
         case "hotmail.com":
-            this.provider = Convey.ServiceProvider.OUTLOOK;
+            this.provider = GriabuntuMail.ServiceProvider.OUTLOOK;
             break;
         default:
-            this.provider = Convey.ServiceProvider.OTHER;
+            this.provider = GriabuntuMail.ServiceProvider.OTHER;
             break;
         }
     }
 
     private void set_server_settings_from_hostname(string hostname) {
-        Convey.ServiceInformation imap_service = this.receiving_service_widget.service;
-        Convey.ServiceInformation smtp_service = this.sending_service_widget.service;
+        GriabuntuMail.ServiceInformation imap_service = this.receiving_service_widget.service;
+        GriabuntuMail.ServiceInformation smtp_service = this.sending_service_widget.service;
         string smtp_hostname = "smtp." + hostname;
         string imap_hostname = "imap." + hostname;
         string last_imap_hostname = "";
@@ -411,14 +412,14 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         // Do not update entries if changed by user
         if (imap_service.credentials == null ||
             imap_service.credentials.user == this.last_valid_email) {
-            imap_service.credentials = new Convey.Credentials(
-                Convey.Credentials.Method.PASSWORD, email
+            imap_service.credentials = new GriabuntuMail.Credentials(
+                GriabuntuMail.Credentials.Method.PASSWORD, email
             );
         }
         if (smtp_service.credentials == null ||
             smtp_service.credentials.user == this.last_valid_email) {
-            smtp_service.credentials = new Convey.Credentials(
-                Convey.Credentials.Method.PASSWORD, email
+            smtp_service.credentials = new GriabuntuMail.Credentials(
+                GriabuntuMail.Credentials.Method.PASSWORD, email
             );
         }
 
@@ -439,9 +440,9 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
         });
     }
 
-    private void on_untrusted_host(Convey.AccountInformation account,
-                                   Convey.ServiceInformation service,
-                                   Convey.Endpoint endpoint,
+    private void on_untrusted_host(GriabuntuMail.AccountInformation account,
+                                   GriabuntuMail.ServiceInformation service,
+                                   GriabuntuMail.Endpoint endpoint,
                                    GLib.TlsConnection cx) {
         this.editor.prompt_pin_certificate.begin(
             account, service, endpoint, this.op_cancellable,
@@ -463,11 +464,11 @@ internal class Accounts.EditorAddPane : Accounts.EditorPane {
     private void on_action_button_clicked() {
         if (this.stack.get_visible_child_name() == "user_settings") {
             switch (this.provider) {
-            case Convey.ServiceProvider.GMAIL:
-            case Convey.ServiceProvider.OUTLOOK:
+            case GriabuntuMail.ServiceProvider.GMAIL:
+            case GriabuntuMail.ServiceProvider.OUTLOOK:
                 add_goa_account();
                 break;
-            case Convey.ServiceProvider.OTHER:
+            case GriabuntuMail.ServiceProvider.OTHER:
                 switch_to_server_settings();
                 break;
             }

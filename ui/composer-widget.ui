@@ -81,7 +81,7 @@
                                 </child>
                                 <style>
                                   <class name="property"/>
-                                  <class name="convey-composer-from"/>
+                                  <class name="griabuntu-mail-composer-from"/>
                                 </style>
                               </object>
                             </child>
@@ -196,7 +196,7 @@
               <placeholder/>
             </child>
             <style>
-              <class name="convey-attachments-box"/>
+              <class name="griabuntu-mail-attachments-box"/>
             </style>
           </object>
         </child>

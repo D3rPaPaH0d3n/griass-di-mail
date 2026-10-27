@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /* Private downstream tests, 2026-10-26. GPL-3.0-only; see COPYING. */
@@ -16,7 +17,7 @@ public class Application.NotificationTestSink : GLib.Object {
 public class Application.NotificationActionsTest : TestCase {
     /** Desktop fixture: all callbacks only print; no Client or mail store exists. */
     public static int run_fixture() {
-        var app = new GLib.Application("net.donnybeelo.Convey.NotificationFixture", FLAGS_NONE);
+        var app = new GLib.Application("io.github.d3rpapah0d3n.GriabuntuMail.NotificationFixture", FLAGS_NONE);
         GLib.Intl.setlocale(LocaleCategory.ALL, "");
         GLib.Intl.bindtextdomain(Config.GETTEXT_PACKAGE, "/app/share/locale");
         GLib.Intl.textdomain(Config.GETTEXT_PACKAGE);
@@ -33,7 +34,7 @@ public class Application.NotificationActionsTest : TestCase {
         }
         app.activate.connect(() => {
             app.hold();
-            var notice = new GLib.Notification("Convey: synthetischer Aktionstest");
+            var notice = new GLib.Notification("Griabuntu Mail: synthetischer Aktionstest");
             notice.set_body("Keine echte Mail – alle drei Buttons sind gefahrlos.");
             NotificationActions.add_buttons(notice, make_target());
             app.send_notification("synthetic-actions", notice);
@@ -43,23 +44,23 @@ public class Application.NotificationActionsTest : TestCase {
                 return false;
             });
         });
-        return app.run({"convey-notification-fixture"});
+        return app.run({"griabuntu-mail-notification-fixture"});
     }
 
-    private class MovableFolder : Mock.Folder, Convey.FolderSupport.Move {
+    private class MovableFolder : Mock.Folder, GriabuntuMail.FolderSupport.Move {
         public int moves = 0;
-        public Convey.EmailIdentifier? moved = null;
-        public Convey.FolderPath? destination = null;
+        public GriabuntuMail.EmailIdentifier? moved = null;
+        public GriabuntuMail.FolderPath? destination = null;
         public bool fail_move = false;
-        public MovableFolder(Convey.Account account, Convey.FolderPath path) {
+        public MovableFolder(GriabuntuMail.Account account, GriabuntuMail.FolderPath path) {
             base(account, null, path, INBOX, null);
         }
-        public async Convey.Revokable? move_email_async(
-            Gee.Collection<Convey.EmailIdentifier> ids, Convey.FolderPath path,
+        public async GriabuntuMail.Revokable? move_email_async(
+            Gee.Collection<GriabuntuMail.EmailIdentifier> ids, GriabuntuMail.FolderPath path,
             GLib.Cancellable? cancellable = null) throws GLib.Error {
             this.moves++;
             assert(ids.size == 1);
-            this.moved = Convey.Collection.first(ids);
+            this.moved = GriabuntuMail.Collection.first(ids);
             this.destination = path;
             if (this.fail_move) throw new GLib.IOError.FAILED("Synthetic move error");
             return null;
@@ -92,7 +93,7 @@ public class Application.NotificationActionsTest : TestCase {
                                             string folder_account = "one",
                                             int64 row = 42, int64 uid = 7) {
         var raw = new GLib.Variant("(y(xx))", (uchar) 'i', row, uid);
-        var path = new Convey.FolderRoot("#imap", false).get_child("INBOX");
+        var path = new GriabuntuMail.FolderRoot("#imap", false).get_child("INBOX");
         return NotificationActions.target(
             new GLib.Variant("(sv)", email_account, raw),
             new GLib.Variant("(sv)", folder_account, path.to_variant())
@@ -142,7 +143,7 @@ public class Application.NotificationActionsTest : TestCase {
         bool expired = false;
         uint timer = GLib.Timeout.add_seconds(5, () => { expired = true; return false; });
         while (!name_acquired && !expired) this.main_loop.iteration(true);
-        var app = new GLib.Application("net.donnybeelo.Convey.NotificationTest", NON_UNIQUE);
+        var app = new GLib.Application("io.github.d3rpapah0d3n.GriabuntuMail.NotificationTest", NON_UNIQUE);
         app.register();
         app.send_notification("synthetic", notice);
         while (sink.received == null && !expired) this.main_loop.iteration(true);
@@ -173,9 +174,9 @@ public class Application.NotificationActionsTest : TestCase {
         assert_null(send_to_sink(notice).lookup("buttons"));
     }
 
-    private Mock.Folder source(Convey.Folder.SpecialUse use = INBOX) {
+    private Mock.Folder source(GriabuntuMail.Folder.SpecialUse use = INBOX) {
         return new Mock.Folder(null, null,
-            new Convey.FolderRoot("#test", false).get_child("INBOX"), use, null);
+            new GriabuntuMail.FolderRoot("#test", false).get_child("INBOX"), use, null);
     }
     private void check(Mock.Folder folder, GLib.Cancellable? cancel = null) throws GLib.Error {
         NotificationActions.check_source.begin(folder, new Mock.EmailIdentifer(42), cancel,
@@ -185,7 +186,7 @@ public class Application.NotificationActionsTest : TestCase {
     private void expect_present(Mock.Folder folder, int row = 42) {
         folder.expect_call("open_async");
         folder.expect_call("contains_identifiers").returns_object(
-            new Gee.ArrayList<Convey.EmailIdentifier>.wrap({new Mock.EmailIdentifer(row)})
+            new Gee.ArrayList<GriabuntuMail.EmailIdentifier>.wrap({new Mock.EmailIdentifer(row)})
         );
         folder.expect_call("close_async");
     }
@@ -201,20 +202,20 @@ public class Application.NotificationActionsTest : TestCase {
         folder.expect_call("contains_identifiers");
         folder.expect_call("close_async");
         try { check(folder); assert_not_reached(); }
-        catch (Convey.EngineError.NOT_FOUND error) {}
+        catch (GriabuntuMail.EngineError.NOT_FOUND error) {}
         folder.assert_expectations();
     }
     public void different_mail_rejected() throws GLib.Error {
         var folder = source();
         expect_present(folder, 99);
         try { check(folder); assert_not_reached(); }
-        catch (Convey.EngineError.NOT_FOUND error) {}
+        catch (GriabuntuMail.EngineError.NOT_FOUND error) {}
         folder.assert_expectations();
     }
     public void unsafe_source_rejected() throws GLib.Error {
         var folder = source(TRASH);
         try { check(folder); assert_not_reached(); }
-        catch (Convey.EngineError.BAD_PARAMETERS error) {}
+        catch (GriabuntuMail.EngineError.BAD_PARAMETERS error) {}
         folder.assert_expectations();
     }
     public void source_open_failure() throws GLib.Error {
@@ -243,12 +244,12 @@ public class Application.NotificationActionsTest : TestCase {
     }
 
     private Mock.Account account(string id) {
-        return new Mock.Account(new Convey.AccountInformation(id, Convey.ServiceProvider.OTHER,
-            new Mock.CredentialsMediator(), new Convey.RFC822.MailboxAddress(null, "fixture@example.test")));
+        return new Mock.Account(new GriabuntuMail.AccountInformation(id, GriabuntuMail.ServiceProvider.OTHER,
+            new Mock.CredentialsMediator(), new GriabuntuMail.RFC822.MailboxAddress(null, "fixture@example.test")));
     }
-    private void move(Convey.Folder.SpecialUse use, bool fail = false) throws GLib.Error {
+    private void move(GriabuntuMail.Folder.SpecialUse use, bool fail = false) throws GLib.Error {
         var owner = account("one");
-        var root = new Convey.FolderRoot("#test", false);
+        var root = new GriabuntuMail.FolderRoot("#test", false);
         var folder = new MovableFolder(owner, root.get_child("INBOX"));
         var dest = new Mock.Folder(owner, null, root.get_child("Destination"), use, null);
         var commands = new CommandStack();
@@ -273,14 +274,14 @@ public class Application.NotificationActionsTest : TestCase {
     public void move_failure_closes_source() throws GLib.Error { move(TRASH, true); }
     private void reject_move(bool cross_account) throws GLib.Error {
         var owner = account("one");
-        var root = new Convey.FolderRoot("#test", false);
+        var root = new GriabuntuMail.FolderRoot("#test", false);
         var folder = new MovableFolder(owner, root.get_child("INBOX"));
         var dest = new Mock.Folder(cross_account ? account("two") : owner, null,
-            root.get_child("Destination"), cross_account ? Convey.Folder.SpecialUse.TRASH : Convey.Folder.SpecialUse.SENT, null);
+            root.get_child("Destination"), cross_account ? GriabuntuMail.Folder.SpecialUse.TRASH : GriabuntuMail.Folder.SpecialUse.SENT, null);
         NotificationActions.move_message.begin(folder, dest, new Mock.EmailIdentifer(42),
             new CommandStack(), new GLib.Cancellable(), this.async_completion);
         try { NotificationActions.move_message.end(async_result()); assert_not_reached(); }
-        catch (Convey.EngineError.BAD_PARAMETERS error) {}
+        catch (GriabuntuMail.EngineError.BAD_PARAMETERS error) {}
         assert_true(folder.moves == 0);
         folder.assert_expectations();
     }

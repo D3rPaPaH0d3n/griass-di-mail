@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2017-2020 Michael Gratton <mike@vee.net>
@@ -11,8 +12,8 @@
 /**
  * A widget for editing the body of an email message.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/composer-editor.ui")]
-public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/composer-editor.ui")]
+public class Composer.Editor : Gtk.Grid, GriabuntuMail.BaseInterface {
 
     private const string ACTION_BOLD = "bold";
     private const string ACTION_COLOR = "color";
@@ -82,7 +83,7 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
 
 
     static construct {
-        set_css_name("convey-composer-editor");
+        set_css_name("griabuntu-mail-composer-editor");
     }
 
     public static void add_accelerators(Application.Client application) {
@@ -115,9 +116,9 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
     private string? cursor_url = null;
 
     // Timeout for showing the slow image paste pulsing bar
-    private Convey.TimeoutManager show_background_work_timeout = null;
+    private GriabuntuMail.TimeoutManager show_background_work_timeout = null;
     // Timer for pulsing progress bar
-    private Convey.TimeoutManager background_work_pulse;
+    private GriabuntuMail.TimeoutManager background_work_pulse;
 
     private Menu context_menu_model;
     private Menu context_menu_rich_text;
@@ -159,7 +160,7 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
         this.config = config;
 
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/net/donnybeelo/Convey/composer-editor-menus.ui"
+            "/io/github/d3rpapah0d3n/GriabuntuMail/composer-editor-menus.ui"
         );
         this.context_menu_model = (Menu) builder.get_object("context_menu_model");
         this.context_menu_rich_text = (Menu) builder.get_object("context_menu_rich_text");
@@ -230,10 +231,10 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
             config.set_spell_check_languages(active_langs);
         });
 
-        this.show_background_work_timeout = new Convey.TimeoutManager.milliseconds(
+        this.show_background_work_timeout = new GriabuntuMail.TimeoutManager.milliseconds(
             Util.Gtk.SHOW_PROGRESS_TIMEOUT_MSEC, this.on_background_work_timeout
         );
-        this.background_work_pulse = new Convey.TimeoutManager.milliseconds(
+        this.background_work_pulse = new GriabuntuMail.TimeoutManager.milliseconds(
             Util.Gtk.PROGRESS_PULSE_TIMEOUT_MSEC, this.background_progress.pulse
         );
         this.background_work_pulse.repetition = FOREVER;
@@ -295,7 +296,7 @@ public class Composer.Editor : Gtk.Grid, Convey.BaseInterface {
         this.show_formatting_button.visible = false;
         set_size_request(-1, 200);
 
-        this.body.load_signature(Convey.HTML.smart_escape(signature));
+        this.body.load_signature(GriabuntuMail.HTML.smart_escape(signature));
     }
 
     private void on_signature_insert_image(bool from_clipboard) {

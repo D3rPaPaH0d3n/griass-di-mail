@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -18,7 +19,7 @@
  * This class is ''not'' thread safe and should only be used by
  * asynchronous tasks.
  */
-public class Convey.Nonblocking.CountingSemaphore : Convey.Nonblocking.Lock {
+public class GriabuntuMail.Nonblocking.CountingSemaphore : GriabuntuMail.Nonblocking.Lock {
     /**
      * The number of tasks which have {@link acquire} the semaphore.
      */

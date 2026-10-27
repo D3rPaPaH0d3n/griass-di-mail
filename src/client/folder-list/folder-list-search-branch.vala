@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,22 +11,22 @@
  * This branch is a top-level container for a search entry.
  */
 public class FolderList.SearchBranch : Sidebar.RootOnlyBranch {
-    public SearchBranch(Convey.App.SearchFolder folder, Convey.Engine engine) {
+    public SearchBranch(GriabuntuMail.App.SearchFolder folder, GriabuntuMail.Engine engine) {
         base(new SearchEntry(folder, engine));
     }
 
-    public Convey.App.SearchFolder get_search_folder() {
-        return (Convey.App.SearchFolder) ((SearchEntry) get_root()).folder;
+    public GriabuntuMail.App.SearchFolder get_search_folder() {
+        return (GriabuntuMail.App.SearchFolder) ((SearchEntry) get_root()).folder;
     }
 }
 
 public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
 
-    Convey.Engine engine;
+    GriabuntuMail.Engine engine;
     private int account_count = 0;
 
-    public SearchEntry(Convey.App.SearchFolder folder,
-                       Convey.Engine engine) {
+    public SearchEntry(GriabuntuMail.App.SearchFolder folder,
+                       GriabuntuMail.Engine engine) {
         base(folder);
         this.engine = engine;
 
@@ -38,7 +39,7 @@ public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
         this.engine.account_available.connect(on_accounts_changed);
         this.engine.account_unavailable.connect(on_accounts_changed);
         folder.properties.notify[
-            Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
+            GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL
         ].connect(on_email_total_changed);
     }
 
@@ -46,7 +47,7 @@ public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
         this.engine.account_available.disconnect(on_accounts_changed);
         this.engine.account_unavailable.disconnect(on_accounts_changed);
         folder.properties.notify[
-            Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
+            GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL
         ].disconnect(on_email_total_changed);
     }
 
@@ -69,8 +70,8 @@ public class FolderList.SearchEntry : FolderList.AbstractFolderEntry {
         return "SearchEntry: " + folder.to_string();
     }
 
-    private void on_accounts_changed(Convey.Engine engine,
-                                     Convey.AccountInformation config) {
+    private void on_accounts_changed(GriabuntuMail.Engine engine,
+                                     GriabuntuMail.AccountInformation config) {
         entry_changed();
         try {
             this.account_count = engine.get_accounts().size;

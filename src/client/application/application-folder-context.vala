@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -11,7 +12,7 @@
 /**
  * Collects application state related to a single folder.
  */
-public class Application.FolderContext : Convey.BaseObject,
+public class Application.FolderContext : GriabuntuMail.BaseObject,
     Gee.Comparable<FolderContext> {
 
 
@@ -32,7 +33,7 @@ public class Application.FolderContext : Convey.BaseObject,
      * only the ones a message can plausibly belong in are: the rest
      * are maintained by the account itself.
      */
-    public static bool is_user_destination(Convey.Folder folder) {
+    public static bool is_user_destination(GriabuntuMail.Folder folder) {
         switch (folder.used_as) {
         case NONE:
         case INBOX:
@@ -47,7 +48,7 @@ public class Application.FolderContext : Convey.BaseObject,
     }
 
     /** The account for this context. */
-    public Convey.Folder folder { get; private set; }
+    public GriabuntuMail.Folder folder { get; private set; }
 
     /** Returns the human-readable name of the folder */
     public string display_name { get; set; }
@@ -59,7 +60,7 @@ public class Application.FolderContext : Convey.BaseObject,
     public EmailCount displayed_count { get; set; }
 
 
-    public FolderContext(Convey.Folder folder) {
+    public FolderContext(GriabuntuMail.Folder folder) {
         this.folder = folder;
         this.folder.use_changed.connect(() => update());
         update();
@@ -73,7 +74,7 @@ public class Application.FolderContext : Convey.BaseObject,
         var service_provider = this.folder.account.information.service_provider;
 
         switch (service_provider) {
-        case Convey.ServiceProvider.GMAIL:
+        case GriabuntuMail.ServiceProvider.GMAIL:
             return "tag-symbolic";
         default:
             return "folder-symbolic";

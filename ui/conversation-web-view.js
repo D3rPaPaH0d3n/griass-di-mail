@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016 Michael Gratton <mike@vee.net>
@@ -15,8 +16,8 @@ let ConversationPageState = function() {
     this.init.apply(this, arguments);
 };
 
-ConversationPageState.QUOTE_CONTAINER_CLASS = "convey-quote-container";
-ConversationPageState.QUOTE_HIDE_CLASS = "convey-hide";
+ConversationPageState.QUOTE_CONTAINER_CLASS = "griabuntu-mail-quote-container";
+ConversationPageState.QUOTE_HIDE_CLASS = "griabuntu-mail-hide";
 
 // Keep these in sync with ConversationWebView
 ConversationPageState.NOT_DECEPTIVE = 0;
@@ -103,11 +104,11 @@ ConversationPageState.prototype = {
      * Add email headers for printing
      */
     addPrintHeaders: function(headers) {
-        let headerTable = document.getElementById('convey-message-headers');
+        let headerTable = document.getElementById('griabuntu-mail-message-headers');
         if (headerTable) headerTable.parentNode.removeChild(headerTable);
 
         headerTable = document.createElement('table');
-        headerTable.id = 'convey-message-headers';
+        headerTable.id = 'griabuntu-mail-message-headers';
         for (var header in headers) {
             let row = headerTable.appendChild(document.createElement('tr'));
             let name = row.appendChild(document.createElement('th'));
@@ -159,14 +160,14 @@ ConversationPageState.prototype = {
                     ConversationPageState.QUOTE_CONTAINER_CLASS
                 );
                 if (isControllable) {
-                    quoteContainer.classList.add("convey-controllable");
+                    quoteContainer.classList.add("griabuntu-mail-controllable");
                     quoteContainer.classList.add(
                         ConversationPageState.QUOTE_HIDE_CLASS
                     );
                 }
 
                 let quoteDiv = document.createElement("DIV");
-                quoteDiv.classList.add("convey-quote");
+                quoteDiv.classList.add("griabuntu-mail-quote");
 
                 quoteDiv.appendChild(blockquote);
                 quoteContainer.appendChild(quoteDiv);
@@ -177,7 +178,7 @@ ConversationPageState.prototype = {
                 let state = this;
                 function newControllerButton(styleClass, text) {
                     let button = document.createElement("BUTTON");
-                    button.classList.add("convey-button");
+                    button.classList.add("griabuntu-mail-button");
                     button.type = "button";
                     button.onclick = function() {
                         let hide = ConversationPageState.QUOTE_HIDE_CLASS;
@@ -206,10 +207,10 @@ ConversationPageState.prototype = {
 
                 if (isControllable) {
                     quoteContainer.appendChild(newControllerButton(
-                        "convey-shower", "▼        ▼        ▼"
+                        "griabuntu-mail-shower", "▼        ▼        ▼"
                     ));
                     quoteContainer.appendChild(newControllerButton(
-                        "convey-hider", "▲        ▲        ▲"
+                        "griabuntu-mail-hider", "▲        ▲        ▲"
                     ));
                 }
             }
@@ -256,7 +257,7 @@ ConversationPageState.prototype = {
             let elem = possibleSigs.item(i);
             let parent = elem.parentNode;
             let signatureContainer = document.createElement("DIV");
-            signatureContainer.classList.add("convey-signature");
+            signatureContainer.classList.add("griabuntu-mail-signature");
             do {
                 // Get its sibling _before_ we move it into the signature div.
                 let sibling = elem.nextSibling;
@@ -438,4 +439,4 @@ ConversationPageState.isDescendantOf = function(node,
     return false;
 };
 
-var convey = new ConversationPageState();
+var griabuntu_mail = new ConversationPageState();

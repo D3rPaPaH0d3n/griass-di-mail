@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -7,10 +8,10 @@
  */
 
 /**
- * Adapts a progress bar to automatically display progress of a Convey.ProgressMonitor.
+ * Adapts a progress bar to automatically display progress of a GriabuntuMail.ProgressMonitor.
  */
 public class MonitoredProgressBar : Adw.Bin {
-    private Convey.ProgressMonitor? monitor = null;
+    private GriabuntuMail.ProgressMonitor? monitor = null;
 
     private Gtk.ProgressBar progress_bar;
 
@@ -19,7 +20,7 @@ public class MonitoredProgressBar : Adw.Bin {
         this.child = this.progress_bar;
     }
 
-    public void set_progress_monitor(Convey.ProgressMonitor monitor) {
+    public void set_progress_monitor(GriabuntuMail.ProgressMonitor monitor) {
         this.monitor = monitor;
         monitor.start.connect(on_start);
         monitor.finish.connect(on_finish);
@@ -32,7 +33,7 @@ public class MonitoredProgressBar : Adw.Bin {
         this.progress_bar.fraction = 0.0;
     }
 
-    private void on_update(double total_progress, double change, Convey.ProgressMonitor monitor) {
+    private void on_update(double total_progress, double change, GriabuntuMail.ProgressMonitor monitor) {
         this.progress_bar.fraction = total_progress;
     }
 

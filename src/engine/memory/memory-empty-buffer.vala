@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -12,7 +13,7 @@
  * Because all EmptyBuffers are the same and immutable, only a single may be used: {@link instance}.
  */
 
-public class Convey.Memory.EmptyBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
+public class GriabuntuMail.Memory.EmptyBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
     Memory.UnownedBytesBuffer, Memory.UnownedByteArrayBuffer {
     private static EmptyBuffer? _instance = null;
     public static EmptyBuffer instance {

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017-2018 Michael Gratton <mike@vee.net>
  *
@@ -19,8 +20,8 @@
  * occurs the error will be suppressed and it will be re-attempted
  * once, to allow for the network dropping out mid-execution.
  */
-internal class Convey.ImapEngine.AccountProcessor :
-    Convey.BaseObject, Logging.Source {
+internal class GriabuntuMail.ImapEngine.AccountProcessor :
+    GriabuntuMail.BaseObject, Logging.Source {
 
 
     // Retry ops after network failures at least once before giving up

@@ -1,5 +1,15 @@
 # AI handoff — Griabuntu Mail
 
+**Current continuation, 2026-10-27:** the owner chose native `.deb` packaging,
+approved a fresh native setup and then requested the complete name/identity
+refactor. Current decisions and paths are in [IDENTITY.md](IDENTITY.md); root
+[AGENTS.md](../AGENTS.md) and [BUILDING.md](../BUILDING.md) govern new work. The
+repository is now `D3rPaPaH0d3n/griabuntu-mail`. The earlier handoff below is
+historical evidence for its named source commits, not current app identity or
+current flag-test status. Original hashes, licences and author records remain.
+
+---
+
 **Consolidated on 2026-10-26.** This is the entry point for another AI agent to
 continue the project. It consolidates source, original graphics, decisions,
 licensing work, test evidence and pending work; it does not authorise a public

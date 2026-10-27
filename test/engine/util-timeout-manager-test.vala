@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.TimeoutManagerTest : TestCase {
+class GriabuntuMail.TimeoutManagerTest : TestCase {
 
     // add_seconds seems to vary wildly, so needs a large epsilon
     private const double SECONDS_EPSILON = 1.8;
@@ -40,7 +41,7 @@ class Convey.TimeoutManagerTest : TestCase {
 
 
     public TimeoutManagerTest() {
-        base("Convey.TimeoutManagerTest");
+        base("GriabuntuMail.TimeoutManagerTest");
         add_test("weak_ref", callback_weak_ref);
         add_test("start_reset", start_reset);
         if (Test.slow()) {

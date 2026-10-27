@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
@@ -10,12 +11,12 @@
 /**
  * An account editor pane for editing a specific account's preferences.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_edit_pane.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts_editor_edit_pane.ui")]
 internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
 
 
     /** {@inheritDoc} */
-    internal Convey.AccountInformation account { get ; protected set; }
+    internal GriabuntuMail.AccountInformation account { get ; protected set; }
 
     /** {@inheritDoc} */
     internal Application.CommandStack commands {
@@ -51,13 +52,13 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     [GtkChild] private unowned Gtk.Button remove_button;
 
 
-    public EditorEditPane(Editor editor, Convey.AccountInformation account) {
+    public EditorEditPane(Editor editor, GriabuntuMail.AccountInformation account) {
         this.editor = editor;
         this.account = account;
 
         update_display_name();
 
-        foreach (Convey.RFC822.MailboxAddress sender in
+        foreach (GriabuntuMail.RFC822.MailboxAddress sender in
                  account.sender_mailboxes) {
             this.senders_list.append(new_mailbox_row(sender));
         }
@@ -218,7 +219,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     internal string? get_default_name() {
         string? name = this.account.primary_mailbox.name;
 
-        if (Convey.String.is_empty_or_whitespace(name)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(name)) {
             name = this.editor.accounts.get_account_name();
         }
 
@@ -234,7 +235,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         return signature_editor;
     }
 
-    internal MailboxRow new_mailbox_row(Convey.RFC822.MailboxAddress sender) {
+    internal MailboxRow new_mailbox_row(GriabuntuMail.RFC822.MailboxAddress sender) {
         MailboxRow row = new MailboxRow(this.account, sender, this);
         row.move_to.connect(on_sender_row_moved);
         row.dropped.connect(on_sender_row_dropped);
@@ -290,7 +291,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         if (!this.editor.accounts.is_goa_account(account)) {
             var dialog = new Adw.AlertDialog(
                 _("Remove Account: %s").printf(account.primary_mailbox.address),
-                _("This will remove it from Convey and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
+                _("This will remove it from Griabuntu Mail and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
             );
             dialog.add_css_class("warning");
 
@@ -375,9 +376,9 @@ public enum Accounts.PrefetchPeriod {
 
 private class Accounts.MailboxRow : Adw.ActionRow {
 
-    public Convey.AccountInformation account { get; construct set; }
+    public GriabuntuMail.AccountInformation account { get; construct set; }
 
-    public Convey.RFC822.MailboxAddress mailbox { get; construct set; }
+    public GriabuntuMail.RFC822.MailboxAddress mailbox { get; construct set; }
 
     public unowned Accounts.EditorEditPane pane { get; construct set; }
 
@@ -389,8 +390,8 @@ private class Accounts.MailboxRow : Adw.ActionRow {
     public signal void dropped(MailboxRow target);
 
 
-    public MailboxRow(Convey.AccountInformation account,
-                      Convey.RFC822.MailboxAddress mailbox,
+    public MailboxRow(GriabuntuMail.AccountInformation account,
+                      GriabuntuMail.RFC822.MailboxAddress mailbox,
                       Accounts.EditorEditPane pane) {
         Object(
             account: account,
@@ -414,7 +415,7 @@ private class Accounts.MailboxRow : Adw.ActionRow {
         this.drag_handle.valign = Gtk.Align.CENTER;
         // Translators: Tooltip for dragging list items
         this.drag_handle.set_tooltip_text(_("Drag to move this item"));
-        this.drag_handle.add_css_class("convey-drag-handle");
+        this.drag_handle.add_css_class("griabuntu-mail-drag-handle");
         add_suffix(this.drag_handle);
 
         var drag_source = new Gtk.DragSource();
@@ -434,7 +435,7 @@ private class Accounts.MailboxRow : Adw.ActionRow {
         drop_target.drop.connect(on_drop);
         add_controller(drop_target);
 
-        add_css_class("convey-draggable");
+        add_css_class("griabuntu-mail-draggable");
 
         var key_controller = new Gtk.EventControllerKey();
         key_controller.key_pressed.connect(on_key_pressed);
@@ -452,14 +453,14 @@ private class Accounts.MailboxRow : Adw.ActionRow {
     private void on_drag_begin(Gtk.DragSource source, Gdk.Drag drag) {
         var paintable = new Gtk.WidgetPaintable(this);
         source.set_icon(paintable, 0, 0);
-        add_css_class("convey-drag-source");
+        add_css_class("griabuntu-mail-drag-source");
         this.drag_picked_up = true;
     }
 
     private void on_drag_end(Gtk.DragSource source,
                              Gdk.Drag drag,
                              bool delete_data) {
-        remove_css_class("convey-drag-source");
+        remove_css_class("griabuntu-mail-drag-source");
         this.drag_picked_up = false;
     }
 
@@ -567,7 +568,7 @@ private class Accounts.MailboxRow : Adw.ActionRow {
         this.title = mailbox.address.strip();
 
         string? name = this.mailbox.name;
-        if (Convey.String.is_empty_or_whitespace(name)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(name)) {
             // Translators: Label used to indicate the user has
             // provided no display name for one of their sender
             // email addresses in their account settings.
@@ -627,16 +628,16 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
 
 
     private MailboxRow row;
-    private Convey.RFC822.MailboxAddress new_mailbox;
+    private GriabuntuMail.RFC822.MailboxAddress new_mailbox;
     private string new_signature;
 
-    private Convey.RFC822.MailboxAddress old_mailbox;
+    private GriabuntuMail.RFC822.MailboxAddress old_mailbox;
     private string old_signature;
     private int mailbox_index;
 
 
     public UpdateMailboxCommand(MailboxRow row,
-                                Convey.RFC822.MailboxAddress new_mailbox,
+                                GriabuntuMail.RFC822.MailboxAddress new_mailbox,
                                 string new_signature) {
         this.row = row;
         this.new_mailbox = new_mailbox;
@@ -685,13 +686,13 @@ internal class Accounts.ReorderMailboxCommand : Application.Command {
     private int source_index;
     private int target_index;
 
-    private Convey.AccountInformation account;
+    private GriabuntuMail.AccountInformation account;
     private Gtk.ListBox list;
 
 
     public ReorderMailboxCommand(MailboxRow source,
                                  int target_index,
-                                 Convey.AccountInformation account,
+                                 GriabuntuMail.AccountInformation account,
                                  Gtk.ListBox list) {
         this.source = source;
         this.source_index = source.get_index();
@@ -729,7 +730,7 @@ internal class Accounts.RemoveMailboxCommand : Application.Command {
 
     private MailboxRow row;
 
-    private Convey.RFC822.MailboxAddress mailbox;
+    private GriabuntuMail.RFC822.MailboxAddress mailbox;
     private int mailbox_index;
     private Gtk.ListBox list;
 
@@ -767,7 +768,7 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
     private Composer.WebView signature_view;
-    private Convey.AccountInformation account;
+    private GriabuntuMail.AccountInformation account;
 
     private string old_value;
     private bool old_enabled;
@@ -777,11 +778,11 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
     public SignatureChangedCommand(Composer.WebView signature_view,
-                                   Convey.AccountInformation account) {
+                                   GriabuntuMail.AccountInformation account) {
         this.signature_view = signature_view;
         this.account = account;
 
-        this.old_value = Convey.HTML.smart_escape(account.signature);
+        this.old_value = GriabuntuMail.HTML.smart_escape(account.signature);
         this.old_enabled = account.use_signature;
 
         // Translators: Label used as the undo tooltip after removing
@@ -793,7 +794,7 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
     public async override void execute(GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.new_value = yield this.signature_view.get_body_html();
-        this.new_enabled = !Convey.String.is_empty(this.new_value);
+        this.new_enabled = !GriabuntuMail.String.is_empty(this.new_value);
         update_account_signature(this.new_value, this.new_enabled);
     }
 

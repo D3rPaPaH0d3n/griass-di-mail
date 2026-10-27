@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.ImapEngine.GenericAccountTest : TestCase {
+public class GriabuntuMail.ImapEngine.GenericAccountTest : TestCase {
 
 
     internal class TestAccount : GenericAccount {
@@ -31,27 +32,27 @@ public class Convey.ImapEngine.GenericAccountTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
-    private Convey.AccountInformation? config = null;
+    private GriabuntuMail.AccountInformation? config = null;
     private ImapDB.Account? local_account = null;
 
 
     public GenericAccountTest() {
-        base("Convey.ImapEngine.GenericAccountTest");
+        base("GriabuntuMail.ImapEngine.GenericAccountTest");
         add_test("to_email_identifier", to_email_identifier);
     }
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
             GLib.DirUtils.make_tmp(
-                "convey-imap-engine-generic-account-test-XXXXXX"
+                "griabuntu-mail-imap-engine-generic-account-test-XXXXXX"
             )
         );
 
-        this.config = new Convey.AccountInformation(
+        this.config = new GriabuntuMail.AccountInformation(
             "test",
             ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Convey.RFC822.MailboxAddress(null, "test@example.com")
+            new GriabuntuMail.RFC822.MailboxAddress(null, "test@example.com")
         );
 
         this.local_account = new ImapDB.Account(

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -12,7 +13,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-7.2]] for more information.
  */
 
-public class Convey.Imap.ServerData : ServerResponse {
+public class GriabuntuMail.Imap.ServerData : ServerResponse {
     public ServerDataType server_data_type { get; private set; }
 
     private ServerData(Tag tag, ServerDataType server_data_type, Quirks quirks) {

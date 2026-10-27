@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -13,7 +14,7 @@
  * @see MailboxInformation
  */
 
-public class Convey.Imap.MailboxAttributes : Convey.Imap.Flags {
+public class GriabuntuMail.Imap.MailboxAttributes : GriabuntuMail.Imap.Flags {
     /**
      * True if the mailbox should not be accessed via SELECT, EXAMINE, or STATUS, i.e. is a
      * "no-select" mailbox.
@@ -60,9 +61,9 @@ public class Convey.Imap.MailboxAttributes : Convey.Imap.Flags {
      * Returns the special use specified for the mailbox.
      *
      * If no special use is set, returns {@link
-     * Convey.Folder.SpecialUse.NONE}.
+     * GriabuntuMail.Folder.SpecialUse.NONE}.
      */
-    public Convey.Folder.SpecialUse get_special_use() {
+    public GriabuntuMail.Folder.SpecialUse get_special_use() {
         if (contains(MailboxAttribute.SPECIAL_FOLDER_ALL))
             return ALL_MAIL;
 

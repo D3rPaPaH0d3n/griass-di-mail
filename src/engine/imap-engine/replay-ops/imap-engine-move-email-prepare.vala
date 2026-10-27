@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -14,7 +15,7 @@
  * messages to be removed, mark the messages as removed, and update
  * counts.
  */
-private class Convey.ImapEngine.MoveEmailPrepare : Convey.ImapEngine.SendReplayOperation {
+private class GriabuntuMail.ImapEngine.MoveEmailPrepare : GriabuntuMail.ImapEngine.SendReplayOperation {
     public Gee.Set<ImapDB.EmailIdentifier>? prepared_for_move = null;
 
     private MinimalFolder engine;

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.Client : Convey.BaseObject {
+internal class GriabuntuMail.Graph.Client : GriabuntuMail.BaseObject {
 
     public const string DEFAULT_BASE_URI = "https://graph.microsoft.com/v1.0";
     private const uint REQUEST_TIMEOUT_SEC = 30;
@@ -19,14 +20,14 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         "id%20eq%20'String%200x1042'%20or%20id%20eq%20'String%200x1039')";
 
 
-    internal class Message : Convey.BaseObject {
+    internal class Message : GriabuntuMail.BaseObject {
         public string id = "";
         public string conversation_id = "";
         public string parent_folder_id = "";
-        public Convey.RFC822.MailboxAddresses? from = null;
-        public Convey.RFC822.MailboxAddresses? to = null;
-        public Convey.RFC822.MailboxAddresses? cc = null;
-        public Convey.RFC822.MailboxAddresses? bcc = null;
+        public GriabuntuMail.RFC822.MailboxAddresses? from = null;
+        public GriabuntuMail.RFC822.MailboxAddresses? to = null;
+        public GriabuntuMail.RFC822.MailboxAddresses? cc = null;
+        public GriabuntuMail.RFC822.MailboxAddresses? bcc = null;
         public string subject = "";
         public string internet_message_id = "";
         public string in_reply_to = "";
@@ -45,7 +46,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
             new Gee.HashMap<string,string>();
     }
 
-    internal class MailFolder : Convey.BaseObject {
+    internal class MailFolder : GriabuntuMail.BaseObject {
         public string id = "";
         public string display_name = "";
         public string well_known_name = "";
@@ -54,7 +55,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         public int64 child_folder_count = 0;
     }
 
-    internal class DeltaResult : Convey.BaseObject {
+    internal class DeltaResult : GriabuntuMail.BaseObject {
         // Graph message IDs that were created or updated; fetch full
         // messages for these, delta entries don't carry reliable properties
         public Gee.Set<string> changed_ids = new Gee.HashSet<string>();
@@ -73,12 +74,12 @@ internal class Convey.Graph.Client : Convey.BaseObject {
 
     public signal void response_received();
 
-    private Convey.AccountInformation account;
+    private GriabuntuMail.AccountInformation account;
     private Soup.Session session;
     internal string base_uri { get; set; default = DEFAULT_BASE_URI; }
 
 
-    public Client(Convey.AccountInformation account,
+    public Client(GriabuntuMail.AccountInformation account,
                   string? base_uri = null) {
         this.account = account;
         this.session = new Soup.Session();
@@ -175,7 +176,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                             ordered = false;
                         }
                         break;
-                    } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
+                    } catch (GriabuntuMail.Graph.HttpError.BAD_REQUEST err) {
                         // Not all tenants/API versions support every field
                         // in this query; try the next, simpler one.
                         debug("Graph: list query %d rejected for folder %s, " +
@@ -184,7 +185,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     }
                 }
                 if (root == null) {
-                    throw new Convey.EngineError.SERVER_UNAVAILABLE(
+                    throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                         "Graph request failed (%s)",
                         path
                     );
@@ -318,7 +319,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         }
     }
 
-    public async Convey.Memory.Buffer fetch_message_rfc822(
+    public async GriabuntuMail.Memory.Buffer fetch_message_rfc822(
         string message_id,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
@@ -333,7 +334,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
             "message/rfc822",
             GLib.Priority.HIGH
         );
-        return new Convey.Memory.ByteBuffer(
+        return new GriabuntuMail.Memory.ByteBuffer(
             body.get_data(),
             (size_t) body.get_size()
         );
@@ -385,7 +386,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
             Json.Object root;
             try {
                 root = yield request_json_url(url, cancellable);
-            } catch (Convey.Graph.HttpError.GONE err) {
+            } catch (GriabuntuMail.Graph.HttpError.GONE err) {
                 // The cursor expired; caller must restart with a fresh
                 // baseline sync.
                 result.resync_required = true;
@@ -456,7 +457,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
      */
     public async string create_message_in_folder(
         string folder_id,
-        Convey.RFC822.Message rfc822,
+        GriabuntuMail.RFC822.Message rfc822,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         string encoded = GLib.Base64.encode(
@@ -474,7 +475,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         );
         string? id = get_string_member(result, "id");
         if (String.is_empty(id)) {
-            throw new Convey.EngineError.SERVER_UNAVAILABLE(
+            throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                 "Graph: create_message_in_folder returned no message id"
             );
         }
@@ -489,15 +490,15 @@ internal class Convey.Graph.Client : Convey.BaseObject {
     }
 
     public async string create_message_in_outbox(
-        Convey.ComposedEmail composed,
+        GriabuntuMail.ComposedEmail composed,
         GLib.Cancellable? cancellable = null
     ) throws GLib.Error {
         string domain = this.account.primary_mailbox.domain;
         if (!composed.from.is_empty) {
             domain = composed.from[0].domain;
         }
-        Convey.RFC822.Message rfc822 =
-            yield new Convey.RFC822.Message.from_composed_email(
+        GriabuntuMail.RFC822.Message rfc822 =
+            yield new GriabuntuMail.RFC822.Message.from_composed_email(
                 composed,
                 GMime.utils_generate_message_id(domain),
                 GMime.EncodingConstraint.8BIT,
@@ -518,14 +519,14 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         );
         string? id = get_string_member(result, "id");
         if (String.is_empty(id)) {
-            throw new Convey.EngineError.SERVER_UNAVAILABLE(
+            throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                 "Graph: create_message_in_outbox returned no message id"
             );
         }
         // Graph preserves the MIME body, but the saved draft can lose the
         // explicit recipient envelope unless it is patched separately.
         yield patch_message_recipients(id, composed, cancellable);
-        Convey.Memory.Buffer? pgp_mime = rfc822.get_pgp_mime_buffer();
+        GriabuntuMail.Memory.Buffer? pgp_mime = rfc822.get_pgp_mime_buffer();
         if (pgp_mime != null) {
             yield replace_with_pgp_mime_attachment(id, pgp_mime, cancellable);
         }
@@ -547,7 +548,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         yield request_no_content("POST", path, null, cancellable);
     }
 
-    public async void send_composed_email(Convey.ComposedEmail composed,
+    public async void send_composed_email(GriabuntuMail.ComposedEmail composed,
                                           bool save_to_sent_items,
                                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
@@ -741,13 +742,13 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     cancellable
                 );
                 break;
-            } catch (Convey.Graph.HttpError.BAD_REQUEST err) {
+            } catch (GriabuntuMail.Graph.HttpError.BAD_REQUEST err) {
                 continue;
             }
         }
 
         if (root == null) {
-            throw new Convey.EngineError.SERVER_UNAVAILABLE(
+            throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                 "Graph: all list_mail_folders queries failed"
             );
         }
@@ -892,9 +893,9 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         while (true) {
             yield this.account.load_incoming_credentials(cancellable);
 
-            Convey.Credentials? credentials = this.account.incoming.credentials;
+            GriabuntuMail.Credentials? credentials = this.account.incoming.credentials;
             if (credentials == null || String.is_empty(credentials.token)) {
-                throw new Convey.EngineError.SERVER_UNAVAILABLE(
+                throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                     "No Graph OAuth token available"
                 );
             }
@@ -927,7 +928,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     timeout_retries++;
                     continue;
                 }
-                throw new Convey.EngineError.SERVER_UNAVAILABLE(
+                throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                     "Graph request timed out (%s)",
                     uri
                 );
@@ -948,7 +949,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                     ),
                     MAX_RETRY_AFTER_SEC
                 );
-                yield Convey.Scheduler.sleep_async(wait_sec);
+                yield GriabuntuMail.Scheduler.sleep_async(wait_sec);
                 continue;
             }
 
@@ -974,17 +975,17 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         );
         switch (status) {
         case 400:
-            return new Convey.Graph.HttpError.BAD_REQUEST(message);
+            return new GriabuntuMail.Graph.HttpError.BAD_REQUEST(message);
         case 401:
-            return new Convey.Graph.HttpError.UNAUTHORIZED(message);
+            return new GriabuntuMail.Graph.HttpError.UNAUTHORIZED(message);
         case 404:
-            return new Convey.Graph.HttpError.NOT_FOUND(message);
+            return new GriabuntuMail.Graph.HttpError.NOT_FOUND(message);
         case 410:
-            return new Convey.Graph.HttpError.GONE(message);
+            return new GriabuntuMail.Graph.HttpError.GONE(message);
         case 429:
-            return new Convey.Graph.HttpError.TOO_MANY_REQUESTS(message);
+            return new GriabuntuMail.Graph.HttpError.TOO_MANY_REQUESTS(message);
         default:
-            return new Convey.Graph.HttpError.SERVER(message);
+            return new GriabuntuMail.Graph.HttpError.SERVER(message);
         }
     }
 
@@ -997,7 +998,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
                 (ssize_t) body.get_size()
             );
         } catch (GLib.Error err) {
-            throw new Convey.EngineError.SERVER_UNAVAILABLE(
+            throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                 "Graph response decode failed (%s): %s",
                 uri,
                 err.message
@@ -1005,7 +1006,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         }
         Json.Node root = parser.get_root();
         if (root == null || root.get_node_type() != Json.NodeType.OBJECT) {
-            throw new Convey.EngineError.SERVER_UNAVAILABLE(
+            throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                 "Invalid Graph response payload"
             );
         }
@@ -1022,7 +1023,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
             );
             return new Soup.Message.from_uri(method, uri);
         } catch (GLib.UriError err) {
-            throw new Convey.EngineError.SERVER_UNAVAILABLE(
+            throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                 "Invalid Graph request URI (%s): %s",
                 uri_string,
                 err.message
@@ -1078,41 +1079,41 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         return parsed;
     }
 
-    private static Convey.RFC822.MailboxAddresses? parse_address_member(Json.Object object,
+    private static GriabuntuMail.RFC822.MailboxAddresses? parse_address_member(Json.Object object,
                                                                         string key) {
-        Convey.RFC822.MailboxAddress? mailbox = null;
+        GriabuntuMail.RFC822.MailboxAddress? mailbox = null;
         if (object.has_member(key) &&
             object.get_member(key).get_node_type() == Json.NodeType.OBJECT) {
             Json.Object wrapper = object.get_object_member(key);
             mailbox = parse_email_address_wrapper(wrapper);
         }
-        return mailbox == null ? null : new Convey.RFC822.MailboxAddresses.single(mailbox);
+        return mailbox == null ? null : new GriabuntuMail.RFC822.MailboxAddresses.single(mailbox);
     }
 
-    private static Convey.RFC822.MailboxAddresses? parse_addresses_member(Json.Object object,
+    private static GriabuntuMail.RFC822.MailboxAddresses? parse_addresses_member(Json.Object object,
                                                                           string key) {
         if (!object.has_member(key) ||
             object.get_member(key).get_node_type() != Json.NodeType.ARRAY) {
             return null;
         }
         Json.Array values = object.get_array_member(key);
-        Gee.ArrayList<Convey.RFC822.MailboxAddress> addresses =
-            new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+        Gee.ArrayList<GriabuntuMail.RFC822.MailboxAddress> addresses =
+            new Gee.ArrayList<GriabuntuMail.RFC822.MailboxAddress>();
         for (uint i = 0; i < values.get_length(); i++) {
             Json.Node value = values.get_element(i);
             if (value.get_node_type() != Json.NodeType.OBJECT) {
                 continue;
             }
-            Convey.RFC822.MailboxAddress? mailbox =
+            GriabuntuMail.RFC822.MailboxAddress? mailbox =
                 parse_email_address_wrapper(values.get_object_element(i));
             if (mailbox != null) {
                 addresses.add(mailbox);
             }
         }
-        return addresses.is_empty ? null : new Convey.RFC822.MailboxAddresses(addresses);
+        return addresses.is_empty ? null : new GriabuntuMail.RFC822.MailboxAddresses(addresses);
     }
 
-    private static Convey.RFC822.MailboxAddress? parse_email_address_wrapper(Json.Object wrapper) {
+    private static GriabuntuMail.RFC822.MailboxAddress? parse_email_address_wrapper(Json.Object wrapper) {
         if (!wrapper.has_member("emailAddress") ||
             wrapper.get_member("emailAddress").get_node_type() != Json.NodeType.OBJECT) {
             return null;
@@ -1122,7 +1123,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         if (String.is_empty(address)) {
             return null;
         }
-        return new Convey.RFC822.MailboxAddress(get_string_member(email, "name"), address);
+        return new GriabuntuMail.RFC822.MailboxAddress(get_string_member(email, "name"), address);
     }
 
     private static Gee.HashMap<string,string> parse_internet_message_headers(
@@ -1220,19 +1221,19 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         return generator.to_data(null);
     }
 
-    private Convey.ComposedEmail message_to_composed_email(Convey.RFC822.Message message) {
+    private GriabuntuMail.ComposedEmail message_to_composed_email(GriabuntuMail.RFC822.Message message) {
         GLib.DateTime date = message.date != null
             ? message.date.value
             : new GLib.DateTime.now_local();
-        Convey.RFC822.MailboxAddresses from = (
+        GriabuntuMail.RFC822.MailboxAddresses from = (
             message.from != null && !message.from.is_empty
             ? message.from
-            : new Convey.RFC822.MailboxAddresses.single(
+            : new GriabuntuMail.RFC822.MailboxAddresses.single(
                 this.account.primary_mailbox
             )
         );
 
-        Convey.ComposedEmail composed = new Convey.ComposedEmail(date, from);
+        GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(date, from);
         if (message.to != null) {
             composed.set_to(message.to);
         }
@@ -1258,7 +1259,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
     }
 
     private async void patch_message_recipients(string message_id,
-                                                Convey.ComposedEmail composed,
+                                                GriabuntuMail.ComposedEmail composed,
                                                 GLib.Cancellable? cancellable)
         throws GLib.Error {
         Json.Builder builder = new Json.Builder();
@@ -1302,7 +1303,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
 
     private async void replace_with_pgp_mime_attachment(
         string message_id,
-        Convey.Memory.Buffer pgp_mime,
+        GriabuntuMail.Memory.Buffer pgp_mime,
         GLib.Cancellable? cancellable
     ) throws GLib.Error {
         string path = "/me/messages/%s".printf(
@@ -1369,14 +1370,14 @@ internal class Convey.Graph.Client : Convey.BaseObject {
     private static bool append_mailbox_addresses_to_builder(
         Json.Builder builder,
         string name,
-        Convey.RFC822.MailboxAddresses? addresses
+        GriabuntuMail.RFC822.MailboxAddresses? addresses
     ) {
         if (addresses == null || addresses.size == 0) {
             return false;
         }
-        Gee.ArrayList<Convey.RFC822.MailboxAddress> valid_addresses =
-            new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
-        foreach (Convey.RFC822.MailboxAddress address in addresses) {
+        Gee.ArrayList<GriabuntuMail.RFC822.MailboxAddress> valid_addresses =
+            new Gee.ArrayList<GriabuntuMail.RFC822.MailboxAddress>();
+        foreach (GriabuntuMail.RFC822.MailboxAddress address in addresses) {
             if (!String.is_empty(address.address)) {
                 valid_addresses.add(address);
             }
@@ -1386,7 +1387,7 @@ internal class Convey.Graph.Client : Convey.BaseObject {
         }
         builder.set_member_name(name);
         builder.begin_array();
-        foreach (Convey.RFC822.MailboxAddress address in valid_addresses) {
+        foreach (GriabuntuMail.RFC822.MailboxAddress address in valid_addresses) {
             builder.begin_object();
             builder.set_member_name("emailAddress");
             builder.begin_object();

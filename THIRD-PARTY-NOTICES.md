@@ -1,3 +1,8 @@
+<!-- Icon correction, 2026-10-27: The active app/tray/symbolic family now derives
+from the owner-supplied closed-envelope PNGs, not the local CC0 study described
+in the superseded inventory below. See brand/README.md. No earlier CC0 grant
+is asserted for these separately supplied originals. -->
+
 # Licensing and third-party notices
 
 Prepared **2026-10-26** for the private Griabuntu Mail preparation branch. This is an
@@ -23,21 +28,29 @@ distribution route and separates remaining release work from new permissions.
   derivatives from GNOME and the specific `tag-symbolic.svg` public-domain
   exception. [COPYING.sounds](COPYING.sounds) credits **Ivica Bukvic** for
   `message.oga` under **CC-BY-SA-3.0**. Those lists are retained verbatim.
-- The new downstream tray SVG is original geometry introduced on 2026-10-26,
-  marked LGPL-2.1-or-later in-file and remains byte-identical. A colocated
-  `icons/hicolor/scalable/apps/COPYING` retains its correct LGPL reference and
-  is installed beside it. No logo or inherited artwork was modified.
-- New Griabuntu Mail brand vectors and synthetic hero artwork: **CC0-1.0**, explicitly
-  limited to those new files; see [brand/README.md](brand/README.md) and
-  [docs/images/README.md](docs/images/README.md). No trademark rights are granted
-  or claimed by that copyright dedication.
+- Current app and tray exports use the owner-supplied closed-envelope PNG;
+  the symbolic mask follows the supplied closed mono PNG. Originals and hashes
+  are in `design/owner-artwork-20261027/`. No new licence or authorship is
+  inferred from the old studies' CC0 dedication. The installed
+  `Griabuntu-Mail-Artwork.md` describes the source/derivation distinction.
+  See [brand/README.md](brand/README.md). The earlier CC0 local study is
+  archived under `brand/history/superseded-envelope-20261027/`.
+- The earlier LGPL tray SVG and its colocated LGPL COPYING are preserved under
+  `icons/historical/convey-before-envelope/`, together with earlier inherited
+  app-icon aliases. They are not current runtime install inputs. The dated
+  verification records for older packages keep their original content/hashes.
+- The earlier folded-G study and synthetic hero retain their original CC0
+  dedication and provenance. The hero remains illustrative, not an application
+  screenshot or evidence of the wider UI redesign. No trademark right is granted.
 - Legacy screenshots in `desktop/screenshots/` are not used in the README:
   their per-image provenance, licensing and visible-data suitability have not
   been independently established. The inherited upstream application icons are
   also retained unchanged but not appropriated as Griabuntu Mail's brand. Finish the
   per-asset audit before choosing public screenshots or distributing packages.
   Specifically, the current COPYING.icons list omits installed font/format/edit
-  icons, some RTL variants and Convey application icons. Historical contributor
+  icons and some RTL variants. Earlier inherited Convey app icons remain in
+  the source archive with their original provenance limits; the current runtime
+  app/tray/symbolic family uses the separately supplied owner artwork described above. Historical contributor
   commits are identified in the decision; they are not a complete path-to-grant
   supplement. All inherited assets/sound are unchanged versus the upstream base.
   CC-BY/CC-BY-SA 3.0 require supplied attribution/title/source/licence notices and

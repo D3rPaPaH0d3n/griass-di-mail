@@ -22,7 +22,7 @@ option(
   'nightly',
   type: 'boolean',
   value: false,
-  description: 'Install the nightly (moonlit) app icon'
+  description: 'Use the owner-selected app icon for nightly builds'
 )
 option(
   'iso_639_xml',
@@ -51,7 +51,7 @@ option(
   'ref_tracking',
   type: 'feature',
   value: 'disabled',
-  description: 'Enable Convey.BaseObject reference tracking'
+  description: 'Enable GriabuntuMail.BaseObject reference tracking'
 )
 
 #

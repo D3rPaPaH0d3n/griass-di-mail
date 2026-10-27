@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2018, 2020 Michael Gratton <mike@vee.net>
@@ -40,7 +41,7 @@
  * removed account-wide, so that known conversations can be updated as
  * needed.
  */
-public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
+public class GriabuntuMail.App.ConversationMonitor : BaseObject, Logging.Source {
 
     /**
      * The fields Conversations require to thread emails together.
@@ -48,10 +49,10 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
      * These fields will be retrieved regardless of the Field
      * parameter passed to the constructor.
      */
-    public const Convey.Email.Field REQUIRED_FIELDS = (
-        Convey.Email.Field.REFERENCES |
-        Convey.Email.Field.FLAGS |
-        Convey.Email.Field.DATE
+    public const GriabuntuMail.Email.Field REQUIRED_FIELDS = (
+        GriabuntuMail.Email.Field.REFERENCES |
+        GriabuntuMail.Email.Field.FLAGS |
+        GriabuntuMail.Email.Field.DATE
     );
 
     /** The GLib logging domain used by this class. */
@@ -60,11 +61,11 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
 
     private struct ProcessJobContext {
 
-        public Gee.Map<Convey.EmailIdentifier,Convey.Email> emails;
+        public Gee.Map<GriabuntuMail.EmailIdentifier,GriabuntuMail.Email> emails;
 
 
         public ProcessJobContext() {
-            this.emails = new Gee.HashMap<Convey.EmailIdentifier,Convey.Email>();
+            this.emails = new Gee.HashMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.Email>();
         }
 
     }
@@ -158,7 +159,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
     // Determines if the base folder was actually opened or not
     private bool base_was_opened = false;
 
-    private Convey.Email.Field required_fields;
+    private GriabuntuMail.Email.Field required_fields;
     private ConversationOperationQueue queue;
     private GLib.Cancellable operation_cancellable = new GLib.Cancellable();
 
@@ -280,7 +281,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
      * Creates a conversation monitor for the given folder.
      *
      * @param base_folder a Folder to monitor for conversations
-     * @param required_fields See {@link Convey.Folder}
+     * @param required_fields See {@link GriabuntuMail.Folder}
      * @param min_window_count Minimum number of conversations that will be loaded
      */
     public ConversationMonitor(Folder base_folder,
@@ -306,7 +307,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
      * cancel any such operations, simply close the monitor via {@link
      * stop_monitoring}.
      *
-     * @param open_flags See {@link Convey.Folder}
+     * @param open_flags See {@link GriabuntuMail.Folder}
      * @param cancellable Passed to the folder open operation
      */
     public async bool start_monitoring(Folder.OpenFlags open_flags,
@@ -378,7 +379,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
      * Stops monitoring for new messages and closes the base folder.
      *
      * Returns a result code that is semantically identical to the
-     * result of {@link Convey.Folder.close_async}.
+     * result of {@link GriabuntuMail.Folder.close_async}.
      *
      * The //cancellable// parameter will be used when waiting for
      * internal monitor operations to complete, but will not prevent
@@ -396,7 +397,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
     }
 
     /** Ensures the given email are loaded in the monitor. */
-    public async void load_email(Gee.Collection<Convey.EmailIdentifier> to_load,
+    public async void load_email(Gee.Collection<GriabuntuMail.EmailIdentifier> to_load,
                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         if (!this.is_monitoring) {
@@ -420,7 +421,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
     /**
      * Returns the conversation containing the given email, if any.
      */
-    public Conversation? get_by_email_identifier(Convey.EmailIdentifier email_id) {
+    public Conversation? get_by_email_identifier(GriabuntuMail.EmailIdentifier email_id) {
         return this.conversations.get_by_email_identifier(email_id);
     }
 
@@ -448,16 +449,16 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
     /**
      * Returns the list of folders that disqualify emails from conversations.
      */
-    internal Gee.Collection<Convey.FolderPath> get_search_folder_blacklist() {
+    internal Gee.Collection<GriabuntuMail.FolderPath> get_search_folder_blacklist() {
         Folder.SpecialUse[] blacklisted_folder_types = {
             JUNK,
             TRASH,
             DRAFTS,
         };
 
-        var blacklist = new Gee.ArrayList<Convey.FolderPath?>();
+        var blacklist = new Gee.ArrayList<GriabuntuMail.FolderPath?>();
         foreach (var type in blacklisted_folder_types) {
-            Convey.Folder? blacklist_folder = this.base_folder.account.get_special_folder(type);
+            GriabuntuMail.Folder? blacklist_folder = this.base_folder.account.get_special_folder(type);
             if (blacklist_folder != null) {
                 blacklist.add(blacklist_folder.path);
             }
@@ -472,9 +473,9 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
     /**
      * Returns the list of flags that disqualify emails from conversations.
      */
-    internal Convey.EmailFlags get_search_flag_blacklist() {
-        Convey.EmailFlags flags = new Convey.EmailFlags();
-        flags.add(Convey.EmailFlags.DRAFT);
+    internal GriabuntuMail.EmailFlags get_search_flag_blacklist() {
+        GriabuntuMail.EmailFlags flags = new GriabuntuMail.EmailFlags();
+        flags.add(GriabuntuMail.EmailFlags.DRAFT);
         return flags;
     }
 
@@ -488,7 +489,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
         int load_count = 0;
         GLib.Error? scan_error = null;
         try {
-            Gee.Collection<Convey.Email>? messages =
+            Gee.Collection<GriabuntuMail.Email>? messages =
                 yield this.base_folder.list_email_by_id_async(
                     initial_id, count, required_fields, flags,
                     this.operation_cancellable
@@ -524,7 +525,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
 
         GLib.Error? scan_error = null;
         try {
-            Gee.Collection<Convey.Email>? messages =
+            Gee.Collection<GriabuntuMail.Email>? messages =
                 yield this.base_folder.list_email_by_sparse_id_async(
                     ids, required_fields, flags, this.operation_cancellable
                 );
@@ -559,25 +560,25 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
         throws Error {
         bool opened = false;
 
-        Gee.List<Convey.Email>? emails = null;
+        Gee.List<GriabuntuMail.Email>? emails = null;
         try {
             yield folder.open_async(
-                Convey.Folder.OpenFlags.NONE, this.operation_cancellable
+                GriabuntuMail.Folder.OpenFlags.NONE, this.operation_cancellable
             );
             opened = true;
 
             // First just get the bare minimum we need to determine if we even
             // care about the messages.
             emails = yield folder.list_email_by_sparse_id_async(
-                ids, Convey.Email.Field.REFERENCES, flags, this.operation_cancellable
+                ids, GriabuntuMail.Email.Field.REFERENCES, flags, this.operation_cancellable
             );
             if (emails != null) {
-                Gee.HashSet<Convey.EmailIdentifier> relevant_ids =
-                    new Gee.HashSet<Convey.EmailIdentifier>();
-                foreach (Convey.Email email in emails) {
+                Gee.HashSet<GriabuntuMail.EmailIdentifier> relevant_ids =
+                    new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
+                foreach (GriabuntuMail.Email email in emails) {
                     Gee.Set<RFC822.MessageID>? ancestors = email.get_ancestors();
                     if (ancestors != null &&
-                        Convey.traverse<RFC822.MessageID>(ancestors).any(id => conversations.has_message_id(id)))
+                        GriabuntuMail.traverse<RFC822.MessageID>(ancestors).any(id => conversations.has_message_id(id)))
                         relevant_ids.add(email.id);
                 }
 
@@ -652,16 +653,16 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
     }
 
     protected virtual void notify_conversation_appended(Conversation conversation,
-        Gee.Collection<Convey.Email> emails) {
+        Gee.Collection<GriabuntuMail.Email> emails) {
         conversation_appended(conversation, emails);
     }
 
     protected virtual void notify_conversation_trimmed(Conversation conversation,
-        Gee.Collection<Convey.Email> emails) {
+        Gee.Collection<GriabuntuMail.Email> emails) {
         conversation_trimmed(conversation, emails);
     }
 
-    protected virtual void notify_email_flags_changed(Conversation conversation, Convey.Email email) {
+    protected virtual void notify_email_flags_changed(Conversation conversation, GriabuntuMail.Email email) {
         conversation.email_flags_changed(email);
         email_flags_changed(conversation, email);
     }
@@ -714,7 +715,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
         return closing;
     }
 
-    private async void process_email_async(Gee.Collection<Convey.Email>? emails,
+    private async void process_email_async(Gee.Collection<GriabuntuMail.Email>? emails,
                                            ProcessJobContext job)
         throws Error {
         if (emails == null || emails.size == 0) {
@@ -725,18 +726,18 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
         debug("process_email: %d emails", emails.size);
 
         Gee.HashSet<RFC822.MessageID> new_message_ids = new Gee.HashSet<RFC822.MessageID>();
-        foreach (Convey.Email email in emails) {
+        foreach (GriabuntuMail.Email email in emails) {
             if (!job.emails.has_key(email.id)) {
                 job.emails.set(email.id, email);
 
                 // Expand conversations whose messages have ancestors, and aren't marked
                 // for deletion.
-                Convey.EmailFlags? flags = email.email_flags;
+                GriabuntuMail.EmailFlags? flags = email.email_flags;
                 bool marked_for_deletion = (flags != null) ? flags.is_deleted() : false;
 
                 Gee.Set<RFC822.MessageID>? ancestors = email.get_ancestors();
                 if (ancestors != null && !marked_for_deletion) {
-                    Convey.traverse<RFC822.MessageID>(ancestors)
+                    GriabuntuMail.traverse<RFC822.MessageID>(ancestors)
                         .filter(id => !new_message_ids.contains(id))
                         .add_all_to(new_message_ids);
                 }
@@ -752,11 +753,11 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
 
     private async void process_email_complete_async(ProcessJobContext job) {
         Gee.Collection<Conversation>? added = null;
-        Gee.MultiMap<Conversation, Convey.Email>? appended = null;
+        Gee.MultiMap<Conversation, GriabuntuMail.Email>? appended = null;
         Gee.Collection<Conversation>? removed_due_to_merge = null;
         try {
             // Get known paths for all emails
-            Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>? email_paths =
+            Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>? email_paths =
                 yield this.base_folder.account.get_containing_folders_async(
                     job.emails.keys,
                     this.operation_cancellable
@@ -799,8 +800,8 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
 
         debug("expand_conversations: %d email ids", needed_message_ids.size);
 
-        Gee.Collection<Convey.FolderPath> folder_blacklist = get_search_folder_blacklist();
-        Convey.EmailFlags flag_blacklist = get_search_flag_blacklist();
+        Gee.Collection<GriabuntuMail.FolderPath> folder_blacklist = get_search_folder_blacklist();
+        GriabuntuMail.EmailFlags flag_blacklist = get_search_flag_blacklist();
 
         // execute all the local search operations at once
         Nonblocking.Batch batch = new Nonblocking.Batch();
@@ -812,14 +813,14 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
         yield batch.execute_all_async();
 
         // collect their results into a single collection of addt'l emails
-        Gee.HashMap<Convey.EmailIdentifier, Convey.Email> needed_messages = new Gee.HashMap<
-            Convey.EmailIdentifier, Convey.Email>();
+        Gee.HashMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.Email> needed_messages = new Gee.HashMap<
+            GriabuntuMail.EmailIdentifier, GriabuntuMail.Email>();
         foreach (int id in batch.get_ids()) {
             LocalSearchOperation op = (LocalSearchOperation) batch.get_operation(id);
             if (op.emails != null) {
-                Convey.traverse<Convey.Email>(op.emails.get_keys())
+                GriabuntuMail.traverse<GriabuntuMail.Email>(op.emails.get_keys())
                     .filter(e => !needed_messages.has_key(e.id))
-                    .add_all_to_map<Convey.EmailIdentifier>(needed_messages, e => e.id);
+                    .add_all_to_map<GriabuntuMail.EmailIdentifier>(needed_messages, e => e.id);
             }
         }
 
@@ -831,8 +832,8 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
               needed_message_ids.size, needed_messages.size);
     }
 
-    private void on_folder_opened(Convey.Folder.OpenState state, int count) {
-        if (state == Convey.Folder.OpenState.REMOTE)
+    private void on_folder_opened(GriabuntuMail.Folder.OpenState state, int count) {
+        if (state == GriabuntuMail.Folder.OpenState.REMOTE)
             this.queue.add(new ReseedOperation(this));
     }
 
@@ -888,7 +889,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
         }
     }
 
-    private void on_account_email_flags_changed(Convey.Folder folder,
+    private void on_account_email_flags_changed(GriabuntuMail.Folder folder,
                                                 Gee.Map<EmailIdentifier,EmailFlags> map) {
         Gee.HashSet<EmailIdentifier> inserted_ids = new Gee.HashSet<EmailIdentifier>();
         Gee.HashSet<EmailIdentifier> removed_ids = new Gee.HashSet<EmailIdentifier>();
@@ -899,7 +900,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
                 if (folder == this.base_folder) {
                     // Check to see if the incoming message is sorted later than the last message in the
                     // window. If it is, don't resurrect it since it likely hasn't been loaded yet.
-                    Convey.EmailIdentifier? lowest = this.window_lowest;
+                    GriabuntuMail.EmailIdentifier? lowest = this.window_lowest;
                     if (lowest != null) {
                         if (lowest.natural_sort_comparator(id) < 0) {
                             debug(
@@ -928,7 +929,7 @@ public class Convey.App.ConversationMonitor : BaseObject, Logging.Source {
 
             // Remove conversation if get_emails yields an empty collection -- this probably means
             // the conversation was deleted.
-            if (conversation.get_emails(Convey.App.Conversation.Ordering.NONE).size == 0) {
+            if (conversation.get_emails(GriabuntuMail.App.Conversation.Ordering.NONE).size == 0) {
                 debug(
                     "Flagging email %s for deletion evaporates conversation %s",
                     id.to_string(), conversation.to_string()

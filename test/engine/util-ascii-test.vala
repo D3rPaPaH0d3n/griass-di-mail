@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -7,10 +8,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Ascii.Test : TestCase {
+class GriabuntuMail.Ascii.Test : TestCase {
 
     public Test() {
-        base("Convey.Ascii.Test");
+        base("GriabuntuMail.Ascii.Test");
         add_test("index_of", index_of);
         add_test("last_index_of", last_index_of);
     }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -16,7 +17,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc3501#section-6.3.4]]
  */
-public class Convey.Imap.DeleteCommand : Command {
+public class GriabuntuMail.Imap.DeleteCommand : Command {
 
     public const string NAME = "DELETE";
 

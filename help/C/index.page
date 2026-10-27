@@ -4,14 +4,14 @@
       id="index">
 
   <info>
-    <title type="link" role="trail">Convey</title>
-    <title type="text">Convey</title>
-    <title type="link">Convey</title>
+    <title type="link" role="trail">Griabuntu Mail</title>
+    <title type="text">Griabuntu Mail</title>
+    <title type="link">Griabuntu Mail</title>
   </info>
 
   <title>
-    <media type="image" its:translate="no" src="figures/net.donnybeelo.Convey.svg" width="48" height="48"></media>
-    <span>Convey</span>
+    <media type="image" its:translate="no" src="figures/io.github.d3rpapah0d3n.GriabuntuMail.svg" width="48" height="48"></media>
+    <span>Griabuntu Mail</span>
   </title>
 
   <section id="introduction" style="2column">
@@ -19,7 +19,7 @@
   </section>
 
   <section id="overview" style="2column">
-    <title>Using Convey</title>
+    <title>Using Griabuntu Mail</title>
   </section>
 
   <section id="contribute" style="2column">

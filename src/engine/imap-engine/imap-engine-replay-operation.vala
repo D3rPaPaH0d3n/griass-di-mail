@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -10,7 +11,7 @@
 /**
  * Base class for folder operations executed by {@link ReplayQueue}.
  */
-private abstract class Convey.ImapEngine.ReplayOperation : Convey.BaseObject, Gee.Comparable<ReplayOperation> {
+private abstract class GriabuntuMail.ImapEngine.ReplayOperation : GriabuntuMail.BaseObject, Gee.Comparable<ReplayOperation> {
 
     /**
      * Specifies the call scope (local, remote, both) of an operation.

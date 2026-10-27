@@ -1,5 +1,5 @@
 {
-  description = "Dev shell for Convey";
+  description = "Dev shell for Griabuntu Mail";
 
   inputs = {
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";

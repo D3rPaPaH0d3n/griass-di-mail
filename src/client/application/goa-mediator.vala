@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -10,7 +11,7 @@
  */
 
 /** GNOME Online Accounts token adapter. */
-public class GoaMediator : Convey.CredentialsMediator, Object {
+public class GoaMediator : GriabuntuMail.CredentialsMediator, Object {
 
 
     private const string PROVIDER_TYPE_WINDOWS_LIVE = "windows_live";
@@ -27,25 +28,25 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
         this.handle = handle;
     }
 
-    public Convey.ServiceProvider get_service_provider() {
-        Convey.ServiceProvider provider = Convey.ServiceProvider.OTHER;
+    public GriabuntuMail.ServiceProvider get_service_provider() {
+        GriabuntuMail.ServiceProvider provider = GriabuntuMail.ServiceProvider.OTHER;
         switch (this.handle.get_account().provider_type) {
         case "google":
-            provider = Convey.ServiceProvider.GMAIL;
+            provider = GriabuntuMail.ServiceProvider.GMAIL;
             break;
 
         case PROVIDER_TYPE_WINDOWS_LIVE:
         case PROVIDER_TYPE_MS_GRAPH:
-            provider = Convey.ServiceProvider.OUTLOOK;
+            provider = GriabuntuMail.ServiceProvider.OUTLOOK;
             break;
         }
         return provider;
     }
 
-    public Convey.AccountBackend get_account_backend() {
-        Convey.AccountBackend backend = Convey.AccountBackend.IMAP_SMTP;
+    public GriabuntuMail.AccountBackend get_account_backend() {
+        GriabuntuMail.AccountBackend backend = GriabuntuMail.AccountBackend.IMAP_SMTP;
         if (this.handle.get_account().provider_type == PROVIDER_TYPE_MS_GRAPH) {
-            backend = Convey.AccountBackend.MICROSOFT_GRAPH;
+            backend = GriabuntuMail.AccountBackend.MICROSOFT_GRAPH;
         }
         return backend;
     }
@@ -54,19 +55,19 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
         return this.handle.get_account().provider_name;
     }
 
-    public async void update(Convey.AccountInformation convey_account,
+    public async void update(GriabuntuMail.AccountInformation griabuntu_mail_account,
                              GLib.Cancellable? cancellable)
         throws GLib.Error {
         // Call this to get the exception thrown if no auth method is
         // supported.
         get_auth_method();
 
-        update_imap_config(convey_account.incoming);
-        update_smtp_config(convey_account.outgoing);
+        update_imap_config(griabuntu_mail_account.incoming);
+        update_smtp_config(griabuntu_mail_account.outgoing);
     }
 
-    public virtual async bool load_token(Convey.AccountInformation account,
-                                         Convey.ServiceInformation service,
+    public virtual async bool load_token(GriabuntuMail.AccountInformation account,
+                                         GriabuntuMail.ServiceInformation service,
                                          Cancellable? cancellable)
         throws GLib.Error {
         // Per GOA docs
@@ -99,13 +100,13 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
 
         case PASSWORD:
             switch (service.protocol) {
-            case Convey.Protocol.IMAP:
+            case GriabuntuMail.Protocol.IMAP:
                 yield this.handle.get_password_based().call_get_password(
                     "imap-password", cancellable, out token
                 );
                 break;
 
-            case Convey.Protocol.SMTP:
+            case GriabuntuMail.Protocol.SMTP:
                 yield this.handle.get_password_based().call_get_password(
                     "smtp-password", cancellable, out token
                 );
@@ -124,14 +125,14 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
         return loaded;
     }
 
-    private Convey.Credentials.Method get_auth_method() throws GLib.Error {
+    private GriabuntuMail.Credentials.Method get_auth_method() throws GLib.Error {
         if (this.handle.get_oauth2_based() != null) {
-            return Convey.Credentials.Method.OAUTH2;
+            return GriabuntuMail.Credentials.Method.OAUTH2;
         }
         if (this.handle.get_password_based() != null) {
-            return Convey.Credentials.Method.PASSWORD;
+            return GriabuntuMail.Credentials.Method.PASSWORD;
         }
-        throw new Convey.EngineError.UNSUPPORTED(
+        throw new GriabuntuMail.EngineError.UNSUPPORTED(
             "GOA account supports neither password or OAuth2 auth"
         );
     }
@@ -158,40 +159,40 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
 
     private bool has_mail_endpoints(Goa.Mail mail) {
         return (
-            !Convey.String.is_empty(mail.imap_host) &&
-            !Convey.String.is_empty(mail.smtp_host)
+            !GriabuntuMail.String.is_empty(mail.imap_host) &&
+            !GriabuntuMail.String.is_empty(mail.smtp_host)
         );
     }
 
-    private string get_service_user_name(Convey.Protocol protocol)
+    private string get_service_user_name(GriabuntuMail.Protocol protocol)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
         if (mail != null) {
             string? user = null;
             switch (protocol) {
-            case Convey.Protocol.IMAP:
+            case GriabuntuMail.Protocol.IMAP:
                 user = mail.imap_user_name;
                 break;
 
-            case Convey.Protocol.SMTP:
+            case GriabuntuMail.Protocol.SMTP:
                 user = mail.smtp_user_name;
                 break;
             }
-            if (!Convey.String.is_empty_or_whitespace(user)) {
+            if (!GriabuntuMail.String.is_empty_or_whitespace(user)) {
                 return (string) user;
             }
         }
 
         string mailbox = this.handle.get_account().presentation_identity;
-        if (Convey.String.is_empty_or_whitespace(mailbox)) {
-            throw new Convey.EngineError.UNSUPPORTED(
+        if (GriabuntuMail.String.is_empty_or_whitespace(mailbox)) {
+            throw new GriabuntuMail.EngineError.UNSUPPORTED(
                 "GOA account does not include a mailbox identity"
             );
         }
         return mailbox;
     }
 
-    private void update_imap_config(Convey.ServiceInformation service)
+    private void update_imap_config(GriabuntuMail.ServiceInformation service)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
         bool use_microsoft_fallback = (
@@ -202,21 +203,21 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
             parse_host_name(service, mail.imap_host);
 
             if (mail.imap_use_ssl) {
-                service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
             } else if (mail.imap_use_tls) {
-                service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.START_TLS;
             } else {
-                service.transport_security = Convey.TlsNegotiationMethod.NONE;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.NONE;
             }
         } else if (use_microsoft_fallback) {
             parse_host_name(service, get_default_imap_host());
-            service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
+            service.transport_security = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
         } else {
             return;
         }
 
-        service.credentials = new Convey.Credentials(
-            get_auth_method(), get_service_user_name(Convey.Protocol.IMAP)
+        service.credentials = new GriabuntuMail.Credentials(
+            get_auth_method(), get_service_user_name(GriabuntuMail.Protocol.IMAP)
         );
 
         if (service.port == 0) {
@@ -224,7 +225,7 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
         }
     }
 
-    private void update_smtp_config(Convey.ServiceInformation service)
+    private void update_smtp_config(GriabuntuMail.ServiceInformation service)
         throws GLib.Error {
         Goa.Mail? mail = this.handle.get_mail();
         bool use_microsoft_fallback = (
@@ -235,30 +236,30 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
             parse_host_name(service, mail.smtp_host);
 
             if (mail.smtp_use_ssl) {
-                service.transport_security = Convey.TlsNegotiationMethod.TRANSPORT;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
             } else if (mail.smtp_use_tls) {
-                service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.START_TLS;
             } else {
-                service.transport_security = Convey.TlsNegotiationMethod.NONE;
+                service.transport_security = GriabuntuMail.TlsNegotiationMethod.NONE;
             }
 
             if (mail.smtp_use_auth) {
-                service.credentials_requirement = Convey.Credentials.Requirement.CUSTOM;
+                service.credentials_requirement = GriabuntuMail.Credentials.Requirement.CUSTOM;
             } else {
-                service.credentials_requirement = Convey.Credentials.Requirement.NONE;
+                service.credentials_requirement = GriabuntuMail.Credentials.Requirement.NONE;
             }
 
             if (mail.smtp_use_auth) {
-                service.credentials = new Convey.Credentials(
-                    get_auth_method(), get_service_user_name(Convey.Protocol.SMTP)
+                service.credentials = new GriabuntuMail.Credentials(
+                    get_auth_method(), get_service_user_name(GriabuntuMail.Protocol.SMTP)
                 );
             }
         } else if (use_microsoft_fallback) {
             parse_host_name(service, get_default_smtp_host());
-            service.transport_security = Convey.TlsNegotiationMethod.START_TLS;
-            service.credentials_requirement = Convey.Credentials.Requirement.CUSTOM;
-            service.credentials = new Convey.Credentials(
-                get_auth_method(), get_service_user_name(Convey.Protocol.SMTP)
+            service.transport_security = GriabuntuMail.TlsNegotiationMethod.START_TLS;
+            service.credentials_requirement = GriabuntuMail.Credentials.Requirement.CUSTOM;
+            service.credentials = new GriabuntuMail.Credentials(
+                get_auth_method(), get_service_user_name(GriabuntuMail.Protocol.SMTP)
             );
         } else {
             return;
@@ -269,7 +270,7 @@ public class GoaMediator : Convey.CredentialsMediator, Object {
         }
     }
 
-    private void parse_host_name(Convey.ServiceInformation service,
+    private void parse_host_name(GriabuntuMail.ServiceInformation service,
                                  string host_name) {
         // Fall back to trying to use the host name as-is.
         // At least the user can see it in the settings if

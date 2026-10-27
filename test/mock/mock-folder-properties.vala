@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -7,16 +8,16 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Mock.FolderPoperties : Convey.FolderProperties {
+public class Mock.FolderPoperties : GriabuntuMail.FolderProperties {
 
 
     public FolderPoperties() {
         base(
             0,
             0,
-            Convey.Trillian.UNKNOWN,
-            Convey.Trillian.UNKNOWN,
-            Convey.Trillian.UNKNOWN,
+            GriabuntuMail.Trillian.UNKNOWN,
+            GriabuntuMail.Trillian.UNKNOWN,
+            GriabuntuMail.Trillian.UNKNOWN,
             false,
             false,
             false

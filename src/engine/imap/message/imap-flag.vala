@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -15,7 +16,7 @@
  * @see MailboxAttribute
  */
 
-public abstract class Convey.Imap.Flag : BaseObject, Gee.Hashable<Convey.Imap.Flag> {
+public abstract class GriabuntuMail.Imap.Flag : BaseObject, Gee.Hashable<GriabuntuMail.Imap.Flag> {
     public string value { get; private set; }
 
     /**
@@ -35,7 +36,7 @@ public abstract class Convey.Imap.Flag : BaseObject, Gee.Hashable<Convey.Imap.Fl
         return Ascii.stri_equal(this.value, value);
     }
 
-    public bool equal_to(Convey.Imap.Flag flag) {
+    public bool equal_to(GriabuntuMail.Imap.Flag flag) {
         return (flag == this) ? true : flag.equals_string(value);
     }
 

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
@@ -55,7 +56,7 @@ offsets_tokenizer_func (void       *data,
 }
 
 static void
-convey_matches (const Fts5ExtensionApi  *api,
+griabuntu_mail_matches (const Fts5ExtensionApi  *api,
                Fts5Context             *fts_ctx,
                sqlite3_context         *ctx,
                int                      n_args,
@@ -163,10 +164,16 @@ gboolean sqlite3_register_fts5_matches(sqlite3 *db) {
     }
 
     rc = api->xCreateFunction(api,
-                              "convey_matches",
+                              "griabuntu_mail_matches",
                               NULL,
-                              &convey_matches,
+                              &griabuntu_mail_matches,
                               NULL);
+
+    /* Compatibility for explicitly imported older FTS5 queries. */
+    if (rc == SQLITE_OK) {
+        rc = api->xCreateFunction(api, "convey_matches", NULL,
+                                 &griabuntu_mail_matches, NULL);
+    }
 
     return (rc == SQLITE_OK) ? TRUE : FALSE;
 }

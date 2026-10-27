@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael James Gratton <mike@vee.net>
  *
@@ -13,7 +14,7 @@
  * This class provides a convenient, high-level API for the {@link
  * GLib.KeyFile} class.
  */
-public class Convey.ConfigFile {
+public class GriabuntuMail.ConfigFile {
 
 
     /** A string parser that can be used to extract custom values. */

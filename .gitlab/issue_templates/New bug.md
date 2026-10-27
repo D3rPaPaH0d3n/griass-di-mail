@@ -6,12 +6,12 @@ comments such as this with the requested information.
 
 **Your installation**
 
-To obtain installation information, copy it from Convey's Problem
-Report dialog if shown (or else open the Convey Inspector by typing
+To obtain installation information, copy it from Griabuntu Mail's Problem
+Report dialog if shown (or else open the Griabuntu Mail Inspector by typing
 Shift + Alt + I) by selecting System, and clicking the Copy
 button, then pasting here.
 
- * Convey version:                    <!-- "x.y.z" -->
+ * Griabuntu Mail version:                    <!-- "x.y.z" -->
  * Installation method:              <!-- Package? Flathub? Self-compiled? -->
  * Desktop environment:              <!-- GNOME? KDE? Something else? -->
  * Operating system and version:     <!-- Ubuntu 18.04? Fedora 29? -->
@@ -27,18 +27,18 @@ button, then pasting here.
 
 **What happened?**
 
-What did Convey do that was unexpected?
+What did Griabuntu Mail do that was unexpected?
 
 
 **What did you expect to happen?**
 
-What did you expect Convey to do?
+What did you expect Griabuntu Mail to do?
 
 
 **Relevant logs and/or screenshots**
 
-To obtain log information, save it from Convey's Problem Report dialog
-if shown (or else open the Convey Inspector by typing Shift + Alt + I),
+To obtain log information, save it from Griabuntu Mail's Problem Report dialog
+if shown (or else open the Griabuntu Mail Inspector by typing Shift + Alt + I),
 by clicking the Save As button and attaching the resulting file
 to this issue.
 

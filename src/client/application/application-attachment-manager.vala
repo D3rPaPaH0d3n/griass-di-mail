@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -38,11 +39,11 @@ public class Application.AttachmentManager : GLib.Object {
      * overwriting existing files. Files are written with their
      * existing names. Returns true if written to disk, else false.
      */
-    public async bool save_attachments(Gee.Collection<Convey.Attachment> attachments,
+    public async bool save_attachments(Gee.Collection<GriabuntuMail.Attachment> attachments,
                                        GLib.Cancellable? cancellable) {
         if (attachments.size == 1) {
             return yield save_attachment(
-                Convey.Collection.first(attachments), null, cancellable
+                GriabuntuMail.Collection.first(attachments), null, cancellable
             );
         } else {
             return yield save_all(attachments, cancellable);
@@ -56,16 +57,16 @@ public class Application.AttachmentManager : GLib.Object {
      * overwriting existing files. Returns true if written to disk,
      * else false.
      */
-    public async bool save_attachment(Convey.Attachment attachment,
+    public async bool save_attachment(GriabuntuMail.Attachment attachment,
                                       string? alt_name,
                                       GLib.Cancellable? cancellable) {
-        string alt_display_name = Convey.String.is_empty_or_whitespace(alt_name)
+        string alt_display_name = GriabuntuMail.String.is_empty_or_whitespace(alt_name)
             ? AttachmentManager.untitled_file_name : alt_name;
         string display_name = yield attachment.get_safe_file_name(
             alt_display_name
         );
 
-        Convey.Memory.Buffer? content = yield open_buffer(
+        GriabuntuMail.Memory.Buffer? content = yield open_buffer(
             attachment, cancellable
         );
 
@@ -86,7 +87,7 @@ public class Application.AttachmentManager : GLib.Object {
      * else false.
      */
     public async bool save_buffer(string display_name,
-                                  Convey.Memory.Buffer buffer,
+                                  GriabuntuMail.Memory.Buffer buffer,
                                   GLib.Cancellable? cancellable) {
         var dialog = new Gtk.FileDialog();
         dialog.initial_name = display_name;
@@ -108,7 +109,7 @@ public class Application.AttachmentManager : GLib.Object {
         return yield check_and_write(buffer, destination, cancellable);
     }
 
-    private async bool save_all(Gee.Collection<Convey.Attachment> attachments,
+    private async bool save_all(Gee.Collection<GriabuntuMail.Attachment> attachments,
                                 GLib.Cancellable? cancellable) {
         var dialog = new Gtk.FileDialog();
         dialog.initial_file = download_dir();
@@ -130,7 +131,7 @@ public class Application.AttachmentManager : GLib.Object {
             return false;
 
         bool succeeded = false;
-        foreach (Convey.Attachment attachment in attachments) {
+        foreach (GriabuntuMail.Attachment attachment in attachments) {
             GLib.File? destination = null;
             try {
                 destination = destination_dir.get_child_for_display_name(
@@ -163,13 +164,13 @@ public class Application.AttachmentManager : GLib.Object {
         return succeeded;
     }
 
-    private async Convey.Memory.Buffer open_buffer(Convey.Attachment attachment,
+    private async GriabuntuMail.Memory.Buffer open_buffer(GriabuntuMail.Attachment attachment,
                                                   GLib.Cancellable? cancellable) {
-        Convey.Memory.FileBuffer? content = null;
+        GriabuntuMail.Memory.FileBuffer? content = null;
         try {
-            yield Convey.Nonblocking.Concurrent.global.schedule_async(
+            yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
                 () => {
-                    content = new Convey.Memory.FileBuffer(attachment.file, true);
+                    content = new GriabuntuMail.Memory.FileBuffer(attachment.file, true);
                 },
                 cancellable
             );
@@ -183,7 +184,7 @@ public class Application.AttachmentManager : GLib.Object {
         return content;
     }
 
-    private async bool check_and_write(Convey.Memory.Buffer content,
+    private async bool check_and_write(GriabuntuMail.Memory.Buffer content,
                                        GLib.File destination,
                                        GLib.Cancellable? cancellable) {
         bool succeeded = false;
@@ -256,7 +257,7 @@ public class Application.AttachmentManager : GLib.Object {
         return (response == "replace");
     }
 
-    private async void write_buffer_to_file(Convey.Memory.Buffer buffer,
+    private async void write_buffer_to_file(GriabuntuMail.Memory.Buffer buffer,
                                            GLib.File destination,
                                            GLib.Cancellable? cancellable)
         throws GLib.Error {
@@ -282,14 +283,14 @@ public class Application.AttachmentManager : GLib.Object {
 
     private File? download_dir() {
         var download_dir = GLib.Environment.get_user_special_dir(DOWNLOAD);
-        if (Convey.String.is_empty_or_whitespace(download_dir))
+        if (GriabuntuMail.String.is_empty_or_whitespace(download_dir))
             return null;
         return File.new_for_path(download_dir);
     }
 
     private inline void handle_error(GLib.Error error) {
         this.parent.application.controller.report_problem(
-            new Convey.ProblemReport(error)
+            new GriabuntuMail.ProblemReport(error)
         );
     }
 

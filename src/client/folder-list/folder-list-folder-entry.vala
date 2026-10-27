@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -24,14 +25,14 @@ public class FolderList.FolderEntry :
         this.context = context;
         this.context.notify.connect(on_context_changed);
         this.has_new = false;
-        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL].connect(on_counts_changed);
-        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD].connect(on_counts_changed);
+        this.folder.properties.notify[GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL].connect(on_counts_changed);
+        this.folder.properties.notify[GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_UNREAD].connect(on_counts_changed);
     }
 
     ~FolderEntry() {
         this.context.notify.disconnect(on_context_changed);
-        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL].disconnect(on_counts_changed);
-        this.folder.properties.notify[Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD].disconnect(on_counts_changed);
+        this.folder.properties.notify[GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL].disconnect(on_counts_changed);
+        this.folder.properties.notify[GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_UNREAD].disconnect(on_counts_changed);
     }
 
     public override string get_sidebar_name() {

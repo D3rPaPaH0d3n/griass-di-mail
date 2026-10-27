@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>
@@ -27,7 +28,7 @@
  * is buffered, there's no need to buffer the InputStream passed to Deserializer's constructor.
  */
 
-public class Convey.Imap.Deserializer : BaseObject, Logging.Source {
+public class GriabuntuMail.Imap.Deserializer : BaseObject, Logging.Source {
 
 
     private const size_t MAX_BLOCK_READ_SIZE = 4096;
@@ -78,8 +79,8 @@ public class Convey.Imap.Deserializer : BaseObject, Logging.Source {
         return ((Event) event).to_string();
     }
 
-    private static Convey.State.MachineDescriptor machine_desc = new Convey.State.MachineDescriptor(
-        "Convey.Imap.Deserializer", State.TAG, State.COUNT, Event.COUNT,
+    private static GriabuntuMail.State.MachineDescriptor machine_desc = new GriabuntuMail.State.MachineDescriptor(
+        "GriabuntuMail.Imap.Deserializer", State.TAG, State.COUNT, Event.COUNT,
         state_to_string, event_to_string);
 
     /** {@inheritDoc} */
@@ -96,7 +97,7 @@ public class Convey.Imap.Deserializer : BaseObject, Logging.Source {
 
     private string identifier;
     private DataInputStream input;
-    private Convey.State.Machine fsm;
+    private GriabuntuMail.State.Machine fsm;
 
     private ListParameter context;
     private Gee.LinkedList<ListParameter> context_stack =
@@ -106,7 +107,7 @@ public class Convey.Imap.Deserializer : BaseObject, Logging.Source {
     private Nonblocking.Semaphore closed_semaphore = new Nonblocking.Semaphore();
     private StringBuilder? current_string = null;
     private size_t literal_length_remaining = 0;
-    private Convey.Memory.GrowableBuffer? block_buffer = null;
+    private GriabuntuMail.Memory.GrowableBuffer? block_buffer = null;
     private unowned uint8[]? current_buffer = null;
     private int ins_priority = Priority.DEFAULT;
 
@@ -176,69 +177,69 @@ public class Convey.Imap.Deserializer : BaseObject, Logging.Source {
 
         this.quirks = quirks;
 
-        Convey.State.Mapping[] mappings = {
-            new Convey.State.Mapping(State.TAG, Event.CHAR, on_tag_char),
-            new Convey.State.Mapping(State.TAG, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.TAG, Event.ERROR, on_error),
+        GriabuntuMail.State.Mapping[] mappings = {
+            new GriabuntuMail.State.Mapping(State.TAG, Event.CHAR, on_tag_char),
+            new GriabuntuMail.State.Mapping(State.TAG, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.TAG, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.START_PARAM, Event.CHAR, on_first_param_char),
-            new Convey.State.Mapping(State.START_PARAM, Event.EOL, on_eol),
-            new Convey.State.Mapping(State.START_PARAM, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.START_PARAM, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.START_PARAM, Event.CHAR, on_first_param_char),
+            new GriabuntuMail.State.Mapping(State.START_PARAM, Event.EOL, on_eol),
+            new GriabuntuMail.State.Mapping(State.START_PARAM, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.START_PARAM, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.ATOM, Event.CHAR, on_atom_char),
-            new Convey.State.Mapping(State.ATOM, Event.EOL, on_param_eol),
-            new Convey.State.Mapping(State.ATOM, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.ATOM, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.ATOM, Event.CHAR, on_atom_char),
+            new GriabuntuMail.State.Mapping(State.ATOM, Event.EOL, on_param_eol),
+            new GriabuntuMail.State.Mapping(State.ATOM, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.ATOM, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.FLAG, Event.CHAR, on_flag_char),
-            new Convey.State.Mapping(State.FLAG, Event.EOL, on_param_eol),
-            new Convey.State.Mapping(State.FLAG, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.FLAG, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.FLAG, Event.CHAR, on_flag_char),
+            new GriabuntuMail.State.Mapping(State.FLAG, Event.EOL, on_param_eol),
+            new GriabuntuMail.State.Mapping(State.FLAG, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.FLAG, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.QUOTED, Event.CHAR, on_quoted_char),
-            new Convey.State.Mapping(State.QUOTED, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.QUOTED, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.QUOTED, Event.CHAR, on_quoted_char),
+            new GriabuntuMail.State.Mapping(State.QUOTED, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.QUOTED, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.QUOTED_ESCAPE, Event.CHAR, on_quoted_escape_char),
-            new Convey.State.Mapping(State.QUOTED_ESCAPE, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.QUOTED_ESCAPE, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.QUOTED_ESCAPE, Event.CHAR, on_quoted_escape_char),
+            new GriabuntuMail.State.Mapping(State.QUOTED_ESCAPE, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.QUOTED_ESCAPE, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.PARTIAL_BODY_ATOM, Event.CHAR, on_partial_body_atom_char),
-            new Convey.State.Mapping(State.PARTIAL_BODY_ATOM, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.PARTIAL_BODY_ATOM, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.PARTIAL_BODY_ATOM, Event.CHAR, on_partial_body_atom_char),
+            new GriabuntuMail.State.Mapping(State.PARTIAL_BODY_ATOM, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.PARTIAL_BODY_ATOM, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.PARTIAL_BODY_ATOM_TERMINATING, Event.CHAR,
+            new GriabuntuMail.State.Mapping(State.PARTIAL_BODY_ATOM_TERMINATING, Event.CHAR,
                 on_partial_body_atom_terminating_char),
-            new Convey.State.Mapping(State.PARTIAL_BODY_ATOM_TERMINATING, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.PARTIAL_BODY_ATOM_TERMINATING, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.PARTIAL_BODY_ATOM_TERMINATING, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.PARTIAL_BODY_ATOM_TERMINATING, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.LITERAL, Event.CHAR, on_literal_char),
-            new Convey.State.Mapping(State.LITERAL, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.LITERAL, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.LITERAL, Event.CHAR, on_literal_char),
+            new GriabuntuMail.State.Mapping(State.LITERAL, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.LITERAL, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.LITERAL_DATA_BEGIN, Event.EOL, on_literal_data_begin_eol),
-            new Convey.State.Mapping(State.LITERAL_DATA_BEGIN, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.LITERAL_DATA_BEGIN, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.LITERAL_DATA_BEGIN, Event.EOL, on_literal_data_begin_eol),
+            new GriabuntuMail.State.Mapping(State.LITERAL_DATA_BEGIN, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.LITERAL_DATA_BEGIN, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.LITERAL_DATA, Event.DATA, on_literal_data),
-            new Convey.State.Mapping(State.LITERAL_DATA, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.LITERAL_DATA, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.LITERAL_DATA, Event.DATA, on_literal_data),
+            new GriabuntuMail.State.Mapping(State.LITERAL_DATA, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.LITERAL_DATA, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.RESPONSE_TEXT, Event.CHAR, on_response_text_char),
-            new Convey.State.Mapping(State.RESPONSE_TEXT, Event.EOL, on_param_eol),
-            new Convey.State.Mapping(State.RESPONSE_TEXT, Event.EOS, on_eos),
-            new Convey.State.Mapping(State.RESPONSE_TEXT, Event.ERROR, on_error),
+            new GriabuntuMail.State.Mapping(State.RESPONSE_TEXT, Event.CHAR, on_response_text_char),
+            new GriabuntuMail.State.Mapping(State.RESPONSE_TEXT, Event.EOL, on_param_eol),
+            new GriabuntuMail.State.Mapping(State.RESPONSE_TEXT, Event.EOS, on_eos),
+            new GriabuntuMail.State.Mapping(State.RESPONSE_TEXT, Event.ERROR, on_error),
 
-            new Convey.State.Mapping(State.FAILED, Event.EOL, on_failed_eol),
-            new Convey.State.Mapping(State.FAILED, Event.EOS, Convey.State.nop),
-            new Convey.State.Mapping(State.FAILED, Event.ERROR, Convey.State.nop),
+            new GriabuntuMail.State.Mapping(State.FAILED, Event.EOL, on_failed_eol),
+            new GriabuntuMail.State.Mapping(State.FAILED, Event.EOS, GriabuntuMail.State.nop),
+            new GriabuntuMail.State.Mapping(State.FAILED, Event.ERROR, GriabuntuMail.State.nop),
 
-            new Convey.State.Mapping(State.CLOSED, Event.EOS, Convey.State.nop),
-            new Convey.State.Mapping(State.CLOSED, Event.ERROR, Convey.State.nop)
+            new GriabuntuMail.State.Mapping(State.CLOSED, Event.EOS, GriabuntuMail.State.nop),
+            new GriabuntuMail.State.Mapping(State.CLOSED, Event.ERROR, GriabuntuMail.State.nop)
         };
 
-        this.fsm = new Convey.State.Machine(machine_desc, mappings, on_bad_transition);
+        this.fsm = new GriabuntuMail.State.Machine(machine_desc, mappings, on_bad_transition);
 
         reset_params();
     }
@@ -318,7 +319,7 @@ public class Convey.Imap.Deserializer : BaseObject, Logging.Source {
                 assert(literal_length_remaining >= 0);
 
                 if (block_buffer == null)
-                    block_buffer = new Convey.Memory.GrowableBuffer();
+                    block_buffer = new GriabuntuMail.Memory.GrowableBuffer();
 
                 current_buffer = block_buffer.allocate(
                     size_t.min(MAX_BLOCK_READ_SIZE, literal_length_remaining));

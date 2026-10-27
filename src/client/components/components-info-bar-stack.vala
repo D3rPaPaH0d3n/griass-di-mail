@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -14,7 +15,7 @@
  * around the info bar, and manages revealing and hiding itself and
  * the info bars as needed.
  */
-public class Components.InfoBarStack : Gtk.Frame, Convey.BaseInterface {
+public class Components.InfoBarStack : Gtk.Frame, GriabuntuMail.BaseInterface {
 
 
     /**
@@ -89,7 +90,7 @@ public class Components.InfoBarStack : Gtk.Frame, Convey.BaseInterface {
             return (
                 this.element == null
                 ? Gee.Collection.empty<Components.InfoBar>().iterator()
-                : Convey.Collection.single(this.element).iterator()
+                : GriabuntuMail.Collection.single(this.element).iterator()
             );
         }
 
@@ -160,7 +161,7 @@ public class Components.InfoBarStack : Gtk.Frame, Convey.BaseInterface {
 
 
     construct {
-        add_css_class("convey-info-bar-stack");
+        add_css_class("griabuntu-mail-info-bar-stack");
         update_queue_type();
     }
 

@@ -9,7 +9,7 @@
 
   <title>Preferences</title>
 
-  <p>Convey allows you to customise how it works via its <gui
+  <p>Griabuntu Mail allows you to customise how it works via its <gui
   style="group">Preferences</gui> window. To open the window, select
   <gui style="menuitem">Preferences</gui> from the application menu on
   the main window's toolbar. You can change the following options:</p>
@@ -17,9 +17,9 @@
   <terms>
     <item>
       <title><gui>Automatically select next message</gui></title>
-      <p>When this option is enabled, Convey automatically selects the
+      <p>When this option is enabled, Griabuntu Mail automatically selects the
       latest message in a folder when you enter the folder. In
-      addition, after archiving a message, Convey automatically selects
+      addition, after archiving a message, Griabuntu Mail automatically selects
       an adjacent message.</p>
     </item>
     <item>
@@ -35,7 +35,7 @@
     </item>
     <item>
       <title><gui>Watch for new mail when closed</gui></title>
-      <p>Convey will watch your accounts for new mail even when the
+      <p>Griabuntu Mail will watch your accounts for new mail even when the
       main window is not open.  To do this, it will silently start
       when you log in to your computer, and it will continue to run
       after you close all windows.</p>

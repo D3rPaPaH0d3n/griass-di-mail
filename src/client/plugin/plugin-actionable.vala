@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -15,7 +16,7 @@
  * registered via {@link Application.register_action} or similar calls
  * for it to be enabled.
  */
-public class Plugin.Actionable : Convey.BaseObject {
+public class Plugin.Actionable : GriabuntuMail.BaseObject {
 
 
     /**

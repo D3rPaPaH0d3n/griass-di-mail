@@ -7,7 +7,7 @@
     <signal name="unmap" handler="on_unmap"/>
 
     <style>
-      <class name="convey-main-window"/>
+      <class name="griabuntu-mail-main-window"/>
     </style>
 
 
@@ -248,7 +248,7 @@
                                       <property name="vexpand">True</property>
                                       <property name="hscrollbar_policy">never</property>
                                       <style>
-                                        <class name="convey-folder"/>
+                                        <class name="griabuntu-mail-folder"/>
                                       </style>
                                   </object>
                                 </property>
@@ -405,7 +405,7 @@
               </object>
             </child>
             <style>
-              <class name="convey-main-layout"/>
+              <class name="griabuntu-mail-main-layout"/>
             </style>
           </object>
         </child>
@@ -472,7 +472,7 @@
         <attribute name="accel">F1</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">_About Convey</attribute>
+        <attribute name="label" translatable="yes">_About Griabuntu Mail</attribute>
         <attribute name="action">app.about</attribute>
       </item>
     </section>

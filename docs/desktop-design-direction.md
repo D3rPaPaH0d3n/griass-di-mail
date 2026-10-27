@@ -1,4 +1,16 @@
+<!-- Current icon correction, 2026-10-27: The owner selected the CLOSED COLOURED
+ENVELOPE in design/owner-artwork-20261027/. Active exports in brand/ preserve
+that supplied PNG. The previously installed .3 icon study was a mistaken
+substitution and is superseded. Do not reuse its CC0 claim for owner originals.
+See brand/README.md. Broader UI theming remains separate. -->
+
 # Future native desktop direction · 2026-10-26
+
+**Icon correction, 2026-10-27:** the owner selected the supplied closed coloured
+G-envelope, preserved in `design/owner-artwork-20261027/`. App and tray exports
+use that PNG; the symbolic mask uses the supplied closed mono variant.
+The locally drawn .3 study was a mistaken substitution and is archived.
+See [current assets](../brand/README.md). This does not complete the GTK theme.
 
 Owner brief: **Griabuntu Mail** should eventually fit Ubuntu seamlessly, including
 icons, buttons, dialogs and interaction details. Retain petrol/teal and copper,
@@ -20,15 +32,15 @@ brief and original presentation art only — **not a completed application redes
   cross-desktop acceptance. Do not copy Ubuntu/Canonical marks or trade dress,
   and do not imply their endorsement.
 
-## Latest owner feedback: more clearly mail
+## Earlier owner feedback: more clearly mail (superseded by selection above)
 
 The owner reviewed the folded-G study and asked for a stronger **mail/envelope**
 cue. A G with a small folded corner does not yet communicate a mail app clearly
 enough. Keep the agreed pastel petrol/teal and copper/peach family.
 
 We discussed a recognisable rounded envelope with a clear flap, possibly a G in
-its geometry/negative space, and closed versus open envelope. **No final variant
-or open/closed choice has been approved.** These are discussion directions, not
+its geometry/negative space, and closed versus open envelope. At that earlier point no final variant
+or open/closed choice had been approved. These are discussion directions, not
 a completed new logo. Keep the prior editable artwork for provenance/iteration;
 do not present it as final owner acceptance or install it silently.
 

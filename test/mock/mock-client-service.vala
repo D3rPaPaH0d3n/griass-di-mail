@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2017-2020 Michael Gratton <mike@vee.net>
  *
@@ -7,23 +8,23 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Mock.ClientService : Convey.ClientService {
+public class Mock.ClientService : GriabuntuMail.ClientService {
 
 
-    public ClientService(Convey.AccountInformation account,
-                         Convey.ServiceInformation configuration,
-                         Convey.Endpoint remote) {
+    public ClientService(GriabuntuMail.AccountInformation account,
+                         GriabuntuMail.ServiceInformation configuration,
+                         GriabuntuMail.Endpoint remote) {
         base(account, configuration, remote);
     }
 
     public override async void start(GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        throw new Convey.EngineError.UNSUPPORTED("Mock method");
+        throw new GriabuntuMail.EngineError.UNSUPPORTED("Mock method");
     }
 
     public override async void stop(GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        throw new Convey.EngineError.UNSUPPORTED("Mock method");
+        throw new GriabuntuMail.EngineError.UNSUPPORTED("Mock method");
     }
 
     public override void became_reachable() {

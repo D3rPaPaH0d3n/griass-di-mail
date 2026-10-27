@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -7,11 +8,11 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.GenericFolder : MinimalFolder,
-    Convey.FolderSupport.Archive,
-    Convey.FolderSupport.Remove,
-    Convey.FolderSupport.Create,
-    Convey.FolderSupport.Empty {
+private class GriabuntuMail.ImapEngine.GenericFolder : MinimalFolder,
+    GriabuntuMail.FolderSupport.Archive,
+    GriabuntuMail.FolderSupport.Remove,
+    GriabuntuMail.FolderSupport.Create,
+    GriabuntuMail.FolderSupport.Empty {
 
     public GenericFolder(GenericAccount account,
                          ImapDB.Folder local_folder,
@@ -19,11 +20,11 @@ private class Convey.ImapEngine.GenericFolder : MinimalFolder,
         base (account, local_folder, use);
     }
 
-    public async Convey.Revokable?
-        archive_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
+    public async GriabuntuMail.Revokable?
+        archive_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids,
                             GLib.Cancellable? cancellable = null)
         throws GLib.Error {
-        Convey.Folder? archive_folder = null;
+        GriabuntuMail.Folder? archive_folder = null;
         try {
             archive_folder = yield account.get_required_special_folder_async(
                 Folder.SpecialUse.ARCHIVE, cancellable
@@ -42,7 +43,7 @@ private class Convey.ImapEngine.GenericFolder : MinimalFolder,
     }
 
     public async void
-        remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
+        remove_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         yield expunge_email_async(email_ids, cancellable);

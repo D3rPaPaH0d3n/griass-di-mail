@@ -1,11 +1,12 @@
-# Russian translation for convey.
+# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Russian translation for griabuntu_mail.
 # Copyright (C) 2022 convey's COPYRIGHT HOLDER
-# This file is distributed under the same license as the convey package.
+# This file is distributed under the same license as the griabuntu-mail package.
 # Sergej A. <asvmail.as@gmail.com>, 2022.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: convey mainline\n"
+"Project-Id-Version: griabuntu-mail mainline\n"
 "POT-Creation-Date: 2023-02-28 17:44+0000\n"
 "PO-Revision-Date: 2023-03-18 23:20+1000\n"
 "Last-Translator: Ser82-png <asvmail.as@gmail.com>\n"
@@ -37,13 +38,13 @@ msgstr "Редактор учётных записей"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Convey’s application menu button "
+"<em>accounts editor</em>. To open it, click Griabuntu Mail’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
 "Учётные записи электронной почты можно добавлять, обновлять и удалять с "
 "помощью <em>редактора учетных записей</em>. Чтобы открыть его, нажмите "
-"кнопку меню приложения Convey в главном окне над списком папок, затем "
+"кнопку меню приложения Griabuntu Mail в главном окне над списком папок, затем "
 "выберите <gui>Учётные записи</gui> во всплывающем меню."
 
 #. (itstool) path: section/p
@@ -69,16 +70,16 @@ msgstr "Добавление учётных записей"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Convey will automatically use any email accounts you have added via the "
+"Griabuntu Mail will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not "
 "have any accounts added to <app>Online Accounts</app>, you will be prompted "
-"to add an account the first time you run Convey."
+"to add an account the first time you run GriabuntuMail."
 msgstr ""
-"Convey будет автоматически использовать любые учётные записи электронной "
+"Griabuntu Mail будет автоматически использовать любые учётные записи электронной "
 "почты, которые вы добавили через панель <app>Сетевые учётные записи</app> в "
 "<app>Настройках</app> GNOME. Если у вас нет учётных записей, добавленных в "
 "<app>Сетевые учётные записи</app>, то будет предложено добавить учётную "
-"запись при первом запуске Convey."
+"запись при первом запуске GriabuntuMail."
 
 #. (itstool) path: section/p
 #: C/accounts.page:37
@@ -88,7 +89,7 @@ msgid ""
 "providers supported by <app>Online Accounts</app>, <app>GNOME Settings</app> "
 "will be opened and you will be asked for your account information there. For "
 "other email providers, you will be asked for your account information by "
-"Convey. Once entered, click <gui>Create</gui> and the account information "
+"GriabuntuMail. Once entered, click <gui>Create</gui> and the account information "
 "will be checked and then added."
 msgstr ""
 "Чтобы добавить дополнительные учётные записи, откройте редактор учётных "
@@ -96,7 +97,7 @@ msgstr ""
 "из списка в нижней части окна. Для провайдеров, поддерживаемых <app>Сетевыми "
 "учётными записями</app>, будут открыты <app>Настройки</app> GNOME, и там вам "
 "будет предложено ввести информацию об учётной записи. Для других провайдеров "
-"электронной почты Convey попросит ввести информацию об учётной записи "
+"электронной почты Griabuntu Mail попросит ввести информацию об учётной записи "
 "вручную. После ввода настроек щёлкните <gui>Создать</gui>, и информация об "
 "учётной записи будет проверена, а затем добавлена в список."
 
@@ -109,12 +110,12 @@ msgstr "Обновление существующих учётных запис�
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account "
-"you wish to update. Convey will display settings for the account. From there, "
+"you wish to update. Griabuntu Mail will display settings for the account. From there, "
 "you can add and remove additional sender email addresses, edit your email "
 "signature, and various other settings."
 msgstr ""
 "Чтобы обновить существующие учётные записи, откройте редактор учётных "
-"записей и выберите учётную запись, которую хотите обновить. Convey отобразит "
+"записей и выберите учётную запись, которую хотите обновить. Griabuntu Mail отобразит "
 "настройки учётной записи. Там вы сможете добавлять и удалять дополнительные "
 "адреса электронной почты отправителя, редактировать подпись электронной "
 "почты и осуществлять другие настройки."
@@ -123,11 +124,11 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Convey will download and store locally. Convey can only use locally available "
+"Griabuntu Mail will download and store locally. Griabuntu Mail can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
-"Параметр <gui>Загружать почту</gui> позволяет указать, за какой период Convey "
-"будет загружать и хранить локально почту. Convey может использовать только "
+"Параметр <gui>Загружать почту</gui> позволяет указать, за какой период Griabuntu Mail "
+"будет загружать и хранить локально почту. Griabuntu Mail может использовать только "
 "локально доступную почту при отображении и поиске переписки."
 
 #. (itstool) path: section/p
@@ -136,7 +137,7 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Convey will check the settings, then update the account. Note that "
+"and Griabuntu Mail will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
@@ -144,7 +145,7 @@ msgstr ""
 "Чтобы изменить настройки сервера для учётной записи, прокрутите окно до "
 "нижней части и нажмите <gui>Параметры сервера</gui>. Отобразятся настройки "
 "сервера, и вы сможете внести необходимые изменения. После этого щёлкните "
-"<gui>Применить</gui>, и Convey проверит настройки, а затем обновит учётную "
+"<gui>Применить</gui>, и Griabuntu Mail проверит настройки, а затем обновит учётную "
 "запись. Обратите внимание, что для учётных записей, добавленных через панель "
 "<app>Сетевые учётные записи</app> в <app>Настройках</app> GNOME, нельзя "
 "изменить имя сервера, настройки безопасности, логин или пароль."
@@ -165,13 +166,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Convey "
+"The <gui>Save sent email on server</gui> checkbox controls whether Griabuntu Mail "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder. "
 "If de-selected, you will no be able to see any email messages you have sent, "
 "unless your server automatically saves them for you."
 msgstr ""
 "Пункт <gui>Сохранить отправленную электронную почту на сервере</gui> "
-"определяет, будет ли Convey сохранять копии отправленных электронных "
+"определяет, будет ли Griabuntu Mail сохранять копии отправленных электронных "
 "сообщений, в папку <gui>Отправленные</gui>. Если параметр отключен, вы не "
 "сможете просматривать отправленные вами сообщения, если только сервер "
 "автоматически не сохранит их для вас."
@@ -196,16 +197,16 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Convey, open the accounts editor and choose "
-"the account you wish to remove. Convey will display settings for the account. "
+"To remove an account added via Griabuntu Mail, open the accounts editor and choose "
+"the account you wish to remove. Griabuntu Mail will display settings for the account. "
 "Scroll to the bottom of the window and click <gui>Remove Account</gui>. You "
 "will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
 "<gui>Undo</gui> in the popup notification, or by typing <keyseq><key>Ctrl</"
 "key><key>U</key></keyseq>."
 msgstr ""
-"Чтобы удалить учётную запись, добавленную через Convey, откройте редактор "
-"учётных записей и выберите запись, которую хотите удалить. Convey отобразит "
+"Чтобы удалить учётную запись, добавленную через Griabuntu Mail, откройте редактор "
+"учётных записей и выберите запись, которую хотите удалить. Griabuntu Mail отобразит "
 "настройки учётной записи. Прокрутите окно до нижней части и нажмите "
 "<gui>Удалить учётную запись</gui>. Вам будет предложено подтвердить "
 "удаление. После подтверждения, если вы передумаете, то ещё сможете отменить "
@@ -220,13 +221,13 @@ msgstr "Архивация, перемещение в корзину и удал
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Convey lets you archive messages if your server supports it. Clicking the "
+"Griabuntu Mail lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
 "email organised by moving old and replied-to email out of the way."
 msgstr ""
-"Convey позволяет архивировать сообщения, если сервер поддерживает эту "
+"Griabuntu Mail позволяет архивировать сообщения, если сервер поддерживает эту "
 "функцию. Нажатие кнопки <gui style=\"button\">Архив</gui> на панели "
 "инструментов перемещает беседу из текущей папки в папку <gui>Архив</gui> для "
 "большинства почтовых служб или в папку <gui>Вся почта</gui> для Gmail. "
@@ -290,8 +291,8 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/bugs.page:10
-msgid "Need help with Convey?"
-msgstr "Нужна помощь с Convey?"
+msgid "Need help with Griabuntu Mail?"
+msgstr "Нужна помощь с Griabuntu Mail?"
 
 #. (itstool) path: section/title
 #: C/bugs.page:13
@@ -301,13 +302,13 @@ msgstr "Получение поддержки"
 #. (itstool) path: section/p
 #: C/bugs.page:15
 msgid ""
-"If you are having trouble using Convey, please <link href=\"https://wiki."
+"If you are having trouble using Griabuntu Mail, please <link href=\"https://wiki."
 "gnome.org/Apps/Geary/Contact\">get in touch</link> with the Geary community "
 "about the problem."
 msgstr ""
-"Если у вас возникли проблемы с использованием Convey, пожалуйста <link "
-"href=\"https://wiki.gnome.org/Apps/Geary/Contact\">свяжитесь</link> с "
-"сообществом Convey по поводу проблемы."
+"Если у вас возникли проблемы с использованием Griabuntu Mail, пожалуйста <link "
+"href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">свяжитесь</link> с "
+"сообществом Griabuntu Mail по поводу проблемы."
 
 #. (itstool) path: section/title
 #: C/bugs.page:21
@@ -317,12 +318,12 @@ msgstr "Сообщение об ошибках"
 #. (itstool) path: section/p
 #: C/bugs.page:23
 msgid ""
-"If you suspect you have found a bug in Convey, please follow the <link "
-"href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">bug reporting "
+"If you suspect you have found a bug in Griabuntu Mail, please follow the <link "
+"href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">bug reporting "
 "guidelines</link> so the problem can be diagnosed and fixed."
 msgstr ""
-"Если вы подозреваете, что обнаружили ошибку в Convey, следуйте <link "
-"href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">руководству по "
+"Если вы подозреваете, что обнаружили ошибку в Griabuntu Mail, следуйте <link "
+"href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">руководству по "
 "сообщениям об ошибках</link>, чтобы можно было диагностировать проблему и "
 "устранить её."
 
@@ -337,8 +338,8 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:32
-msgid "Convey version and installation method (Package? Flathub? Source code?)"
-msgstr "Версия Convey и метод установки (Пакет? Flathub? Исходный код?)"
+msgid "Griabuntu Mail version and installation method (Package? Flathub? Source code?)"
+msgstr "Версия Griabuntu Mail и метод установки (Пакет? Flathub? Исходный код?)"
 
 #. (itstool) path: item/p
 #: C/bugs.page:34
@@ -377,92 +378,92 @@ msgstr "Что вы ожидали?"
 #. (itstool) path: section/p
 #: C/bugs.page:44
 msgid ""
-"Log files can be accessed via the Convey Inspector, press <keyseq><key>Alt</"
+"Log files can be accessed via the Griabuntu Mail Inspector, press <keyseq><key>Alt</"
 "key><key>I</key></keyseq> to open it, select and save any relevant log "
 "files, and attach them to the bug report."
 msgstr ""
-"Доступ к файлам журнала можно получить через Convey Inspector, нажмите "
+"Доступ к файлам журнала можно получить через Griabuntu Mail Inspector, нажмите "
 "<keyseq><key>Alt</key><key>I</key></keyseq>, чтобы открыть его, выберите и "
 "сохраните любые соответствующие файлы журнала и прикрепите их к отчёту об "
 "ошибке."
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Convey"
-msgstr "Вклад в Convey"
+msgid "Contribute to Griabuntu Mail"
+msgstr "Вклад в Griabuntu Mail"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Convey? There are a number of ways you can contribute:"
+"Want to help improve Griabuntu Mail? There are a number of ways you can contribute:"
 msgstr ""
-"Хотите помочь улучшить Convey? Вы можете внести свой вклад несколькими "
+"Хотите помочь улучшить Griabuntu Mail? Вы можете внести свой вклад несколькими "
 "способами:"
 
 #. (itstool) path: item/p
 #: C/contributing.page:16
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">Bug "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Bug "
 "reporting</link>—report new bugs or request new features"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">Сообщения об "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Сообщения об "
 "ошибках</link>— сообщайте о новых ошибках или запрашивайте новые функции"
 
 #. (itstool) path: item/p
 #: C/contributing.page:19
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Translating</"
-"link>—translate Convey’s user interface and user manual into new languages"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Translating</"
+"link>—translate Griabuntu Mail’s user interface and user manual into new languages"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Перевод</link>—"
-"переводите пользовательский интерфейс и руководство пользователя Convey на "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Перевод</link>—"
+"переводите пользовательский интерфейс и руководство пользователя Griabuntu Mail на "
 "новые языки"
 
 #. (itstool) path: item/p
 #: C/contributing.page:20
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Development\">Development</"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Development</"
 "link>—fix bugs and add new features"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Development\">Разработка</"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Разработка</"
 "link>—участвуйте в исправлении ошибок и добавлении новых функций"
 
 #. (itstool) path: page/p
 #: C/contributing.page:23
 msgid ""
-"See <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">the wiki</"
+"See <link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">the wiki</"
 "link> for more information and options for contributing financially to "
-"Convey's development."
+"Griabuntu Mail's development."
 msgstr ""
 "Для получения более подробной информации смотрите <link href=\"https://wiki."
-"gnome.org/Apps/Geary/Contribute\">wiki</link>. А также вы можете поддержать "
-"развитие Convey финансово."
+"gnome.org/Apps/Griabuntu Mail/Contribute\">wiki</link>. А также вы можете поддержать "
+"развитие Griabuntu Mail финансово."
 
 #. (itstool) path: info/title
 #: C/index.page:7
-#| msgid "Using Convey"
+#| msgid "Using Griabuntu Mail"
 msgctxt "link:trail"
-msgid "Convey"
-msgstr "Convey"
+msgid "Griabuntu Mail"
+msgstr "Griabuntu Mail"
 
 #. (itstool) path: info/title
 #: C/index.page:8
-#| msgid "Using Convey"
+#| msgid "Using Griabuntu Mail"
 msgctxt "text"
-msgid "Convey"
-msgstr "Convey"
+msgid "Griabuntu Mail"
+msgstr "Griabuntu Mail"
 
 #. (itstool) path: info/title
 #: C/index.page:9
-#| msgid "Using Convey"
+#| msgid "Using Griabuntu Mail"
 msgctxt "link"
-msgid "Convey"
-msgstr "Convey"
+msgid "Griabuntu Mail"
+msgstr "Griabuntu Mail"
 
 #. (itstool) path: page/title
 #: C/index.page:12
-msgid "<_:media-1/> <span>Convey</span>"
-msgstr "<_:media-1/> <span>Convey</span>"
+msgid "<_:media-1/> <span>Griabuntu Mail</span>"
+msgstr "<_:media-1/> <span>Griabuntu Mail</span>"
 
 #. (itstool) path: section/title
 #: C/index.page:18
@@ -471,8 +472,8 @@ msgstr "Введение"
 
 #. (itstool) path: section/title
 #: C/index.page:22
-msgid "Using Convey"
-msgstr "Использование Convey"
+msgid "Using Griabuntu Mail"
+msgstr "Использование Griabuntu Mail"
 
 #. (itstool) path: section/title
 #: C/index.page:26
@@ -492,12 +493,12 @@ msgstr "Отметить беседу"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Convey lets you apply one or more <em>labels</em> to each conversation. Convey "
+"Griabuntu Mail lets you apply one or more <em>labels</em> to each conversation. Griabuntu Mail "
 "labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
-"Convey позволяет применять одну или несколько <em>меток</em> к каждой беседе. "
-"Метки Convey соответствуют меткам в Gmail или обычным папкам в других "
+"Griabuntu Mail позволяет применять одну или несколько <em>меток</em> к каждой беседе. "
+"Метки Griabuntu Mail соответствуют меткам в Gmail или обычным папкам в других "
 "почтовых сервисах."
 
 #. (itstool) path: section/p
@@ -566,28 +567,28 @@ msgstr "Ограничения"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Convey is still in early development. Convey supports IMAP and has been tested "
+"Griabuntu Mail is still in early development. Griabuntu Mail supports IMAP and has been tested "
 "with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Convey may not yet work well with some IMAP "
-"servers. At this time Convey is still missing numerous features including "
+"for Outlook.com is provided. Griabuntu Mail may not yet work well with some IMAP "
+"servers. At this time Griabuntu Mail is still missing numerous features including "
 "offline mode."
 msgstr ""
-"Convey всё ещё находится на ранней стадии разработки. Convey поддерживает IMAP "
+"Griabuntu Mail всё ещё находится на ранней стадии разработки. Griabuntu Mail поддерживает IMAP "
 "и был протестирован с Gmail, Yahoo и бесплатным почтовым сервером Dovecot. "
-"Предоставляется экспериментальная поддержка Outlook.com. Convey может пока не "
-"работать с некоторыми серверами IMAP. В настоящее время Convey по-прежнему не "
+"Предоставляется экспериментальная поддержка Outlook.com. Griabuntu Mail может пока не "
+"работать с некоторыми серверами IMAP. В настоящее время Griabuntu Mail по-прежнему не "
 "хватает многих функций, включая автономный режим."
 
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Convey, "
+"To learn more about the features we're working on and the future of Griabuntu Mail, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
 "Чтобы узнать больше о функциях, над которыми мы работаем, и о будущих "
 "возможностях Geary, посетите <link href=\"https://wiki.gnome.org/Apps/"
-"Convey\">вики-страницу Convey</link>."
+"Griabuntu Mail\">вики-страницу Griabuntu Mail</link>."
 
 #. (itstool) path: page/title
 #. (itstool) path: section/title
@@ -598,11 +599,11 @@ msgstr "Обзор"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Convey is an email application built around conversations, for the GNOME 3 "
+"Griabuntu Mail is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Convey — приложение электронной почты для рабочего стола GNOME 3, построенное "
+"Griabuntu Mail — приложение электронной почты для рабочего стола GNOME 3, построенное "
 "по принципу обмена сообщениями — беседами. Позволяет читать, находить и "
 "отправлять электронную почту с простым и современным интерфейсом."
 
@@ -618,10 +619,10 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Convey window is divided into several areas: The folder list, the "
+"The main Griabuntu Mail window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
-"Главное окно Convey разделено на несколько областей: список папок, список "
+"Главное окно Griabuntu Mail разделено на несколько областей: список папок, список "
 "бесед и область просмотра бесед."
 
 #. (itstool) path: section/title
@@ -633,11 +634,11 @@ msgstr "Список папок"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Convey uses the term <em>label</em> for any folder "
+"for your email accounts. Griabuntu Mail uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "В <em>списке папок</em> отображаются все <em>папки</em> и <em>метки</em> для "
-"ваших учётных записей электронной почты. Convey использует термин <em>метка</"
+"ваших учётных записей электронной почты. Griabuntu Mail использует термин <em>метка</"
 "em> для любой папки, созданной вами для систематизации сообщений электронной "
 "почты."
 
@@ -668,38 +669,38 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Convey displays a count "
+"sender. If a conversation has more than one message, Griabuntu Mail displays a count "
 "of messages in the conversation."
 msgstr ""
 "Имя каждого отправителя выделяется жирным шрифтом, если от него есть "
-"непрочитанные сообщения. Если в беседе несколько сообщений, Convey показывает "
+"непрочитанные сообщения. Если в беседе несколько сообщений, Griabuntu Mail показывает "
 "количество имеющихся в беседе сообщений."
 
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Convey does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Convey "
+"Griabuntu Mail does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Griabuntu Mail "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Convey will fetch more messages "
+"simply scroll down the conversation list and Griabuntu Mail will fetch more messages "
 "automatically."
 msgstr ""
-"Convey не загружает автоматически все сообщения во все ваши почтовые папки. "
-"Когда вы впервые посещаете папку «Входящие» или любую другую папку, Convey "
+"Griabuntu Mail не загружает автоматически все сообщения во все ваши почтовые папки. "
+"Когда вы впервые посещаете папку «Входящие» или любую другую папку, Griabuntu Mail "
 "загружает самые последние сообщения из этой папки. Чтобы увидеть больше "
-"сообщений, просто прокрутите список бесед вниз, и Convey автоматически "
+"сообщений, просто прокрутите список бесед вниз, и Griabuntu Mail автоматически "
 "подгрузит другие сообщения."
 
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Convey can act on a group of conversations. To select "
+"Some commands in Griabuntu Mail can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the "
 "last conversation."
 msgstr ""
-"Некоторые команды в Convey могут быть применены к группе бесед. Чтобы выбрать "
+"Некоторые команды в Griabuntu Mail могут быть применены к группе бесед. Чтобы выбрать "
 "несколько бесед, удерживайте нажатой клавишу <key>Ctrl</key> и щёлкайте "
 "каждую беседу по очереди в списке бесед. Либо щёлкните первую беседу в "
 "требуемом диапазоне, затем, удерживая нажатой клавишу <key>Shift</key>, "
@@ -722,11 +723,11 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Convey collapses messages that you’ve already "
+"When you view a conversation, Griabuntu Mail collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
-"Во время просмотра беседы Convey сворачивает сообщения, которые вы уже "
+"Во время просмотра беседы Griabuntu Mail сворачивает сообщения, которые вы уже "
 "прочитали. Щёлкните свернутые сообщения, чтобы снова развернуть их. Щёлкните "
 "заголовок развернутого сообщения, чтобы вновь свернуть его."
 
@@ -761,12 +762,12 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Convey will display the first starred message in a conversation "
+"starred, and Griabuntu Mail will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "Нажмите кнопку со звездочкой рядом с каждым сообщением, чтобы пометить его "
 "звездочкой или снять отметку. При просмотре сообщений вся беседа будет "
-"помечена звездочкой. Когда вы вернётесь к просмотру беседы, Convey покажет "
+"помечена звездочкой. Когда вы вернётесь к просмотру беседы, Griabuntu Mail покажет "
 "отмеченное сообщение первым."
 
 #. (itstool) path: section/p
@@ -801,12 +802,12 @@ msgstr "Параметры"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Convey allows you to customise how it works via its <gui "
+"Griabuntu Mail allows you to customise how it works via its <gui "
 "style=\"group\">Preferences</gui> window. To open the window, select <gui "
 "style=\"menuitem\">Preferences</gui> from the application menu on the main "
 "window's toolbar. You can change the following options:"
 msgstr ""
-"В окне <gui style=\"group\">Параметры</gui> можно настроить работу Convey. "
+"В окне <gui style=\"group\">Параметры</gui> можно настроить работу GriabuntuMail. "
 "Чтобы открыть это окно, выберите <gui style=\"menuitem\">Параметры</gui> в "
 "меню приложения на панели инструментов главного окна. Вы можете изменить "
 "следующие настройки:"
@@ -819,12 +820,12 @@ msgstr "<gui>Автопереход к следующему сообщению</
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Convey automatically selects the latest message "
+"When this option is enabled, Griabuntu Mail automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Convey automatically selects an adjacent message."
+"message, Griabuntu Mail automatically selects an adjacent message."
 msgstr ""
-"Когда эта опция включена, Convey автоматически выбирает последнее сообщение в "
-"папке при входе в неё. Кроме того, после архивирования сообщения Convey "
+"Когда эта опция включена, Griabuntu Mail автоматически выбирает последнее сообщение в "
+"папке при входе в неё. Кроме того, после архивирования сообщения Griabuntu Mail "
 "автоматически выбирает соседнее."
 
 #. (itstool) path: item/title
@@ -865,11 +866,11 @@ msgstr "<gui>Следить за поступлением новых писем 
 #. (itstool) path: item/p
 #: C/preferences.page:38
 msgid ""
-"Convey will watch your accounts for new mail even when the main window is not "
+"Griabuntu Mail will watch your accounts for new mail even when the main window is not "
 "open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
-"Convey будет следить за вашими учётными записями на наличие новой почты, даже "
+"Griabuntu Mail будет следить за вашими учётными записями на наличие новой почты, даже "
 "если главное окно закрыто. Для этого приложение будет автоматически "
 "запускаться при входе в систему на компьютере и продолжать работу после "
 "того, как вы закроете все окна."
@@ -882,12 +883,12 @@ msgstr "Поиск"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Convey supports a per-account full text search. To start a search, select a "
+"Griabuntu Mail supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) and start typing. Results will appear after a brief delay."
 msgstr ""
-"Convey поддерживает полнотекстовый поиск для каждой учётной записи. Чтобы "
+"Griabuntu Mail поддерживает полнотекстовый поиск для каждой учётной записи. Чтобы "
 "начать поиск, выберите папку, связанную с учётной записью, в которой вы "
 "хотите выполнить поиск. Затем щёлкните поле поиска на панели инструментов "
 "(или нажмите <keyseq><key>Ctrl</key><key>S</key></keyseq>) и начните вводить "
@@ -906,12 +907,12 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Convey "
+"Keywords that match your search are highlighted in the message view. Griabuntu Mail "
 "will match different forms of the same word, for example searching for "
 "\"walk\" will also match \"walking\" and \"walked.\""
 msgstr ""
 "Ключевые слова, соответствующие вашему запросу, будут выделяться в окне "
-"сообщения. Convey находит разные формы одного и того же слова, например, при "
+"сообщения. Griabuntu Mail находит разные формы одного и того же слова, например, при "
 "поиске «walk», также будут найдены «walking» и «walked»."
 
 #. (itstool) path: section/title
@@ -921,8 +922,8 @@ msgstr "Операторы поиска"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Convey supports the following operators to limit the scope of searches:"
-msgstr "Convey поддерживает следующие операторы для ограничения области поиска:"
+msgid "Griabuntu Mail supports the following operators to limit the scope of searches:"
+msgstr "Griabuntu Mail поддерживает следующие операторы для ограничения области поиска:"
 
 #. (itstool) path: td/p
 #: C/search.page:27
@@ -1057,12 +1058,12 @@ msgstr "Комбинации клавиш"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Convey has keyboard shortcuts for most common operations. Use the built-in "
+"Griabuntu Mail has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the "
 "main window's toolbar, or using the keyboard shortcuts listed below."
 msgstr ""
-"У Convey есть сочетания клавиш для наиболее распространенных операций. "
+"У Griabuntu Mail есть сочетания клавиш для наиболее распространенных операций. "
 "Используйте встроенную справку, чтобы открыть полный их список. Для открытия "
 "справки по сочетаниям клавиш, выберите <gui style=\"menuitem\">Комбинации "
 "клавиш</gui> в меню на панели инструментов главного окна или используйте "
@@ -1072,9 +1073,9 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Convey:"
+"Griabuntu Mail:"
 msgstr ""
-"Для доступа к интерактивной справке от Convey можно использовать следующие "
+"Для доступа к интерактивной справке от Griabuntu Mail можно использовать следующие "
 "сочетания клавиш:"
 
 #. (itstool) path: td/p
@@ -1162,11 +1163,11 @@ msgstr "Обозначение сообщений как прочитанные 
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Convey marks messages as read automatically as you read them. To manually "
+"Griabuntu Mail marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
-"Во время чтения сообщения Convey автоматически отмечает его как прочитанное. "
+"Во время чтения сообщения Griabuntu Mail автоматически отмечает его как прочитанное. "
 "Чтобы вручную отметить беседу как прочитанную или непрочитанную, щёлкните "
 "значок кружка в списке бесед."
 
@@ -1228,13 +1229,13 @@ msgstr "Отмена отправки"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Convey will wait 5 seconds before delivering the "
+"When sending an email, Griabuntu Mail will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui "
 "style=\"button\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
 "more changes to it."
 msgstr ""
-"При отправке электронного письма Convey будет ожидать 5 секунд, прежде чем "
+"При отправке электронного письма Griabuntu Mail будет ожидать 5 секунд, прежде чем "
 "доставить сообщение. В течение этого времени вы можете нажать кнопку <gui "
 "style=\"button\">Отменить</gui> в появившемся всплывающем уведомлении или "
 "нажать <keyseq><key>Ctrl</key><key>Z</key></keyseq>, чтобы повторно открыть "
@@ -1264,12 +1265,12 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/write.page:41
 msgid ""
-"When entering an email address into any of these fields, Convey will provide "
+"When entering an email address into any of these fields, Griabuntu Mail will provide "
 "suggestions from your desktop address book and from previously sent and "
 "received email messages. To choose one of these suggestions, simply click on "
 "it."
 msgstr ""
-"При вводе адреса электронной почты в любое из этих полей Convey будет "
+"При вводе адреса электронной почты в любое из этих полей Griabuntu Mail будет "
 "предлагать варианты из вашей адресной книги, а также из ранее отправленных и "
 "полученных сообщений электронной почты. Чтобы выбрать один из этих "
 "вариантов, просто нажмите на него."
@@ -1324,12 +1325,12 @@ msgstr "Форматированный текст, изображения и в�
 #. (itstool) path: section/p
 #: C/write.page:68
 msgid ""
-"Convey's email composer lets you use text styles such as <em>bold</em> and "
+"Griabuntu Mail's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it, and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar "
 "at the bottom of the composer area."
 msgstr ""
-"Редактор электронной почты Convey позволяет использовать такие стили текста, "
+"Редактор электронной почты Griabuntu Mail позволяет использовать такие стили текста, "
 "как <em>полужирный текст</em> и <em>курсив</em>, отступ текста для его "
 "цитирования и ссылки на веб-страницы. Для этого просто выделите текст и "
 "нажмите соответствующую кнопку на панели инструментов форматирования в "
@@ -1408,12 +1409,12 @@ msgstr "Проверка орфографии"
 #. (itstool) path: section/p
 #: C/write.page:106
 msgid ""
-"Convey supports spell-checking your composed email in one or more languages, "
+"Griabuntu Mail supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
 msgstr ""
-"Convey поддерживает проверку орфографии на одном или нескольких языках по "
+"Griabuntu Mail поддерживает проверку орфографии на одном или нескольких языках по "
 "мере ввода электронного письма. Чтобы включить проверку орфографии, сначала "
 "убедитесь, что на вашем компьютере установлены словари для нужных языков. "
 "Обратитесь к справочной информации вашей системы, чтобы определить, как "
@@ -1446,10 +1447,10 @@ msgstr "Сохранение черновиков и восстановлени�
 #. (itstool) path: section/p
 #: C/write.page:125
 msgid ""
-"For mail servers that support drafts, Convey will automatically save the "
+"For mail servers that support drafts, Griabuntu Mail will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
-"Если почтовые серверы поддерживают создание черновиков, то Convey "
+"Если почтовые серверы поддерживают создание черновиков, то Griabuntu Mail "
 "автоматически будет сохранять сообщение по мере его ввода на сервере с "
 "небольшой задержкой."
 
@@ -1466,7 +1467,7 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:133
-msgid "Convey will delete the draft when you send the message."
+msgid "Griabuntu Mail will delete the draft when you send the message."
 msgstr "После отправки сообщения черновик будет удалён."
 
 #. (itstool) path: note/p
@@ -1493,19 +1494,19 @@ msgstr "Обычные текстовые сообщения"
 #. (itstool) path: section/p
 #: C/write.page:148
 msgid ""
-"Convey can also send plain text messages. Press the <gui "
+"Griabuntu Mail can also send plain text messages. Press the <gui "
 "style=\"button\">More options</gui> button at the end of the bottom toolbar, "
 "then choose \"Rich Text\" or \"Plain Text\". Plain text mode is useful when "
 "sending email to mailing lists that prohibit rich text (HTML) messages, or "
-"when sending email to people that do no use modern clients like Convey."
+"when sending email to people that do no use modern clients like GriabuntuMail."
 msgstr ""
-"Также Convey может отправлять и обычные текстовые сообщения. Нажмите кнопку "
+"Также Griabuntu Mail может отправлять и обычные текстовые сообщения. Нажмите кнопку "
 "<gui style=\"button\">Дополнительные параметры</gui> в нижней панели "
 "инструментов, затем выберите «Форматированный текст» или «Простой текст». "
 "Режим обычного текста удобен при отправке электронной почты в списки "
 "рассылки, которые запрещают сообщения в формате RTF (HTML), или при отправке "
 "электронной почты людям, которые не используют современные почтовые клиенты, "
-"такие как Convey."
+"такие как GriabuntuMail."
 
 #. (itstool) path: section/p
 #: C/write.page:155

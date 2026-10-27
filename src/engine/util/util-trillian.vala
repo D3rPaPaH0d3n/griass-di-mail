@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
  * A trillian is a three-state boolean, used when the value is potentially unknown.
  */
 
-public enum Convey.Trillian {
+public enum GriabuntuMail.Trillian {
     // DO NOT MODIFY unless you know what you're doing.  These values are persisted.
     UNKNOWN = -1,
     FALSE = 0,

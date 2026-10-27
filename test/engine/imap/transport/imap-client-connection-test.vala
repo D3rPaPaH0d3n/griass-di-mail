@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Imap.ClientConnectionTest : TestCase {
+class GriabuntuMail.Imap.ClientConnectionTest : TestCase {
 
 
     private class TestCommand : Command {
@@ -22,7 +23,7 @@ class Convey.Imap.ClientConnectionTest : TestCase {
 
 
     public ClientConnectionTest() {
-        base("Convey.Imap.ClientConnectionTest");
+        base("GriabuntuMail.Imap.ClientConnectionTest");
         add_test("connect_disconnect", connect_disconnect);
         if (GLib.Test.slow()) {
             add_test("idle", idle);

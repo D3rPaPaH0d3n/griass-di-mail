@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -7,11 +8,11 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Imap.ListParameterTest : TestCase {
+class GriabuntuMail.Imap.ListParameterTest : TestCase {
 
 
     public ListParameterTest() {
-        base("Convey.Imap.ListParameterTest");
+        base("GriabuntuMail.Imap.ListParameterTest");
         add_test("add_to_multiple_parents", add_to_multiple_parents);
     }
 

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.Outbox.FolderProperties : Convey.FolderProperties {
+private class GriabuntuMail.Outbox.FolderProperties : GriabuntuMail.FolderProperties {
 
     public FolderProperties(int total, int unread) {
         base(

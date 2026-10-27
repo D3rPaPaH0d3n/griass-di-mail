@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -8,28 +9,28 @@
 
 MainLoop? main_loop = null;
 int ec = 0;
-Convey.Endpoint? endpoint = null;
-Convey.Credentials? credentials = null;
-Convey.ComposedEmail? composed_email = null;
+GriabuntuMail.Endpoint? endpoint = null;
+GriabuntuMail.Credentials? credentials = null;
+GriabuntuMail.ComposedEmail? composed_email = null;
 
 async void main_async() throws Error {
-    Convey.Smtp.ClientSession session = new Convey.Smtp.ClientSession(endpoint);
+    GriabuntuMail.Smtp.ClientSession session = new GriabuntuMail.Smtp.ClientSession(endpoint);
 
-    Convey.Smtp.Greeting? greeting = yield session.login_async(credentials);
+    GriabuntuMail.Smtp.Greeting? greeting = yield session.login_async(credentials);
     stdout.printf("%s\n", greeting.to_string());
 
     for (int ctr = 0; ctr < arg_count; ctr++) {
-        Convey.RFC822.Message msg;
+        GriabuntuMail.RFC822.Message msg;
 
         if (arg_full_file != null) {
             debug("%s", arg_full_file);
-            msg = new Convey.RFC822.Message.from_buffer(new Convey.Memory.FileBuffer(
+            msg = new GriabuntuMail.RFC822.Message.from_buffer(new GriabuntuMail.Memory.FileBuffer(
                 File.new_for_path(arg_full_file), true));
         } else {
             string subj_msg = "#%d".printf(ctr + 1);
             composed_email.set_subject(subj_msg);
 
-            if (Convey.String.is_empty(arg_file)) {
+            if (GriabuntuMail.String.is_empty(arg_file)) {
                 composed_email.body_text = subj_msg;
             } else {
                 string contents;
@@ -38,14 +39,14 @@ async void main_async() throws Error {
                 composed_email.body_text = contents;
             }
 
-            if (!Convey.String.is_empty(arg_html)) {
+            if (!GriabuntuMail.String.is_empty(arg_html)) {
                 string contents;
                 FileUtils.get_contents(arg_html, out contents);
 
                 composed_email.body_html = contents;
             }
 
-            msg = yield new Convey.RFC822.Message.from_composed_email(
+            msg = yield new GriabuntuMail.RFC822.Message.from_composed_email(
                 composed_email, null, GMime.EncodingConstraint.7BIT, null
             );
         }
@@ -57,7 +58,7 @@ async void main_async() throws Error {
         stdout.printf("Sent email #%d\n", ctr);
     }
 
-    Convey.Smtp.Response? logout = yield session.logout_async(false);
+    GriabuntuMail.Smtp.Response? logout = yield session.logout_async(false);
     stdout.printf("%s\n", logout.to_string());
 }
 
@@ -106,7 +107,7 @@ const OptionEntry[] options = {
 const int SMTP_TIMEOUT_SEC = 30;
 
 bool verify_required(string? arg, string name) {
-    if (!Convey.String.is_empty(arg))
+    if (!GriabuntuMail.String.is_empty(arg))
         return true;
 
     stdout.printf("%s required\n", name);
@@ -143,17 +144,17 @@ int main(string[] args) {
         arg_count = 1;
 
     if (arg_gmail) {
-        endpoint = new Convey.Endpoint(
-            new GLib.NetworkAddress("smtp.gmail.com", Convey.Smtp.SUBMISSION_PORT),
-            Convey.TlsNegotiationMethod.START_TLS,
+        endpoint = new GriabuntuMail.Endpoint(
+            new GLib.NetworkAddress("smtp.gmail.com", GriabuntuMail.Smtp.SUBMISSION_PORT),
+            GriabuntuMail.TlsNegotiationMethod.START_TLS,
             SMTP_TIMEOUT_SEC
         );
     } else {
-        Convey.TlsNegotiationMethod method = Convey.TlsNegotiationMethod.TRANSPORT;
+        GriabuntuMail.TlsNegotiationMethod method = GriabuntuMail.TlsNegotiationMethod.TRANSPORT;
         if (arg_no_tls) {
-            method = Convey.TlsNegotiationMethod.START_TLS;
+            method = GriabuntuMail.TlsNegotiationMethod.START_TLS;
         }
-        endpoint = new Convey.Endpoint(
+        endpoint = new GriabuntuMail.Endpoint(
             new GLib.NetworkAddress(arg_hostname, (uint16) arg_port),
             method,
             SMTP_TIMEOUT_SEC
@@ -161,24 +162,24 @@ int main(string[] args) {
     }
 
     stdout.printf("Enabling debug: %s\n", arg_debug.to_string());
-    Convey.Logging.init();
+    GriabuntuMail.Logging.init();
     if (arg_debug) {
-        Convey.Logging.log_to(stdout);
-        GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
+        GriabuntuMail.Logging.log_to(stdout);
+        GLib.Log.set_writer_func(GriabuntuMail.Logging.default_log_writer);
     }
 
-    Convey.RFC822.init();
+    GriabuntuMail.RFC822.init();
 
-    credentials = new Convey.Credentials(
-        Convey.Credentials.Method.PASSWORD, arg_user, arg_pass
+    credentials = new GriabuntuMail.Credentials(
+        GriabuntuMail.Credentials.Method.PASSWORD, arg_user, arg_pass
     );
 
     if (arg_full_file == null) {
-        composed_email = new Convey.ComposedEmail(
+        composed_email = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(new Convey.RFC822.MailboxAddress(null, arg_from))
+            new GriabuntuMail.RFC822.MailboxAddresses.single(new GriabuntuMail.RFC822.MailboxAddress(null, arg_from))
         ).set_to(
-            new Convey.RFC822.MailboxAddresses.single(new Convey.RFC822.MailboxAddress(null, arg_to))
+            new GriabuntuMail.RFC822.MailboxAddresses.single(new GriabuntuMail.RFC822.MailboxAddress(null, arg_to))
         );
     }
 

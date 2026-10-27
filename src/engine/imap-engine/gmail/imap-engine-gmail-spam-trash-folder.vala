@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -11,7 +12,7 @@
  * Gmail's Spam and Trash folders support basic operations and
  * removing messages with a traditional IMAP STORE/EXPUNGE operation.
  */
-private class Convey.ImapEngine.GmailSpamTrashFolder :
+private class GriabuntuMail.ImapEngine.GmailSpamTrashFolder :
     MinimalFolder,
     FolderSupport.Remove,
     FolderSupport.Empty {
@@ -23,7 +24,7 @@ private class Convey.ImapEngine.GmailSpamTrashFolder :
     }
 
     public async void
-        remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
+        remove_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         yield expunge_email_async(email_ids, cancellable);

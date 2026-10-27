@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>.
@@ -8,7 +9,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapDB.EmailIdentifier : Convey.EmailIdentifier {
+private class GriabuntuMail.ImapDB.EmailIdentifier : GriabuntuMail.EmailIdentifier {
 
 
     private const string VARIANT_TYPE = "(y(xx))";
@@ -67,14 +68,14 @@ private class Convey.ImapDB.EmailIdentifier : Convey.EmailIdentifier {
     }
 
     /** {@inheritDoc} */
-    public override bool equal_to(Convey.EmailIdentifier other) {
+    public override bool equal_to(GriabuntuMail.EmailIdentifier other) {
         return (
             this.get_type() == other.get_type() &&
             this.message_id == ((EmailIdentifier) other).message_id
         );
     }
 
-    public override int natural_sort_comparator(Convey.EmailIdentifier o) {
+    public override int natural_sort_comparator(GriabuntuMail.EmailIdentifier o) {
         ImapDB.EmailIdentifier? other = o as ImapDB.EmailIdentifier;
         if (other == null)
             return 1;

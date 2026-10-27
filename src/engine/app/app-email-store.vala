@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,42 +7,42 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.App.EmailStore : BaseObject {
-    public weak Convey.Account account { get; private set; }
+public class GriabuntuMail.App.EmailStore : BaseObject {
+    public weak GriabuntuMail.Account account { get; private set; }
 
-    public EmailStore(Convey.Account account) {
+    public EmailStore(GriabuntuMail.Account account) {
         this.account = account;
     }
 
     /**
-     * Return a map of EmailIdentifiers to the special Convey.FolderSupport
+     * Return a map of EmailIdentifiers to the special GriabuntuMail.FolderSupport
      * interfaces each one supports.  For example, if an EmailIdentifier comes
-     * back mapped to typeof(Convey.FolderSupport.Mark), it can be marked via
+     * back mapped to typeof(GriabuntuMail.FolderSupport.Mark), it can be marked via
      * mark_email_async().  If an EmailIdentifier doesn't appear in the
      * returned map, no operations are supported on it.
      */
-    public async Gee.MultiMap<Convey.EmailIdentifier, Type>? get_supported_operations_async(
-        Gee.Collection<Convey.EmailIdentifier> emails, Cancellable? cancellable = null) throws Error {
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>? folders
+    public async Gee.MultiMap<GriabuntuMail.EmailIdentifier, Type>? get_supported_operations_async(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> emails, Cancellable? cancellable = null) throws Error {
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>? folders
             = yield account.get_containing_folders_async(emails, cancellable);
         if (folders == null)
             return null;
 
         Gee.HashSet<Type> all_support = new Gee.HashSet<Type>();
-        all_support.add(typeof(Convey.FolderSupport.Archive));
-        all_support.add(typeof(Convey.FolderSupport.Copy));
-        all_support.add(typeof(Convey.FolderSupport.Create));
-        all_support.add(typeof(Convey.FolderSupport.Mark));
-        all_support.add(typeof(Convey.FolderSupport.Move));
-        all_support.add(typeof(Convey.FolderSupport.Remove));
+        all_support.add(typeof(GriabuntuMail.FolderSupport.Archive));
+        all_support.add(typeof(GriabuntuMail.FolderSupport.Copy));
+        all_support.add(typeof(GriabuntuMail.FolderSupport.Create));
+        all_support.add(typeof(GriabuntuMail.FolderSupport.Mark));
+        all_support.add(typeof(GriabuntuMail.FolderSupport.Move));
+        all_support.add(typeof(GriabuntuMail.FolderSupport.Remove));
 
-        Gee.HashMultiMap<Convey.EmailIdentifier, Type> map
-            = new Gee.HashMultiMap<Convey.EmailIdentifier, Type>();
-        foreach (Convey.EmailIdentifier email in folders.get_keys()) {
+        Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, Type> map
+            = new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, Type>();
+        foreach (GriabuntuMail.EmailIdentifier email in folders.get_keys()) {
             Gee.HashSet<Type> support = new Gee.HashSet<Type>();
 
-            foreach (Convey.FolderPath path in folders.get(email)) {
-                Convey.Folder folder;
+            foreach (GriabuntuMail.FolderPath path in folders.get(email)) {
+                GriabuntuMail.Folder folder;
                 try {
                     folder = account.get_folder(path);
                 } catch (Error e) {
@@ -57,7 +58,7 @@ public class Convey.App.EmailStore : BaseObject {
                     break;
             }
 
-            Convey.Collection.multi_map_set_all<Convey.EmailIdentifier, Type>(map, email, support);
+            GriabuntuMail.Collection.multi_map_set_all<GriabuntuMail.EmailIdentifier, Type>(map, email, support);
         }
 
         return (map.size > 0 ? map : null);
@@ -66,10 +67,10 @@ public class Convey.App.EmailStore : BaseObject {
     /**
      * Lists any set of EmailIdentifiers as if they were all in one folder.
      */
-    public async Gee.Collection<Convey.Email>? list_email_by_sparse_id_async(
-        Gee.Collection<Convey.EmailIdentifier> emails, Convey.Email.Field required_fields,
-        Convey.Folder.ListFlags flags, Cancellable? cancellable = null) throws Error {
-        ListOperation op = new Convey.App.ListOperation(required_fields, flags);
+    public async Gee.Collection<GriabuntuMail.Email>? list_email_by_sparse_id_async(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> emails, GriabuntuMail.Email.Field required_fields,
+        GriabuntuMail.Folder.ListFlags flags, Cancellable? cancellable = null) throws Error {
+        ListOperation op = new GriabuntuMail.App.ListOperation(required_fields, flags);
         yield do_folder_operation_async(op, emails, cancellable);
         return (op.results.size > 0 ? op.results : null);
     }
@@ -77,12 +78,12 @@ public class Convey.App.EmailStore : BaseObject {
     /**
      * Fetches any EmailIdentifier regardless of what folder it's in.
      */
-    public async Convey.Email fetch_email_async(Convey.EmailIdentifier email_id,
-        Convey.Email.Field required_fields, Convey.Folder.ListFlags flags,
+    public async GriabuntuMail.Email fetch_email_async(GriabuntuMail.EmailIdentifier email_id,
+        GriabuntuMail.Email.Field required_fields, GriabuntuMail.Folder.ListFlags flags,
         Cancellable? cancellable = null) throws Error {
-        FetchOperation op = new Convey.App.FetchOperation(required_fields, flags);
+        FetchOperation op = new GriabuntuMail.App.FetchOperation(required_fields, flags);
         yield do_folder_operation_async(op,
-            Convey.iterate<Convey.EmailIdentifier>(email_id).to_array_list(), cancellable);
+            GriabuntuMail.iterate<GriabuntuMail.EmailIdentifier>(email_id).to_array_list(), cancellable);
 
         if (op.result == null)
             throw new EngineError.NOT_FOUND("Couldn't fetch email ID %s", email_id.to_string());
@@ -91,22 +92,22 @@ public class Convey.App.EmailStore : BaseObject {
 
     /**
      * Marks any set of EmailIdentifiers as if they were all in one
-     * Convey.FolderSupport.Mark folder.
+     * GriabuntuMail.FolderSupport.Mark folder.
      */
-    public async void mark_email_async(Gee.Collection<Convey.EmailIdentifier> emails,
-        Convey.EmailFlags? flags_to_add, Convey.EmailFlags? flags_to_remove,
+    public async void mark_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> emails,
+        GriabuntuMail.EmailFlags? flags_to_add, GriabuntuMail.EmailFlags? flags_to_remove,
         Cancellable? cancellable = null) throws Error {
-        yield do_folder_operation_async(new Convey.App.MarkOperation(flags_to_add, flags_to_remove),
+        yield do_folder_operation_async(new GriabuntuMail.App.MarkOperation(flags_to_add, flags_to_remove),
             emails, cancellable);
     }
 
     /**
      * Copies any set of EmailIdentifiers as if they were all in one
-     * Convey.FolderSupport.Copy folder.
+     * GriabuntuMail.FolderSupport.Copy folder.
      */
-    public async void copy_email_async(Gee.Collection<Convey.EmailIdentifier> emails,
-        Convey.FolderPath destination, Cancellable? cancellable = null) throws Error {
-        yield do_folder_operation_async(new Convey.App.CopyOperation(destination),
+    public async void copy_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> emails,
+        GriabuntuMail.FolderPath destination, Cancellable? cancellable = null) throws Error {
+        yield do_folder_operation_async(new GriabuntuMail.App.CopyOperation(destination),
             emails, cancellable);
     }
 
@@ -116,8 +117,8 @@ public class Convey.App.EmailStore : BaseObject {
         throws GLib.Error {
         bool best_is_open = false;
         int best_count = 0;
-        Convey.FolderPath? best = null;
-        foreach (Convey.FolderPath path in folders_to_ids.get_keys()) {
+        GriabuntuMail.FolderPath? best = null;
+        foreach (GriabuntuMail.FolderPath path in folders_to_ids.get_keys()) {
             Folder folder = this.account.get_folder(path);
             if (!folder.get_type().is_a(operation.folder_type))
                 continue;
@@ -126,7 +127,7 @@ public class Convey.App.EmailStore : BaseObject {
             if (count == 0)
                 continue;
 
-            if (folder.get_open_state() == Convey.Folder.OpenState.REMOTE) {
+            if (folder.get_open_state() == GriabuntuMail.Folder.OpenState.REMOTE) {
                 if (!best_is_open) {
                     best_is_open = true;
                     best_count = 0;
@@ -145,28 +146,28 @@ public class Convey.App.EmailStore : BaseObject {
     }
 
     private async void do_folder_operation_async(AsyncFolderOperation operation,
-        Gee.Collection<Convey.EmailIdentifier> emails, Cancellable? cancellable) throws Error {
+        Gee.Collection<GriabuntuMail.EmailIdentifier> emails, Cancellable? cancellable) throws Error {
         if (emails.size == 0)
             return;
 
         debug("EmailStore %s running %s on %d emails", account.to_string(),
             operation.get_type().name(), emails.size);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath>? ids_to_folders
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>? ids_to_folders
             = yield account.get_containing_folders_async(emails, cancellable);
         if (ids_to_folders == null)
             return;
 
-        Gee.MultiMap<Convey.FolderPath, Convey.EmailIdentifier> folders_to_ids
-            = Convey.Collection.reverse_multi_map<Convey.EmailIdentifier, Convey.FolderPath>(ids_to_folders);
-        Convey.FolderPath? path;
+        Gee.MultiMap<GriabuntuMail.FolderPath, GriabuntuMail.EmailIdentifier> folders_to_ids
+            = GriabuntuMail.Collection.reverse_multi_map<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>(ids_to_folders);
+        GriabuntuMail.FolderPath? path;
         while ((path = next_folder_for_operation(operation, folders_to_ids)) != null) {
-            Convey.Folder folder = this.account.get_folder(path);
-            Gee.Collection<Convey.EmailIdentifier> ids = folders_to_ids.get(path);
+            GriabuntuMail.Folder folder = this.account.get_folder(path);
+            Gee.Collection<GriabuntuMail.EmailIdentifier> ids = folders_to_ids.get(path);
             assert(ids.size > 0);
 
             bool open = false;
-            Gee.Collection<Convey.EmailIdentifier>? used_ids = null;
+            Gee.Collection<GriabuntuMail.EmailIdentifier>? used_ids = null;
             GLib.Error? op_error = null;
             try {
                 yield folder.open_async(Folder.OpenFlags.NONE, cancellable);
@@ -193,8 +194,8 @@ public class Convey.App.EmailStore : BaseObject {
 
             // We don't want to operate on any mails twice.
             if (used_ids != null) {
-                foreach (Convey.EmailIdentifier id in used_ids.to_array()) {
-                    foreach (Convey.FolderPath p in ids_to_folders.get(id))
+                foreach (GriabuntuMail.EmailIdentifier id in used_ids.to_array()) {
+                    foreach (GriabuntuMail.FolderPath p in ids_to_folders.get(id))
                         folders_to_ids.remove(p, id);
                 }
             }

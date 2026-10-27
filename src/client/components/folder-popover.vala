@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,7 +7,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/folder-popover.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/folder-popover.ui")]
 public class FolderPopover : Gtk.Popover {
 
     [GtkChild] private unowned Gtk.SearchEntry search_entry;
@@ -14,15 +15,15 @@ public class FolderPopover : Gtk.Popover {
     /** Whether picking a folder moves the conversation or copies it. */
     public bool moves { get; construct; }
 
-    public Convey.Account account {get; set;}
+    public GriabuntuMail.Account account {get; set;}
 
     /** The folder the conversations are currently in, if known. */
-    public Convey.Folder? source {get; set;}
+    public GriabuntuMail.Folder? source {get; set;}
 
     private int filtered_folder_count = 0;
 
-    public signal void copy_conversation(Convey.Folder folder);
-    public signal void move_conversation(Convey.Folder folder);
+    public signal void copy_conversation(GriabuntuMail.Folder folder);
+    public signal void move_conversation(GriabuntuMail.Folder folder);
 
     public FolderPopover(bool moves) {
         Object(moves: moves);
@@ -36,7 +37,7 @@ public class FolderPopover : Gtk.Popover {
     }
 
     private void add_folder(Application.FolderContext context, Gee.HashMap<string,string> map) {
-        Convey.Folder folder = context.folder;
+        GriabuntuMail.Folder folder = context.folder;
         // don't allow multiples and don't allow folders that can't be opened (that means they
         // support almost no operations and have no content)
         if (folder.properties.is_openable.is_impossible())
@@ -75,7 +76,7 @@ public class FolderPopover : Gtk.Popover {
         var map = new Gee.HashMap<string,string>();
         foreach (var folder in folders) {
             var context = new Application.FolderContext(folder);
-            if (folder.used_as == Convey.Folder.SpecialUse.NONE)
+            if (folder.used_as == GriabuntuMail.Folder.SpecialUse.NONE)
                 continue;
             map.set(
                 folder.path.to_string().substring(1),
@@ -101,7 +102,7 @@ public class FolderPopover : Gtk.Popover {
     [GtkCallback]
     private void on_row_activated(Gtk.ListBoxRow? row) {
         if (row != null) {
-            Convey.Folder folder = row.get_data<Convey.Folder>("folder");
+            GriabuntuMail.Folder folder = row.get_data<GriabuntuMail.Folder>("folder");
             if (this.moves) {
                 move_conversation(folder);
             } else {
@@ -138,7 +139,7 @@ public class FolderPopover : Gtk.Popover {
     }
 
     private bool row_filter(Gtk.ListBoxRow row) {
-        Convey.Folder folder = row.get_data<Convey.Folder>("folder");
+        GriabuntuMail.Folder folder = row.get_data<GriabuntuMail.Folder>("folder");
         if (folder.path.to_string().down().contains(search_entry.text.down())) {
             filtered_folder_count++;
             return true;
@@ -147,13 +148,13 @@ public class FolderPopover : Gtk.Popover {
     }
 
     private int row_sort(Gtk.ListBoxRow row1, Gtk.ListBoxRow row2) {
-        Convey.Folder folder1 = row1.get_data<Convey.Folder>("folder");
-        Convey.Folder folder2 = row2.get_data<Convey.Folder>("folder");
-        if (folder1.used_as != Convey.Folder.SpecialUse.NONE &&
-                folder2.used_as == Convey.Folder.SpecialUse.NONE)
+        GriabuntuMail.Folder folder1 = row1.get_data<GriabuntuMail.Folder>("folder");
+        GriabuntuMail.Folder folder2 = row2.get_data<GriabuntuMail.Folder>("folder");
+        if (folder1.used_as != GriabuntuMail.Folder.SpecialUse.NONE &&
+                folder2.used_as == GriabuntuMail.Folder.SpecialUse.NONE)
             return -1;
-        else if (folder1.used_as == Convey.Folder.SpecialUse.NONE &&
-                folder2.used_as != Convey.Folder.SpecialUse.NONE)
+        else if (folder1.used_as == GriabuntuMail.Folder.SpecialUse.NONE &&
+                folder2.used_as != GriabuntuMail.Folder.SpecialUse.NONE)
             return 1;
         else
             return folder1.path.compare_to(folder2.path);

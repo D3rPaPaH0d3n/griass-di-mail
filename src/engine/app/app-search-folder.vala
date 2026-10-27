@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -15,7 +16,7 @@
  * search, then collects search results and presents them via the
  * folder interface.
  */
-public class Convey.App.SearchFolder :
+public class GriabuntuMail.App.SearchFolder :
     AbstractLocalFolder, FolderSupport.Remove {
 
 
@@ -23,8 +24,8 @@ public class Convey.App.SearchFolder :
     public const int MAX_RESULT_EMAILS = 1000;
 
     /** The canonical name of the search folder. */
-    public const string MAGIC_BASENAME = "$ConveyAccountSearchFolder$";
-    public const string STARRED_BASENAME = "$ConveyAccountStarredFolder$";
+    public const string MAGIC_BASENAME = "$GriabuntuMailAccountSearchFolder$";
+    public const string STARRED_BASENAME = "$GriabuntuMailAccountStarredFolder$";
 
     private const Folder.SpecialUse[] EXCLUDE_TYPES = {
         DRAFTS,
@@ -224,8 +225,8 @@ public class Convey.App.SearchFolder :
     }
 
     /** {@inheritDoc} */
-    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Convey.EmailIdentifier> ids,
+    public override async Gee.Collection<GriabuntuMail.EmailIdentifier> contains_identifiers(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
         debug("Waiting for checking contains");
@@ -234,7 +235,7 @@ public class Convey.App.SearchFolder :
         result_mutex.release(ref result_mutex_token);
 
         debug("Checking contains");
-        return Convey.traverse(
+        return GriabuntuMail.traverse(
             ids
         ).filter(
             (id) => existing_ids.has_key(id)

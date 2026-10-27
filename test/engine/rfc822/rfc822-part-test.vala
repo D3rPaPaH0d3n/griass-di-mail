@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.RFC822.PartTest : TestCase {
+class GriabuntuMail.RFC822.PartTest : TestCase {
 
     private const string CR_BODY = "This is an attachment.\n";
     private const string CRLF_BODY = "This is an attachment.\r\n";
@@ -16,7 +17,7 @@ class Convey.RFC822.PartTest : TestCase {
 
 
     public PartTest() {
-        base("Convey.RFC822.PartTest");
+        base("GriabuntuMail.RFC822.PartTest");
         add_test("new_from_minimal_mime_part", new_from_minimal_mime_part);
         add_test("new_from_complete_mime_part", new_from_complete_mime_part);
         add_test("write_to_buffer_plain", write_to_buffer_plain);
@@ -43,7 +44,7 @@ class Convey.RFC822.PartTest : TestCase {
         part.set_content_description(DESC);
         part.set_content_disposition(
             GMime.ContentDisposition.parse(
-                Convey.RFC822.get_parser_options(),
+                GriabuntuMail.RFC822.get_parser_options(),
                 "inline"
             )
         );
@@ -54,7 +55,7 @@ class Convey.RFC822.PartTest : TestCase {
         assert_equal(test.content_id, ID);
         assert_equal(test.content_description, DESC);
         assert_non_null(test.content_disposition, "content_disposition");
-        assert_equal<Convey.Mime.DispositionType?>(
+        assert_equal<GriabuntuMail.Mime.DispositionType?>(
             test.content_disposition.disposition_type, INLINE
         );
     }
@@ -98,7 +99,7 @@ class Convey.RFC822.PartTest : TestCase {
         GMime.Part part = new GMime.Part.with_type("text", "plain");
         if (mime_type != null) {
             part.set_content_type(GMime.ContentType.parse(
-                Convey.RFC822.get_parser_options(),
+                GriabuntuMail.RFC822.get_parser_options(),
                 mime_type
             ));
         }

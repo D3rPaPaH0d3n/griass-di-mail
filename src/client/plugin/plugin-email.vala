@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -13,8 +14,8 @@
  * Instances of these may be obtained from {@link EmailStore}.
  */
 public interface Plugin.Email :
-    Convey.BaseObject,
-    Convey.EmailHeaderSet {
+    GriabuntuMail.BaseObject,
+    GriabuntuMail.EmailHeaderSet {
 
 
     /** Defines the formats that email body text can be loaded as. */
@@ -30,7 +31,7 @@ public interface Plugin.Email :
     public abstract EmailIdentifier identifier { get; }
 
     /** Returns the set of mutable flags for the email. */
-    public abstract Convey.EmailFlags flags { get; }
+    public abstract GriabuntuMail.EmailFlags flags { get; }
 
     /**
      * Returns the email's primary originator.
@@ -40,7 +41,7 @@ public interface Plugin.Email :
      *
      * @see Util.Email.get_primary_originator
      */
-    public abstract Convey.RFC822.MailboxAddress? get_primary_originator();
+    public abstract GriabuntuMail.RFC822.MailboxAddress? get_primary_originator();
 
     /**
      * Load the text of the email body as the given type.
@@ -79,7 +80,7 @@ public interface Plugin.Email :
  * An object representing an email's identifier.
  */
 public interface Plugin.EmailIdentifier :
-    Convey.BaseObject, Gee.Hashable<EmailIdentifier> {
+    GriabuntuMail.BaseObject, Gee.Hashable<EmailIdentifier> {
 
 
     /** Returns the account that the email belongs to. */

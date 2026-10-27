@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -11,7 +12,7 @@ class Integration.Imap.ClientSession : TestCase {
 
 
     private Configuration config;
-    private Convey.Imap.ClientSession? session;
+    private GriabuntuMail.Imap.ClientSession? session;
 
 
     public ClientSession(Configuration config) {
@@ -29,9 +30,9 @@ class Integration.Imap.ClientSession : TestCase {
     }
 
     public override void set_up() {
-        this.session = new Convey.Imap.ClientSession(
+        this.session = new GriabuntuMail.Imap.ClientSession(
             this.config.target,
-            new Convey.Imap.Quirks()
+            new GriabuntuMail.Imap.Quirks()
         );
     }
 
@@ -54,7 +55,7 @@ class Integration.Imap.ClientSession : TestCase {
     public void login_password_invalid() throws GLib.Error {
         do_connect();
 
-        Convey.Credentials password_creds = new Convey.Credentials(
+        GriabuntuMail.Credentials password_creds = new GriabuntuMail.Credentials(
             PASSWORD, "automated-integration-test", "password"
         );
         this.session.login_async.begin(
@@ -63,9 +64,9 @@ class Integration.Imap.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Convey.ImapError.UNAUTHENTICATED err) {
+        } catch (GriabuntuMail.ImapError.UNAUTHENTICATED err) {
             // All good
-        } catch (Convey.ImapError.SERVER_ERROR err) {
+        } catch (GriabuntuMail.ImapError.SERVER_ERROR err) {
             // Some servers (Y!) return AUTHORIZATIONFAILED response
             // code if the login (not password) is bad
             if (!("AUTHORIZATIONFAILED" in err.message)) {
@@ -77,7 +78,7 @@ class Integration.Imap.ClientSession : TestCase {
     public void login_oauth2_invalid() throws GLib.Error {
         do_connect();
 
-        Convey.Credentials oauth2_creds = new Convey.Credentials(
+        GriabuntuMail.Credentials oauth2_creds = new GriabuntuMail.Credentials(
             OAUTH2, "automated-integration-test", "password"
         );
         this.session.login_async.begin(
@@ -86,7 +87,7 @@ class Integration.Imap.ClientSession : TestCase {
         try {
             this.session.login_async.end(async_result());
             assert_not_reached();
-        } catch (Convey.ImapError.UNAUTHENTICATED err) {
+        } catch (GriabuntuMail.ImapError.UNAUTHENTICATED err) {
             // All good
         }
     }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,17 +11,17 @@
  * Stage two of a {@link RevokableMove}: move messages from folder to destination.
  */
 
-private class Convey.ImapEngine.MoveEmailCommit : Convey.ImapEngine.SendReplayOperation {
+private class GriabuntuMail.ImapEngine.MoveEmailCommit : GriabuntuMail.ImapEngine.SendReplayOperation {
     public Gee.Set<Imap.UID> destination_uids = new Gee.HashSet<Imap.UID>();
 
     private MinimalFolder engine;
     private Gee.List<ImapDB.EmailIdentifier> to_move = new Gee.ArrayList<ImapDB.EmailIdentifier>();
-    private Convey.FolderPath destination;
+    private GriabuntuMail.FolderPath destination;
     private Cancellable? cancellable;
     private Gee.List<Imap.MessageSet>? remaining_msg_sets = null;
 
     public MoveEmailCommit(MinimalFolder engine, Gee.Collection<ImapDB.EmailIdentifier> to_move,
-        Convey.FolderPath destination, Cancellable? cancellable) {
+        GriabuntuMail.FolderPath destination, Cancellable? cancellable) {
         base.only_remote("MoveEmailCommit", OnError.RETRY);
 
         this.engine = engine;

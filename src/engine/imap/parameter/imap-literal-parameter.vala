@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -18,7 +19,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.3]]
  */
 
-public class Convey.Imap.LiteralParameter : Convey.Imap.Parameter {
+public class GriabuntuMail.Imap.LiteralParameter : GriabuntuMail.Imap.Parameter {
 
 
     /** The value of the literal parameter. */

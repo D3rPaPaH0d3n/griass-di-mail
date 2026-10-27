@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -8,11 +9,11 @@
  */
 
 
-class Convey.Graph.AccountTest : GraphTestCase {
+class GriabuntuMail.Graph.AccountTest : GraphTestCase {
 
 
     public AccountTest() {
-        base("Convey.Graph.AccountTest");
+        base("GriabuntuMail.Graph.AccountTest");
         add_test("exposes_seven_special_folders", exposes_seven_special_folders);
         add_test("special_folders_map_to_correct_use", special_folders_map_to_correct_use);
         add_test("get_required_special_folder_returns_match", get_required_special_folder_returns_match);
@@ -22,17 +23,17 @@ class Convey.Graph.AccountTest : GraphTestCase {
         add_test("account_supports_queue_send_interface", account_supports_queue_send_interface);
     }
 
-    private Convey.Graph.Account new_account() throws GLib.Error {
-        return new Convey.Graph.Account(
+    private GriabuntuMail.Graph.Account new_account() throws GLib.Error {
+        return new GriabuntuMail.Graph.Account(
             this.account,
-            new Convey.Endpoint(
+            new GriabuntuMail.Endpoint(
                 new GLib.NetworkAddress("localhost", 0),
-                Convey.TlsNegotiationMethod.TRANSPORT,
+                GriabuntuMail.TlsNegotiationMethod.TRANSPORT,
                 1
             ),
-            new Convey.Endpoint(
+            new GriabuntuMail.Endpoint(
                 new GLib.NetworkAddress("localhost", 0),
-                Convey.TlsNegotiationMethod.TRANSPORT,
+                GriabuntuMail.TlsNegotiationMethod.TRANSPORT,
                 1
             )
         );
@@ -42,8 +43,8 @@ class Convey.Graph.AccountTest : GraphTestCase {
         // A freshly-constructed Graph.Account should expose the seven
         // hard-coded special-use folders that the engine uses to
         // represent the Outlook mailbox.
-        Convey.Graph.Account account = new_account();
-        Gee.Collection<Convey.Folder> folders = account.list_folders();
+        GriabuntuMail.Graph.Account account = new_account();
+        Gee.Collection<GriabuntuMail.Folder> folders = account.list_folders();
         assert_true(
             folders.size == 7,
             "Expected 7 hard-coded special folders"
@@ -51,20 +52,20 @@ class Convey.Graph.AccountTest : GraphTestCase {
     }
 
     public void special_folders_map_to_correct_use() throws GLib.Error {
-        Convey.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Account account = new_account();
 
-        Gee.Map<Convey.Folder.SpecialUse,string> expected = new Gee.HashMap<
-            Convey.Folder.SpecialUse,string
+        Gee.Map<GriabuntuMail.Folder.SpecialUse,string> expected = new Gee.HashMap<
+            GriabuntuMail.Folder.SpecialUse,string
         >();
-        expected.set(Convey.Folder.SpecialUse.INBOX, "Inbox");
-        expected.set(Convey.Folder.SpecialUse.SENT, "Sent");
-        expected.set(Convey.Folder.SpecialUse.DRAFTS, "Drafts");
-        expected.set(Convey.Folder.SpecialUse.TRASH, "Trash");
-        expected.set(Convey.Folder.SpecialUse.JUNK, "Junk");
-        expected.set(Convey.Folder.SpecialUse.ARCHIVE, "Archive");
-        expected.set(Convey.Folder.SpecialUse.OUTBOX, "Outbox");
+        expected.set(GriabuntuMail.Folder.SpecialUse.INBOX, "Inbox");
+        expected.set(GriabuntuMail.Folder.SpecialUse.SENT, "Sent");
+        expected.set(GriabuntuMail.Folder.SpecialUse.DRAFTS, "Drafts");
+        expected.set(GriabuntuMail.Folder.SpecialUse.TRASH, "Trash");
+        expected.set(GriabuntuMail.Folder.SpecialUse.JUNK, "Junk");
+        expected.set(GriabuntuMail.Folder.SpecialUse.ARCHIVE, "Archive");
+        expected.set(GriabuntuMail.Folder.SpecialUse.OUTBOX, "Outbox");
 
-        foreach (Convey.Folder folder in account.list_folders()) {
+        foreach (GriabuntuMail.Folder folder in account.list_folders()) {
             string? expected_name = expected.get(folder.used_as);
             if (expected_name == null) {
                 continue;
@@ -85,11 +86,11 @@ class Convey.Graph.AccountTest : GraphTestCase {
     }
 
     public void get_required_special_folder_returns_match() throws GLib.Error {
-        Convey.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Account account = new_account();
 
-        Convey.Folder? inbox = null;
+        GriabuntuMail.Folder? inbox = null;
         account.get_required_special_folder_async.begin(
-            Convey.Folder.SpecialUse.INBOX, null, (obj, res) => {
+            GriabuntuMail.Folder.SpecialUse.INBOX, null, (obj, res) => {
                 try {
                     inbox = account.get_required_special_folder_async.end(res);
                 } catch (GLib.Error err) {
@@ -101,20 +102,20 @@ class Convey.Graph.AccountTest : GraphTestCase {
             MainContext.default().iteration(true);
         }
         assert_non_null(inbox);
-        assert_true(inbox.used_as == Convey.Folder.SpecialUse.INBOX);
+        assert_true(inbox.used_as == GriabuntuMail.Folder.SpecialUse.INBOX);
     }
 
     public void get_required_special_folder_throws_for_unknown() throws GLib.Error {
-        Convey.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Account account = new_account();
 
         // NONE is not registered as a special folder; asking for it
         // should fail rather than return null silently.
         bool threw = false;
         account.get_required_special_folder_async.begin(
-            Convey.Folder.SpecialUse.NONE, null, (obj, res) => {
+            GriabuntuMail.Folder.SpecialUse.NONE, null, (obj, res) => {
                 try {
                     account.get_required_special_folder_async.end(res);
-                } catch (Convey.EngineError.NOT_FOUND err) {
+                } catch (GriabuntuMail.EngineError.NOT_FOUND err) {
                     threw = true;
                 } catch (GLib.Error err) {
                     fail("Expected NOT_FOUND, got: %s".printf(err.message));
@@ -128,21 +129,21 @@ class Convey.Graph.AccountTest : GraphTestCase {
     }
 
     public void get_folder_looks_up_by_path() throws GLib.Error {
-        Convey.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Account account = new_account();
 
-        Convey.FolderPath inbox_path = account.get_graph_special_folder(
-            Convey.Folder.SpecialUse.INBOX
+        GriabuntuMail.FolderPath inbox_path = account.get_graph_special_folder(
+            GriabuntuMail.Folder.SpecialUse.INBOX
         ).path;
-        Convey.Folder folder = account.get_folder(inbox_path);
-        assert_true(folder.used_as == Convey.Folder.SpecialUse.INBOX);
+        GriabuntuMail.Folder folder = account.get_folder(inbox_path);
+        assert_true(folder.used_as == GriabuntuMail.Folder.SpecialUse.INBOX);
 
         // A path that doesn't exist should raise NOT_FOUND.
-        Convey.FolderPath bogus = new Convey.FolderRoot("bogus", false)
+        GriabuntuMail.FolderPath bogus = new GriabuntuMail.FolderRoot("bogus", false)
             .get_child("DoesNotExist");
         bool threw = false;
         try {
             account.get_folder(bogus);
-        } catch (Convey.EngineError.NOT_FOUND err) {
+        } catch (GriabuntuMail.EngineError.NOT_FOUND err) {
             threw = true;
         }
         assert_true(threw, "Unknown path should raise NOT_FOUND");
@@ -152,16 +153,16 @@ class Convey.Graph.AccountTest : GraphTestCase {
         // Graph doesn't allow callers to choose a special use when
         // creating a folder; that should be rejected up front rather
         // than silently creating a generic folder.
-        Convey.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Account account = new_account();
 
         bool threw = false;
         try {
             account.create_personal_folder.begin(
-                "Archive", Convey.Folder.SpecialUse.ARCHIVE, null, null,
+                "Archive", GriabuntuMail.Folder.SpecialUse.ARCHIVE, null, null,
                 (obj, res) => {
                     try {
                         account.create_personal_folder.end(res);
-                    } catch (Convey.EngineError.UNSUPPORTED err) {
+                    } catch (GriabuntuMail.EngineError.UNSUPPORTED err) {
                         threw = true;
                     } catch (GLib.Error err) {
                         // The account is not open in this test, so the
@@ -193,9 +194,9 @@ class Convey.Graph.AccountTest : GraphTestCase {
         // A Graph.Account must implement the QueueSend interface so
         // the application controller can wire up staged-send
         // notifications.
-        Convey.Graph.Account account = new_account();
+        GriabuntuMail.Graph.Account account = new_account();
         assert_true(
-            account is Convey.AccountSupport.QueueSend,
+            account is GriabuntuMail.AccountSupport.QueueSend,
             "Graph.Account should implement AccountSupport.QueueSend"
         );
     }

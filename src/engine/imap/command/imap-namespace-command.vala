@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
@@ -15,7 +16,7 @@
  *
  * See [[https://tools.ietf.org/html/rfc2342|RFC 2342]] for details.
  */
-public class Convey.Imap.NamespaceCommand : Command {
+public class GriabuntuMail.Imap.NamespaceCommand : Command {
 
     public const string NAME = "NAMESPACE";
 

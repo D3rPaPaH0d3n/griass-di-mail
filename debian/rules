@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+# New downstream packaging: 2026-10-27. GPL-3.0-only; see COPYING.
+
+include /usr/share/dpkg/architecture.mk
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+# Engine symbols are present in both the private client DSO and executables.
+# Preserve interposition so their GTypes share one registration; Ubuntu's
+# -Bsymbolic-functions otherwise registers GriabuntuMailBaseObject twice.
+export DEB_LDFLAGS_MAINT_STRIP = -Wl,-Bsymbolic-functions
+
+%:
+	dh $@ --buildsystem=meson
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-Dprofile=release \
+		-Drevno=deb-$(shell dpkg-parsechangelog -SVersion) \
+		-Dtnef=enabled \
+		-Dlibunwind=enabled \
+		-Dvaladoc=disabled \
+		--wrap-mode=nodownload
+
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	python3 debian/run-tests.py obj-$(DEB_HOST_GNU_TYPE)
+endif
+
+override_dh_shlibdeps:
+	dh_shlibdeps -l$(CURDIR)/debian/griabuntu-mail/usr/lib/$(DEB_HOST_MULTIARCH)/griabuntu-mail

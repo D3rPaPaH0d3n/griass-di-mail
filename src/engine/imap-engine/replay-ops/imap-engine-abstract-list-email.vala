@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -9,7 +10,7 @@
 /**
  * A base class for building replay operations that list messages.
  */
-private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.SendReplayOperation {
+private abstract class GriabuntuMail.ImapEngine.AbstractListEmail : GriabuntuMail.ImapEngine.SendReplayOperation {
 
     private static int total_fetches_avoided = 0;
 
@@ -18,11 +19,11 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
         public Imap.FolderSession remote;
         public ImapDB.Folder local;
         public Imap.MessageSet msg_set;
-        public Convey.Email.Field unfulfilled_fields;
-        public Convey.Email.Field required_fields;
+        public GriabuntuMail.Email.Field unfulfilled_fields;
+        public GriabuntuMail.Email.Field required_fields;
 
         // OUT
-        public Gee.Set<Convey.EmailIdentifier> created_ids = new Gee.HashSet<Convey.EmailIdentifier>();
+        public Gee.Set<GriabuntuMail.EmailIdentifier> created_ids = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
 
         private ContactHarvester harvester;
 
@@ -30,8 +31,8 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
         public RemoteBatchOperation(Imap.FolderSession remote,
                                     ImapDB.Folder local,
                                     Imap.MessageSet msg_set,
-                                    Convey.Email.Field unfulfilled_fields,
-                                    Convey.Email.Field required_fields,
+                                    GriabuntuMail.Email.Field unfulfilled_fields,
+                                    GriabuntuMail.Email.Field required_fields,
                                     ContactHarvester harvester) {
             this.remote = remote;
             this.local = local;
@@ -43,7 +44,7 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
 
         public override async Object? execute_async(Cancellable? cancellable) throws Error {
             // fetch from remote folder
-            Gee.List<Convey.Email>? list = yield this.remote.list_email_async(
+            Gee.List<GriabuntuMail.Email>? list = yield this.remote.list_email_async(
                 msg_set, unfulfilled_fields, cancellable
             );
             if (list == null || list.size == 0)
@@ -59,7 +60,7 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
                 );
 
             for (int ctr = 0; ctr < list.size; ctr++) {
-                Convey.Email email = list[ctr];
+                GriabuntuMail.Email email = list[ctr];
 
                 // if created, add to id pool
                 if (created_or_merged.get(email))
@@ -84,16 +85,16 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
 
     // The accumulated Email from the list operation.  Should only be accessed once the operation
     // has completed.
-    public Gee.List<Convey.Email> accumulator = new Gee.ArrayList<Convey.Email>();
+    public Gee.List<GriabuntuMail.Email> accumulator = new Gee.ArrayList<GriabuntuMail.Email>();
 
     protected MinimalFolder owner;
-    protected Convey.Email.Field required_fields;
+    protected GriabuntuMail.Email.Field required_fields;
     protected Cancellable? cancellable;
     protected Folder.ListFlags flags;
 
-    private Gee.HashMap<Imap.UID, Convey.Email.Field> unfulfilled = new Gee.HashMap<Imap.UID, Convey.Email.Field>();
+    private Gee.HashMap<Imap.UID, GriabuntuMail.Email.Field> unfulfilled = new Gee.HashMap<Imap.UID, GriabuntuMail.Email.Field>();
 
-    protected AbstractListEmail(string name, MinimalFolder owner, Convey.Email.Field required_fields,
+    protected AbstractListEmail(string name, MinimalFolder owner, GriabuntuMail.Email.Field required_fields,
         Folder.ListFlags flags, Cancellable? cancellable) {
         base(name, OnError.IGNORE_REMOTE);
 
@@ -103,7 +104,7 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
         this.flags = flags;
     }
 
-    protected void add_unfulfilled_fields(Imap.UID? uid, Convey.Email.Field unfulfilled_fields) {
+    protected void add_unfulfilled_fields(Imap.UID? uid, GriabuntuMail.Email.Field unfulfilled_fields) {
         assert(uid != null);
         assert(uid.is_valid());
 
@@ -114,7 +115,7 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
     }
 
     protected void add_many_unfulfilled_fields(Gee.Collection<Imap.UID>? uids,
-        Convey.Email.Field unfulfilled_fields) {
+        GriabuntuMail.Email.Field unfulfilled_fields) {
         if (uids != null) {
             foreach (Imap.UID uid in uids)
                 add_unfulfilled_fields(uid, unfulfilled_fields);
@@ -128,7 +129,7 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
     public override void notify_remote_removed_ids(Gee.Collection<ImapDB.EmailIdentifier> ids) {
         // remove email already picked up from local store ... for email reported via the
         // callback, too late
-        Collection.remove_if<Convey.Email>(accumulator, (email) => {
+        Collection.remove_if<GriabuntuMail.Email>(accumulator, (email) => {
             return ids.contains((ImapDB.EmailIdentifier) email.id);
         });
 
@@ -164,15 +165,15 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
 
         // convert UID -> needed fields mapping to needed fields -> UIDs, as they can be grouped
         // and submitted at same time
-        Gee.HashMultiMap<Convey.Email.Field, Imap.UID> reverse_unfulfilled = new Gee.HashMultiMap<
-            Convey.Email.Field, Imap.UID>();
+        Gee.HashMultiMap<GriabuntuMail.Email.Field, Imap.UID> reverse_unfulfilled = new Gee.HashMultiMap<
+            GriabuntuMail.Email.Field, Imap.UID>();
         foreach (Imap.UID uid in unfulfilled.keys)
             reverse_unfulfilled.set(unfulfilled.get(uid), uid);
 
         // schedule operations to remote for each set of email with unfulfilled fields and merge
         // in results, pulling out the entire email
         Nonblocking.Batch batch = new Nonblocking.Batch();
-        foreach (Convey.Email.Field unfulfilled_fields in reverse_unfulfilled.get_keys()) {
+        foreach (GriabuntuMail.Email.Field unfulfilled_fields in reverse_unfulfilled.get_keys()) {
             Gee.Collection<Imap.UID> unfulfilled_uids = reverse_unfulfilled.get(unfulfilled_fields);
             if (unfulfilled_uids.size == 0)
                 continue;
@@ -194,10 +195,10 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
         yield batch.execute_all_async(cancellable);
         batch.throw_first_exception();
 
-        Gee.ArrayList<Convey.Email> result_list = new Gee.ArrayList<Convey.Email>();
-        Gee.HashSet<Convey.EmailIdentifier> created_ids = new Gee.HashSet<Convey.EmailIdentifier>();
+        Gee.ArrayList<GriabuntuMail.Email> result_list = new Gee.ArrayList<GriabuntuMail.Email>();
+        Gee.HashSet<GriabuntuMail.EmailIdentifier> created_ids = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
         foreach (int batch_id in batch.get_ids()) {
-            Gee.List<Convey.Email>? list = (Gee.List<Convey.Email>?) batch.get_result(batch_id);
+            Gee.List<GriabuntuMail.Email>? list = (Gee.List<GriabuntuMail.Email>?) batch.get_result(batch_id);
             if (list != null && list.size > 0) {
                 result_list.add_all(list);
 
@@ -308,14 +309,14 @@ private abstract class Convey.ImapEngine.AbstractListEmail : Convey.ImapEngine.S
             (initial_uid != null) ? initial_uid.to_string() : "(null)", count, actual_count.to_string(),
             local_count, remote_count, flags.is_oldest_to_newest().to_string());
 
-        Gee.List<Convey.Email>? list = yield remote.list_email_async(msg_set,
-            Convey.Email.Field.NONE, cancellable);
+        Gee.List<GriabuntuMail.Email>? list = yield remote.list_email_async(msg_set,
+            GriabuntuMail.Email.Field.NONE, cancellable);
 
         Gee.Set<Imap.UID> uids = new Gee.HashSet<Imap.UID>();
         if (list != null) {
             // add all the new email to the unfulfilled list, which ensures (when replay_remote_async
             // is called) that the fields are downloaded and added to the database
-            foreach (Convey.Email email in list)
+            foreach (GriabuntuMail.Email email in list)
                 uids.add(((ImapDB.EmailIdentifier) email.id).uid);
 
             // remove any already stored locally

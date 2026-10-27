@@ -10,7 +10,7 @@ Content-Type: text/html; charset=UTF-8
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griabuntu Mail Test Suite 1.0
 
 <P>This is the first line.
 

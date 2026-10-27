@@ -3,8 +3,8 @@ subdir('data')
 
 # Mock classes should be compiled into a stand-alone test lib for
 # re-use by both client and engine test suites, but we can't since
-# that would depend on convey-engine.vapi, and the engine test sute
-# needs to depend convey-engine_internal.vapi, which leads to duplicate
+# that would depend on griabuntu-mail-engine.vapi, and the engine test sute
+# needs to depend griabuntu-mail-engine_internal.vapi, which leads to duplicate
 # symbols when linking. So just duplicate the sources in both.
 libmock_sources = [
   'mock/mock-account.vala',
@@ -25,13 +25,13 @@ test_engine_sources = [
 
   'engine/common/common-contact-harvester-mock.vala',
 
-  'engine/api/convey-account-information-test.vala',
-  'engine/api/convey-attachment-test.vala',
-  'engine/api/convey-composed-email-test.vala',
-  'engine/api/convey-email-test.vala',
-  'engine/api/convey-engine-test.vala',
-  'engine/api/convey-folder-path-test.vala',
-  'engine/api/convey-service-information-test.vala',
+  'engine/api/griabuntu-mail-account-information-test.vala',
+  'engine/api/griabuntu-mail-attachment-test.vala',
+  'engine/api/griabuntu-mail-composed-email-test.vala',
+  'engine/api/griabuntu-mail-email-test.vala',
+  'engine/api/griabuntu-mail-engine-test.vala',
+  'engine/api/griabuntu-mail-folder-path-test.vala',
+  'engine/api/griabuntu-mail-service-information-test.vala',
   'engine/graph/graph-test-case.vala',
   'engine/graph/graph-engine-client-test.vala',
   'engine/graph/graph-engine-account-test.vala',
@@ -103,8 +103,8 @@ test_client_sources = [
   'js/composer-page-state-test.vala',
   'js/conversation-page-state-test.vala',
 
-  convey_compiled_schema,
-  convey_resources
+  griabuntu_mail_compiled_schema,
+  griabuntu_mail_resources
 ]
 
 test_js_sources = [
@@ -117,8 +117,8 @@ test_js_sources = [
   'js/composer-page-state-test.vala',
   'js/conversation-page-state-test.vala',
 
-  convey_compiled_schema,
-  convey_resources
+  griabuntu_mail_compiled_schema,
+  griabuntu_mail_resources
 ]
 
 test_integration_sources = [
@@ -139,7 +139,7 @@ test_engine_dependencies = [
 ]
 test_engine_dependencies += engine_dependencies
 
-test_engine_vala_args = convey_vala_args
+test_engine_vala_args = griabuntu_mail_vala_args
 
 if libytnef.found()
   test_engine_dependencies += libytnef
@@ -152,7 +152,7 @@ test_engine_bin = executable('test-engine',
   test_engine_sources + libmock_sources,
   dependencies: test_engine_dependencies,
   vala_args: test_engine_vala_args,
-  c_args: convey_c_args,
+  c_args: griabuntu_mail_c_args,
 )
 
 # Client tests
@@ -168,8 +168,8 @@ test_client_dependencies += client_dependencies
 test_client_bin = executable('test-client',
   test_client_sources + libmock_sources,
   dependencies: test_client_dependencies,
-  vala_args: convey_vala_args,
-  c_args: convey_c_args,
+  vala_args: griabuntu_mail_vala_args,
+  c_args: griabuntu_mail_c_args,
   build_rpath: client_build_dir,
 )
 
@@ -187,8 +187,8 @@ test_recipient_aliases_bin = executable('test-recipient-aliases',
     'client/util/util-email-summary-contact-test.vala',
   ] + libmock_sources,
   dependencies: test_client_dependencies,
-  vala_args: convey_vala_args,
-  c_args: convey_c_args,
+  vala_args: griabuntu_mail_vala_args,
+  c_args: griabuntu_mail_c_args,
   build_rpath: client_build_dir,
 )
 
@@ -203,8 +203,8 @@ test_js_dependencies += client_dependencies
 test_js_bin = executable('test-js',
   test_js_sources + libmock_sources,
   dependencies: test_js_dependencies,
-  vala_args: convey_vala_args,
-  c_args: convey_c_args,
+  vala_args: griabuntu_mail_vala_args,
+  c_args: griabuntu_mail_c_args,
   build_rpath: client_build_dir,
 )
 
@@ -222,8 +222,8 @@ test_integration_bin = executable('test-integration',
     vala_unit_dep,
     webkitgtk,
   ],
-  vala_args: convey_vala_args,
-  c_args: convey_c_args,
+  vala_args: griabuntu_mail_vala_args,
+  c_args: griabuntu_mail_c_args,
 )
 
 test(

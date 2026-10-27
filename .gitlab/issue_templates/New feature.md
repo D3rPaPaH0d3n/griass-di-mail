@@ -1,6 +1,6 @@
 **Feature Summary**
 
-Describe what you would like to be able to do with Convey that you
+Describe what you would like to be able to do with Griabuntu Mail that you
 currently cannot do, such as "send email whilst underwater".
 
 Please replace all comments such as this with the requested
@@ -9,7 +9,7 @@ information.
 
 **How would you like it to work**
 
-If you can think of a way Convey might be able to do this, let us know
+If you can think of a way Griabuntu Mail might be able to do this, let us know
 here.
 
 

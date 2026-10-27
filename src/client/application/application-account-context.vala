@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -11,19 +12,19 @@
 /**
  * Collects application state related to a single open account.
  */
-public class Application.AccountContext : Convey.BaseObject {
+public class Application.AccountContext : GriabuntuMail.BaseObject {
 
     /** The account for this context. */
-    public Convey.Account account { get; private set; }
+    public GriabuntuMail.Account account { get; private set; }
 
     /** The account's Inbox folder */
-    public Convey.Folder? inbox = null;
+    public GriabuntuMail.Folder? inbox = null;
 
     /** The account's search folder */
-    public Convey.App.SearchFolder search = null;
+    public GriabuntuMail.App.SearchFolder search = null;
 
     /** The account's email store */
-    public Convey.App.EmailStore emails { get; private set; }
+    public GriabuntuMail.App.EmailStore emails { get; private set; }
 
     /** The account's contact store */
     public ContactStore contacts { get; private set; }
@@ -68,8 +69,8 @@ public class Application.AccountContext : Convey.BaseObject {
         get; internal set; default = false;
     }
 
-    private Gee.Map<Convey.FolderPath,FolderContext> folders =
-        new Gee.HashMap<Convey.FolderPath,FolderContext>();
+    private Gee.Map<GriabuntuMail.FolderPath,FolderContext> folders =
+        new Gee.HashMap<GriabuntuMail.FolderPath,FolderContext>();
 
 
     /** Emitted when folders contexts become available. */
@@ -79,9 +80,9 @@ public class Application.AccountContext : Convey.BaseObject {
     public signal void folders_unavailable(Gee.Collection<FolderContext> unavailable);
 
 
-    public AccountContext(Convey.Account account,
-                          Convey.App.SearchFolder search,
-                          Convey.App.EmailStore emails,
+    public AccountContext(GriabuntuMail.Account account,
+                          GriabuntuMail.App.SearchFolder search,
+                          GriabuntuMail.App.EmailStore emails,
                           Application.ContactStore contacts) {
         this.account = account;
         this.search = search;
@@ -90,16 +91,16 @@ public class Application.AccountContext : Convey.BaseObject {
     }
 
     /** Returns the current effective status for the account. */
-    public Convey.Account.Status get_effective_status() {
-        Convey.Account.Status current = this.account.current_status;
-        Convey.Account.Status effective = 0;
+    public GriabuntuMail.Account.Status get_effective_status() {
+        GriabuntuMail.Account.Status current = this.account.current_status;
+        GriabuntuMail.Account.Status effective = 0;
         if (current.is_online()) {
             effective |= ONLINE;
         }
         if (current.has_service_problem()) {
             // Only retain service problem if the problem isn't auth
             // or cert related, that is handled elsewhere.
-            const Convey.ClientService.Status SPECIALS[] = {
+            const GriabuntuMail.ClientService.Status SPECIALS[] = {
                 AUTHENTICATION_FAILED,
                 TLS_VALIDATION_FAILED
             };
@@ -121,7 +122,7 @@ public class Application.AccountContext : Convey.BaseObject {
     /**
      * Returns context for a folder belonging to this context's account.
      */
-    public FolderContext? get_folder(Convey.Folder target) {
+    public FolderContext? get_folder(GriabuntuMail.Folder target) {
         FolderContext? context = null;
         if (this.account == target.account) {
             context = this.folders.get(target.path);

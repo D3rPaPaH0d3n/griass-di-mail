@@ -5,7 +5,7 @@
     <property name="name">box</property>
     <style>
       <class name="view"/>
-      <class name="convey-attachment-pane"/>
+      <class name="griabuntu-mail-attachment-pane"/>
     </style>
 
     <child>

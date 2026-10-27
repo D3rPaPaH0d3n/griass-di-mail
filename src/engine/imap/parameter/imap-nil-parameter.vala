@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -20,7 +21,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.5]]
  */
 
-public class Convey.Imap.NilParameter : Convey.Imap.Parameter {
+public class GriabuntuMail.Imap.NilParameter : GriabuntuMail.Imap.Parameter {
     public const string VALUE = "NIL";
 
     private static NilParameter? _instance = null;

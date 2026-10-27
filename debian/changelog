@@ -1,0 +1,42 @@
+griabuntu-mail (51.0+griabuntu20261027.5) stonking; urgency=medium
+
+  * Embed the owner-supplied banner in the native About dialog.
+  * Preserve its aspect ratio, credits, licence and version information.
+
+ -- Griabuntu Mail local builds <local-build@example.invalid>  Tue, 27 Oct 2026 21:40:40 +0100
+
+griabuntu-mail (51.0+griabuntu20261027.4) stonking; urgency=medium
+
+  * Replace the mistaken local icon study with the owner-selected closed envelope.
+  * Preserve supplied PNGs exactly; export native sizes and matching mono mask.
+  * Keep profile identity unchanged and distinguish artwork provenance.
+
+ -- Griabuntu Mail local builds <local-build@example.invalid>  Tue, 27 Oct 2026 21:15:00 +0100
+
+griabuntu-mail (51.0+griabuntu20261027.3) stonking; urgency=medium
+
+  * Package original CC0 envelope app, tray and symbolic icons from brand/.
+  * Include native icon sizes from 16 to 512 pixels and a dark nightly variant.
+  * Replace inherited app artwork in runtime lookup and help; preserve originals.
+  * Keep the new application identity and synthetic-only validation.
+
+ -- Griabuntu Mail local builds <local-build@example.invalid>  Tue, 27 Oct 2026 20:04:02 +0100
+
+griabuntu-mail (51.0+griabuntu20261027.2) stonking; urgency=medium
+
+  * Rename the application, executable, desktop/D-Bus/schema/resource identity,
+    engine namespace, private libraries, translations and help to Griabuntu Mail.
+  * Use the GitHub account namespace io.github.d3rpapah0d3n.GriabuntuMail.
+  * Isolate new config/data/cache and secret schema from Convey profiles.
+  * Preserve historical attribution, licences and immutable build evidence.
+
+ -- Griabuntu Mail local builds <local-build@example.invalid>  Tue, 27 Oct 2026 19:23:16 +0100
+
+griabuntu-mail (51.0+griabuntu20261027.1) stonking; urgency=medium
+
+  * Add private native Ubuntu 26.10 packaging, retaining TNEF support.
+  * Include the verified session-new notification flag correction.
+  * Run existing headless regression suites without host profiles or buses.
+  * Preserve application/component notices and the existing technical identity.
+
+ -- Griabuntu Mail local builds <local-build@example.invalid>  Tue, 27 Oct 2026 18:57:37 +0100

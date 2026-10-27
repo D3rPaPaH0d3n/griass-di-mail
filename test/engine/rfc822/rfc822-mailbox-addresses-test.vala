@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
@@ -7,10 +8,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.RFC822.MailboxAddressesTest : TestCase {
+class GriabuntuMail.RFC822.MailboxAddressesTest : TestCase {
 
     public MailboxAddressesTest() {
-        base("Convey.RFC822.MailboxAddressesTest");
+        base("GriabuntuMail.RFC822.MailboxAddressesTest");
         add_test("from_rfc822_string_encoded", from_rfc822_string_encoded);
         add_test("from_rfc822_string_quoted", from_rfc822_string_quoted);
         add_test("to_rfc822_string", to_rfc822_string);

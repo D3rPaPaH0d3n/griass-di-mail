@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -14,7 +15,7 @@
  * @see StatusCommand
  */
 
-public class Convey.Imap.StatusData : Object {
+public class GriabuntuMail.Imap.StatusData : Object {
     // NOTE: This must be negative one; other values won't work well due to how the values are
     // decoded
     public const int UNSET = -1;
@@ -110,7 +111,7 @@ public class Convey.Imap.StatusData : Object {
                             // whatever is used by home.pl (dovecot?)
                             // sends UIDNEXT 0. Just ignore these
                             // since there nothing else that can be
-                            // done. See GNOME/convey#711
+                            // done. See GNOME/griabuntu-mail#711
                             if (valuep.as_int64() == 0) {
                                 warning("Ignoring bad UIDNEXT 0 from server");
                             } else {

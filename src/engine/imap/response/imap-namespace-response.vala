@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
@@ -10,9 +11,9 @@
 /**
  * Response for a NAMESPACE command.
  *
- * @see Convey.Imap.NamespaceCommand
+ * @see GriabuntuMail.Imap.NamespaceCommand
  */
-public class Convey.Imap.NamespaceResponse : BaseObject {
+public class GriabuntuMail.Imap.NamespaceResponse : BaseObject {
 
 
     public Gee.List<Namespace>? personal { get; private set; default = null; }

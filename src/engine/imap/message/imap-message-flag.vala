@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -16,7 +17,7 @@
  * @see FetchedData
  */
 
-public class Convey.Imap.MessageFlag : Convey.Imap.Flag {
+public class GriabuntuMail.Imap.MessageFlag : GriabuntuMail.Imap.Flag {
     private static MessageFlag? _answered = null;
     public static MessageFlag ANSWERED { get {
         if (_answered == null)
@@ -102,35 +103,35 @@ public class Convey.Imap.MessageFlag : Convey.Imap.Flag {
 
     // Converts a list of email flags to add and remove to a list of message
     // flags to add and remove.
-    public static void from_email_flags(Convey.EmailFlags? email_flags_add,
-        Convey.EmailFlags? email_flags_remove, out Gee.List<MessageFlag> msg_flags_add,
+    public static void from_email_flags(GriabuntuMail.EmailFlags? email_flags_add,
+        GriabuntuMail.EmailFlags? email_flags_remove, out Gee.List<MessageFlag> msg_flags_add,
         out Gee.List<MessageFlag> msg_flags_remove) {
         msg_flags_add = new Gee.ArrayList<MessageFlag>();
         msg_flags_remove = new Gee.ArrayList<MessageFlag>();
 
         if (email_flags_add != null) {
-            if (email_flags_add.contains(Convey.EmailFlags.UNREAD))
+            if (email_flags_add.contains(GriabuntuMail.EmailFlags.UNREAD))
                 msg_flags_remove.add(MessageFlag.SEEN);
-            if (email_flags_add.contains(Convey.EmailFlags.FLAGGED))
+            if (email_flags_add.contains(GriabuntuMail.EmailFlags.FLAGGED))
                 msg_flags_add.add(MessageFlag.FLAGGED);
-            if (email_flags_add.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES))
+            if (email_flags_add.contains(GriabuntuMail.EmailFlags.LOAD_REMOTE_IMAGES))
                 msg_flags_add.add(MessageFlag.LOAD_REMOTE_IMAGES);
-            if (email_flags_add.contains(Convey.EmailFlags.DRAFT))
+            if (email_flags_add.contains(GriabuntuMail.EmailFlags.DRAFT))
                 msg_flags_add.add(MessageFlag.DRAFT);
-            if (email_flags_add.contains(Convey.EmailFlags.DELETED))
+            if (email_flags_add.contains(GriabuntuMail.EmailFlags.DELETED))
                 msg_flags_add.add(MessageFlag.DELETED);
         }
 
         if (email_flags_remove != null) {
-            if (email_flags_remove.contains(Convey.EmailFlags.UNREAD))
+            if (email_flags_remove.contains(GriabuntuMail.EmailFlags.UNREAD))
                 msg_flags_add.add(MessageFlag.SEEN);
-            if (email_flags_remove.contains(Convey.EmailFlags.FLAGGED))
+            if (email_flags_remove.contains(GriabuntuMail.EmailFlags.FLAGGED))
                 msg_flags_remove.add(MessageFlag.FLAGGED);
-            if (email_flags_remove.contains(Convey.EmailFlags.LOAD_REMOTE_IMAGES))
+            if (email_flags_remove.contains(GriabuntuMail.EmailFlags.LOAD_REMOTE_IMAGES))
                 msg_flags_remove.add(MessageFlag.LOAD_REMOTE_IMAGES);
-            if (email_flags_remove.contains(Convey.EmailFlags.DRAFT))
+            if (email_flags_remove.contains(GriabuntuMail.EmailFlags.DRAFT))
                 msg_flags_remove.add(MessageFlag.DRAFT);
-            if (email_flags_remove.contains(Convey.EmailFlags.DELETED))
+            if (email_flags_remove.contains(GriabuntuMail.EmailFlags.DELETED))
                 msg_flags_remove.add(MessageFlag.DELETED);
         }
     }

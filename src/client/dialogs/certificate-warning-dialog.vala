@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,7 +7,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/certificate-warning-dialog.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/certificate-warning-dialog.ui")]
 public class CertificateWarningDialog : Adw.AlertDialog {
 
     public enum Result {
@@ -23,9 +24,9 @@ public class CertificateWarningDialog : Adw.AlertDialog {
     [GtkChild] private unowned Gtk.Label dont_trust_label;
     [GtkChild] private unowned Gtk.Label contact_label;
 
-    public CertificateWarningDialog(Convey.AccountInformation account,
-                                    Convey.ServiceInformation service,
-                                    Convey.Endpoint endpoint,
+    public CertificateWarningDialog(GriabuntuMail.AccountInformation account,
+                                    GriabuntuMail.ServiceInformation service,
+                                    GriabuntuMail.Endpoint endpoint,
                                     bool is_validation) {
         this.title = _("Untrusted Connection: %s").printf(account.display_name);
 
@@ -47,14 +48,14 @@ public class CertificateWarningDialog : Adw.AlertDialog {
             // could be a new or existing account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Convey not to access this server.")
+                + _("Selecting “Don’t Trust This Server” will cause Griabuntu Mail not to access this server.")
                 + "</b> "
-                + _("Convey will not add or update this email account.");
+                + _("Griabuntu Mail will not add or update this email account.");
         } else {
             // a registered account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Convey to stop accessing this account.")
+                + _("Selecting “Don’t Trust This Server” will cause Griabuntu Mail to stop accessing this account.")
                 + "</b> ";
         }
         this.dont_trust_label.use_markup = true;

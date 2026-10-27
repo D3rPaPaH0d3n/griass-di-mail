@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -13,16 +14,16 @@
  * This class provides a common implementation that shares email
  * objects between different plugin context instances.
  */
-internal class Application.EmailStoreFactory : Convey.BaseObject {
+internal class Application.EmailStoreFactory : GriabuntuMail.BaseObject {
 
 
-    private const Convey.Email.Field REQUIRED_FIELDS = (
+    private const GriabuntuMail.Email.Field REQUIRED_FIELDS = (
         ENVELOPE |
         FLAGS
     );
 
 
-    private class EmailStoreImpl : Convey.BaseObject, Plugin.EmailStore {
+    private class EmailStoreImpl : GriabuntuMail.BaseObject, Plugin.EmailStore {
 
 
         private weak EmailStoreFactory factory;
@@ -50,10 +51,10 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
             // only a single account, so optimise for that a bit.
 
             var found_accounts = new Gee.HashMap<
-                AccountContext, Gee.Set<Convey.EmailIdentifier>
+                AccountContext, Gee.Set<GriabuntuMail.EmailIdentifier>
             >();
             AccountContext? current_account = null;
-            Gee.Set<Convey.EmailIdentifier>? engine_ids = null;
+            Gee.Set<GriabuntuMail.EmailIdentifier>? engine_ids = null;
             foreach (Plugin.EmailIdentifier plugin_id in plugin_ids) {
                 IdImpl? id_impl = plugin_id as IdImpl;
                 if (id_impl != null) {
@@ -61,7 +62,7 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
                         current_account = id_impl.account_impl.backing;
                         engine_ids = found_accounts.get(current_account);
                         if (engine_ids == null) {
-                            engine_ids = new Gee.HashSet<Convey.EmailIdentifier>();
+                            engine_ids = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
                             found_accounts.set(current_account, engine_ids);
                         }
                     }
@@ -70,7 +71,7 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
             }
 
             foreach (var context in found_accounts.keys) {
-                Gee.Collection<Convey.Email> batch =
+                Gee.Collection<GriabuntuMail.Email> batch =
                     yield context.emails.list_email_by_sparse_id_async(
                         found_accounts.get(context),
                         REQUIRED_FIELDS,
@@ -114,8 +115,8 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
 
 
     /** Implementation of the plugin email interface. */
-    internal class EmailImpl : Convey.BaseObject,
-        Convey.EmailHeaderSet,
+    internal class EmailImpl : GriabuntuMail.BaseObject,
+        GriabuntuMail.EmailHeaderSet,
         Plugin.Email {
 
 
@@ -129,65 +130,65 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
         }
         private IdImpl? _id = null;
 
-        public Convey.RFC822.MailboxAddresses? from {
+        public GriabuntuMail.RFC822.MailboxAddresses? from {
             get { return this.backing.from; }
         }
 
-        public Convey.RFC822.MailboxAddress? sender {
+        public GriabuntuMail.RFC822.MailboxAddress? sender {
             get { return this.backing.sender; }
         }
 
-        public Convey.RFC822.MailboxAddresses? reply_to {
+        public GriabuntuMail.RFC822.MailboxAddresses? reply_to {
             get { return this.backing.reply_to; }
         }
 
-        public Convey.RFC822.MailboxAddresses? to {
+        public GriabuntuMail.RFC822.MailboxAddresses? to {
             get { return this.backing.to; }
         }
 
-        public Convey.RFC822.MailboxAddresses? cc {
+        public GriabuntuMail.RFC822.MailboxAddresses? cc {
             get { return this.backing.cc; }
         }
 
-        public Convey.RFC822.MailboxAddresses? bcc {
+        public GriabuntuMail.RFC822.MailboxAddresses? bcc {
             get { return this.backing.bcc; }
         }
 
-        public Convey.RFC822.MessageID? message_id {
+        public GriabuntuMail.RFC822.MessageID? message_id {
             get { return this.backing.message_id; }
         }
 
-        public Convey.RFC822.MessageIDList? in_reply_to {
+        public GriabuntuMail.RFC822.MessageIDList? in_reply_to {
             get { return this.backing.in_reply_to; }
         }
 
-        public Convey.RFC822.MessageIDList? references {
+        public GriabuntuMail.RFC822.MessageIDList? references {
             get { return this.backing.references; }
         }
 
-        public Convey.RFC822.Subject? subject {
+        public GriabuntuMail.RFC822.Subject? subject {
             get { return this.backing.subject; }
         }
 
-        public Convey.RFC822.Date? date {
+        public GriabuntuMail.RFC822.Date? date {
             get { return this.backing.date; }
         }
 
-        public Convey.EmailFlags flags {
+        public GriabuntuMail.EmailFlags flags {
             get { return this.backing.email_flags; }
         }
 
-        internal Convey.Email backing { get; private set; }
+        internal GriabuntuMail.Email backing { get; private set; }
         internal PluginManager.AccountImpl account { get; private set; }
 
 
-        internal EmailImpl(Convey.Email backing,
+        internal EmailImpl(GriabuntuMail.Email backing,
                            PluginManager.AccountImpl account) {
             this.backing = backing;
             this.account = account;
         }
 
-        public Convey.RFC822.MailboxAddress? get_primary_originator() {
+        public GriabuntuMail.RFC822.MailboxAddress? get_primary_originator() {
             return Util.Email.get_primary_originator(this.backing);
         }
 
@@ -195,16 +196,16 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
                                          bool convert,
                                          GLib.Cancellable? cancellable)
             throws GLib.Error {
-            if (!(Convey.Email.REQUIRED_FOR_MESSAGE in this.backing.fields)) {
-                Convey.Account account = this.account.backing.account;
+            if (!(GriabuntuMail.Email.REQUIRED_FOR_MESSAGE in this.backing.fields)) {
+                GriabuntuMail.Account account = this.account.backing.account;
                 this.backing = yield account.local_fetch_email_async(
                     this.backing.id,
-                    Convey.Email.REQUIRED_FOR_MESSAGE | this.backing.fields,
+                    GriabuntuMail.Email.REQUIRED_FOR_MESSAGE | this.backing.fields,
                     cancellable
                 );
             }
 
-            Convey.RFC822.Message message = this.backing.get_message();
+            GriabuntuMail.RFC822.Message message = this.backing.get_message();
             string body = "";
             switch (type) {
             case PLAIN:
@@ -228,17 +229,17 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
     }
 
 
-    internal class IdImpl : Convey.BaseObject,
+    internal class IdImpl : GriabuntuMail.BaseObject,
         Gee.Hashable<Plugin.EmailIdentifier>, Plugin.EmailIdentifier {
 
 
         public Plugin.Account account { get { return this.account_impl; } }
         internal PluginManager.AccountImpl account_impl;
 
-        internal Convey.EmailIdentifier backing { get; private set; }
+        internal GriabuntuMail.EmailIdentifier backing { get; private set; }
 
 
-        internal IdImpl(Convey.EmailIdentifier backing,
+        internal IdImpl(GriabuntuMail.EmailIdentifier backing,
                         PluginManager.AccountImpl account) {
             this.backing = backing;
             this.account_impl = account;
@@ -308,13 +309,13 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
         }
     }
 
-    public Convey.Email? to_engine_email(Plugin.Email plugin) {
+    public GriabuntuMail.Email? to_engine_email(Plugin.Email plugin) {
         var impl = plugin as EmailImpl;
         return (impl != null) ? impl.backing : null;
     }
 
     public Gee.Collection<Plugin.EmailIdentifier> to_plugin_ids(
-        Gee.Collection<Convey.EmailIdentifier> engine_ids,
+        Gee.Collection<GriabuntuMail.EmailIdentifier> engine_ids,
         AccountContext account
     ) {
         var plugin_ids = new Gee.HashSet<Plugin.EmailIdentifier>();
@@ -324,12 +325,12 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
         return plugin_ids;
     }
 
-    public Convey.EmailIdentifier? to_engine_id(Plugin.EmailIdentifier plugin) {
+    public GriabuntuMail.EmailIdentifier? to_engine_id(Plugin.EmailIdentifier plugin) {
         var impl = plugin as IdImpl;
         return (impl != null) ? impl.backing : null;
     }
 
-    public Plugin.Email to_plugin_email(Convey.Email engine,
+    public Plugin.Email to_plugin_email(GriabuntuMail.Email engine,
                                         AccountContext account) {
         return new EmailImpl(engine, this.accounts.get(account));
     }
@@ -349,9 +350,9 @@ internal class Application.EmailStoreFactory : Convey.BaseObject {
     }
 
     /** Returns the engine email id for the given plugin email id. */
-    public Convey.EmailIdentifier?
+    public GriabuntuMail.EmailIdentifier?
         get_email_identifier_for_variant(GLib.Variant target) {
-        Convey.EmailIdentifier? id = null;
+        GriabuntuMail.EmailIdentifier? id = null;
         var context = get_account_for_variant(target);
         if (context != null) {
             try {

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
  * Allows for a common string to be represented as an {@link Memory.Buffer}.
  */
 
-public class Convey.Memory.StringBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
+public class GriabuntuMail.Memory.StringBuffer : Memory.Buffer, Memory.UnownedStringBuffer,
     Memory.UnownedBytesBuffer {
     public override size_t size {
         get {

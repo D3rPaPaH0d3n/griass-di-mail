@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2017-2021 Michael Gratton <mike@vee.net>
@@ -19,8 +20,8 @@ private errordomain AttachmentError {
  * Composers must always be placed in an instance of {@link
  * Container}.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/composer-widget.ui")]
-public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/composer-widget.ui")]
+public class Composer.Widget : Adw.Bin, GriabuntuMail.BaseInterface {
 
 
     /**
@@ -28,7 +29,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
      *
      * @see load_context
      */
-    public const Convey.Email.Field REQUIRED_FIELDS = ENVELOPE | HEADER | BODY;
+    public const GriabuntuMail.Email.Field REQUIRED_FIELDS = ENVELOPE | HEADER | BODY;
 
     /// Translators: Title for an empty composer window
     private const string DEFAULT_TITLE = _("New Message");
@@ -122,7 +123,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     private class FromAddressMap : GLib.Object {
         public Application.AccountContext account;
-        public Convey.RFC822.MailboxAddresses from;
+        public GriabuntuMail.RFC822.MailboxAddresses from;
 
         // Label shown in the From row and its dropdown list
         public string display {
@@ -144,7 +145,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         }
 
         public FromAddressMap(Application.AccountContext account,
-                              Convey.RFC822.MailboxAddresses from) {
+                              GriabuntuMail.RFC822.MailboxAddresses from) {
             this.account = account;
             this.from = from;
         }
@@ -187,7 +188,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
 
     static construct {
-        set_css_name("convey-composer-widget");
+        set_css_name("griabuntu-mail-composer-widget");
 
         typeof(AddressesRow).ensure();
         typeof(FromAddressMap).ensure();
@@ -222,13 +223,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private const string ATTACHMENT_KEYWORDS_LOCALISED =
         _("attach|attaching|attaches|attachment|attachments|attached|enclose|enclosed|enclosing|encloses|enclosure|enclosures");
 
-    private const string PASTED_IMAGE_FILENAME_TEMPLATE = "convey-pasted-image-%u.png";
+    private const string PASTED_IMAGE_FILENAME_TEMPLATE = "griabuntu-mail-pasted-image-%u.png";
 
     /** The account the email is being sent from. */
     public Application.AccountContext sender_context { get; private set; }
 
     /** The identifier of the saved email this composer holds, if any. */
-    public Convey.EmailIdentifier? saved_id {
+    public GriabuntuMail.EmailIdentifier? saved_id {
         get; private set; default = null;
     }
 
@@ -278,7 +279,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private bool sender_required = false;
 
     /** Currently selected sender mailbox. */
-    public Convey.RFC822.MailboxAddresses from { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddresses from { get; private set; }
 
     /** Current text of the `to` entry. */
     public string to {
@@ -311,17 +312,17 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     /** The In-Reply-To header value for the composed email, if any. */
-    public Convey.RFC822.MessageIDList in_reply_to {
-        get; private set; default = new Convey.RFC822.MessageIDList();
+    public GriabuntuMail.RFC822.MessageIDList in_reply_to {
+        get; private set; default = new GriabuntuMail.RFC822.MessageIDList();
     }
 
     /** The References header value for the composed email, if any. */
-    public Convey.RFC822.MessageIDList references {
-        get; private set; default = new Convey.RFC822.MessageIDList();
+    public GriabuntuMail.RFC822.MessageIDList references {
+        get; private set; default = new GriabuntuMail.RFC822.MessageIDList();
     }
 
     /** Overrides for the draft folder as save destination, if any. */
-    internal Convey.Folder? save_to { get; private set; default = null; }
+    internal GriabuntuMail.Folder? save_to { get; private set; default = null; }
 
     internal Composer.Header header { get; private set; }
 
@@ -387,10 +388,10 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private bool top_posting = true;
 
     // The message(s) this email is in reply to/forwarded from
-    private Gee.Set<Convey.EmailIdentifier> referred_ids =
-        new Gee.HashSet<Convey.EmailIdentifier>();
+    private Gee.Set<GriabuntuMail.EmailIdentifier> referred_ids =
+        new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
 
-    private Gee.List<Convey.Attachment>? pending_attachments = null;
+    private Gee.List<GriabuntuMail.Attachment>? pending_attachments = null;
     private AttachPending pending_include = AttachPending.INLINE_ONLY;
     private Gee.Map<string,bool> pgp_keys = new Gee.HashMap<string,bool>();
     private Gee.Set<string> pgp_looked_up = new Gee.HashSet<string>();
@@ -398,14 +399,14 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private bool pgp_available = false;
     private bool reply_encrypted = false;
     private uint pgp_check_id = 0;
-    private Gee.Set<File> attached_files =new Gee.HashSet<File>(Convey.Files.nullable_hash,
-        Convey.Files.nullable_equal);
-    private Gee.Map<string,Convey.Memory.Buffer> inline_files = new Gee.HashMap<string,Convey.Memory.Buffer>();
-    private Gee.Map<string,Convey.Memory.Buffer> cid_files = new Gee.HashMap<string,Convey.Memory.Buffer>();
+    private Gee.Set<File> attached_files =new Gee.HashSet<File>(GriabuntuMail.Files.nullable_hash,
+        GriabuntuMail.Files.nullable_equal);
+    private Gee.Map<string,GriabuntuMail.Memory.Buffer> inline_files = new Gee.HashMap<string,GriabuntuMail.Memory.Buffer>();
+    private Gee.Map<string,GriabuntuMail.Memory.Buffer> cid_files = new Gee.HashMap<string,GriabuntuMail.Memory.Buffer>();
 
-    private Convey.App.DraftManager? draft_manager = null;
+    private GriabuntuMail.App.DraftManager? draft_manager = null;
     private GLib.Cancellable? draft_manager_opening = null;
-    private Convey.TimeoutManager draft_timer;
+    private GriabuntuMail.TimeoutManager draft_timer;
     private bool is_draft_saved = false;
     private string loaded_state = "";
     private string draft_status_text {
@@ -438,7 +439,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     internal Widget(ApplicationInterface application,
                     Application.Configuration config,
                     Application.AccountContext initial_account,
-                    Convey.Folder? save_to = null) {
+                    GriabuntuMail.Folder? save_to = null) {
         base_ref();
         this.application = application;
         this.config = config;
@@ -545,11 +546,11 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
         // TODO: also listen for account updates to allow adding identities while writing an email
 
-        this.from = new Convey.RFC822.MailboxAddresses.single(
+        this.from = new GriabuntuMail.RFC822.MailboxAddresses.single(
             this.sender_context.account.information.primary_mailbox
         );
 
-        this.draft_timer = new Convey.TimeoutManager.seconds(
+        this.draft_timer = new GriabuntuMail.TimeoutManager.seconds(
             10, on_draft_timeout
         );
 
@@ -574,7 +575,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Loads an empty message into the composer. */
-    public async void load_empty_body(Convey.RFC822.MailboxAddress? to = null)
+    public async void load_empty_body(GriabuntuMail.RFC822.MailboxAddress? to = null)
         throws GLib.Error {
         if (to != null) {
             this.to = to.to_full_display();
@@ -614,31 +615,31 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             }
 
             // Assemble the headers.
-            if (!Convey.String.is_empty_or_whitespace(email) &&
+            if (!GriabuntuMail.String.is_empty_or_whitespace(email) &&
                 headers.contains("to")) {
                 this.to = "%s,%s".printf(
-                    email, Convey.Collection.first(headers.get("to"))
+                    email, GriabuntuMail.Collection.first(headers.get("to"))
                 );
-            } else if (!Convey.String.is_empty_or_whitespace(email)) {
+            } else if (!GriabuntuMail.String.is_empty_or_whitespace(email)) {
                 this.to = email;
             } else if (headers.contains("to")) {
-                this.to = Convey.Collection.first(headers.get("to"));
+                this.to = GriabuntuMail.Collection.first(headers.get("to"));
             }
 
             if (headers.contains("cc"))
-                this.cc = Convey.Collection.first(headers.get("cc"));
+                this.cc = GriabuntuMail.Collection.first(headers.get("cc"));
 
             if (headers.contains("bcc"))
-                this.bcc = Convey.Collection.first(headers.get("bcc"));
+                this.bcc = GriabuntuMail.Collection.first(headers.get("bcc"));
 
             if (headers.contains("subject"))
-                this.subject = Convey.Collection.first(headers.get("subject"));
+                this.subject = GriabuntuMail.Collection.first(headers.get("subject"));
 
             var body = "";
             if (headers.contains("body")) {
-                body = Convey.HTML.preserve_whitespace(
-                    Convey.HTML.escape_markup(
-                        Convey.Collection.first(headers.get("body"))
+                body = GriabuntuMail.HTML.preserve_whitespace(
+                    GriabuntuMail.HTML.escape_markup(
+                        GriabuntuMail.Collection.first(headers.get("body"))
                     )
                 );
             }
@@ -666,31 +667,31 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
      * the current account context's store with those.
      */
     public async void load_context(ContextType type,
-                                   Convey.Email context,
+                                   GriabuntuMail.Email context,
                                    string? quote)
         throws GLib.Error {
         if (type == NONE) {
-            throw new Convey.EngineError.BAD_PARAMETERS(
+            throw new GriabuntuMail.EngineError.BAD_PARAMETERS(
                 "Invalid context type: %s", type.to_string()
             );
         }
 
         var full_context = context;
         if (!context.fields.is_all_set(REQUIRED_FIELDS)) {
-            Gee.Collection<Convey.Email>? email =
+            Gee.Collection<GriabuntuMail.Email>? email =
                 yield this.sender_context.emails.list_email_by_sparse_id_async(
-                    Convey.Collection.single(context.id),
+                    GriabuntuMail.Collection.single(context.id),
                     REQUIRED_FIELDS,
                     NONE,
                     this.sender_context.cancellable
                 );
             if (email == null || email.is_empty) {
-                throw new Convey.EngineError.INCOMPLETE_MESSAGE(
+                throw new GriabuntuMail.EngineError.INCOMPLETE_MESSAGE(
                     "Unable to load email fields required for composer: %s",
                     context.fields.to_string()
                 );
             }
-            full_context = Convey.Collection.first(email);
+            full_context = GriabuntuMail.Collection.first(email);
         }
 
         this.context_type = type;
@@ -700,10 +701,10 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             this.pending_include = AttachPending.ALL;
             this.pending_attachments = full_context.attachments;
         } else if (type == REPLY_SENDER || type == REPLY_ALL || type == REPLY_LIST) {
-            var attachments = new Gee.ArrayList<Convey.Attachment>();
+            var attachments = new Gee.ArrayList<GriabuntuMail.Attachment>();
             foreach (var attachment in full_context.attachments) {
                 if (attachment.content_id == null &&
-                    attachment.content_disposition.disposition_type != Convey.Mime.DispositionType.INLINE) {
+                    attachment.content_disposition.disposition_type != GriabuntuMail.Mime.DispositionType.INLINE) {
                     attachments.add(attachment);
                 }
             }
@@ -748,7 +749,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             if (full_context.subject != null) {
                 this.subject = full_context.subject.value ?? "";
             }
-            Convey.RFC822.Message message = full_context.get_message();
+            GriabuntuMail.RFC822.Message message = full_context.get_message();
             if (message.has_html_body()) {
                 body = message.get_html_body(null);
                 body_complete = body.contains(
@@ -772,14 +773,14 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 this.sender_context.account.information.has_sender_aliases) {
                 require_sender();
             }
-            this.subject = Convey.RFC822.Utils.create_subject_for_reply(
+            this.subject = GriabuntuMail.RFC822.Utils.create_subject_for_reply(
                 full_context
             );
             add_recipients_and_ids(type, full_context);
             complete_quote = Util.Email.quote_email_for_reply(
                 full_context, quote, HTML
             );
-            if (!Convey.String.is_empty(quote)) {
+            if (!GriabuntuMail.String.is_empty(quote)) {
                 this.top_posting = false;
             } else {
                 this.can_delete_quote = true;
@@ -787,7 +788,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             break;
 
         case FORWARD:
-            this.subject = Convey.RFC822.Utils.create_subject_for_forward(
+            this.subject = GriabuntuMail.RFC822.Utils.create_subject_for_forward(
                 full_context
             );
             if (full_context.message_id != null) {
@@ -817,7 +818,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
      * forwarded from. There may be multiple if a composer was already
      * open and another email was replied to.
      */
-    public Gee.Set<Convey.EmailIdentifier> get_referred_ids() {
+    public Gee.Set<GriabuntuMail.EmailIdentifier> get_referred_ids() {
         return this.referred_ids.read_only_view;
     }
 
@@ -973,7 +974,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 yield close_draft_manager(discard_draft ? DraftPolicy.DISCARD : DraftPolicy.KEEP);
             } catch (GLib.Error error) {
                 this.application.report_problem(
-                    new Convey.AccountProblemReport(
+                    new GriabuntuMail.AccountProblemReport(
                         this.sender_context.account.information, error
                     )
                 );
@@ -1024,7 +1025,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                         this.open_draft_manager.end(res);
                     } catch (GLib.Error error) {
                         this.application.report_problem(
-                            new Convey.AccountProblemReport(
+                            new GriabuntuMail.AccountProblemReport(
                                 current_account.information, error
                             )
                         );
@@ -1040,7 +1041,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Overrides the folder used for saving drafts. */
-    public void set_save_to_override(Convey.Folder? save_to) {
+    public void set_save_to_override(GriabuntuMail.Folder? save_to) {
         this.save_to = save_to;
         this.reopen_draft_manager.begin();
     }
@@ -1061,14 +1062,14 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
      * Restores the composer's widget state from any replied to messages.
      */
     private async void restore_reply_to_state() {
-        Gee.List<Convey.RFC822.MailboxAddress> sender_addresses =
+        Gee.List<GriabuntuMail.RFC822.MailboxAddress> sender_addresses =
             this.sender_context.account.information.sender_mailboxes;
-        var to_addresses = new Convey.RFC822.MailboxAddresses();
-        var cc_addresses = new Convey.RFC822.MailboxAddresses();
+        var to_addresses = new GriabuntuMail.RFC822.MailboxAddresses();
+        var cc_addresses = new GriabuntuMail.RFC822.MailboxAddresses();
 
         bool new_email = true;
         foreach (var mid in this.in_reply_to) {
-            Gee.MultiMap<Convey.Email, Convey.FolderPath?>? email_map = null;
+            Gee.MultiMap<GriabuntuMail.Email, GriabuntuMail.FolderPath?>? email_map = null;
             try {
                 // TODO: Folder blacklist
                 email_map = yield this.sender_context.account
@@ -1077,7 +1078,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                         ENVELOPE,
                         true,
                         null,
-                        new Convey.EmailFlags.with(Convey.EmailFlags.DRAFT)
+                        new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.DRAFT)
                     );
             } catch (GLib.Error error) {
                 warning(
@@ -1090,12 +1091,12 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                     if (candidate.message_id != null &&
                         mid.equal_to(candidate.message_id)) {
                         to_addresses = to_addresses.merge_list(
-                            Convey.RFC822.Utils.create_to_addresses_for_reply(
+                            GriabuntuMail.RFC822.Utils.create_to_addresses_for_reply(
                                 candidate, sender_addresses
                             )
                         );
                         cc_addresses = cc_addresses.merge_list(
-                            Convey.RFC822.Utils.create_cc_addresses_for_reply_all(
+                            GriabuntuMail.RFC822.Utils.create_cc_addresses_for_reply_all(
                                 candidate, sender_addresses
                             )
                         );
@@ -1144,9 +1145,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         bool header_visible = (
             this.current_mode != INLINE_COMPACT
         );
-        if (header_visible && Convey.String.is_empty(to)) {
+        if (header_visible && GriabuntuMail.String.is_empty(to)) {
             this.to_row.grab_focus();
-        } else if (header_visible && Convey.String.is_empty(subject)) {
+        } else if (header_visible && GriabuntuMail.String.is_empty(subject)) {
             this.subject_row.grab_focus();
         } else {
             // Need to grab the focus after the content has finished
@@ -1161,13 +1162,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         }
     }
 
-    private bool update_from_address(Convey.RFC822.MailboxAddresses? referred_addresses) {
+    private bool update_from_address(GriabuntuMail.RFC822.MailboxAddresses? referred_addresses) {
         if (referred_addresses != null) {
             var senders = this.sender_context.account.information.sender_mailboxes;
             var referred = referred_addresses.get_all();
-            foreach (Convey.RFC822.MailboxAddress address in senders) {
+            foreach (GriabuntuMail.RFC822.MailboxAddress address in senders) {
                 if (referred.contains(address)) {
-                    this.from = new Convey.RFC822.MailboxAddresses.single(address);
+                    this.from = new GriabuntuMail.RFC822.MailboxAddresses.single(address);
                     return true;
                 }
             }
@@ -1259,9 +1260,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Returns a representation of the current message. */
-    public async Convey.ComposedEmail to_composed_email(GLib.DateTime? date_override = null,
+    public async GriabuntuMail.ComposedEmail to_composed_email(GLib.DateTime? date_override = null,
                                                        bool for_draft = false) {
-        Convey.ComposedEmail email = new Convey.ComposedEmail(
+        GriabuntuMail.ComposedEmail email = new GriabuntuMail.ComposedEmail(
             date_override ?? new DateTime.now_local(),
             from
         ).set_to(
@@ -1308,12 +1309,12 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     /** Appends an email or fragment quoted into the composer. */
-    public void append_to_email(Convey.Email referred,
+    public void append_to_email(GriabuntuMail.Email referred,
                                 string? to_quote,
                                 ContextType type)
-        throws Convey.EngineError {
+        throws GriabuntuMail.EngineError {
         if (!referred.fields.is_all_set(REQUIRED_FIELDS)) {
-            throw new Convey.EngineError.INCOMPLETE_MESSAGE(
+            throw new GriabuntuMail.EngineError.INCOMPLETE_MESSAGE(
                 "Required fields not met: %s", referred.fields.to_string()
             );
         }
@@ -1343,23 +1344,23 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     private void add_recipients_and_ids(ContextType type,
-                                        Convey.Email referred) {
-        Gee.List<Convey.RFC822.MailboxAddress> sender_addresses =
+                                        GriabuntuMail.Email referred) {
+        Gee.List<GriabuntuMail.RFC822.MailboxAddress> sender_addresses =
             this.sender_context.account.information.sender_mailboxes;
 
-        Convey.RFC822.MailboxAddresses? list_address =
+        GriabuntuMail.RFC822.MailboxAddresses? list_address =
             type == REPLY_LIST
-            ? Convey.RFC822.Utils.get_list_post_address(referred)
+            ? GriabuntuMail.RFC822.Utils.get_list_post_address(referred)
             : null;
         if (list_address != null) {
-            this.to_row.addresses = Convey.RFC822.Utils.merge_addresses(
+            this.to_row.addresses = GriabuntuMail.RFC822.Utils.merge_addresses(
                 this.to_row.addresses, list_address
             );
         } else {
             // Add the sender to the To address list if needed
-            this.to_row.addresses = Convey.RFC822.Utils.merge_addresses(
+            this.to_row.addresses = GriabuntuMail.RFC822.Utils.merge_addresses(
                 this.to_row.addresses,
-                Convey.RFC822.Utils.create_to_addresses_for_reply(
+                GriabuntuMail.RFC822.Utils.create_to_addresses_for_reply(
                     referred, sender_addresses
                 )
             );
@@ -1367,10 +1368,10 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         if (type == REPLY_ALL) {
             // Add other recipients to the Cc address list if needed,
             // but don't include any already in the To list.
-            this.cc_row.addresses = Convey.RFC822.Utils.remove_addresses(
-                Convey.RFC822.Utils.merge_addresses(
+            this.cc_row.addresses = GriabuntuMail.RFC822.Utils.remove_addresses(
+                GriabuntuMail.RFC822.Utils.merge_addresses(
                     this.cc_row.addresses,
-                    Convey.RFC822.Utils.create_cc_addresses_for_reply_all(
+                    GriabuntuMail.RFC822.Utils.create_cc_addresses_for_reply_all(
                         referred, sender_addresses
                     )
                 ),
@@ -1387,7 +1388,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
         // Merge the new message's references with this
         this.references = this.references.merge_list(
-            Convey.RFC822.Utils.reply_references(referred)
+            GriabuntuMail.RFC822.Utils.reply_references(referred)
         );
 
         // Include the email in the composer's list of referred email
@@ -1405,7 +1406,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     /** Updates the composer's top level window and headerbar title. */
     public void update_window_title() {
         string subject = this.subject.strip();
-        if (Convey.String.is_empty(subject)) {
+        if (GriabuntuMail.String.is_empty(subject)) {
             subject = DEFAULT_TITLE;
         }
 
@@ -1481,7 +1482,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                     this.open_draft_manager.end(res);
                 } catch (GLib.Error error) {
                     this.application.report_problem(
-                        new Convey.AccountProblemReport(
+                        new GriabuntuMail.AccountProblemReport(
                             current_account.information, error
                         )
                     );
@@ -1519,12 +1520,12 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             return false;
         }
 
-        bool has_subject = !Convey.String.is_empty(subject.strip());
+        bool has_subject = !GriabuntuMail.String.is_empty(subject.strip());
         bool has_attachment = this.attached_files.size > 0;
         bool has_body = true;
 
         try {
-            has_body = !Convey.String.is_empty(
+            has_body = !GriabuntuMail.String.is_empty(
                 yield this.editor.body.get_html()
             );
         } catch (Error err) {
@@ -1585,7 +1586,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             }
         } catch (GLib.Error error) {
             this.application.report_problem(
-                new Convey.AccountProblemReport(
+                new GriabuntuMail.AccountProblemReport(
                     this.sender_context.account.information, error
                 )
             );
@@ -1600,7 +1601,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
      * method typically needs to be called from the main loop as a
      * background async task using the `begin` async call form.
      */
-    private async void open_draft_manager(Convey.EmailIdentifier? editing_draft_id)
+    private async void open_draft_manager(GriabuntuMail.EmailIdentifier? editing_draft_id)
         throws GLib.Error {
         if (!this.sender_context.account.information.save_drafts) {
             this.header.show_save_and_close = false;
@@ -1618,38 +1619,38 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         );
         this.draft_manager_opening = internal_cancellable;
 
-        Convey.Folder? target = this.save_to;
+        GriabuntuMail.Folder? target = this.save_to;
         if (target == null) {
             target = yield this.sender_context.account.get_required_special_folder_async(
                 DRAFTS, internal_cancellable
             );
         }
 
-        Convey.EmailFlags? flags = (
+        GriabuntuMail.EmailFlags? flags = (
             target.used_as == DRAFTS
-            ? new Convey.EmailFlags.with(Convey.EmailFlags.DRAFT)
-            : new Convey.EmailFlags()
+            ? new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.DRAFT)
+            : new GriabuntuMail.EmailFlags()
         );
 
         bool opened = false;
         try {
-            var new_manager = yield new Convey.App.DraftManager(
+            var new_manager = yield new GriabuntuMail.App.DraftManager(
                 this.sender_context.account,
                 target,
                 flags,
                 editing_draft_id,
                 internal_cancellable
             );
-            new_manager.notify[Convey.App.DraftManager.PROP_DRAFT_STATE]
+            new_manager.notify[GriabuntuMail.App.DraftManager.PROP_DRAFT_STATE]
                 .connect(on_draft_state_changed);
-            new_manager.notify[Convey.App.DraftManager.PROP_CURRENT_DRAFT_ID]
+            new_manager.notify[GriabuntuMail.App.DraftManager.PROP_CURRENT_DRAFT_ID]
                 .connect(on_draft_id_changed);
             new_manager.fatal
                 .connect(on_draft_manager_fatal);
             this.draft_manager = new_manager;
             opened = true;
             debug("Draft manager opened");
-        } catch (Convey.EngineError.UNSUPPORTED err) {
+        } catch (GriabuntuMail.EngineError.UNSUPPORTED err) {
             // Tell the user rather than silently never saving. This
             // happens when the drafts folder can't store mail or the
             // IMAP server has no UIDPLUS, so we can't identify the
@@ -1687,7 +1688,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             }
         } catch (GLib.Error error) {
             this.application.report_problem(
-                new Convey.AccountProblemReport(
+                new GriabuntuMail.AccountProblemReport(
                     current_account.information, error
                 )
             );
@@ -1704,9 +1705,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             this.saved_id = null;
             this.draft_status_text = "";
 
-            old_manager.notify[Convey.App.DraftManager.PROP_DRAFT_STATE]
+            old_manager.notify[GriabuntuMail.App.DraftManager.PROP_DRAFT_STATE]
                 .disconnect(on_draft_state_changed);
-            old_manager.notify[Convey.App.DraftManager.PROP_CURRENT_DRAFT_ID]
+            old_manager.notify[GriabuntuMail.App.DraftManager.PROP_CURRENT_DRAFT_ID]
                 .disconnect(on_draft_id_changed);
             old_manager.fatal.disconnect(on_draft_manager_fatal);
 
@@ -1722,22 +1723,22 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
     private void update_draft_state() {
         switch (this.draft_manager.draft_state) {
-            case Convey.App.DraftManager.DraftState.STORED:
+            case GriabuntuMail.App.DraftManager.DraftState.STORED:
                 this.draft_status_text = DRAFT_SAVED_TEXT;
                 this.is_draft_saved = true;
             break;
 
-            case Convey.App.DraftManager.DraftState.STORING:
+            case GriabuntuMail.App.DraftManager.DraftState.STORING:
                 this.draft_status_text = DRAFT_SAVING_TEXT;
                 this.is_draft_saved = true;
             break;
 
-            case Convey.App.DraftManager.DraftState.NOT_STORED:
+            case GriabuntuMail.App.DraftManager.DraftState.NOT_STORED:
                 this.draft_status_text = "";
                 this.is_draft_saved = false;
             break;
 
-            case Convey.App.DraftManager.DraftState.ERROR:
+            case GriabuntuMail.App.DraftManager.DraftState.ERROR:
                 this.draft_status_text = DRAFT_ERROR_TEXT;
                 this.is_draft_saved = false;
             break;
@@ -1769,9 +1770,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         this.draft_timer.reset();
 
         if (this.draft_manager != null) {
-            Convey.ComposedEmail draft = yield to_composed_email(null, true);
+            GriabuntuMail.ComposedEmail draft = yield to_composed_email(null, true);
             yield this.draft_manager.update(
-                yield new Convey.RFC822.Message.from_composed_email(
+                yield new GriabuntuMail.RFC822.Message.from_composed_email(
                     draft, null, GMime.EncodingConstraint.7BIT, null
                 ),
                 null,
@@ -1788,7 +1789,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 yield save_draft();
             } catch (GLib.Error error) {
                 this.application.report_problem(
-                    new Convey.AccountProblemReport(
+                    new GriabuntuMail.AccountProblemReport(
                         this.sender_context.account.information, error
                     )
                 );
@@ -1814,7 +1815,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             yield close_draft_manager(DISCARD);
         } catch (GLib.Error error) {
             this.application.report_problem(
-                new Convey.AccountProblemReport(
+                new GriabuntuMail.AccountProblemReport(
                     this.sender_context.account.information, error
                 )
             );
@@ -1838,13 +1839,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         bool have_added = false;
         bool manual_enabled = false;
         if (this.pending_attachments != null) {
-            foreach(Convey.Attachment part in this.pending_attachments) {
+            foreach(GriabuntuMail.Attachment part in this.pending_attachments) {
                 try {
                     string? content_id = part.content_id;
-                    Convey.Mime.DispositionType? type =
+                    GriabuntuMail.Mime.DispositionType? type =
                         part.content_disposition.disposition_type;
                     File file = part.file;
-                    if (type == Convey.Mime.DispositionType.INLINE) {
+                    if (type == GriabuntuMail.Mime.DispositionType.INLINE) {
                         // We only care about the Content Ids of
                         // inline parts, since we need to display them
                         // in the editor web view. However if an
@@ -1853,17 +1854,17 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                         // using a cid: URL anyway, so treat it as an
                         // attachment instead.
                         if (content_id != null) {
-                            Convey.Memory.FileBuffer file_buffer = new Convey.Memory.FileBuffer(file, true);
+                            GriabuntuMail.Memory.FileBuffer file_buffer = new GriabuntuMail.Memory.FileBuffer(file, true);
                             this.cid_files[content_id] = file_buffer;
                             this.editor.body.add_internal_resource(
                                 content_id, file_buffer
                             );
                         } else {
-                            type = Convey.Mime.DispositionType.ATTACHMENT;
+                            type = GriabuntuMail.Mime.DispositionType.ATTACHMENT;
                         }
                     }
 
-                    if (type == Convey.Mime.DispositionType.INLINE ||
+                    if (type == GriabuntuMail.Mime.DispositionType.INLINE ||
                         include == AttachPending.ALL) {
                         // The pending attachment should be added
                         // automatically, so add it if asked to and it
@@ -1871,9 +1872,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                         if (do_add &&
                             !this.attached_files.contains(file) &&
                             !this.inline_files.has_key(content_id)) {
-                            if (type == Convey.Mime.DispositionType.INLINE) {
+                            if (type == GriabuntuMail.Mime.DispositionType.INLINE) {
                                 check_attachment_file(file);
-                                Convey.Memory.FileBuffer file_buffer = new Convey.Memory.FileBuffer(file, true);
+                                GriabuntuMail.Memory.FileBuffer file_buffer = new GriabuntuMail.Memory.FileBuffer(file, true);
                                 string unused;
                                 add_inline_part(file_buffer, content_id, out unused);
                             } else {
@@ -1932,7 +1933,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         update_attachments_view();
     }
 
-    private void add_inline_part(Convey.Memory.Buffer target, string content_id, out string unique_contentid)
+    private void add_inline_part(GriabuntuMail.Memory.Buffer target, string content_id, out string unique_contentid)
         throws AttachmentError {
 
         const string UNIQUE_RENAME_TEMPLATE = "%s_%02u";
@@ -2050,7 +2051,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     /** Inserts an image file inline in the message body. */
     private void insert_inline_image_file(GLib.File file) throws GLib.Error {
         check_attachment_file(file);
-        var file_buffer = new Convey.Memory.FileBuffer(file, true);
+        var file_buffer = new GriabuntuMail.Memory.FileBuffer(file, true);
         string content_id = file.get_path() ?? file.get_basename();
         string unique_filename;
         add_inline_part(file_buffer, content_id, out unique_filename);
@@ -2137,7 +2138,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
 
                 var png_bytes = texture.save_to_png_bytes();
                 uint8[] png_data = png_bytes.get_data();
-                Convey.Memory.ByteBuffer byte_buffer = new Convey.Memory.ByteBuffer.take(png_data, png_data.length);
+                GriabuntuMail.Memory.ByteBuffer byte_buffer = new GriabuntuMail.Memory.ByteBuffer.take(png_data, png_data.length);
 
                 GLib.DateTime time_now = new GLib.DateTime.now();
                 string filename = PASTED_IMAGE_FILENAME_TEMPLATE.printf(time_now.hash());
@@ -2179,7 +2180,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 for (uint i = 0; i < files.get_n_items(); i++) {
                     File file = (File) files.get_item(i);
                     check_attachment_file(file);
-                    Convey.Memory.FileBuffer file_buffer = new Convey.Memory.FileBuffer(file, true);
+                    GriabuntuMail.Memory.FileBuffer file_buffer = new GriabuntuMail.Memory.FileBuffer(file, true);
                     string path = file.get_path();
                     string unique_filename;
                     add_inline_part(file_buffer, path, out unique_filename);
@@ -2234,25 +2235,25 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             + this.cc_row.text + (ccbcc ? ", " : "") + this.bcc_row.text;
         StringBuilder tooltip = new StringBuilder();
         if (this.to_row.addresses != null) {
-            foreach(Convey.RFC822.MailboxAddress addr in this.to_row.addresses) {
+            foreach(GriabuntuMail.RFC822.MailboxAddress addr in this.to_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 To header
                 tooltip.append("%s %s\n".printf(_("To:"), addr.to_full_display()));
             }
         }
         if (this.cc_row.addresses != null) {
-            foreach(Convey.RFC822.MailboxAddress addr in this.cc_row.addresses) {
+            foreach(GriabuntuMail.RFC822.MailboxAddress addr in this.cc_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 CC header
                 tooltip.append("%s %s\n".printf(_("Cc:"), addr.to_full_display()));
             }
         }
         if (this.bcc_row.addresses != null) {
-            foreach(Convey.RFC822.MailboxAddress addr in this.bcc_row.addresses) {
+            foreach(GriabuntuMail.RFC822.MailboxAddress addr in this.bcc_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 BCC header
                 tooltip.append("%s %s\n".printf(_("Bcc:"), addr.to_full_display()));
             }
         }
         if (this.reply_to_row.addresses != null) {
-            foreach(Convey.RFC822.MailboxAddress addr in this.reply_to_row.addresses) {
+            foreach(GriabuntuMail.RFC822.MailboxAddress addr in this.reply_to_row.addresses) {
                 // Translators: Human-readable version of the RFC 822 Reply-To header
                 tooltip.append("%s%s\n".printf(_("Reply-To: "), addr.to_full_display()));
             }
@@ -2278,7 +2279,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     private async void update_pgp_available() {
         bool available = false;
         foreach (var mailbox in this.from) {
-            available = yield Convey.RFC822.Utils.has_pgp_secret_key(
+            available = yield GriabuntuMail.RFC822.Utils.has_pgp_secret_key(
                 mailbox.address, null
             );
         }
@@ -2326,8 +2327,8 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             if (!this.pgp_keys.has_key(address)) {
                 bool found = false;
                 try {
-                    yield Convey.Nonblocking.Concurrent.global.schedule_async(
-                        () => { found = Convey.RFC822.Utils.has_pgp_key(address); },
+                    yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
+                        () => { found = GriabuntuMail.RFC822.Utils.has_pgp_key(address); },
                         null
                     );
                 } catch (GLib.Error err) {
@@ -2340,7 +2341,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                 this.pgp_looked_up.add(address);
                 try {
                     this.pgp_keys[address] =
-                        yield Convey.RFC822.Utils.discover_pgp_key(address, null);
+                        yield GriabuntuMail.RFC822.Utils.discover_pgp_key(address, null);
                 } catch (GLib.Error err) {
                     warning("OpenPGP key lookup failed for %s: %s", address, err.message);
                 }
@@ -2502,9 +2503,9 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         Application.AccountContext other_account,
         bool set_active = false
     ) {
-        Convey.AccountInformation info = other_account.account.information;
-        foreach (Convey.RFC822.MailboxAddress mailbox in info.sender_mailboxes) {
-            var addresses = new Convey.RFC822.MailboxAddresses.single(mailbox);
+        GriabuntuMail.AccountInformation info = other_account.account.information;
+        foreach (GriabuntuMail.RFC822.MailboxAddress mailbox in info.sender_mailboxes) {
+            var addresses = new GriabuntuMail.RFC822.MailboxAddresses.single(mailbox);
             var addr_map = new FromAddressMap(other_account, addresses);
 
             this.from_model.append(addr_map);
@@ -2642,7 +2643,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
             this.application.get_account_contexts();
         if (accounts.size < 1 ||
             (accounts.size == 1 &&
-            !Convey.Collection.first(
+            !GriabuntuMail.Collection.first(
                 accounts
             ).account.information.has_sender_aliases)) {
             return false;
@@ -2701,13 +2702,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     private async void update_signature(Cancellable? cancellable = null) {
-        Convey.AccountInformation account =
+        GriabuntuMail.AccountInformation account =
             this.sender_context.account.information;
-        Convey.RFC822.MailboxAddress? sender = this.from.get(0);
+        GriabuntuMail.RFC822.MailboxAddress? sender = this.from.get(0);
         string sig = sender != null ? account.get_sender_signature(sender) : "";
-        if (Convey.String.is_empty_or_whitespace(sig) && account.use_signature) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(sig) && account.use_signature) {
             sig = account.signature;
-            if (Convey.String.is_empty_or_whitespace(sig)) {
+            if (GriabuntuMail.String.is_empty_or_whitespace(sig)) {
                 // No signature is specified in the settings, so use
                 // ~/.signature
                 File signature_file = File.new_for_path(Environment.get_home_dir()).get_child(".signature");
@@ -2727,13 +2728,13 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
         // since when changing the selected from account, if the
         // previously selected account had a sig but the newly
         // selected account does not, the old sig gets cleared out.
-        if (Convey.String.is_empty_or_whitespace(sig)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(sig)) {
             // Clear out multiple spaces etc so smart_escape
             // doesn't create &nbsp;'s
             sig = "";
         }
         this.editor.body.update_signature(
-            embed_signature_images(Convey.HTML.smart_escape(sig))
+            embed_signature_images(GriabuntuMail.HTML.smart_escape(sig))
         );
     }
 
@@ -2751,7 +2752,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                     try {
                         string unique_id;
                         add_inline_part(
-                            new Convey.Memory.ByteBuffer(data, data.length),
+                            new GriabuntuMail.Memory.ByteBuffer(data, data.length),
                             name,
                             out unique_id
                         );
@@ -2878,7 +2879,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
                     this.save_draft.end(res);
                 } catch (GLib.Error error) {
                     this.application.report_problem(
-                        new Convey.AccountProblemReport(
+                        new GriabuntuMail.AccountProblemReport(
                             current_account.information, error
                         )
                     );
@@ -2946,7 +2947,7 @@ public class Composer.Widget : Adw.Bin, Convey.BaseInterface {
     }
 
     private void on_image_file_dropped(string filename, string file_type, uint8[] contents) {
-        Convey.Memory.ByteBuffer buffer = new Convey.Memory.ByteBuffer(contents, contents.length);
+        GriabuntuMail.Memory.ByteBuffer buffer = new GriabuntuMail.Memory.ByteBuffer(contents, contents.length);
         string unique_filename;
         try {
             add_inline_part(buffer, filename, out unique_filename);

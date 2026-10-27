@@ -1,11 +1,12 @@
-# Indonesian translation for convey.
+# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Indonesian translation for griabuntu_mail.
 # Copyright (C) 2020 convey's COPYRIGHT HOLDER
-# This file is distributed under the same license as the convey package.
+# This file is distributed under the same license as the griabuntu-mail package.
 # Andika Triwidada <atriwidada@gnome.org>, 2020.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: convey gnome-3-38\n"
+"Project-Id-Version: griabuntu-mail gnome-3-38\n"
 "POT-Creation-Date: 2020-12-03 14:57+0000\n"
 "PO-Revision-Date: 2021-05-31 18:14+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
@@ -35,12 +36,12 @@ msgstr "Penyunting Akun"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Convey’s application menu button "
+"<em>accounts editor</em>. To open it, click Griabuntu Mail’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
 "Akun surel Anda dapat ditambahkan, diperbarui, dan dihapus menggunakan "
-"<em>penyunting akun</em>. Untuk membukanya, klik tombol menu aplikasi Convey "
+"<em>penyunting akun</em>. Untuk membukanya, klik tombol menu aplikasi Griabuntu Mail "
 "di jendela utama di atas daftar folder, lalu klik <gui>Akun</gui> di menu "
 "pop-up."
 
@@ -67,16 +68,16 @@ msgstr "Menambahkan akun"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Convey will automatically use any email accounts you have added via the "
+"Griabuntu Mail will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not "
 "have any accounts added to <app>Online Accounts</app>, you will be prompted "
-"to add an account the first time you run Convey."
+"to add an account the first time you run GriabuntuMail."
 msgstr ""
-"Convey akan secara otomatis menggunakan akun surel apa pun yang telah Anda "
+"Griabuntu Mail akan secara otomatis menggunakan akun surel apa pun yang telah Anda "
 "tambahkan melalui panel <app>Akun Daring</app> dari <app>Pengaturan GNOME</"
 "app>. Jika Anda tidak memiliki akun apa pun yang ditambahkan ke <app>Akun "
 "Daring</app>, Anda akan diminta untuk menambahkan akun saat pertama kali "
-"Anda menjalankan Convey."
+"Anda menjalankan GriabuntuMail."
 
 #. (itstool) path: section/p
 #: C/accounts.page:37
@@ -86,14 +87,14 @@ msgid ""
 "providers supported by <app>Online Accounts</app>, <app>GNOME Settings</app> "
 "will be opened and you will be asked for your account information there. For "
 "other email providers, you will be asked for your account information by "
-"Convey. Once entered, click <gui>Create</gui> and the account information "
+"GriabuntuMail. Once entered, click <gui>Create</gui> and the account information "
 "will be checked and then added."
 msgstr ""
 "Untuk menambahkan akun tambahan, buka penyunting akun, lalu pilih penyedia "
 "surel yang sesuai dari daftar di bagian bawah jendela. Untuk penyedia yang "
 "didukung oleh <app>Akun Daring</app>, <app>Pengaturan GNOME</app> akan "
 "dibuka dan Anda akan dimintai informasi akun Anda di sana. Untuk penyedia "
-"surel lain, Anda akan dimintai informasi akun Anda oleh Convey. Setelah "
+"surel lain, Anda akan dimintai informasi akun Anda oleh GriabuntuMail. Setelah "
 "dimasukkan, klik <gui>Buat</gui> dan informasi akun akan diperiksa lalu "
 "ditambahkan."
 
@@ -106,12 +107,12 @@ msgstr "Memperbarui akun yang sudah ada"
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account "
-"you wish to update. Convey will display settings for the account. From there, "
+"you wish to update. Griabuntu Mail will display settings for the account. From there, "
 "you can add and remove additional sender email addresses, edit your email "
 "signature, and various other settings."
 msgstr ""
 "Untuk memperbarui akun yang sudah ada, buka penyunting akun dan pilih akun "
-"yang ingin Anda perbarui. Convey akan menampilkan pengaturan untuk akun "
+"yang ingin Anda perbarui. Griabuntu Mail akan menampilkan pengaturan untuk akun "
 "tersebut. Dari sana, Anda dapat menambahkan dan menghapus alamat surel "
 "pengirim tambahan, menyunting tanda tangan surel Anda, dan berbagai "
 "pengaturan lainnya."
@@ -120,11 +121,11 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Convey will download and store locally. Convey can only use locally available "
+"Griabuntu Mail will download and store locally. Griabuntu Mail can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
 "Pengaturan <gui>Unduh surat</gui> memungkinkan Anda untuk mengonfigurasi "
-"berapa banyak surel yang akan diunduh dan disimpan Convey secara lokal. Convey "
+"berapa banyak surel yang akan diunduh dan disimpan Griabuntu Mail secara lokal. Griabuntu Mail "
 "hanya dapat menggunakan surat yang tersedia secara lokal saat menampilkan "
 "dan mencari percakapan."
 
@@ -134,7 +135,7 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Convey will check the settings, then update the account. Note that "
+"and Griabuntu Mail will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
@@ -142,7 +143,7 @@ msgstr ""
 "Untuk menyunting pengaturan server bagi akun, gulir ke bagian bawah jendela "
 "dan klik <gui>Pengaturan Server</gui>. Setelan server akan ditampilkan dan "
 "Anda bisa mengklik untuk menyuntingnya. Setelah selesai, klik <gui>Terapkan</"
-"gui> dan Convey akan memeriksa pengaturan, lalu memperbarui akun. Perhatikan "
+"gui> dan Griabuntu Mail akan memeriksa pengaturan, lalu memperbarui akun. Perhatikan "
 "bahwa akun yang ditambahkan melalui panel <app>Akun Daring</app> dari "
 "<app>Pengaturan GNOME</app> tidak dapat mengubah nama server, keamanan, "
 "login, atau kata sandi mereka."
@@ -163,13 +164,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Convey "
+"The <gui>Save sent email on server</gui> checkbox controls whether Griabuntu Mail "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder. "
 "If de-selected, you will no be able to see any email messages you have sent, "
 "unless your server automatically saves them for you."
 msgstr ""
 "Kotak centang <gui>Simpan surel terkirim di server</gui> mengontrol apakah "
-"Convey akan menyimpan salinan surel yang telah dikirim ke folder <gui>Sent</"
+"Griabuntu Mail akan menyimpan salinan surel yang telah dikirim ke folder <gui>Sent</"
 "gui>. Jika tidak dipilih, Anda tidak akan dapat melihat pesan surel apa pun "
 "yang telah Anda kirim, kecuali server Anda secara otomatis menyimpannya "
 "untuk Anda."
@@ -194,16 +195,16 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Convey, open the accounts editor and choose "
-"the account you wish to remove. Convey will display settings for the account. "
+"To remove an account added via Griabuntu Mail, open the accounts editor and choose "
+"the account you wish to remove. Griabuntu Mail will display settings for the account. "
 "Scroll to the bottom of the window and click <gui>Remove Account</gui>. You "
 "will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
 "<gui>Undo</gui> in the popup notification, or by typing <keyseq><key>Ctrl</"
 "key><key>U</key></keyseq>."
 msgstr ""
-"Untuk menghapus akun yang ditambahkan melalui Convey, buka penyunting akun "
-"dan pilih akun yang ingin Anda hapus. Convey akan menampilkan pengaturan "
+"Untuk menghapus akun yang ditambahkan melalui Griabuntu Mail, buka penyunting akun "
+"dan pilih akun yang ingin Anda hapus. Griabuntu Mail akan menampilkan pengaturan "
 "untuk akun tersebut. Gulir ke bagian bawah jendela dan klik <gui>Hapus Akun</"
 "gui>. Anda akan diminta untuk mengonfirmasi menghapus akun. Setelah "
 "dikonfirmasi, jika Anda berubah pikiran, Anda masih bisa membatalkan "
@@ -218,13 +219,13 @@ msgstr "Mengarsipkan, membuang, dan menghapus pesan"
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Convey lets you archive messages if your server supports it. Clicking the "
+"Griabuntu Mail lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
 "email organised by moving old and replied-to email out of the way."
 msgstr ""
-"Convey memungkinkan Anda mengarsipkan pesan jika server mendukungnya. "
+"Griabuntu Mail memungkinkan Anda mengarsipkan pesan jika server mendukungnya. "
 "Mengklik tombol bilah alat <gui style=\"button\">Arsip</gui> memindahkan "
 "percakapan dari folder saat ini ke folder <gui>Arsip</gui> bagi sebagian "
 "besar layanan surel, atau ke <gui>Semua Surel</gui> untuk GMail. "
@@ -288,8 +289,8 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/bugs.page:10
-msgid "Need help with Convey?"
-msgstr "Butuh bantuan dengan Convey?"
+msgid "Need help with Griabuntu Mail?"
+msgstr "Butuh bantuan dengan Griabuntu Mail?"
 
 #. (itstool) path: section/title
 #: C/bugs.page:13
@@ -299,11 +300,11 @@ msgstr "Mendapatkan dukungan"
 #. (itstool) path: section/p
 #: C/bugs.page:15
 msgid ""
-"If you are having trouble using Convey, please <link href=\"https://wiki."
+"If you are having trouble using Griabuntu Mail, please <link href=\"https://wiki."
 "gnome.org/Apps/Geary/Contact\">get in touch</link> with the Geary community "
 "about the problem."
 msgstr ""
-"Jika Anda mengalami masalah menggunakan Convey, <link href=\"https://wiki."
+"Jika Anda mengalami masalah menggunakan Griabuntu Mail, <link href=\"https://wiki."
 "gnome.org/Apps/Geary/Contact\">silakan hubungi</link> komunitas Geary "
 "tentang masalah tersebut."
 
@@ -315,12 +316,12 @@ msgstr "Melaporkan bug"
 #. (itstool) path: section/p
 #: C/bugs.page:23
 msgid ""
-"If you suspect you have found a bug in Convey, please follow the <link href="
-"\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">bug reporting "
+"If you suspect you have found a bug in Griabuntu Mail, please follow the <link href="
+"\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">bug reporting "
 "guidelines</link> so the problem can be diagnosed and fixed."
 msgstr ""
-"Jika Anda menduga Anda telah menemukan bug di Convey, silakan ikuti <link "
-"href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">pedoman pelaporan "
+"Jika Anda menduga Anda telah menemukan bug di Griabuntu Mail, silakan ikuti <link "
+"href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">pedoman pelaporan "
 "kutu</link> sehingga masalah dapat didiagnosis dan diperbaiki."
 
 #. (itstool) path: section/p
@@ -334,8 +335,8 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:32
-msgid "Convey version and installation method (Package? Flathub? Source code?)"
-msgstr "Versi Convey dan metode instalasi (Paket? Flathub? Kode sumber?)"
+msgid "Griabuntu Mail version and installation method (Package? Flathub? Source code?)"
+msgstr "Versi Griabuntu Mail dan metode instalasi (Paket? Flathub? Kode sumber?)"
 
 #. (itstool) path: item/p
 #: C/bugs.page:34
@@ -372,69 +373,69 @@ msgstr "Apa yang Anda harapkan terjadi?"
 #. (itstool) path: section/p
 #: C/bugs.page:44
 msgid ""
-"Log files can be accessed via the Convey Inspector, press <keyseq><key>Alt</"
+"Log files can be accessed via the Griabuntu Mail Inspector, press <keyseq><key>Alt</"
 "key><key>I</key></keyseq> to open it, select and save any relevant log "
 "files, and attach them to the bug report."
 msgstr ""
-"Berkas log dapat diakses melalui Pemeriksa Convey, tekan <keyseq><key>Alt</"
+"Berkas log dapat diakses melalui Pemeriksa Griabuntu Mail, tekan <keyseq><key>Alt</"
 "key><key>I</key></keyseq> untuk membukanya, memilih dan menyimpan berkas log "
 "yang relevan, dan melampirkannya ke laporan bug."
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Convey"
-msgstr "Berkontribusi pada Convey"
+msgid "Contribute to Griabuntu Mail"
+msgstr "Berkontribusi pada Griabuntu Mail"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Convey? There are a number of ways you can contribute:"
+"Want to help improve Griabuntu Mail? There are a number of ways you can contribute:"
 msgstr ""
-"Ingin membantu meningkatkan Convey? Ada beberapa cara untuk berkontribusi:"
+"Ingin membantu meningkatkan Griabuntu Mail? Ada beberapa cara untuk berkontribusi:"
 
 #. (itstool) path: item/p
 #: C/contributing.page:16
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">Bug "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Bug "
 "reporting</link>—report new bugs or request new features"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/ReportingABug\">Pelaporan "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Pelaporan "
 "bug</link>—laporkan bug baru atau meminta fitur baru"
 
 #. (itstool) path: item/p
 #: C/contributing.page:19
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Translating</"
-"link>—translate Convey’s user interface and user manual into new languages"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Translating</"
+"link>—translate Griabuntu Mail’s user interface and user manual into new languages"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Translating\">Menerjemahkan</"
-"link>—menerjemahkan antarmuka pengguna dan manual pengguna Convey ke dalam "
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Menerjemahkan</"
+"link>—menerjemahkan antarmuka pengguna dan manual pengguna Griabuntu Mail ke dalam "
 "bahasa baru"
 
 #. (itstool) path: item/p
 #: C/contributing.page:20
 msgid ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Development\">Development</"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Development</"
 "link>—fix bugs and add new features"
 msgstr ""
-"<link href=\"https://wiki.gnome.org/Apps/Geary/Development\">Pengembangan</"
+"<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Pengembangan</"
 "link>—memperbaiki bug dan tambahkan fitur baru"
 
 #. (itstool) path: page/p
 #: C/contributing.page:23
 msgid ""
-"See <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">the wiki</"
+"See <link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">the wiki</"
 "link> for more information and options for contributing financially to "
-"Convey's development."
+"Griabuntu Mail's development."
 msgstr ""
-"Lihat <link href=\"https://wiki.gnome.org/Apps/Geary/Contribute\">wiki</"
+"Lihat <link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">wiki</"
 "link> untuk informasi lebih lanjut dan opsi untuk berkontribusi secara "
-"finansial untuk pengembangan Convey."
+"finansial untuk pengembangan GriabuntuMail."
 
 #. (itstool) path: page/title
 #: C/index.page:6
-msgid "<_:media-1/> <span>Convey</span>"
-msgstr "<_:media-1/> <span>Convey</span>"
+msgid "<_:media-1/> <span>Griabuntu Mail</span>"
+msgstr "<_:media-1/> <span>Griabuntu Mail</span>"
 
 #. (itstool) path: section/title
 #: C/index.page:12
@@ -443,8 +444,8 @@ msgstr "Perkenalan"
 
 #. (itstool) path: section/title
 #: C/index.page:16
-msgid "Using Convey"
-msgstr "Menggunakan Convey"
+msgid "Using Griabuntu Mail"
+msgstr "Menggunakan Griabuntu Mail"
 
 #. (itstool) path: section/title
 #: C/index.page:20
@@ -464,12 +465,12 @@ msgstr "Melabeli percakapan"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Convey lets you apply one or more <em>labels</em> to each conversation. Convey "
+"Griabuntu Mail lets you apply one or more <em>labels</em> to each conversation. Griabuntu Mail "
 "labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
-"Convey memungkinkan Anda menerapkan satu atau beberapa <em>label</em> ke "
-"setiap percakapan. Label Convey sesuai dengan label di Gmail, atau folder "
+"Griabuntu Mail memungkinkan Anda menerapkan satu atau beberapa <em>label</em> ke "
+"setiap percakapan. Label Griabuntu Mail sesuai dengan label di Gmail, atau folder "
 "biasa di layanan surel lainnya."
 
 #. (itstool) path: section/p
@@ -539,28 +540,28 @@ msgstr "Limitasi"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Convey is still in early development. Convey supports IMAP and has been tested "
+"Griabuntu Mail is still in early development. Griabuntu Mail supports IMAP and has been tested "
 "with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Convey may not yet work well with some IMAP "
-"servers. At this time Convey is still missing numerous features including "
+"for Outlook.com is provided. Griabuntu Mail may not yet work well with some IMAP "
+"servers. At this time Griabuntu Mail is still missing numerous features including "
 "offline mode."
 msgstr ""
-"Convey masih dalam pengembangan awal. Convey mendukung IMAP dan telah diuji "
+"Griabuntu Mail masih dalam pengembangan awal. Griabuntu Mail mendukung IMAP dan telah diuji "
 "dengan Gmail, Yahoo, dan server surel Dovecot yang bebas. Dukungan "
-"eksperimental untuk Outlook.com disediakan. Convey mungkin belum bekerja "
-"dengan baik dengan beberapa server IMAP. Saat ini Convey masih kekurangan "
+"eksperimental untuk Outlook.com disediakan. Griabuntu Mail mungkin belum bekerja "
+"dengan baik dengan beberapa server IMAP. Saat ini Griabuntu Mail masih kekurangan "
 "banyak fitur termasuk mode luring."
 
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Convey, "
+"To learn more about the features we're working on and the future of Griabuntu Mail, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
 "Untuk mempelajari lebih lanjut tentang fitur yang sedang kami kerjakan dan "
 "masa depan Geary, silakan kunjungi <link href=\"https://wiki.gnome.org/Apps/"
-"Convey\">halaman wiki</link> Convey."
+"Griabuntu Mail\">halaman wiki</link> GriabuntuMail."
 
 #. (itstool) path: page/title
 #. (itstool) path: section/title
@@ -571,11 +572,11 @@ msgstr "Ringkasan"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Convey is an email application built around conversations, for the GNOME 3 "
+"Griabuntu Mail is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Convey adalah aplikasi surel yang dibangun di sekitar percakapan, bagi "
+"Griabuntu Mail adalah aplikasi surel yang dibangun di sekitar percakapan, bagi "
 "desktop GNOME 3. Memungkinkan Anda membaca, mencari, dan mengirim surel "
 "dengan antar muka yang modern, mudah."
 
@@ -591,10 +592,10 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Convey window is divided into several areas: The folder list, the "
+"The main Griabuntu Mail window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
-"Jendela Convey utama dibagi menjadi beberapa area: Daftar folder, daftar "
+"Jendela Griabuntu Mail utama dibagi menjadi beberapa area: Daftar folder, daftar "
 "percakapan, dan penampil percakapan."
 
 #. (itstool) path: section/title
@@ -606,11 +607,11 @@ msgstr "Daftar folder"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Convey uses the term <em>label</em> for any folder "
+"for your email accounts. Griabuntu Mail uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "<em>Daftar folder</em> menampilkan semua <em>folder</em> dan <em>label</em> "
-"untuk akun surel Anda. Convey menggunakan istilah <em>label</em> bagi "
+"untuk akun surel Anda. Griabuntu Mail menggunakan istilah <em>label</em> bagi "
 "sebarang folder yang telah Anda buat untuk mengatur pesan surel Anda."
 
 #. (itstool) path: section/p
@@ -640,38 +641,38 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Convey displays a count "
+"sender. If a conversation has more than one message, Griabuntu Mail displays a count "
 "of messages in the conversation."
 msgstr ""
 "Setiap nama pengirim tampak tebal jika ada pesan yang belum dibaca dari "
-"pengirim tersebut. Jika percakapan memiliki lebih dari satu pesan, Convey "
+"pengirim tersebut. Jika percakapan memiliki lebih dari satu pesan, Griabuntu Mail "
 "menampilkan hitungan pesan dalam percakapan."
 
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Convey does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Convey "
+"Griabuntu Mail does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Griabuntu Mail "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Convey will fetch more messages "
+"simply scroll down the conversation list and Griabuntu Mail will fetch more messages "
 "automatically."
 msgstr ""
-"Convey tidak secara otomatis mengunduh semua pesan di semua folder surel "
-"Anda. Saat pertama kali mengunjungi Inbox atau folder lainnya, Convey "
+"Griabuntu Mail tidak secara otomatis mengunduh semua pesan di semua folder surel "
+"Anda. Saat pertama kali mengunjungi Inbox atau folder lainnya, Griabuntu Mail "
 "mengunduh pesan terbaru di folder tersebut. Untuk melihat lebih banyak "
-"pesan, cukup gulir ke bawah daftar percakapan dan Convey akan mengambil lebih "
+"pesan, cukup gulir ke bawah daftar percakapan dan Griabuntu Mail akan mengambil lebih "
 "banyak pesan secara otomatis."
 
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Convey can act on a group of conversations. To select "
+"Some commands in Griabuntu Mail can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the "
 "last conversation."
 msgstr ""
-"Beberapa perintah di Convey dapat bertindak pada sekelompok percakapan. Untuk "
+"Beberapa perintah di Griabuntu Mail dapat bertindak pada sekelompok percakapan. Untuk "
 "memilih beberapa percakapan, tahan tombol <key>Ctrl</key> dan klik setiap "
 "percakapan secara bergantian dalam daftar percakapan. Atau, klik percakapan "
 "pertama dalam rentang, lalu tahan <key>Shift</key> dan klik percakapan "
@@ -694,11 +695,11 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Convey collapses messages that you’ve already "
+"When you view a conversation, Griabuntu Mail collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
-"Saat Anda melihat percakapan, Convey menciutkan pesan yang sudah Anda baca. "
+"Saat Anda melihat percakapan, Griabuntu Mail menciutkan pesan yang sudah Anda baca. "
 "Klik pesan yang diciutkan untuk memperluasnya. Klik header pesan yang "
 "diperluas untuk menciutkannya."
 
@@ -731,12 +732,12 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Convey will display the first starred message in a conversation "
+"starred, and Griabuntu Mail will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "Klik tombol bintang yang ada pada setiap pesan untuk menandai atau "
 "membatalkan menandai pesan sebagai bintang. Membintangi pesan akan menandai "
-"seluruh percakapan seperti yang dibintangi, dan Convey akan menampilkan pesan "
+"seluruh percakapan seperti yang dibintangi, dan Griabuntu Mail akan menampilkan pesan "
 "berbintang pertama dalam percakapan ketika kembali ke sana."
 
 #. (itstool) path: section/p
@@ -771,12 +772,12 @@ msgstr "Preferensi"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Convey allows you to customise how it works via its <gui style=\"group"
+"Griabuntu Mail allows you to customise how it works via its <gui style=\"group"
 "\">Preferences</gui> window. To open the window, select <gui style=\"menuitem"
 "\">Preferences</gui> from the application menu on the main window's toolbar. "
 "You can change the following options:"
 msgstr ""
-"Convey memungkinkan Anda untuk menyesuaikan cara kerjanya melalui jendela "
+"Griabuntu Mail memungkinkan Anda untuk menyesuaikan cara kerjanya melalui jendela "
 "<gui style=\"group\">Preferensi</gui>. Untuk membuka jendela, pilih <gui "
 "style=\"menuitem\">Preferensi</gui> dari menu aplikasi di bilah alat jendela "
 "utama. Anda bisa mengubah opsi berikut:"
@@ -789,13 +790,13 @@ msgstr "<gui>Otomatis memilih pesan berikutnya</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Convey automatically selects the latest message "
+"When this option is enabled, Griabuntu Mail automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Convey automatically selects an adjacent message."
+"message, Griabuntu Mail automatically selects an adjacent message."
 msgstr ""
-"Ketika opsi ini diaktifkan, Convey secara otomatis memilih pesan terbaru "
+"Ketika opsi ini diaktifkan, Griabuntu Mail secara otomatis memilih pesan terbaru "
 "dalam folder saat Anda memasuki folder. Selain itu, setelah mengarsipkan "
-"pesan, Convey secara otomatis memilih pesan yang berdekatan."
+"pesan, Griabuntu Mail secara otomatis memilih pesan yang berdekatan."
 
 #. (itstool) path: item/title
 #: C/preferences.page:26
@@ -851,11 +852,11 @@ msgstr "<gui>Amati surel baru saat ditutup</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:45
 msgid ""
-"Convey will watch your accounts for new mail even when the main window is not "
+"Griabuntu Mail will watch your accounts for new mail even when the main window is not "
 "open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
-"Convey akan mengamati akun Anda untuk surel baru bahkan ketika jendela utama "
+"Griabuntu Mail akan mengamati akun Anda untuk surel baru bahkan ketika jendela utama "
 "tidak terbuka. Untuk melakukan ini, itu akan dimulai secara diam-diam ketika "
 "Anda masuk ke komputer Anda, dan itu akan terus berjalan setelah Anda "
 "menutup semua jendela."
@@ -868,12 +869,12 @@ msgstr "Pencarian"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Convey supports a per-account full text search. To start a search, select a "
+"Griabuntu Mail supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) and start typing. Results will appear after a brief delay."
 msgstr ""
-"Convey mendukung pencarian teks lengkap per akun. Untuk memulai pencarian, "
+"Griabuntu Mail mendukung pencarian teks lengkap per akun. Untuk memulai pencarian, "
 "pilih folder yang terkait dengan akun yang ingin Anda cari. Lalu klik kotak "
 "pencarian di bilah alat (atau tekan <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) dan mulailah mengetik. Hasil akan muncul setelah penundaan singkat."
@@ -890,12 +891,12 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Convey "
+"Keywords that match your search are highlighted in the message view. Griabuntu Mail "
 "will match different forms of the same word, for example searching for \"walk"
 "\" will also match \"walking\" and \"walked.\""
 msgstr ""
 "Kata kunci yang cocok dengan pencarian Anda disorot dalam tampilan pesan. "
-"Convey akan mencocokkan berbagai bentuk kata yang sama, misalnya mencari "
+"Griabuntu Mail akan mencocokkan berbagai bentuk kata yang sama, misalnya mencari "
 "\"walk\" juga akan cocok dengan \"walking\" dan \"walked.\""
 
 #. (itstool) path: section/title
@@ -905,8 +906,8 @@ msgstr "Operator pencarian"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Convey supports the following operators to limit the scope of searches:"
-msgstr "Convey mendukung operator berikut untuk membatasi cakupan pencarian:"
+msgid "Griabuntu Mail supports the following operators to limit the scope of searches:"
+msgstr "Griabuntu Mail mendukung operator berikut untuk membatasi cakupan pencarian:"
 
 #. (itstool) path: td/p
 #: C/search.page:27
@@ -1037,12 +1038,12 @@ msgstr "Pintasan papan tik"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Convey has keyboard shortcuts for most common operations. Use the built-in "
+"Griabuntu Mail has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the "
 "main window's toolbar, or using the keyboard shortcuts listed below."
 msgstr ""
-"Convey memiliki pintasan papan ketik untuk operasi yang paling umum. Gunakan "
+"Griabuntu Mail memiliki pintasan papan ketik untuk operasi yang paling umum. Gunakan "
 "bantuan bawaan untuk menemukan daftar lengkap. Untuk membuka bantuan "
 "pintasan, pilih <gui style=\"menuitem\">Pintasan Papan Ketik</gui> dari menu "
 "aplikasi di bilah alat jendela utama, atau menggunakan pintasan papan ketik "
@@ -1052,10 +1053,10 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Convey:"
+"Griabuntu Mail:"
 msgstr ""
 "Pintasan papan ketik berikut ini dapat digunakan untuk mengakses bantuan "
-"daring dari Convey:"
+"daring dari Griabuntu Mail:"
 
 #. (itstool) path: td/p
 #: C/shortcuts.page:24
@@ -1142,11 +1143,11 @@ msgstr "Menandai pesan sebagai sudah dibaca atau belum dibaca"
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Convey marks messages as read automatically as you read them. To manually "
+"Griabuntu Mail marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
-"Convey menandai pesan sebagai sudah dibaca secara otomatis saat Anda "
+"Griabuntu Mail menandai pesan sebagai sudah dibaca secara otomatis saat Anda "
 "membacanya. Untuk mengalihkan percakapan secara manual sebagai sudah dibaca "
 "atau belum dibaca, klik ikon lingkaran di daftar percakapan."
 
@@ -1207,13 +1208,13 @@ msgstr "Membatalkan pengiriman"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Convey will wait 5 seconds before delivering the "
+"When sending an email, Griabuntu Mail will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui style=\"button"
 "\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
 "more changes to it."
 msgstr ""
-"Saat mengirim surel, Convey akan menunggu 5 detik sebelum mengirim pesan. "
+"Saat mengirim surel, Griabuntu Mail akan menunggu 5 detik sebelum mengirim pesan. "
 "Selama waktu ini, Anda akan dapat mengklik <gui style=\"button\">Batalkan</"
 "gui> pada pemberitahuan pop-up yang muncul atau ketik <keyseq><key>Ctrl</"
 "key><key>Z</key></keyseq>  untuk membuka kembali surel, dan membuat lebih "
@@ -1241,12 +1242,12 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/write.page:41
 msgid ""
-"When entering an email address into any of these fields, Convey will provide "
+"When entering an email address into any of these fields, Griabuntu Mail will provide "
 "suggestions from your desktop address book and from previously sent and "
 "received email messages. To choose one of these suggestions, simply click on "
 "it."
 msgstr ""
-"Saat memasukkan alamat surel ke salah satu bidang ini, Convey akan memberikan "
+"Saat memasukkan alamat surel ke salah satu bidang ini, Griabuntu Mail akan memberikan "
 "saran dari buku alamat desktop Anda dan dari pesan surel yang dikirim dan "
 "diterima sebelumnya. Untuk memilih salah satu saran ini, cukup klik padanya."
 
@@ -1299,12 +1300,12 @@ msgstr "Pemformatan teks, gambar, dan lampiran"
 #. (itstool) path: section/p
 #: C/write.page:68
 msgid ""
-"Convey's email composer lets you use text styles such as <em>bold</em> and "
+"Griabuntu Mail's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it, and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar "
 "at the bottom of the composer area."
 msgstr ""
-"Komposer surel Convey memungkinkan Anda menggunakan gaya teks seperti "
+"Komposer surel Griabuntu Mail memungkinkan Anda menggunakan gaya teks seperti "
 "<em>teks tebal</em> dan <em>miring</em>, inden untuk mengutipnya, dan "
 "menautkan ke halaman web. Cukup pilih teks dan klik tombol yang sesuai pada "
 "bilah alat pemformatan di bagian bawah area komposer."
@@ -1383,12 +1384,12 @@ msgstr "Memeriksa ejaan"
 #. (itstool) path: section/p
 #: C/write.page:106
 msgid ""
-"Convey supports spell-checking your composed email in one or more languages, "
+"Griabuntu Mail supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
 msgstr ""
-"Convey mendukung pemeriksaan ejaan surel yang Anda buat dalam satu bahasa "
+"Griabuntu Mail mendukung pemeriksaan ejaan surel yang Anda buat dalam satu bahasa "
 "atau lebih, saat Anda mengetik. Untuk mengaktifkan pemeriksaan ejaan, "
 "terlebih dahulu pastikan komputer Anda memiliki kamus pemeriksaan ejaan yang "
 "terinstal untuk bahasa yang diinginkan. Lihat bantuan komputer Anda untuk "
@@ -1421,10 +1422,10 @@ msgstr "Menyimpan draf dan memulihkan pesan yang dibuang"
 #. (itstool) path: section/p
 #: C/write.page:125
 msgid ""
-"For mail servers that support drafts, Convey will automatically save the "
+"For mail servers that support drafts, Griabuntu Mail will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
-"Untuk server surel yang mendukung draf, Convey akan secara otomatis menyimpan "
+"Untuk server surel yang mendukung draf, Griabuntu Mail akan secara otomatis menyimpan "
 "pesan saat Anda mengetik di server setelah penundaan singkat."
 
 #. (itstool) path: section/p
@@ -1439,8 +1440,8 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:133
-msgid "Convey will delete the draft when you send the message."
-msgstr "Convey akan menghapus draf ketika Anda mengirim pesan."
+msgid "Griabuntu Mail will delete the draft when you send the message."
+msgstr "Griabuntu Mail akan menghapus draf ketika Anda mengirim pesan."
 
 #. (itstool) path: note/p
 #: C/write.page:136
@@ -1466,17 +1467,17 @@ msgstr "Pesan teks polos"
 #. (itstool) path: section/p
 #: C/write.page:148
 msgid ""
-"Convey can also send plain text messages. Press the <gui style=\"button"
+"Griabuntu Mail can also send plain text messages. Press the <gui style=\"button"
 "\">More options</gui> button at the end of the bottom toolbar, then choose "
 "\"Rich Text\" or \"Plain Text\". Plain text mode is useful when sending "
 "email to mailing lists that prohibit rich text (HTML) messages, or when "
-"sending email to people that do no use modern clients like Convey."
+"sending email to people that do no use modern clients like GriabuntuMail."
 msgstr ""
-"Convey juga dapat mengirim pesan teks polos. Tekan tombol <gui style=\"button"
+"Griabuntu Mail juga dapat mengirim pesan teks polos. Tekan tombol <gui style=\"button"
 "\">Opsi lainnya</gui> di akhir bilah alat bawah, lalu pilih \"Teks Kaya\" "
 "atau \"Teks Polos\". Mode teks polos berguna saat mengirim surel ke milis "
 "yang melarang pesan teks kaya (HTML), atau saat mengirim surel ke orang yang "
-"tidak menggunakan klien modern seperti Convey."
+"tidak menggunakan klien modern seperti GriabuntuMail."
 
 #. (itstool) path: section/p
 #: C/write.page:155

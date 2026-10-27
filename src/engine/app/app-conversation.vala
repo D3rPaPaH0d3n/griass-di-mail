@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,7 +7,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.App.Conversation : BaseObject {
+public class GriabuntuMail.App.Conversation : BaseObject {
     /**
      * Specify the ordering of {@link Email} returned by various accessors.
      *
@@ -46,10 +47,10 @@ public class Convey.App.Conversation : BaseObject {
     public Folder base_folder { get; private set; }
 
     /** Cache of paths associated with each email */
-    internal Gee.HashMultiMap<Convey.EmailIdentifier,Convey.FolderPath> path_map {
+    internal Gee.HashMultiMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.FolderPath> path_map {
         get;
         private set;
-        default = new Gee.HashMultiMap< Convey.EmailIdentifier,Convey.FolderPath>();
+        default = new Gee.HashMultiMap< GriabuntuMail.EmailIdentifier,GriabuntuMail.FolderPath>();
     }
 
     private Gee.HashMultiSet<RFC822.MessageID> message_ids = new Gee.HashMultiSet<RFC822.MessageID>();
@@ -72,34 +73,34 @@ public class Convey.App.Conversation : BaseObject {
     // this isn't ideal but the cost of adding an email to multiple sorted sets once versus
     // the number of times they're accessed makes it worth it
     private Gee.SortedSet<Email> sent_date_ascending = new Gee.TreeSet<Email>(
-        Convey.Email.compare_sent_date_ascending);
+        GriabuntuMail.Email.compare_sent_date_ascending);
     private Gee.SortedSet<Email> sent_date_descending = new Gee.TreeSet<Email>(
-        Convey.Email.compare_sent_date_descending);
+        GriabuntuMail.Email.compare_sent_date_descending);
     private Gee.SortedSet<Email> recv_date_ascending = new Gee.TreeSet<Email>(
-        Convey.Email.compare_recv_date_ascending);
+        GriabuntuMail.Email.compare_recv_date_ascending);
     private Gee.SortedSet<Email> recv_date_descending = new Gee.TreeSet<Email>(
-        Convey.Email.compare_recv_date_descending);
+        GriabuntuMail.Email.compare_recv_date_descending);
 
     /**
      * Fired when email has been added to this conversation.
      */
-    public signal void appended(Convey.Email email);
+    public signal void appended(GriabuntuMail.Email email);
 
     /**
      * Fired when email has been trimmed from this conversation.
      */
-    public signal void trimmed(Convey.Email email);
+    public signal void trimmed(GriabuntuMail.Email email);
 
     /**
      * Fired when the flags of an email in this conversation have changed.
      */
-    public signal void email_flags_changed(Convey.Email email);
+    public signal void email_flags_changed(GriabuntuMail.Email email);
 
 
     /**
      * Constructs a conversation relative to the given base folder.
      */
-    internal Conversation(Convey.Folder base_folder) {
+    internal Conversation(GriabuntuMail.Folder base_folder) {
         this.convnum = Conversation.next_convnum++;
         this.base_folder = base_folder;
     }
@@ -116,7 +117,7 @@ public class Convey.App.Conversation : BaseObject {
      */
     public uint get_count_in_folder(FolderPath path) {
         uint count = 0;
-        foreach (Convey.EmailIdentifier id in this.emails.keys) {
+        foreach (GriabuntuMail.EmailIdentifier id in this.emails.keys) {
             if (is_in_folder(id, path)) {
                 count++;
             }
@@ -128,21 +129,21 @@ public class Convey.App.Conversation : BaseObject {
      * Returns true if *any* message in the conversation is unread.
      */
     public bool is_unread() {
-        return has_flag(Convey.EmailFlags.UNREAD);
+        return has_flag(GriabuntuMail.EmailFlags.UNREAD);
     }
 
     /**
      * Returns true if any message in the conversation is not unread.
      */
     public bool has_any_read_message() {
-        return is_missing_flag(Convey.EmailFlags.UNREAD);
+        return is_missing_flag(GriabuntuMail.EmailFlags.UNREAD);
     }
 
     /**
      * Returns true if *any* message in the conversation is flagged.
      */
     public bool is_flagged() {
-        return has_flag(Convey.EmailFlags.FLAGGED);
+        return has_flag(GriabuntuMail.EmailFlags.FLAGGED);
     }
 
     /**
@@ -287,7 +288,7 @@ public class Convey.App.Conversation : BaseObject {
     /**
      * Determines if the given id is in the conversation's base folder.
      */
-    public bool is_in_base_folder(Convey.EmailIdentifier id) {
+    public bool is_in_base_folder(GriabuntuMail.EmailIdentifier id) {
         return is_in_folder(id, this.base_folder.path);
     }
 
@@ -297,9 +298,9 @@ public class Convey.App.Conversation : BaseObject {
      * Any folded-away copy of the message counts, since they are all
      * presented as the same message.
      */
-    public bool is_in_folder(Convey.EmailIdentifier id, FolderPath path) {
+    public bool is_in_folder(GriabuntuMail.EmailIdentifier id, FolderPath path) {
         foreach (var candidate in with_copies(id)) {
-            Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(candidate);
+            Gee.Collection<GriabuntuMail.FolderPath>? paths = this.path_map.get(candidate);
             if (paths != null && paths.contains(path)) {
                 return true;
             }
@@ -310,10 +311,10 @@ public class Convey.App.Conversation : BaseObject {
     /**
      * Returns the number of folders the message with the given id is in.
      */
-    public uint get_folder_count(Convey.EmailIdentifier id) {
-        var paths = new Gee.HashSet<Convey.FolderPath>();
+    public uint get_folder_count(GriabuntuMail.EmailIdentifier id) {
+        var paths = new Gee.HashSet<GriabuntuMail.FolderPath>();
         foreach (var candidate in with_copies(id)) {
-            Gee.Collection<Convey.FolderPath>? in_folder = this.path_map.get(candidate);
+            Gee.Collection<GriabuntuMail.FolderPath>? in_folder = this.path_map.get(candidate);
             if (in_folder != null) {
                 paths.add_all(in_folder);
             }
@@ -328,11 +329,11 @@ public class Convey.App.Conversation : BaseObject {
      * server, so acting on "the message in this folder" means acting on
      * all of them — and on none of the copies living elsewhere.
      */
-    public Gee.Collection<Convey.EmailIdentifier>
-        get_ids_in_folder(Convey.EmailIdentifier id, FolderPath path) {
-        var ids = new Gee.ArrayList<Convey.EmailIdentifier>();
+    public Gee.Collection<GriabuntuMail.EmailIdentifier>
+        get_ids_in_folder(GriabuntuMail.EmailIdentifier id, FolderPath path) {
+        var ids = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         foreach (var candidate in with_copies(id)) {
-            Gee.Collection<Convey.FolderPath>? paths = this.path_map.get(candidate);
+            Gee.Collection<GriabuntuMail.FolderPath>? paths = this.path_map.get(candidate);
             if (paths != null && paths.contains(path)) {
                 ids.add(candidate);
             }
@@ -341,9 +342,9 @@ public class Convey.App.Conversation : BaseObject {
     }
 
     // The given id plus any copies of the same message folded into it.
-    public Gee.Collection<Convey.EmailIdentifier>
-        with_copies(Convey.EmailIdentifier id) {
-        var ids = new Gee.ArrayList<Convey.EmailIdentifier>();
+    public Gee.Collection<GriabuntuMail.EmailIdentifier>
+        with_copies(GriabuntuMail.EmailIdentifier id) {
+        var ids = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         ids.add(id);
         foreach (var entry in this.copy_of.entries) {
             if (entry.value.equal_to(id)) {
@@ -356,9 +357,9 @@ public class Convey.App.Conversation : BaseObject {
     /**
      * Determines if the message or any copy folded into it is unread.
      */
-    public bool has_unread_copy(Convey.EmailIdentifier id) {
+    public bool has_unread_copy(GriabuntuMail.EmailIdentifier id) {
         foreach (var copy in with_copies(id)) {
-            Convey.Email? email = get_copy_by_id(copy);
+            GriabuntuMail.Email? email = get_copy_by_id(copy);
             if (email != null && email.is_unread().is_certain()) {
                 return true;
             }
@@ -369,7 +370,7 @@ public class Convey.App.Conversation : BaseObject {
     /**
      * Returns the email with exactly the given id, including folded copies.
      */
-    public Convey.Email? get_copy_by_id(EmailIdentifier id) {
+    public GriabuntuMail.Email? get_copy_by_id(EmailIdentifier id) {
         return this.emails.get(id) ?? this.folded.get(id);
     }
 
@@ -390,8 +391,8 @@ public class Convey.App.Conversation : BaseObject {
     /**
      * Returns the email associated with the EmailIdentifier, if it exists.
      */
-    public Convey.Email? get_email_by_id(EmailIdentifier id) {
-        Convey.Email? email = emails.get(id);
+    public GriabuntuMail.Email? get_email_by_id(EmailIdentifier id) {
+        GriabuntuMail.Email? email = emails.get(id);
         // A copy resolves to the message it was folded into
         if (email == null) {
             EmailIdentifier? primary = this.copy_of.get(id);
@@ -405,7 +406,7 @@ public class Convey.App.Conversation : BaseObject {
     /**
      * Returns all EmailIdentifiers in the conversation, unsorted.
      */
-    public Gee.Collection<Convey.EmailIdentifier> get_email_ids() {
+    public Gee.Collection<GriabuntuMail.EmailIdentifier> get_email_ids() {
         return emails.keys;
     }
 
@@ -435,11 +436,11 @@ public class Convey.App.Conversation : BaseObject {
      * Returns if the email was added, else false if already present
      * and only `known_paths` were merged.
      */
-    internal bool add(Email email, Gee.Collection<Convey.FolderPath> known_paths) {
+    internal bool add(Email email, Gee.Collection<GriabuntuMail.FolderPath> known_paths) {
         // Add the known paths to the path map regardless of whether
         // the email is already in the conversation or not, so that it
         // remains complete
-        foreach (Convey.FolderPath path in known_paths)
+        foreach (GriabuntuMail.FolderPath path in known_paths)
             this.path_map.set(email.id, path);
 
         if (this.emails.has_key(email.id) || this.folded.has_key(email.id))
@@ -533,7 +534,7 @@ public class Convey.App.Conversation : BaseObject {
     /**
      * Removes the target path from the known set for the given id.
      */
-    internal void remove_path(Convey.EmailIdentifier id, FolderPath path) {
+    internal void remove_path(GriabuntuMail.EmailIdentifier id, FolderPath path) {
         this.path_map.remove(id, path);
     }
 
@@ -541,7 +542,7 @@ public class Convey.App.Conversation : BaseObject {
     // place. Returns false if there were none.
     private bool promote_copy(Email email) {
         Email? replacement = null;
-        var others = new Gee.ArrayList<Convey.EmailIdentifier>();
+        var others = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         foreach (var entry in this.copy_of.entries) {
             if (!entry.value.equal_to(email.id)) {
                 continue;
@@ -581,12 +582,12 @@ public class Convey.App.Conversation : BaseObject {
         return true;
     }
 
-    private Convey.Email?
+    private GriabuntuMail.Email?
         get_single_email(Ordering ordering, Location location,
-                         Gee.Collection<Convey.FolderPath>? blacklist = null) {
+                         Gee.Collection<GriabuntuMail.FolderPath>? blacklist = null) {
         // note that the location-ordering preferences are treated as
         // ANYWHERE by get_emails()
-        Gee.Collection<Convey.Email> all = get_emails(
+        Gee.Collection<GriabuntuMail.Email> all = get_emails(
             ordering, location, blacklist
         );
         if (all.size == 0) {
@@ -602,13 +603,13 @@ public class Convey.App.Conversation : BaseObject {
                 return traverse<Email>(all).first();
 
             case Location.IN_FOLDER_OUT_OF_FOLDER:
-                Convey.Email? found = traverse<Email>(all)
+                GriabuntuMail.Email? found = traverse<Email>(all)
                     .first_matching((email) => is_in_base_folder(email.id));
 
                 return found ?? traverse<Email>(all).first();
 
             case Location.OUT_OF_FOLDER_IN_FOLDER:
-                Convey.Email? found = traverse<Email>(all)
+                GriabuntuMail.Email? found = traverse<Email>(all)
                     .first_matching((email) => !is_in_base_folder(email.id));
 
                 return found ?? traverse<Email>(all).first();
@@ -618,12 +619,12 @@ public class Convey.App.Conversation : BaseObject {
         }
     }
 
-    private bool check_flag(Convey.NamedFlag flag, bool contains) {
-        var emails_with_folds = new Gee.ArrayList<Convey.Email>();
+    private bool check_flag(GriabuntuMail.NamedFlag flag, bool contains) {
+        var emails_with_folds = new Gee.ArrayList<GriabuntuMail.Email>();
         emails_with_folds.add_all(get_emails(Ordering.NONE));
         emails_with_folds.add_all(this.folded.values);
 
-        foreach (Convey.Email email in emails_with_folds) {
+        foreach (GriabuntuMail.Email email in emails_with_folds) {
             if (email.email_flags != null && email.email_flags.contains(flag) == contains)
                 return true;
         }
@@ -631,11 +632,11 @@ public class Convey.App.Conversation : BaseObject {
         return false;
     }
 
-    private bool has_flag(Convey.NamedFlag flag) {
+    private bool has_flag(GriabuntuMail.NamedFlag flag) {
         return check_flag(flag, true);
     }
 
-    private bool is_missing_flag(Convey.NamedFlag flag) {
+    private bool is_missing_flag(GriabuntuMail.NamedFlag flag) {
         return check_flag(flag, false);
     }
 

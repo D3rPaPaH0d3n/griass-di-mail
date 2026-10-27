@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2017-2018 Michael Gratton <mike@vee.net>
@@ -11,15 +12,15 @@
 /**
  * A folder for storing outgoing mail.
  */
-public class Convey.Outbox.Folder :
-    Convey.AbstractLocalFolder,
-    Convey.FolderSupport.Create,
-    Convey.FolderSupport.Mark,
-    Convey.FolderSupport.Remove {
+public class GriabuntuMail.Outbox.Folder :
+    GriabuntuMail.AbstractLocalFolder,
+    GriabuntuMail.FolderSupport.Create,
+    GriabuntuMail.FolderSupport.Mark,
+    GriabuntuMail.FolderSupport.Remove {
 
 
     /** The canonical name of the outbox folder. */
-    public const string MAGIC_BASENAME = "$ConveyOutbox$";
+    public const string MAGIC_BASENAME = "$GriabuntuMailOutbox$";
 
 
     private class OutboxRow {
@@ -48,7 +49,7 @@ public class Convey.Outbox.Folder :
     public override Account account { get { return this._account; } }
 
     /** {@inheritDoc} */
-    public override Convey.FolderProperties properties {
+    public override GriabuntuMail.FolderProperties properties {
         get { return _properties; }
     }
 
@@ -70,7 +71,7 @@ public class Convey.Outbox.Folder :
      *
      * This is always {@link Folder.SpecialUse.OUTBOX}
      */
-    public override Convey.Folder.SpecialUse used_as {
+    public override GriabuntuMail.Folder.SpecialUse used_as {
         get {
             return OUTBOX;
         }
@@ -89,7 +90,7 @@ public class Convey.Outbox.Folder :
         this.local = local;
     }
 
-    public override async bool open_async(Convey.Folder.OpenFlags open_flags,
+    public override async bool open_async(GriabuntuMail.Folder.OpenFlags open_flags,
                                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         bool opened = yield base.open_async(open_flags, cancellable);
@@ -108,9 +109,9 @@ public class Convey.Outbox.Folder :
         return closed;
     }
 
-    public virtual async Convey.EmailIdentifier?
+    public virtual async GriabuntuMail.EmailIdentifier?
         create_email_async(RFC822.Message rfc822,
-                           Convey.EmailFlags? flags,
+                           GriabuntuMail.EmailFlags? flags,
                            GLib.DateTime? date_received,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
@@ -150,16 +151,16 @@ public class Convey.Outbox.Folder :
     }
 
     public virtual async void
-        mark_email_async(Gee.Collection<Convey.EmailIdentifier> to_mark,
+        mark_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> to_mark,
                          EmailFlags? flags_to_add,
                          EmailFlags? flags_to_remove,
                          GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
-        Gee.Map<Convey.EmailIdentifier,EmailFlags> changed =
-            new Gee.HashMap<Convey.EmailIdentifier,EmailFlags>();
+        Gee.Map<GriabuntuMail.EmailIdentifier,EmailFlags> changed =
+            new Gee.HashMap<GriabuntuMail.EmailIdentifier,EmailFlags>();
 
-        foreach (Convey.EmailIdentifier id in to_mark) {
+        foreach (GriabuntuMail.EmailIdentifier id in to_mark) {
             EmailIdentifier? outbox_id = id as EmailIdentifier;
             if (outbox_id != null) {
                 yield db.exec_transaction_async(Db.TransactionType.WR, (cx) => {
@@ -175,15 +176,15 @@ public class Convey.Outbox.Folder :
     }
 
     public virtual async void
-        remove_email_async(Gee.Collection<Convey.EmailIdentifier> email_ids,
+        remove_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> email_ids,
                            GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
 
-        Gee.List<Convey.EmailIdentifier> removed = new Gee.ArrayList<Convey.EmailIdentifier>();
+        Gee.List<GriabuntuMail.EmailIdentifier> removed = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         int final_count = 0;
         yield db.exec_transaction_async(Db.TransactionType.WR, (cx) => {
-            foreach (Convey.EmailIdentifier id in email_ids) {
+            foreach (GriabuntuMail.EmailIdentifier id in email_ids) {
                 // ignore anything not belonging to the outbox, but also don't report it as removed
                 // either
                 EmailIdentifier? outbox_id = id as EmailIdentifier;
@@ -192,7 +193,7 @@ public class Convey.Outbox.Folder :
 
                 // Even though we discard the new value here, this check must
                 // occur before any insert/delete on the table, to ensure we
-                // never reuse an ordering value while Convey is running.
+                // never reuse an ordering value while Griabuntu Mail is running.
                 do_get_next_ordering(cx, cancellable);
 
                 if (do_remove_email(cx, outbox_id, cancellable))
@@ -213,16 +214,16 @@ public class Convey.Outbox.Folder :
     }
 
     /** {@inheritDoc} */
-    public override async Gee.Collection<Convey.EmailIdentifier> contains_identifiers(
-        Gee.Collection<Convey.EmailIdentifier> ids,
+    public override async Gee.Collection<GriabuntuMail.EmailIdentifier> contains_identifiers(
+        Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
         GLib.Cancellable? cancellable = null)
     throws GLib.Error {
         check_open();
-        var contains = new Gee.HashSet<Convey.EmailIdentifier>();
+        var contains = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
         yield db.exec_transaction_async(
             RO,
             (cx, cancellable) => {
-                foreach (Convey.EmailIdentifier id in ids) {
+                foreach (GriabuntuMail.EmailIdentifier id in ids) {
                     var outbox_id = id as EmailIdentifier;
                     if (outbox_id != null) {
                         var row = do_fetch_row_by_ordering(
@@ -241,10 +242,10 @@ public class Convey.Outbox.Folder :
     }
 
     public override async Gee.List<Email>?
-        list_email_by_id_async(Convey.EmailIdentifier? _initial_id,
+        list_email_by_id_async(GriabuntuMail.EmailIdentifier? _initial_id,
                                int count,
-                               Convey.Email.Field required_fields,
-                               Convey.Folder.ListFlags flags,
+                               GriabuntuMail.Email.Field required_fields,
+                               GriabuntuMail.Folder.ListFlags flags,
                                GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
@@ -265,7 +266,7 @@ public class Convey.Outbox.Folder :
             select = select + ", message, sent";
         }
 
-        Gee.List<Convey.Email>? list = null;
+        Gee.List<GriabuntuMail.Email>? list = null;
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
             string dir = flags.is_newest_to_oldest() ? "DESC" : "ASC";
 
@@ -295,7 +296,7 @@ public class Convey.Outbox.Folder :
             if (results.finished)
                 return Db.TransactionOutcome.DONE;
 
-            list = new Gee.ArrayList<Convey.Email>();
+            list = new Gee.ArrayList<GriabuntuMail.Email>();
             int position = -1;
             do {
                 int64 ordering = results.int64_at(1);
@@ -327,17 +328,17 @@ public class Convey.Outbox.Folder :
         return list;
     }
 
-    public override async Gee.List<Convey.Email>?
-        list_email_by_sparse_id_async(Gee.Collection<Convey.EmailIdentifier> ids,
-                                      Convey.Email.Field required_fields,
-                                      Convey.Folder.ListFlags flags,
+    public override async Gee.List<GriabuntuMail.Email>?
+        list_email_by_sparse_id_async(Gee.Collection<GriabuntuMail.EmailIdentifier> ids,
+                                      GriabuntuMail.Email.Field required_fields,
+                                      GriabuntuMail.Folder.ListFlags flags,
                                       GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
 
-        Gee.List<Convey.Email> list = new Gee.ArrayList<Convey.Email>();
+        Gee.List<GriabuntuMail.Email> list = new Gee.ArrayList<GriabuntuMail.Email>();
         yield db.exec_transaction_async(Db.TransactionType.RO, (cx) => {
-            foreach (Convey.EmailIdentifier id in ids) {
+            foreach (GriabuntuMail.EmailIdentifier id in ids) {
                 EmailIdentifier? outbox_id = id as EmailIdentifier;
                 if (outbox_id == null)
                     throw new EngineError.BAD_PARAMETERS("%s is not outbox EmailIdentifier", id.to_string());
@@ -356,9 +357,9 @@ public class Convey.Outbox.Folder :
     }
 
     public override async Email
-        fetch_email_async(Convey.EmailIdentifier id,
-                          Convey.Email.Field required_fields,
-                          Convey.Folder.ListFlags flags,
+        fetch_email_async(GriabuntuMail.EmailIdentifier id,
+                          GriabuntuMail.Email.Field required_fields,
+                          GriabuntuMail.Folder.ListFlags flags,
                           GLib.Cancellable? cancellable = null)
         throws GLib.Error {
         check_open();
@@ -386,24 +387,24 @@ public class Convey.Outbox.Folder :
     }
 
     // Utility for getting an email object back from an outbox row.
-    private Convey.Email row_to_email(OutboxRow row) throws Error {
-        Convey.Email? email = null;
+    private GriabuntuMail.Email row_to_email(OutboxRow row) throws Error {
+        GriabuntuMail.Email? email = null;
 
         // If the row doesn't contain any message, just the id will do
         if (row.message == null) {
             email = new Email(row.outbox_id);
         } else {
             RFC822.Message message = new RFC822.Message.from_buffer(row.message);
-            email = new Convey.Email.from_message(row.outbox_id, message);
+            email = new GriabuntuMail.Email.from_message(row.outbox_id, message);
 
             // TODO: Determine message's total size (header + body) to
             // store in Properties.
             email.set_email_properties(
                 new EmailProperties(new DateTime.now_local(), -1)
             );
-            Convey.EmailFlags flags = new Convey.EmailFlags();
+            GriabuntuMail.EmailFlags flags = new GriabuntuMail.EmailFlags();
             if (row.sent)
-                flags.add(Convey.EmailFlags.OUTBOX_SENT);
+                flags.add(GriabuntuMail.EmailFlags.OUTBOX_SENT);
             email.set_flags(flags);
         }
 

@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gresources>
+  <gresource prefix="/io/github/d3rpapah0d3n/GriabuntuMailConsole">
+    <file compressed="true" preprocess="xml-stripblanks">imap-console.ui</file>
+  </gresource>
+</gresources>

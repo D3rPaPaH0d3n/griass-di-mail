@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -15,7 +16,7 @@
  * MIME entity header field values that are useful to applications and
  * decoded forms of the entity body.
  */
-public class Convey.RFC822.Part : Object {
+public class GriabuntuMail.RFC822.Part : Object {
 
 
     /** Specifies a character set encoding when writing text bodies. */
@@ -154,7 +155,7 @@ public class Convey.RFC822.Part : Object {
 
         write_to_stream(stream, conversion, format);
 
-        return new Convey.Memory.ByteBuffer.from_byte_array(byte_array);
+        return new GriabuntuMail.Memory.ByteBuffer.from_byte_array(byte_array);
     }
 
     internal void write_to_stream(GMime.Stream destination,
@@ -181,13 +182,13 @@ public class Convey.RFC822.Part : Object {
             }
             if (conversion == UTF8 && !is_utf_8(charset)) {
                 GMime.FilterCharset? filter_charset = new GMime.FilterCharset(
-                    charset, Convey.RFC822.UTF8_CHARSET
+                    charset, GriabuntuMail.RFC822.UTF8_CHARSET
                 );
                 if (filter_charset == null) {
                     // Source charset not supported, so assume
                     // US-ASCII
                     filter_charset = new GMime.FilterCharset(
-                        "US-ASCII", Convey.RFC822.UTF8_CHARSET
+                        "US-ASCII", GriabuntuMail.RFC822.UTF8_CHARSET
                     );
                 }
                 filter.add(filter_charset);
@@ -208,7 +209,7 @@ public class Convey.RFC822.Part : Object {
 
             if (flowed) {
                 filter.add(
-                    new Convey.RFC822.FilterFlowed(
+                    new GriabuntuMail.RFC822.FilterFlowed(
                         format == BodyFormatting.HTML, delsp
                     )
                 );
@@ -216,7 +217,7 @@ public class Convey.RFC822.Part : Object {
 
             if (format == BodyFormatting.HTML) {
                 if (!flowed) {
-                    filter.add(new Convey.RFC822.FilterPlain());
+                    filter.add(new GriabuntuMail.RFC822.FilterPlain());
                 }
                 filter.add(
                     new GMime.FilterHTML(
@@ -225,7 +226,7 @@ public class Convey.RFC822.Part : Object {
                         0
                     )
                 );
-                filter.add(new Convey.RFC822.FilterBlockquotes());
+                filter.add(new GriabuntuMail.RFC822.FilterBlockquotes());
             }
 
             if (wrapper.write_to_stream(filter) < 0)

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
@@ -15,7 +16,7 @@
  * locally and from the server for a specific IMAP mailbox so as to
  * ensure the execution of the operations maintains consistent.
  */
-private class Convey.ImapEngine.ReplayQueue : BaseObject, Logging.Source {
+private class GriabuntuMail.ImapEngine.ReplayQueue : BaseObject, Logging.Source {
 
 
     // Maximum number of times a retry-able operation should be
@@ -226,7 +227,7 @@ private class Convey.ImapEngine.ReplayQueue : BaseObject, Logging.Source {
      *
      * All unsolicited server data uses positional addressing, so it's possible for an EXISTS
      * (append) to arrive followed by one or more EXPUNGEs (removes), meaning that the first
-     * append's position has shifted downward.  Without a pause, Convey will immediately issue a
+     * append's position has shifted downward.  Without a pause, Griabuntu Mail will immediately issue a
      * FETCH on that position, which no longer exists on the server.
      *
      * There is no signal in IMAP for the server to say "no more notifications arriving", hence a

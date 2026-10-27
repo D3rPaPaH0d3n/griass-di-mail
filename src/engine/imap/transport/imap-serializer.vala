@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2018, 2020 Michael Gratton <mike@vee.net>
@@ -21,7 +22,7 @@
  *
  * @see Deserializer
  */
-public class Convey.Imap.Serializer : BaseObject {
+public class GriabuntuMail.Imap.Serializer : BaseObject {
 
 
     private const string EOL = "\r\n";

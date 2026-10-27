@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2017 Michael Gratton <mike@vee.net>
@@ -18,7 +19,7 @@
  * are multiple tasks waiting for items, the first to wait will
  * receive the next item.
  */
-public class Convey.Nonblocking.Queue<G> : BaseObject {
+public class GriabuntuMail.Nonblocking.Queue<G> : BaseObject {
 
     /** Returns the number of items currently in the queue. */
     public int size { get { return queue.size; } }

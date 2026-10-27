@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016-2018 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.RFC822.MessageTest : TestCase {
+class GriabuntuMail.RFC822.MessageTest : TestCase {
 
 
     private const string BASIC_TEXT_PLAIN = "basic-text-plain.eml";
@@ -32,12 +33,12 @@ This is the second line.
 """;
 
     private static string SIMPLE_MULTIRECIPIENT_TO_CC_BCC = "From: Jill Smith <jill@somewhere.tld>\r\nTo: Jane Doe <jdoe@somewhere.tld>\r\nCc: Jane Doe CC <jdoe_cc@somewhere.tld>\r\nBcc: Jane Doe BCC <jdoe_bcc@somewhere.tld>\r\nSubject: Re: Saying Hello\r\nDate: Fri, 21 Nov 1997 10:01:10 -0600\r\n\r\nThis is a reply to your hello.\r\n\r\n";
-    private static string NETWORK_BUFFER_EXPECTED = "From: Alice <alice@example.net>\r\nSender: Bob <bob@example.net>\r\nTo: Charlie <charlie@example.net>\r\nCC: Dave <dave@example.net>\r\nBCC: Eve <eve@example.net>\r\nReply-To: \"Alice: Personal Account\" <alice@example.org>\r\nSubject: Re: Basic text/plain message\r\nDate: Fri, 21 Nov 1997 10:01:10 -0600\r\nMessage-ID: <3456@example.net>\r\nIn-Reply-To: <1234@local.machine.example>\r\nReferences: <1234@local.machine.example>\r\nX-Mailer: Convey Test Suite 1.0\r\n\r\nThis is the first line.\r\n\r\nThis is the second line.\r\n\r\n";
+    private static string NETWORK_BUFFER_EXPECTED = "From: Alice <alice@example.net>\r\nSender: Bob <bob@example.net>\r\nTo: Charlie <charlie@example.net>\r\nCC: Dave <dave@example.net>\r\nBCC: Eve <eve@example.net>\r\nReply-To: \"Alice: Personal Account\" <alice@example.org>\r\nSubject: Re: Basic text/plain message\r\nDate: Fri, 21 Nov 1997 10:01:10 -0600\r\nMessage-ID: <3456@example.net>\r\nIn-Reply-To: <1234@local.machine.example>\r\nReferences: <1234@local.machine.example>\r\nX-Mailer: Griabuntu Mail Test Suite 1.0\r\n\r\nThis is the first line.\r\n\r\nThis is the second line.\r\n\r\n";
 
     private static string TEST_ATTACHMENT_IMAGE_FILENAME = "test-attachment-image.png";
 
     public MessageTest() {
-        base("Convey.RFC822.MessageTest");
+        base("GriabuntuMail.RFC822.MessageTest");
         add_test("basic_message_from_buffer", basic_message_from_buffer);
         add_test("encoded_recipient", encoded_recipient);
         add_test("duplicate_mailbox", duplicate_mailbox);
@@ -86,7 +87,7 @@ This is the second line.
         assert_message_id_list(basic.in_reply_to, "<1234@local.machine.example>");
         assert_message_id_list(basic.references, "<1234@local.machine.example>");
         assert_data(basic.date, "1997-11-21T10:01:10-0600");
-        assert(basic.mailer == "Convey Test Suite 1.0");
+        assert(basic.mailer == "Griabuntu Mail Test Suite 1.0");
     }
 
     public void encoded_recipient() throws GLib.Error {
@@ -266,17 +267,17 @@ This is the second line.
         RFC822.MailboxAddress from = new RFC822.MailboxAddress(
             "Sender", "sender@example.com"
         );
-        Convey.ComposedEmail composed = new Convey.ComposedEmail(
+        GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(from)
-        ).set_to(new Convey.RFC822.MailboxAddresses.single(to));
+            new GriabuntuMail.RFC822.MailboxAddresses.single(from)
+        ).set_to(new GriabuntuMail.RFC822.MailboxAddresses.single(to));
         composed.body_text = ".newline\n.\n";
 
         this.message_from_composed_email.begin(
             composed,
             this.async_completion
         );
-        Convey.RFC822.Message message = message_from_composed_email.end(async_result());
+        GriabuntuMail.RFC822.Message message = message_from_composed_email.end(async_result());
 
         string message_data = message.get_rfc822_buffer(SMTP_FORMAT).to_string();
         assert_true(message_data.has_suffix("..newline\r\n..\r\n"));
@@ -292,13 +293,13 @@ This is the second line.
         RFC822.MailboxAddress from = new RFC822.MailboxAddress(
             "Sender", "sender@example.com"
         );
-        Convey.ComposedEmail composed = new Convey.ComposedEmail(
+        GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(from)
+            new GriabuntuMail.RFC822.MailboxAddresses.single(from)
         ).set_to(
-            new Convey.RFC822.MailboxAddresses.single(to)
+            new GriabuntuMail.RFC822.MailboxAddresses.single(to)
         ).set_bcc(
-            new Convey.RFC822.MailboxAddresses.single(bcc)
+            new GriabuntuMail.RFC822.MailboxAddresses.single(bcc)
         );
         composed.body_text = "\nbody\n";
 
@@ -306,7 +307,7 @@ This is the second line.
             composed,
             this.async_completion
         );
-        Convey.RFC822.Message message = message_from_composed_email.end(async_result());
+        GriabuntuMail.RFC822.Message message = message_from_composed_email.end(async_result());
 
         string message_data = message.get_rfc822_buffer(SMTP_FORMAT).to_string();
         assert_true("To: Test <test@example.com>\r\n" in message_data);
@@ -320,10 +321,10 @@ This is the second line.
         RFC822.MailboxAddress from = new RFC822.MailboxAddress(
             "Sender", "sender@example.com"
         );
-        Convey.ComposedEmail composed = new Convey.ComposedEmail(
+        GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(from)
-        ).set_to(new Convey.RFC822.MailboxAddresses.single(to));
+            new GriabuntuMail.RFC822.MailboxAddresses.single(from)
+        ).set_to(new GriabuntuMail.RFC822.MailboxAddresses.single(to));
 
         GLib.StringBuilder buf = new GLib.StringBuilder();
         for (int i = 0; i < 2000; i++) {
@@ -337,7 +338,7 @@ This is the second line.
             composed,
             this.async_completion
         );
-        Convey.RFC822.Message message = message_from_composed_email.end(async_result());
+        GriabuntuMail.RFC822.Message message = message_from_composed_email.end(async_result());
 
         string message_data = message.get_rfc822_buffer(SMTP_FORMAT).to_string();
         foreach (var line in message_data.split("\n")) {
@@ -352,17 +353,17 @@ This is the second line.
         RFC822.MailboxAddress from = new RFC822.MailboxAddress(
             "Sender", "sender@example.com"
         );
-       Convey.ComposedEmail composed = new Convey.ComposedEmail(
+       GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(from)
-       ).set_to(new Convey.RFC822.MailboxAddresses.single(to));
+            new GriabuntuMail.RFC822.MailboxAddresses.single(from)
+       ).set_to(new GriabuntuMail.RFC822.MailboxAddresses.single(to));
        composed.body_text = "hello";
 
         this.message_from_composed_email.begin(
             composed,
             this.async_completion
         );
-        Convey.RFC822.Message message = message_from_composed_email.end(async_result());
+        GriabuntuMail.RFC822.Message message = message_from_composed_email.end(async_result());
 
         assert_non_null(message.to, "to");
         assert_non_null(message.from, "from");
@@ -400,26 +401,26 @@ This is the second line.
             "Sender", "sender@example.com"
         );
 
-       Convey.ComposedEmail composed = new Convey.ComposedEmail(
+       GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(from)
-       ).set_to(new Convey.RFC822.MailboxAddresses.single(to));
+            new GriabuntuMail.RFC822.MailboxAddresses.single(from)
+       ).set_to(new GriabuntuMail.RFC822.MailboxAddresses.single(to));
        composed.body_html = "<img src=\"cid:test-attachment-image.png\" /><img src=\"needing_cid.png\" />";
 
         GLib.File resource =
             GLib.File.new_for_uri(RESOURCE_URI).resolve_relative_path(TEST_ATTACHMENT_IMAGE_FILENAME);
         uint8[] contents;
         resource.load_contents(null, out contents, null);
-        Convey.Memory.ByteBuffer buffer = new Convey.Memory.ByteBuffer(contents, contents.length);
+        GriabuntuMail.Memory.ByteBuffer buffer = new GriabuntuMail.Memory.ByteBuffer(contents, contents.length);
         composed.cid_files[TEST_ATTACHMENT_IMAGE_FILENAME] = buffer;
-        Convey.Memory.ByteBuffer buffer2 = new Convey.Memory.ByteBuffer(contents, contents.length);
+        GriabuntuMail.Memory.ByteBuffer buffer2 = new GriabuntuMail.Memory.ByteBuffer(contents, contents.length);
         composed.inline_files["needing_cid.png"] = buffer2;
 
         this.message_from_composed_email.begin(
             composed,
             this.async_completion
         );
-        Convey.RFC822.Message message = message_from_composed_email.end(async_result());
+        GriabuntuMail.RFC822.Message message = message_from_composed_email.end(async_result());
 
         Gee.List<Part> attachments = message.get_attachments();
 
@@ -476,7 +477,7 @@ This is the second line.
 
     private async Message message_from_composed_email(ComposedEmail composed)
         throws GLib.Error {
-        return yield new Convey.RFC822.Message.from_composed_email(
+        return yield new GriabuntuMail.RFC822.Message.from_composed_email(
             composed,
             GMime.utils_generate_message_id(composed.from.get(0).domain),
             GMime.EncodingConstraint.7BIT,
@@ -492,31 +493,31 @@ This is the second line.
         resource.load_contents(null, out contents, null);
 
         return new Message.from_buffer(
-            new Convey.Memory.ByteBuffer(contents, contents.length)
+            new GriabuntuMail.Memory.ByteBuffer(contents, contents.length)
         );
     }
 
     private Message string_to_message(string message_text) throws GLib.Error {
         return new Message.from_buffer(
-            new Convey.Memory.StringBuffer(message_text)
+            new GriabuntuMail.Memory.StringBuffer(message_text)
         );
     }
 
-    private void assert_data(Convey.MessageData.AbstractMessageData? actual,
+    private void assert_data(GriabuntuMail.MessageData.AbstractMessageData? actual,
                              string expected)
         throws GLib.Error {
         assert_non_null(actual, expected);
         assert_equal(actual.to_string(), expected);
     }
 
-    private void assert_address(Convey.RFC822.MailboxAddress? address,
+    private void assert_address(GriabuntuMail.RFC822.MailboxAddress? address,
                                 string expected)
         throws GLib.Error {
         assert_non_null(address, expected);
         assert_equal(address.to_rfc822_string(), expected);
     }
 
-    private void assert_addresses(Convey.RFC822.MailboxAddresses? addresses,
+    private void assert_addresses(GriabuntuMail.RFC822.MailboxAddresses? addresses,
                                   string expected)
         throws GLib.Error {
         assert_non_null(addresses, expected);
@@ -534,7 +535,7 @@ This is the second line.
         }
     }
 
-    private void assert_message_id_list(Convey.RFC822.MessageIDList? ids,
+    private void assert_message_id_list(GriabuntuMail.RFC822.MessageIDList? ids,
                                         string expected)
         throws GLib.Error {
         assert_non_null(ids, "ids are null");

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
@@ -20,7 +21,7 @@
  * A connection will be automatically closed when its last reference
  * is dropped.
  */
-public interface Convey.Db.Connection : BaseObject {
+public interface GriabuntuMail.Db.Connection : BaseObject {
 
     private const string PRAGMA_FOREIGN_KEYS = "foreign_keys";
     private const string PRAGMA_RECURSIVE_TRIGGERS = "recursive_triggers";
@@ -172,7 +173,7 @@ public interface Convey.Db.Connection : BaseObject {
      * Gets the schema version number, which is maintained by SQLite. See
      * [[http://www.sqlite.org/pragma.html#pragma_schema_version]]
      *
-     * Since this number is maintained by SQLite, Convey.Db doesn't offer a way to set it.
+     * Since this number is maintained by SQLite, GriabuntuMail.Db doesn't offer a way to set it.
      */
     public int get_schema_version_number() throws GLib.Error {
         return get_pragma_int(PRAGMA_SCHEMA_VERSION);

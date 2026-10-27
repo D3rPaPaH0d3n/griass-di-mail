@@ -28,7 +28,7 @@
               <object class="AdwSwitchRow" id="startup_notifications_row">
                 <!-- Translators: Preferences label -->
                 <property name="title" translatable="yes">_Watch for new mail when closed</property>
-                <property name="tooltip-text" translatable="yes">Convey will keep running after all windows are closed</property>
+                <property name="tooltip-text" translatable="yes">Griabuntu Mail will keep running after all windows are closed</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
@@ -117,7 +117,7 @@
               <object class="AdwSwitchRow" id="custom_proxy_row">
                 <!-- Translators: Preferences label -->
                 <property name="title" translatable="yes">Use _custom proxy</property>
-                <property name="subtitle" translatable="yes">Set a proxy for Convey to use for all network requests</property>
+                <property name="subtitle" translatable="yes">Set a proxy for Griabuntu Mail to use for all network requests</property>
                 <property name="use-underline">True</property>
               </object>
             </child>

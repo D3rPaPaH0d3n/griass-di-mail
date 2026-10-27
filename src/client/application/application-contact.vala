@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -15,7 +16,7 @@
  * queried. Contacts are obtained from the {@link ContactStore} for an
  * account.
  */
-public class Application.Contact : Convey.BaseObject {
+public class Application.Contact : GriabuntuMail.BaseObject {
 
 
     /** The human-readable name of the contact. */
@@ -60,10 +61,10 @@ public class Application.Contact : Convey.BaseObject {
     public GLib.ListModel email_addresses {
         get {
             if (this._email_addresses == null) {
-                var addrs = new GLib.ListStore(typeof(Convey.RFC822.MailboxAddress));
+                var addrs = new GLib.ListStore(typeof(GriabuntuMail.RFC822.MailboxAddress));
                 foreach (Folks.EmailFieldDetails email in
                          this.individual.email_addresses) {
-                    var mailbox_addr = new Convey.RFC822.MailboxAddress(
+                    var mailbox_addr = new GriabuntuMail.RFC822.MailboxAddress(
                         this.display_name, email.value
                     );
                     addrs.append(mailbox_addr);
@@ -84,7 +85,7 @@ public class Application.Contact : Convey.BaseObject {
     internal Folks.Individual? individual { get; private set; }
 
     /** The Engine contact, if any. */
-    private Convey.Contact? engine = null;
+    private GriabuntuMail.Contact? engine = null;
 
     private weak ContactStore store;
 
@@ -102,7 +103,7 @@ public class Application.Contact : Convey.BaseObject {
 
     internal Contact.for_engine(ContactStore store,
                                 string display_name,
-                                Convey.Contact source) {
+                                GriabuntuMail.Contact source) {
         this(store, null);
         this.engine = source;
         this.engine.flags.added.connect(on_engine_flags_changed);
@@ -148,10 +149,10 @@ public class Application.Contact : Convey.BaseObject {
         }
 
         for (uint i = 0; i < this.email_addresses.get_n_items(); i++) {
-            var this_addr = (Convey.RFC822.MailboxAddress) this.email_addresses.get_item(i);
+            var this_addr = (GriabuntuMail.RFC822.MailboxAddress) this.email_addresses.get_item(i);
             bool found = false;
             for (uint j = 0; j < other.email_addresses.get_n_items(); j++) {
-                var other_addr = (Convey.RFC822.MailboxAddress) other.email_addresses.get_item(j);
+                var other_addr = (GriabuntuMail.RFC822.MailboxAddress) other.email_addresses.get_item(j);
                 if (this_addr.equal_to(other_addr)) {
                     found = true;
                     break;
@@ -190,7 +191,7 @@ public class Application.Contact : Convey.BaseObject {
                     new Gee.HashSet<Folks.EmailFieldDetails>();
                 GLib.Value email_value = GLib.Value(typeof(Gee.Set));
                 for (uint i = 0; i < this.email_addresses.get_n_items(); i++) {
-                    var addr = (Convey.RFC822.MailboxAddress) this.email_addresses.get_item(i);
+                    var addr = (GriabuntuMail.RFC822.MailboxAddress) this.email_addresses.get_item(i);
                     email_addresses.add(
                         new Folks.EmailFieldDetails(addr.address)
                     );
@@ -207,14 +208,14 @@ public class Application.Contact : Convey.BaseObject {
             }
         }
         if (persona == null) {
-            throw new Convey.EngineError.UNSUPPORTED(
+            throw new GriabuntuMail.EngineError.UNSUPPORTED(
                 "Supported persona store not found"
             );
         }
 
         Folks.Individual? individual = persona.individual;
         if (individual == null) {
-            throw new Convey.EngineError.UNSUPPORTED(
+            throw new GriabuntuMail.EngineError.UNSUPPORTED(
                 "Individual not created for persona"
             );
         }
@@ -248,19 +249,19 @@ public class Application.Contact : Convey.BaseObject {
         throws GLib.Error {
         ContactStore? store = this.store;
         if (store != null) {
-            var contacts = new Gee.LinkedList<Convey.Contact>();
+            var contacts = new Gee.LinkedList<GriabuntuMail.Contact>();
             for (uint i = 0; i < this.email_addresses.get_n_items(); i++) {
-                var mailbox = (Convey.RFC822.MailboxAddress) this.email_addresses.get_item(i);
-                Convey.Contact? contact = yield store.lookup_engine_contact(
+                var mailbox = (GriabuntuMail.RFC822.MailboxAddress) this.email_addresses.get_item(i);
+                GriabuntuMail.Contact? contact = yield store.lookup_engine_contact(
                     mailbox, cancellable
                 );
                 if (enabled) {
                     contact.flags.add(
-                        Convey.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
+                        GriabuntuMail.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
                     );
                 } else {
                     contact.flags.remove(
-                        Convey.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
+                        GriabuntuMail.Contact.Flags.ALWAYS_LOAD_REMOTE_IMAGES
                     );
                 }
                 contacts.add(contact);
@@ -291,7 +292,7 @@ public class Application.Contact : Convey.BaseObject {
     private void update_name(string name) {
         this.display_name = name;
         this.display_name_is_email =
-            Convey.RFC822.MailboxAddress.is_valid_address(name);
+            GriabuntuMail.RFC822.MailboxAddress.is_valid_address(name);
     }
 
     private void on_individual_avatar_notify() {
@@ -315,8 +316,8 @@ public class Application.Contact : Convey.BaseObject {
     }
 
     private void update_from_engine() {
-        Convey.RFC822.MailboxAddress mailbox = this.engine.get_rfc822_address();
-        var addrs = new GLib.ListStore(typeof(Convey.RFC822.MailboxAddress));
+        GriabuntuMail.RFC822.MailboxAddress mailbox = this.engine.get_rfc822_address();
+        var addrs = new GLib.ListStore(typeof(GriabuntuMail.RFC822.MailboxAddress));
         addrs.append(mailbox);
         this._email_addresses = addrs;
         this.load_remote_resources = this.engine.flags.always_load_remote_images();

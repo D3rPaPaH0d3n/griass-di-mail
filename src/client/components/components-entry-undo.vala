@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -10,7 +11,7 @@
 /**
  * Provides per-GTK Editable undo and redo using a command stack.
  */
-public class Components.EntryUndo : Convey.BaseObject {
+public class Components.EntryUndo : GriabuntuMail.BaseObject {
 
 
     private const ActionEntry[] EDIT_ACTIONS = {

@@ -1,10 +1,25 @@
 <!-- Downstream modification: 2026-10-26 — fork-specific development, manifest and source-mapping guidance. -->
+<!-- Downstream modification: 2026-10-27 — update notification-flag test expectations. -->
 # Building this independent downstream
 
-This is a source preview, not an independently installable public release.
-The inherited `net.donnybeelo.Convey` / `.Devel` IDs and profile locations still
-overlap upstream. Use a disposable test environment and synthetic data; do not
-launch it against a valuable existing account/profile. See [BRANDING.md](docs/BRANDING.md).
+The primary target is a native Ubuntu 26.10/amd64 `.deb`, with independent
+`io.github.d3rpapah0d3n.GriabuntuMail` desktop, D-Bus, GSettings and resource IDs.
+Executable/project/gettext domain: `griabuntu-mail`. Engine: `GriabuntuMail`.
+Read [the identity map](docs/IDENTITY.md) and [native package instructions](debian/README).
+Installation does not copy existing Convey/Flatpak data. Use disposable state
+for tests; choose any personal-profile migration separately.
+
+## Native Debian package
+
+```sh
+sudo apt-get build-dep .
+DEB_BUILD_OPTIONS=parallel=6 dpkg-buildpackage -b -us -uc
+```
+
+The private `.deb` is written to the parent directory. `debian/rules` enables
+TNEF, uses system libraries, checks the cross-component identity wiring and runs
+headless engine/helper/flag tests plus desktop/AppStream validation with isolated
+HOME/XDG, network and buses. GTK/WebKit/desktop acceptance is recorded separately.
 
 ## Native development
 
@@ -23,28 +38,28 @@ meson compile -C build
 meson test -C build --print-errorlogs
 ```
 
-The aggregate test run is currently expected to fail the four known
-notification-flag baseline cases, not to be fully green. See [test/README.md](test/README.md).
+The notification-flag suite now passes all ten cases after the 2026-10-27 fix;
+the earlier baseline's four failures are preserved in [test/README.md](test/README.md).
+This focused result does not establish that the aggregate test run is green.
 Client tests need a display; engine and flag tests can run headless. Test
 infrastructure should isolate HOME/XDG, buses and network from personal mail.
 
-The built executable is `build/src/convey`. A full install is required for some
-desktop integrations, but **do not install this preview into an existing upstream
-profile or system prefix**. No new install/run action is performed by these docs.
+The built executable is `build/src/griabuntu-mail`. A full install is required for some
+desktop integrations, but **do not install this preview into an existing profile without an explicit migration plan or system prefix**. No new install/run action is performed by these docs.
 Meson's `development`, `beta` and `release` profiles affect identity/data paths;
 `meson.options` is the source of truth. `release` is not an approval to publish.
 
 ## Flatpak practice build
 
 The current downstream manifest is
-[`packaging/net.donnybeelo.Convey.Practice.yml`](packaging/net.donnybeelo.Convey.Practice.yml).
+[`packaging/io.github.d3rpapah0d3n.GriabuntuMail.Practice.yml`](packaging/io.github.d3rpapah0d3n.GriabuntuMail.Practice.yml).
 It uses GNOME Platform/SDK **51**, pins eight dependency sources and builds this
 checkout via `type: dir`, `path: ..`. Use the official Flatpak Builder already
 available in your chosen user/system scope; do not install duplicate SDKs.
 For a sandboxed build without installing or running the app:
 
 ```sh
-flatpak-builder --user --force-clean build-flatpak packaging/net.donnybeelo.Convey.Practice.yml
+flatpak-builder --user --force-clean build-flatpak packaging/io.github.d3rpapah0d3n.GriabuntuMail.Practice.yml
 ```
 
 `--force-clean` replaces only the designated build directory: choose a fresh one
@@ -54,11 +69,9 @@ untracked files: build only from a reviewed clean export. Never bundle signing
 keys, profiles, logs or credentials. Runtime/SDK branch `51` is not an immutable
 commit; record both resolved commits for a candidate build.
 
-The top-level `net.donnybeelo.Convey.yml` is an inherited upstream template with
-`INSERT_COMMIT_SHA_HERE` and an upstream source URL; it does **not** build this
-fork. `net.donnybeelo.Convey.Devel.json` has moving dependencies/master runtime,
-broader permissions and test sandbox overrides; do not use it as a public
-release recipe. They are retained for history, not advertised as downloads.
+Original upstream Flatpak templates and publishing automation are archived under
+`packaging/historical/` and `docs/history/`; they are not the active downstream
+build/publish route. No remote publishing workflow is enabled.
 
 The practice sandbox adds read-only access to the desktop Evolution addressbook
 photo cache, not a new avatar provider. Review all final permissions, including

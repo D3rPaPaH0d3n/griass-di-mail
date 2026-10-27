@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -8,7 +9,7 @@
  */
 
 
-class Convey.ContactHarvesterImplTest : TestCase {
+class GriabuntuMail.ContactHarvesterImplTest : TestCase {
 
 
     private Mock.ContactStore? store = null;
@@ -19,7 +20,7 @@ class Convey.ContactHarvesterImplTest : TestCase {
 
 
     public ContactHarvesterImplTest() {
-        base("Convey.ContactHarvesterImplTest");
+        base("GriabuntuMail.ContactHarvesterImplTest");
         add_test("whitelisted_folder_type", whitelisted_folder_type);
         add_test("blacklisted_folder_type", blacklisted_folder_type);
         add_test("seen_priority", seen_priority);

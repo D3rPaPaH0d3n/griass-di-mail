@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>.
@@ -95,7 +96,7 @@ public class Plugin.MessagingMenu :
     }
 
     private string get_source_id(Folder folder) {
-        return "convey%s".printf(folder.to_variant().print(false));
+        return "griabuntu-mail%s".printf(folder.to_variant().print(false));
     }
 
     private void on_activate_source(string source_id) {

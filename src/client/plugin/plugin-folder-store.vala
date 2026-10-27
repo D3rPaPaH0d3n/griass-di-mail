@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -15,7 +16,7 @@
  * FolderContext.get_folder_store} on their {@link
  * FolderExtension.folders} property.
  */
-public interface Plugin.FolderStore : Convey.BaseObject {
+public interface Plugin.FolderStore : GriabuntuMail.BaseObject {
 
 
     /**

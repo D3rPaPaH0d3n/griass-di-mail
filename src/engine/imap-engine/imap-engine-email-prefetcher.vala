@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -11,7 +12,7 @@
 /**
  * Ensures all email in a folder's vector has been downloaded.
  */
-private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
+private class GriabuntuMail.ImapEngine.EmailPrefetcher : GriabuntuMail.BaseObject {
 
 
     public const int PREFETCH_DELAY_SEC = 1;
@@ -21,12 +22,12 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
     // don't need re-fetching, and PARTIAL_OK so that messages
     // that don't have properties (i.e. are essentially blank)
     // are still found and filled in.
-    private const Convey.Email.Field PREPARE_FIELDS = PROPERTIES;
+    private const GriabuntuMail.Email.Field PREPARE_FIELDS = PROPERTIES;
     private const ImapDB.Folder.ListFlags PREPARE_FLAGS = (
         ONLY_INCOMPLETE | PARTIAL_OK
     );
 
-    private const Convey.Email.Field PREFETCH_FIELDS = Convey.Email.Field.ALL;
+    private const GriabuntuMail.Email.Field PREFETCH_FIELDS = GriabuntuMail.Email.Field.ALL;
     private const int PREFETCH_CHUNK_BYTES = 512 * 1024;
 
     public Nonblocking.CountingSemaphore active_sem { get; private set;
@@ -34,7 +35,7 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
 
     private weak ImapEngine.MinimalFolder folder;
     private Nonblocking.Mutex mutex = new Nonblocking.Mutex();
-    private Gee.TreeSet<Convey.Email> prefetch_emails = new Gee.TreeSet<Convey.Email>(
+    private Gee.TreeSet<GriabuntuMail.Email> prefetch_emails = new Gee.TreeSet<GriabuntuMail.Email>(
         Email.compare_recv_date_descending);
     private TimeoutManager prefetch_timer;
     private Cancellable? cancellable = null;
@@ -78,13 +79,13 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
         this.cancellable = null;
     }
 
-    private void on_local_expansion(Gee.Collection<Convey.EmailIdentifier> ids) {
+    private void on_local_expansion(Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
         // acquire here since .begin() only schedules for later
         active_sem.acquire();
         do_prepare_new_async.begin(ids);
     }
 
-    private void schedule_prefetch(Gee.Collection<Convey.Email>? emails) {
+    private void schedule_prefetch(Gee.Collection<GriabuntuMail.Email>? emails) {
         if (emails != null && emails.size > 0) {
             this.prefetch_emails.add_all(emails);
 
@@ -98,7 +99,7 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
     }
 
     private async void do_prepare_all_local_async() {
-        Gee.List<Convey.Email>? list = null;
+        Gee.List<GriabuntuMail.Email>? list = null;
         try {
             list = yield this.folder.local_folder.list_email_by_id_async(
                 null, int.MAX,
@@ -119,8 +120,8 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
         this.active_sem.blind_notify();
     }
 
-    private async void do_prepare_new_async(Gee.Collection<Convey.EmailIdentifier> ids) {
-        Gee.List<Convey.Email>? list = null;
+    private async void do_prepare_new_async(Gee.Collection<GriabuntuMail.EmailIdentifier> ids) {
+        Gee.List<GriabuntuMail.Email>? list = null;
         try {
             list = yield this.folder.local_folder.list_email_by_sparse_id_async(
                 (Gee.Collection<ImapDB.EmailIdentifier>) ids,
@@ -165,8 +166,8 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
 
     private async void do_prefetch_batch_async() throws Error {
         // snarf up all requested Emails for this round
-        Gee.TreeSet<Convey.Email> emails = prefetch_emails;
-        prefetch_emails = new Gee.TreeSet<Convey.Email>(Email.compare_recv_date_descending);
+        Gee.TreeSet<GriabuntuMail.Email> emails = prefetch_emails;
+        prefetch_emails = new Gee.TreeSet<GriabuntuMail.Email>(Email.compare_recv_date_descending);
 
         if (emails.size == 0)
             return;
@@ -189,7 +190,7 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
 
         while (emails.size > 0) {
             // dequeue emails by date received, newest to oldest
-            Convey.Email email = emails.first();
+            GriabuntuMail.Email email = emails.first();
 
             if (email.properties == null) {
                 // There's no properties, so there's no idea how large
@@ -241,7 +242,7 @@ private class Convey.ImapEngine.EmailPrefetcher : Convey.BaseObject {
     }
 
     // Return true to continue, false to stop prefetching (cancelled or not open)
-    private async bool do_prefetch_email_async(Gee.Collection<Convey.EmailIdentifier> ids, int64 chunk_bytes) {
+    private async bool do_prefetch_email_async(Gee.Collection<GriabuntuMail.EmailIdentifier> ids, int64 chunk_bytes) {
         debug("do_prefetch_email_async: %s prefetching %d emails (%sb)", folder.to_string(),
             ids.size, chunk_bytes.to_string());
 

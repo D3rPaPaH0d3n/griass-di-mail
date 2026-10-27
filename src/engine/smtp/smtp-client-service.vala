@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2018, 2020 Michael Gratton <mike@vee.net>
@@ -14,7 +15,7 @@
  * This class maintains a queue of email messages to be delivered, and
  * opens SMTP connections to deliver queued messages as needed.
  */
-public class Convey.Smtp.ClientService : Convey.ClientService {
+public class GriabuntuMail.Smtp.ClientService : GriabuntuMail.ClientService {
 
 
     /** The GLib logging domain used for SMTP sub-system logging. */
@@ -56,10 +57,10 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
     private Cancellable? queue_cancellable = null;
 
     /** Emitted when the manager has sent an email. */
-    public signal void email_sent(Convey.Email email);
+    public signal void email_sent(GriabuntuMail.Email email);
 
     /** Emitted when an error occurred sending an email. */
-    public signal void report_problem(Convey.ProblemReport problem);
+    public signal void report_problem(GriabuntuMail.ProblemReport problem);
 
 
     public ClientService(AccountInformation account,
@@ -101,7 +102,7 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
      * This is a convenience method that calls {@link save_email} then
      * {@link queue_email} with the resulting id.
      */
-    public async void send_email(Convey.ComposedEmail composed,
+    public async void send_email(GriabuntuMail.ComposedEmail composed,
                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         queue_email(yield save_email(composed, cancellable));
@@ -117,7 +118,7 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
      *
      * @see send_email
      */
-    public async EmailIdentifier save_email(Convey.ComposedEmail composed,
+    public async EmailIdentifier save_email(GriabuntuMail.ComposedEmail composed,
                                             GLib.Cancellable? cancellable)
         throws GLib.Error {
         debug("Saving composed email: %s", email_subject(composed));
@@ -141,8 +142,8 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
         var domain = from != null && !from.is_empty
             ? from[0].domain
             : this.account.primary_mailbox.domain;
-        Convey.RFC822.Message rfc822 =
-            yield new Convey.RFC822.Message.from_composed_email(
+        GriabuntuMail.RFC822.Message rfc822 =
+            yield new GriabuntuMail.RFC822.Message.from_composed_email(
                 composed,
                 GMime.utils_generate_message_id(domain),
                 constraint,
@@ -284,8 +285,8 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
             // cancellable here - if it's been sent we want to try to
             // update the sent flag anyway
             debug("Outbox postie: Marking %s as sent", email.id.to_string());
-            Convey.EmailFlags flags = new Convey.EmailFlags();
-            flags.add(Convey.EmailFlags.OUTBOX_SENT);
+            GriabuntuMail.EmailFlags flags = new GriabuntuMail.EmailFlags();
+            flags.add(GriabuntuMail.EmailFlags.OUTBOX_SENT);
             yield this.outbox.mark_email_async(
                 Collection.single(email.id), flags, null, null
             );
@@ -315,14 +316,14 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
         yield this.outbox.remove_email_async(Collection.single(email.id), null);
     }
 
-    private async void send_email_internal(Convey.RFC822.Message rfc822, Cancellable? cancellable)
+    private async void send_email_internal(GriabuntuMail.RFC822.Message rfc822, Cancellable? cancellable)
         throws Error {
         Credentials? login = this.account.get_outgoing_credentials();
         if (login != null && !login.is_complete()) {
             throw new SmtpError.AUTHENTICATION_FAILED("Token not loaded");
         }
 
-        Smtp.ClientSession smtp = new Convey.Smtp.ClientSession(this.remote);
+        Smtp.ClientSession smtp = new GriabuntuMail.Smtp.ClientSession(this.remote);
         smtp.set_logging_parent(this);
         sending_monitor.notify_start();
 
@@ -382,14 +383,14 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
             throw smtp_err;
     }
 
-    private async void save_sent_mail(Convey.Email message,
+    private async void save_sent_mail(GriabuntuMail.Email message,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Convey.FolderSupport.Create? create = (
+        GriabuntuMail.FolderSupport.Create? create = (
             yield this.owner.get_required_special_folder_async(
                 SENT, cancellable
             )
-        ) as Convey.FolderSupport.Create;
+        ) as GriabuntuMail.FolderSupport.Create;
         if (create == null) {
             throw new EngineError.UNSUPPORTED(
                 "Save sent mail enabled, but no writable sent mail folder"
@@ -414,10 +415,10 @@ public class Convey.Smtp.ClientService : Convey.ClientService {
         }
     }
 
-    private async void sync_sent_mail(Convey.Email message,
+    private async void sync_sent_mail(GriabuntuMail.Email message,
                                       GLib.Cancellable? cancellable)
         throws GLib.Error {
-        Convey.Folder sent = this.owner.get_special_folder(SENT);
+        GriabuntuMail.Folder sent = this.owner.get_special_folder(SENT);
         if (sent != null) {
             bool open = false;
             try {

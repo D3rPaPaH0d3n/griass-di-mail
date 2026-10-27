@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
@@ -7,10 +8,10 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Mime.ContentTypeTest : TestCase {
+class GriabuntuMail.Mime.ContentTypeTest : TestCase {
 
     public ContentTypeTest() {
-        base("Convey.Mime.ContentTypeTest");
+        base("GriabuntuMail.Mime.ContentTypeTest");
         add_test("static_defaults", static_defaults);
         add_test("parse", parse);
         add_test("get_file_name_extension", get_file_name_extension);

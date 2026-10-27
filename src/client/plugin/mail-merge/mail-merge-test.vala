@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -10,12 +11,12 @@
 
 int main(string[] args) {
     GLib.Test.init(ref args);
-    Convey.RFC822.init();
-    Convey.HTML.init();
-    Convey.Logging.init();
+    GriabuntuMail.RFC822.init();
+    GriabuntuMail.HTML.init();
+    GriabuntuMail.Logging.init();
     if (GLib.Test.verbose()) {
-        GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
-        Convey.Logging.log_to(GLib.stdout);
+        GLib.Log.set_writer_func(GriabuntuMail.Logging.default_log_writer);
+        GriabuntuMail.Logging.log_to(GLib.stdout);
     }
 
     GLib.TestSuite root = GLib.TestSuite.get_root();

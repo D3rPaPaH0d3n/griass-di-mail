@@ -1,10 +1,10 @@
 # Downstream modification: 2026-10-26 — downstream tray, model and notification-action sources.
-# Convey client
+# Griabuntu Mail client
 
-client_package_name = 'convey-client'
+client_package_name = 'griabuntu-mail-client'
 client_api_version = '.'.join([
-  convey_version.split('.')[0],
-  convey_version.split('.')[1]
+  griabuntu_mail_version.split('.')[0],
+  griabuntu_mail_version.split('.')[1]
 ])
 client_package = '@0@-@1@'.format(
   client_package_name,
@@ -180,7 +180,7 @@ client_build_dir = meson.current_build_dir()
 # Generate internal VAPI for unit testing. See Meson issue
 # https://github.com/mesonbuild/meson/issues/1781 for official
 # internal VAPI support.
-client_vala_args = convey_vala_args
+client_vala_args = griabuntu_mail_vala_args
 client_vala_args += [
   '--internal-header=@0@/@1@-internal.h'.format(
     client_build_dir, client_package_name
@@ -197,10 +197,10 @@ endif
 # Main client application library
 client_lib = shared_library(
   client_package,
-  client_vala_sources + convey_resources,
+  client_vala_sources + griabuntu_mail_resources,
   dependencies: client_dependencies,
   vala_args: client_vala_args,
-  c_args: convey_c_args,
+  c_args: griabuntu_mail_c_args,
   install: true,
   install_dir: client_lib_dir,
 )
@@ -211,14 +211,14 @@ client_lib = shared_library(
 client_internal_header_fixup = custom_target(
   'client_internal_header_fixup',
   output: [
-    'convey-client-internal.h',
-    'convey-client-internal.vapi',
+    'griabuntu-mail-client-internal.h',
+    'griabuntu-mail-client-internal.vapi',
   ],
   command: [
     find_program('sed'),
     '-ibak',
-    's/@0@.h/convey-client-internal.h/g'.format(client_package),
-    '@OUTDIR@/convey-client-internal.vapi',
+    's/@0@.h/griabuntu-mail-client-internal.h/g'.format(client_package),
+    '@OUTDIR@/griabuntu-mail-client-internal.vapi',
   ],
   depends: client_lib
 )

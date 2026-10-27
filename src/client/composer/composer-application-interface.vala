@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -19,7 +20,7 @@ internal interface Composer.ApplicationInterface :
     GLib.Object, Application.AccountInterface {
 
 
-    public abstract void report_problem(Convey.ProblemReport report);
+    public abstract void report_problem(GriabuntuMail.ProblemReport report);
 
     internal abstract async void send_composed_email(Composer.Widget composer);
 

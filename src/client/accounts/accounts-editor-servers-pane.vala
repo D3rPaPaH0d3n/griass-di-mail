@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
@@ -11,7 +12,7 @@
 /**
  * An account editor pane for editing server details for an account.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_servers_pane.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts_editor_servers_pane.ui")]
 internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane {
 
 
@@ -19,7 +20,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     internal override weak Accounts.Editor editor { get; set; }
 
     /** {@inheritDoc} */
-    internal Convey.AccountInformation account { get ; protected set; }
+    internal GriabuntuMail.AccountInformation account { get ; protected set; }
 
     /** {@inheritDoc} */
     internal Application.CommandStack commands {
@@ -37,7 +38,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         get; protected set; default = new GLib.Cancellable();
     }
 
-    private Convey.Engine engine;
+    private GriabuntuMail.Engine engine;
 
 
     [GtkChild] private unowned Adw.ActionRow account_provider_row;
@@ -59,7 +60,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     }
 
 
-    public EditorServersPane(Editor editor, Convey.AccountInformation account) {
+    public EditorServersPane(Editor editor, GriabuntuMail.AccountInformation account) {
         this.editor = editor;
         this.account = account;
         this.engine = editor.application.engine;
@@ -138,15 +139,15 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
 
     private void fill_in_service_provider() {
         switch (this.account.service_provider) {
-        case Convey.ServiceProvider.GMAIL:
+        case GriabuntuMail.ServiceProvider.GMAIL:
             this.service_provider_row.subtitle = _("Gmail");
             break;
 
-        case Convey.ServiceProvider.OUTLOOK:
+        case GriabuntuMail.ServiceProvider.OUTLOOK:
             this.service_provider_row.subtitle = _("Outlook.com");
             break;
 
-        case Convey.ServiceProvider.OTHER:
+        case GriabuntuMail.ServiceProvider.OTHER:
             this.service_provider_row.subtitle = this.account.service_label;
             break;
         }
@@ -170,7 +171,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         // settings
         bool is_valid = true;
         bool has_changed = false;
-        if (this.account.service_provider == Convey.ServiceProvider.OTHER &&
+        if (this.account.service_provider == GriabuntuMail.ServiceProvider.OTHER &&
             !this.editor.accounts.is_goa_account(this.account)) {
             // Pull the entered field values into the service objects
             // before validating and saving.
@@ -220,8 +221,8 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     private async bool validate(GLib.Cancellable? cancellable) {
         // Use a copy here so we can handle any prompting needed
         // (auth, certs) directly, rather than through the main window
-        Convey.AccountInformation local_account =
-            new Convey.AccountInformation.copy(this.account);
+        GriabuntuMail.AccountInformation local_account =
+            new GriabuntuMail.AccountInformation.copy(this.account);
         local_account.untrusted_host.connect(on_untrusted_host);
 
         string? message = null;
@@ -234,7 +235,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                 cancellable
             );
             imap_valid = true;
-        } catch (Convey.ImapError.UNAUTHENTICATED err) {
+        } catch (GriabuntuMail.ImapError.UNAUTHENTICATED err) {
             debug("Error authenticating IMAP service: %s", err.message);
             // Translators: In-app notification label
             message = _("Check your receiving login and password");
@@ -246,7 +247,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
             // Nothing to do here, someone just cancelled
             debug("IMAP validation was cancelled: %s", err.message);
         } catch (GLib.Error err) {
-            Convey.ErrorContext context = new Convey.ErrorContext(err);
+            GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(err);
             debug("Error validating IMAP service: %s",
                   context.format_full_error());
             // Translators: In-app notification label
@@ -264,7 +265,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                     cancellable
                 );
                 smtp_valid = true;
-            } catch (Convey.SmtpError.AUTHENTICATION_FAILED err) {
+            } catch (GriabuntuMail.SmtpError.AUTHENTICATION_FAILED err) {
                 debug("Error authenticating SMTP service: %s", err.message);
                 // There was an SMTP auth error, but IMAP already
                 // succeeded, so the user probably needs to
@@ -280,7 +281,7 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
                 // Nothing to do here, someone just cancelled
                 debug("SMTP validation was cancelled: %s", err.message);
             } catch (GLib.Error err) {
-                Convey.ErrorContext context = new Convey.ErrorContext(err);
+                GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(err);
                 debug("Error validating SMTP service: %s",
                       context.format_full_error());
                 // Translators: In-app notification label
@@ -306,8 +307,8 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
         return is_valid;
     }
 
-    private async bool update_service(Convey.ServiceInformation existing,
-                                      Convey.ServiceInformation copy,
+    private async bool update_service(GriabuntuMail.ServiceInformation existing,
+                                      GriabuntuMail.ServiceInformation copy,
                                       GLib.Cancellable cancellable) {
         bool has_changed = !existing.equal_to(copy);
         if (has_changed) {
@@ -351,9 +352,9 @@ internal class Accounts.EditorServersPane : EditorPane, AccountPane, CommandPane
     // when offline or behind split DNS. The validators show inline
     // feedback and apply() re-enables the button after a failure.
 
-    private void on_untrusted_host(Convey.AccountInformation account,
-                                   Convey.ServiceInformation service,
-                                   Convey.Endpoint endpoint,
+    private void on_untrusted_host(GriabuntuMail.AccountInformation account,
+                                   GriabuntuMail.ServiceInformation service,
+                                   GriabuntuMail.Endpoint endpoint,
                                    GLib.TlsConnection cx) {
         this.editor.prompt_pin_certificate.begin(
             account, service, endpoint, null,

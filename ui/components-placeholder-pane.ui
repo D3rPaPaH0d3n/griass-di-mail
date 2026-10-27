@@ -31,7 +31,7 @@
     </child>
     <style>
       <class name="dim-label"/>
-      <class name="convey-placeholder-pane"/>
+      <class name="griabuntu-mail-placeholder-pane"/>
     </style>
   </template>
 </interface>

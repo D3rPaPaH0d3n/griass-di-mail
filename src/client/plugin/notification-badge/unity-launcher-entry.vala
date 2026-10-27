@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -12,14 +13,14 @@
  *
  * See https://wiki.ubuntu.com/Unity/LauncherAPI for documentation.
  */
-public class UnityLauncherEntry : Convey.BaseObject {
+public class UnityLauncherEntry : GriabuntuMail.BaseObject {
 
 
     private const string DBUS_NAME = "com.canonical.Unity.LauncherEntry";
 
 
     [DBus (name = "com.canonical.Unity.LauncherEntry")]
-    private class Entry : Convey.BaseObject {
+    private class Entry : GriabuntuMail.BaseObject {
 
 
         public signal void update (string app_uri,

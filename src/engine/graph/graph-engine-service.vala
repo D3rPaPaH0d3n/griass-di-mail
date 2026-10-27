@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -7,11 +8,11 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.Service : Convey.ClientService {
+internal class GriabuntuMail.Graph.Service : GriabuntuMail.ClientService {
 
-    public Service(Convey.AccountInformation account,
-                   Convey.ServiceInformation configuration,
-                   Convey.Endpoint remote) {
+    public Service(GriabuntuMail.AccountInformation account,
+                   GriabuntuMail.ServiceInformation configuration,
+                   GriabuntuMail.Endpoint remote) {
         base(account, configuration, remote);
     }
 
@@ -39,7 +40,7 @@ internal class Convey.Graph.Service : Convey.ClientService {
     }
 
     protected override void became_unreachable() {
-        this.current_status = Convey.ClientService.Status.UNREACHABLE;
+        this.current_status = GriabuntuMail.ClientService.Status.UNREACHABLE;
     }
 
 }

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
@@ -18,9 +19,9 @@
  *
  * See [[https://tools.ietf.org/html/rfc5322#section-3.4]]
  */
-public class Convey.RFC822.MailboxAddress :
-    Convey.MessageData.AbstractMessageData,
-    Convey.MessageData.SearchableMessageData,
+public class GriabuntuMail.RFC822.MailboxAddress :
+    GriabuntuMail.MessageData.AbstractMessageData,
+    GriabuntuMail.MessageData.SearchableMessageData,
     Gee.Hashable<MailboxAddress>,
     DecodedMessageData {
 
@@ -51,14 +52,14 @@ public class Convey.RFC822.MailboxAddress :
 
     private static string decode_name(string name) {
         return GMime.utils_header_decode_phrase(
-            Convey.RFC822.get_parser_options(),
+            GriabuntuMail.RFC822.get_parser_options(),
             prepare_header_text_part(name)
         );
     }
 
     private static string decode_address_part(string mailbox) {
         return GMime.utils_header_decode_text(
-          Convey.RFC822.get_parser_options(),
+          GriabuntuMail.RFC822.get_parser_options(),
           prepare_header_text_part(mailbox)
         );
     }
@@ -251,7 +252,7 @@ public class Convey.RFC822.MailboxAddress :
 
     public MailboxAddress.from_rfc822_string(string rfc822) throws Error {
         GMime.InternetAddressList addrlist = GMime.InternetAddressList.parse(
-            Convey.RFC822.get_parser_options(),
+            GriabuntuMail.RFC822.get_parser_options(),
             rfc822
         );
         if (addrlist == null) {
@@ -331,11 +332,11 @@ public class Convey.RFC822.MailboxAddress :
      * brackets.
      */
     public string to_full_display(string open = "<", string close = ">") {
-        string clean_name = Convey.String.reduce_whitespace(this.name);
+        string clean_name = GriabuntuMail.String.reduce_whitespace(this.name);
         if (display_name_needs_quoting(clean_name)) {
             clean_name = quote_string(clean_name);
         }
-        string clean_address = Convey.String.reduce_whitespace(this.address);
+        string clean_address = GriabuntuMail.String.reduce_whitespace(this.address);
         return (!has_distinct_name() || is_spoofed())
             ? clean_address
             : "%s %s%s%s".printf(clean_name, open, clean_address, close);
@@ -355,8 +356,8 @@ public class Convey.RFC822.MailboxAddress :
      * brackets.
      */
     public string to_short_display() {
-        string clean_name = Convey.String.reduce_whitespace(this.name);
-        string clean_address = Convey.String.reduce_whitespace(this.address);
+        string clean_name = GriabuntuMail.String.reduce_whitespace(this.name);
+        string clean_address = GriabuntuMail.String.reduce_whitespace(this.address);
         return String.is_empty(clean_name) || is_spoofed()
             ? clean_address
             : clean_name;
@@ -373,7 +374,7 @@ public class Convey.RFC822.MailboxAddress :
      * specified brackets.
      */
     public string to_address_display(string open = "<", string close = ">") {
-        return open + Convey.String.reduce_whitespace(this.address) + close;
+        return open + GriabuntuMail.String.reduce_whitespace(this.address) + close;
     }
 
     /**
@@ -417,14 +418,14 @@ public class Convey.RFC822.MailboxAddress :
         // 1. Check the name part contains no controls and doesn't
         // look like an email address (unless it's the same as the
         // address part).
-        if (!Convey.String.is_empty(this.name)) {
+        if (!GriabuntuMail.String.is_empty(this.name)) {
             if (Regex.match_simple(CONTROLS, this.name)) {
                 is_spoof = true;
             } else if (has_distinct_name()) {
                 // Clean up the name as usual, but remove all
                 // whitespace so an attack can't get away with a name
                 // like "potus @ whitehouse . gov"
-                string clean_name = Convey.String.reduce_whitespace(this.name);
+                string clean_name = GriabuntuMail.String.reduce_whitespace(this.name);
                 clean_name = clean_name.replace(" ", "");
                 if (is_valid_address(clean_name)) {
                     is_spoof = true;
@@ -442,7 +443,7 @@ public class Convey.RFC822.MailboxAddress :
         // 3. Check the address doesn't contain any spaces or
         // controls. Again, space in the mailbox is allowed if quoted,
         // but in practice should rarely be used.
-        if (!is_spoof && Regex.match_simple(Convey.String.WS_OR_NP, this.address)) {
+        if (!is_spoof && Regex.match_simple(GriabuntuMail.String.WS_OR_NP, this.address)) {
             is_spoof = true;
         }
 
@@ -457,11 +458,11 @@ public class Convey.RFC822.MailboxAddress :
      * when performing a case-insensitive comparison.
      */
     public bool has_distinct_name() {
-        string name = Convey.String.reduce_whitespace(this.name);
-        if (!Convey.String.is_empty(name)) {
+        string name = GriabuntuMail.String.reduce_whitespace(this.name);
+        if (!GriabuntuMail.String.is_empty(name)) {
             // Some software uses single quotes instead of double
             // quotes for name parts, which GMime ignores. Don't take
-            // those into account if present. See GNOME/convey#491.
+            // those into account if present. See GNOME/griabuntu-mail#491.
             if (name.length >= 2 &&
                 name[0] == '\'' &&
                 name[name.length - 1] == '\'') {
@@ -470,9 +471,9 @@ public class Convey.RFC822.MailboxAddress :
         }
 
         bool ret = false;
-        if (!Convey.String.is_empty(name)) {
+        if (!GriabuntuMail.String.is_empty(name)) {
             name = name.normalize().casefold();
-            string address = Convey.String.reduce_whitespace(
+            string address = GriabuntuMail.String.reduce_whitespace(
                 this.address.normalize().casefold()
             );
             ret = (name != address);
@@ -494,7 +495,7 @@ public class Convey.RFC822.MailboxAddress :
         return has_distinct_name()
             ? "%s <%s>".printf(
                 GMime.utils_header_encode_phrase(
-                    Convey.RFC822.get_format_options(),
+                    GriabuntuMail.RFC822.get_format_options(),
                     this.name,
                     null
                 ),
@@ -547,7 +548,7 @@ public class Convey.RFC822.MailboxAddress :
     }
 
     /**
-     * See Convey.MessageData.SearchableMessageData.
+     * See GriabuntuMail.MessageData.SearchableMessageData.
      */
     public string to_searchable_string() {
         return has_distinct_name()

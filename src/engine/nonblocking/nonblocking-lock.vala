@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>.
@@ -34,7 +35,7 @@
  * This class is ''not'' thread safe and should only be used by
  * asynchronous tasks.
  */
-public abstract class Convey.Nonblocking.Lock : BaseObject {
+public abstract class GriabuntuMail.Nonblocking.Lock : BaseObject {
 
     private class Pending : BaseObject {
         public unowned SourceFunc cb;

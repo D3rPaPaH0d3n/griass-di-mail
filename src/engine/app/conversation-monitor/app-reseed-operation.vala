@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -16,7 +17,7 @@
  * or the required fields passed to its constructor, causing these
  * fields to be downloaded from the remote.
  */
-private class Convey.App.ReseedOperation : ConversationOperation {
+private class GriabuntuMail.App.ReseedOperation : ConversationOperation {
 
 
     public ReseedOperation(ConversationMonitor monitor) {

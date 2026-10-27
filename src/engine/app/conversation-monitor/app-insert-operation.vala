@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -10,7 +11,7 @@
 /**
  * Handles an insertion of messages from a monitor's base folder.
  */
-private class Convey.App.InsertOperation : BatchOperation<EmailIdentifier> {
+private class GriabuntuMail.App.InsertOperation : BatchOperation<EmailIdentifier> {
 
 
     public InsertOperation(ConversationMonitor monitor,
@@ -25,7 +26,7 @@ private class Convey.App.InsertOperation : BatchOperation<EmailIdentifier> {
         // avoid involuntarily growing the window larger more than it
         // needs to be.
         bool needs_more = this.monitor.should_load_more;
-        Convey.EmailIdentifier? lowest = this.monitor.window_lowest;
+        GriabuntuMail.EmailIdentifier? lowest = this.monitor.window_lowest;
         if (lowest != null) {
             Gee.Iterator<EmailIdentifier> iter = batch.iterator();
             while (iter.next()) {

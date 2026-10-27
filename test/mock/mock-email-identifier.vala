@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
@@ -7,7 +8,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Mock.EmailIdentifer : Convey.EmailIdentifier {
+public class Mock.EmailIdentifer : GriabuntuMail.EmailIdentifier {
 
 
     private int id;
@@ -21,7 +22,7 @@ public class Mock.EmailIdentifer : Convey.EmailIdentifier {
         return GLib.int_hash(this.id);
     }
 
-    public override bool equal_to(Convey.EmailIdentifier other) {
+    public override bool equal_to(GriabuntuMail.EmailIdentifier other) {
         return (
             this.get_type() == other.get_type() &&
             this.id == ((EmailIdentifer) other).id
@@ -40,7 +41,7 @@ public class Mock.EmailIdentifer : Convey.EmailIdentifier {
         return new GLib.Variant.int32(id);
     }
 
-    public override int natural_sort_comparator(Convey.EmailIdentifier other) {
+    public override int natural_sort_comparator(GriabuntuMail.EmailIdentifier other) {
         EmailIdentifer? other_mock = other as EmailIdentifer;
         return (other_mock == null) ? 1 : this.id - other_mock.id;
     }

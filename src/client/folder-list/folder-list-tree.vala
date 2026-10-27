@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,7 +7,7 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
+public class FolderList.Tree : Sidebar.Tree, GriabuntuMail.BaseInterface {
 
 
     private const int ALL_INBOX_ORDINAL = -3; // First account branch is zero
@@ -14,7 +15,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     private const int SEARCH_ORDINAL = -1;
 
 
-    public signal void folder_selected(Convey.Folder? folder);
+    public signal void folder_selected(GriabuntuMail.Folder? folder);
     public signal void all_inboxes_selected();
 
     /** Fired when the user collapses or expands a part of the tree. */
@@ -22,23 +23,23 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
 
     /** Fired on a deliberate poke at the sidebar. */
     public signal void user_interacted();
-    public signal void folder_activated(Convey.Folder? folder);
+    public signal void folder_activated(GriabuntuMail.Folder? folder);
     public signal void all_inboxes_activated();
-    public signal void copy_conversation(Convey.Folder folder);
-    public signal void move_conversation(Convey.Folder folder);
-    public signal void folder_rename(Convey.Folder folder, string new_name);
-    public signal void folder_delete(Convey.Folder folder);
+    public signal void copy_conversation(GriabuntuMail.Folder folder);
+    public signal void move_conversation(GriabuntuMail.Folder folder);
+    public signal void folder_rename(GriabuntuMail.Folder folder, string new_name);
+    public signal void folder_delete(GriabuntuMail.Folder folder);
 
-    public Convey.Folder? selected { get ; private set; default = null; }
+    public GriabuntuMail.Folder? selected { get ; private set; default = null; }
 
-    private Gee.HashMap<Convey.Account, AccountBranch> account_branches
-        = new Gee.HashMap<Convey.Account, AccountBranch>();
+    private Gee.HashMap<GriabuntuMail.Account, AccountBranch> account_branches
+        = new Gee.HashMap<GriabuntuMail.Account, AccountBranch>();
     private InboxesBranch inboxes_branch = new InboxesBranch();
     private AllInboxesBranch all_inboxes_branch = new AllInboxesBranch();
     private SearchBranch? search_branch = null;
     private Gtk.PopoverMenu? inboxes_context_menu = null;
-    private Gee.Set<Convey.Folder> drag_sources =
-        new Gee.HashSet<Convey.Folder>();
+    private Gee.Set<GriabuntuMail.Folder> drag_sources =
+        new Gee.HashSet<GriabuntuMail.Folder>();
     private Gee.Set<string> collapsed = new Gee.HashSet<string>();
     private uint startup_scroll_timeout = 0;
     private bool startup_scroll_done = false;
@@ -112,7 +113,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         minimum_baseline = natural_baseline = -1;
     }
 
-    public void set_has_new(Convey.Folder folder, bool has_new) {
+    public void set_has_new(GriabuntuMail.Folder folder, bool has_new) {
         FolderEntry? entry = get_folder_entry(folder);
         if (entry != null) {
             entry.set_has_new(has_new);
@@ -128,7 +129,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     }
 
     /** Dims a folder's row and spins it while the folder is changing. */
-    public void set_folder_busy(Convey.Folder folder, bool busy) {
+    public void set_folder_busy(GriabuntuMail.Folder folder, bool busy) {
         FolderEntry? entry = get_folder_entry(folder);
         if (entry != null) {
             entry.set_busy(busy);
@@ -149,9 +150,9 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
      * remove_pending_folder} once the real folder exists or the
      * attempt has failed.
      */
-    public PendingFolderEntry? add_pending_folder(Convey.Account account,
+    public PendingFolderEntry? add_pending_folder(GriabuntuMail.Account account,
                                                   string name,
-                                                  Convey.Folder? parent = null) {
+                                                  GriabuntuMail.Folder? parent = null) {
         var branch = this.account_branches.get(account);
         if (branch == null) {
             return null;
@@ -163,7 +164,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         return entry;
     }
 
-    public void remove_pending_folder(Convey.Account account,
+    public void remove_pending_folder(GriabuntuMail.Account account,
                                       PendingFolderEntry entry) {
         var branch = this.account_branches.get(account);
         if (branch != null) {
@@ -172,7 +173,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     }
 
     /** Returns the account whose branch contains this entry, if any. */
-    public Convey.Account? get_account_for_entry(Sidebar.Entry entry) {
+    public GriabuntuMail.Account? get_account_for_entry(Sidebar.Entry entry) {
         foreach (var branch in this.account_branches.values) {
             if (branch.has_entry(entry)) {
                 return branch.account;
@@ -223,7 +224,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     }
 
     /** Folders the mail currently being dragged came from. */
-    public void set_drag_sources(Gee.Collection<Convey.Folder> sources) {
+    public void set_drag_sources(Gee.Collection<GriabuntuMail.Folder> sources) {
         this.drag_sources.clear();
         this.drag_sources.add_all(sources);
     }
@@ -235,7 +236,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
      * selected folder, or, when nothing is selected, as every one of
      * the drag sources.
      */
-    public bool accepts_drop(Convey.Folder folder) {
+    public bool accepts_drop(GriabuntuMail.Folder folder) {
         if (!Application.FolderContext.is_user_destination(folder)) {
             return false;
         }
@@ -247,7 +248,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
             );
         }
 
-        Convey.Account? account = null;
+        GriabuntuMail.Account? account = null;
         foreach (var source in this.drag_sources) {
             if (source == folder ||
                 (account != null && account != source.account)) {
@@ -340,7 +341,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         );
     }
 
-    private FolderEntry? get_folder_entry(Convey.Folder folder) {
+    private FolderEntry? get_folder_entry(GriabuntuMail.Folder folder) {
         AccountBranch? account_branch = account_branches.get(folder.account);
         return (account_branch == null ? null :
             account_branch.get_entry_for_path(folder.path));
@@ -377,14 +378,14 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         }
     }
 
-    public void set_user_folders_root_name(Convey.Account account, string name) {
+    public void set_user_folders_root_name(GriabuntuMail.Account account, string name) {
         if (account_branches.has_key(account))
             account_branches.get(account).user_folder_group.rename(name);
     }
 
     public void add_folder(Application.FolderContext context) {
-        Convey.Folder folder = context.folder;
-        Convey.Account account = folder.account;
+        GriabuntuMail.Folder folder = context.folder;
+        GriabuntuMail.Account account = folder.account;
 
         if (!account_branches.has_key(account)) {
             this.account_branches.set(account, new AccountBranch(account));
@@ -467,8 +468,8 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     }
 
     public void remove_folder(Application.FolderContext context) {
-        Convey.Folder folder = context.folder;
-        Convey.Account account = folder.account;
+        GriabuntuMail.Folder folder = context.folder;
+        GriabuntuMail.Account account = folder.account;
 
         var account_branch = this.account_branches.get(account);
 
@@ -496,7 +497,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         account_branch.remove_folder(folder.path);
     }
 
-    public void remove_account(Convey.Account account) {
+    public void remove_account(GriabuntuMail.Account account) {
         account.information.notify["ordinal"].disconnect(on_ordinal_changed);
 
         // If a folder on this account is selected, unselect it.
@@ -521,7 +522,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         }
     }
 
-    public void select_folder(Convey.Folder to_select) {
+    public void select_folder(GriabuntuMail.Folder to_select) {
         if (this.selected != to_select) {
             bool selected = false;
             if (to_select.used_as == INBOX) {
@@ -537,7 +538,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
         }
     }
 
-    public bool select_inbox(Convey.Account account) {
+    public bool select_inbox(GriabuntuMail.Account account) {
         if (!has_branch(inboxes_branch))
             return false;
 
@@ -562,7 +563,7 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     }
 
     /** The inboxes the combined entry stands for. */
-    public Gee.Collection<Convey.Folder> get_all_inboxes() {
+    public Gee.Collection<GriabuntuMail.Folder> get_all_inboxes() {
         return this.all_inboxes_branch.get_inboxes_entry().get_inboxes();
     }
 
@@ -575,8 +576,8 @@ public class FolderList.Tree : Sidebar.Tree, Convey.BaseInterface {
     // Ctrl-for-copy is negotiated by GtkDropTarget in GTK4; see
     // Sidebar.Tree.on_drop_target_drop.
 
-    public void set_search(Convey.Engine engine,
-                           Convey.App.SearchFolder search_folder) {
+    public void set_search(GriabuntuMail.Engine engine,
+                           GriabuntuMail.App.SearchFolder search_folder) {
         if (search_branch != null && has_branch(search_branch)) {
             // We already have a search folder.  If it's the same one, just
             // select it.  If it's a new search folder, remove the old one and

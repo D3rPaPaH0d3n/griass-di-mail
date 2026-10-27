@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -6,15 +7,15 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.ReplayAppend : Convey.ImapEngine.ReplayOperation {
+private class GriabuntuMail.ImapEngine.ReplayAppend : GriabuntuMail.ImapEngine.ReplayOperation {
 
     private MinimalFolder owner;
     private int remote_count;
     private Gee.List<Imap.SequenceNumber> positions;
     private Cancellable? cancellable;
 
-    public signal void email_appended(Gee.Collection<Convey.EmailIdentifier> ids);
-    public signal void email_locally_appended(Gee.Collection<Convey.EmailIdentifier> ids);
+    public signal void email_appended(Gee.Collection<GriabuntuMail.EmailIdentifier> ids);
+    public signal void email_locally_appended(Gee.Collection<GriabuntuMail.EmailIdentifier> ids);
     public signal void email_count_changed(int count, Folder.CountChangeReason reason);
 
 
@@ -81,11 +82,11 @@ private class Convey.ImapEngine.ReplayAppend : Convey.ImapEngine.ReplayOperation
         debug("%s do_replay_appended_message: this.remote_count=%d this.positions=%s",
             to_string(), this.remote_count, positions_builder.str);
 
-        Gee.HashSet<Convey.EmailIdentifier> created = new Gee.HashSet<Convey.EmailIdentifier>();
-        Gee.HashSet<Convey.EmailIdentifier> appended = new Gee.HashSet<Convey.EmailIdentifier>();
+        Gee.HashSet<GriabuntuMail.EmailIdentifier> created = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
+        Gee.HashSet<GriabuntuMail.EmailIdentifier> appended = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
         Gee.List<Imap.MessageSet> msg_sets = Imap.MessageSet.sparse(this.positions);
         foreach (Imap.MessageSet msg_set in msg_sets) {
-            Gee.List<Convey.Email>? list = yield remote.list_email_async(
+            Gee.List<GriabuntuMail.Email>? list = yield remote.list_email_async(
                 msg_set, ImapDB.Folder.REQUIRED_FIELDS, this.cancellable
             );
             if (list != null && list.size > 0) {
@@ -94,11 +95,11 @@ private class Convey.ImapEngine.ReplayAppend : Convey.ImapEngine.ReplayOperation
 
                 // need to report both if it was created (not known before) and appended (which
                 // could mean created or simply a known email associated with this folder)
-                Gee.Map<Convey.Email, bool> created_or_merged =
+                Gee.Map<GriabuntuMail.Email, bool> created_or_merged =
                     yield this.owner.local_folder.create_or_merge_email_async(
                         list, true, this.owner.harvester, this.cancellable
                     );
-                foreach (Convey.Email email in created_or_merged.keys) {
+                foreach (GriabuntuMail.Email email in created_or_merged.keys) {
                     // true means created
                     if (created_or_merged.get(email)) {
                         debug("%s do_replay_appended_message: appended email ID %s added",

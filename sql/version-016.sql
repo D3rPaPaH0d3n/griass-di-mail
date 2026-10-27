@@ -3,7 +3,7 @@
 -- search table.  To be proper (and since this is right before a major release)
 -- we want to make sure anyone who's been running the dailies has a good
 -- database, which unfortunately means ditching the search table and letting
--- Convey recreate it properly.
+-- Griabuntu Mail recreate it properly.
 --
 
 DELETE FROM MessageSearchTable

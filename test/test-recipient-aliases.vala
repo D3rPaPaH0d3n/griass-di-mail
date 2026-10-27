@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
 /*
  * This release copy is licensed under the GNU General Public License
@@ -17,7 +18,7 @@ int main(string[] args) {
     GLib.Environment.set_variable("TZ", "Europe/Vienna", true);
     GLib.Intl.setlocale(LocaleCategory.ALL, "C.UTF-8");
     GLib.Test.init(ref args);
-    Convey.RFC822.init();
+    GriabuntuMail.RFC822.init();
 
     unowned GLib.TestSuite root = GLib.TestSuite.get_root();
     root.add_suite(new Util.Email.RecipientAliasesTest().steal_suite());

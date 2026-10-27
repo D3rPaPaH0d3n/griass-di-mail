@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -19,7 +20,7 @@
  * See [[https://tools.ietf.org/html/rfc2183#section-2]]
  */
 
-public enum Convey.Mime.DispositionType {
+public enum GriabuntuMail.Mime.DispositionType {
     UNSPECIFIED = -1,
     ATTACHMENT = 0,
     INLINE = 1;

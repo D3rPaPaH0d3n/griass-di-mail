@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
 /* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
@@ -12,22 +13,22 @@ public class ConversationList.ParticipantDisplayTest : TestCase {
         add_test("literal_markup_and_spoof", literal_markup_and_spoof);
     }
 
-    private Gee.List<Convey.RFC822.MailboxAddress> accounts() {
-        return new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+    private Gee.List<GriabuntuMail.RFC822.MailboxAddress> accounts() {
+        return new Gee.ArrayList<GriabuntuMail.RFC822.MailboxAddress>();
     }
 
     public void name_and_address() throws GLib.Error {
-        var p = new Participant(new Convey.RFC822.MailboxAddress("Example", "sender@example.com"));
+        var p = new Participant(new GriabuntuMail.RFC822.MailboxAddress("Example", "sender@example.com"));
         assert_equal(p.get_full_markup(accounts()), "Example &lt;sender@example.com&gt;");
     }
 
     public void address_without_name() throws GLib.Error {
-        var p = new Participant(new Convey.RFC822.MailboxAddress(null, "sender@example.com"));
+        var p = new Participant(new GriabuntuMail.RFC822.MailboxAddress(null, "sender@example.com"));
         assert_equal(p.get_full_markup(accounts()), "sender@example.com");
     }
 
     public void own_address_not_hidden() throws GLib.Error {
-        var mailbox = new Convey.RFC822.MailboxAddress("Own", "own@example.com");
+        var mailbox = new GriabuntuMail.RFC822.MailboxAddress("Own", "own@example.com");
         var own = accounts();
         own.add(mailbox);
         var p = new Participant(mailbox);
@@ -35,17 +36,17 @@ public class ConversationList.ParticipantDisplayTest : TestCase {
     }
 
     public void short_threads_keep_addresses() throws GLib.Error {
-        var p = new Participant(new Convey.RFC822.MailboxAddress("Last, First", "sender@example.com"));
+        var p = new Participant(new GriabuntuMail.RFC822.MailboxAddress("Last, First", "sender@example.com"));
         assert_equal(p.get_short_markup(accounts()), p.get_full_markup(accounts()));
         assert_true("sender@example.com" in p.get_short_markup(accounts()));
     }
 
     public void literal_markup_and_spoof() throws GLib.Error {
-        var p = new Participant(new Convey.RFC822.MailboxAddress("<b>Example</b>", "sender@example.com"));
+        var p = new Participant(new GriabuntuMail.RFC822.MailboxAddress("<b>Example</b>", "sender@example.com"));
         string markup = p.get_full_markup(accounts());
         assert_false("<b>" in markup);
         assert_true("&lt;b&gt;" in markup);
-        p = new Participant(new Convey.RFC822.MailboxAddress("trusted@example.com", "other@example.org"));
+        p = new Participant(new GriabuntuMail.RFC822.MailboxAddress("trusted@example.com", "other@example.org"));
         assert_true(p.address.is_spoofed());
         assert_equal(p.get_full_markup(accounts()), "<s>other@example.org</s>");
     }

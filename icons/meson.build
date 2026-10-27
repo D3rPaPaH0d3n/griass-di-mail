@@ -1,4 +1,4 @@
-# Downstream modification: 2026-10-26 — install the downstream tray icon.
+# Downstream modification: 2026-10-27 — install the owner-selected closed-envelope artwork.
 system_icons_dir = join_paths(data_dir, 'icons', 'hicolor')
 
 icon_files = files(
@@ -27,47 +27,47 @@ icon_files = files(
   'tag-symbolic-rtl.svg',
 )
 
-colour_app_icon_dirs = [
-  '16x16',
-  '24x24',
-  '32x32',
-  '48x48',
-  '256x256',
-  '512x512',
-]
-
 install_data(icon_files,
   install_dir: join_paths(system_icons_dir, 'scalable', 'actions'),
 )
 
 scalable_dir = join_paths('hicolor', 'scalable', 'apps')
 
-app_icon = '@0@.svg'.format(convey_id)
+brand_dir = meson.project_source_root() / 'brand'
+app_icon = 'griabuntu-mail-app-icon'
 if get_option('nightly')
-  app_icon = 'net.donnybeelo.Convey.Nightly.svg'
+  app_icon = 'griabuntu-mail-app-icon-nightly'
 endif
 
 install_data(
-  join_paths(scalable_dir, app_icon),
+  brand_dir / (app_icon + '.svg'),
   install_dir: join_paths(data_dir, 'icons', scalable_dir),
-  rename: '@0@.svg'.format(convey_id),
+  rename: '@0@.svg'.format(griabuntu_mail_id),
 )
+
+foreach size : [16, 24, 32, 48, 64, 128, 256, 512]
+  install_data(
+    brand_dir / '@0@-@1@.png'.format(app_icon, size),
+    install_dir: system_icons_dir / '@0@x@0@'.format(size) / 'apps',
+    rename: '@0@.png'.format(griabuntu_mail_id),
+  )
+endforeach
 
 symbolic_dir = join_paths('hicolor', 'symbolic', 'apps')
 
 install_data(
-  join_paths(scalable_dir, 'net.donnybeelo.Convey-tray.svg'),
+  brand_dir / 'griabuntu-mail-tray.svg',
   install_dir: join_paths(data_dir, 'icons', scalable_dir),
-  rename: '@0@-tray.svg'.format(convey_id),
+  rename: '@0@-tray.svg'.format(griabuntu_mail_id),
 )
 
 install_data(
-  join_paths(symbolic_dir, 'net.donnybeelo.Convey-symbolic.svg'),
+  brand_dir / 'griabuntu-mail-symbolic.svg',
   install_dir: join_paths(data_dir, 'icons', symbolic_dir),
-  rename: '@0@-symbolic.svg'.format(convey_id)
+  rename: '@0@-symbolic.svg'.format(griabuntu_mail_id)
 )
 
-# 2026-10-26: keep the untouched LGPL tray SVG's colocated COPYING reference valid.
-install_data(join_paths(scalable_dir, 'COPYING'),
-  install_dir: join_paths(data_dir, 'icons', scalable_dir),
+install_data(brand_dir / 'README.md',
+  install_dir: license_dir,
+  rename: 'Griabuntu-Mail-Artwork.md',
 )

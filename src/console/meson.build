@@ -12,13 +12,13 @@ console_dependencies = [
   engine_dep,
 ]
 
-console_resources = gnome.compile_resources('net.donnybeelo.ConveyConsole',
-  files('net.donnybeelo.ConveyConsole.gresource.xml'),
+console_resources = gnome.compile_resources('io.github.d3rpapah0d3n.GriabuntuMailConsole',
+  files('io.github.d3rpapah0d3n.GriabuntuMailConsole.gresource.xml'),
 )
 
-console = executable('convey-console',
+console = executable('griabuntu-mail-console',
   [ console_sources, console_resources ],
   dependencies: console_dependencies,
-  vala_args: convey_vala_args,
-  c_args: convey_c_args,
+  vala_args: griabuntu_mail_vala_args,
+  c_args: griabuntu_mail_c_args,
 )

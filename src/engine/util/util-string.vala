@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -10,7 +11,7 @@
 [CCode (cname = "g_utf8_substring")]
 extern string glib_substring(string str, long start_pos, long end_pos);
 
-namespace Convey.String {
+namespace GriabuntuMail.String {
 
 /** The end-of-string character, NUL. */
 public const char EOS = '\0';

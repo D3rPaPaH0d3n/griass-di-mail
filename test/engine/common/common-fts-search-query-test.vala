@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -7,17 +8,17 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.FtsSearchQueryTest : TestCase {
+public class GriabuntuMail.FtsSearchQueryTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
-    private Convey.AccountInformation? config = null;
+    private GriabuntuMail.AccountInformation? config = null;
     private ImapDB.Account? account = null;
     private SnowBall.Stemmer? stemmer = null;
 
 
     public FtsSearchQueryTest() {
-        base("Convey.FtsSearchQueryTest");
+        base("GriabuntuMail.FtsSearchQueryTest");
         add_test("email_text_terms", email_text_terms);
         add_test("email_text_terms_stemmed", email_text_terms_stemmed);
         add_test("email_text_terms_specific", email_text_terms_specific);
@@ -27,14 +28,14 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("convey-common-fts-search-query-test-XXXXXX")
+            GLib.DirUtils.make_tmp("griabuntu-mail-common-fts-search-query-test-XXXXXX")
         );
 
-        this.config = new Convey.AccountInformation(
+        this.config = new GriabuntuMail.AccountInformation(
             "test",
             ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Convey.RFC822.MailboxAddress(null, "test@example.com")
+            new GriabuntuMail.RFC822.MailboxAddress(null, "test@example.com")
         );
 
         this.account = new ImapDB.Account(
@@ -72,15 +73,15 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
     public void email_text_terms() throws GLib.Error {
         var single_all_term = new_search_query(
-            { new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "test")},
+            { new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "test")},
             "test"
         );
         assert_queries(single_all_term);
 
         var multiple_all_term = new_search_query(
             {
-                new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "foo"),
-                new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "bar")
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "foo"),
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "bar")
             },
             "foo bar"
         );
@@ -88,8 +89,8 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
         var all_to_term = new_search_query(
             {
-                new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "foo"),
-                new Convey.SearchQuery.EmailTextTerm(TO, EXACT, "bar")
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "foo"),
+                new GriabuntuMail.SearchQuery.EmailTextTerm(TO, EXACT, "bar")
             },
             "foo to:bar"
         );
@@ -97,9 +98,9 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
         var all_to_all_term = new_search_query(
             {
-                new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "foo"),
-                new Convey.SearchQuery.EmailTextTerm(TO, EXACT, "bar"),
-                new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "baz")
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "foo"),
+                new GriabuntuMail.SearchQuery.EmailTextTerm(TO, EXACT, "bar"),
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "baz")
             },
             "foo to:bar baz"
         );
@@ -108,15 +109,15 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
     public void email_text_terms_stemmed() throws GLib.Error {
         var single_all_term = new_search_query(
-            { new Convey.SearchQuery.EmailTextTerm(ALL, CONSERVATIVE, "universal")},
+            { new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, CONSERVATIVE, "universal")},
             "universal"
         );
         assert_queries(single_all_term);
 
         var multiple_all_term = new_search_query(
             {
-                new Convey.SearchQuery.EmailTextTerm(ALL, CONSERVATIVE, "universal"),
-                new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "bar")
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, CONSERVATIVE, "universal"),
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "bar")
             },
             "universal bar"
         );
@@ -124,8 +125,8 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
         var all_to_term = new_search_query(
             {
-                new Convey.SearchQuery.EmailTextTerm(ALL, CONSERVATIVE, "universal"),
-                new Convey.SearchQuery.EmailTextTerm(TO, EXACT, "bar")
+                new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, CONSERVATIVE, "universal"),
+                new GriabuntuMail.SearchQuery.EmailTextTerm(TO, EXACT, "bar")
             },
             "universal to:bar"
         );
@@ -134,25 +135,25 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
     public void email_text_terms_specific() throws GLib.Error {
         var single_term = new_search_query(
-            { new Convey.SearchQuery.EmailTextTerm(SUBJECT, EXACT, "test")},
+            { new GriabuntuMail.SearchQuery.EmailTextTerm(SUBJECT, EXACT, "test")},
             "subject:test"
         );
         assert_queries(single_term);
 
         var missing_term = new_search_query(
-            { new Convey.SearchQuery.EmailTextTerm(SUBJECT, EXACT, "")},
+            { new GriabuntuMail.SearchQuery.EmailTextTerm(SUBJECT, EXACT, "")},
             "subject:"
         );
         assert_queries(missing_term);
 
         var conflicting_property = new_search_query(
-            { new Convey.SearchQuery.EmailTextTerm(ALL, EXACT, "subject:")},
+            { new GriabuntuMail.SearchQuery.EmailTextTerm(ALL, EXACT, "subject:")},
             "subject:"
         );
         assert_queries(conflicting_property);
 
         var conflicting_property_and_term = new_search_query(
-            { new Convey.SearchQuery.EmailTextTerm(SUBJECT, EXACT, "subject:")},
+            { new GriabuntuMail.SearchQuery.EmailTextTerm(SUBJECT, EXACT, "subject:")},
             "subject:subject:"
         );
         assert_queries(conflicting_property_and_term);
@@ -161,7 +162,7 @@ public class Convey.FtsSearchQueryTest : TestCase {
     public void email_text_terms_disjunction() throws GLib.Error {
         var multiple_all = new_search_query(
             {
-                new Convey.SearchQuery.EmailTextTerm.disjunction(
+                new GriabuntuMail.SearchQuery.EmailTextTerm.disjunction(
                     ALL, EXACT, new Gee.ArrayList<string>.wrap({ "foo", "bar" })
                 )
             },
@@ -171,7 +172,7 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
         var multiple_subject = new_search_query(
             {
-                new Convey.SearchQuery.EmailTextTerm.disjunction(
+                new GriabuntuMail.SearchQuery.EmailTextTerm.disjunction(
                     ALL, EXACT, new Gee.ArrayList<string>.wrap({ "foo", "bar" })
                 )
             },
@@ -182,28 +183,28 @@ public class Convey.FtsSearchQueryTest : TestCase {
 
     public void email_flag_terms() throws GLib.Error {
         var unread = new_search_query(
-            { new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.UNREAD)},
+            { new GriabuntuMail.SearchQuery.EmailFlagTerm(GriabuntuMail.EmailFlags.UNREAD)},
             "is:unread"
         );
         assert_queries(unread);
 
-        var read_term = new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.UNREAD);
+        var read_term = new GriabuntuMail.SearchQuery.EmailFlagTerm(GriabuntuMail.EmailFlags.UNREAD);
         read_term.is_negated = true;
         var read = new_search_query({ read_term }, "is:read");
         assert_queries(read);
 
         var flagged = new_search_query(
-            { new Convey.SearchQuery.EmailFlagTerm(Convey.EmailFlags.FLAGGED)},
+            { new GriabuntuMail.SearchQuery.EmailFlagTerm(GriabuntuMail.EmailFlags.FLAGGED)},
             "is:flagged"
         );
         assert_queries(flagged);
     }
 
-    private FtsSearchQuery new_search_query(Convey.SearchQuery.Term[] ops,
+    private FtsSearchQuery new_search_query(GriabuntuMail.SearchQuery.Term[] ops,
                                             string raw)
         throws GLib.Error {
         return new FtsSearchQuery(
-            new Gee.ArrayList<Convey.SearchQuery.Term>.wrap(ops),
+            new Gee.ArrayList<GriabuntuMail.SearchQuery.Term>.wrap(ops),
             raw,
             this.stemmer
         );

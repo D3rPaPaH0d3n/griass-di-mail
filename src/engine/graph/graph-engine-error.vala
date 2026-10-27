@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
@@ -8,12 +9,12 @@
  */
 
 /**
- * Errors thrown by {@link Convey.Graph.Client} for non-2xx HTTP responses.
+ * Errors thrown by {@link GriabuntuMail.Graph.Client} for non-2xx HTTP responses.
  *
  * Lets callers branch on the actual status class instead of parsing the
  * error message string.
  */
-public errordomain Convey.Graph.HttpError {
+public errordomain GriabuntuMail.Graph.HttpError {
     BAD_REQUEST,
     UNAUTHORIZED,
     NOT_FOUND,

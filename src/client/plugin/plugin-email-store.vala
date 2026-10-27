@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
@@ -15,7 +16,7 @@
  * EmailContext.get_email_store} on their {@link EmailExtension.email}
  * property.
  */
-public interface Plugin.EmailStore : Convey.BaseObject {
+public interface Plugin.EmailStore : GriabuntuMail.BaseObject {
 
 
     /**

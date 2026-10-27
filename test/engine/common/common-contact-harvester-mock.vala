@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
@@ -7,8 +8,8 @@
  * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.MockContactHarvester :
-    Convey.BaseObject,
+internal class GriabuntuMail.MockContactHarvester :
+    GriabuntuMail.BaseObject,
     ContactHarvester {
 
     public async void harvest_from_email(Gee.Collection<Email> messages,

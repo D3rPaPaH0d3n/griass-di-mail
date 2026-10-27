@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
  * This release copy is licensed under the GNU General Public License
@@ -7,7 +8,7 @@
  */
 
 // A simple grouping Entry that is only expandable
-public class Sidebar.Grouping : Convey.BaseObject, Sidebar.Entry, Sidebar.ExpandableEntry,
+public class Sidebar.Grouping : GriabuntuMail.BaseObject, Sidebar.Entry, Sidebar.ExpandableEntry,
     Sidebar.RenameableEntry {
 
     private string name;

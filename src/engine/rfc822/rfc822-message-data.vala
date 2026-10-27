@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020-2021 Michael Gratton <mike@vee.net>
@@ -14,8 +15,8 @@
  * The value of these objects is the decoded form of the header
  * data. Encoded forms can be obtained via {@link to_rfc822_string}.
  */
-public interface Convey.RFC822.DecodedMessageData :
-    Convey.MessageData.AbstractMessageData {
+public interface GriabuntuMail.RFC822.DecodedMessageData :
+    GriabuntuMail.MessageData.AbstractMessageData {
 
     /** Returns an RFC822-safe string representation of the data. */
     public abstract string to_rfc822_string();
@@ -29,8 +30,8 @@ public interface Convey.RFC822.DecodedMessageData :
  * data. Decoded forms can be obtained via means specific to
  * implementations of this interface.
  */
-public interface Convey.RFC822.EncodedMessageData :
-    Convey.MessageData.BlockMessageData {
+public interface GriabuntuMail.RFC822.EncodedMessageData :
+    GriabuntuMail.MessageData.BlockMessageData {
 
 }
 
@@ -40,8 +41,8 @@ public interface Convey.RFC822.EncodedMessageData :
  * The decoded form of the id is the `addr-spec` portion, that is,
  * without the leading `<` and tailing `>`.
  */
-public class Convey.RFC822.MessageID :
-    Convey.MessageData.StringMessageData, DecodedMessageData {
+public class GriabuntuMail.RFC822.MessageID :
+    GriabuntuMail.MessageData.StringMessageData, DecodedMessageData {
 
     public MessageID(string value) {
         base(value);
@@ -102,8 +103,8 @@ public class Convey.RFC822.MessageID :
 /**
  * A immutable list of RFC822 Message-ID values.
  */
-public class Convey.RFC822.MessageIDList :
-    Convey.MessageData.AbstractMessageData,
+public class GriabuntuMail.RFC822.MessageIDList :
+    GriabuntuMail.MessageData.AbstractMessageData,
     DecodedMessageData {
 
 
@@ -302,9 +303,9 @@ public class Convey.RFC822.MessageIDList :
 
 }
 
-public class Convey.RFC822.Date :
-    Convey.MessageData.AbstractMessageData,
-    Gee.Hashable<Convey.RFC822.Date>,
+public class GriabuntuMail.RFC822.Date :
+    GriabuntuMail.MessageData.AbstractMessageData,
+    Gee.Hashable<GriabuntuMail.RFC822.Date>,
     DecodedMessageData {
 
 
@@ -337,7 +338,7 @@ public class Convey.RFC822.Date :
         return this.rfc822;
     }
 
-    public virtual bool equal_to(Convey.RFC822.Date other) {
+    public virtual bool equal_to(GriabuntuMail.RFC822.Date other) {
         return this == other || this.value.equal(other.value);
     }
 
@@ -351,9 +352,9 @@ public class Convey.RFC822.Date :
 
 }
 
-public class Convey.RFC822.Subject :
-    Convey.MessageData.StringMessageData,
-    Convey.MessageData.SearchableMessageData,
+public class GriabuntuMail.RFC822.Subject :
+    GriabuntuMail.MessageData.StringMessageData,
+    GriabuntuMail.MessageData.SearchableMessageData,
     DecodedMessageData {
 
     public const string REPLY_PREFACE = "Re:";
@@ -436,7 +437,7 @@ public class Convey.RFC822.Subject :
     }
 
     /**
-     * See Convey.MessageData.SearchableMessageData.
+     * See GriabuntuMail.MessageData.SearchableMessageData.
      */
     public string to_searchable_string() {
         return value;
@@ -444,8 +445,8 @@ public class Convey.RFC822.Subject :
 
 }
 
-public class Convey.RFC822.Header :
-    Convey.MessageData.BlockMessageData, EncodedMessageData {
+public class GriabuntuMail.RFC822.Header :
+    GriabuntuMail.MessageData.BlockMessageData, EncodedMessageData {
 
 
     private GMime.HeaderList headers;
@@ -513,8 +514,8 @@ public class Convey.RFC822.Header :
 
 }
 
-public class Convey.RFC822.Text :
-    Convey.MessageData.BlockMessageData, EncodedMessageData {
+public class GriabuntuMail.RFC822.Text :
+    GriabuntuMail.MessageData.BlockMessageData, EncodedMessageData {
 
 
     private class GMimeBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
@@ -561,8 +562,8 @@ public class Convey.RFC822.Text :
 
 }
 
-public class Convey.RFC822.Full :
-    Convey.MessageData.BlockMessageData, EncodedMessageData {
+public class GriabuntuMail.RFC822.Full :
+    GriabuntuMail.MessageData.BlockMessageData, EncodedMessageData {
 
     public Full(Memory.Buffer buffer) {
         base("RFC822.Full", buffer);
@@ -571,7 +572,7 @@ public class Convey.RFC822.Full :
 }
 
 /** Represents text providing a preview of an email's body. */
-public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
+public class GriabuntuMail.RFC822.PreviewText : GriabuntuMail.RFC822.Text {
 
     /** The preview stored for an encrypted email. */
     public const string ENCRYPTED = "\x01encrypted\x01";
@@ -600,7 +601,7 @@ public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
         // Parse the header.
         GMime.Stream header_stream = Utils.create_stream_mem(preview_header);
         GMime.Parser parser = new GMime.Parser.with_stream(header_stream);
-        GMime.Part? gpart = parser.construct_part(Convey.RFC822.get_parser_options()) as GMime.Part;
+        GMime.Part? gpart = parser.construct_part(GriabuntuMail.RFC822.get_parser_options()) as GMime.Part;
         if (gpart != null) {
             Part part = new Part(gpart);
 
@@ -624,7 +625,7 @@ public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
                     Memory.Buffer preview_buffer = part.write_to_buffer(
                         Part.EncodingConversion.UTF8
                     );
-                    preview_text = Convey.RFC822.Utils.to_preview_text(
+                    preview_text = GriabuntuMail.RFC822.Utils.to_preview_text(
                         preview_buffer.get_valid_utf8(),
                         is_html ? TextFormat.HTML : TextFormat.PLAIN
                     );
@@ -634,11 +635,11 @@ public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
             }
         }
 
-        base(new Convey.Memory.StringBuffer(preview_text));
+        base(new GriabuntuMail.Memory.StringBuffer(preview_text));
     }
 
     public PreviewText.from_string(string preview) {
-        base (new Convey.Memory.StringBuffer(
+        base (new GriabuntuMail.Memory.StringBuffer(
             preview.has_prefix("-----BEGIN PGP MESSAGE-----")
             ? PreviewText.ENCRYPTED_INLINE
             : preview
@@ -647,8 +648,8 @@ public class Convey.RFC822.PreviewText : Convey.RFC822.Text {
 
 }
 
-public class Convey.RFC822.AuthenticationResults :
-    Convey.MessageData.StringMessageData {
+public class GriabuntuMail.RFC822.AuthenticationResults :
+    GriabuntuMail.MessageData.StringMessageData {
 
     public AuthenticationResults(string value) {
         base(value);
