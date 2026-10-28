@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — assert the owner-selected display name. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
@@ -135,7 +136,7 @@ public class Application.StatusIconTest : TestCase {
         assert_equal(item.status, "Active");
         assert_equal(item.icon_name, Config.APP_ID + "-tray");
         assert_equal((string) item.menu, "/StatusNotifierItem/Menu");
-        assert_equal(item.tool_tip.title, "Griabuntu Mail");
+        assert_equal(item.tool_tip.title, "Griaß di Mail");
     }
 
     private static GLib.Variant mail_target(string account, string id) {
@@ -232,6 +233,6 @@ public class Application.StatusIconTest : TestCase {
         assert_equal(item.x_ayatana_label, "999+");
         item.set_new_mail_count(-1);
         assert_equal(item.x_ayatana_label, "");
-        assert_equal(item.title, "Griabuntu Mail");
+        assert_equal(item.title, "Griaß di Mail");
     }
 }

@@ -81,8 +81,9 @@ is **GPL-3.0-only**, with TNEF retained. Libraries, icons, sounds and vendored
 resources retain their individual terms. Original authors and full history remain.
 Maintainer credit does not replace upstream copyright.
 
-The current closed-envelope icon and banner were generated with ChatGPT from
-text prompts, as confirmed by the owner. [Artwork provenance](docs/ARTWORK-PROVENANCE.md).
+The original closed-envelope icon and banner were generated with ChatGPT from
+text prompts, as confirmed by the owner. The current banner adapts that supplied
+artwork to the selected Griaß di Mail name; the app icon remains unchanged. [Artwork provenance](docs/ARTWORK-PROVENANCE.md).
 
 [COPYING](COPYING) · [AUTHORS](AUTHORS) · [Third-party notices](THIRD-PARTY-NOTICES.md) ·
 [Name and trademark review](docs/BRANDING.md) · [Source delivery](docs/release/CORRESPONDING-SOURCE.md)

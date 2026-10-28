@@ -6,7 +6,7 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name>Griaß di Mail</name>
-  <short-name>griabuntu-mail</short-name>
+  <short-name>griass-di-mail</short-name>
   <shortdesc xml:lang="en">Send and receive email</shortdesc>
   <description xml:lang="en">Griaß di Mail is an email application built
 around conversations, for the GNOME desktop. It allows you to
