@@ -99,3 +99,16 @@ The owner confirmed there is no written Canonical permission or qualified name
 review. The public-name gate remains unresolved; do not claim clearance or
 contact Canonical without separate instruction. Private development and pushes
 continue under the existing authorisation.
+
+## Owner clarification · 2026-10-28
+
+The app will remain free of charge. A voluntary Revolut donation button similar
+to eStundnzettl may be added in future; do not add payment UI in the current task.
+The owner explicitly authorised app testing on TerraLinux / Linux, including the
+previously offered installation and existing-account contact-picture checks when
+access is available. This supersedes the earlier restriction on such acceptance
+checks; use the least personal data necessary and never publish mailbox data.
+Sending mail or deliberately moving/deleting messages is not needed for picture
+acceptance and is not inferred from the test approval. No Canonical outreach was
+authorised. Host administrator authentication remains technically unavailable;
+do not bypass it or request a password in chat.
