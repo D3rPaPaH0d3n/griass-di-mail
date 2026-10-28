@@ -142,3 +142,10 @@ an audit limit, not proof of prohibited distribution. Retain those precise
 limits without falsely claiming sole authorship, universal name clearance or
 legal certification. Native source access, notices, verified artifacts and
 honest development-preview limits remain publication requirements.
+
+Publication completed, 2026-10-28: repository is PUBLIC; public prerelease
+`v51.0-griassdi20261028.8` points to source
+`16dec14d5b22bfcdb909efbf86197ead38eae4f4`. All 15 artifact digests and anonymous
+source/checksum access were verified. This is a development preview with scoped
+acceptance limits; do not describe it as private, legally certified or real-mail
+accepted. Full measured evidence is in docs/release/PUBLIC-PREVIEW-20261028.md.

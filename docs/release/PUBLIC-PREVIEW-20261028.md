@@ -68,3 +68,39 @@ uses synthetic profiles. Recipients should treat this as a preview with those
 limits, not an already accepted replacement for every personal-mail workflow.
 This engineering/source-notice review is not a blanket legal guarantee or
 independent investigation of every upstream contributor's underlying rights.
+
+## Final measured package and publication record
+
+Published at **2026-10-28T06:29:34Z** as a public GitHub prerelease:
+https://github.com/D3rPaPaH0d3n/griass-di-mail/releases/tag/v51.0-griassdi20261028.8
+
+Exact compiled source: **`16dec14d5b22bfcdb909efbf86197ead38eae4f4`**. This reporting-only
+follow-up does not change the source in the distributed .8 package/archive.
+
+| Artifact | SHA-256 |
+| --- | --- |
+| griabuntu-mail_51.0+griassdi20261028.8_amd64.deb | `79dc334abac74235c92cfed0ff059d7e71b0ed77b3a6c707a8bc07e7dac77cc5` |
+| griabuntu-mail_51.0+griassdi20261028.8.tar.xz | `c979e3aee2692fc63d9e1ff331c2d66985c20fa4ef03d6b0d13d5a413e00564f` |
+
+The final .8 clean build passed **328 engine + 69 focused + 10 flag cases**,
+all three desktop/AppStream targets and all **eight real GTK/HTTPS picture
+scenarios against the final package library**. Its actual launcher/window name,
+exact selected banner resource and deb-.8 revision were verified. All 23
+installed action-icon byte hashes matched the inventory; installed original
+notice, author and full CC/GNOME/LGPL/MIT licence files were checked. Actual
+.7→.8 package unpack retained synthetic config/data/cache checksums. These
+measured tests keep the previously stated personal-account/fixture limits.
+
+Gitleaks checked **6,961 history commits / 56.93 MB**, plus the final **16.15 MB**
+source snapshot, with no detections. This remains a scan result, not a guarantee
+about arbitrary rights or secrets. All 15 uploaded asset digests matched local
+final files and the release points to the exact source commit. After publication,
+anonymous repository access and downloading the exact SHA256SUMS returned HTTP
+200; downloaded checksum bytes matched the prepared release. Source, .deb and
+companion downloads are now public, rather than private URLs as source offers.
+
+The repository is public; main remains at
+`5834da28091fb951ba3f53dd610d2f30fa352135`, with full fork history preserved.
+The default branch remains the owner-authorised `work/griabuntu-ubuntu-deb`.
+No real mail was sent/moved/deleted, no host administrator authentication was
+bypassed, and no Canonical inquiry was sent.
