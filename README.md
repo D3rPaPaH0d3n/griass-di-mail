@@ -68,7 +68,7 @@ The package does not start the app or copy accounts. Native Griaß di Mail packa
 app-ID and profile paths remain stable; Convey/Geary/Flatpak migration is separate.
 
 [Build guide](BUILDING.md) · [Packaging](debian/README) · [Upgrading](docs/UPGRADING.md) ·
-[Current validation](docs/VALIDATION-20261027.md)
+[Current validation](docs/release/GRIASS-DI-MAIL-20261028.md)
 
 This is a development preview. Review [release requirements](RELEASE-CHECKLIST.md)
 and provide corresponding source before distributing a binary.

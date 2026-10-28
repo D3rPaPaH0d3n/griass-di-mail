@@ -70,7 +70,7 @@ Paketname, App-ID und Griabuntu-Mail-Profilpfade bleiben stabil. Ein Umzug von
 Convey, Geary oder Flatpak ist ein gesonderter Vorgang.
 
 [Bauanleitung](BUILDING.md) · [Paketierung](debian/README) ·
-[Update und Datenerhalt](docs/UPGRADING.md) · [Prüfergebnisse](docs/VALIDATION-20261027.md)
+[Update und Datenerhalt](docs/UPGRADING.md) · [Prüfergebnisse](docs/release/GRIASS-DI-MAIL-20261028.md)
 
 Dies ist eine Entwicklungsvorschau. Vor einer Binärveröffentlichung sind
 [Veröffentlichungsanforderungen](RELEASE-CHECKLIST.md) und die Bereitstellung
