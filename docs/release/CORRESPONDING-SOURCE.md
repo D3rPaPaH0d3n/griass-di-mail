@@ -1,3 +1,60 @@
+# Native Griaß di Mail corresponding-source delivery · 2026-10-28
+
+The current distribution is a native Ubuntu 26.10 amd64 .deb, not a Flatpak
+runtime bundle. The historical procedure below describes earlier private work.
+The source-delivery route for the public preview is GPLv3 §6(d): equivalent
+machine-readable source access next to the binary, including clear locations
+where exact distribution dependency sources are available on other servers.
+
+Each release carries the exact complete application `.tar.xz` plus `.dsc`,
+source commit/BUILD-MANIFEST.json, binary/source SHA256SUMS, buildinfo/changes,
+Dark Reader preferred-source companion and native libytnef source companion.
+The application archive includes all preferred-form Vala/C/JS/CSS/VAPI/resources,
+translations, vendored subprojects, original notices and Debian build/test rules.
+No generated-C-only substitution, private Git URL, signing key or mail profile
+is used as source delivery. The public source tree retains full upstream history.
+
+## Exact native library sources
+
+`NATIVE-SOURCES.json` beside the binary records 134 resolved Ubuntu runtime
+binary packages, their exact versions, and 104 source packages (351 source-file
+URLs, approximately 632 MB). It was derived from the actual native application,
+plugin and WebKit-extension ELF dependency closure, using Ubuntu's cached source
+metadata. The available strong archive checksums are SHA-512 or SHA-256 as
+explicitly labelled in each entry. This is a source-location index, not a copied
+runtime or a claim that every `/usr` library is automatically exempt.
+
+All 351 HTTPS source-file locations were checked reachable before publication.
+The adjacent `fetch-native-sources.py` downloads and verifies exact size/checksum
+without executing inputs; the real libytnef source-fetch/checksum path was tested.
+A copy of the index and helper is also in the application source archive:
+
+```sh
+python3 build-aux/fetch-native-sources.py docs/release/NATIVE-SOURCES-20261028.json --list
+python3 build-aux/fetch-native-sources.py docs/release/NATIVE-SOURCES-20261028.json native-dependency-sources
+```
+
+Or use the standalone `fetch-native-sources.py NATIVE-SOURCES.json` release
+assets. `--package libytnef` limits a download; `--verify-existing` verifies local
+files without network. Ubuntu source packages preserve original component
+notices and Debian patches; do not replace them with a generic top-level licence.
+Maintainers must keep corresponding-source access available alongside continued
+binary distribution, checking/mirroring sources if upstream locations change.
+
+## Rebuilding and replacing libraries
+
+The release's normal instructions use `sudo apt-get build-dep .` and
+`DEB_BUILD_OPTIONS=parallel=6 dpkg-buildpackage -b -us -uc` on Ubuntu 26.10.
+The maintainer's rootless environment limitations and separate tests are recorded
+honestly in the release manifest. Source/headers/VAPI/build rules are available;
+there is no requirement to use the maintainer's signing key, account or service
+to build/install a modified app. Native shared libraries remain ordinary distro
+libraries; modified user builds are not forbidden or tied to a signature check.
+No OS/runtime image, hardware product or anti-tamper installation restriction is
+being distributed. These practical controls do not promise bitwise reproduction.
+
+## Historical private Flatpak preparation procedure
+
 # Corresponding source and internal build controls
 
 This is a preparation procedure, **not a public source offer or download**.

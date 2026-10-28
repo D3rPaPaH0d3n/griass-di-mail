@@ -53,6 +53,14 @@ notification behaviour; synthetic tests do not establish personal-mail acceptanc
 
 </details>
 
+## Download the development preview
+
+[Ubuntu 26.10 · amd64 · .deb](https://github.com/D3rPaPaH0d3n/griass-di-mail/releases/download/v51.0-griassdi20261028.8/griabuntu-mail_51.0%2Bgriassdi20261028.8_amd64.deb) · [Source and checksums](https://github.com/D3rPaPaH0d3n/griass-di-mail/releases/tag/v51.0-griassdi20261028.8)
+
+Free of charge. Close the app and read the [upgrade guide](docs/UPGRADING.md)
+before updating. The compatibility package remains `griabuntu-mail`, keeping
+existing native profiles in their established locations.
+
 ## Build and update
 
 Supported package target: **Ubuntu 26.10, amd64**. From the current development branch:
@@ -68,7 +76,7 @@ The package does not start the app or copy accounts. Native Griaß di Mail packa
 app-ID and profile paths remain stable; Convey/Geary/Flatpak migration is separate.
 
 [Build guide](BUILDING.md) · [Packaging](debian/README) · [Upgrading](docs/UPGRADING.md) ·
-[Current validation](docs/release/GRIASS-DI-MAIL-20261028.md)
+[Current validation](docs/release/PUBLIC-PREVIEW-20261028.md)
 
 This is a development preview. Review [release requirements](RELEASE-CHECKLIST.md)
 and provide corresponding source before distributing a binary.

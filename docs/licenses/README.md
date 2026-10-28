@@ -43,3 +43,16 @@ remain in root COPYING.icons/COPYING.sounds; those lists are unchanged.
 `libstemmer-vapi-BSD.txt` preserves the full original Giulio Paci BSD-style
 notice from `bindings/vapi/libstemmer.vapi` verbatim, including its binary-notice
 condition; installed conservatively with the binding/component notices.
+
+## Native artwork distribution additions · 2026-10-28
+
+GNOME-Symbolic-COPYING-3.8.0.txt is the verbatim historical GNOME grant before
+the edit-icon import; GNOME-Adwaita-COPYING/AUTHORS-3.14.1 retain the theme's
+original grant and authors, and GNOME-Icons-LGPL-3.0.txt retains its full LGPL.
+GNOME-CCBYSA3-Notice.txt preserves the original short CC wording separately.
+CC-BY-3.0.txt and CC-BY-SA-3.0.txt are full legal codes from the official SPDX
+text mirror at github.com/spdx/license-list-data (corresponding canonical CC
+3.0 URLs remain in original notices). Convey-Artwork-LGPL-2.1.txt preserves
+the original root grant for historical source artwork. ARTWORK-PATHS.json maps
+all 23 installed paths to byte hashes, credits and documented licence bases.
+No new CC0 claim or sole-owner authorship is made for inherited material.

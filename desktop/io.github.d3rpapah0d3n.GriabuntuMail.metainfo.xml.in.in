@@ -32,6 +32,11 @@
   <launchable type="desktop-id">@appid@.desktop</launchable>
   <translation type="gettext">griabuntu-mail</translation>
   <releases>
+    <release version="51.0+griassdi20261028.8" date="2026-10-28" type="development">
+      <description><p>Public development preview with preserved fork credits,
+      complete installed-artwork mapping, original licence notices, and exact
+      native dependency source locations alongside the application source.</p></description>
+    </release>
     <release version="51.0+griassdi20261028.7" date="2026-10-28" type="development">
       <description><p>Rename the visible application to Griaß di Mail, preserve
       the selected envelope icon, update the banner, and retain existing native

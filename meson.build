@@ -168,7 +168,8 @@ install_data(
   install_dir: license_dir,
 )
 install_subdir('docs/licenses', install_dir: license_dir)
-install_data('docs/ARTWORK-PROVENANCE.md', 'docs/PRIVACY.md', 'docs/UPGRADING.md',
+install_data('docs/ARTWORK-PROVENANCE.md',
+  'docs/ARTWORK-INVENTORY.md', 'docs/PRIVACY.md', 'docs/UPGRADING.md',
   install_dir: license_dir,
 )
 

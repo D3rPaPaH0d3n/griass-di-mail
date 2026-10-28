@@ -1,7 +1,7 @@
 # Ubuntu 26.10 upgrades / Aktualisieren
 
 The package name remains `griabuntu-mail`; the next version is
-`51.0+griassdi20261028.7`, greater than the `.5`/`.6` native previews. The executable,
+`51.0+griassdi20261028.8`, greater than the `.5`/`.6`/`.7` native previews. The executable,
 application ID, GSettings path, data directories and secret schema established
 by that preview remain unchanged. No package script launches the app, copies
 profiles, rewrites accounts or removes personal data.
@@ -11,7 +11,7 @@ and data while it is closed. Then install the local package using Ubuntu's
 package manager, so missing distribution dependencies are resolved:
 
 ```sh
-sudo apt install ./griabuntu-mail_51.0+griassdi20261028.7_amd64.deb
+sudo apt install ./griabuntu-mail_51.0+griassdi20261028.8_amd64.deb
 ```
 
 This is an update of an existing **native Griaß di Mail** installation. It is

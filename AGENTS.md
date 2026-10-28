@@ -130,3 +130,15 @@ The Canonical inquiry concerned the superseded name; archive it unsent rather
 than making an inquiry about a name the owner has abandoned. Do not claim that
 this choice establishes universal trademark clearance. Existing inherited
 licence/asset obligations remain. Publication authorisation is already recorded.
+
+## Public preview publication · owner confirmation 2026-10-28
+
+The owner again asked to publish after adopting Griaß di Mail. Publication and
+release upload are authorised; do not ask for the same permission again.
+The filename/RTL asset inventory has now been completed using the inherited
+explicit work grants, original project COPYING and verified GNOME licences.
+The earlier absence of a per-file table or unrecorded exact Dino revision was
+an audit limit, not proof of prohibited distribution. Retain those precise
+limits without falsely claiming sole authorship, universal name clearance or
+legal certification. Native source access, notices, verified artifacts and
+honest development-preview limits remain publication requirements.

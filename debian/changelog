@@ -1,3 +1,12 @@
+griabuntu-mail (51.0+griassdi20261028.8) stonking; urgency=medium
+
+  * Complete installed artwork filename/RTL attribution and upstream notices.
+  * Ship GNOME authors, original LGPL and full Creative Commons legal texts.
+  * Provide exact native dependency source locations and a checksum verifier.
+  * Prepare the free public development preview with matching source downloads.
+
+ -- Markus Kainer <projekt@kainer.co.at>  Wed, 28 Oct 2026 07:21:53 +0100
+
 griabuntu-mail (51.0+griassdi20261028.7) stonking; urgency=medium
 
   * Present the application as Griaß di Mail, retaining the selected icon.

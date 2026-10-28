@@ -54,3 +54,19 @@ tag-symbolic.svg
     Tag designed by Ian Hamilton, 2012
     http://thenounproject.com/noun/tag/#icon-No4018
 
+
+
+Current filename/RTL mapping and additional attribution (2026-10-28)
+-----------------------------------------------------------------
+Original notices above are retained. Current draft files are
+mail-drafts-symbolic.svg and mail-drafts-symbolic-rtl.svg; both retain the
+GNOME Project CC-BY-SA-3.0 base/adaptation terms. Sent/RTL and tag/RTL variants
+retain their base attribution plus project adaptation credits.
+GNOME-derived edit/list work: GNOME Project, https://www.gnome.org; upstream
+LGPLv3 or CC-BY-SA-3.0 grant and AUTHORS are supplied in the licence directory.
+Project contributions include James Westman (font/toolbar icons), Nikolas Tapia
+(lists), Alexander Wilms (edit import), Michael Gratton and Jeremy Bicha
+(RTL/adaptations), Tobias Bernard (symbolic refinements), and Daniel Elia
+(Convey reply-to-list). Import credit is not a claim of sole original creation.
+See installed ARTWORK-INVENTORY.md for every installed path and licence basis.
+Separate CC/PD/third-party terms are not overwritten by the application GPL copy.

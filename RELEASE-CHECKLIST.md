@@ -1,3 +1,35 @@
+# Griaß di Mail · public development preview .8
+
+## Current distribution state · 2026-10-28
+
+The owner authorised public source visibility and the native .deb release.
+The current product is Griaß di Mail; the old-name inquiry remains archived,
+unsent. There is no assertion of universal trademark clearance or endorsement.
+
+The installed 23-icon/path/RTL inventory, original project grants and explicit
+CC exceptions are recorded in [ARTWORK-INVENTORY.md](docs/ARTWORK-INVENTORY.md).
+Full GNOME/CC/LGPL notices and original author credits are retained in the
+package. Earlier mapping omissions are addressed using published upstream
+grants; an unheaded contribution or unrecorded historic import revision is
+not by itself proof of prohibited distribution. This is not a warranty of title.
+
+The release supplies exact complete application source, build controls,
+Dark Reader/libytnef sources, strong hashes and NATIVE-SOURCES.json with exact
+Ubuntu dependency source locations. All 351 source URLs were checked reachable;
+the actual selected download/hash-verification path was exercised. The final
+source/binary mapping and actual package checks are recorded in the release
+BUILD-MANIFEST.json and [preview evidence](docs/release/PUBLIC-PREVIEW-20261028.md).
+
+This is a development preview. Real personal-mail workflows, full desktop
+accessibility and configured laptop upgrades remain acceptance limits stated
+to recipients; they are not represented as tested. Do not convert those limits
+into a stable/support claim. Keep original notices and source access available.
+
+## Dated historical preparation records
+
+The records below describe earlier candidates, decisions and incomplete audits;
+their old approval/mapping/baseline statuses are not the current preview status.
+
 # Griaß di Mail · current release preparation
 
 ## Current name decision · 2026-10-28

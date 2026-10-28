@@ -54,6 +54,14 @@ Desktop-Benachrichtigungen hängen auch von der Desktop-Shell ab.
 
 </details>
 
+## Vorabversion herunterladen
+
+[Ubuntu 26.10 · amd64 · .deb](https://github.com/D3rPaPaH0d3n/griass-di-mail/releases/download/v51.0-griassdi20261028.8/griabuntu-mail_51.0%2Bgriassdi20261028.8_amd64.deb) · [Quellcode und Prüfsummen](https://github.com/D3rPaPaH0d3n/griass-di-mail/releases/tag/v51.0-griassdi20261028.8)
+
+Kostenlose Entwicklungsversion. Vor dem Update die App beenden und die
+[Update-Hinweise](docs/UPGRADING.md) lesen. Das Paket heißt aus Kompatibilitätsgründen
+weiterhin `griabuntu-mail`; vorhandene Profile behalten ihre bisherigen Pfade.
+
 ## Bauen und aktualisieren
 
 Zielsystem: **Ubuntu 26.10, amd64**. Auf dem aktuellen Entwicklungsbranch:
@@ -70,7 +78,7 @@ Paketname, App-ID und Griabuntu-Mail-Profilpfade bleiben stabil. Ein Umzug von
 Convey, Geary oder Flatpak ist ein gesonderter Vorgang.
 
 [Bauanleitung](BUILDING.md) · [Paketierung](debian/README) ·
-[Update und Datenerhalt](docs/UPGRADING.md) · [Prüfergebnisse](docs/release/GRIASS-DI-MAIL-20261028.md)
+[Update und Datenerhalt](docs/UPGRADING.md) · [Prüfergebnisse](docs/release/PUBLIC-PREVIEW-20261028.md)
 
 Dies ist eine Entwicklungsvorschau. Vor einer Binärveröffentlichung sind
 [Veröffentlichungsanforderungen](RELEASE-CHECKLIST.md) und die Bereitstellung

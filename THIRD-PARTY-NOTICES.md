@@ -1,3 +1,29 @@
+# Griaß di Mail · current native distribution notices
+
+## Publication preparation · 2026-10-28
+
+The installed action-icon/RTL mapping is now completed in
+[ARTWORK-INVENTORY.md](docs/ARTWORK-INVENTORY.md), with hashes in
+[ARTWORK-PATHS.json](docs/licenses/ARTWORK-PATHS.json). Original per-work grants,
+GNOME attribution/AUTHORS and full CC/LGPL legal texts are shipped. The sent
+sound, historical source artwork and screenshots have explicit scope/basis.
+This resolves the earlier mapping omissions using published upstream grants;
+it is not an independent warranty of every contributor's underlying title.
+
+Dino project GPLv3 origin and Dovecot MIT text are supplied as previously
+recorded; the absence of an unrecorded historic import revision is not by itself
+a new licence prohibition. No permissive grant or exact revision is invented.
+
+For this native binary, distribution libraries are Ubuntu shared dependencies,
+not copied Flatpak runtimes. The release's exact application source plus pinned
+Dark Reader/libytnef companions and NATIVE-SOURCES.json/source-fetch helper give
+source access and exact native component locations. See
+[CORRESPONDING-SOURCE.md](docs/release/CORRESPONDING-SOURCE.md). Every original
+GPL/CC/MIT/BSD/other notice below remains; current package evidence supersedes
+older statements about what had not yet been staged or exported.
+
+## Historical notices and dated evidence
+
 # Griaß di Mail · component notices
 
 Current display name, 2026-10-28: **Griaß di Mail**. Technical/native package

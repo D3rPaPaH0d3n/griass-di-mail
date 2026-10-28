@@ -1,0 +1,163 @@
+[
+  {
+    "path": "icons/mail-archive-symbolic.svg",
+    "sha256": "e02589254626df6a79ec98ce3ed96d5cbc591c1e4abb887445086f220feab690",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Sam Hewitt (2013); Tobias Bernard refinements",
+    "addition_record": "86316e18bda5a47197cb65a638a485e5120a17bf Robert Roth 2014-10-28"
+  },
+  {
+    "path": "icons/close-symbolic.svg",
+    "sha256": "76c3ccd6903548c22bdfa58c6ba300e35754c708d7fefbfe38e972aa148feb8a",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Icomatic",
+    "addition_record": "bb72647b266b033365d997044b49b43225b3ebcb Eric Gregory 2013-08-26"
+  },
+  {
+    "path": "icons/detach-symbolic.svg",
+    "sha256": "29fd1de56b6c052f0b2be9897b9dcc6691e64fc0fdc2e18360ea90c55781be53",
+    "licence_basis": "CC-BY-SA-3.0, including adaptation/RTL",
+    "attribution": "GNOME Project; Robert Schroll adaptation",
+    "addition_record": "bc2965217564b92fec56e5156ec6145046f5f598 Robert Schroll 2014-07-18"
+  },
+  {
+    "path": "icons/text-x-generic-symbolic.svg",
+    "sha256": "fb6ce5786e1a3b990a662700820cd5586043c87f35df98e0daa20373939311df",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Edward Boatman / The Noun Project",
+    "addition_record": "86316e18bda5a47197cb65a638a485e5120a17bf Robert Roth 2014-10-28"
+  },
+  {
+    "path": "icons/edit-symbolic.svg",
+    "sha256": "59e3b5b925a2405301c450f12682e94df6e9a82e061ad9af62adb87f4b257fbd",
+    "licence_basis": "GNOME LGPL-3.0 option; retain project adaptation terms",
+    "attribution": "GNOME Project; Alexander Wilms import / Tobias Bernard refinement",
+    "addition_record": "833066746ce797f04dbf8f444d32d8c0b874eaa8 Alexander Wilms 2013-06-19"
+  },
+  {
+    "path": "icons/font-size-symbolic.svg",
+    "sha256": "313c19eb484ff44f2cf93b0fb2aaec64a8e514e7f40897029f0a408f6d529cf5",
+    "licence_basis": "Project LGPL-2.1-or-later origin → elected GPL-3.0-only copy",
+    "attribution": "James Westman",
+    "addition_record": "0eed1bb21aff8b66ada9316f00b8ad356dcbf3d3 James Westman 2020-01-14"
+  },
+  {
+    "path": "icons/font-color-symbolic.svg",
+    "sha256": "fbd5c403e8b65e3309afde69002ce0013d3c994e93a28aefb9850fa057f5176e",
+    "licence_basis": "Project LGPL-2.1-or-later origin → elected GPL-3.0-only copy",
+    "attribution": "James Westman",
+    "addition_record": "0eed1bb21aff8b66ada9316f00b8ad356dcbf3d3 James Westman 2020-01-14"
+  },
+  {
+    "path": "icons/format-ordered-list-symbolic.svg",
+    "sha256": "f42127137f3e002f2ad2e32fe616c3960374e92180befbd8e687fff4c391c512",
+    "licence_basis": "GNOME LGPL-3.0 option; retain project adaptation terms",
+    "attribution": "GNOME Project; Nikolas Tapia adaptation",
+    "addition_record": "63521d85661851af68639b9981fde409ea821cca Nikolas Tapia 2017-12-06"
+  },
+  {
+    "path": "icons/format-ordered-list-symbolic-rtl.svg",
+    "sha256": "7ad1124c80f351796f5519292044812fec8ecd4862ec0c1560409b4b588d3824",
+    "licence_basis": "GNOME LGPL-3.0 option; retain project adaptation terms",
+    "attribution": "GNOME Project; Nikolas Tapia / Michael Gratton adaptations",
+    "addition_record": "2642119c3bc728c0a357a91a25e6905f5f066cdf Michael James Gratton 2017-12-12"
+  },
+  {
+    "path": "icons/format-text-remove-symbolic.svg",
+    "sha256": "d3fed60e12b9df7f416f0d11b214233259557ee75ef82ab8f2e412b596733e40",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Sam Hewitt (Moka Symbolic Icon Theme)",
+    "addition_record": "bb72647b266b033365d997044b49b43225b3ebcb Eric Gregory 2013-08-26"
+  },
+  {
+    "path": "icons/format-toolbar-toggle-symbolic.svg",
+    "sha256": "265e7755057c216de1ab8bab0064c173db6b92b6bd75a22c6bd7547403ae389b",
+    "licence_basis": "Project LGPL-2.1-or-later origin → elected GPL-3.0-only copy",
+    "attribution": "James Westman",
+    "addition_record": "c53b1b0a30b8e6cfb8e53fe052f6b7a2fed1f4c3 James Westman 2020-01-30"
+  },
+  {
+    "path": "icons/format-unordered-list-symbolic.svg",
+    "sha256": "0723403c18d6821dc1b2a7cb1c2c266dcc7d29ce5690cc196dedbc1e55603093",
+    "licence_basis": "GNOME LGPL-3.0 option; retain project adaptation terms",
+    "attribution": "GNOME Project; Nikolas Tapia adaptation",
+    "addition_record": "63521d85661851af68639b9981fde409ea821cca Nikolas Tapia 2017-12-06"
+  },
+  {
+    "path": "icons/format-unordered-list-symbolic-rtl.svg",
+    "sha256": "ef249275dd330ca34d00c04ed894c69386b45aeae5e21a88443e045e9c91d2bc",
+    "licence_basis": "GNOME LGPL-3.0 option; retain project adaptation terms",
+    "attribution": "GNOME Project; Nikolas Tapia / Michael Gratton adaptations",
+    "addition_record": "2642119c3bc728c0a357a91a25e6905f5f066cdf Michael James Gratton 2017-12-12"
+  },
+  {
+    "path": "icons/mail-drafts-symbolic.svg",
+    "sha256": "d6cbe3868d27fd26701cac0d1b04c985e2085a9f68faf8227be899878ee40340",
+    "licence_basis": "CC-BY-SA-3.0, including adaptation/RTL",
+    "attribution": "GNOME Project; Michael Gratton adaptation",
+    "addition_record": "095049f8490c54eece90b0ca8ceb6aa0b24a64ce Michael James Gratton 2016-07-13"
+  },
+  {
+    "path": "icons/mail-drafts-symbolic-rtl.svg",
+    "sha256": "06e853ff141cd0ddb906b89a1d954d644bc5a8f669e90145bd7c395b66a933d3",
+    "licence_basis": "CC-BY-SA-3.0, including adaptation/RTL",
+    "attribution": "GNOME Project; Michael Gratton / Jeremy Bicha adaptations",
+    "addition_record": "509b6695328eb1dcbf4c89166918d3b95c21adf2 Jeremy Bicha 2016-08-05"
+  },
+  {
+    "path": "icons/mail-inbox-symbolic.svg",
+    "sha256": "4bf40af371346305b5031cf4d2c2f77fd910242f9195ca306d9c976617c5a9ce",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Edward Boatman / The Noun Project; Tobias Bernard refinements",
+    "addition_record": "86316e18bda5a47197cb65a638a485e5120a17bf Robert Roth 2014-10-28"
+  },
+  {
+    "path": "icons/mail-outbox-symbolic.svg",
+    "sha256": "647759df32fc65e6152a207f4826f8febc001616fd68370d10e516b48b51348d",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Edward Boatman / The Noun Project, Inbox derivative; Tobias Bernard refinements",
+    "addition_record": "86316e18bda5a47197cb65a638a485e5120a17bf Robert Roth 2014-10-28"
+  },
+  {
+    "path": "icons/mail-reply-list-symbolic.svg",
+    "sha256": "4e95999fc55a462dbdcad8d7a31d2b9e2741190f13dad18f41251b38f1a2207a",
+    "licence_basis": "Project LGPL-2.1-or-later origin → elected GPL-3.0-only copy",
+    "attribution": "Daniel Elia (Dan), Convey",
+    "addition_record": "7d685ccc108d3a727d71681d65ae6965e6143264 Dan 2026-09-29"
+  },
+  {
+    "path": "icons/mail-reply-list-symbolic-rtl.svg",
+    "sha256": "9ccca25628a7f20d41f377457fcda6e4a469365e3a249d37fe81d4d48b204cb6",
+    "licence_basis": "Project LGPL-2.1-or-later origin → elected GPL-3.0-only copy",
+    "attribution": "Daniel Elia (Dan), Convey",
+    "addition_record": "7d685ccc108d3a727d71681d65ae6965e6143264 Dan 2026-09-29"
+  },
+  {
+    "path": "icons/mail-sent-symbolic.svg",
+    "sha256": "064fc7e289a32a030426b68296e2cf6f00f06bebaee776cdfea6a0fffe92f76f",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Sam Hewitt; Tobias Bernard refinements",
+    "addition_record": "86316e18bda5a47197cb65a638a485e5120a17bf Robert Roth 2014-10-28"
+  },
+  {
+    "path": "icons/mail-sent-symbolic-rtl.svg",
+    "sha256": "62d1599217eddaa51afe908704f3585361bbb4c4b382fdc1f189fb6e27f93275",
+    "licence_basis": "CC-BY-3.0 base; retain later project modification credits",
+    "attribution": "Sam Hewitt; Jeremy Bicha / Tobias Bernard adaptations",
+    "addition_record": "509b6695328eb1dcbf4c89166918d3b95c21adf2 Jeremy Bicha 2016-08-05"
+  },
+  {
+    "path": "icons/tag-symbolic.svg",
+    "sha256": "cfa11de50c059c336c7a0a67f420cfbbf57199a7888d14ea1fdd5447e07f8365",
+    "licence_basis": "Ian Hamilton original public domain; later project adaptations retain GPLv3-copy terms",
+    "attribution": "Ian Hamilton (2012); Jeremy Bicha / Tobias Bernard adaptations",
+    "addition_record": "bb72647b266b033365d997044b49b43225b3ebcb Eric Gregory 2013-08-26"
+  },
+  {
+    "path": "icons/tag-symbolic-rtl.svg",
+    "sha256": "169b91f8a61575079e864a0dfbcb19ffade91727c6c7c69ca79978ab9ab9009d",
+    "licence_basis": "Ian Hamilton original public domain; later project adaptations retain GPLv3-copy terms",
+    "attribution": "Ian Hamilton (2012); Jeremy Bicha / Tobias Bernard adaptations",
+    "addition_record": "509b6695328eb1dcbf4c89166918d3b95c21adf2 Jeremy Bicha 2016-08-05"
+  }
+]
