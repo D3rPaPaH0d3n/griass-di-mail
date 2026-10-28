@@ -1,4 +1,4 @@
-# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Downstream modification: 2026-10-27 — Griaß di Mail branding and source paths.
 # Ukrainian translation for griabuntu_mail.
 # Copyright (C) 2020 convey's COPYRIGHT HOLDER
 # This file is distributed under the same license as the griabuntu-mail package.
@@ -38,13 +38,13 @@ msgstr "Редактор облікових записів"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Griabuntu Mail’s application menu button "
+"<em>accounts editor</em>. To open it, click Griaß di Mail’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
 "Ви можете додати, оновити або вилучити ваші облікові записи електронної "
 "пошти за допомогою <em>редактора облікових записів</em>. Щоб відкрити "
-"редактора, натисніть кнопку меню програми Griabuntu Mail у головному вікні над "
+"редактора, натисніть кнопку меню програми Griaß di Mail у головному вікні над "
 "списком тек, а потім виберіть пункт <gui>Облікові записи</gui> у "
 "контекстному меню."
 
@@ -73,12 +73,12 @@ msgstr "Додавання облікових записів"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Griabuntu Mail will automatically use any email accounts you have added via the "
+"Griaß di Mail will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not "
 "have any accounts added to <app>Online Accounts</app>, you will be prompted "
 "to add an account the first time you run GriabuntuMail."
 msgstr ""
-"Griabuntu Mail автоматично скористається усіма обліковими записами, які було додано "
+"Griaß di Mail автоматично скористається усіма обліковими записами, які було додано "
 "за допомогою панелі <app>Мережеві записи</app> програми <app>Параметри "
 "GNOME</app>. Якщо ви не додавали облікових записів за допомогою "
 "<app>Мережевих записів</app>, програма попросить вас додати обліковий запис, "
@@ -100,7 +100,7 @@ msgstr ""
 "частині вікна. Для підтримуваних <app>Мережевими записами</app> надавачів "
 "послуг буде відкрито <app>Параметри GNOME</app>, і програма попросить вас "
 "ввести дані облікового запису. Для інших надавачів послуг електронної пошти "
-"Griabuntu Mail попросить вас ввести дані облікового запису. Після введення параметрів "
+"Griaß di Mail попросить вас ввести дані облікового запису. Після введення параметрів "
 "облікового запису натисніть кнопку <gui>Створити</gui> — програма перевірить "
 "дані облікового запису і додасть його до списку."
 
@@ -113,12 +113,12 @@ msgstr "Оновлення наявних облікових записів"
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account "
-"you wish to update. Griabuntu Mail will display settings for the account. From there, "
+"you wish to update. Griaß di Mail will display settings for the account. From there, "
 "you can add and remove additional sender email addresses, edit your email "
 "signature, and various other settings."
 msgstr ""
 "Щоб оновити наявні облікові записи, відкрийте редактор облікових записів і "
-"виберіть пункт облікового запису, дані якого ви хочете змінити. Griabuntu Mail покаже "
+"виберіть пункт облікового запису, дані якого ви хочете змінити. Griaß di Mail покаже "
 "параметри цього облікового запису. За допомогою відповідної сторінки ви "
 "можете додавати і вилучати додаткові адреси електронної пошти відправника, "
 "редагувати підпис до повідомлень та інші параметри облікового запису."
@@ -127,12 +127,12 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Griabuntu Mail will download and store locally. Griabuntu Mail can only use locally available "
+"Griaß di Mail will download and store locally. Griaß di Mail can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
 "За допомогою пункту <gui>Отримання пошти</gui> ви можете налаштувати обсяг "
-"поштових даних, які Griabuntu Mail отримуватиме із сервера і зберігатиме локально. "
-"Griabuntu Mail може показувати повідомлення і шукати дані лише у збереженій локально "
+"поштових даних, які Griaß di Mail отримуватиме із сервера і зберігатиме локально. "
+"Griaß di Mail може показувати повідомлення і шукати дані лише у збереженій локально "
 "пошті."
 
 #. (itstool) path: section/p
@@ -141,7 +141,7 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Griabuntu Mail will check the settings, then update the account. Note that "
+"and Griaß di Mail will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
@@ -150,7 +150,7 @@ msgstr ""
 "вмісту вікна до нижньої частини і натисніть кнопку <gui>Параметри сервера</"
 "gui>. Програма покаже параметри сервера — ви зможете клацати на них із метою "
 "редагування. Щойно належні зміни буде внесено, натисніть кнопку "
-"<gui>Застосувати</gui> і Griabuntu Mail перевірить параметри, потім оновить дані "
+"<gui>Застосувати</gui> і Griaß di Mail перевірить параметри, потім оновить дані "
 "облікового запису. Зауважте, що для облікових записів, які було додано за "
 "допомогою панелі <app>Мережеві записи</app> <app>Параметрів GNOME</app>, не "
 "можна змінювати назву сервера, захист, ім'я користувача і пароль."
@@ -171,13 +171,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Griabuntu Mail "
+"The <gui>Save sent email on server</gui> checkbox controls whether Griaß di Mail "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder. "
 "If de-selected, you will no be able to see any email messages you have sent, "
 "unless your server automatically saves them for you."
 msgstr ""
 "Пункт <gui>Зберігати надіслану пошту на сервері</gui> керує тим, чи буде "
-"Griabuntu Mail зберігати копії повідомлень, які було надіслано, у теці "
+"Griaß di Mail зберігати копії повідомлень, які було надіслано, у теці "
 "<gui>Надіслані</gui>. Якщо пункт не позначено, ви не зможете переглядати "
 "надіслані вами повідомлення, якщо сервер не виконуватиме автоматичного "
 "зберігання цих повідомлень."
@@ -202,17 +202,17 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Griabuntu Mail, open the accounts editor and choose "
-"the account you wish to remove. Griabuntu Mail will display settings for the account. "
+"To remove an account added via Griaß di Mail, open the accounts editor and choose "
+"the account you wish to remove. Griaß di Mail will display settings for the account. "
 "Scroll to the bottom of the window and click <gui>Remove Account</gui>. You "
 "will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
 "<gui>Undo</gui> in the popup notification, or by typing <keyseq><key>Ctrl</"
 "key><key>U</key></keyseq>."
 msgstr ""
-"Щоб вилучити обліковий запис, який було додано за допомогою Griabuntu Mail, відкрийте "
+"Щоб вилучити обліковий запис, який було додано за допомогою Griaß di Mail, відкрийте "
 "вікно редактора облікових записів і виберіть пункт облікового запису, який "
-"слід вилучити. Griabuntu Mail покаже параметри облікового запису. Виконайте гортання "
+"слід вилучити. Griaß di Mail покаже параметри облікового запису. Виконайте гортання "
 "до нижньої частини сторінки і натисніть кнопку <gui>Вилучити обліковий "
 "запис</gui>. Програма попросить вас підтвердити вилучення облікового запису. "
 "Після підтвердження вилучення, якщо ви передумаєте, ви зможете скасувати "
@@ -229,13 +229,13 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Griabuntu Mail lets you archive messages if your server supports it. Clicking the "
+"Griaß di Mail lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
 "email organised by moving old and replied-to email out of the way."
 msgstr ""
-"Griabuntu Mail надає вам змогу архівувати повідомлення, якщо на вашому сервері "
+"Griaß di Mail надає вам змогу архівувати повідомлення, якщо на вашому сервері "
 "передбачено підтримку архівування. Натискання кнопки <gui "
 "style=\"button\">Архівувати</gui> на панелі інструментів пересуває "
 "спілкування з поточної теки до теки <gui>Архів</gui> на більшості служб "
@@ -303,8 +303,8 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/bugs.page:10
-msgid "Need help with Griabuntu Mail?"
-msgstr "Потрібна допомога з Griabuntu Mail?"
+msgid "Need help with Griaß di Mail?"
+msgstr "Потрібна допомога з Griaß di Mail?"
 
 #. (itstool) path: section/title
 #: C/bugs.page:13
@@ -314,13 +314,13 @@ msgstr "Отримання підтримки"
 #. (itstool) path: section/p
 #: C/bugs.page:15
 msgid ""
-"If you are having trouble using Griabuntu Mail, please <link href=\"https://wiki."
+"If you are having trouble using Griaß di Mail, please <link href=\"https://wiki."
 "gnome.org/Apps/Geary/Contact\">get in touch</link> with the Geary community "
 "about the problem."
 msgstr ""
-"Якщо у вас виникають проблеми у користуванні Griabuntu Mail, будь ласка, <link "
+"Якщо у вас виникають проблеми у користуванні Griaß di Mail, будь ласка, <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">зв'яжіться</link> зі "
-"спільнотою користувачів Griabuntu Mail щодо вашої проблеми."
+"спільнотою користувачів Griaß di Mail щодо вашої проблеми."
 
 #. (itstool) path: section/title
 #: C/bugs.page:21
@@ -330,11 +330,11 @@ msgstr "Як повідомити про вади"
 #. (itstool) path: section/p
 #: C/bugs.page:23
 msgid ""
-"If you suspect you have found a bug in Griabuntu Mail, please follow the <link "
+"If you suspect you have found a bug in Griaß di Mail, please follow the <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">bug reporting "
 "guidelines</link> so the problem can be diagnosed and fixed."
 msgstr ""
-"Якщо ви вважаєте, що виявили ваду у Griabuntu Mail, будь ласка, скористайтеся <link "
+"Якщо ви вважаєте, що виявили ваду у Griaß di Mail, будь ласка, скористайтеся <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">настановами щодо "
 "звітування про вади</link>, щоб розробники могли виконати діагностику та "
 "виправлення вади."
@@ -350,9 +350,9 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:32
-msgid "Griabuntu Mail version and installation method (Package? Flathub? Source code?)"
+msgid "Griaß di Mail version and installation method (Package? Flathub? Source code?)"
 msgstr ""
-"Версія Griabuntu Mail та спосіб встановлення (Пакунок? Flathub? Початковий код?)"
+"Версія Griaß di Mail та спосіб встановлення (Пакунок? Flathub? Початковий код?)"
 
 #. (itstool) path: item/p
 #: C/bugs.page:34
@@ -392,26 +392,26 @@ msgstr "На які наслідки ви сподівалися?"
 #. (itstool) path: section/p
 #: C/bugs.page:44
 msgid ""
-"Log files can be accessed via the Griabuntu Mail Inspector, press <keyseq><key>Alt</"
+"Log files can be accessed via the Griaß di Mail Inspector, press <keyseq><key>Alt</"
 "key><key>I</key></keyseq> to open it, select and save any relevant log "
 "files, and attach them to the bug report."
 msgstr ""
-"Доступ до файлів журналу можна отримати за допомогою Інспектора Griabuntu Mail: "
+"Доступ до файлів журналу можна отримати за допомогою Інспектора Griaß di Mail: "
 "натисніть комбінацію клавіш <keyseq><key>Alt</key><key>I</key></keyseq>, щоб "
 "відкрити його вікно, виберіть і збережіть потрібні вам файли журналу, а "
 "потім долучіть їх до звіту щодо вади."
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Griabuntu Mail"
-msgstr "Участь у розробці Griabuntu Mail"
+msgid "Contribute to Griaß di Mail"
+msgstr "Участь у розробці Griaß di Mail"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Griabuntu Mail? There are a number of ways you can contribute:"
+"Want to help improve Griaß di Mail? There are a number of ways you can contribute:"
 msgstr ""
-"Хочете допомогти в удосконаленні Griabuntu Mail? Існує декілька способів взяти участь "
+"Хочете допомогти в удосконаленні Griaß di Mail? Існує декілька способів взяти участь "
 "у розробці програми:"
 
 #. (itstool) path: item/p
@@ -428,10 +428,10 @@ msgstr ""
 #: C/contributing.page:19
 msgid ""
 "<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Translating</"
-"link>—translate Griabuntu Mail’s user interface and user manual into new languages"
+"link>—translate Griaß di Mail’s user interface and user manual into new languages"
 msgstr ""
 "<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Переклад</link> "
-"— переклад інтерфейсу та підручника Griabuntu Mail різними мовами"
+"— переклад інтерфейсу та підручника Griaß di Mail різними мовами"
 
 #. (itstool) path: item/p
 #: C/contributing.page:20
@@ -447,37 +447,37 @@ msgstr ""
 msgid ""
 "See <link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">the wiki</"
 "link> for more information and options for contributing financially to "
-"Griabuntu Mail's development."
+"Griaß di Mail's development."
 msgstr ""
 "Щоб дізнатися більше про можливості та варіанти фінансової підтримки "
-"розробки Griabuntu Mail, ознайомтеся зі <link href=\"https://wiki.gnome.org/Apps/"
-"Griabuntu Mail/Contribute\">сторінкою нашої вікі</link>."
+"розробки Griaß di Mail, ознайомтеся зі <link href=\"https://wiki.gnome.org/Apps/"
+"Griaß di Mail/Contribute\">сторінкою нашої вікі</link>."
 
 #. (itstool) path: info/title
 #: C/index.page:7
-#| msgid "Using Griabuntu Mail"
+#| msgid "Using Griaß di Mail"
 msgctxt "link:trail"
-msgid "Griabuntu Mail"
-msgstr "Griabuntu Mail"
+msgid "Griaß di Mail"
+msgstr "Griaß di Mail"
 
 #. (itstool) path: info/title
 #: C/index.page:8
-#| msgid "Using Griabuntu Mail"
+#| msgid "Using Griaß di Mail"
 msgctxt "text"
-msgid "Griabuntu Mail"
-msgstr "Griabuntu Mail"
+msgid "Griaß di Mail"
+msgstr "Griaß di Mail"
 
 #. (itstool) path: info/title
 #: C/index.page:9
-#| msgid "Using Griabuntu Mail"
+#| msgid "Using Griaß di Mail"
 msgctxt "link"
-msgid "Griabuntu Mail"
-msgstr "Griabuntu Mail"
+msgid "Griaß di Mail"
+msgstr "Griaß di Mail"
 
 #. (itstool) path: page/title
 #: C/index.page:12
-msgid "<_:media-1/> <span>Griabuntu Mail</span>"
-msgstr "<_:media-1/> <span>Griabuntu Mail</span>"
+msgid "<_:media-1/> <span>Griaß di Mail</span>"
+msgstr "<_:media-1/> <span>Griaß di Mail</span>"
 
 #. (itstool) path: section/title
 #: C/index.page:18
@@ -486,8 +486,8 @@ msgstr "Вступ"
 
 #. (itstool) path: section/title
 #: C/index.page:22
-msgid "Using Griabuntu Mail"
-msgstr "Користування Griabuntu Mail"
+msgid "Using Griaß di Mail"
+msgstr "Користування Griaß di Mail"
 
 #. (itstool) path: section/title
 #: C/index.page:26
@@ -507,12 +507,12 @@ msgstr "Позначення спілкування"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Griabuntu Mail lets you apply one or more <em>labels</em> to each conversation. Griabuntu Mail "
+"Griaß di Mail lets you apply one or more <em>labels</em> to each conversation. Griaß di Mail "
 "labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
-"Griabuntu Mail надає вам змогу призначити одну або декілька <em>міток</em> до кожного "
-"спілкування. Мітки Griabuntu Mail відповідають міткам у Gmail або звичайним текам у "
+"Griaß di Mail надає вам змогу призначити одну або декілька <em>міток</em> до кожного "
+"спілкування. Мітки Griaß di Mail відповідають міткам у Gmail або звичайним текам у "
 "інших службах електронної пошти."
 
 #. (itstool) path: section/p
@@ -582,28 +582,28 @@ msgstr "Обмеження"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Griabuntu Mail is still in early development. Griabuntu Mail supports IMAP and has been tested "
+"Griaß di Mail is still in early development. Griaß di Mail supports IMAP and has been tested "
 "with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Griabuntu Mail may not yet work well with some IMAP "
-"servers. At this time Griabuntu Mail is still missing numerous features including "
+"for Outlook.com is provided. Griaß di Mail may not yet work well with some IMAP "
+"servers. At this time Griaß di Mail is still missing numerous features including "
 "offline mode."
 msgstr ""
-"Griabuntu Mail усе ще перебуває у стані початкової розробки. У Griabuntu Mail передбачено "
+"Griaß di Mail усе ще перебуває у стані початкової розробки. У Griaß di Mail передбачено "
 "підтримку IMAP, яку було перевірено для Gmail, Yahoo і вільного поштового "
 "сервера Dovecot. Надається експериментальна підтримка Outlook.com. Поточна "
-"версія Griabuntu Mail може не працювати із деякими серверами IMAP. На сьогодні, у "
-"Griabuntu Mail ще не реалізовано багато можливостей, зокрема автономний режим."
+"версія Griaß di Mail може не працювати із деякими серверами IMAP. На сьогодні, у "
+"Griaß di Mail ще не реалізовано багато можливостей, зокрема автономний режим."
 
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Griabuntu Mail, "
+"To learn more about the features we're working on and the future of Griaß di Mail, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
 "Щоб дізнатися більше про можливості, над якими ми працюємо, та майбутнє "
 "Geary, будь ласка, відвідайте <link href=\"https://wiki.gnome.org/Apps/"
-"Griabuntu Mail\">сторінку вікі</link> GriabuntuMail."
+"Griaß di Mail\">сторінку вікі</link> GriabuntuMail."
 
 #. (itstool) path: page/title
 #. (itstool) path: section/title
@@ -614,11 +614,11 @@ msgstr "Огляд"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Griabuntu Mail is an email application built around conversations, for the GNOME 3 "
+"Griaß di Mail is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Griabuntu Mail — програма для роботи з електронною поштою, базовою концепцією якої є "
+"Griaß di Mail — програма для роботи з електронною поштою, базовою концепцією якої є "
 "«спілкування». Програму призначено для стільничного середовища GNOME 3. Вона "
 "надає вам змогу читати, шукати та надсилати електронну пошту. Інтерфейс "
 "програми є простим і сучасним."
@@ -635,10 +635,10 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Griabuntu Mail window is divided into several areas: The folder list, the "
+"The main Griaß di Mail window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
-"Головне вікно Griabuntu Mail поділено на декілька областей: список тек, список "
+"Головне вікно Griaß di Mail поділено на декілька областей: список тек, список "
 "спілкувань та панель перегляду спілкування."
 
 #. (itstool) path: section/title
@@ -650,11 +650,11 @@ msgstr "Список тек"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Griabuntu Mail uses the term <em>label</em> for any folder "
+"for your email accounts. Griaß di Mail uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "У <em>списку тек</em> буде показано усі <em>теки</em> і <em>мітки</em> для "
-"ваших облікових записів електронної пошти. У Griabuntu Mail термін <em>мітка</em> "
+"ваших облікових записів електронної пошти. У Griaß di Mail термін <em>мітка</em> "
 "використовується для будь-якої теки, яку було створено для упорядковування "
 "ваших повідомлень електронної пошти."
 
@@ -685,38 +685,38 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Griabuntu Mail displays a count "
+"sender. If a conversation has more than one message, Griaß di Mail displays a count "
 "of messages in the conversation."
 msgstr ""
 "Пункт відправника буде показано напівжирним, якщо існують непрочитані "
 "повідомлення цього відправника. Якщо у спілкуванні декілька повідомлень, "
-"Griabuntu Mail покаже кількість повідомлень у спілкуванні."
+"Griaß di Mail покаже кількість повідомлень у спілкуванні."
 
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Griabuntu Mail does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Griabuntu Mail "
+"Griaß di Mail does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Griaß di Mail "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Griabuntu Mail will fetch more messages "
+"simply scroll down the conversation list and Griaß di Mail will fetch more messages "
 "automatically."
 msgstr ""
-"Griabuntu Mail не виконує автоматичного отримання усіх повідомлень у всіх ваших теках "
+"Griaß di Mail не виконує автоматичного отримання усіх повідомлень у всіх ваших теках "
 "пошти. Коли ви вперше відкриєте вашу теку «Вхідні» або будь-яку іншу теку, "
-"Griabuntu Mail отримає найсвіжіші повідомлення у цій теці. Щоб переглянути інші "
-"повідомлення, просто виконайте гортання списку повідомлень і Griabuntu Mail отримає "
+"Griaß di Mail отримає найсвіжіші повідомлення у цій теці. Щоб переглянути інші "
+"повідомлення, просто виконайте гортання списку повідомлень і Griaß di Mail отримає "
 "додаткові повідомлення автоматично."
 
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Griabuntu Mail can act on a group of conversations. To select "
+"Some commands in Griaß di Mail can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the "
 "last conversation."
 msgstr ""
-"Деякі команди у Griabuntu Mail можуть виконуватися над групою спілкувань. Щоб "
+"Деякі команди у Griaß di Mail можуть виконуватися над групою спілкувань. Щоб "
 "позначити декілька спілкувань, натисніть і утримуйте натиснутою клавішу "
 "<key>Ctrl</key>, а потім клацайте на кожному спілкуванні у списку "
 "спілкувань. Крім того, ви можете клацнути на першому зі спілкувань у "
@@ -741,11 +741,11 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Griabuntu Mail collapses messages that you’ve already "
+"When you view a conversation, Griaß di Mail collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
-"При перегляді спілкування Griabuntu Mail згортає повідомлення, які було вже "
+"При перегляді спілкування Griaß di Mail згортає повідомлення, які було вже "
 "прочитано. Клацніть на згорнутих повідомленнях, щоб розгорнути їх. Натисніть "
 "на розгорнутому повідомленні, щоб згорнути його."
 
@@ -780,13 +780,13 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Griabuntu Mail will display the first starred message in a conversation "
+"starred, and Griaß di Mail will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "Клацніть на кнопці зірки, яку буде показано для кожного зображення, щоб "
 "позначити повідомлення зіркою або зняти з нього позначення. Позначення "
 "повідомлення зіркою призведе до позначення зіркою усього спілкування, — "
-"Griabuntu Mail покаже перше повідомлення з зіркою у спілкуванні, коли повернетеся до "
+"Griaß di Mail покаже перше повідомлення з зіркою у спілкуванні, коли повернетеся до "
 "його читання."
 
 #. (itstool) path: section/p
@@ -822,12 +822,12 @@ msgstr "Параметри"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Griabuntu Mail allows you to customise how it works via its <gui "
+"Griaß di Mail allows you to customise how it works via its <gui "
 "style=\"group\">Preferences</gui> window. To open the window, select <gui "
 "style=\"menuitem\">Preferences</gui> from the application menu on the main "
 "window's toolbar. You can change the following options:"
 msgstr ""
-"Роботу Griabuntu Mail можна налаштувaти за допомогою вікна <gui "
+"Роботу Griaß di Mail можна налаштувaти за допомогою вікна <gui "
 "style=\"group\">Параметри</gui>. Щоб відкрити повідомлення, виберіть пункт "
 "<gui style=\"menuitem\">Параметри</gui> з меню програми на панелі "
 "інструментів головного вікна програми. Ви можете змінити такі параметри:"
@@ -840,13 +840,13 @@ msgstr "<gui>Автоматично вибирати наступний лист
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Griabuntu Mail automatically selects the latest message "
+"When this option is enabled, Griaß di Mail automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Griabuntu Mail automatically selects an adjacent message."
+"message, Griaß di Mail automatically selects an adjacent message."
 msgstr ""
-"Якщо позначено цей пункт, після входу до теки Griabuntu Mail автоматично вибирає "
+"Якщо позначено цей пункт, після входу до теки Griaß di Mail автоматично вибирає "
 "найсвіжіше повідомлення у теці. Крім того, після архівування повідомлення "
-"Griabuntu Mail автоматично позначає сусідні повідомлення."
+"Griaß di Mail автоматично позначає сусідні повідомлення."
 
 #. (itstool) path: item/title
 #: C/preferences.page:26
@@ -887,11 +887,11 @@ msgstr "<gui>Шукати нові повідомлення під час зак
 #. (itstool) path: item/p
 #: C/preferences.page:38
 msgid ""
-"Griabuntu Mail will watch your accounts for new mail even when the main window is not "
+"Griaß di Mail will watch your accounts for new mail even when the main window is not "
 "open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
-"Griabuntu Mail виконуватиме пошук нових повідомлень на ваших облікових записах, якщо "
+"Griaß di Mail виконуватиме пошук нових повідомлень на ваших облікових записах, якщо "
 "головне вікно програми не буде відкрито. Для цього програму буде без "
 "запитань запущено під час входу до вашого облікового запису на комп'ютері. "
 "Програма продовжуватиме працювати, навіть якщо ви закриєте усі її вікна."
@@ -904,12 +904,12 @@ msgstr "Пошук"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Griabuntu Mail supports a per-account full text search. To start a search, select a "
+"Griaß di Mail supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) and start typing. Results will appear after a brief delay."
 msgstr ""
-"У Griabuntu Mail передбачено повнотекстовий пошук для окремих облікових записів. Щоб "
+"У Griaß di Mail передбачено повнотекстовий пошук для окремих облікових записів. Щоб "
 "розпочати пошук, позначте теку, пов'язану із обліковим записом, на якому ви "
 "хочете виконати пошук. Далі, клацніть на смужці пошуку на панелі "
 "інструментів програми (або натисніть комбінацію клавіш <keyseq><key>Ctrl</"
@@ -929,12 +929,12 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Griabuntu Mail "
+"Keywords that match your search are highlighted in the message view. Griaß di Mail "
 "will match different forms of the same word, for example searching for "
 "\"walk\" will also match \"walking\" and \"walked.\""
 msgstr ""
 "Ключові слова, які збігатимуться із критерієм пошуку, буде підсвічено на "
-"панелі повідомлень. Крім того, Griabuntu Mail встановлюватиме відповідність із "
+"панелі повідомлень. Крім того, Griaß di Mail встановлюватиме відповідність із "
 "різними формами того самого слова. Наприклад, якщо ви шукатимете «walk», "
 "буде знайдено і слова «walking» та «walked»."
 
@@ -945,9 +945,9 @@ msgstr "Оператори пошуку"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Griabuntu Mail supports the following operators to limit the scope of searches:"
+msgid "Griaß di Mail supports the following operators to limit the scope of searches:"
 msgstr ""
-"У Griabuntu Mail передбачено підтримку таких операторів для обмеження області пошуку:"
+"У Griaß di Mail передбачено підтримку таких операторів для обмеження області пошуку:"
 
 #. (itstool) path: td/p
 #: C/search.page:27
@@ -1083,12 +1083,12 @@ msgstr "Клавіатурні скорочення"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Griabuntu Mail has keyboard shortcuts for most common operations. Use the built-in "
+"Griaß di Mail has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the "
 "main window's toolbar, or using the keyboard shortcuts listed below."
 msgstr ""
-"У Griabuntu Mail передбачено клавіатурні скорочення для типових операцій. "
+"У Griaß di Mail передбачено клавіатурні скорочення для типових операцій. "
 "Скористайтеся вбудованою довідкою для ознайомлення із повним списком. Щоб "
 "відкрити довідку з клавіатурних скорочень, виберіть пункт <gui "
 "style=\"menuitem\">Клавіатурні скорочення</gui> у меню програми на панелі "
@@ -1099,9 +1099,9 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Griabuntu Mail:"
+"Griaß di Mail:"
 msgstr ""
-"Для доступу до інтерактивної довідки з вікна Griabuntu Mail можна скористатися такими "
+"Для доступу до інтерактивної довідки з вікна Griaß di Mail можна скористатися такими "
 "комбінаціями клавіш:"
 
 #. (itstool) path: td/p
@@ -1195,11 +1195,11 @@ msgstr "Позначення повідомлень як прочитаних а
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Griabuntu Mail marks messages as read automatically as you read them. To manually "
+"Griaß di Mail marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
-"Griabuntu Mail автоматично позначає повідомлення як прочитані, якщо ви їх читаєте. "
+"Griaß di Mail автоматично позначає повідомлення як прочитані, якщо ви їх читаєте. "
 "Щоб вказати спілкування як прочитане або непрочитане вручну, натисніть "
 "піктограму з колом у списку спілкувань."
 
@@ -1262,13 +1262,13 @@ msgstr "Скасовування надсилання"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Griabuntu Mail will wait 5 seconds before delivering the "
+"When sending an email, Griaß di Mail will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui "
 "style=\"button\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
 "more changes to it."
 msgstr ""
-"При надсиланні повідомлення електронної пошти Griabuntu Mail очікує 5 секунд перед "
+"При надсиланні повідомлення електронної пошти Griaß di Mail очікує 5 секунд перед "
 "відправлення повідомлення. Протягом цього часу ви зможете натиснути кнопку "
 "<gui style=\"button\">Скасувати</gui> на контекстній панелі сповіщення, яку "
 "буде показано, або натиснути комбінацію клавіш <keyseq><key>Ctrl</"
@@ -1299,12 +1299,12 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/write.page:41
 msgid ""
-"When entering an email address into any of these fields, Griabuntu Mail will provide "
+"When entering an email address into any of these fields, Griaß di Mail will provide "
 "suggestions from your desktop address book and from previously sent and "
 "received email messages. To choose one of these suggestions, simply click on "
 "it."
 msgstr ""
-"При введення адреси електронної пошти у будь-яке з цих полів Griabuntu Mail "
+"При введення адреси електронної пошти у будь-яке з цих полів Griaß di Mail "
 "надаватиме пропозиції із адресної книги вашого стільничного середовища та "
 "адрес у раніше надісланих і отриманих повідомленнях електронної пошти. Щоб "
 "вибрати одну з пропозицій, просто клацніть на ній."
@@ -1361,12 +1361,12 @@ msgstr "Форматування тексту, зображення і долу�
 #. (itstool) path: section/p
 #: C/write.page:68
 msgid ""
-"Griabuntu Mail's email composer lets you use text styles such as <em>bold</em> and "
+"Griaß di Mail's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it, and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar "
 "at the bottom of the composer area."
 msgstr ""
-"У редакторі повідомлень Griabuntu Mail ви можете скористатися стилями тексту, зокрема "
+"У редакторі повідомлень Griaß di Mail ви можете скористатися стилями тексту, зокрема "
 "<em>напівжирним</em> та <em>курсивом</em>, відступами тексту для цитування "
 "та посиланнями на вебсторінки. Просто позначте фрагмент тексту і натисніть "
 "відповідну кнопку на панелі інструментів форматування у нижній частині "
@@ -1451,12 +1451,12 @@ msgstr "Перевірка правопису"
 #. (itstool) path: section/p
 #: C/write.page:106
 msgid ""
-"Griabuntu Mail supports spell-checking your composed email in one or more languages, "
+"Griaß di Mail supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
 msgstr ""
-"У Griabuntu Mail передбачено підтримку перевірки правопису безпосередньо під час "
+"У Griaß di Mail передбачено підтримку перевірки правопису безпосередньо під час "
 "введення редагованого повідомлення однією або декількома мовами. Щоб "
 "увімкнути перевірку правопису, спочатку встановіть у вашій системі словники "
 "перевірки правопису бажаними мовами. Зверніться до довідки з операційної "
@@ -1490,11 +1490,11 @@ msgstr "Збереження чернеток і відновлення відк
 #. (itstool) path: section/p
 #: C/write.page:125
 msgid ""
-"For mail servers that support drafts, Griabuntu Mail will automatically save the "
+"For mail servers that support drafts, Griaß di Mail will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
 "Якщо ви працюєте із поштовим сервером, на якому передбачено підтримку "
-"чернеток, Griabuntu Mail автоматично зберігатиме повідомлення на сервері під час "
+"чернеток, Griaß di Mail автоматично зберігатиме повідомлення на сервері під час "
 "введення з невеликою затримкою."
 
 #. (itstool) path: section/p
@@ -1510,8 +1510,8 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:133
-msgid "Griabuntu Mail will delete the draft when you send the message."
-msgstr "Griabuntu Mail вилучить чернетку, коли ви надішлете повідомлення."
+msgid "Griaß di Mail will delete the draft when you send the message."
+msgstr "Griaß di Mail вилучить чернетку, коли ви надішлете повідомлення."
 
 #. (itstool) path: note/p
 #: C/write.page:136
@@ -1539,13 +1539,13 @@ msgstr "Звичайні текстові повідомлення"
 #. (itstool) path: section/p
 #: C/write.page:148
 msgid ""
-"Griabuntu Mail can also send plain text messages. Press the <gui "
+"Griaß di Mail can also send plain text messages. Press the <gui "
 "style=\"button\">More options</gui> button at the end of the bottom toolbar, "
 "then choose \"Rich Text\" or \"Plain Text\". Plain text mode is useful when "
 "sending email to mailing lists that prohibit rich text (HTML) messages, or "
 "when sending email to people that do no use modern clients like GriabuntuMail."
 msgstr ""
-"Крім того, Griabuntu Mail може надсилати звичайні текстові повідомлення. Натисніть "
+"Крім того, Griaß di Mail може надсилати звичайні текстові повідомлення. Натисніть "
 "кнопку <gui style=\"button\">Додаткові параметри</gui> у кінці нижньої "
 "панелі інструментів, потім виберіть пункт «Форматований текст» або "
 "«Звичайний текст». Звичайний текстовий режим є корисним для надсилання "

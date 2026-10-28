@@ -1,4 +1,4 @@
-# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Downstream modification: 2026-10-27 — Griaß di Mail branding and source paths.
 # Turkish translation for griabuntu_mail.
 # Copyright (C) 2017-2023 convey's COPYRIGHT HOLDER
 # This file is distributed under the same license as the griabuntu-mail package.
@@ -42,13 +42,13 @@ msgstr "Hesap Düzenleyici"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Griabuntu Mail’s application menu button "
+"<em>accounts editor</em>. To open it, click Griaß di Mail’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
 "E-posta hesaplarınız <em>hesap düzenleyici</em> kullanılarak eklenebilir, "
 "güncellenebilir ve kaldırılabilir. Açmak için ana pencerede klasör "
-"listesinin üstündeki Griabuntu Mail’nin uygulama menüsü düğmesine tıklayın, ardından "
+"listesinin üstündeki Griaß di Mail’nin uygulama menüsü düğmesine tıklayın, ardından "
 "açılır menüdeki <gui>Hesaplar</gui>ʼa tıklayın."
 
 #. (itstool) path: section/p
@@ -74,14 +74,14 @@ msgstr "Hesap ekleme"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Griabuntu Mail will automatically use any email accounts you have added via the "
+"Griaß di Mail will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not "
 "have any accounts added to <app>Online Accounts</app>, you will be prompted "
 "to add an account the first time you run GriabuntuMail."
 msgstr ""
-"Griabuntu Mail, <app>GNOME Ayarlar</app>ʼın <app>Çevrim İçi Hesaplar</app> paneliyle "
+"Griaß di Mail, <app>GNOME Ayarlar</app>ʼın <app>Çevrim İçi Hesaplar</app> paneliyle "
 "eklediğiniz e-posta hesaplarını kendiliğinden kullanacaktır. Eğer "
-"<app>Çevrim İçi Hesaplar</app>ʼa hesap eklemediyseniz Griabuntu Mailʼyi ilk "
+"<app>Çevrim İçi Hesaplar</app>ʼa hesap eklemediyseniz Griaß di Mailʼyi ilk "
 "çalıştırmanızda hesap eklemeniz istenecektir."
 
 #. (itstool) path: section/p
@@ -99,7 +99,7 @@ msgstr ""
 "listeden uygun e-posta sağlayıcısını seçin. <app>Çevrim İçi Hesaplar</app> "
 "tarafından desteklenen hesaplar için <app>GNOME Ayarlar</app> açılacak ve "
 "hesap bilgileriniz burada sorulacaktır. Diğer e-posta sağlayıcılar için "
-"hesap bilginiz Griabuntu Mail tarafından sorulacaktır. Girdiğinizde <gui>Oluştur</"
+"hesap bilginiz Griaß di Mail tarafından sorulacaktır. Girdiğinizde <gui>Oluştur</"
 "gui>a tıklayın ve hesap bilgileriniz denetlenip eklenecektir."
 
 #. (itstool) path: section/title
@@ -111,12 +111,12 @@ msgstr "Var olan hesapları güncelleme"
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account "
-"you wish to update. Griabuntu Mail will display settings for the account. From there, "
+"you wish to update. Griaß di Mail will display settings for the account. From there, "
 "you can add and remove additional sender email addresses, edit your email "
 "signature, and various other settings."
 msgstr ""
 "Var olan hesabı güncellemek için hesap düzenleyiciyi açın ve güncellemeyi "
-"istediğiniz hesabı seçin. Griabuntu Mail, hesap için ayarları gösterecektir. Buradan "
+"istediğiniz hesabı seçin. Griaß di Mail, hesap için ayarları gösterecektir. Buradan "
 "ek gönderici e-posta adresleri ekleyebilir veya kaldırabilir, e-posta "
 "imzanızı ve bazı diğer seçenekleri düzenleyebilirsiniz."
 
@@ -124,11 +124,11 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Griabuntu Mail will download and store locally. Griabuntu Mail can only use locally available "
+"Griaß di Mail will download and store locally. Griaß di Mail can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
-"<gui>Posta indir</gui> ayarı, Griabuntu Mailʼnin ne kadar postayı indirip yerel "
-"olarak tutacağını yapılandırmanızı sağlar. Griabuntu Mail, konuşmaları görüntülerken "
+"<gui>Posta indir</gui> ayarı, Griaß di Mailʼnin ne kadar postayı indirip yerel "
+"olarak tutacağını yapılandırmanızı sağlar. Griaß di Mail, konuşmaları görüntülerken "
 "ya da ararken yalnızca yereldeki postaları kullanabilir."
 
 #. (itstool) path: section/p
@@ -137,14 +137,14 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Griabuntu Mail will check the settings, then update the account. Note that "
+"and Griaß di Mail will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
 msgstr ""
 "Hesabın sunucu ayarlarını düzenlemek için pencerenin altına kaydırın ve "
 "<gui>Sunucu Ayarları</gui>ʼna tıklayın. Sunucu ayarları gösterilecek ve "
-"tıklayarak düzeltebilirsiniz. Bitince  <gui>Uygula</gui>ya tıklayın ve Griabuntu Mail "
+"tıklayarak düzeltebilirsiniz. Bitince  <gui>Uygula</gui>ya tıklayın ve Griaß di Mail "
 "ayarları denetleyecek ardından hesabı güncelleyecek. Unutmayın ki <app>GNOME "
 "Ayarlar</app>ʼın <app>Çevrim İçi Hesaplar</app> panelinden eklenen "
 "hesapların adı, güvenliği, giriş ve parola ayarları değiştirilemez."
@@ -165,12 +165,12 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Griabuntu Mail "
+"The <gui>Save sent email on server</gui> checkbox controls whether Griaß di Mail "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder. "
 "If de-selected, you will no be able to see any email messages you have sent, "
 "unless your server automatically saves them for you."
 msgstr ""
-"<gui>Gönderilmiş postayı sunucuya kaydet</gui> kutucuğu, Griabuntu Mailʼnin "
+"<gui>Gönderilmiş postayı sunucuya kaydet</gui> kutucuğu, Griaß di Mailʼnin "
 "gönderilecek e-posta iletilerinin kopyalarını <gui>Gönderilmiş</gui> "
 "klasörüne kaydedip kaydedilmeyeceğini denetler. Eğer seçilmezse; sunucunuz "
 "sizin için kendiliğinden kaydetmiyorsa, gönderdiğiniz e-posta iletilerini "
@@ -195,16 +195,16 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Griabuntu Mail, open the accounts editor and choose "
-"the account you wish to remove. Griabuntu Mail will display settings for the account. "
+"To remove an account added via Griaß di Mail, open the accounts editor and choose "
+"the account you wish to remove. Griaß di Mail will display settings for the account. "
 "Scroll to the bottom of the window and click <gui>Remove Account</gui>. You "
 "will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
 "<gui>Undo</gui> in the popup notification, or by typing <keyseq><key>Ctrl</"
 "key><key>U</key></keyseq>."
 msgstr ""
-"Griabuntu Mail aracılığıyla eklenen hesabı kaldırmak için hesap düzenleyiciyi açın ve "
-"kaldırmak istediğiniz hesabı seçin. Griabuntu Mail, hesap için ayarları gösterecek. "
+"Griaß di Mail aracılığıyla eklenen hesabı kaldırmak için hesap düzenleyiciyi açın ve "
+"kaldırmak istediğiniz hesabı seçin. Griaß di Mail, hesap için ayarları gösterecek. "
 "Pencerenin altına kaydırın ve <gui>Hesabı Kaldır</gui>ʼa tıklayın. Hesabı "
 "kaldırma isteminiz sorulacak. Onaylayınca, eğer fikrinizi değiştirirseniz "
 "açılır pencere bildirimindeki <gui>Geri Al</gui>ʼa tıklayarak veya "
@@ -219,13 +219,13 @@ msgstr "İletileri arşivle, çöpe at ve sil"
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Griabuntu Mail lets you archive messages if your server supports it. Clicking the "
+"Griaß di Mail lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
 "email organised by moving old and replied-to email out of the way."
 msgstr ""
-"Griabuntu Mail, sunucunuz destekliyorsa iletileri arşivlemenizi sağlar. <gui "
+"Griaß di Mail, sunucunuz destekliyorsa iletileri arşivlemenizi sağlar. <gui "
 "style=\"button\">Arşivle</gui> araç çubuğu düğmesine tıklanması, konuşmayı "
 "geçerli klasörden çoğu e-posta hizmeti için <gui>Arşiv</gui> klasörüne ya da "
 "Gmail için <gui>Tüm Postalar</gui> klasörüne taşır. Arşivleme eski ve "
@@ -289,8 +289,8 @@ msgstr ""
 
 #. (itstool) path: page/title
 #: C/bugs.page:10
-msgid "Need help with Griabuntu Mail?"
-msgstr "Griabuntu Mail’de yardım mı gerekiyor?"
+msgid "Need help with Griaß di Mail?"
+msgstr "Griaß di Mail’de yardım mı gerekiyor?"
 
 #. (itstool) path: section/title
 #: C/bugs.page:13
@@ -300,11 +300,11 @@ msgstr "Destek alma"
 #. (itstool) path: section/p
 #: C/bugs.page:15
 msgid ""
-"If you are having trouble using Griabuntu Mail, please <link href=\"https://"
+"If you are having trouble using Griaß di Mail, please <link href=\"https://"
 "wiki.gnome.org/Apps/Geary/Contact\">get in touch</link> with the Geary "
 "community about the problem."
 msgstr ""
-"Eğer Griabuntu Mail kullanırken sorun yaşıyorsanız, lütfen Griabuntu Mail topluluğuyla <link "
+"Eğer Griaß di Mail kullanırken sorun yaşıyorsanız, lütfen Griaß di Mail topluluğuyla <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">iletişim kurun</link>."
 
 #. (itstool) path: section/title
@@ -315,11 +315,11 @@ msgstr "Hata raporlama"
 #. (itstool) path: section/p
 #: C/bugs.page:23
 msgid ""
-"If you suspect you have found a bug in Griabuntu Mail, please follow the <link "
+"If you suspect you have found a bug in Griaß di Mail, please follow the <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">bug reporting "
 "guidelines</link> so the problem can be diagnosed and fixed."
 msgstr ""
-"Griabuntu Mailʼde hata bulduğunuzu düşünüyorsanız lütfen bununla ilgili <link "
+"Griaß di Mailʼde hata bulduğunuzu düşünüyorsanız lütfen bununla ilgili <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">iletişime geçin</"
 "link> ki sorun saptanabilsin ve giderilsin."
 
@@ -333,8 +333,8 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:32
-msgid "Griabuntu Mail version and installation method (Package? Flathub? Source code?)"
-msgstr "Griabuntu Mail sürümü ve kurulum yöntemi (Paket? Flathub? Kaynak kod?)"
+msgid "Griaß di Mail version and installation method (Package? Flathub? Source code?)"
+msgstr "Griaß di Mail sürümü ve kurulum yöntemi (Paket? Flathub? Kaynak kod?)"
 
 #. (itstool) path: item/p
 #: C/bugs.page:34
@@ -371,25 +371,25 @@ msgstr "Ne olmasını beklediniz?"
 #. (itstool) path: section/p
 #: C/bugs.page:44
 msgid ""
-"Log files can be accessed via the Griabuntu Mail Inspector, press <keyseq><key>Alt</"
+"Log files can be accessed via the Griaß di Mail Inspector, press <keyseq><key>Alt</"
 "key><key>I</key></keyseq> to open it, select and save any relevant log "
 "files, and attach them to the bug report."
 msgstr ""
-"Günlük dosyalarına Griabuntu Mail Denetçisi ile erişilebilir. Açmak için "
+"Günlük dosyalarına Griaß di Mail Denetçisi ile erişilebilir. Açmak için "
 "<keyseq><key>Alt</key><key>I</key></keyseq> tuşlarına basın. İlgili günlük "
 "dosyalarını seçip kaydedin ve bunları hata raporuna ekleyin."
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Griabuntu Mail"
-msgstr "Griabuntu Mailʼye katkıda bulun"
+msgid "Contribute to Griaß di Mail"
+msgstr "Griaß di Mailʼye katkıda bulun"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Griabuntu Mail? There are a number of ways you can contribute:"
+"Want to help improve Griaß di Mail? There are a number of ways you can contribute:"
 msgstr ""
-"Griabuntu Mailʼyi iyileştirmek ister misiniz? Katkıda bulunabileceğiniz birkaç yol "
+"Griaß di Mailʼyi iyileştirmek ister misiniz? Katkıda bulunabileceğiniz birkaç yol "
 "vardır:"
 
 #. (itstool) path: item/p
@@ -405,10 +405,10 @@ msgstr ""
 #: C/contributing.page:19
 msgid ""
 "<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Translating</"
-"link>—translate Griabuntu Mail’s user interface and user manual into new languages"
+"link>—translate Griaß di Mail’s user interface and user manual into new languages"
 msgstr ""
 "<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Çeviri</link>—"
-"Griabuntu Mail’nin kullanıcı arayüzünü ve kullanım kılavuzunu yeni dillere çevirin"
+"Griaß di Mail’nin kullanıcı arayüzünü ve kullanım kılavuzunu yeni dillere çevirin"
 
 #. (itstool) path: item/p
 #: C/contributing.page:20
@@ -424,34 +424,34 @@ msgstr ""
 msgid ""
 "See <link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">the wiki</"
 "link> for more information and options for contributing financially to "
-"Griabuntu Mail's development."
+"Griaß di Mail's development."
 msgstr ""
-"Daha çok bilgi ve Griabuntu Mail’nin gelişimine finansal destek seçenekleri için "
+"Daha çok bilgi ve Griaß di Mail’nin gelişimine finansal destek seçenekleri için "
 "lütfen <link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">wiki</"
 "link>’ye bakın."
 
 #. (itstool) path: info/title
 #: C/index.page:7
 msgctxt "link:trail"
-msgid "Griabuntu Mail"
-msgstr "Griabuntu Mail"
+msgid "Griaß di Mail"
+msgstr "Griaß di Mail"
 
 #. (itstool) path: info/title
 #: C/index.page:8
 msgctxt "text"
-msgid "Griabuntu Mail"
-msgstr "Griabuntu Mail"
+msgid "Griaß di Mail"
+msgstr "Griaß di Mail"
 
 #. (itstool) path: info/title
 #: C/index.page:9
 msgctxt "link"
-msgid "Griabuntu Mail"
-msgstr "Griabuntu Mail"
+msgid "Griaß di Mail"
+msgstr "Griaß di Mail"
 
 #. (itstool) path: page/title
 #: C/index.page:12
-msgid "<_:media-1/> <span>Griabuntu Mail</span>"
-msgstr "<_:media-1/> <span>Griabuntu Mail</span>"
+msgid "<_:media-1/> <span>Griaß di Mail</span>"
+msgstr "<_:media-1/> <span>Griaß di Mail</span>"
 
 #. (itstool) path: section/title
 #: C/index.page:18
@@ -460,8 +460,8 @@ msgstr "Tanıtım"
 
 #. (itstool) path: section/title
 #: C/index.page:22
-msgid "Using Griabuntu Mail"
-msgstr "Griabuntu Mailʼyi Kullanmak"
+msgid "Using Griaß di Mail"
+msgstr "Griaß di Mailʼyi Kullanmak"
 
 #. (itstool) path: section/title
 #: C/index.page:26
@@ -481,12 +481,12 @@ msgstr "Konuşmayı etiketle"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Griabuntu Mail lets you apply one or more <em>labels</em> to each conversation. Griabuntu Mail "
+"Griaß di Mail lets you apply one or more <em>labels</em> to each conversation. Griaß di Mail "
 "labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
-"Griabuntu Mail, her konuşmaya bir veya daha çok <em>etiket</em> uygulamanızı sağlar. "
-"Griabuntu Mail etiketleri Gmailʼdeki etiketlerle veya diğer posta hizmetlerindeki "
+"Griaß di Mail, her konuşmaya bir veya daha çok <em>etiket</em> uygulamanızı sağlar. "
+"Griaß di Mail etiketleri Gmailʼdeki etiketlerle veya diğer posta hizmetlerindeki "
 "olağan klasörlerle uyuşmaktadır."
 
 #. (itstool) path: section/p
@@ -556,27 +556,27 @@ msgstr "Kısıtlamalar"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Griabuntu Mail is still in early development. Griabuntu Mail supports IMAP and has been tested "
+"Griaß di Mail is still in early development. Griaß di Mail supports IMAP and has been tested "
 "with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Griabuntu Mail may not yet work well with some IMAP "
-"servers. At this time Griabuntu Mail is still missing numerous features including "
+"for Outlook.com is provided. Griaß di Mail may not yet work well with some IMAP "
+"servers. At this time Griaß di Mail is still missing numerous features including "
 "offline mode."
 msgstr ""
-"Griabuntu Mail hala erken gelişimdedir. Griabuntu Mail, IMAPʼı destekler. Gmail, Yahoo ve "
+"Griaß di Mail hala erken gelişimdedir. Griaß di Mail, IMAPʼı destekler. Gmail, Yahoo ve "
 "özgür Dovecot posta sunucusuyla sınanmıştır. Outlook.com için deneysel "
-"destek sağlanmıştır. Griabuntu Mail bazı IMAP sunucularıyla çok iyi çalışmayabilir. "
-"Griabuntu Mail, şu anda çevrim dışı kipi de içeren birçok özellikten hala eksiktir."
+"destek sağlanmıştır. Griaß di Mail bazı IMAP sunucularıyla çok iyi çalışmayabilir. "
+"Griaß di Mail, şu anda çevrim dışı kipi de içeren birçok özellikten hala eksiktir."
 
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Griabuntu Mail, "
+"To learn more about the features we're working on and the future of Griaß di Mail, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
-"Griabuntu Mailʼnin geleceğini ve üzerinde çalıştığımız özellikler hakkında daha "
+"Griaß di Mailʼnin geleceğini ve üzerinde çalıştığımız özellikler hakkında daha "
 "çoğunu öğrenmek için lütfen Gearyʼnin <link href=\"https://wiki.gnome.org/"
-"Apps/Griabuntu Mail\">wiki sayfası</link>nı ziyaret edin."
+"Apps/Griaß di Mail\">wiki sayfası</link>nı ziyaret edin."
 
 #. (itstool) path: page/title
 #. (itstool) path: section/title
@@ -587,11 +587,11 @@ msgstr "Genel bakış"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Griabuntu Mail is an email application built around conversations, for the GNOME 3 "
+"Griaß di Mail is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Griabuntu Mail, GNOME 3 masaüstü için konuşmalar etrafında inşa edilmiş bir e-posta "
+"Griaß di Mail, GNOME 3 masaüstü için konuşmalar etrafında inşa edilmiş bir e-posta "
 "uygulamasıdır. Dolambaçsız çağdaş bir arayüzle e-posta okumanızı, bulmanızı "
 "ve göndermenizi sağlar."
 
@@ -607,10 +607,10 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Griabuntu Mail window is divided into several areas: The folder list, the "
+"The main Griaß di Mail window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
-"Ana Griabuntu Mail penceresi birkaç alana bölünmüştür: Klasör listesi, konuşma "
+"Ana Griaß di Mail penceresi birkaç alana bölünmüştür: Klasör listesi, konuşma "
 "listesi ve konuşma görüntüleyici."
 
 #. (itstool) path: section/title
@@ -622,11 +622,11 @@ msgstr "Klasör listesi"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Griabuntu Mail uses the term <em>label</em> for any folder "
+"for your email accounts. Griaß di Mail uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "<em>Klasör listesi</em>, e-posta hesaplarınızdaki tüm <em>klasörler</em>i ve "
-"<em>etiketler</em>i gösterir. Griabuntu Mail, iletilerinizi toparlamak için "
+"<em>etiketler</em>i gösterir. Griaß di Mail, iletilerinizi toparlamak için "
 "oluşturduğunuz herhangi bir klasör için <em>etiket</em> adlandırmasını "
 "kullanır."
 
@@ -657,38 +657,38 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Griabuntu Mail displays a count "
+"sender. If a conversation has more than one message, Griaß di Mail displays a count "
 "of messages in the conversation."
 msgstr ""
 "Her göndericinin adı, eğer bu göndericiden okunmamış iletiler varsa kalın "
-"gözükür. Eğer konuşmanın birden çok iletisi varsa, Griabuntu Mail konuşmadaki "
+"gözükür. Eğer konuşmanın birden çok iletisi varsa, Griaß di Mail konuşmadaki "
 "iletilerin sayısını gösterir."
 
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Griabuntu Mail does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Griabuntu Mail "
+"Griaß di Mail does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Griaß di Mail "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Griabuntu Mail will fetch more messages "
+"simply scroll down the conversation list and Griaß di Mail will fetch more messages "
 "automatically."
 msgstr ""
-"Griabuntu Mail, tüm posta klasörlerinizdeki tüm iletileri kendiliğinden indirmez. "
+"Griaß di Mail, tüm posta klasörlerinizdeki tüm iletileri kendiliğinden indirmez. "
 "Gelen Kutunuzu veya başka herhangi klasörü ilk kez ziyaret ettiğinizde, "
-"Griabuntu Mail bu klasördeki en son iletileri indirir. Daha çok ileti görmek için "
-"konuşma listesini basitçe aşağı kaydırın ve Griabuntu Mail daha çok iletiyi "
+"Griaß di Mail bu klasördeki en son iletileri indirir. Daha çok ileti görmek için "
+"konuşma listesini basitçe aşağı kaydırın ve Griaß di Mail daha çok iletiyi "
 "kendiliğinden getirecektir."
 
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Griabuntu Mail can act on a group of conversations. To select "
+"Some commands in Griaß di Mail can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the "
 "last conversation."
 msgstr ""
-"Griabuntu Mailʼdeki bazı komutlar konuşmalar kümesi üzerinde etki eder. Birden çok "
+"Griaß di Mailʼdeki bazı komutlar konuşmalar kümesi üzerinde etki eder. Birden çok "
 "konuşma seçmek için, <key>Ctrl</key> tuşuna basılı tutun ve konuşma "
 "listesinde sırasıyla her konuşmaya tıklayın. Diğer seçenek olarak, bir "
 "aralıktaki ilk konuşmaya tıklayın, ardından <key>Shift</key>ʼe basılı tutun "
@@ -711,11 +711,11 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Griabuntu Mail collapses messages that you’ve already "
+"When you view a conversation, Griaß di Mail collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
-"Konuşmaya bakarken, Griabuntu Mail zaten okuduğunuz iletileri kapatır. Kapalı "
+"Konuşmaya bakarken, Griaß di Mail zaten okuduğunuz iletileri kapatır. Kapalı "
 "iletileri genişletmek için üzerine tıklayın. Kapatmak için genişletilmiş "
 "iletinin başlığına tıklayın."
 
@@ -747,12 +747,12 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Griabuntu Mail will display the first starred message in a conversation "
+"starred, and Griaß di Mail will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "İletiyi yıldızlamak veya yıldız imini kaldırmak için her iletide bulunan "
 "yıldız düğmesine tıklayın. Bir iletiyi yıldızlamak tüm konuşmayı "
-"yıldızlayacaktır ve Griabuntu Mail konuşmaya dönüldüğünde yıldızlanan ilk iletiyi "
+"yıldızlayacaktır ve Griaß di Mail konuşmaya dönüldüğünde yıldızlanan ilk iletiyi "
 "gösterecektir."
 
 #. (itstool) path: section/p
@@ -787,12 +787,12 @@ msgstr "Tercihler"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Griabuntu Mail allows you to customise how it works via its <gui "
+"Griaß di Mail allows you to customise how it works via its <gui "
 "style=\"group\">Preferences</gui> window. To open the window, select <gui "
 "style=\"menuitem\">Preferences</gui> from the application menu on the main "
 "window's toolbar. You can change the following options:"
 msgstr ""
-"Griabuntu Mail, <gui style=\"group\">Tercihler</gui> penceresiyle nasıl çalıştığını "
+"Griaß di Mail, <gui style=\"group\">Tercihler</gui> penceresiyle nasıl çalıştığını "
 "özelleştirmenizi sağlar. Pencereyi açmak için ana pencerenin araç "
 "çubuğundaki uygulama menüsünden <gui style=\"menuitem\">Tercihler</gui>ʼi "
 "seçin. Aşağıdaki seçenekleri değiştirebilirsiniz:"
@@ -805,12 +805,12 @@ msgstr "<gui>Sonraki iletiyi kendiliğinden seç</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Griabuntu Mail automatically selects the latest message "
+"When this option is enabled, Griaß di Mail automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Griabuntu Mail automatically selects an adjacent message."
+"message, Griaß di Mail automatically selects an adjacent message."
 msgstr ""
-"Bu seçenek etkinken, Griabuntu Mail, klasöre girdiğinizde klasör içindeki son iletiyi "
-"kendiliğinden seçer. Ek olarak, iletiyi arşivledikten sonra Griabuntu Mail bitişik "
+"Bu seçenek etkinken, Griaß di Mail, klasöre girdiğinizde klasör içindeki son iletiyi "
+"kendiliğinden seçer. Ek olarak, iletiyi arşivledikten sonra Griaß di Mail bitişik "
 "iletiyi seçer."
 
 #. (itstool) path: item/title
@@ -851,11 +851,11 @@ msgstr "<gui>Kapatıldığında yeni postayı gözetle</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:38
 msgid ""
-"Griabuntu Mail will watch your accounts for new mail even when the main window is not "
+"Griaß di Mail will watch your accounts for new mail even when the main window is not "
 "open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
-"Griabuntu Mail, ana pencere açık olmadığında bile hesaplarınızı yeni posta için "
+"Griaß di Mail, ana pencere açık olmadığında bile hesaplarınızı yeni posta için "
 "gözetler. Bunu yapmak için, bilgisayarınıza giriş yaptığınızda sessizce "
 "başlar ve tüm pencereleri kapattığınızda çalışmayı sürdürür."
 
@@ -867,12 +867,12 @@ msgstr "Ara"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Griabuntu Mail supports a per-account full text search. To start a search, select a "
+"Griaß di Mail supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></"
 "keyseq>) and start typing. Results will appear after a brief delay."
 msgstr ""
-"Griabuntu Mail, hesap başına tam metin aramayı destekler. Arama başlatmak için aramak "
+"Griaß di Mail, hesap başına tam metin aramayı destekler. Arama başlatmak için aramak "
 "istediğiniz hesapla ilişkili klasör seçin. Ardından araç çubuğundaki arama "
 "kutusuna tıklayın (veya <keyseq><key>Ctrl</key><key>S</key></keyseq> "
 "tuşlarına basın) ve yazmaya başlayın. Sonuçlar kısacık gecikmenin ardından "
@@ -890,11 +890,11 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Griabuntu Mail "
+"Keywords that match your search are highlighted in the message view. Griaß di Mail "
 "will match different forms of the same word, for example searching for "
 "\"walk\" will also match \"walking\" and \"walked.\""
 msgstr ""
-"Aramanızla eşleşen sözcükler ileti görünümünde vurgulanmıştır. Griabuntu Mail, aynı "
+"Aramanızla eşleşen sözcükler ileti görünümünde vurgulanmıştır. Griaß di Mail, aynı "
 "sözcüğün başka biçimlerini eşleyecektir, örneğin \"yürü\" için aramak ayrıca "
 "\"yürüyorum\" ve \"yürüdüm\"ü de eşleyecektir."
 
@@ -905,8 +905,8 @@ msgstr "Arama işleticileri"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Griabuntu Mail supports the following operators to limit the scope of searches:"
-msgstr "Griabuntu Mail, aramaların kapsamını sınırlamak için şu işleticileri kullanır:"
+msgid "Griaß di Mail supports the following operators to limit the scope of searches:"
+msgstr "Griaß di Mail, aramaların kapsamını sınırlamak için şu işleticileri kullanır:"
 
 #. (itstool) path: td/p
 #: C/search.page:27
@@ -1034,12 +1034,12 @@ msgstr "Klavye kısayolları"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Griabuntu Mail has keyboard shortcuts for most common operations. Use the built-in "
+"Griaß di Mail has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the "
 "main window's toolbar, or using the keyboard shortcuts listed below."
 msgstr ""
-"Griabuntu Mail, çoğu ortak işlem için klavye kısayollarına sahiptir. Tam listeyi "
+"Griaß di Mail, çoğu ortak işlem için klavye kısayollarına sahiptir. Tam listeyi "
 "keşfetmek için yerleşik yardımı kullanın. Kısayollar yardımını açmak için, "
 "ana pencerenin araç çubuğundaki uygulama menüsünden ya da aşağıda listelenen "
 "klavye kısayollarını kullanarak <gui style=\"menuitem\">Klavye Kısayolları</"
@@ -1049,9 +1049,9 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Griabuntu Mail:"
+"Griaß di Mail:"
 msgstr ""
-"Şu klavye kısayolları Griabuntu Mailʼden çevrim içi yardıma erişimde kullanılabilir:"
+"Şu klavye kısayolları Griaß di Mailʼden çevrim içi yardıma erişimde kullanılabilir:"
 
 #. (itstool) path: td/p
 #: C/shortcuts.page:24
@@ -1138,11 +1138,11 @@ msgstr "İletileri okundu veya okunmamış olarak imle"
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Griabuntu Mail marks messages as read automatically as you read them. To manually "
+"Griaß di Mail marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
-"Griabuntu Mail, iletileri siz onları okuduğunuz gibi kendiliğinden okundu olarak "
+"Griaß di Mail, iletileri siz onları okuduğunuz gibi kendiliğinden okundu olarak "
 "imler. Konuşmayı elle okundu veya okunmamış olarak imlemek için konuşma "
 "listesindeki daire simgeye tıklayın."
 
@@ -1203,13 +1203,13 @@ msgstr "Gönderimi geri alma"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Griabuntu Mail will wait 5 seconds before delivering the "
+"When sending an email, Griaß di Mail will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui "
 "style=\"button\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
 "more changes to it."
 msgstr ""
-"Griabuntu Mail, e-posta gönderirken iletiyi teslim etmeden önce 5 saniye bekler. Bu "
+"Griaß di Mail, e-posta gönderirken iletiyi teslim etmeden önce 5 saniye bekler. Bu "
 "sürede, e-postayı yeniden açmak ve üzerinde daha çok değişiklik yapmak için "
 "açılan bildirimde <gui style=\"button\">Geri Al</gui>ʼa tıklayabilir ya da "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> kısayolunu kullanabilirsiniz."
@@ -1236,12 +1236,12 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/write.page:41
 msgid ""
-"When entering an email address into any of these fields, Griabuntu Mail will provide "
+"When entering an email address into any of these fields, Griaß di Mail will provide "
 "suggestions from your desktop address book and from previously sent and "
 "received email messages. To choose one of these suggestions, simply click on "
 "it."
 msgstr ""
-"Bu alanlardan herhangi birine e-posta adresi girerken, Griabuntu Mail masaüstü adres "
+"Bu alanlardan herhangi birine e-posta adresi girerken, Griaß di Mail masaüstü adres "
 "defterinizden, önceki gönderilen ve alınan e-posta iletilerinden öneriler "
 "sunacaktır. Bu önerilerden birini seçmek için yalnızca üstüne tıklayın."
 
@@ -1294,12 +1294,12 @@ msgstr "Metin biçimlendirme, resimler ve ekler"
 #. (itstool) path: section/p
 #: C/write.page:68
 msgid ""
-"Griabuntu Mail's email composer lets you use text styles such as <em>bold</em> and "
+"Griaß di Mail's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it, and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar "
 "at the bottom of the composer area."
 msgstr ""
-"Griabuntu Mailʼnin e-posta oluşturucusu, <em>kalın</em> ve <em>eğik</em> gibi metin "
+"Griaß di Mailʼnin e-posta oluşturucusu, <em>kalın</em> ve <em>eğik</em> gibi metin "
 "biçimleri, alıntılamak için metin girintisi ve web sayfalarına bağlantılar "
 "kullanmanızı sağlar. Metni seçin ve oluşturucu alanı altındaki biçimlendirme "
 "araç çubuğunda uygun düğmeye tıklayın."
@@ -1377,12 +1377,12 @@ msgstr "İmla denetimi"
 #. (itstool) path: section/p
 #: C/write.page:106
 msgid ""
-"Griabuntu Mail supports spell-checking your composed email in one or more languages, "
+"Griaß di Mail supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
 msgstr ""
-"Griabuntu Mail, siz yazarken e-postanızın imlasını bir veya daha çok dilde "
+"Griaß di Mail, siz yazarken e-postanızın imlasını bir veya daha çok dilde "
 "denetlemeyi sağlar. Yazım denetimini etkinleştirmek için, önce "
 "bilgisayarınızda istenen diller için yazım denetimi sözlüklerinin "
 "kurulduğundan emin olun. Yoksa, sözlüklerin nasıl kurulacağını saptamak için "
@@ -1414,10 +1414,10 @@ msgstr "Taslakları kaydetme ve gözden çıkarılan iletileri geri yükleme"
 #. (itstool) path: section/p
 #: C/write.page:125
 msgid ""
-"For mail servers that support drafts, Griabuntu Mail will automatically save the "
+"For mail servers that support drafts, Griaß di Mail will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
-"Griabuntu Mail, taslakları destekleyen posta sunucularında, siz iletiyi yazdıkça kısa "
+"Griaß di Mail, taslakları destekleyen posta sunucularında, siz iletiyi yazdıkça kısa "
 "bir gecikmeyle sunucuya kendiliğinden kaydedecektir."
 
 #. (itstool) path: section/p
@@ -1432,8 +1432,8 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:133
-msgid "Griabuntu Mail will delete the draft when you send the message."
-msgstr "Griabuntu Mail, iletiyi gönderdiğinizde taslağı silecektir."
+msgid "Griaß di Mail will delete the draft when you send the message."
+msgstr "Griaß di Mail, iletiyi gönderdiğinizde taslağı silecektir."
 
 #. (itstool) path: note/p
 #: C/write.page:136
@@ -1459,16 +1459,16 @@ msgstr "Düz metin iletileri"
 #. (itstool) path: section/p
 #: C/write.page:148
 msgid ""
-"Griabuntu Mail can also send plain text messages. Press the <gui "
+"Griaß di Mail can also send plain text messages. Press the <gui "
 "style=\"button\">More options</gui> button at the end of the bottom toolbar, "
 "then choose \"Rich Text\" or \"Plain Text\". Plain text mode is useful when "
 "sending email to mailing lists that prohibit rich text (HTML) messages, or "
 "when sending email to people that do no use modern clients like GriabuntuMail."
 msgstr ""
-"Griabuntu Mail, düz metin iletileri de gönderebilir. Alt araç çubuğunun sonundaki "
+"Griaß di Mail, düz metin iletileri de gönderebilir. Alt araç çubuğunun sonundaki "
 "<gui style=\"button\">Daha çok seçenek</gui> düğmesine basın, ardından "
 "\"Zengin Metin\" ya da \"Düz Metin\"i seçin. Düz metin kipi, zengin metin "
-"(HTML) iletilerini yasaklayan posta listelerine veya Griabuntu Mail gibi çağdaş "
+"(HTML) iletilerini yasaklayan posta listelerine veya Griaß di Mail gibi çağdaş "
 "istemcileri kullanmayanlara e-posta gönderirken kullanışlıdır."
 
 #. (itstool) path: section/p

@@ -1,6 +1,6 @@
-# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Downstream modification: 2026-10-27 — Griaß di Mail branding and source paths.
 # po/griabuntu-mail.pot
-# PO message string template file for Griabuntu Mail email client
+# PO message string template file for Griaß di Mail email client
 # Copyright 2016 Software Freedom Conservancy Inc.
 # This release copy is distributed under GNU GPL version 3 only.
 # Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
@@ -37,8 +37,8 @@ msgid "Send by email"
 msgstr "Enviar por correo electrónico"
 
 #: desktop/griabuntu-mail-attach.contract.desktop.in:5
-msgid "Send files using Griabuntu Mail"
-msgstr "Enviar archivos mediante Griabuntu Mail"
+msgid "Send files using Griaß di Mail"
+msgstr "Enviar archivos mediante Griaß di Mail"
 
 #. Translators: The application name
 #: desktop/griabuntu-mail-autostart.desktop.in.in:2
@@ -46,8 +46,8 @@ msgstr "Enviar archivos mediante Griabuntu Mail"
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:11
 #: src/client/application/application-main-window.vala:598
 #: ui/accounts_editor_servers_pane.ui:56
-msgid "Griabuntu Mail"
-msgstr "Griabuntu Mail"
+msgid "Griaß di Mail"
+msgstr "Griaß di Mail"
 
 #: desktop/griabuntu-mail-autostart.desktop.in.in:3
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in:3
@@ -315,7 +315,7 @@ msgstr ""
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml:153
 msgid ""
-"Open whichever inbox was last viewed when Griabuntu Mail starts, rather than a fixed "
+"Open whichever inbox was last viewed when Griaß di Mail starts, rather than a fixed "
 "one"
 msgstr ""
 
@@ -427,11 +427,11 @@ msgstr ""
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:19
 #, fuzzy
 msgid ""
-"Griabuntu Mail is an email application built around conversations, for the GNOME "
+"Griaß di Mail is an email application built around conversations, for the GNOME "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Griabuntu Mail es una aplicación de correo-e pensada para las conversaciones, para "
+"Griaß di Mail es una aplicación de correo-e pensada para las conversaciones, para "
 "el escritorio GNOME 3. Le permite leer, buscar y enviar correos con una "
 "interfaz sencilla y moderna."
 
@@ -445,13 +445,13 @@ msgstr ""
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:28
 msgid ""
-"Griabuntu Mail is a fork of Geary, originally developed by the Geary Development "
+"Griaß di Mail is a fork of Geary, originally developed by the Geary Development "
 "Team and the Software Freedom Conservancy."
 msgstr ""
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:32
-msgid "Griabuntu Mail’s features include:"
-msgstr "Entre las características de Griabuntu Mail se incluyen:"
+msgid "Griaß di Mail’s features include:"
+msgstr "Entre las características de Griaß di Mail se incluyen:"
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:34
 msgid "Quick email account setup"
@@ -479,16 +479,16 @@ msgstr "Compatible con GMail, Yahoo! Mail, Outlook.com y otros servidores IMAP"
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:52
 #, fuzzy
-msgid "Griabuntu Mail showing an inbox of conversations"
-msgstr "Griabuntu Mail mostrando una conversación"
+msgid "Griaß di Mail showing an inbox of conversations"
+msgstr "Griaß di Mail mostrando una conversación"
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:56
-msgid "Griabuntu Mail displaying a conversation"
-msgstr "Griabuntu Mail mostrando una conversación"
+msgid "Griaß di Mail displaying a conversation"
+msgstr "Griaß di Mail mostrando una conversación"
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:60
-msgid "Griabuntu Mail showing the rich text composer"
-msgstr "Griabuntu Mail mostrando el editor de texto enriquecido"
+msgid "Griaß di Mail showing the rich text composer"
+msgstr "Griaß di Mail mostrando el editor de texto enriquecido"
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:82
 msgid "Show nested folders on Microsoft accounts"
@@ -559,7 +559,7 @@ msgid "Numerous user interface and styling fixes"
 msgstr ""
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:116
-msgid "The first Griabuntu Mail release, forked from Geary 46.0."
+msgid "The first Griaß di Mail release, forked from Geary 46.0."
 msgstr ""
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:117
@@ -575,7 +575,7 @@ msgid "Added a Microsoft Graph backend for Outlook and Microsoft 365 accounts"
 msgstr ""
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:121
-msgid "Rebranded as Griabuntu Mail, with new application icons"
+msgid "Rebranded as Griaß di Mail, with new application icons"
 msgstr ""
 
 #: desktop/io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml.in.in:122
@@ -714,10 +714,10 @@ msgstr "Quitar cuenta: %s"
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:291
 msgid ""
-"This will remove it from Griabuntu Mail and delete locally cached email data from "
+"This will remove it from Griaß di Mail and delete locally cached email data from "
 "your computer. Nothing will be deleted from your service provider."
 msgstr ""
-"Esto la eliminará de Griabuntu Mail y también eliminará los datos en caché de su "
+"Esto la eliminará de Griaß di Mail y también eliminará los datos en caché de su "
 "equipo, pero no eliminará nada de su proveedor de servicios."
 
 #: src/client/accounts/accounts-editor-edit-pane.vala:295
@@ -1036,13 +1036,13 @@ msgstr "Mostrar la versión del programa"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:246
-msgid "Griabuntu Mail version"
-msgstr "Versión de Griabuntu Mail"
+msgid "Griaß di Mail version"
+msgstr "Versión de Griaß di Mail"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:248
-msgid "Griabuntu Mail revision"
-msgstr "Revisión de Griabuntu Mail"
+msgid "Griaß di Mail revision"
+msgstr "Revisión de Griaß di Mail"
 
 #. / Application runtime information label
 #: src/client/application/application-client.vala:250
@@ -1090,8 +1090,8 @@ msgstr "Prefijo de instalación"
 
 #: src/client/application/application-client.vala:544
 #, fuzzy
-msgid "Visit the Griabuntu Mail repository"
-msgstr "Visite el sitio web de Griabuntu Mail"
+msgid "Visit the Griaß di Mail repository"
+msgstr "Visite el sitio web de Griaß di Mail"
 
 #: src/client/application/application-client.vala:545
 #, c-format
@@ -1265,7 +1265,7 @@ msgid ""
 "\n"
 "%s\n"
 "\n"
-"Griabuntu Mail can rebuild the database and re-synchronize with the server or exit.\n"
+"Griaß di Mail can rebuild the database and re-synchronize with the server or exit.\n"
 "\n"
 "Rebuilding the database will destroy all local email and its attachments. "
 "<b>The mail on the your server will not be affected.</b>"
@@ -1276,7 +1276,7 @@ msgstr ""
 "\n"
 "%s\n"
 "\n"
-"Griabuntu Mail puede reconstruir la base de datos y volver a sincronizarse con el "
+"Griaß di Mail puede reconstruir la base de datos y volver a sincronizarse con el "
 "servidor al salir.\n"
 "\n"
 "Reconstruir la base de datos destruirá todo el correo guardado de forma "
@@ -1538,17 +1538,17 @@ msgstr "Quitar «%s»"
 #: src/client/application/application-main-window.vala:1965
 #, fuzzy
 msgid ""
-"This removes the label and all email in it from Griabuntu Mail and your email server."
+"This removes the label and all email in it from Griaß di Mail and your email server."
 msgstr ""
-"Esto eliminará el mensaje de Griabuntu Mail y del servidor de correo electrónico."
+"Esto eliminará el mensaje de Griaß di Mail y del servidor de correo electrónico."
 
 #: src/client/application/application-main-window.vala:1966
 #, fuzzy
 msgid ""
-"This removes the folder and all email in it from Griabuntu Mail and your email "
+"This removes the folder and all email in it from Griaß di Mail and your email "
 "server."
 msgstr ""
-"Esto eliminará el mensaje de Griabuntu Mail y del servidor de correo electrónico."
+"Esto eliminará el mensaje de Griaß di Mail y del servidor de correo electrónico."
 
 #: src/client/application/application-main-window.vala:1967
 #: src/client/application/application-main-window.vala:2005
@@ -1582,9 +1582,9 @@ msgid "Empty all email from your %s folder?"
 msgstr "¿Quiere eliminar todos los mensajes de la carpeta «%s»?"
 
 #: src/client/application/application-main-window.vala:2004
-msgid "This removes the email from Griabuntu Mail and your email server."
+msgid "This removes the email from Griaß di Mail and your email server."
 msgstr ""
-"Esto eliminará el mensaje de Griabuntu Mail y del servidor de correo electrónico."
+"Esto eliminará el mensaje de Griaß di Mail y del servidor de correo electrónico."
 
 #: src/client/application/application-main-window.vala:2008
 #, c-format
@@ -1624,7 +1624,7 @@ msgid "Unsubscribe from %s?"
 msgstr ""
 
 #: src/client/application/application-main-window.vala:3694
-msgid "Griabuntu Mail will ask the sender to stop sending you emails."
+msgid "Griaß di Mail will ask the sender to stop sending you emails."
 msgstr ""
 
 #: src/client/application/application-main-window.vala:3695
@@ -1654,7 +1654,7 @@ msgid "Unsubscribe request sent to %s"
 msgstr ""
 
 #: src/client/application/application-startup-manager.vala:78
-msgid "Griabuntu Mail wants to run in background"
+msgid "Griaß di Mail wants to run in background"
 msgstr ""
 
 #. Translators: The first argument will be a
@@ -1810,16 +1810,16 @@ msgstr "Problema con la cuenta"
 #. problem. String substitution is the account name.
 #: src/client/components/components-problem-report-info-bar.vala:40
 #, c-format
-msgid "Griabuntu Mail has encountered a problem with %s."
-msgstr "Griabuntu Mail ha encontrado un problema con %s."
+msgid "Griaß di Mail has encountered a problem with %s."
+msgstr "Griaß di Mail ha encontrado un problema con %s."
 
 #. Translators: Info bar sub-title for a generic
 #. account problem. String substitution is the
 #. account name.
 #: src/client/components/components-problem-report-info-bar.vala:53
 #, c-format
-msgid "Griabuntu Mail encountered a problem checking mail for %s."
-msgstr "Griabuntu Mail ha encontrado un problema al comprobar el correo para %s."
+msgid "Griaß di Mail encountered a problem checking mail for %s."
+msgstr "Griaß di Mail ha encontrado un problema al comprobar el correo para %s."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:57
@@ -1831,8 +1831,8 @@ msgstr "Vuelva a intentar conectar"
 #. account name
 #: src/client/components/components-problem-report-info-bar.vala:65
 #, c-format
-msgid "Griabuntu Mail encountered a problem sending email for %s."
-msgstr "Griabuntu Mail ha encontrado un problema al enviar correo para %s."
+msgid "Griaß di Mail encountered a problem sending email for %s."
+msgstr "Griaß di Mail ha encontrado un problema al enviar correo para %s."
 
 #. Translators: Tooltip label for Retry button
 #: src/client/components/components-problem-report-info-bar.vala:69
@@ -1842,8 +1842,8 @@ msgstr "Reintentar enviar los correos encolados"
 #. Translators: Info bar title for a generic application
 #. problem.
 #: src/client/components/components-problem-report-info-bar.vala:76
-msgid "Griabuntu Mail has encountered a problem"
-msgstr "Griabuntu Mail ha encontrado un problema"
+msgid "Griaß di Mail has encountered a problem"
+msgstr "Griaß di Mail ha encontrado un problema"
 
 #. Translators: Info bar sub-title for a generic
 #. application problem.
@@ -2418,22 +2418,22 @@ msgstr ""
 
 #: src/client/dialogs/certificate-warning-dialog.vala:48
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Griabuntu Mail not to access this "
+"Selecting “Don’t Trust This Server” will cause Griaß di Mail not to access this "
 "server."
 msgstr ""
-"Griabuntu Mail no accederá a este servidor si selecciona «No confiar en este "
+"Griaß di Mail no accederá a este servidor si selecciona «No confiar en este "
 "servidor»."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:50
-msgid "Griabuntu Mail will not add or update this email account."
-msgstr "Griabuntu Mail no añadirá ni actualizará esta cuenta de correo electrónico."
+msgid "Griaß di Mail will not add or update this email account."
+msgstr "Griaß di Mail no añadirá ni actualizará esta cuenta de correo electrónico."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:55
 msgid ""
-"Selecting “Don’t Trust This Server” will cause Griabuntu Mail to stop accessing this "
+"Selecting “Don’t Trust This Server” will cause Griaß di Mail to stop accessing this "
 "account."
 msgstr ""
-"Griabuntu Mail dejará de acceder a esta cuenta si selecciona «No confiar en este "
+"Griaß di Mail dejará de acceder a esta cuenta si selecciona «No confiar en este "
 "servidor»."
 
 #: src/client/dialogs/certificate-warning-dialog.vala:61
@@ -2887,7 +2887,7 @@ msgstr "---------- Mensaje reenviado ----------"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:605
 msgctxt "Search operator"
 msgid "attachment"
@@ -2900,7 +2900,7 @@ msgstr "adjunto"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:618
 msgctxt "Search operator"
 msgid "bcc"
@@ -2913,7 +2913,7 @@ msgstr "cco"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:630
 msgctxt "Search operator"
 msgid "body"
@@ -2926,7 +2926,7 @@ msgstr "cuerpo"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:642
 msgctxt "Search operator"
 msgid "cc"
@@ -2939,7 +2939,7 @@ msgstr "cc"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:654
 msgctxt "Search operator"
 msgid "from"
@@ -2952,7 +2952,7 @@ msgstr "de"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:668
 msgctxt "Search operator"
 msgid "subject"
@@ -2965,7 +2965,7 @@ msgstr "asunto"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:680
 msgctxt "Search operator"
 msgid "to"
@@ -2978,7 +2978,7 @@ msgstr "para"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:691
 msgctxt "Search operator value - mail addressed to the user"
 msgid "me"
@@ -2991,7 +2991,7 @@ msgstr "yo"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:704
 msgctxt "Search operator value - mail sent by the user"
 msgid "me"
@@ -3006,7 +3006,7 @@ msgstr "yo"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:719
 msgctxt "Search operator"
 msgid "is"
@@ -3019,7 +3019,7 @@ msgstr "está"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:729
 msgctxt "'is:' search operator value"
 msgid "unread"
@@ -3032,7 +3032,7 @@ msgstr "sin-leer"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:739
 msgctxt "'is:' search operator value"
 msgid "read"
@@ -3045,7 +3045,7 @@ msgstr "leído"
 #. / The translated string must be a single word (use '-', '_'
 #. / or similar to combine words into one), should be short,
 #. / and also match the translation in "search.page" of the
-#. / Griabuntu Mail User Guide.
+#. / Griaß di Mail User Guide.
 #: src/client/util/util-email.vala:749
 msgctxt "'is:' search operator value"
 msgid "starred"
@@ -3319,8 +3319,8 @@ msgid "Archive Instead of Moving to Trash"
 msgstr ""
 
 #: ui/accounts_editor_edit_pane.ui:110
-msgid "Remove this account from Griabuntu Mail"
-msgstr "Quitar cuenta de Griabuntu Mail"
+msgid "Remove this account from Griaß di Mail"
+msgstr "Quitar cuenta de Griaß di Mail"
 
 #. This is a button in the account settings to show server settings.
 #: ui/accounts_editor_edit_pane.ui:120 ui/accounts_editor_servers_pane.ui:4
@@ -3336,8 +3336,8 @@ msgid "Add an account"
 msgstr "Añadir una cuenta"
 
 #: ui/accounts_editor_list_pane.ui:65
-msgid "Welcome to Griabuntu Mail"
-msgstr "Bienvenido/a a Griabuntu Mail"
+msgid "Welcome to Griaß di Mail"
+msgstr "Bienvenido/a a Griaß di Mail"
 
 #: ui/accounts_editor_list_pane.ui:82
 #, fuzzy
@@ -3348,7 +3348,7 @@ msgstr "Para empezar seleccione a continuación un proveedor de correo-e."
 msgid "Apply"
 msgstr "Aplicar"
 
-#. Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Griabuntu Mail
+#. Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Griaß di Mail
 #: ui/accounts_editor_servers_pane.ui:55
 #, fuzzy
 msgid "Account Source"
@@ -3411,8 +3411,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "Atajos del _teclado"
 
 #: ui/application-main-window.ui:475
-msgid "_About Griabuntu Mail"
-msgstr "_Acerca de Griabuntu Mail"
+msgid "_About Griaß di Mail"
+msgstr "_Acerca de Griaß di Mail"
 
 #: ui/certificate-warning-dialog.ui:4
 msgid "Untrusted Connection"
@@ -3455,8 +3455,8 @@ msgid "_Watch for new mail when closed"
 msgstr "_Revisar si hay mensajes nuevos al cerrar"
 
 #: ui/components-preferences-dialog.ui:30
-msgid "Griabuntu Mail will keep running after all windows are closed"
-msgstr "Griabuntu Mail seguirá en ejecución después de haber cerrado todas la ventanas"
+msgid "Griaß di Mail will keep running after all windows are closed"
+msgstr "Griaß di Mail seguirá en ejecución después de haber cerrado todas la ventanas"
 
 #: ui/components-preferences-dialog.ui:41
 #, fuzzy
@@ -3517,7 +3517,7 @@ msgid "Use _custom proxy"
 msgstr ""
 
 #: ui/components-preferences-dialog.ui:119
-msgid "Set a proxy for Griabuntu Mail to use for all network requests"
+msgid "Set a proxy for Griaß di Mail to use for all network requests"
 msgstr ""
 
 #. Translators: Preferences label
@@ -4496,8 +4496,8 @@ msgid "_Authenticate"
 msgstr "_Autenticar"
 
 #: ui/password-dialog.ui:23
-msgid "Griabuntu Mail requires your email password to continue"
-msgstr "Griabuntu Mail necesita la contraseña de su cuenta de correo para continuar"
+msgid "Griaß di Mail requires your email password to continue"
+msgstr "Griaß di Mail necesita la contraseña de su cuenta de correo para continuar"
 
 #: ui/password-dialog.ui:31
 msgid "_Username"

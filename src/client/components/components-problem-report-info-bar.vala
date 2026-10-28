@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2017,2020 Michael Gratton <mike@vee.net>
@@ -40,7 +41,7 @@ public class Components.ProblemReportInfoBar : InfoBar {
             // Translators: Info bar sub-title for a generic account
             // problem. String substitution is the account name.
             descr = _(
-                "Griabuntu Mail has encountered a problem with %s."
+                "Griaß di Mail has encountered a problem with %s."
             ).printf(account_name);
 
             if (report is GriabuntuMail.ServiceProblemReport) {
@@ -53,7 +54,7 @@ public class Components.ProblemReportInfoBar : InfoBar {
                     // account problem. String substitution is the
                     // account name.
                     descr = _(
-                        "Griabuntu Mail encountered a problem checking mail for %s."
+                        "Griaß di Mail encountered a problem checking mail for %s."
                     ).printf(account_name);
 
                     // Translators: Tooltip label for Retry button
@@ -65,7 +66,7 @@ public class Components.ProblemReportInfoBar : InfoBar {
                     // account problem. String substitution is the
                     // account name
                     descr = _(
-                        "Griabuntu Mail encountered a problem sending email for %s."
+                        "Griaß di Mail encountered a problem sending email for %s."
                     ).printf(account_name);
 
                     // Translators: Tooltip label for Retry button
@@ -76,7 +77,7 @@ public class Components.ProblemReportInfoBar : InfoBar {
         } else {
             // Translators: Info bar title for a generic application
             // problem.
-            title = _("Griabuntu Mail has encountered a problem");
+            title = _("Griaß di Mail has encountered a problem");
             // Translators: Info bar sub-title for a generic
             // application problem.
             descr = _(

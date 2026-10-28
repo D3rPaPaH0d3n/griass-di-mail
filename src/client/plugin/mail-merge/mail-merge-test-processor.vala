@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
@@ -136,7 +137,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Griabuntu Mail Test Suite 1.0
+X-Mailer: Griaß di Mail Test Suite 1.0
 
 This is the first line.
 
@@ -155,7 +156,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Griabuntu Mail Test Suite 1.0
+X-Mailer: Griaß di Mail Test Suite 1.0
 
 This is the first line.
 
@@ -174,7 +175,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Griabuntu Mail Test Suite 1.0
+X-Mailer: Griaß di Mail Test Suite 1.0
 
 Hello {{name}}!
 

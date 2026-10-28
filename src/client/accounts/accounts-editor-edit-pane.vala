@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
@@ -291,7 +292,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         if (!this.editor.accounts.is_goa_account(account)) {
             var dialog = new Adw.AlertDialog(
                 _("Remove Account: %s").printf(account.primary_mailbox.address),
-                _("This will remove it from Griabuntu Mail and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
+                _("This will remove it from Griaß di Mail and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
             );
             dialog.add_css_class("warning");
 

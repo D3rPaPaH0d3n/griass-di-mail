@@ -167,7 +167,7 @@ public class Application.ContactPicture : GLib.Object {
         if (session == null) {
             session = (Soup.Session) GLib.Object.new(typeof(Soup.Session),
                 "timeout", 8u, "max-conns", 4, "max-conns-per-host", 2,
-                "user-agent", "Griabuntu-Mail/" + Config.VERSION
+                "user-agent", "Griass-di-Mail/" + Config.VERSION
             );
         }
         session.proxy_resolver = config.get_proxy_resolver() ?? GLib.ProxyResolver.get_default();

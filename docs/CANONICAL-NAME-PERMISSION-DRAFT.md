@@ -1,3 +1,9 @@
+# Archived unsent inquiry · superseded product name
+
+On 2026-10-28 the owner selected **Griaß di Mail**. The inquiry below concerns
+the previous **Griabuntu Mail** name and is retained as a historical draft.
+Do not send it. No contact, rejection or permission occurred.
+
 # UNSENT · Canonical name/permission enquiry draft
 
 Prepared 2026-10-26; updated 2026-10-28 with confirmed artwork, maintainer and

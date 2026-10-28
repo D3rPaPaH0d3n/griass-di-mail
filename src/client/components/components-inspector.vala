@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -218,7 +219,7 @@ public class Components.Inspector : Adw.ApplicationWindow {
         var dialog = new Gtk.FileDialog();
         dialog.title = _("Save As");
         dialog.accept_label = _("Save As");
-        dialog.initial_name = new DateTime.now_local().format("Griabuntu Mail Inspector - %F %T.txt");
+        dialog.initial_name = new DateTime.now_local().format("Griaß di Mail Inspector - %F %T.txt");
 
         try {
             File? file = yield dialog.save(this, null);

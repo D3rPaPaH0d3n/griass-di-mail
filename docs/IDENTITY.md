@@ -1,3 +1,18 @@
+# Griaß di Mail · display name and upgrade compatibility
+
+Owner decision, 2026-10-28: the current display name is **Griaß di Mail**;
+repository `D3rPaPaH0d3n/griass-di-mail`. Native launchers, menus, windows,
+notifications and current artwork use it. The original selected icon is retained.
+
+The technical identifiers inventoried below remain intentionally stable for
+native `.deb` upgrades: package/executable/gettext `griabuntu-mail`, existing
+application ID, namespace, resources, settings/database paths and secret schema.
+This avoids creating a second profile or losing references to existing accounts.
+Historical records and original authorship remain unchanged. This is a display/
+repository rebrand, not a profile migration. See [UPGRADING.md](UPGRADING.md).
+
+## Historical technical identity inventory
+
 <!-- Current icon correction, 2026-10-27: The owner selected the CLOSED COLOURED
 ENVELOPE in design/owner-artwork-20261027/. Active exports in brand/ preserve
 that supplied PNG. The previously installed .3 icon study was a mistaken

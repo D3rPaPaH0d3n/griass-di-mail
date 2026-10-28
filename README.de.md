@@ -1,10 +1,10 @@
 <div align="center">
 
-![Griabuntu Mail](design/owner-artwork-20261027/brand-banner.png)
+![Griaß di Mail](brand/brand-banner-griass-di-mail.png)
 
 # Ein ruhiger Platz für deine E-Mails.
 
-**Griabuntu Mail · native Linux-App · Ubuntu 26.10**
+**Griaß di Mail · native Linux-App · Ubuntu 26.10**
 
 Pastelliges Petrol und warmes Pfirsich. Klare Unterhaltungen. Du entscheidest.
 
@@ -14,7 +14,7 @@ Pastelliges Petrol und warmes Pfirsich. Klare Unterhaltungen. Du entscheidest.
 
 ## Für den Linux-Desktop
 
-Griabuntu Mail ist ein eigenständiger **Fork von Convey/Geary** mit GTK4 und
+Griaß di Mail ist ein eigenständiger **Fork von Convey/Geary** mit GTK4 und
 libadwaita. Native Menüs, Tastaturbedienung und Desktop-Integration bleiben
 erhalten. Petrol/Teal und Kupfer/Pfirsich folgen dem Hell-, Dunkel- und
 Hochkontrastmodus des Systems.
@@ -22,7 +22,7 @@ Hochkontrastmodus des Systems.
 Entwicklung und Pflege: **Markus Kainer ·
 [D3rPaPaH0d3n](https://github.com/D3rPaPaH0d3n)**. Kontakt:
 **[projekt@kainer.co.at](mailto:projekt@kainer.co.at)** oder
-[GitHub Issues](https://github.com/D3rPaPaH0d3n/griabuntu-mail/issues).
+[GitHub Issues](https://github.com/D3rPaPaH0d3n/griass-di-mail/issues).
 
 ## Die wichtigen Details im Blick
 
@@ -78,7 +78,7 @@ des zugehörigen Quellcodes zu beachten.
 
 ## Eigener Auftritt, erhaltene Herkunft
 
-Griabuntu Mail ist kein offizielles Produkt von Convey, Geary, GNOME oder
+Griaß di Mail ist kein offizielles Produkt von Convey, Geary, GNOME oder
 Canonical. Die Anwendung steht unter **GPL-3.0-only**; Bibliotheken, Symbole,
 Klänge und eingebundene Komponenten behalten ihre jeweiligen Lizenzen.
 Ursprüngliche Urheber, Hinweise und die Fork-Historie bleiben erhalten.
@@ -99,3 +99,8 @@ Für sensible Meldungen gilt [SECURITY.md](SECURITY.md).
 ---
 Die ursprünglichen README-Urheberhinweise stehen vollständig in [README.md](README.md).
 Änderungen © 2026 Markus Kainer <projekt@kainer.co.at>
+
+Current name / Aktueller Name: **Griaß di Mail** (2026-10-28).
+The native package remains `griabuntu-mail` for existing-profile upgrades;
+der technische Paketname bleibt für Updates erhalten. The app remains free;
+a voluntary donation button may be considered in future.

@@ -1,3 +1,10 @@
+# Griaß di Mail · component notices
+
+Current display name, 2026-10-28: **Griaß di Mail**. Technical/native package
+identifiers remain stable for upgrades. The renamed title banner is documented
+in [ARTWORK-PROVENANCE.md](docs/ARTWORK-PROVENANCE.md); the selected icon remains
+unchanged. Historical notices below retain their original dates and names.
+
 <!-- Icon correction, 2026-10-27: The active app/tray/symbolic family now derives
 from the owner-supplied closed-envelope PNGs, not the local CC0 study described
 in the superseded inventory below. See brand/README.md. No earlier CC0 grant

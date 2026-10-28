@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
  * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
@@ -156,7 +157,7 @@ internal class Application.TrayItem : GLib.Object {
     public string category { owned get { return "Communications"; } }
     public string id { owned get { return Config.APP_ID; } }
     public string title { owned get {
-        return this.new_mail_count > 0 ? "Griabuntu Mail — " + count_description() : "Griabuntu Mail";
+        return this.new_mail_count > 0 ? "Griaß di Mail — " + count_description() : "Griaß di Mail";
     } }
     public string status { owned get { return "Active"; } }
     public int window_id { get { return 0; } }
@@ -171,7 +172,7 @@ internal class Application.TrayItem : GLib.Object {
     public bool item_is_menu { get { return false; } }
     public GLib.ObjectPath menu { owned get { return new GLib.ObjectPath("/StatusNotifierItem/Menu"); } }
     public TrayTooltip tool_tip { owned get {
-        return { this.icon_name, {}, "Griabuntu Mail", count_description() };
+        return { this.icon_name, {}, "Griaß di Mail", count_description() };
     } }
     public string x_ayatana_label { owned get {
         return this.new_mail_count > 999 ? "999+"
@@ -317,7 +318,7 @@ internal class Application.TrayMenu : GLib.Object {
             all.insert("label", new GLib.Variant.string(label.replace("_", "__")));
             all.insert("icon-name", new GLib.Variant.string("mail-unread-symbolic"));
         } else {
-            string label = id == 1 ? _("Open Griabuntu Mail")
+            string label = id == 1 ? _("Open Griaß di Mail")
                 : id == 2 ? _("New Message") : _("_Quit");
             all.insert("label", new GLib.Variant.string(label));
             all.insert("icon-name", new GLib.Variant.string(id == 1

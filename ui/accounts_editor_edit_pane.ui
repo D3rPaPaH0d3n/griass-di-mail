@@ -107,7 +107,7 @@
               <object class="AdwPreferencesGroup">
                 <child>
                   <object class="GtkButton" id="remove_button">
-                    <property name="tooltip_text" translatable="yes">Remove this account from Griabuntu Mail</property>
+                    <property name="tooltip_text" translatable="yes">Remove this account from Griaß di Mail</property>
                     <property name="icon_name">user-trash-symbolic</property>
                     <signal name="clicked" handler="on_remove_account_clicked"/>
                     <style>

@@ -4,14 +4,14 @@
       id="index">
 
   <info>
-    <title type="link" role="trail">Griabuntu Mail</title>
-    <title type="text">Griabuntu Mail</title>
-    <title type="link">Griabuntu Mail</title>
+    <title type="link" role="trail">Griaß di Mail</title>
+    <title type="text">Griaß di Mail</title>
+    <title type="link">Griaß di Mail</title>
   </info>
 
   <title>
     <media type="image" its:translate="no" src="figures/io.github.d3rpapah0d3n.GriabuntuMail.svg" width="48" height="48"></media>
-    <span>Griabuntu Mail</span>
+    <span>Griaß di Mail</span>
   </title>
 
   <section id="introduction" style="2column">
@@ -19,7 +19,7 @@
   </section>
 
   <section id="overview" style="2column">
-    <title>Using Griabuntu Mail</title>
+    <title>Using Griaß di Mail</title>
   </section>
 
   <section id="contribute" style="2column">

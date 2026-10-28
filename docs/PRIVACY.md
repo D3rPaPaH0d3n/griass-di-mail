@@ -9,7 +9,7 @@ and has not been changed by this feature.
 1. With **Allow Gravatar contact pictures** enabled, displayed sender/recipient
    addresses are trimmed, lowercased and SHA-256 hashed. Only that hash goes to
    `www.gravatar.com`, together with the connection's IP address and a generic
-   Griabuntu Mail user agent. Email hashes are pseudonymous, not anonymous:
+   Griaß di Mail user agent. Email hashes are pseudonymous, not anonymous:
    common addresses can be guessed. No name, subject or message body is sent.
 2. With the additional **Allow company and website icons** setting enabled,
    and only when a local/Gravatar picture is unavailable, the address's domain

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
@@ -163,7 +164,7 @@ public class SecretMediator : GriabuntuMail.CredentialsMediator, Object {
             SecretMediator.schema,
             new_attrs(service),
             Secret.COLLECTION_DEFAULT,
-            "Griabuntu Mail %s password".printf(to_proto_value(service.protocol)),
+            "Griaß di Mail %s password".printf(to_proto_value(service.protocol)),
             password,
             cancellable
         );

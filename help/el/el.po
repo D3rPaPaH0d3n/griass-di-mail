@@ -1,4 +1,4 @@
-# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Downstream modification: 2026-10-27 — Griaß di Mail branding and source paths.
 # Greek translation for griabuntu_mail.
 # Copyright (C) 2014 convey's COPYRIGHT HOLDER
 # This file is distributed under the same license as the griabuntu-mail package.
@@ -23,8 +23,8 @@ msgid "Write a message"
 msgstr "Συγγραφή μηνύματος"
 
 #: C/write.page:12(p)
-msgid "To compose a new message in Griabuntu Mail, press the <gui>New Message</gui> button on the toolbar."
-msgstr "Για να συνθέσετε ένα νέο μήνυμα στο Griabuntu Mail, πατήστε το πλήκτρο <gui>Νέο μήνυμα</gui> στην εργαλειοθήκη."
+msgid "To compose a new message in Griaß di Mail, press the <gui>New Message</gui> button on the toolbar."
+msgstr "Για να συνθέσετε ένα νέο μήνυμα στο Griaß di Mail, πατήστε το πλήκτρο <gui>Νέο μήνυμα</gui> στην εργαλειοθήκη."
 
 #: C/write.page:15(p)
 msgid "To reply to a message, open the message menu in the upper right corner of the message and choose <gui>Reply</gui>, <gui>Reply All</gui> or <gui>Forward</gui>. You can also reply to the last message in a conversation via the <gui>Reply</gui>, <gui>Reply All</gui> or <gui>Forward</gui> buttons on the toolbar."
@@ -35,12 +35,12 @@ msgid "Features"
 msgstr "Λειτουργίες"
 
 #: C/write.page:22(p)
-msgid "Griabuntu Mail's email composer lets you adjust the font, size and color of text. You can also insert hyperlinks into messages."
-msgstr "Η σύνταξη μηνύματος στο Griabuntu Mail σας επιτρέπει να ρυθμίσετε τη γραμματοσειρά, το μέγεθος και το χρώμα του κειμένου. Μπορείτε επίσης να παρεμβάλετε υπερσυνδέσμους στα μηνύματα."
+msgid "Griaß di Mail's email composer lets you adjust the font, size and color of text. You can also insert hyperlinks into messages."
+msgstr "Η σύνταξη μηνύματος στο Griaß di Mail σας επιτρέπει να ρυθμίσετε τη γραμματοσειρά, το μέγεθος και το χρώμα του κειμένου. Μπορείτε επίσης να παρεμβάλετε υπερσυνδέσμους στα μηνύματα."
 
 #: C/write.page:24(p)
-msgid "Griabuntu Mail can also send plain text messages. In the drop-down menu, check or uncheck \"Rich Text\" to toggle between plain text and rich text mode."
-msgstr "Το Griabuntu Mail μπορεί επίσης να στείλει απλά μηνύματα κειμένου. Στο αναπτυσσόμενο μενού, επιλέξτε ή αποεπιλέξτε \"Πλούσιο κείμενο\" για εναλλαγή μεταξύ κατάστασης απλού και πλούσιου κειμένου."
+msgid "Griaß di Mail can also send plain text messages. In the drop-down menu, check or uncheck \"Rich Text\" to toggle between plain text and rich text mode."
+msgstr "Το Griaß di Mail μπορεί επίσης να στείλει απλά μηνύματα κειμένου. Στο αναπτυσσόμενο μενού, επιλέξτε ή αποεπιλέξτε \"Πλούσιο κείμενο\" για εναλλαγή μεταξύ κατάστασης απλού και πλούσιου κειμένου."
 
 #: C/write.page:27(p)
 msgid "You can attach a file to a message you're writing in either of these ways:"
@@ -59,16 +59,16 @@ msgid "Drafts"
 msgstr "Πρόχειρα"
 
 #: C/write.page:39(p)
-msgid "For mail servers that support drafts, Griabuntu Mail will automatically save the message as you type. If you close the composer without sending, Griabuntu Mail will prompt you to keep the draft or to discard it."
-msgstr "Για διακομιστές αλληλογραφίας που υποστηρίζουν πρόχειρα, το Griabuntu Mail θα αποθηκεύσει αυτόματα το μήνυμα καθώς πληκτρολογείτε. Αν κλείσετε τη σύνταξη χωρίς αποστολή, το Griabuntu Mail θα σας προτρέψει να κρατήσετε το πρόχειρο ή να το απορρίψετε."
+msgid "For mail servers that support drafts, Griaß di Mail will automatically save the message as you type. If you close the composer without sending, Griaß di Mail will prompt you to keep the draft or to discard it."
+msgstr "Για διακομιστές αλληλογραφίας που υποστηρίζουν πρόχειρα, το Griaß di Mail θα αποθηκεύσει αυτόματα το μήνυμα καθώς πληκτρολογείτε. Αν κλείσετε τη σύνταξη χωρίς αποστολή, το Griaß di Mail θα σας προτρέψει να κρατήσετε το πρόχειρο ή να το απορρίψετε."
 
 #: C/write.page:42(p)
 msgid "To edit an existing draft, select the Drafts folder in the folder list, select the message, and click \"Edit Draft\" in the message viewer."
 msgstr "Για να επεξεργαστείτε ένα υπάρχον πρόχειρο, επιλέξτε τον φάκελο προχείρων στον κατάλογο φακέλων, επιλέξτε το μήνυμα και πατήστε \"Επεξεργασία προχείρου\" στην προβολή μηνυμάτων."
 
 #: C/write.page:45(p)
-msgid "Griabuntu Mail deletes the draft when you send the message."
-msgstr "Το Griabuntu Mail διαγράφει το πρόχειρο όταν στέλνετε το μήνυμα."
+msgid "Griaß di Mail deletes the draft when you send the message."
+msgstr "Το Griaß di Mail διαγράφει το πρόχειρο όταν στέλνετε το μήνυμα."
 
 #: C/star.page:10(title)
 msgid "Star a message or mark it as read/unread"
@@ -91,8 +91,8 @@ msgid "Mark messages as read or unread"
 msgstr "Σημείωση μηνυμάτων ως διαβασμένα ή αδιάβαστα"
 
 #: C/star.page:19(p)
-msgid "Griabuntu Mail marks messages as read automatically as you read them. To manually toggle a conversation as read or unread, click the circle icon in the conversation list."
-msgstr "Το Griabuntu Mail σημειώνει τα μηνύματα ως διαβασμένα αυτόματα καθώς τα διαβάζετε. Για χειροκίνητη εναλλαγή μιας συνομιλίας ως διαβασμένης ή αδιάβαστης, πατήστε το εικονίδιο κύκλου στον κατάλογο συνομιλιών."
+msgid "Griaß di Mail marks messages as read automatically as you read them. To manually toggle a conversation as read or unread, click the circle icon in the conversation list."
+msgstr "Το Griaß di Mail σημειώνει τα μηνύματα ως διαβασμένα αυτόματα καθώς τα διαβάζετε. Για χειροκίνητη εναλλαγή μιας συνομιλίας ως διαβασμένης ή αδιάβαστης, πατήστε το εικονίδιο κύκλου στον κατάλογο συνομιλιών."
 
 #: C/star.page:22(p)
 msgid "Alternately, the <gui>Mark as Unread</gui> in the <gui>Mark</gui> menu on the toolbar can be used to toggle the read status of the selected conversation(s)."
@@ -107,8 +107,8 @@ msgid "Keyboard shortcuts"
 msgstr "Συντομεύσεις πληκτρολογίου"
 
 #: C/shortcuts.page:12(p)
-msgid "Griabuntu Mail has keyboard shortcuts for most common operations."
-msgstr "Το Griabuntu Mail έχει συντομεύσεις πληκτρολογίου για τις πιο συνηθισμένες λειτουργίες."
+msgid "Griaß di Mail has keyboard shortcuts for most common operations."
+msgstr "Το Griaß di Mail έχει συντομεύσεις πληκτρολογίου για τις πιο συνηθισμένες λειτουργίες."
 
 #: C/shortcuts.page:15(p)
 msgid "Compose a new message"
@@ -310,24 +310,24 @@ msgid "Search"
 msgstr "Αναζήτηση"
 
 #: C/search.page:12(p)
-msgid "Griabuntu Mail supports a per-account full text search. To start a search, select a folder associated with the account you'd like to search against. Then click the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></keyseq>) and start typing. Results will appear after a brief delay."
-msgstr "Το Griabuntu Mail υποστηρίζει μια πλήρη αναζήτηση κειμένου ανά λογαριασμό. Για να αρχίσετε μια αναζήτηση, επιλέξτε έναν φάκελο που συσχετίζεται με τον λογαριασμό που θα θέλατε να αναζητήσετε. Έπειτα πατήστε στο πλαίσιο αναζήτησης στην εργαλειοθήκη (ή πατήστε <keyseq><key>Ctrl</key><key>S</key></keyseq>) και αρχίστε να πληκτρολογείτε. Τα αποτελέσματα θα εμφανιστούν μετά από μια σύντομη καθυστέρηση."
+msgid "Griaß di Mail supports a per-account full text search. To start a search, select a folder associated with the account you'd like to search against. Then click the search box in the toolbar (or press <keyseq><key>Ctrl</key><key>S</key></keyseq>) and start typing. Results will appear after a brief delay."
+msgstr "Το Griaß di Mail υποστηρίζει μια πλήρη αναζήτηση κειμένου ανά λογαριασμό. Για να αρχίσετε μια αναζήτηση, επιλέξτε έναν φάκελο που συσχετίζεται με τον λογαριασμό που θα θέλατε να αναζητήσετε. Έπειτα πατήστε στο πλαίσιο αναζήτησης στην εργαλειοθήκη (ή πατήστε <keyseq><key>Ctrl</key><key>S</key></keyseq>) και αρχίστε να πληκτρολογείτε. Τα αποτελέσματα θα εμφανιστούν μετά από μια σύντομη καθυστέρηση."
 
 #: C/search.page:16(p)
 msgid "The full text search includes email text, email addresses (to, from, and cc), subject lines and attachment filenames."
 msgstr "Η πλήρης αναζήτηση κειμένου περιλαμβάνει κείμενο μηνύματος, διευθύνσεων αλληλογραφίας (πρός, από, και κοινοποίηση), γραμμές θέματος και ονόματα αρχείων συνημμένων."
 
 #: C/search.page:19(p)
-msgid "Keywords that match your search are highlighted in the message view. Griabuntu Mail will match different forms of the same word, for example searching for \"walk\" will also match \"walking\" and \"walked.\""
-msgstr "Οι λέξεις-κλειδιά που ταιριάζουν με την αναζήτησή σας επισημαίνονται στην προβολή μηνυμάτων. Το Griabuntu Mail θα ταιριάξει διαφορετικές μορφές της ίδιας λέξης, για παράδειγμα η αναζήτηση για \"walk\" θα ταιριάξει επίσης \"walking\" και \"walked\"."
+msgid "Keywords that match your search are highlighted in the message view. Griaß di Mail will match different forms of the same word, for example searching for \"walk\" will also match \"walking\" and \"walked.\""
+msgstr "Οι λέξεις-κλειδιά που ταιριάζουν με την αναζήτησή σας επισημαίνονται στην προβολή μηνυμάτων. Το Griaß di Mail θα ταιριάξει διαφορετικές μορφές της ίδιας λέξης, για παράδειγμα η αναζήτηση για \"walk\" θα ταιριάξει επίσης \"walking\" και \"walked\"."
 
 #: C/search.page:23(title)
 msgid "Search operators"
 msgstr "Τελεστές αναζήτησης"
 
 #: C/search.page:24(p)
-msgid "Griabuntu Mail supports the following operators to limit the scope of searches:"
-msgstr "Το Griabuntu Mail υποστηρίζει τους ακόλουθους τελεστές για να περιορίσουν το πεδίο των αναζητήσεων:"
+msgid "Griaß di Mail supports the following operators to limit the scope of searches:"
+msgstr "Το Griaß di Mail υποστηρίζει τους ακόλουθους τελεστές για να περιορίσουν το πεδίο των αναζητήσεων:"
 
 #: C/search.page:27(var)
 msgid "filename"
@@ -409,8 +409,8 @@ msgid "As a special case, the <input>bcc</input>, <input>cc</input>, <input>from
 msgstr "Σαν μια ειδική περίπτωση οι τελεστές <input>κρυφή κοιν.</input>, <input>κοιν.</input>, <input>από</input>, και <input>προς</input> υποστηρίζουν και το <input>εμένα</input> ως επιχείρημά τους, που κάνει αναζήτηση για τη διεύθυνση ηλεκτρονικού ταχυδρομείου του λογαριασμού σας στο κατάλληλο πλαίσιο."
 
 #: C/preferences.page:11(p)
-msgid "The <gui>Preferences</gui> option is available in either Griabuntu Mail's application menu or the gear menu in the upper-right of the toolbar. (The location depends on the install desktop shell. For GNOME Shell and Unity, the application menu is available near the top-left corner of the screen.)"
-msgstr "Η επιλογή <gui>Προτιμήσεις</gui> είναι διαθέσιμη είτε στο μενού εφαρμογών του Griabuntu Mail ή το μενού με το γρανάζι στην επάνω δεξιά γωνία της γραμμής εργαλείων. (Η θέση εξαρτάται από την εγκατάσταση του κελύφους επιφάνειας εργασίας. Για το κέλυφος GNOME και το Unity, το μενού της εφαρμογής είναι διαθέσιμο κοντά στην επάνω αριστερή γωνία της οθόνης.)"
+msgid "The <gui>Preferences</gui> option is available in either Griaß di Mail's application menu or the gear menu in the upper-right of the toolbar. (The location depends on the install desktop shell. For GNOME Shell and Unity, the application menu is available near the top-left corner of the screen.)"
+msgstr "Η επιλογή <gui>Προτιμήσεις</gui> είναι διαθέσιμη είτε στο μενού εφαρμογών του Griaß di Mail ή το μενού με το γρανάζι στην επάνω δεξιά γωνία της γραμμής εργαλείων. (Η θέση εξαρτάται από την εγκατάσταση του κελύφους επιφάνειας εργασίας. Για το κέλυφος GNOME και το Unity, το μενού της εφαρμογής είναι διαθέσιμο κοντά στην επάνω αριστερή γωνία της οθόνης.)"
 
 #: C/preferences.page:17(title)
 msgid "Reading"
@@ -421,8 +421,8 @@ msgid "Automatically select next message"
 msgstr "Αυτόματη επιλογή επόμενου μηνύματος"
 
 #: C/preferences.page:21(p)
-msgid "When this option is enabled, Griabuntu Mail automatically selects the latest message in a folder when you enter the folder. In addition, after archiving a message, Griabuntu Mail automatically selects an adjacent message."
-msgstr "Όταν αυτή η επιλογή είναι ενεργή, το Griabuntu Mail επιλέγει αυτόματα το τελευταίο μήνυμα στον φάκελο όταν μπαίνετε στον φάκελο. Επιπλέον, μετά την αρχειοθέτηση ενός μηνύματος, το Griabuntu Mail επιλέγει αυτόματα ένα παρακείμενο μήνυμα."
+msgid "When this option is enabled, Griaß di Mail automatically selects the latest message in a folder when you enter the folder. In addition, after archiving a message, Griaß di Mail automatically selects an adjacent message."
+msgstr "Όταν αυτή η επιλογή είναι ενεργή, το Griaß di Mail επιλέγει αυτόματα το τελευταίο μήνυμα στον φάκελο όταν μπαίνετε στον φάκελο. Επιπλέον, μετά την αρχειοθέτηση ενός μηνύματος, το Griaß di Mail επιλέγει αυτόματα ένα παρακείμενο μήνυμα."
 
 #: C/preferences.page:26(gui)
 msgid "Display conversation preview"
@@ -441,8 +441,8 @@ msgid "Enable spell checking"
 msgstr "Ενεργοποίηση ορθογραφικού ελέγχου"
 
 #: C/preferences.page:38(p)
-msgid "When set, Griabuntu Mail automatically spell checks a message as you write it, underlying each misspelled word in red."
-msgstr "Αν οριστεί, το Griabuntu Mail ελέγχει αυτόματα ορθογραφικά ένα μήνυμα καθώς γράφετε, υπογραμμίζοντας κάθε ανορθόγραφη λέξη με κόκκινο."
+msgid "When set, Griaß di Mail automatically spell checks a message as you write it, underlying each misspelled word in red."
+msgstr "Αν οριστεί, το Griaß di Mail ελέγχει αυτόματα ορθογραφικά ένα μήνυμα καθώς γράφετε, υπογραμμίζοντας κάθε ανορθόγραφη λέξη με κόκκινο."
 
 #: C/preferences.page:45(title)
 msgid "Notifications"
@@ -453,16 +453,16 @@ msgid "Play notification sounds"
 msgstr "Αναπαραγωγή ήχων ειδοποίησης"
 
 #: C/preferences.page:49(p)
-msgid "When set, Griabuntu Mail plays a sound whenever a new message arrives."
-msgstr "Αν οριστεί, το Griabuntu Mail παίζει έναν ήχο όποτε φτάνει ένα νέο μήνυμα."
+msgid "When set, Griaß di Mail plays a sound whenever a new message arrives."
+msgstr "Αν οριστεί, το Griaß di Mail παίζει έναν ήχο όποτε φτάνει ένα νέο μήνυμα."
 
 #: C/preferences.page:52(gui)
 msgid "Show notifications for new mail"
 msgstr "Εμφάνιση ειδοποιήσεων για νέα μηνύματα"
 
 #: C/preferences.page:53(p)
-msgid "When set, Griabuntu Mail displays a <em>notification</em> each time a new message arrives. Notifications are displayed in a system-dependent manner. On GNOME Shell, notifications appear at the bottom of the display. In Ubuntu Unity, notifications appear at the upper right of the display."
-msgstr "Αν οριστεί, το Griabuntu Mail εμφανίζει μια <em>ειδοποίηση</em> κάθε φορά που φτάνει ένα νέο μήνυμα. Οι ειδοποιήσεις εμφανίζονται με έναν τρόπο εξαρτημένου συστήματος. Στο κέλυφος GNOME, οι ειδοποιήσεις εμφανίζονται στο κάτω μέρος της οθόνης. Στο Ubuntu Unity, οι ειδοποιήσεις εμφανίζονται στο πάνω δεξιά μέρος της οθόνης."
+msgid "When set, Griaß di Mail displays a <em>notification</em> each time a new message arrives. Notifications are displayed in a system-dependent manner. On GNOME Shell, notifications appear at the bottom of the display. In Ubuntu Unity, notifications appear at the upper right of the display."
+msgstr "Αν οριστεί, το Griaß di Mail εμφανίζει μια <em>ειδοποίηση</em> κάθε φορά που φτάνει ένα νέο μήνυμα. Οι ειδοποιήσεις εμφανίζονται με έναν τρόπο εξαρτημένου συστήματος. Στο κέλυφος GNOME, οι ειδοποιήσεις εμφανίζονται στο κάτω μέρος της οθόνης. Στο Ubuntu Unity, οι ειδοποιήσεις εμφανίζονται στο πάνω δεξιά μέρος της οθόνης."
 
 #: C/overview.page:8(title)
 msgid "Overview"
@@ -473,20 +473,20 @@ msgid "Geary is a lightweight email reader for the <link href=\"http://gnome.org
 msgstr "Το Geary είναι μια ελαφρυά εφαρμογή ανάγνωσης αλληλογραφίας για την επιφάνεια εργασίας <link href=\"http://gnome.org\">GNOME</link>. Δουλεύει με διακομιστές αλληλογραφίας που υποστηρίζουν το πρωτόκολλο IMAP, συμπεριλαμβανομένων δημοφιλών υπηρεσιών όπως Gmail, Yahoo Mail και Outlook.com."
 
 #: C/overview.page:14(p)
-msgid "Griabuntu Mail groups mail messages into <em>conversations</em>. A conversation contains all messages in a single thread of discussion."
-msgstr "Το Griabuntu Mail ομαδοποιεί τα μηνύματα αλληλογραφίας σε <em>συνομιλίες</em>. Μια συνομιλία περιέχει όλα τα μηνύματα σε ένα μοναδικό νήμα συζήτησης."
+msgid "Griaß di Mail groups mail messages into <em>conversations</em>. A conversation contains all messages in a single thread of discussion."
+msgstr "Το Griaß di Mail ομαδοποιεί τα μηνύματα αλληλογραφίας σε <em>συνομιλίες</em>. Μια συνομιλία περιέχει όλα τα μηνύματα σε ένα μοναδικό νήμα συζήτησης."
 
 #: C/overview.page:17(p)
-msgid "The main Griabuntu Mail window is divided into several areas:"
-msgstr "Το κυρίως παράθυρο του Griabuntu Mail διαιρείται σε αρκετές περιοχές:"
+msgid "The main Griaß di Mail window is divided into several areas:"
+msgstr "Το κυρίως παράθυρο του Griaß di Mail διαιρείται σε αρκετές περιοχές:"
 
 #: C/overview.page:20(title)
 msgid "Folder list"
 msgstr "Λίστα φακέλων"
 
 #: C/overview.page:21(p)
-msgid "The <em>folder list</em> at the left displays all <em>folders</em> and <em>labels</em> in your mail account. Griabuntu Mail uses the term <em>label</em> for any folder that you have created to help organize your messages. (The Gmail web interface also uses this term; most other mail services do not.)"
-msgstr "Η <em>λίστα φακέλων</em> στα αριστερά εμφανίζει όλους τους <em>φακέλους</em> και τις <em>ετικέτες</em> στον λογαριασμό αλληλογραφίας σας. Το Griabuntu Mail χρησιμοποιεί τον όρο <em>ετικέτα</em> για οποιονδήποτε φάκελο έχετε δημιουργήσει για να βοηθήσει την οργάνωση των μηνυμάτων σας. (Η διεπαφή ιστού Gmail χρησιμοποιεί επίσης αυτόν τον όρο· οι περισσότερες άλλες υπηρεσίες δεν τον χρησιμοποιούν.)"
+msgid "The <em>folder list</em> at the left displays all <em>folders</em> and <em>labels</em> in your mail account. Griaß di Mail uses the term <em>label</em> for any folder that you have created to help organize your messages. (The Gmail web interface also uses this term; most other mail services do not.)"
+msgstr "Η <em>λίστα φακέλων</em> στα αριστερά εμφανίζει όλους τους <em>φακέλους</em> και τις <em>ετικέτες</em> στον λογαριασμό αλληλογραφίας σας. Το Griaß di Mail χρησιμοποιεί τον όρο <em>ετικέτα</em> για οποιονδήποτε φάκελο έχετε δημιουργήσει για να βοηθήσει την οργάνωση των μηνυμάτων σας. (Η διεπαφή ιστού Gmail χρησιμοποιεί επίσης αυτόν τον όρο· οι περισσότερες άλλες υπηρεσίες δεν τον χρησιμοποιούν.)"
 
 #: C/overview.page:28(title)
 msgid "Conversation list"
@@ -497,16 +497,16 @@ msgid "The <em>conversation list</em> displays a list of conversations in the se
 msgstr "Η <em>λίστα συνομιλιών</em> εμφανίζει μια λίστα συνομιλιών στον επιλεγμένο φάκελο. Οι νεότερες συνομιλίες εμφανίζονται στην κορυφή."
 
 #: C/overview.page:31(p)
-msgid "Each sender's name appears bold if there are unread messages from that sender. If a conversation has more than one message, Griabuntu Mail displays a count of messages in the conversation."
-msgstr "Κάθε όνομα αποστολέα εμφανίζεται έντονα αν υπάρχουν αδιάβαστα μηνύματα από αυτόν τον αποστολέα. Αν μια συνομιλία έχει περισσότερα από ένα μηνύματα, το Griabuntu Mail εμφανίζει ένα αριθμό μηνυμάτων στη συνομιλία."
+msgid "Each sender's name appears bold if there are unread messages from that sender. If a conversation has more than one message, Griaß di Mail displays a count of messages in the conversation."
+msgstr "Κάθε όνομα αποστολέα εμφανίζεται έντονα αν υπάρχουν αδιάβαστα μηνύματα από αυτόν τον αποστολέα. Αν μια συνομιλία έχει περισσότερα από ένα μηνύματα, το Griaß di Mail εμφανίζει ένα αριθμό μηνυμάτων στη συνομιλία."
 
 #: C/overview.page:34(p)
-msgid "Griabuntu Mail does not automatically download all messages in all of your mail folders. When you first visit your Inbox or any other folder, Griabuntu Mail downloads the 50 most recent messages in that folder. To see more messages, simply scroll down the conversation list and Griabuntu Mail will fetch more messages automatically."
-msgstr "Το Griabuntu Mail δεν κάνει αυτόματη λήψη όλων των μηνυμάτων σε όλους τους φακέλους αλληλογραφίας. Όταν πρωτοεπισκέπτεστε τα εισερχόμενα ή οποιονδήποτε άλλον φάκελο, το Griabuntu Mail κάνει λήψη των 50 πιο πρόσφατων μηνυμάτων σε αυτόν τον φάκελο. Για να δείτε περισσότερα μηνύματα, απλά κυλήστε προς τα κάτω τον κατάλογο συνομιλιών και το Griabuntu Mail θα ανακτήσει περισσότερα μηνύματα αυτόματα."
+msgid "Griaß di Mail does not automatically download all messages in all of your mail folders. When you first visit your Inbox or any other folder, Griaß di Mail downloads the 50 most recent messages in that folder. To see more messages, simply scroll down the conversation list and Griaß di Mail will fetch more messages automatically."
+msgstr "Το Griaß di Mail δεν κάνει αυτόματη λήψη όλων των μηνυμάτων σε όλους τους φακέλους αλληλογραφίας. Όταν πρωτοεπισκέπτεστε τα εισερχόμενα ή οποιονδήποτε άλλον φάκελο, το Griaß di Mail κάνει λήψη των 50 πιο πρόσφατων μηνυμάτων σε αυτόν τον φάκελο. Για να δείτε περισσότερα μηνύματα, απλά κυλήστε προς τα κάτω τον κατάλογο συνομιλιών και το Griaß di Mail θα ανακτήσει περισσότερα μηνύματα αυτόματα."
 
 #: C/overview.page:36(p)
-msgid "Some commands in Griabuntu Mail can act on a group of conversations. To select multiple conversations, hold down the <key>Ctrl</key> key and click each conversation in turn in the conversation list. Alternatively, click the first conversation in a range, then hold down <key>Shift</key> and click the last conversation."
-msgstr "Κάποιες εντολές στο Griabuntu Mail μπορούν να δράσουν σε μια ομάδα συνομιλιών. Για να επιλέξετε πολλές συνομιλίες, κρατήστε πατημένο το πλήκτρο <key>Ctrl</key> και πατήστε κάθε συνομιλία με τη σειρά της στην λίστα συνομιλιών. Εναλλακτικά, πατήστε την πρώτη συνομιλία σε μια περιοχή, έπειτα κρατήστε πατημένο το <key>Shift</key> και πατήστε την τελευταία συνομιλία."
+msgid "Some commands in Griaß di Mail can act on a group of conversations. To select multiple conversations, hold down the <key>Ctrl</key> key and click each conversation in turn in the conversation list. Alternatively, click the first conversation in a range, then hold down <key>Shift</key> and click the last conversation."
+msgstr "Κάποιες εντολές στο Griaß di Mail μπορούν να δράσουν σε μια ομάδα συνομιλιών. Για να επιλέξετε πολλές συνομιλίες, κρατήστε πατημένο το πλήκτρο <key>Ctrl</key> και πατήστε κάθε συνομιλία με τη σειρά της στην λίστα συνομιλιών. Εναλλακτικά, πατήστε την πρώτη συνομιλία σε μια περιοχή, έπειτα κρατήστε πατημένο το <key>Shift</key> και πατήστε την τελευταία συνομιλία."
 
 #: C/overview.page:44(title)
 msgid "Message area"
@@ -517,28 +517,28 @@ msgid "The <em>message area</em> displays all messages in the selected conversat
 msgstr "Η <em>περιοχή μηνυμάτων</em> εμφανίζει όλα τα μηνύματα στην επιλεγμένη συνομιλία, με τα πιο παλιά μηνύματα στην κορυφή."
 
 #: C/overview.page:47(p)
-msgid "At the upper right of each message, Griabuntu Mail displays a dropdown arrow that lets you open the <em>message menu</em> with commands that operate on the message."
-msgstr "Επάνω δεξιά σε κάθε μήνυμα, το Griabuntu Mail εμφανίζει ένα αναπτυσσόμενο βέλος που σας επιτρέπει να ανοίξετε το <em>μενού μηνυμάτων</em> με εντολές που επιδρούν στο μήνυμα."
+msgid "At the upper right of each message, Griaß di Mail displays a dropdown arrow that lets you open the <em>message menu</em> with commands that operate on the message."
+msgstr "Επάνω δεξιά σε κάθε μήνυμα, το Griaß di Mail εμφανίζει ένα αναπτυσσόμενο βέλος που σας επιτρέπει να ανοίξετε το <em>μενού μηνυμάτων</em> με εντολές που επιδρούν στο μήνυμα."
 
 #: C/overview.page:49(p)
-msgid "When you view a conversation, Griabuntu Mail collapses messages that you've already read. Click collapsed messages to expand them. Click an expanded message's header to collapse it."
-msgstr "Όταν προβάλετε μια συνομιλία, το Griabuntu Mail συμπτύσσει τα μηνύματα που έχετε ήδη διαβάσει. Πατήστε τα συνεπτυγμένα μηνύματα για να τα αναπτύξετε. Πατήστε την κεφαλίδα ενός ανεπτυγμένου μηνύματος για να το συμπτύξετε."
+msgid "When you view a conversation, Griaß di Mail collapses messages that you've already read. Click collapsed messages to expand them. Click an expanded message's header to collapse it."
+msgstr "Όταν προβάλετε μια συνομιλία, το Griaß di Mail συμπτύσσει τα μηνύματα που έχετε ήδη διαβάσει. Πατήστε τα συνεπτυγμένα μηνύματα για να τα αναπτύξετε. Πατήστε την κεφαλίδα ενός ανεπτυγμένου μηνύματος για να το συμπτύξετε."
 
 #: C/overview.page:50(p)
 msgid "Any attachments in a message appear at the bottom of the message. You can click an attachment to open it or right-click to save it."
 msgstr "Όλα τα συνημμένα σε ένα μήνυμα εμφανίζονται στο τέλος του μηνύματος. Μπορείτε να κάνετε κλικ σε ένα συνημμένο για να το ανοίξετε ή δεξί κλικ για να το αποθηκεύσετε."
 
 #: C/overview.page:52(p)
-msgid "Griabuntu Mail uses <link href=\"https://secure.gravatar.com/\">Gravatar</link> to display an avatar for each message's sender in its header."
-msgstr "Το Griabuntu Mail χρησιμοποιεί το <link href=\"https://secure.gravatar.com/\">Gravatar</link> για να εμφανίσετε ένα άβαταρ για τον αποστολέα κάθε μηνύματος στην επικεφαλίδα του."
+msgid "Griaß di Mail uses <link href=\"https://secure.gravatar.com/\">Gravatar</link> to display an avatar for each message's sender in its header."
+msgstr "Το Griaß di Mail χρησιμοποιεί το <link href=\"https://secure.gravatar.com/\">Gravatar</link> για να εμφανίσετε ένα άβαταρ για τον αποστολέα κάθε μηνύματος στην επικεφαλίδα του."
 
 #: C/limits.page:11(title)
 msgid "Limitations"
 msgstr "Περιορισμοί"
 
 #: C/limits.page:12(p)
-msgid "Griabuntu Mail is still in early development. Griabuntu Mail supports IMAP and has been tested with Gmail, Yahoo, and the free Dovecot mail server. Experimental support for Outlook.com is provided. Griabuntu Mail may not yet work well with some IMAP servers. At this time Griabuntu Mail is still missing numerous features including offline mode."
-msgstr "Το Griabuntu Mail είναι ακόμα στην πρώιμη ανάπτυξη. Το Griabuntu Mail υποστηρίζει IMAP και έχει δοκιμαστεί με Gmail, Yahoo και τον ελεύθερο διακομιστή αλληλογραφίας Dovecot. Πειραματική υποστήριξη παρέχεται για το Outlook.com. Το Griabuntu Mail ενδέχεται να μην δουλεύει ακόμα καλά με κάποιους διακομιστές IMAP. Αυτήν την περίοδο στο Griabuntu Mail λείπουν ακόμα πολυάριθμες λειτουργίες συμπεριλαμβανόμενης της λειτουργίας χωρίς σύνδεση."
+msgid "Griaß di Mail is still in early development. Griaß di Mail supports IMAP and has been tested with Gmail, Yahoo, and the free Dovecot mail server. Experimental support for Outlook.com is provided. Griaß di Mail may not yet work well with some IMAP servers. At this time Griaß di Mail is still missing numerous features including offline mode."
+msgstr "Το Griaß di Mail είναι ακόμα στην πρώιμη ανάπτυξη. Το Griaß di Mail υποστηρίζει IMAP και έχει δοκιμαστεί με Gmail, Yahoo και τον ελεύθερο διακομιστή αλληλογραφίας Dovecot. Πειραματική υποστήριξη παρέχεται για το Outlook.com. Το Griaß di Mail ενδέχεται να μην δουλεύει ακόμα καλά με κάποιους διακομιστές IMAP. Αυτήν την περίοδο στο Griaß di Mail λείπουν ακόμα πολυάριθμες λειτουργίες συμπεριλαμβανόμενης της λειτουργίας χωρίς σύνδεση."
 
 #: C/limits.page:14(p)
 msgid "To learn more about the features we're working on and the future of Geary, please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki page</link>."
@@ -553,8 +553,8 @@ msgid "Label a conversation"
 msgstr "Ονομάστε μια συνομιλία"
 
 #: C/label.page:13(p)
-msgid "Griabuntu Mail lets you apply one or more <em>labels</em> to each conversation. Griabuntu Mail labels correspond to labels in Gmail, or ordinary folders in other mail services."
-msgstr "Το Griabuntu Mail σας επιτρέπει να εφαρμόσετε μία ή περισσότερες <em>ετικέτες</em> για κάθε συνομιλία. Οι ετικέτες Griabuntu Mail αντιστοιχούν στου Gmail, ή σε κοινούς φακέλους σε άλλες υπηρεσίες αλληλογραφίας."
+msgid "Griaß di Mail lets you apply one or more <em>labels</em> to each conversation. Griaß di Mail labels correspond to labels in Gmail, or ordinary folders in other mail services."
+msgstr "Το Griaß di Mail σας επιτρέπει να εφαρμόσετε μία ή περισσότερες <em>ετικέτες</em> για κάθε συνομιλία. Οι ετικέτες Griaß di Mail αντιστοιχούν στου Gmail, ή σε κοινούς φακέλους σε άλλες υπηρεσίες αλληλογραφίας."
 
 #: C/label.page:15(p)
 msgid "To label one or more conversations, first select the conversation(s), then do either of the following:"
@@ -591,16 +591,16 @@ msgid "@@image: 'figures/griabuntu_mail.svg'; md5=18b50c9e10fe5256ae1cb12aaa3a76
 msgstr "@@image: 'figures/griabuntu_mail.svg'· md5=18b50c9e10fe5256ae1cb12aaa3a7600"
 
 #: C/index.page:5(title)
-msgid "<media type=\"image\" src=\"figures/griabuntu_mail.svg\"/> Griabuntu Mail"
-msgstr "<media type=\"image\" src=\"figures/griabuntu_mail.svg\"/> Griabuntu Mail"
+msgid "<media type=\"image\" src=\"figures/griabuntu_mail.svg\"/> Griaß di Mail"
+msgstr "<media type=\"image\" src=\"figures/griabuntu_mail.svg\"/> Griaß di Mail"
 
 #: C/index.page:9(title)
 msgid "Introduction"
 msgstr "Εισαγωγή"
 
 #: C/index.page:13(title)
-msgid "Using Griabuntu Mail"
-msgstr "Χρήση του Griabuntu Mail"
+msgid "Using Griaß di Mail"
+msgstr "Χρήση του Griaß di Mail"
 
 #: C/index.page:17(title)
 msgid "Bugs"
@@ -611,8 +611,8 @@ msgid "Think you've found a bug?"
 msgstr "Νομίζετε ότι έχετε βρει ένα σφάλμα;"
 
 #: C/bugs.page:9(p)
-msgid "If you suspect you've found a bug in Griabuntu Mail, follow these steps to report it:"
-msgstr "Αν υποψιάζεστε ότι έχετε βρει ένα σφάλμα στο Griabuntu Mail, ακολουθήστε αυτά τα βήματα για να το αναφέρετε:"
+msgid "If you suspect you've found a bug in Griaß di Mail, follow these steps to report it:"
+msgstr "Αν υποψιάζεστε ότι έχετε βρει ένα σφάλμα στο Griaß di Mail, ακολουθήστε αυτά τα βήματα για να το αναφέρετε:"
 
 #: C/bugs.page:11(p)
 msgid "Search Geary's <link href=\"https://bugzilla.gnome.org/browse.cgi?product=geary\">bug database</link> to see if someone else has reported the bug."
@@ -631,8 +631,8 @@ msgid "Delete or archive a message"
 msgstr "Διαγραφή ή αρχειοθέτηση μηνύματος"
 
 #: C/archive.page:12(p)
-msgid "When you use Griabuntu Mail with a Gmail account, Griabuntu Mail lets you <em>archive</em> messages. The <gui>Archive</gui> toolbar button archives the selected conversation(s). Archived messages appear in the <gui>All Mail</gui> folder."
-msgstr "Όταν χρησιμοποιείτε το Griabuntu Mail με έναν λογαριασμό Gmail, το Griabuntu Mail σας επιτρέπει να <em>αρχειοθετείτε</em> μηνύματα. Το πλήκτρο εργαλειοθήκης <gui>Αρχειοθήκη</gui>, αρχειοθετεί τις επιλεγμένες συνομιλίες. Τα αρχειοθετημένα μηνύματα εμφανίζονται στον φάκελο <gui>Όλη η αλληλογραφία</gui>."
+msgid "When you use Griaß di Mail with a Gmail account, Griaß di Mail lets you <em>archive</em> messages. The <gui>Archive</gui> toolbar button archives the selected conversation(s). Archived messages appear in the <gui>All Mail</gui> folder."
+msgstr "Όταν χρησιμοποιείτε το Griaß di Mail με έναν λογαριασμό Gmail, το Griaß di Mail σας επιτρέπει να <em>αρχειοθετείτε</em> μηνύματα. Το πλήκτρο εργαλειοθήκης <gui>Αρχειοθήκη</gui>, αρχειοθετεί τις επιλεγμένες συνομιλίες. Τα αρχειοθετημένα μηνύματα εμφανίζονται στον φάκελο <gui>Όλη η αλληλογραφία</gui>."
 
 #: C/archive.page:16(p)
 msgid "With other mail servers, you can trash or delete, but not archive, messages. To move one or more conversations to the <gui>Trash</gui> folder, select them and press the <gui>Trash</gui> button on the toolbar. To permanently delete the conversations, hold down <key>Shift</key> and press the <gui>Delete</gui> button that appears in place of the <gui>Trash</gui> button."
@@ -647,20 +647,20 @@ msgid "Adding accounts"
 msgstr "Προσθήκη λογαριασμών"
 
 #: C/accounts.page:15(p)
-msgid "The first time you start Griabuntu Mail, you will be prompted to add an email account. On this screen, select if your account is Gmail, Yahoo, Outlook.com, or other. For other account types, you will need to enter your IMAP and SMTP login settings manually."
-msgstr "Την πρώτη φορά που ξεκινάτε το Griabuntu Mail, θα σας ζητηθεί να προσθέσετε έναν λογαριασμό αλληλογραφίας. Σε αυτήν την οθόνη, επιλέξτε αν ο λογαριασμός σας είναι Gmail, Yahoo, Outlook.com, ή άλλος. Για άλλους τύπους λογαριασμών, θα χρειαστεί να εισάγετε τις ρυθμίσεις σύνδεσης IMAP και SMTP χειροκίνητα."
+msgid "The first time you start Griaß di Mail, you will be prompted to add an email account. On this screen, select if your account is Gmail, Yahoo, Outlook.com, or other. For other account types, you will need to enter your IMAP and SMTP login settings manually."
+msgstr "Την πρώτη φορά που ξεκινάτε το Griaß di Mail, θα σας ζητηθεί να προσθέσετε έναν λογαριασμό αλληλογραφίας. Σε αυτήν την οθόνη, επιλέξτε αν ο λογαριασμός σας είναι Gmail, Yahoo, Outlook.com, ή άλλος. Για άλλους τύπους λογαριασμών, θα χρειαστεί να εισάγετε τις ρυθμίσεις σύνδεσης IMAP και SMTP χειροκίνητα."
 
 #: C/accounts.page:19(p)
-msgid "Additional accounts can be added from the Accounts dialog. The <gui>Accounts</gui> option is available in either Griabuntu Mail's application menu or the gear menu in the upper-right of the toolbar. (The location depends on the install desktop shell. For GNOME Shell and Unity, the application menu is available near the top-left corner of the screen.) Alternately, <keyseq><key>Ctrl</key><key>M</key></keyseq> will open the Accounts dialog. To add an account, click the + button."
-msgstr "Πρόσθετοι λογαριασμοί μπορούν να προστεθούν από το παράθυρο διαλόγου Λογαριασμοί. Η επιλογή <gui>Λογαριασμοί</gui> είναι διαθέσιμη είτε στο μενού εφαρμογών Griabuntu Mail ή στο μενού με το γρανάζι στην επάνω δεξιά γωνία της γραμμής εργαλείων. (Η θέση εξαρτάται από την εγκατάσταση του κελύφους επιφάνειας εργασίας. Για το κέλυφος GNOME και Unity, το μενού της εφαρμογής είναι διαθέσιμο κοντά στην επάνω αριστερή γωνία της οθόνης.) Εναλλακτικά, το <keyseq><key>Ctrl</key><key>M</key></keyseq> θα ανοίξει το παράθυρο διαλόγου Λογαριασμοί. Για να προσθέσετε ένα λογαριασμό, πατήστε το κουμπί +."
+msgid "Additional accounts can be added from the Accounts dialog. The <gui>Accounts</gui> option is available in either Griaß di Mail's application menu or the gear menu in the upper-right of the toolbar. (The location depends on the install desktop shell. For GNOME Shell and Unity, the application menu is available near the top-left corner of the screen.) Alternately, <keyseq><key>Ctrl</key><key>M</key></keyseq> will open the Accounts dialog. To add an account, click the + button."
+msgstr "Πρόσθετοι λογαριασμοί μπορούν να προστεθούν από το παράθυρο διαλόγου Λογαριασμοί. Η επιλογή <gui>Λογαριασμοί</gui> είναι διαθέσιμη είτε στο μενού εφαρμογών Griaß di Mail ή στο μενού με το γρανάζι στην επάνω δεξιά γωνία της γραμμής εργαλείων. (Η θέση εξαρτάται από την εγκατάσταση του κελύφους επιφάνειας εργασίας. Για το κέλυφος GNOME και Unity, το μενού της εφαρμογής είναι διαθέσιμο κοντά στην επάνω αριστερή γωνία της οθόνης.) Εναλλακτικά, το <keyseq><key>Ctrl</key><key>M</key></keyseq> θα ανοίξει το παράθυρο διαλόγου Λογαριασμοί. Για να προσθέσετε ένα λογαριασμό, πατήστε το κουμπί +."
 
 #: C/accounts.page:28(title)
 msgid "Editing existing accounts"
 msgstr "Επεξεργασία υπαρχόντων λογαριασμών"
 
 #: C/accounts.page:30(p)
-msgid "From the Accounts dialog, select an account and click the pencil icon to change various settings. Please note that Griabuntu Mail cannot change server settings on an existing account. If you need to change your IMAP or SMTP server, you will need to delete the account and re-add it."
-msgstr "Από τον διάλογο λογαριασμών, επιλέξτε έναν λογαριασμό και πατήστε το εικονίδιο μολυβιού για να αλλάξετε ποικίλες ρυθμίσεις. Παρακαλούμε σημειώστε ότι το Griabuntu Mail δεν μπορεί να αλλάξει τις ρυθμίσεις διακομιστή σε έναν υπάρχοντα λογαριασμό. Αν χρειαστείτε να αλλάξετε τον διακομιστή σας IMAP ή SMTP, θα χρειαστείτε να διαγράψετε τον λογαριασμό και να τον ξαναπροσθέσετε."
+msgid "From the Accounts dialog, select an account and click the pencil icon to change various settings. Please note that Griaß di Mail cannot change server settings on an existing account. If you need to change your IMAP or SMTP server, you will need to delete the account and re-add it."
+msgstr "Από τον διάλογο λογαριασμών, επιλέξτε έναν λογαριασμό και πατήστε το εικονίδιο μολυβιού για να αλλάξετε ποικίλες ρυθμίσεις. Παρακαλούμε σημειώστε ότι το Griaß di Mail δεν μπορεί να αλλάξει τις ρυθμίσεις διακομιστή σε έναν υπάρχοντα λογαριασμό. Αν χρειαστείτε να αλλάξετε τον διακομιστή σας IMAP ή SMTP, θα χρειαστείτε να διαγράψετε τον λογαριασμό και να τον ξαναπροσθέσετε."
 
 #: C/accounts.page:34(p)
 msgid "To change the order that accounts are displayed in the folder list, drag the accounts in the Accounts dialog to the desired order."
@@ -671,20 +671,20 @@ msgid "There are some advanced options available when editing accounts:"
 msgstr "Υπάρχουν κάποιες προηγμένες επιλογές που είναι διαθέσιμες κατά την επεξεργασία των λογαριασμών:"
 
 #: C/accounts.page:39(p)
-msgid "The <gui>Save sent mail</gui> checkbox controls whether Griabuntu Mail will push successfully sent messages up to the account's <gui>Sent Mail</gui> folder. For Gmail accounts, this happens automatically. Yahoo and some other accounts can be configured to do this automatically as well. For other accounts, if you disable this setting, you may be unable to view messages you've sent."
-msgstr "Το πλαίσιο ελέγχου <gui>Αποθήκευση απεσταλμένων</gui> ελέγχει αν το Griabuntu Mail θα προωθήσει με επιτυχία τα απεσταλμένα μηνύματα στον φάκελο <gui>Απεσταλμένων</gui> του λογαριασμού σας. Για τους λογαριασμούς Gmail, αυτό συμβαίνει αυτόματα. Το Yahoo και ορισμένοι άλλοι πελάτες μπορούν να ρυθμιστούν για να γίνει αυτό αυτόματα. Για άλλους λογαριασμούς, αν απενεργοποιήσετε αυτή τη ρύθμιση, μπορεί να μην είστε σε θέση, να δείτε τα μηνύματα που έχετε στείλει."
+msgid "The <gui>Save sent mail</gui> checkbox controls whether Griaß di Mail will push successfully sent messages up to the account's <gui>Sent Mail</gui> folder. For Gmail accounts, this happens automatically. Yahoo and some other accounts can be configured to do this automatically as well. For other accounts, if you disable this setting, you may be unable to view messages you've sent."
+msgstr "Το πλαίσιο ελέγχου <gui>Αποθήκευση απεσταλμένων</gui> ελέγχει αν το Griaß di Mail θα προωθήσει με επιτυχία τα απεσταλμένα μηνύματα στον φάκελο <gui>Απεσταλμένων</gui> του λογαριασμού σας. Για τους λογαριασμούς Gmail, αυτό συμβαίνει αυτόματα. Το Yahoo και ορισμένοι άλλοι πελάτες μπορούν να ρυθμιστούν για να γίνει αυτό αυτόματα. Για άλλους λογαριασμούς, αν απενεργοποιήσετε αυτή τη ρύθμιση, μπορεί να μην είστε σε θέση, να δείτε τα μηνύματα που έχετε στείλει."
 
 #: C/accounts.page:45(p)
-msgid "The <gui>Download mail</gui> drop-down allows you to configure how much mail Griabuntu Mail will keep locally. Griabuntu Mail can only use locally available mail when searching and forming conversations."
-msgstr "Η αναπτυσσόμενη <gui>Λήψη αλληλογραφίας</gui> σας επιτρέπει να ρυθμίσετε πόσα μηνύματα αλληλογραφίας θα κρατήσει το Griabuntu Mail τοπικά. Το Griabuntu Mail μπορεί να χρησιμοποιήσει μόνο μηνύματα σε τοπικό επίπεδο κατα την αναζήτηση και διαμόρφωση συνομιλιών."
+msgid "The <gui>Download mail</gui> drop-down allows you to configure how much mail Griaß di Mail will keep locally. Griaß di Mail can only use locally available mail when searching and forming conversations."
+msgstr "Η αναπτυσσόμενη <gui>Λήψη αλληλογραφίας</gui> σας επιτρέπει να ρυθμίσετε πόσα μηνύματα αλληλογραφίας θα κρατήσει το Griaß di Mail τοπικά. Το Griaß di Mail μπορεί να χρησιμοποιήσει μόνο μηνύματα σε τοπικό επίπεδο κατα την αναζήτηση και διαμόρφωση συνομιλιών."
 
 #: C/accounts.page:53(title)
 msgid "Removing accounts"
 msgstr "Αφαίρεση λογαριασμών"
 
 #: C/accounts.page:55(p)
-msgid "To delete an account, open the Accounts dialog, select the account, and press the - button. Griabuntu Mail will delete all information associated with the account."
-msgstr "Για να διαγράψετε έναν λογαριασμό, ανοίξτε τον διάλογο λογαριασμών, επιλέξτε τον λογαριασμό και πατήστε το πλήκτρο -. Το Griabuntu Mail θα διαγράψει όλες τις πληροφορίες που σχετίζονται με τον λογαριασμό."
+msgid "To delete an account, open the Accounts dialog, select the account, and press the - button. Griaß di Mail will delete all information associated with the account."
+msgstr "Για να διαγράψετε έναν λογαριασμό, ανοίξτε τον διάλογο λογαριασμών, επιλέξτε τον λογαριασμό και πατήστε το πλήκτρο -. Το Griaß di Mail θα διαγράψει όλες τις πληροφορίες που σχετίζονται με τον λογαριασμό."
 
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
 #: C/accounts.page:0(None)

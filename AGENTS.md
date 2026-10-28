@@ -4,14 +4,14 @@ that supplied PNG. The previously installed .3 icon study was a mistaken
 substitution and is superseded. Do not reuse its CC0 claim for owner originals.
 See brand/README.md. Broader UI theming remains separate. -->
 
-# Working on Griabuntu Mail
+# Working on Griaß di Mail
 
 This is the owner's independent Convey/Geary downstream, not official Convey,
-Geary or an Ubuntu/Canonical product. The product is **Griabuntu Mail**. The owner explicitly requested a project-wide
+Geary or an Ubuntu/Canonical product. The current product is **Griaß di Mail** (owner decision, 2026-10-28). The owner explicitly requested a project-wide
 identity change on 2026-10-27. Current executable/project/gettext domain:
 `griabuntu-mail`; application ID: `io.github.d3rpapah0d3n.GriabuntuMail`;
 engine namespace: `GriabuntuMail`. Read `docs/IDENTITY.md` before identity work.
-The repository is `D3rPaPaH0d3n/griabuntu-mail`.
+The current repository is `D3rPaPaH0d3n/griass-di-mail` (renamed with GitHub redirects).
 
 Native Ubuntu 26.10 .deb packaging is the current primary build route. Keep
 profiles, secret schemas and launchers separate from the historical Convey
@@ -112,3 +112,21 @@ Sending mail or deliberately moving/deleting messages is not needed for picture
 acceptance and is not inferred from the test approval. No Canonical outreach was
 authorised. Host administrator authentication remains technically unavailable;
 do not bypass it or request a password in chat.
+
+## Current owner-selected display name · 2026-10-28
+
+The owner selected the third proposed name: **Griaß di Mail**, exact spelling
+with ß and spaces. ASCII repository: `griass-di-mail`. Update all active visible
+branding/project presentation accordingly. Preserve the selected closed-envelope
+G icon byte-for-byte, its palette and the existing banner composition. A separate
+AI-edited banner changes only the title and removes the Ubuntu explanation.
+Original supplied images and dated release evidence remain unchanged.
+
+For upgrade continuity retain `griabuntu-mail` package/executable/gettext/domain,
+`io.github.d3rpapah0d3n.GriabuntuMail`, namespace and all profiles/secret schemas.
+These are compatibility identifiers, not the current public product name.
+A repository rename does not authorise changing data paths or rewriting history.
+The Canonical inquiry concerned the superseded name; archive it unsent rather
+than making an inquiry about a name the owner has abandoned. Do not claim that
+this choice establishes universal trademark clearance. Existing inherited
+licence/asset obligations remain. Publication authorisation is already recorded.

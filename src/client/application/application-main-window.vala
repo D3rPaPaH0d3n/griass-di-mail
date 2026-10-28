@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Downstream modification: 2026-10-26 — session-new tray state integration. */
 /*
@@ -612,7 +613,7 @@ public class Application.MainWindow :
             ? account.get_folder(this.selected_folder)
             : null
         );
-        string title = _("Griabuntu Mail");
+        string title = _("Griaß di Mail");
         string? account_name = null;
         string? folder_name = null;
         if (account != null && folder != null) {
@@ -1984,8 +1985,8 @@ public class Application.MainWindow :
              ? _("Delete label “%s”?")
              : _("Delete folder “%s”?")).printf(folder.path.name),
             (labels
-             ? _("This removes the label and all email in it from Griabuntu Mail and your email server.")
-             : _("This removes the folder and all email in it from Griabuntu Mail and your email server.")) +
+             ? _("This removes the label and all email in it from Griaß di Mail and your email server.")
+             : _("This removes the folder and all email in it from Griaß di Mail and your email server.")) +
             "  <b>" + _("This cannot be undone.") + "</b>"
         );
         dialog.body_use_markup = true;
@@ -2023,7 +2024,7 @@ public class Application.MainWindow :
         var folder_name = Util.I18n.to_folder_type_display_name(type);
         var dialog = new Adw.AlertDialog(
             _("Empty all email from your %s folder?").printf(folder_name),
-            _("This removes the email from Griabuntu Mail and your email server.") +
+            _("This removes the email from Griaß di Mail and your email server.") +
             "  <b>" + _("This cannot be undone.") + "</b>");
         dialog.body_use_markup = true;
         dialog.add_response("cancel", _("_Cancel"));
@@ -3712,7 +3713,7 @@ public class Application.MainWindow :
             // substitution is the sender's name
             _("Unsubscribe from %s?").printf(sender),
             automatic
-            ? _("Griabuntu Mail will ask the sender to stop sending you emails.")
+            ? _("Griaß di Mail will ask the sender to stop sending you emails.")
             : _("To unsubscribe, go to the sender’s website.")
         );
         dialog.add_response("cancel", _("_Cancel"));

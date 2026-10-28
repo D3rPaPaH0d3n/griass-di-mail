@@ -5,23 +5,23 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name>Griabuntu Mail</name>
+  <name>Griaß di Mail</name>
   <short-name>griabuntu-mail</short-name>
   <shortdesc xml:lang="en">Send and receive email</shortdesc>
-  <description xml:lang="en">Griabuntu Mail is an email application built
+  <description xml:lang="en">Griaß di Mail is an email application built
 around conversations, for the GNOME desktop. It allows you to
 read, find and send email with a straightforward, modern
 interface. Based on Convey and Geary; original authorship is retained.</description>
 
-  <homepage rdf:resource="https://github.com/D3rPaPaH0d3n/griabuntu-mail" />
-  <bug-database rdf:resource="https://github.com/D3rPaPaH0d3n/griabuntu-mail/issues" />
+  <homepage rdf:resource="https://github.com/D3rPaPaH0d3n/griass-di-mail" />
+  <bug-database rdf:resource="https://github.com/D3rPaPaH0d3n/griass-di-mail/issues" />
   <category rdf:resource="http://api.gnome.org/doap-extensions#apps" />
   <programming-language>Vala</programming-language>
 
   <maintainer>
     <foaf:Person>
       <foaf:name>Markus Kainer (D3rPaPaH0d3n)</foaf:name>
-      <foaf:homepage rdf:resource="https://github.com/D3rPaPaH0d3n/griabuntu-mail"/>
+      <foaf:homepage rdf:resource="https://github.com/D3rPaPaH0d3n/griass-di-mail"/>
     </foaf:Person>
   </maintainer>
 

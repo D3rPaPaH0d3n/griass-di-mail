@@ -1,4 +1,30 @@
-# Griabuntu Mail — identity and open name review
+# Griaß di Mail — current identity and name history
+
+## Current owner decision · 2026-10-28
+
+The selected public display name is **Griaß di Mail**, with the ASCII repository
+name **`griass-di-mail`**. The owner chose the third proposed alternative after
+discussing the Ubuntu/BUNTU naming uncertainty. The selected envelope/G icon and
+palette are retained. The new banner removes the Ubuntu explanation and updates
+the title; original supplied PNGs remain archived byte-for-byte.
+
+The old Canonical inquiry is archived **unsent**: it concerns the abandoned
+Griabuntu Mail product name. There has been no rejection, contact or approval.
+Compatibility package/app-ID/profile names are deliberately retained; see
+[UPGRADING.md](UPGRADING.md). No universal trademark clearance is asserted.
+
+A bounded web search on 2026-10-28 for exact “Griaß di Mail” / “Griass di Mail”
+did not identify an exact-name mail product. A nearby distinct name exists:
+[Griaßdi!](https://www.ds.uzh.ch/de/projekte/griassdi/app.html), the University
+of Zurich's dialect-research app. This is recorded rather than claiming the
+wording is unused. No trademark-register or legal clearance is inferred.
+
+## Historical identity and preliminary review
+
+The following records the superseded name and earlier proposals. Its open
+Canonical question is historical, not an assertion that every BUNTU name is
+prohibited or that the current display name includes Ubuntu.
+
 
 **Current continuation, 2026-10-27:** The owner confirmed that no written
 Canonical permission or qualified name review exists. Public presentation and

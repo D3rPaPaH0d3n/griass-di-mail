@@ -65,13 +65,13 @@ Recommends:
  gnome-keyring,
  gstreamer1.0-plugins-good,
  libfolks-eds26,
-Provides: imap-client, mail-reader
-Description: native Griabuntu Mail desktop email client
+Provides: imap-client, mail-reader, griass-di-mail
+Description: native Griaß di Mail desktop email client
  Independent Convey/Geary-derived GTK email client with recipient aliases,
  contact pictures with opt-in external lookups, precise received timestamps
  and a native new-mail tray.
  TNEF/winmail.dat support and the session-new notification flag fix are enabled.
  .
- This local Ubuntu 26.10 preview uses its own Griabuntu Mail executable,
+ This local Ubuntu 26.10 preview uses its own Griaß di Mail executable,
  desktop identity and profile paths. It does not migrate existing Convey or
  Flatpak profiles or start the application during installation.

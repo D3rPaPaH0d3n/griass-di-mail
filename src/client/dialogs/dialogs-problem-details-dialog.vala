@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
@@ -211,7 +212,7 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
         dialog.title = _("Save As");
         dialog.accept_label = _("Save As");
         dialog.initial_name = new DateTime.now_local().format(
-            "Griabuntu Mail Problem Report - %F %T.txt"
+            "Griaß di Mail Problem Report - %F %T.txt"
         );
 
         try {

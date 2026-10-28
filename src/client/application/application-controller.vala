@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
@@ -1347,7 +1348,7 @@ internal class Application.Controller :
             _("Unable to open the database for %s").printf(account.information.id),
             null);
         dialog.format_body_markup(
-            _("There was an error opening the local mail database for this account. This is possibly due to corruption of the database file in this directory:\n\n%s\n\nGriabuntu Mail can rebuild the database and re-synchronize with the server or exit.\n\nRebuilding the database will destroy all local email and its attachments. <b>The mail on the your server will not be affected.</b>"),
+            _("There was an error opening the local mail database for this account. This is possibly due to corruption of the database file in this directory:\n\n%s\n\nGriaß di Mail can rebuild the database and re-synchronize with the server or exit.\n\nRebuilding the database will destroy all local email and its attachments. <b>The mail on the your server will not be affected.</b>"),
             account.information.data_dir.get_path());
         dialog.add_response("exit", _("E_xit"));
         dialog.add_response("rebuild", _("_Rebuild"));

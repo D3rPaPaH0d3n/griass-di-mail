@@ -1,4 +1,4 @@
-# Downstream modification: 2026-10-27 — Griabuntu Mail branding and source paths.
+# Downstream modification: 2026-10-27 — Griaß di Mail branding and source paths.
 # Translators:
 # Jaume Jorba <jaume.jorba@gmail.com>, 2020
 # 
@@ -34,13 +34,13 @@ msgstr "Editor de comptes"
 #: C/accounts.page:15
 msgid ""
 "Your email accounts can be added, updated, and removed using the "
-"<em>accounts editor</em>. To open it, click Griabuntu Mail’s application menu button "
+"<em>accounts editor</em>. To open it, click Griaß di Mail’s application menu button "
 "in the main window above the folder list, then click <gui>Accounts</gui> in "
 "the pop-up menu."
 msgstr ""
 "Els vostres comptes de correu es poden afegir, actualitzar, i esborrar "
 "utilitzant l'<em>editor de comptes</em>. Per a obrir-lo, feu clic al botó de "
-"menú de l'aplicació Griabuntu Mail a la finestra principal sobre la llista de "
+"menú de l'aplicació Griaß di Mail a la finestra principal sobre la llista de "
 "carpetes i, a continuació, feu clic al menú emergent <gui>Comptes</gui>."
 
 #. (itstool) path: section/p
@@ -68,12 +68,12 @@ msgstr "Afegeix comptes"
 #. (itstool) path: section/p
 #: C/accounts.page:31
 msgid ""
-"Griabuntu Mail will automatically use any email accounts you have added via the "
+"Griaß di Mail will automatically use any email accounts you have added via the "
 "<app>Online Accounts</app> panel of <app>GNOME Settings</app>. If you do not"
 " have any accounts added to <app>Online Accounts</app>, you will be prompted"
 " to add an account the first time you run GriabuntuMail."
 msgstr ""
-"Griabuntu Mail automàticament utilitzarà qualsevol compte de correu electrònic que "
+"Griaß di Mail automàticament utilitzarà qualsevol compte de correu electrònic que "
 "hàgeu afegit des del panell <app>Comptes en línia</app> de la "
 "<app>Paràmetres del GNOME</app>. Si no teniu comptes a <app>Comptes en "
 "línia</app>, se us demanarà que afegiu un compte la primera vegada que "
@@ -95,7 +95,7 @@ msgstr ""
 "part inferior de la finestra. En el cas dels proveïdors suportats pels "
 "<app>Comptes en línia</app>, s'obrirà la <app>Paràmetres del GNOME</app> i "
 "se us demanarà la informació de configuració. En el cas d'altres proveïdors "
-", Griabuntu Mail us demanarà informació del compte. Un cop introduïda, feu clic a "
+", Griaß di Mail us demanarà informació del compte. Un cop introduïda, feu clic a "
 "<gui>Crea</gui> i un cop comprovada la informació del compte, s'afegirà."
 
 #. (itstool) path: section/title
@@ -107,12 +107,12 @@ msgstr "Actualitzar els comptes existents"
 #: C/accounts.page:50
 msgid ""
 "To update existing accounts, open the accounts editor and choose the account"
-" you wish to update. Griabuntu Mail will display settings for the account. From "
+" you wish to update. Griaß di Mail will display settings for the account. From "
 "there, you can add and remove additional sender email addresses, edit your "
 "email signature, and various other settings."
 msgstr ""
 "Per a actualitzar els comptes existents, obriu l'editor de comptes i trieu el "
-"compte que voleu actualitzar. Griabuntu Mail mostrarà la configuració del compte, des"
+"compte que voleu actualitzar. Griaß di Mail mostrarà la configuració del compte, des"
 " d'on podreu afegir i eliminar adreces de correu electrònic del remitent, "
 "editar la vostra signatura de correu electrònic i diversos altres "
 "paràmetres."
@@ -121,11 +121,11 @@ msgstr ""
 #: C/accounts.page:56
 msgid ""
 "The <gui>Download mail</gui> setting allows you to configure how much mail "
-"Griabuntu Mail will download and store locally. Griabuntu Mail can only use locally available "
+"Griaß di Mail will download and store locally. Griaß di Mail can only use locally available "
 "mail when displaying and searching for conversations."
 msgstr ""
 "Les opcions de <gui>Baixa els missatges</gui> us permet configurar quant "
-"correu es descarregarà i emmagatzemarà localment. Griabuntu Mail només pot utilitzar "
+"correu es descarregarà i emmagatzemarà localment. Griaß di Mail només pot utilitzar "
 "el correu electrònic local quan es mostren i cerquen converses."
 
 #. (itstool) path: section/p
@@ -134,7 +134,7 @@ msgid ""
 "To edit the server settings for the account, scroll to the bottom of the "
 "window and click <gui>Server Settings</gui>. The server settings will be "
 "displayed and you can click to edit them. Once done, click <gui>Apply</gui> "
-"and Griabuntu Mail will check the settings, then update the account. Note that "
+"and Griaß di Mail will check the settings, then update the account. Note that "
 "accounts added via the <app>Online Accounts</app> panel of <app>GNOME "
 "Settings</app> cannot have their server name, security, login, or password "
 "settings changed."
@@ -142,7 +142,7 @@ msgstr ""
 "Per a editar la configuració del servidor del compte, desplaceu-vos fins a la "
 "part inferior de la finestra i feu clic a <gui>Configuració del "
 "servidor</gui>. Es mostrarà la configuració del servidor i podreu editar-"
-"les. Un cop modificades, feu clic a <gui>Aplica</gui> i Griabuntu Mail validarà la "
+"les. Un cop modificades, feu clic a <gui>Aplica</gui> i Griaß di Mail validarà la "
 "configuració, i aleshores s'actualitzarà el compte. Noteu que els comptes "
 "afegits via el panell <app>Comptes en línia</app> de la <app> Configuració "
 "de GNOME</app> no poden tenir canviat el nom, la seguretat, el registre o la"
@@ -164,13 +164,13 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:75
 msgid ""
-"The <gui>Save sent email on server</gui> checkbox controls whether Griabuntu Mail "
+"The <gui>Save sent email on server</gui> checkbox controls whether Griaß di Mail "
 "will save copies of email that have been sent to the <gui>Sent</gui> folder."
 " If de-selected, you will no be able to see any email messages you have "
 "sent, unless your server automatically saves them for you."
 msgstr ""
 " La casella de selecció <gui>Desa els missatges enviats al servidor"
-"</gui> controla si Griabuntu Mail desarà les còpies de correu electrònic "
+"</gui> controla si Griaß di Mail desarà les còpies de correu electrònic "
 "enviades a la carpeta <gui>Enviats</gui>. Si es desactiva, no podreu veure "
 "cap dels missatges de correu electrònic que hàgiu enviat, tret que el "
 "servidor els desi automàticament."
@@ -195,16 +195,16 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/accounts.page:90
 msgid ""
-"To remove an account added via Griabuntu Mail, open the accounts editor and choose "
-"the account you wish to remove. Griabuntu Mail will display settings for the account."
+"To remove an account added via Griaß di Mail, open the accounts editor and choose "
+"the account you wish to remove. Griaß di Mail will display settings for the account."
 " Scroll to the bottom of the window and click <gui>Remove Account</gui>. You"
 " will be prompted to confirm removing the account. Once confirmed, if you "
 "change your mind you can still undo removing the account by clicking "
 "<gui>Undo</gui> in the popup notification, or by typing "
 "<keyseq><key>Ctrl</key><key>U</key></keyseq>."
 msgstr ""
-"Per a eliminar un compte afegit a través de Griabuntu Mail, obriu l'editor de comptes i"
-" trieu el compte que voleu suprimir. Griabuntu Mail us mostrarà la configuració del "
+"Per a eliminar un compte afegit a través de Griaß di Mail, obriu l'editor de comptes i"
+" trieu el compte que voleu suprimir. Griaß di Mail us mostrarà la configuració del "
 "compte. Desplaceu-vos fins a la part inferior de la finestra i feu clic a "
 "<gui>Suprimeix el compte</gui>. Se us demanarà que confirmeu que elimineu el "
 "compte. Un cop confirmat, si canvieu d'opinió, encara podeu recuperar el "
@@ -219,13 +219,13 @@ msgstr "Arxivar, esborrar i eliminar missatges"
 #. (itstool) path: page/p
 #: C/archive.page:10
 msgid ""
-"Griabuntu Mail lets you archive messages if your server supports it. Clicking the "
+"Griaß di Mail lets you archive messages if your server supports it. Clicking the "
 "<gui style=\"button\">Archive</gui> toolbar button moves the conversation "
 "from the current folder to the <gui>Archive</gui> folder for most email "
 "services, or to <gui>All Mail</gui> for GMail. Archiving helps keep your "
 "email organised by moving old and replied-to email out of the way."
 msgstr ""
-"Griabuntu Mail us permet arxivar missatges si el vostre servidor ho permet. Fent clic"
+"Griaß di Mail us permet arxivar missatges si el vostre servidor ho permet. Fent clic"
 " al botó de la barra d'eines <gui style=\"button\">Arxiva</gui> es mouen les "
 "converses des de la carpeta actual a la carpeta <gui>Arxivats</gui> en la "
 "majoria de serveis de correu, o a <gui>Tot el correu electrònic</gui> a "
@@ -296,11 +296,11 @@ msgstr "Heu trobat un error?"
 #. (itstool) path: page/p
 #: C/bugs.page:12
 msgid ""
-"If you suspect you've found a bug in Griabuntu Mail, please <link "
+"If you suspect you've found a bug in Griaß di Mail, please <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">get in touch</link> about"
 " it so it can be fixed."
 msgstr ""
-"Si sospiteu haver trobat un error a Griabuntu Mail, si us plau <link "
+"Si sospiteu haver trobat un error a Griaß di Mail, si us plau <link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">poseu-vos en "
 "contacte</link> de forma que es pugui resoldre."
 
@@ -315,8 +315,8 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/bugs.page:20
-msgid "Griabuntu Mail version and installation method (Package? Flathub? Source code?)"
-msgstr "Versió de Griabuntu Mail i mètode d'instal·lació (Paquet? Flathub? Codi font?)"
+msgid "Griaß di Mail version and installation method (Package? Flathub? Source code?)"
+msgstr "Versió de Griaß di Mail i mètode d'instal·lació (Paquet? Flathub? Codi font?)"
 
 #. (itstool) path: item/p
 #: C/bugs.page:22
@@ -361,15 +361,15 @@ msgstr "Gràcies per la vostra ajuda!"
 
 #. (itstool) path: page/title
 #: C/contributing.page:10
-msgid "Contribute to Griabuntu Mail"
-msgstr "Contribuir a Griabuntu Mail"
+msgid "Contribute to Griaß di Mail"
+msgstr "Contribuir a Griaß di Mail"
 
 #. (itstool) path: page/p
 #: C/contributing.page:12
 msgid ""
-"Want to help improve Griabuntu Mail? There are a number of ways you can contribute:"
+"Want to help improve Griaß di Mail? There are a number of ways you can contribute:"
 msgstr ""
-"Vol ajudar a millorar Griabuntu Mail? Hi ha diferents maneres de contribuir-hi:"
+"Vol ajudar a millorar Griaß di Mail? Hi ha diferents maneres de contribuir-hi:"
 
 #. (itstool) path: item/p
 #: C/contributing.page:16
@@ -384,11 +384,11 @@ msgstr ""
 #: C/contributing.page:19
 msgid ""
 "<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">User Experience "
-"Design</link>—research and develop Griabuntu Mail’s user experience"
+"Design</link>—research and develop Griaß di Mail’s user experience"
 msgstr ""
 "<link href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Disseny de "
 "l'experiència d'usuari</link>— recerca i desenvolupa l'experiència d'usuari "
-"de Griabuntu Mail"
+"de Griaß di Mail"
 
 #. (itstool) path: item/p
 #: C/contributing.page:20
@@ -406,11 +406,11 @@ msgstr ""
 msgid ""
 "<link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Translating</link>—translate"
-" Griabuntu Mail’s user interface and user manual into new languages"
+" Griaß di Mail’s user interface and user manual into new languages"
 msgstr ""
 "<link "
 "href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail\">Traducció</link>—traducció"
-" de la interfície i manual d'usuari de Griabuntu Mail a nous llenguatges"
+" de la interfície i manual d'usuari de Griaß di Mail a nous llenguatges"
 
 #. (itstool) path: item/p
 #: C/contributing.page:22
@@ -423,8 +423,8 @@ msgstr ""
 
 #. (itstool) path: page/p
 #: C/contributing.page:25
-msgid "Thanks for your help making Griabuntu Mail better!"
-msgstr "Gràcies per a ajudar-nos a fer Griabuntu Mail millor!"
+msgid "Thanks for your help making Griaß di Mail better!"
+msgstr "Gràcies per a ajudar-nos a fer Griaß di Mail millor!"
 
 #. (itstool) path: title/media
 #. This is a reference to an external file such as an image or video. When
@@ -442,10 +442,10 @@ msgstr ""
 #: C/index.page:5
 msgid ""
 "<media type=\"image\" src=\"figures/griabuntu_mail.svg\" width=\"64\" height=\"64\"/>"
-" <span>Griabuntu Mail</span>"
+" <span>Griaß di Mail</span>"
 msgstr ""
 "<media type=\"image\" src=\"figures/griabuntu_mail.svg\" width=\"64\" height=\"64\"/>"
-" <span>Griabuntu Mail</span>"
+" <span>Griaß di Mail</span>"
 
 #. (itstool) path: section/title
 #: C/index.page:11
@@ -454,8 +454,8 @@ msgstr "Introducció"
 
 #. (itstool) path: section/title
 #: C/index.page:15
-msgid "Using Griabuntu Mail"
-msgstr "Utilitzar Griabuntu Mail"
+msgid "Using Griaß di Mail"
+msgstr "Utilitzar Griaß di Mail"
 
 #. (itstool) path: section/title
 #: C/index.page:19
@@ -475,12 +475,12 @@ msgstr "Etiquetar una conversa"
 #. (itstool) path: section/p
 #: C/label.page:13
 msgid ""
-"Griabuntu Mail lets you apply one or more <em>labels</em> to each conversation. Griabuntu Mail"
+"Griaß di Mail lets you apply one or more <em>labels</em> to each conversation. Griaß di Mail"
 " labels correspond to labels in Gmail, or ordinary folders in other mail "
 "services."
 msgstr ""
-"Griabuntu Mail us permet aplicar una o més <em>etiquetes</em> a cada conversa. Les "
-"etiquetes de Griabuntu Mail es corresponen amb les etiquetes a Gmail, o a carpetes en"
+"Griaß di Mail us permet aplicar una o més <em>etiquetes</em> a cada conversa. Les "
+"etiquetes de Griaß di Mail es corresponen amb les etiquetes a Gmail, o a carpetes en"
 " altres serveis de correu."
 
 #. (itstool) path: section/p
@@ -550,27 +550,27 @@ msgstr "Limitacions"
 #. (itstool) path: page/p
 #: C/limits.page:11
 msgid ""
-"Griabuntu Mail is still in early development. Griabuntu Mail supports IMAP and has been tested"
+"Griaß di Mail is still in early development. Griaß di Mail supports IMAP and has been tested"
 " with Gmail, Yahoo, and the free Dovecot mail server. Experimental support "
-"for Outlook.com is provided. Griabuntu Mail may not yet work well with some IMAP "
-"servers. At this time Griabuntu Mail is still missing numerous features including "
+"for Outlook.com is provided. Griaß di Mail may not yet work well with some IMAP "
+"servers. At this time Griaß di Mail is still missing numerous features including "
 "offline mode."
 msgstr ""
-"Griabuntu Mail està en desenvolupament. És compatible amb IMAP i s'ha provat amb "
+"Griaß di Mail està en desenvolupament. És compatible amb IMAP i s'ha provat amb "
 "Gmail, Yahoo i el servidor de correu gratuït de Dovecot. També es "
 "proporciona suport experimental per a Outlook.com. Encara pot no funcionar "
-"bé amb alguns servidors IMAP. En aquests moments a Griabuntu Mail encara li falten "
+"bé amb alguns servidors IMAP. En aquests moments a Griaß di Mail encara li falten "
 "nombroses funcionalitats, inclòs el mode fora de línia."
 
 #. (itstool) path: page/p
 #: C/limits.page:17
 msgid ""
-"To learn more about the features we're working on and the future of Griabuntu Mail, "
+"To learn more about the features we're working on and the future of Griaß di Mail, "
 "please visit Geary's <link href=\"https://wiki.gnome.org/Apps/Geary\">wiki "
 "page</link>."
 msgstr ""
 "Per a obtenir més informació sobre les funcions en què treballem i en el futur"
-" de Griabuntu Mail, si us plau visiteu la <link "
+" de Griaß di Mail, si us plau visiteu la <link "
 "href=\"https://wiki.gnome.org/Apps/Geary\">pàgina wiki</link> de Geary."
 
 #. (itstool) path: page/title
@@ -582,11 +582,11 @@ msgstr "Visió general"
 #. (itstool) path: page/p
 #: C/overview.page:11
 msgid ""
-"Griabuntu Mail is an email application built around conversations, for the GNOME 3 "
+"Griaß di Mail is an email application built around conversations, for the GNOME 3 "
 "desktop. It allows you to read, find and send email with a straightforward, "
 "modern interface."
 msgstr ""
-"Griabuntu Mail és una aplicació de correu electrònic creada al voltant de converses,"
+"Griaß di Mail és una aplicació de correu electrònic creada al voltant de converses,"
 " per a l'escriptori del GNOME 3. Permet llegir, trobar i enviar correu "
 "electrònic amb una interfície moderna i senzilla."
 
@@ -602,10 +602,10 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/overview.page:18
 msgid ""
-"The main Griabuntu Mail window is divided into several areas: The folder list, the "
+"The main Griaß di Mail window is divided into several areas: The folder list, the "
 "conversation list, and the conversation viewer."
 msgstr ""
-"La finestra principal de Griabuntu Mail es divideix en diverses àrees: la llista de "
+"La finestra principal de Griaß di Mail es divideix en diverses àrees: la llista de "
 "carpetes, la llista de converses i el visualitzador de converses."
 
 #. (itstool) path: section/title
@@ -617,11 +617,11 @@ msgstr "Llista de carpetes"
 #: C/overview.page:24
 msgid ""
 "The <em>folder list</em> displays all <em>folders</em> and <em>labels</em> "
-"for your email accounts. Griabuntu Mail uses the term <em>label</em> for any folder "
+"for your email accounts. Griaß di Mail uses the term <em>label</em> for any folder "
 "that you have created to organize your email messages."
 msgstr ""
 "La <em>llista de carpetes</em> mostra totes les <em>carpetes</em> i "
-"<em>etiquetes</em> dels vostres comptes de correu electrònic. Griabuntu Mail utilitza"
+"<em>etiquetes</em> dels vostres comptes de correu electrònic. Griaß di Mail utilitza"
 " el terme <em>etiqueta</em> per qualsevol carpeta que hàgiu creat per a "
 "organitzar els vostres missatges de correu."
 
@@ -652,38 +652,38 @@ msgstr ""
 #: C/overview.page:40
 msgid ""
 "Each sender’s name appears bold if there are unread messages from that "
-"sender. If a conversation has more than one message, Griabuntu Mail displays a count "
+"sender. If a conversation has more than one message, Griaß di Mail displays a count "
 "of messages in the conversation."
 msgstr ""
 "El nom de cada remitent apareix en negreta si hi ha missatges sense llegir "
-"d'aquest. Si una conversa té més d'un missatge, Griabuntu Mail mostra el nombre de "
+"d'aquest. Si una conversa té més d'un missatge, Griaß di Mail mostra el nombre de "
 "missatges a la conversa."
 
 #. (itstool) path: section/p
 #: C/overview.page:44
 msgid ""
-"Griabuntu Mail does not automatically download all messages in all of your mail "
-"folders. When you first visit your Inbox or any other folder, Griabuntu Mail "
+"Griaß di Mail does not automatically download all messages in all of your mail "
+"folders. When you first visit your Inbox or any other folder, Griaß di Mail "
 "downloads the most recent messages in that folder. To see more messages, "
-"simply scroll down the conversation list and Griabuntu Mail will fetch more messages "
+"simply scroll down the conversation list and Griaß di Mail will fetch more messages "
 "automatically."
 msgstr ""
-"Griabuntu Mail no descarrega automàticament tots els missatges a totes les carpetes "
+"Griaß di Mail no descarrega automàticament tots els missatges a totes les carpetes "
 "de correu. Quan visiteu la vostra safata d'entrada o qualsevol altra "
-"carpeta, Griabuntu Mail descarrega els missatges més recents de la carpeta. Per a veure"
+"carpeta, Griaß di Mail descarrega els missatges més recents de la carpeta. Per a veure"
 " més missatges, simplement desplaceu-vos cap avall per la llista de "
-"converses i Griabuntu Mail buscarà més missatges automàticament."
+"converses i Griaß di Mail buscarà més missatges automàticament."
 
 #. (itstool) path: section/p
 #: C/overview.page:50
 msgid ""
-"Some commands in Griabuntu Mail can act on a group of conversations. To select "
+"Some commands in Griaß di Mail can act on a group of conversations. To select "
 "multiple conversations, hold down the <key>Ctrl</key> key and click each "
 "conversation in turn in the conversation list. Alternatively, click the "
 "first conversation in a range, then hold down <key>Shift</key> and click the"
 " last conversation."
 msgstr ""
-"Algunes ordres de Griabuntu Mail poden actuar sobre un grup de converses. Per a "
+"Algunes ordres de Griaß di Mail poden actuar sobre un grup de converses. Per a "
 "seleccionar diverses converses, mantingueu premuda la tecla <key>Ctrl</key> "
 "i feu clic a cada conversa de la llista de converses que vulgueu "
 "seleccionar. Alternativament, podeu fer clic al primer element de la "
@@ -707,11 +707,11 @@ msgstr ""
 #. (itstool) path: section/p
 #: C/overview.page:63
 msgid ""
-"When you view a conversation, Griabuntu Mail collapses messages that you’ve already "
+"When you view a conversation, Griaß di Mail collapses messages that you’ve already "
 "read. Click collapsed messages to expand them. Click an expanded message’s "
 "header to collapse it."
 msgstr ""
-"Quan visualitzeu una conversa, Griabuntu Mail col·lapsa els missatges llegits. Feu "
+"Quan visualitzeu una conversa, Griaß di Mail col·lapsa els missatges llegits. Feu "
 "clic als missatges col·lapsats per a expandir-los. Feu clic a l'encapçalament "
 "d'un missatge expandit per a col·lapsar-lo."
 
@@ -745,12 +745,12 @@ msgstr ""
 msgid ""
 "Click the star button present on each message to mark or un-mark a message "
 "as being starred. Staring a message will mark the whole conversation as "
-"starred, and Griabuntu Mail will display the first starred message in a conversation "
+"starred, and Griaß di Mail will display the first starred message in a conversation "
 "when returning to it."
 msgstr ""
 "Feu clic a l'estrella present a cada missatge per a marcar o desmarcar el "
 "missatge com a destacat. Destacar un missatge destacarà tota la conversa i "
-"Griabuntu Mail mostrarà el primer missatge destacat de la conversa en tornar."
+"Griaß di Mail mostrarà el primer missatge destacat de la conversa en tornar."
 
 #. (itstool) path: section/p
 #: C/overview.page:84
@@ -784,12 +784,12 @@ msgstr "Preferències"
 #. (itstool) path: page/p
 #: C/preferences.page:12
 msgid ""
-"Griabuntu Mail allows you to customise how it works via its <gui "
+"Griaß di Mail allows you to customise how it works via its <gui "
 "style=\"group\">Preferences</gui> window. To open the window, select <gui "
 "style=\"menuitem\">Preferences</gui> from the application menu on the main "
 "window's toolbar. You can change the following options:"
 msgstr ""
-"Griabuntu Mail us permet personalitzar el seu funcionament utilitzant la finestra "
+"Griaß di Mail us permet personalitzar el seu funcionament utilitzant la finestra "
 "<gui style=\"group\">Preferències</gui>. Per a obrir la finestra, seleccioneu "
 "<gui style=\"menuitem\">Preferències</gui> al menú de l'aplicació a la barra"
 " d'eines de la finestra principal. Podeu canviar les opcions següents:"
@@ -802,13 +802,13 @@ msgstr "<gui>Automàticament seleccionar el següent missatge</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:20
 msgid ""
-"When this option is enabled, Griabuntu Mail automatically selects the latest message "
+"When this option is enabled, Griaß di Mail automatically selects the latest message "
 "in a folder when you enter the folder. In addition, after archiving a "
-"message, Griabuntu Mail automatically selects an adjacent message."
+"message, Griaß di Mail automatically selects an adjacent message."
 msgstr ""
-"Quan aquesta opció està activada, Griabuntu Mail selecciona automàticament l'últim "
+"Quan aquesta opció està activada, Griaß di Mail selecciona automàticament l'últim "
 "missatge de la carpeta quan hi entreu. A més, després d'arxivar un missatge,"
-" Griabuntu Mail selecciona automàticament un missatge adjacent."
+" Griaß di Mail selecciona automàticament un missatge adjacent."
 
 #. (itstool) path: item/title
 #: C/preferences.page:26
@@ -864,11 +864,11 @@ msgstr "<gui>Trobar nou correu quan es tanqui</gui>"
 #. (itstool) path: item/p
 #: C/preferences.page:45
 msgid ""
-"Griabuntu Mail will watch your accounts for new mail even when the main window is not"
+"Griaß di Mail will watch your accounts for new mail even when the main window is not"
 " open. To do this, it will silently start when you log in to your computer, "
 "and it will continue to run after you close all windows."
 msgstr ""
-"Griabuntu Mail vigilarà els vostres comptes per a trobar un correu nou, fins i tot quan"
+"Griaß di Mail vigilarà els vostres comptes per a trobar un correu nou, fins i tot quan"
 " la finestra principal no estigui oberta. Per a fer-ho, s'iniciarà "
 "silenciosament quan inicieu la sessió al vostre ordinador i seguirà "
 "funcionant després de tancar totes les finestres."
@@ -881,13 +881,13 @@ msgstr "Cercar"
 #. (itstool) path: page/p
 #: C/search.page:12
 msgid ""
-"Griabuntu Mail supports a per-account full text search. To start a search, select a "
+"Griaß di Mail supports a per-account full text search. To start a search, select a "
 "folder associated with the account you'd like to search against. Then click "
 "the search box in the toolbar (or press "
 "<keyseq><key>Ctrl</key><key>S</key></keyseq>) and start typing. Results will"
 " appear after a brief delay."
 msgstr ""
-"Griabuntu Mail admet una cerca de text completa per compte. Per a iniciar una cerca, "
+"Griaß di Mail admet una cerca de text completa per compte. Per a iniciar una cerca, "
 "seleccioneu una carpeta associada al compte què voleu cercar. A continuació,"
 " feu clic al quadre de cerca a la barra d'eines (o premeu "
 "<keyseq><key>Ctrl</key><key>S</key></keyseq>) i comenceu a teclejar. Els "
@@ -905,12 +905,12 @@ msgstr ""
 #. (itstool) path: page/p
 #: C/search.page:19
 msgid ""
-"Keywords that match your search are highlighted in the message view. Griabuntu Mail "
+"Keywords that match your search are highlighted in the message view. Griaß di Mail "
 "will match different forms of the same word, for example searching for "
 "\"walk\" will also match \"walking\" and \"walked.\""
 msgstr ""
 "Les paraules clau que coincideixen amb la vostra cerca es destaquen a la "
-"vista de missatges. Griabuntu Mail cerca diferents formes d'una mateixa paraula, per "
+"vista de missatges. Griaß di Mail cerca diferents formes d'una mateixa paraula, per "
 "exemple la cerca \"caminar\" també coincidirà amb \"caminant\" i "
 "\"caminat\"."
 
@@ -921,9 +921,9 @@ msgstr "Operadors de cerca"
 
 #. (itstool) path: section/p
 #: C/search.page:24
-msgid "Griabuntu Mail supports the following operators to limit the scope of searches:"
+msgid "Griaß di Mail supports the following operators to limit the scope of searches:"
 msgstr ""
-"Griabuntu Mail admet els operadors següents per a limitar l'abast de les cerques:"
+"Griaß di Mail admet els operadors següents per a limitar l'abast de les cerques:"
 
 #. (itstool) path: td/p
 #: C/search.page:27
@@ -1059,12 +1059,12 @@ msgstr "Dreceres de teclat"
 #. (itstool) path: section/p
 #: C/shortcuts.page:14
 msgid ""
-"Griabuntu Mail has keyboard shortcuts for most common operations. Use the built-in "
+"Griaß di Mail has keyboard shortcuts for most common operations. Use the built-in "
 "help to discover the full list. To open the shortcuts help, select <gui "
 "style=\"menuitem\">Keyboard Shortcuts</gui> from the application menu on the"
 " main window's toolbar, or using the keyboard shortcuts listed below."
 msgstr ""
-"Griabuntu Mail té dreceres de teclat per a les operacions més habituals. Utilitzeu "
+"Griaß di Mail té dreceres de teclat per a les operacions més habituals. Utilitzeu "
 "l'ajuda integrada per a conèixer la llista completa. Per a obrir l'ajuda de les "
 "dreceres, seleccioneu <gui style=\"menuitem\">Dreceres de teclat</gui> al "
 "menú de l'aplicació de la barra d'eines de la finestra principal, o bé "
@@ -1074,10 +1074,10 @@ msgstr ""
 #: C/shortcuts.page:20
 msgid ""
 "The following keyboard shortcuts can be used to access on-line help from "
-"Griabuntu Mail:"
+"Griaß di Mail:"
 msgstr ""
 "Les següents dreceres de teclat es poden utilitzar per a accedir a l'ajuda en "
-"línia de Griabuntu Mail:"
+"línia de Griaß di Mail:"
 
 #. (itstool) path: td/p
 #: C/shortcuts.page:24
@@ -1165,11 +1165,11 @@ msgstr "Marcar missatges com a llegits o no llegits"
 #. (itstool) path: section/p
 #: C/star.page:19
 msgid ""
-"Griabuntu Mail marks messages as read automatically as you read them. To manually "
+"Griaß di Mail marks messages as read automatically as you read them. To manually "
 "toggle a conversation as read or unread, click the circle icon in the "
 "conversation list."
 msgstr ""
-"Griabuntu Mail marca els missatges de forma automàtica mentre els llegiu. Per a "
+"Griaß di Mail marca els missatges de forma automàtica mentre els llegiu. Per a "
 "commutar manualment una conversa entre llegida i no llegida, feu clic a la "
 "icona amb un cercle a la llista de converses."
 
@@ -1231,13 +1231,13 @@ msgstr "Desfer l'enviament"
 #. (itstool) path: note/p
 #: C/write.page:24
 msgid ""
-"When sending an email, Griabuntu Mail will wait 5 seconds before delivering the "
+"When sending an email, Griaß di Mail will wait 5 seconds before delivering the "
 "message. During this time, you will be able to click <gui "
 "style=\"button\">Undo</gui> on the pop-up notification that appears or type "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> to re-open the email, and make "
 "more changes to it."
 msgstr ""
-"Quan s'envia un correu electrònic, Griabuntu Mail espera 5 segons abans d'enviar-lo. "
+"Quan s'envia un correu electrònic, Griaß di Mail espera 5 segons abans d'enviar-lo. "
 "Durant aquest temps, podreu fer clic a <gui style=\"button\">Desfés</gui> a "
 "la finestra emergent que apareix, o teclegeu "
 "<keyseq><key>Ctrl</key><key>Z</key></keyseq> per a reobrir el correu i fer-hi "
@@ -1247,7 +1247,7 @@ msgstr ""
 #: C/write.page:32
 msgid ""
 "When entering an email address in the <gui style=\"input\">To</gui> and <gui"
-" style=\"input\">Cc</gui> fields, Griabuntu Mail will provide suggestions from your "
+" style=\"input\">Cc</gui> fields, Griaß di Mail will provide suggestions from your "
 "desktop address book and from previously sent and received email messages. "
 "To choose one of these suggestions, simply click on it. In addition, <gui "
 "style=\"input\">Bcc</gui> and <gui style=\"input\">Reply-to</gui> fields can"
@@ -1255,7 +1255,7 @@ msgid ""
 "the formatting toolbar menu."
 msgstr ""
 "Quan s'introdueix una adreça de correu electrònic als camps <gui "
-"style=\"input\">Per a</gui> i <gui style=\"input\">Cc</gui>, Griabuntu Mail "
+"style=\"input\">Per a</gui> i <gui style=\"input\">Cc</gui>, Griaß di Mail "
 "proporciona suggeriments de la vostra llibreta d'adreces i dels missatges de"
 " correu electrònic enviats i rebuts anteriorment. Per a seleccionar un "
 "d'aquests suggeriments, només cal que hi feu clic. A més, els camps <gui "
@@ -1314,11 +1314,11 @@ msgstr "Formata el text, les imatges i els adjunts"
 #. (itstool) path: section/p
 #: C/write.page:63
 msgid ""
-"Griabuntu Mail's email composer lets you use text styles such as <em>bold</em> and "
+"Griaß di Mail's email composer lets you use text styles such as <em>bold</em> and "
 "<em>italic</em>, indent text to quote it and links to web pages. Simply "
 "select the text and click the appropriate button on the formatting toolbar."
 msgstr ""
-"L'editor de correu electrònic de Griabuntu Mail's us permet utilitzar estils com "
+"L'editor de correu electrònic de Griaß di Mail's us permet utilitzar estils com "
 "<em>negreta</em> i <em>itàlic</em>, indentar el text per a citar-lo i enllaçar"
 " a pàgines web. Simplement seleccioneu el text i feu clic al botó adequat a "
 "la barra d'eines de format."
@@ -1400,12 +1400,12 @@ msgstr "Comprovar l'ortografia"
 #. (itstool) path: section/p
 #: C/write.page:100
 msgid ""
-"Griabuntu Mail supports spell-checking your composed email in one or more languages, "
+"Griaß di Mail supports spell-checking your composed email in one or more languages, "
 "as you type. To enable spell-checking, first ensure your computer has spell-"
 "check dictionaries installed for the desired languages. Consult your "
 "computer's help to determine how to install dictionaries if not present."
 msgstr ""
-"Griabuntu Mail admet la revisió ortogràfica del vostre correu electrònic en un o "
+"Griaß di Mail admet la revisió ortogràfica del vostre correu electrònic en un o "
 "diversos idiomes, mentre escriviu. Per a habilitar la correcció ortogràfica, "
 "primer assegureu-vos que l'ordinador tingui instal·lats els diccionaris de "
 "correcció ortogràfica dels idiomes desitjats. Consulteu l'ajuda de "
@@ -1438,10 +1438,10 @@ msgstr "Desar esborranys i recuperar missatges descartats"
 #. (itstool) path: section/p
 #: C/write.page:119
 msgid ""
-"For mail servers that support drafts, Griabuntu Mail will automatically save the "
+"For mail servers that support drafts, Griaß di Mail will automatically save the "
 "message as you type on the server after a short delay."
 msgstr ""
-"Per als servidors de correu que admeten esborranys, Griabuntu Mail desarà "
+"Per als servidors de correu que admeten esborranys, Griaß di Mail desarà "
 "automàticament el missatge mentre escriviu al servidor després d'un cert "
 "temps."
 
@@ -1458,8 +1458,8 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/write.page:127
-msgid "Griabuntu Mail will delete the draft when you send the message."
-msgstr "Griabuntu Mail esborrarà l'esborrany quan envieu el missatge."
+msgid "Griaß di Mail will delete the draft when you send the message."
+msgstr "Griaß di Mail esborrarà l'esborrany quan envieu el missatge."
 
 #. (itstool) path: note/p
 #: C/write.page:130
@@ -1486,13 +1486,13 @@ msgstr "Missatges en text pla"
 #. (itstool) path: section/p
 #: C/write.page:143
 msgid ""
-"Griabuntu Mail can also send plain text messages. In the drop-down menu, check or "
+"Griaß di Mail can also send plain text messages. In the drop-down menu, check or "
 "uncheck <gui style=\"menu\">Rich Text</gui> to toggle between plain text and"
 " rich text mode. Plain text mode is useful when sending email to mailing "
 "lists that prohibit rich text (HTML) messages, or when sending email to "
 "people that do no use modern clients like GriabuntuMail."
 msgstr ""
-"Griabuntu Mail també pot enviar missatges de text pla. Al menú desplegable, marqueu o"
+"Griaß di Mail també pot enviar missatges de text pla. Al menú desplegable, marqueu o"
 " desmarqueu <gui style=\"menu\">Text enriquit</gui> per a canviar entre el "
 "text de text pla i el mode de text enriquit. El mode text pla és útil per a "
 "enviar missatges de correu electrònic a llistes de distribució que "

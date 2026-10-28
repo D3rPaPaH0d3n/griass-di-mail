@@ -1,3 +1,19 @@
+# Griaß di Mail · current release preparation
+
+## Current name decision · 2026-10-28
+
+The owner selected **Griaß di Mail**. Its visible branding and title banner
+replace the earlier Griabuntu Mail name. The icon and native upgrade identities
+are preserved. The Canonical inquiry concerns the abandoned name and remains
+archived unsent. No new public trademark-clearance claim is made. Retained
+per-asset provenance and corresponding-source/acceptance obligations still
+apply; earlier dated gates below describe their respective historical candidate.
+
+The next native candidate is `51.0+griassdi20261028.7`, package `griabuntu-mail`.
+Existing publication/default-branch authorisations do not need to be repeated.
+
+## Historical candidate records
+
 <!-- Downstream modification: 2026-10-26 — extend preliminary audit into actionable Griabuntu Mail preparation gates. -->
 # Griabuntu Mail · release preparation checklist
 

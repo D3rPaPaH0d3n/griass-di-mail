@@ -51,9 +51,9 @@
                       <object class="AdwPreferencesGroup">
                         <child>
                           <object class="AdwActionRow" id="account_provider_row">
-                            <!-- Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Griabuntu Mail-->
+                            <!-- Translators: This label describes the program that created the account, e.g. an SSO service like GOA, or locally by Griaß di Mail-->
                             <property name="title" translatable="yes">Account Source</property>
-                            <property name="subtitle" translatable="yes">Griabuntu Mail</property>
+                            <property name="subtitle" translatable="yes">Griaß di Mail</property>
                             <style>
                               <class name="property"/>
                             </style>

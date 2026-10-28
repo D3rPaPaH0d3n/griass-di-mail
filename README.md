@@ -1,10 +1,10 @@
 <div align="center">
 
-![Griabuntu Mail](design/owner-artwork-20261027/brand-banner.png)
+![Griaß di Mail](brand/brand-banner-griass-di-mail.png)
 
 # A calmer place for your mail.
 
-**Griabuntu Mail · native Linux email · Ubuntu 26.10**
+**Griaß di Mail · native Linux email · Ubuntu 26.10**
 
 Pastel teal and warm peach. Clear conversations. Your contacts, your choice.
 
@@ -20,7 +20,7 @@ and copper/peach surfaces. System light, dark and high-contrast modes stay in co
 
 Maintained by **Markus Kainer · [D3rPaPaH0d3n](https://github.com/D3rPaPaH0d3n)**.
 Contact: **[projekt@kainer.co.at](mailto:projekt@kainer.co.at)** or
-[GitHub Issues](https://github.com/D3rPaPaH0d3n/griabuntu-mail/issues).
+[GitHub Issues](https://github.com/D3rPaPaH0d3n/griass-di-mail/issues).
 
 ## Useful details, close at hand
 
@@ -64,7 +64,7 @@ DEB_BUILD_OPTIONS=parallel=6 dpkg-buildpackage -b -us -uc
 
 Install the inspected package with `sudo apt install ./griabuntu-mail_<version>_amd64.deb`.
 Close the app and back up its closed data before updating. Do not run it as root.
-The package does not start the app or copy accounts. Native Griabuntu Mail package,
+The package does not start the app or copy accounts. Native Griaß di Mail package,
 app-ID and profile paths remain stable; Convey/Geary/Flatpak migration is separate.
 
 [Build guide](BUILDING.md) · [Packaging](debian/README) · [Upgrading](docs/UPGRADING.md) ·
@@ -75,7 +75,7 @@ and provide corresponding source before distributing a binary.
 
 ## A fork with its history intact
 
-Griabuntu Mail is **not official Convey, Geary or Ubuntu**, and does not claim
+Griaß di Mail is **not official Convey, Geary or Ubuntu**, and does not claim
 endorsement by their authors, GNOME or Canonical. The elected application copy
 is **GPL-3.0-only**, with TNEF retained. Libraries, icons, sounds and vendored
 resources retain their individual terms. Original authors and full history remain.
@@ -101,3 +101,8 @@ Copyright © 2016 Software Freedom Conservancy Inc.
 Copyright © 2017–2020 Michael Gratton <mike@vee.net>
 Copyright © 2026 Daniel Elia <d.elia@outlook.com>
 Downstream changes © 2026 Markus Kainer <projekt@kainer.co.at>
+
+Current name / Aktueller Name: **Griaß di Mail** (2026-10-28).
+The native package remains `griabuntu-mail` for existing-profile upgrades;
+der technische Paketname bleibt für Updates erhalten. The app remains free;
+a voluntary donation button may be considered in future.

@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
@@ -78,7 +79,7 @@ public class Application.StartupManager : GLib.Object {
             var options = new GLib.HashTable<string, GLib.Variant>(
                 str_hash, str_equal);
             options.insert("reason", new GLib.Variant(
-                "s", _("Griabuntu Mail wants to run in background")));
+                "s", _("Griaß di Mail wants to run in background")));
             options.insert("autostart", new GLib.Variant(
                 "b", autostart));
             options.insert("commandline", new GLib.Variant.strv(cmdline));

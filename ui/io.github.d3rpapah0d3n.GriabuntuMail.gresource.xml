@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gresources>
   <gresource prefix="/io/github/d3rpapah0d3n/GriabuntuMail">
-    <file alias="brand/banner.png">brand-banner.png</file>
+    <file alias="brand/banner.png">brand-banner-griass-di-mail.png</file>
     <file compressed="true" preprocess="xml-stripblanks">accounts_editor.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">accounts-editor-account-list-row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">accounts_editor_add_pane.ui</file>

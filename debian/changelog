@@ -1,3 +1,11 @@
+griabuntu-mail (51.0+griassdi20261028.7) stonking; urgency=medium
+
+  * Present the application as Griaß di Mail, retaining the selected icon.
+  * Update the banner, launcher, translated labels, help and project links.
+  * Keep existing native package, app ID, profiles and keyring schema stable.
+
+ -- Markus Kainer <projekt@kainer.co.at>  Wed, 28 Oct 2026 06:54:00 +0100
+
 griabuntu-mail (51.0+griabuntu20261027.6) stonking; urgency=medium
 
   * Add consent-controlled Gravatar pictures and company/website icons.

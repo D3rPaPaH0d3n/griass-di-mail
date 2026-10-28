@@ -2,6 +2,6 @@
 Name=Send by email
 # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=mail-send
-Description=Send files using Griabuntu Mail
+Description=Send files using Griaß di Mail
 MimeType=!inode;
 Exec=griabuntu-mail-attach %F

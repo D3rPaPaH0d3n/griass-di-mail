@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Downstream modification: 2026-10-26 — native tray lifecycle and exact-message notification actions. */
 /*
@@ -16,7 +17,7 @@
  */
 public class Application.Client : Adw.Application {
 
-    public const string NAME = "Griabuntu Mail" + Config.NAME_SUFFIX;
+    public const string NAME = "Griaß di Mail" + Config.NAME_SUFFIX;
     public const string RESOURCE_BASE_PATH = "/io/github/d3rpapah0d3n/GriabuntuMail";
     public const string SCHEMA_ID = "io.github.d3rpapah0d3n.GriabuntuMail";
     public const string DESCRIPTION = _("Send and receive email");
@@ -253,9 +254,9 @@ public class Application.Client : Adw.Application {
             new Gee.LinkedList<RuntimeDetail?>();
 
         /// Application runtime information label
-        info.add({ _("Griabuntu Mail version"), Config.VERSION });
+        info.add({ _("Griaß di Mail version"), Config.VERSION });
         /// Application runtime information label
-        info.add({ _("Griabuntu Mail revision"), Config.REVNO });
+        info.add({ _("Griaß di Mail revision"), Config.REVNO });
         /// Application runtime information label
         info.add({ _("GTK version"),
                     "%u.%u.%u".printf(
@@ -467,7 +468,7 @@ public class Application.Client : Adw.Application {
                 // and b) we can run under gdb with
                 // G_DEBUG=fatal-warnings and have it break when
                 // this happens, and maybe debug it.
-                warning("Forcing shutdown of Griabuntu Mail, %ss passed...",
+                warning("Forcing shutdown of Griaß di Mail, %ss passed...",
                         (delta_usec / USEC_PER_SEC).to_string());
                 Posix.exit(2);
             }
@@ -582,8 +583,8 @@ public class Application.Client : Adw.Application {
             license_type = Gtk.License.GPL_3_0_ONLY,
             logo = banner,
             version = Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
-            website = "https://github.com/D3rPaPaH0d3n/griabuntu-mail",
-            website_label = _("Visit the Griabuntu Mail repository"),
+            website = "https://github.com/D3rPaPaH0d3n/griass-di-mail",
+            website_label = _("Visit the Griaß di Mail repository"),
             title = _("About %s").printf(NAME),
             // Translators: add your name and email address to receive
             // credit in the About dialog For example: Yamada Taro
@@ -1253,7 +1254,7 @@ public class Application.Client : Adw.Application {
         var dialog = new Adw.AlertDialog(_("Contact pictures and privacy"), null);
         dialog.body_use_markup = true;
         dialog.body = GLib.Markup.escape_text(_("Local contact photos take priority. External pictures are off by default. Gravatar receives an email-address SHA-256 hash and your connection IP address; with separate company-icon consent, DuckDuckGo receives the email domain and connection IP address. Hashes are not anonymous and pictures do not verify identity. No message content is sent. The app uses your proxy settings, keeps only a bounded memory cache, and cancels lookups and clears external pictures when you withdraw consent. Images inside emails keep their existing permissions.")) +
-            "\n\n<a href=\"https://github.com/D3rPaPaH0d3n/griabuntu-mail/blob/work/griabuntu-ubuntu-deb/docs/PRIVACY.md\">" +
+            "\n\n<a href=\"https://github.com/D3rPaPaH0d3n/griass-di-mail/blob/work/griabuntu-ubuntu-deb/docs/PRIVACY.md\">" +
             GLib.Markup.escape_text(_("Full privacy policy and provider links")) + "</a>";
         dialog.add_response("close", _("Close"));
         dialog.default_response = "close";
@@ -1397,7 +1398,7 @@ public class Application.Client : Adw.Application {
         } catch (GLib.Error error) {
             warning("Notification action was not completed: %s", error.message);
             var notice = new GLib.Notification(_("Notification action failed"));
-            notice.set_body(_("Open Griabuntu Mail to check the message. No message was permanently deleted."));
+            notice.set_body(_("Open Griaß di Mail to check the message. No message was permanently deleted."));
             notice.set_default_action_and_target_value(
                 Action.Application.prefix(Action.Application.SHOW_EMAIL), email_target
             );

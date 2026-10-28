@@ -208,7 +208,7 @@
                                   <object class="AdwHeaderBar">
                                     <property name="title-widget">
                                       <object class="GtkLabel">
-                                        <property name="label">Griabuntu Mail</property>
+                                        <property name="label">Griaß di Mail</property>
                                         <property name="ellipsize">end</property>
                                         <style><class name="heading"/></style>
                                       </object>
@@ -485,7 +485,7 @@
         <attribute name="action">app.privacy</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">_About Griabuntu Mail</attribute>
+        <attribute name="label" translatable="yes">_About Griaß di Mail</attribute>
         <attribute name="action">app.about</attribute>
       </item>
     </section>

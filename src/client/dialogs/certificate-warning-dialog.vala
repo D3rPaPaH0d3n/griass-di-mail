@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
 /* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
@@ -48,14 +49,14 @@ public class CertificateWarningDialog : Adw.AlertDialog {
             // could be a new or existing account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Griabuntu Mail not to access this server.")
+                + _("Selecting “Don’t Trust This Server” will cause Griaß di Mail not to access this server.")
                 + "</b> "
-                + _("Griabuntu Mail will not add or update this email account.");
+                + _("Griaß di Mail will not add or update this email account.");
         } else {
             // a registered account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Griabuntu Mail to stop accessing this account.")
+                + _("Selecting “Don’t Trust This Server” will cause Griaß di Mail to stop accessing this account.")
                 + "</b> ";
         }
         this.dont_trust_label.use_markup = true;

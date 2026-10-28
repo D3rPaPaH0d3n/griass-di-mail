@@ -28,7 +28,7 @@ def check(condition, message):
 
 def main():
     client = read("src/client/application/application-client.vala")
-    check('NAME = "Griabuntu Mail"' in client, "canonical application name")
+    check('NAME = "Griaß di Mail"' in client, "canonical application name")
     check(f'SCHEMA_ID = "{APP_ID}"' in client, "application schema ID")
     check(f'RESOURCE_BASE_PATH = "{RESOURCE_PATH}"' in client, "application resource path")
     check(f"'{APP_ID}@0@'" in read("meson.build"), "Meson application ID")
@@ -43,7 +43,7 @@ def main():
     resources = ET.fromstring(read(f"ui/{APP_ID}.gresource.xml"))
     check(resources.find("gresource").attrib["prefix"] == RESOURCE_PATH, "GResource prefix")
     desktop = read(f"desktop/{APP_ID}.desktop.in.in")
-    check("Name=Griabuntu Mail\n" in desktop, "launcher name")
+    check("Name=Griaß di Mail\n" in desktop, "launcher name")
     check(f"TryExec={EXECUTABLE}\n" in desktop, "launcher executable")
     check(f"Exec={EXECUTABLE} %U\n" in desktop, "launcher command")
     check(f"@bindir@/{EXECUTABLE} --gapplication-service" in
@@ -71,8 +71,8 @@ def main():
                   "obsolete engine namespace: " + str(path.relative_to(ROOT)))
     for locale in (ROOT / "po").glob("*.po"):
         for block in locale.read_text().split("\n\n"):
-            if re.search(r'^msgid "Griabuntu Mail"$', block, re.M):
-                check('msgstr "Griabuntu Mail"' in block,
+            if re.search(r'^msgid "Griaß di Mail"$', block, re.M):
+                check('msgstr "Griaß di Mail"' in block,
                       "translated product name: " + locale.name)
 
     import base64
@@ -101,7 +101,7 @@ def main():
     check((ROOT / "brand/griabuntu-mail-app-icon.svg").read_bytes() ==
           (ROOT / f"help/C/figures/{APP_ID}.svg").read_bytes(), "help icon source")
 
-    print("Griabuntu Mail identity and icon sources: desktop, schema, resources, translations and JS bridge agree.")
+    print("Griaß di Mail identity and icon sources: desktop, schema, resources, translations and JS bridge agree.")
 
 
 if __name__ == "__main__":

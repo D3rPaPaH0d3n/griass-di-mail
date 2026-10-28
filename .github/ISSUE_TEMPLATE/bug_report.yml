@@ -1,5 +1,5 @@
 name: Bug report / Fehler melden
-description: Help improve Griabuntu Mail / Griabuntu Mail verbessern
+description: Help improve Griaß di Mail / Griaß di Mail verbessern
 title: "[Bug] "
 body:
   - type: markdown
@@ -12,7 +12,7 @@ body:
     id: version
     attributes:
       label: App and Ubuntu version / App- und Ubuntu-Version
-      placeholder: "Griabuntu Mail 51.0+griabuntu20261027.6, Ubuntu 26.10 amd64"
+      placeholder: "Griaß di Mail 51.0+griabuntu20261027.6, Ubuntu 26.10 amd64"
     validations:
       required: true
   - type: textarea

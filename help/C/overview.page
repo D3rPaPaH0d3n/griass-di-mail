@@ -8,21 +8,21 @@
 
   <title>Overview</title>
 
-  <p>Griabuntu Mail is an email application built around conversations, for the
+  <p>Griaß di Mail is an email application built around conversations, for the
   GNOME 3 desktop. It allows you to read, find and send email with a
   straightforward, modern interface.</p>
 
   <p>Conversations allow you to read a complete discussion without
   having to find and click from message to message.</p>
 
-  <p>The main Griabuntu Mail window is divided into several areas: The folder
+  <p>The main Griaß di Mail window is divided into several areas: The folder
   list, the conversation list, and the conversation viewer.</p>
 
   <section id="folder-list">
     <title>Folder list</title>
 
     <p>The <em>folder list</em> displays all <em>folders</em> and
-    <em>labels</em> for your email accounts. Griabuntu Mail uses the term
+    <em>labels</em> for your email accounts. Griaß di Mail uses the term
     <em>label</em> for any folder that you have created to organize
     your email messages.</p>
 
@@ -39,15 +39,15 @@
 
     <p>Each sender’s name appears bold if there are unread messages
     from that sender. If a conversation has more than one message,
-    Griabuntu Mail displays a count of messages in the conversation.</p>
+    Griaß di Mail displays a count of messages in the conversation.</p>
 
-    <p>Griabuntu Mail does not automatically download all messages in all of
+    <p>Griaß di Mail does not automatically download all messages in all of
     your mail folders. When you first visit your Inbox or any other
-    folder, Griabuntu Mail downloads the most recent messages in that
+    folder, Griaß di Mail downloads the most recent messages in that
     folder. To see more messages, simply scroll down the conversation
-    list and Griabuntu Mail will fetch more messages automatically.</p>
+    list and Griaß di Mail will fetch more messages automatically.</p>
 
-    <p>Some commands in Griabuntu Mail can act on a group of conversations. To
+    <p>Some commands in Griaß di Mail can act on a group of conversations. To
     select multiple conversations, hold down the <key>Ctrl</key> key
     and click each conversation in turn in the conversation list.
     Alternatively, click the first conversation in a range, then hold
@@ -60,7 +60,7 @@
     <p>The <em>conversation viewer</em> displays all email messages in
     the selected conversation, with the oldest message at the top.</p>
 
-    <p>When you view a conversation, Griabuntu Mail collapses messages that
+    <p>When you view a conversation, Griaß di Mail collapses messages that
     you’ve already read. Click collapsed messages to expand
     them. Click an expanded message’s header to collapse it.</p>
 
@@ -78,7 +78,7 @@
 
     <p>Click the star button present on each message to mark or
     un-mark a message as being starred. Staring a message will mark
-    the whole conversation as starred, and Griabuntu Mail will display the
+    the whole conversation as starred, and Griaß di Mail will display the
     first starred message in a conversation when returning to it.</p>
 
     <p>Click the menu button present on each message to open the

@@ -173,7 +173,7 @@
     <key name="remember-last-inbox" type="b">
         <default>true</default>
         <summary>Reopen the inbox last viewed</summary>
-        <description>Open whichever inbox was last viewed when Griabuntu Mail
+        <description>Open whichever inbox was last viewed when Griaß di Mail
         starts, rather than a fixed one</description>
     </key>
 
