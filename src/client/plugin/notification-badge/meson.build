@@ -2,8 +2,7 @@
 plugin_name = 'notification-badge'
 
 plugin_src = files(
-  plugin_name + '.vala',
-  'unity-launcher-entry.vala'
+  plugin_name + '.vala'
 )
 plugin_data = plugin_name + plugin_data_suffix
 plugin_dest = plugins_dir / plugin_name
@@ -12,7 +11,7 @@ shared_module(
   plugin_name,
   sources: plugin_src,
   dependencies: plugin_dependencies,
-  vala_args: convey_vala_args,
+  vala_args: griabuntu_mail_vala_args,
   c_args: plugin_c_args,
   install: true,
   install_dir: plugin_dest,

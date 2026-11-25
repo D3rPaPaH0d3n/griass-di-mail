@@ -113,7 +113,7 @@
                             <property name="vexpand">True</property>
                             <property name="hscrollbar_policy">never</property>
                             <style>
-                              <class name="convey-conversation-scroller"/>
+                              <class name="griabuntu-mail-conversation-scroller"/>
                             </style>
                           </object>
                         </child>

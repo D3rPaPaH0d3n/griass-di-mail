@@ -1,9 +1,14 @@
+/* Downstream modification: 2026-10-28 — session-scoped popup recovery and async retirement guard. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — mail-specific popup action targets and buttons. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 [ModuleInit]
@@ -26,7 +31,7 @@ public class Plugin.DesktopNotifications :
     TrustedExtension {
 
 
-    private const Convey.Folder.SpecialUse[] MONITORED_TYPES = {
+    private const GriabuntuMail.Folder.SpecialUse[] MONITORED_TYPES = {
         INBOX, NONE
     };
 
@@ -58,40 +63,88 @@ public class Plugin.DesktopNotifications :
     private Gee.HashMultiMap<string, string> arrived =
         new Gee.HashMultiMap<string, string>();
     private GLib.Cancellable? cancellable = null;
+    private global::Application.NotificationJournal? journal = null;
+    private global::Application.NotificationDeliveryGuard delivery =
+        new global::Application.NotificationDeliveryGuard();
 
 
     public override async void activate(bool is_startup) throws GLib.Error {
         this.cancellable = new GLib.Cancellable();
+        var activation = this.cancellable;
+        this.journal = null;
+        try {
+            this.journal = new global::Application.NotificationJournal(
+                this.client_application.get_home_data_directory()
+                    .get_child("notifications").get_child("mail-popups.ini")
+            );
+            withdraw_all_arrived();
+        } catch (GLib.Error error) {
+            // Monitoring also drives the shared new-mail count. A broken
+            // journal suppresses popups, but must not disable that monitor.
+            this.journal = null;
+            this.arrived.clear();
+            warning("Mail popups disabled because their recovery journal is unavailable");
+        }
         this.email_store = yield this.email.get_email_store();
+        if (activation.is_cancelled()) return;
 
         this.notifications.new_messages_arrived.connect(on_new_messages_arrived);
         this.notifications.new_messages_retired.connect(on_new_messages_retired);
         this.notifications.email_seen.connect(on_email_seen);
 
         this.folder_store = yield this.folders.get_folder_store();
-        this.folder_store.folders_available.connect(
-            (folders) => check_folders(folders)
-        );
-        this.folder_store.folders_unavailable.connect(
-                (folders) => check_folders(folders)
-        );
-        this.folder_store.folders_type_changed.connect(
-            (folders) => check_folders(folders)
-        );
+        if (activation.is_cancelled()) return;
+        this.folder_store.folders_available.connect(check_folders);
+        this.folder_store.folders_unavailable.connect(on_folders_unavailable);
+        this.folder_store.folders_type_changed.connect(check_folders);
         check_folders(this.folder_store.get_folders());
     }
 
     public override async void deactivate(bool is_shutdown) throws GLib.Error {
-        this.cancellable.cancel();
+        if (this.cancellable != null) this.cancellable.cancel();
+        this.notifications.new_messages_arrived.disconnect(on_new_messages_arrived);
+        this.notifications.new_messages_retired.disconnect(on_new_messages_retired);
+        this.notifications.email_seen.disconnect(on_email_seen);
+        if (this.folder_store != null) {
+            this.folder_store.folders_available.disconnect(check_folders);
+            this.folder_store.folders_unavailable.disconnect(on_folders_unavailable);
+            this.folder_store.folders_type_changed.disconnect(check_folders);
+        }
+        try {
+            withdraw_all_arrived();
+        } catch (GLib.Error error) {
+            // Retained IDs can be recovered on the next successful startup.
+            this.arrived.clear();
+            warning("Could not clear mail notification recovery journal");
+        }
+    }
 
-        // Keep existing notifications if shutting down since they are
-        // persistent, but revoke if the plugin is being disabled.
-        if (!is_shutdown) {
-            foreach (string id in this.arrived.get_values()) {
+    private void withdraw_all_arrived() throws GLib.Error {
+        // Recovery includes only IDs we recorded ourselves, never error or
+        // other application notifications. Retire these on clean shutdown too.
+        if (this.journal != null) {
+            foreach (string id in this.journal.get_ids()) {
                 this.client_application.withdraw_notification(id);
             }
-            this.arrived.clear();
+            this.journal.clear();
         }
+        this.arrived.clear();
+    }
+
+    private void withdraw_arrived(string id) {
+        this.client_application.withdraw_notification(id);
+        try {
+            if (this.journal != null) this.journal.forget(id);
+        } catch (GLib.Error error) {
+            warning("Could not update mail notification recovery journal");
+        }
+    }
+
+    private bool delivery_current(Folder folder, int64 generation,
+                                  GLib.Cancellable request) {
+        return this.cancellable == request &&
+            this.delivery.is_current(folder.persistent_id, generation, request) &&
+            this.notifications.should_notify_new_messages(folder);
     }
 
     private string email_notification_id(EmailIdentifier id) {
@@ -119,18 +172,23 @@ public class Plugin.DesktopNotifications :
         return title;
     }
 
-    private async void notify_specific_message(Folder folder,
-                                               Email email
+    private async bool notify_specific_message(Folder folder,
+                                               Email email,
+                                               int64 generation,
+                                               GLib.Cancellable request
     ) throws GLib.Error {
+        if (!delivery_current(folder, generation, request)) return false;
         string title = to_notitication_title(folder.account, 1);
         GLib.Icon? icon = null;
-        Convey.RFC822.MailboxAddress? originator = email.get_primary_originator();
+        GriabuntuMail.RFC822.MailboxAddress? originator = email.get_primary_originator();
         if (originator != null) {
             ContactStore contacts =
                 yield this.notifications.get_contacts_for_folder(folder);
+            if (!delivery_current(folder, generation, request)) return false;
             global::Application.Contact? contact = yield contacts.load(
-                originator, this.cancellable
+                originator, request
             );
+            if (!delivery_current(folder, generation, request)) return false;
 
             title = (
                 contact.is_trusted
@@ -146,18 +204,20 @@ public class Plugin.DesktopNotifications :
         Gdk.Texture texture;
         if (icon != null) {
             int size = avatar_size();
-            var icon_stream = yield ((LoadableIcon) icon).load_async(size, null);
+            var icon_stream = yield ((LoadableIcon) icon).load_async(size, request);
+            if (!delivery_current(folder, generation, request)) return false;
             var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(
-                icon_stream, size, size, false
+                icon_stream, size, size, false, request
             );
+            if (!delivery_current(folder, generation, request)) return false;
             texture = round_texture(Gdk.Texture.for_pixbuf(pixbuf));
         } else {
             texture = generate_fallback_avatar(title);
         }
 
-        issue_arrived_notification(
+        return issue_arrived_notification(
             email_notification_id(email.identifier),
-            title, body, texture, folder, email.identifier
+            title, body, texture, folder, email.identifier, generation, request
         );
     }
 
@@ -324,7 +384,8 @@ public class Plugin.DesktopNotifications :
         return initials.str;
     }
 
-    private void notify_general(Folder folder, int total, int added) {
+    private void notify_general(Folder folder, int total, int added,
+                                int64 generation, GLib.Cancellable request) {
         GLib.Icon icon = new GLib.ThemedIcon("%s-symbolic".printf(Config.APP_ID));
         string title = to_notitication_title(folder.account, total);
         string body = ngettext(
@@ -350,16 +411,27 @@ public class Plugin.DesktopNotifications :
 
         issue_arrived_notification(
             folder_notification_id(folder),
-            title, body, icon, folder, null
+            title, body, icon, folder, null, generation, request
         );
     }
 
-    private void issue_arrived_notification(string notification_id,
+    private bool issue_arrived_notification(string notification_id,
                                             string summary,
                                             string body,
                                             GLib.Icon icon,
                                             Folder folder,
-                                            EmailIdentifier? id) {
+                                            EmailIdentifier? id,
+                                            int64 generation,
+                                            GLib.Cancellable request) {
+        if (!delivery_current(folder, generation, request) || this.journal == null) {
+            return false;
+        }
+        try {
+            this.journal.record(notification_id);
+        } catch (GLib.Error error) {
+            warning("Could not record mail notification for recovery");
+            return false;
+        }
         this.arrived.set(folder.persistent_id, notification_id);
 
         string? action = null;
@@ -378,8 +450,12 @@ public class Plugin.DesktopNotifications :
             body,
             icon,
             Action.Application.prefix(action),
-            target_param
+            target_param,
+            id == null ? null : global::Application.NotificationActions.target(
+                id.to_variant(), folder.to_variant()
+            )
         );
+        return true;
     }
 
     private GLib.Notification issue_notification(string id,
@@ -387,7 +463,8 @@ public class Plugin.DesktopNotifications :
                                                  string body,
                                                  GLib.Icon icon,
                                                  string? action,
-                                                 GLib.Variant? action_target) {
+                                                 GLib.Variant? action_target,
+                                                 GLib.Variant? mail_target = null) {
         GLib.Notification notification = new GLib.Notification(summary);
         notification.set_body(body);
         notification.set_icon(icon);
@@ -404,6 +481,9 @@ public class Plugin.DesktopNotifications :
                 );
             }
 
+            if (mail_target != null) {
+                global::Application.NotificationActions.add_buttons(notification, mail_target);
+            }
             this.client_application.send_notification(id, notification);
             return notification;
         }
@@ -411,28 +491,33 @@ public class Plugin.DesktopNotifications :
 
     private async void handle_new_messages(Folder folder,
                                            int total,
-                                           Gee.Collection<EmailIdentifier> added) {
-        if (this.notifications.should_notify_new_messages(folder)) {
+                                           Gee.Collection<EmailIdentifier> added,
+                                           int64 generation,
+                                           GLib.Cancellable request) {
+        if (delivery_current(folder, generation, request)) {
             // notify about each message if there are only a few and
             // they can be loaded, otherwise notify generally
             bool notified = false;
             if (added.size <= MAX_INDIVIDUAL) {
                 try {
                     foreach (Email message in
-                             yield this.email_store.get_email(added, this.cancellable)) {
-                        yield notify_specific_message(folder, message);
-                        notified = true;
+                             yield this.email_store.get_email(added, request)) {
+                        if (!delivery_current(folder, generation, request)) return;
+                        if (yield notify_specific_message(folder, message, generation, request)) {
+                            notified = true;
+                        }
                     }
                     if (!notified) {
                         warning("Could not load email for notification");
                     }
                 } catch (GLib.Error error) {
+                    if (!delivery_current(folder, generation, request)) return;
                     warning("Error loading email for notification: %s", error.message);
                 }
             }
 
             if (!notified) {
-                notify_general(folder, total, added.size);
+                notify_general(folder, total, added.size, generation, request);
             }
         }
     }
@@ -443,8 +528,23 @@ public class Plugin.DesktopNotifications :
                 this.notifications.start_monitoring_folder(folder);
             } else {
                 this.notifications.stop_monitoring_folder(folder);
+                retire_folder(folder);
             }
         }
+    }
+
+    private void on_folders_unavailable(Gee.Collection<Folder> folders) {
+        foreach (Folder folder in folders) {
+            this.notifications.stop_monitoring_folder(folder);
+            retire_folder(folder);
+        }
+    }
+
+    private void retire_folder(Folder folder) {
+        string key = folder.persistent_id;
+        this.delivery.invalidate(key);
+        foreach (string id in this.arrived.get(key)) withdraw_arrived(id);
+        this.arrived.remove_all(key);
     }
 
     private inline string to_notitication_title(Account account, int count) {
@@ -458,26 +558,29 @@ public class Plugin.DesktopNotifications :
     private void on_new_messages_arrived(Folder folder,
                                          int total,
                                          Gee.Collection<EmailIdentifier> added) {
-        this.handle_new_messages.begin(folder, total, added);
+        if (this.cancellable != null && !this.cancellable.is_cancelled()) {
+            this.handle_new_messages.begin(folder, total, added,
+                this.delivery.capture(folder.persistent_id), this.cancellable);
+        }
     }
 
     private void on_email_seen(Folder folder,
                                Gee.Collection<EmailIdentifier> seen) {
+        this.delivery.invalidate(folder.persistent_id);
+        string grouped = folder_notification_id(folder);
+        withdraw_arrived(grouped);
+        this.arrived.remove(folder.persistent_id, grouped);
         foreach (EmailIdentifier id in seen) {
             string notification_id = email_notification_id(id);
-            this.client_application.withdraw_notification(notification_id);
+            withdraw_arrived(notification_id);
             this.arrived.remove(folder.persistent_id, notification_id);
         }
     }
 
     private void on_new_messages_retired(Folder folder, int total) {
-        string key = folder.persistent_id;
-        if (total == 0) {
-            foreach (string notification_id in this.arrived.get(key)) {
-                this.client_application.withdraw_notification(notification_id);
-            }
-            this.arrived.remove_all(key);
-        }
+        // This signal provides no retired IDs. All existing folder popups may
+        // now be stale, including a group popup whose count has decreased.
+        retire_folder(folder);
     }
 
 }

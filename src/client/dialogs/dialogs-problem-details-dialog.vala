@@ -1,14 +1,18 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Displays technical details when a problem has been reported.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/problem-details-dialog.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/problem-details-dialog.ui")]
 public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
 
 
@@ -39,17 +43,17 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
     private Components.InspectorLogView log_pane;
     private Components.InspectorSystemView system_pane;
 
-    private Convey.ErrorContext error;
-    private Convey.AccountInformation? account;
-    private Convey.ServiceInformation? service;
+    private GriabuntuMail.ErrorContext error;
+    private GriabuntuMail.AccountInformation? account;
+    private GriabuntuMail.ServiceInformation? service;
 
 
     public ProblemDetailsDialog(Application.Client application,
-                                Convey.ProblemReport report) {
-        Convey.AccountProblemReport? account_report =
-            report as Convey.AccountProblemReport;
-        Convey.ServiceProblemReport? service_report =
-            report as Convey.ServiceProblemReport;
+                                GriabuntuMail.ProblemReport report) {
+        GriabuntuMail.AccountProblemReport? account_report =
+            report as GriabuntuMail.AccountProblemReport;
+        GriabuntuMail.ServiceProblemReport? service_report =
+            report as GriabuntuMail.ServiceProblemReport;
 
         this.error = report.error;
         this.account = (account_report != null) ? account_report.account : null;
@@ -193,7 +197,7 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
         }
 
         string clipboard_value = (string) bytes.get_data();
-        if (!Convey.String.is_empty(clipboard_value)) {
+        if (!GriabuntuMail.String.is_empty(clipboard_value)) {
             get_clipboard().set_text(clipboard_value);
         }
     }
@@ -208,7 +212,7 @@ public class Dialogs.ProblemDetailsDialog : Adw.Dialog {
         dialog.title = _("Save As");
         dialog.accept_label = _("Save As");
         dialog.initial_name = new DateTime.now_local().format(
-            "Convey Problem Report - %F %T.txt"
+            "Griaß di Mail Problem Report - %F %T.txt"
         );
 
         try {

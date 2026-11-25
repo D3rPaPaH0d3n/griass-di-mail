@@ -1,11 +1,14 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
- * Convey.Imap.FolderProperties represent the Convey API's notion of FolderProperties but
+ * GriabuntuMail.Imap.FolderProperties represent the Griabuntu Mail API's notion of FolderProperties but
  * also hangs additional useful information available to IMAP-specific code (in the Engine,
  * that includes imap, imap-engine, and imap-db).
  *
@@ -20,7 +23,7 @@
  *
  * In any event, the properties here are updated by the following logic:
  *
- * When a folder is first "seen" by Convey, it generates an Imap.FolderProperties object with all
+ * When a folder is first "seen" by Griabuntu Mail, it generates an Imap.FolderProperties object with all
  * the fields filled in except for status_messages or select_examine_messages, depending on which
  * command was used to discover it.  (In practice, the folder will be first recognized via STATUS,
  * but this isn't guaranteed.)
@@ -38,7 +41,7 @@
  * is considered more authoritative than STATUS.
  */
 
-public class Convey.Imap.FolderProperties : Convey.FolderProperties {
+public class GriabuntuMail.Imap.FolderProperties : GriabuntuMail.FolderProperties {
     /**
      * -1 if the Folder was not opened via SELECT or EXAMINE.  Updated as EXISTS server data
      * arrives.
@@ -150,7 +153,7 @@ public class Convey.Imap.FolderProperties : Convey.FolderProperties {
      *
      * Note that have_contents_changed does *not* discern if message flags have changed.
      */
-    public bool have_contents_changed(Convey.Imap.FolderProperties other, string name) {
+    public bool have_contents_changed(GriabuntuMail.Imap.FolderProperties other, string name) {
         // UIDNEXT changes indicate messages have been added, but not if they've been removed
         if (uid_next != null && other.uid_next != null && !uid_next.equal_to(other.uid_next)) {
             debug("%s FolderProperties changed: UIDNEXT=%s other.UIDNEXT=%s", name,
@@ -197,7 +200,7 @@ public class Convey.Imap.FolderProperties : Convey.FolderProperties {
     /**
      * Update an existing {@link FolderProperties} with fresh {@link StatusData}.
      *
-     * This will force the {@link Convey.FolderProperties.email_total} property to match the
+     * This will force the {@link GriabuntuMail.FolderProperties.email_total} property to match the
      * {@link status_messages} value.
      */
     public void update_status(StatusData status) {

@@ -1,12 +1,15 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2018-2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.Imap.ClientConnection : BaseObject, Logging.Source {
+public class GriabuntuMail.Imap.ClientConnection : BaseObject, Logging.Source {
 
 
     /**
@@ -63,7 +66,7 @@ public class Convey.Imap.ClientConnection : BaseObject, Logging.Source {
     public Logging.Source? logging_parent { get { return _logging_parent; } }
     private weak Logging.Source? _logging_parent = null;
 
-    private Convey.Endpoint endpoint;
+    private GriabuntuMail.Endpoint endpoint;
     private int cx_id;
     private Quirks quirks;
     private IOStream? cx = null;
@@ -77,8 +80,8 @@ public class Convey.Imap.ClientConnection : BaseObject, Logging.Source {
 
     private size_t bytes_accumulator = 0;
 
-    private Convey.Nonblocking.Queue<Command> pending_queue =
-        new Convey.Nonblocking.Queue<Command>.fifo();
+    private GriabuntuMail.Nonblocking.Queue<Command> pending_queue =
+        new GriabuntuMail.Nonblocking.Queue<Command>.fifo();
     private Gee.Queue<Command> sent_queue = new Gee.LinkedList<Command>();
     private Command? current_command = null;
     private uint command_timeout;
@@ -115,7 +118,7 @@ public class Convey.Imap.ClientConnection : BaseObject, Logging.Source {
 
 
     public ClientConnection(
-        Convey.Endpoint endpoint,
+        GriabuntuMail.Endpoint endpoint,
         Quirks quirks,
         uint command_timeout = Command.DEFAULT_RESPONSE_TIMEOUT_SEC,
         uint idle_timeout_sec = DEFAULT_IDLE_TIMEOUT_SEC) {

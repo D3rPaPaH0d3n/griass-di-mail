@@ -1,23 +1,40 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
 /*
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /** Run only synthetic summary helpers, without GTK or application setup. */
 int main(string[] args) {
+    if (args.length > 1 && args[1] == "--badge-fixture") {
+        try { return Application.StatusIconTest.run_badge_fixture(); }
+        catch (GLib.Error e) { GLib.stderr.printf("%s\n", e.message); return 1; }
+    }
     if (args.length > 1 && args[1] == "--tray-fixture")
         return Application.StatusIconTest.run_fixture();
+    if (args.length > 1 && args[1] == "--notification-fixture")
+        return Application.NotificationActionsTest.run_fixture();
     GLib.Environment.set_variable("GSETTINGS_BACKEND", "memory", true);
+    GLib.Environment.set_variable("GNOTIFICATION_BACKEND", "gtk", true);
     GLib.Environment.set_variable("TZ", "Europe/Vienna", true);
     GLib.Intl.setlocale(LocaleCategory.ALL, "C.UTF-8");
     GLib.Test.init(ref args);
-    Convey.RFC822.init();
+    GriabuntuMail.RFC822.init();
 
     unowned GLib.TestSuite root = GLib.TestSuite.get_root();
+    root.add_suite(new Accounts.IdentitySettingsTest().steal_suite());
+    root.add_suite(new Accounts.SenderDiscoveryTest().steal_suite());
     root.add_suite(new Util.Email.RecipientAliasesTest().steal_suite());
     root.add_suite(new Util.Email.SummaryContactTest().steal_suite());
     root.add_suite(new ConversationList.ParticipantDisplayTest().steal_suite());
     root.add_suite(new Util.Date.ReceivedTimeTest().steal_suite());
+    root.add_suite(new Application.ContactPictureTest().steal_suite());
     root.add_suite(new Application.StatusIconTest().steal_suite());
+    root.add_suite(new Application.LauncherEntryTest().steal_suite());
+    root.add_suite(new Application.NotificationActionsTest().steal_suite());
+    root.add_suite(new Application.NotificationJournalTest().steal_suite());
     return GLib.Test.run();
 }

@@ -1,8 +1,10 @@
+<!-- Downstream modification: 2026-10-26 — document synthetic notification-flag regression suite and red baseline. -->
+<!-- Downstream modification: 2026-10-27 — record verified notification-flag fix. -->
 
 Automated Test Infrastructure
 =============================
 
-Convey currently supports three types of automated tests:
+Griabuntu Mail currently supports three types of automated tests:
 
  * Engine unit tests
  * Client (GTK and JavaScript) unit tests
@@ -26,10 +28,38 @@ The engine tests can be run headless (i.e. without an X11 or Wayland
 session), but the client tests require a functioning display since
 they execute GTK code.
 
+Synthetic notification flag regression
+--------------------------------------
+
+Build and run this separate, headless suite in the existing SDK environment:
+
+```
+meson compile -C build test-notification-flags
+meson test -C build --no-rebuild --print-errorlogs notification-flag-tests
+```
+
+It compiles the actual `application-notification-plugin-context.vala` and tray
+model, with the engine's flags, mock folder signals and production plugin
+interfaces. Only application/plugin-loader/contact boundaries are replaced by
+`mock/notification-context.vala`; the handler is not copied into the test.
+The target is declared at the repository root because Vala needs a common
+source root for the `src/` and `test/` inputs.
+
+No GTK application, accounts, contacts backend or real mail store is opened.
+Use a temporary HOME/XDG environment, memory GSettings, no network and no host
+session/system bus. Do not run the installed mail application for this test.
+
+`python3 build-aux/check-identity.py` checks identity wiring across Vala,
+GSettings, GResources, desktop/D-Bus launch commands, translation sources and
+product names, and the JavaScript/WebKit bridge. The native package test runner
+calls it before the isolated headless suites. See `docs/IDENTITY.md` for the
+current naming map and deliberately preserved provenance/compatibility names.
+
+
 Integration tests
 -----------------
 
-Integration tests run Convey's network code against actual servers, to
+Integration tests run Griabuntu Mail's network code against actual servers, to
 ensure that the code also works in the real world.
 
 The integration tests are built by default, but not currently hooked
@@ -51,3 +81,26 @@ If `PROVIDER` is `other`, then `HOSTNAME` is required.
 The easiest way to test against a number of different servers at the
 moment is to create a test account for each, then write a shell script
 or similar to execute the tests against each in turn.
+
+## Consent-controlled contact pictures (2026-10-27)
+
+The focused headless runner includes seven policy tests for default-off consent,
+separate company permission, SHA-256 normalisation, unsafe domains, free-mail
+providers, fresh settings and rejecting vector payloads.
+
+For the real client-library/GTK/HTTPS fixtures, with the build dependencies
+installed, run from the source root:
+
+```sh
+python3 debian/run-tests.py obj-x86_64-linux-gnu --pictures
+```
+
+The runner creates disposable HOME/XDG, a private bus/display and a loopback-only
+network namespace, with synthetic DNS and an ephemeral TLS trust/key fixture.
+A local HTTPS server behind a local HTTP CONNECT proxy exercises the real Soup
+transport, user proxy handling, Gravatar 404/company fallback, raster decoding,
+revocation, redirects, oversized/vector payloads and stale delayed responses.
+No external service or real mailbox is contacted. No TLS verification is disabled.
+The integration script refuses to run without the explicit fixture marker,
+memory settings and a loopback-only network namespace. Test keys are temporary
+and are never included in the repository or application package.

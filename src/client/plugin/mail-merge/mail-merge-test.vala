@@ -1,19 +1,22 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
 int main(string[] args) {
     GLib.Test.init(ref args);
-    Convey.RFC822.init();
-    Convey.HTML.init();
-    Convey.Logging.init();
+    GriabuntuMail.RFC822.init();
+    GriabuntuMail.HTML.init();
+    GriabuntuMail.Logging.init();
     if (GLib.Test.verbose()) {
-        GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
-        Convey.Logging.log_to(GLib.stdout);
+        GLib.Log.set_writer_func(GriabuntuMail.Logging.default_log_writer);
+        GriabuntuMail.Logging.log_to(GLib.stdout);
     }
 
     GLib.TestSuite root = GLib.TestSuite.get_root();

@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
@@ -27,7 +30,7 @@ class Application.ClientTest : TestCase {
 
     public void paths_when_installed() throws GLib.Error {
         string[] args = new string[] {
-            Config.INSTALL_PREFIX + "/bin/convey",
+            Config.INSTALL_PREFIX + "/bin/griabuntu-mail",
             // Specify this so the app doesn't actually attempt
             // to start up
             "-v"
@@ -38,7 +41,7 @@ class Application.ClientTest : TestCase {
 
         assert_equal(
             this.test_article.get_resource_directory().get_path(),
-            Config.INSTALL_PREFIX + "/share/convey"
+            Config.INSTALL_PREFIX + "/share/griabuntu-mail"
         );
         assert_equal(
             this.test_article.get_desktop_directory().get_path(),

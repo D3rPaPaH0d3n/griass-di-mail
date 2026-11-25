@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * An account editor pane for listing all known accounts.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_list_pane.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts_editor_list_pane.ui")]
 internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 
 
@@ -22,7 +25,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
             return -1;
         }
 
-        return Convey.AccountInformation.compare_ascending(
+        return GriabuntuMail.AccountInformation.compare_ascending(
             account_a.account, account_b.account
         );
     }
@@ -61,8 +64,8 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 
     [GtkChild] private unowned Gtk.ScrolledWindow accounts_list_scrolled;
 
-    private Gee.Map<Convey.AccountInformation,EditorEditPane> edit_pane_cache =
-        new Gee.HashMap<Convey.AccountInformation,EditorEditPane>();
+    private Gee.Map<GriabuntuMail.AccountInformation,EditorEditPane> edit_pane_cache =
+        new Gee.HashMap<GriabuntuMail.AccountInformation,EditorEditPane>();
 
 
     public EditorListPane(Editor editor) {
@@ -74,7 +77,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         this.accounts = editor.accounts;
 
         this.accounts_list.set_sort_func(ordinal_sort);
-        foreach (Convey.AccountInformation account in this.accounts.iterable()) {
+        foreach (GriabuntuMail.AccountInformation account in this.accounts.iterable()) {
             add_account(account, this.accounts.get_status(account));
         }
 
@@ -107,7 +110,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         this.editor.push_pane(new EditorAddPane(this.editor));
     }
 
-    internal void show_existing_account(Convey.AccountInformation account) {
+    internal void show_existing_account(GriabuntuMail.AccountInformation account) {
         EditorEditPane? edit_pane = this.edit_pane_cache.get(account);
         if (edit_pane == null) {
             edit_pane = new EditorEditPane(this.editor, account);
@@ -117,7 +120,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
     }
 
     /** Removes an account from the list. */
-    internal void remove_account(Convey.AccountInformation account) {
+    internal void remove_account(GriabuntuMail.AccountInformation account) {
         AccountListRow? row = get_account_row(account);
         if (row != null) {
             this.commands.execute.begin(
@@ -127,7 +130,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         }
     }
 
-    private void add_account(Convey.AccountInformation account,
+    private void add_account(GriabuntuMail.AccountInformation account,
                              Manager.Status status) {
         AccountListRow row = new AccountListRow(account, status);
         row.moved.connect(on_account_row_moved);
@@ -149,7 +152,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         }
     }
 
-    private AccountListRow? get_account_row(Convey.AccountInformation account) {
+    private AccountListRow? get_account_row(GriabuntuMail.AccountInformation account) {
         for (int i = 0; true; i++) {
             unowned var row = this.accounts_list.get_row_at_index(i) as AccountListRow;
             if (row == null)
@@ -160,13 +163,13 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         return null;
     }
 
-    private void on_account_added(Convey.AccountInformation account,
+    private void on_account_added(GriabuntuMail.AccountInformation account,
                                   Manager.Status status) {
         add_account(account, status);
         update_welcome_panel();
     }
 
-    private void on_account_status_changed(Convey.AccountInformation account,
+    private void on_account_status_changed(GriabuntuMail.AccountInformation account,
                                            Manager.Status status) {
         AccountListRow? row = get_account_row(account);
         if (row != null) {
@@ -190,7 +193,7 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
         );
     }
 
-    private void on_account_removed(Convey.AccountInformation account) {
+    private void on_account_removed(GriabuntuMail.AccountInformation account) {
         AccountListRow? row = get_account_row(account);
         if (row != null) {
             this.accounts_list.remove(row);
@@ -283,10 +286,10 @@ internal class Accounts.EditorListPane : Accounts.EditorPane, CommandPane {
 private extern unowned Gtk.Widget gtk_drag_icon_get_for_drag(Gdk.Drag drag);
 
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-editor-account-list-row.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts-editor-account-list-row.ui")]
 private class Accounts.AccountListRow : Adw.ActionRow {
 
-    public Convey.AccountInformation account { get; construct set; }
+    public GriabuntuMail.AccountInformation account { get; construct set; }
 
     [GtkChild] private unowned Gtk.Image drag_icon;
     [GtkChild] private unowned Gtk.Image unavailable_icon;
@@ -303,7 +306,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         update();
     }
 
-    public AccountListRow(Convey.AccountInformation account,
+    public AccountListRow(GriabuntuMail.AccountInformation account,
                           Manager.Status status) {
         Object(account: account);
         update_status(status);
@@ -315,22 +318,22 @@ private class Accounts.AccountListRow : Adw.ActionRow {
 
     public void update() {
         string name = this.account.display_name;
-        if (Convey.String.is_empty(name)) {
+        if (GriabuntuMail.String.is_empty(name)) {
             name = account.primary_mailbox.to_address_display("", "");
         }
         this.title = name;
 
         string? details = this.account.service_label;
         switch (account.service_provider) {
-        case Convey.ServiceProvider.GMAIL:
+        case GriabuntuMail.ServiceProvider.GMAIL:
             details = _("Gmail");
             break;
 
-        case Convey.ServiceProvider.OUTLOOK:
+        case GriabuntuMail.ServiceProvider.OUTLOOK:
             details = _("Outlook.com");
             break;
 
-        case Convey.ServiceProvider.OTHER:
+        case GriabuntuMail.ServiceProvider.OTHER:
             // no-op: Use the generated label
             break;
         }
@@ -423,7 +426,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
         drag.set_hotspot((int) this.drag_x, (int) this.drag_y);
 
         // Set a visual hint that the row is being dragged
-        add_css_class("convey-drag-source");
+        add_css_class("griabuntu-mail-drag-source");
         this.drag_picked_up = true;
     }
 
@@ -431,7 +434,7 @@ private class Accounts.AccountListRow : Adw.ActionRow {
     private void on_drag_source_end(Gtk.DragSource drag_source,
                                     Gdk.Drag drag,
                                     bool delete_data) {
-        remove_css_class("convey-drag-source");
+        remove_css_class("griabuntu-mail-drag-source");
         this.drag_picked_up = false;
     }
 
@@ -531,14 +534,14 @@ internal class Accounts.ReorderAccountCommand : Application.Command {
     }
 
     private void move_source(int destination) {
-        Gee.List<Convey.AccountInformation> accounts =
+        Gee.List<GriabuntuMail.AccountInformation> accounts =
             this.manager.iterable().to_linked_list();
-        accounts.sort(Convey.AccountInformation.compare_ascending);
+        accounts.sort(GriabuntuMail.AccountInformation.compare_ascending);
         accounts.remove(this.source.account);
         accounts.insert(destination, this.source.account);
 
         int ord = 0;
-        foreach (Convey.AccountInformation account in accounts) {
+        foreach (GriabuntuMail.AccountInformation account in accounts) {
             if (account.ordinal != ord) {
                 account.ordinal = ord;
                 account.changed();
@@ -555,11 +558,11 @@ internal class Accounts.ReorderAccountCommand : Application.Command {
 internal class Accounts.RemoveAccountCommand : Application.Command {
 
 
-    private Convey.AccountInformation account;
+    private GriabuntuMail.AccountInformation account;
     private Manager manager;
 
 
-    public RemoveAccountCommand(Convey.AccountInformation account,
+    public RemoveAccountCommand(GriabuntuMail.AccountInformation account,
                                 Manager manager) {
         this.account = account;
         this.manager = manager;

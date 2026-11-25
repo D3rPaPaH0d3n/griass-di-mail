@@ -1,15 +1,18 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 errordomain AccountProcessorTestError {
     TEST;
 }
 
-public class Convey.ImapEngine.AccountProcessorTest : TestCase {
+public class GriabuntuMail.ImapEngine.AccountProcessorTest : TestCase {
 
 
     public class TestOperation : AccountOperation {
@@ -20,7 +23,7 @@ public class Convey.ImapEngine.AccountProcessorTest : TestCase {
 
         private Nonblocking.Spinlock spinlock = new Nonblocking.Spinlock();
 
-        internal TestOperation(Convey.Account account) {
+        internal TestOperation(GriabuntuMail.Account account) {
             base(account);
         }
 
@@ -40,7 +43,7 @@ public class Convey.ImapEngine.AccountProcessorTest : TestCase {
 
     public class OtherOperation : TestOperation {
 
-        internal OtherOperation(Convey.Account account) {
+        internal OtherOperation(GriabuntuMail.Account account) {
             base(account);
         }
 
@@ -48,15 +51,15 @@ public class Convey.ImapEngine.AccountProcessorTest : TestCase {
 
 
     private AccountProcessor? processor = null;
-    private Convey.Account? account = null;
-    private Convey.AccountInformation? info = null;
+    private GriabuntuMail.Account? account = null;
+    private GriabuntuMail.AccountInformation? info = null;
     private uint succeeded;
     private uint failed;
     private uint completed;
 
 
     public AccountProcessorTest() {
-        base("Convey.ImapEngine.AccountProcessorTest");
+        base("GriabuntuMail.ImapEngine.AccountProcessorTest");
         add_test("success", success);
         add_test("failure", failure);
         add_test("duplicate", duplicate);
@@ -64,7 +67,7 @@ public class Convey.ImapEngine.AccountProcessorTest : TestCase {
     }
 
     public override void set_up() {
-        this.info = new Convey.AccountInformation(
+        this.info = new GriabuntuMail.AccountInformation(
             "test-info",
             ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),

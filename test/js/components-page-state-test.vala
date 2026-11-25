@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 class Components.PageStateTest : WebViewTestCase<WebView> {
@@ -149,31 +152,31 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
         run_javascript(
             "window.darkReaderEnableCalled = false; window.darkReaderDisabledCalled = false;"
         );
-        run_javascript("convey.setUnsetHtmlColors(true, true);");
+        run_javascript("griabuntu_mail.setUnsetHtmlColors(true, true);");
         assert(Util.JS.to_bool(run_javascript("window.darkReaderEnableCalled")));
         assert(!Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
         assert(Util.JS.to_bool(run_javascript(
-            "document.body.getAttribute('data-convey-theme') == 'dark'"
+            "document.body.getAttribute('data-griabuntu-mail-theme') == 'dark'"
         )));
 
         run_javascript(
             "window.darkReaderEnableCalled = false; window.darkReaderDisabledCalled = false;"
         );
-        run_javascript("convey.setUnsetHtmlColors(true, false);");
+        run_javascript("griabuntu_mail.setUnsetHtmlColors(true, false);");
         assert(!Util.JS.to_bool(run_javascript("window.darkReaderEnableCalled")));
         assert(Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
         assert(Util.JS.to_bool(run_javascript(
-            "document.body.getAttribute('data-convey-theme') == 'light'"
+            "document.body.getAttribute('data-griabuntu-mail-theme') == 'light'"
         )));
 
         run_javascript(
             "window.darkReaderEnableCalled = false; window.darkReaderDisabledCalled = false;"
         );
-        run_javascript("convey.setUnsetHtmlColors(false, false);");
+        run_javascript("griabuntu_mail.setUnsetHtmlColors(false, false);");
         assert(!Util.JS.to_bool(run_javascript("window.darkReaderEnableCalled")));
         assert(Util.JS.to_bool(run_javascript("window.darkReaderDisabledCalled")));
         assert(!Util.JS.to_bool(run_javascript(
-            "document.body.hasAttribute('data-convey-theme')"
+            "document.body.hasAttribute('data-griabuntu-mail-theme')"
         )));
     }
 
@@ -214,7 +217,7 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
             "        window.darkReaderDisabledCalled = true;\n" +
             "    }\n" +
             "};\n" +
-            "var convey = new PageState()",
+            "var griabuntu-mail = new PageState()",
             WebKit.UserContentInjectedFrames.TOP_FRAME,
             WebKit.UserScriptInjectionTime.START,
             null,
@@ -229,7 +232,7 @@ class Components.PageStateTest : WebViewTestCase<WebView> {
     private void assert_test_result(string expected)
         throws GLib.Error {
         string? result = Util.JS.to_string(
-            run_javascript("convey.testResult")
+            run_javascript("griabuntu_mail.testResult")
         );
         assert_equal(result, expected);
     }

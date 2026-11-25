@@ -4,15 +4,15 @@
 
 desktop_output = []
 desktop_conf = configuration_data()
-desktop_conf.set('appid', convey_id)
+desktop_conf.set('appid', griabuntu_mail_id)
 
 desktop_file = i18n.merge_file(
   input: configure_file(
-    input: 'net.donnybeelo.Convey.desktop.in.in',
-    output: 'net.donnybeelo.Convey.desktop.in',
+    input: 'io.github.d3rpapah0d3n.GriabuntuMail.desktop.in.in',
+    output: 'io.github.d3rpapah0d3n.GriabuntuMail.desktop.in',
     configuration: desktop_conf
   ),
-  output: '@0@.desktop'.format(convey_id),
+  output: '@0@.desktop'.format(griabuntu_mail_id),
   type: 'desktop',
   po_dir: po_dir,
   install: true,
@@ -22,11 +22,11 @@ desktop_output += desktop_file
 
 autostart_file = i18n.merge_file(
   input: configure_file(
-    input: 'convey-autostart.desktop.in.in',
-    output: 'convey-autostart.desktop.in',
+    input: 'griabuntu-mail-autostart.desktop.in.in',
+    output: 'griabuntu-mail-autostart.desktop.in',
     configuration: desktop_conf
   ),
-  output: 'convey-autostart.desktop',
+  output: 'griabuntu-mail-autostart.desktop',
   type: 'desktop',
   po_dir: po_dir,
   install: true,
@@ -51,7 +51,7 @@ endforeach
 # Metainfo file
 #
 
-metainfo_file = 'net.donnybeelo.Convey.metainfo.xml'
+metainfo_file = 'io.github.d3rpapah0d3n.GriabuntuMail.metainfo.xml'
 
 metainfo_merged = i18n.merge_file(
   input: configure_file(
@@ -59,7 +59,7 @@ metainfo_merged = i18n.merge_file(
     output: metainfo_file + '.in',
     configuration: desktop_conf
   ),
-  output: '@0@.metainfo.xml'.format(convey_id),
+  output: '@0@.metainfo.xml'.format(griabuntu_mail_id),
   type: 'xml',
   po_dir: po_dir,
   install: true,
@@ -88,15 +88,15 @@ if get_option('contractor').enabled()
   # Description field. See merge req !50.
   msgfmt = find_program('msgfmt')
 
-  custom_target('convey-attach-contract',
-    input: 'convey-attach.contract.desktop.in',
-    output: 'convey-attach.contract',
+  custom_target('griabuntu-mail-attach-contract',
+    input: 'griabuntu-mail-attach.contract.desktop.in',
+    output: 'griabuntu-mail-attach.contract',
     command: [msgfmt, '--desktop', '--keyword=Description', '--template', '@INPUT@', '-d', po_dir, '-o', '@OUTPUT@'],
     install: true,
     install_dir: join_paths(data_dir, 'contractor')
   )
 
-  install_data('convey-attach',
+  install_data('griabuntu-mail-attach',
     install_dir: bin_dir,
   )
 endif
@@ -110,10 +110,10 @@ endif
 # schema is re-compiled if the source changes. This is not supported
 # by Meson but it works, so request for official support has been
 # added, see: https://github.com/mesonbuild/meson/issues/2770
-convey_compiled_schema = gnome.compile_schemas(
-  depend_files: files('net.donnybeelo.Convey.gschema.xml'),
+griabuntu_mail_compiled_schema = gnome.compile_schemas(
+  depend_files: files('io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml'),
 )
-install_data('net.donnybeelo.Convey.gschema.xml',
+install_data('io.github.d3rpapah0d3n.GriabuntuMail.gschema.xml',
   install_dir: join_paths(data_dir, 'glib-2.0', 'schemas'),
 )
 
@@ -123,11 +123,11 @@ install_data('net.donnybeelo.Convey.gschema.xml',
 
 service_conf = configuration_data()
 service_conf.set('bindir', bin_dir)
-service_conf.set('appid', convey_id)
+service_conf.set('appid', griabuntu_mail_id)
 
 configure_file(
-  input: 'net.donnybeelo.Convey.service.in',
-  output: '@0@.service'.format(convey_id),
+  input: 'io.github.d3rpapah0d3n.GriabuntuMail.service.in',
+  output: '@0@.service'.format(griabuntu_mail_id),
   configuration: service_conf,
   install: true,
   install_dir: dbus_services_dir

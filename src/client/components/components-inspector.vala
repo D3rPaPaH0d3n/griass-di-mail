@@ -1,14 +1,18 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * A window that displays debugging and development information.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-inspector.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-inspector.ui")]
 public class Components.Inspector : Adw.ApplicationWindow {
 
 
@@ -94,7 +98,7 @@ public class Components.Inspector : Adw.ApplicationWindow {
         // Enable updates to get the log marker, then load log all log
         // records in
         enable_log_updates(true);
-        this.log_pane.load(Convey.Logging.get_earliest_record(), null);
+        this.log_pane.load(GriabuntuMail.Logging.get_earliest_record(), null);
     }
 
     [GtkCallback]
@@ -199,7 +203,7 @@ public class Components.Inspector : Adw.ApplicationWindow {
         }
 
         string clipboard_value = (string) bytes.get_data();
-        if (!Convey.String.is_empty(clipboard_value)) {
+        if (!GriabuntuMail.String.is_empty(clipboard_value)) {
             get_clipboard().set_text(clipboard_value);
         }
     }
@@ -215,7 +219,7 @@ public class Components.Inspector : Adw.ApplicationWindow {
         var dialog = new Gtk.FileDialog();
         dialog.title = _("Save As");
         dialog.accept_label = _("Save As");
-        dialog.initial_name = new DateTime.now_local().format("Convey Inspector - %F %T.txt");
+        dialog.initial_name = new DateTime.now_local().format("Griaß di Mail Inspector - %F %T.txt");
 
         try {
             File? file = yield dialog.save(this, null);

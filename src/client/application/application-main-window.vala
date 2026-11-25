@@ -1,14 +1,20 @@
+/* Downstream modification: 2026-11-25 — session-new notification correctness. */
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — session-new tray state integration. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2016, 2019-2021 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/application-main-window.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/application-main-window.ui")]
 public class Application.MainWindow :
-    Adw.ApplicationWindow, Convey.BaseInterface {
+    Adw.ApplicationWindow, GriabuntuMail.BaseInterface {
 
 
     // Named actions.
@@ -129,13 +135,13 @@ public class Application.MainWindow :
     }
 
     /** Currently selected account, null if none selected */
-    public Convey.Account? selected_account { get; private set; default = null; }
+    public GriabuntuMail.Account? selected_account { get; private set; default = null; }
 
     /** Currently selected folder, null if none selected */
-    public Convey.Folder? selected_folder { get; private set; default = null; }
+    public GriabuntuMail.Folder? selected_folder { get; private set; default = null; }
 
     /** Conversations for the current folder, null if none selected */
-    public Convey.App.ConversationMonitor? conversations {
+    public GriabuntuMail.App.ConversationMonitor? conversations {
         get; private set; default = null;
     }
 
@@ -144,15 +150,15 @@ public class Application.MainWindow :
     private bool restoring_last_inbox = true;
 
     // Delays falling back to the first inbox while All Inboxes loads
-    private Convey.TimeoutManager all_inboxes_wait;
+    private GriabuntuMail.TimeoutManager all_inboxes_wait;
     private bool all_inboxes_wait_over = false;
 
     /** Whether the combined view of every account's inbox is selected. */
     public bool all_inboxes { get; private set; default = false; }
 
     // One per account inbox while the combined view is selected
-    private Gee.List<Convey.App.ConversationMonitor> inbox_monitors =
-        new Gee.ArrayList<Convey.App.ConversationMonitor>();
+    private Gee.List<GriabuntuMail.App.ConversationMonitor> inbox_monitors =
+        new Gee.ArrayList<GriabuntuMail.App.ConversationMonitor>();
 
     /** Specifies if the conversation list is currently displayed. */
     public bool is_folder_list_shown {
@@ -203,16 +209,16 @@ public class Application.MainWindow :
      * A single folder when one is selected, every account's inbox when
      * the combined view is, and nothing otherwise.
      */
-    private Gee.Collection<Convey.Folder> selected_folders {
+    private Gee.Collection<GriabuntuMail.Folder> selected_folders {
         owned get {
             if (this.selected_folder != null) {
-                return Convey.Collection.single<Convey.Folder>(
+                return GriabuntuMail.Collection.single<GriabuntuMail.Folder>(
                     this.selected_folder
                 );
             }
             return this.all_inboxes
                 ? this.folder_list.get_all_inboxes()
-                : Gee.Collection.empty<Convey.Folder>();
+                : Gee.Collection.empty<GriabuntuMail.Folder>();
         }
     }
 
@@ -222,15 +228,15 @@ public class Application.MainWindow :
      * The combined inbox view has no folder of its own, so one of the
      * inboxes stands in for what all of them support.
      */
-    private Convey.Folder? folder_for_actions {
+    private GriabuntuMail.Folder? folder_for_actions {
         owned get {
             if (this.selected_folder == null && this.all_inboxes) {
                 var folders = selected_groups().get_keys();
                 if (folders.size == 1) {
-                    return Convey.Collection.first<Convey.Folder>(folders);
+                    return GriabuntuMail.Collection.first<GriabuntuMail.Folder>(folders);
                 }
             }
-            return Convey.Collection.first<Convey.Folder>(
+            return GriabuntuMail.Collection.first<GriabuntuMail.Folder>(
                 this.selected_folders
             );
         }
@@ -282,16 +288,16 @@ public class Application.MainWindow :
 
     // Caches the last non-search folder so it can be re-selected on
     // the search folder closing
-    private Convey.Folder? previous_non_search_folder = null;
+    private GriabuntuMail.Folder? previous_non_search_folder = null;
 
     private bool searching_all_inboxes = false;
 
-    private Convey.AggregateProgressMonitor progress_monitor = new Convey.AggregateProgressMonitor();
+    private GriabuntuMail.AggregateProgressMonitor progress_monitor = new GriabuntuMail.AggregateProgressMonitor();
 
     private GLib.Cancellable action_update_cancellable = new GLib.Cancellable();
     private GLib.Cancellable folder_open = new GLib.Cancellable();
 
-    private Convey.TimeoutManager update_ui_timeout;
+    private GriabuntuMail.TimeoutManager update_ui_timeout;
     private int64 update_ui_last = 0;
 
     [GtkChild] private unowned Gtk.ToggleButton search_button;
@@ -349,7 +355,7 @@ public class Application.MainWindow :
     private Components.ProblemReportInfoBar? service_problem_infobar = null;
 
     /** Fired when the user requests an account status be retried. */
-    public signal void retry_service_problem(Convey.ClientService.Status problem);
+    public signal void retry_service_problem(GriabuntuMail.ClientService.Status problem);
 
 
     /** Keybinding signal for replying to sender for the current conversation. */
@@ -487,6 +493,11 @@ public class Application.MainWindow :
             add_css_class("devel");
         }
 
+        var appearance = Adw.StyleManager.get_default();
+        appearance.notify["dark"].connect(on_appearance_changed);
+        appearance.notify["high-contrast"].connect(on_appearance_changed);
+        on_appearance_changed();
+
         // Edit actions
         this.edit_actions.add_action_entries(EDIT_ACTIONS, this);
         insert_action_group(Action.Edit.GROUP_NAME, this.edit_actions);
@@ -501,12 +512,12 @@ public class Application.MainWindow :
 
         this.attachments = new AttachmentManager(this);
 
-        this.update_ui_timeout = new Convey.TimeoutManager.seconds(
+        this.update_ui_timeout = new GriabuntuMail.TimeoutManager.seconds(
             UPDATE_UI_INTERVAL, on_update_ui_timeout
         );
         this.update_ui_timeout.repetition = FOREVER;
 
-        this.all_inboxes_wait = new Convey.TimeoutManager.seconds(
+        this.all_inboxes_wait = new GriabuntuMail.TimeoutManager.seconds(
             ALL_INBOXES_WAIT, on_all_inboxes_wait_over
         );
 
@@ -579,6 +590,14 @@ public class Application.MainWindow :
         base_unref();
     }
 
+    private void on_appearance_changed() {
+        var appearance = Adw.StyleManager.get_default();
+        if (appearance.dark) add_css_class("griabuntu-dark");
+        else remove_css_class("griabuntu-dark");
+        if (appearance.high_contrast) add_css_class("griabuntu-high-contrast");
+        else remove_css_class("griabuntu-high-contrast");
+    }
+
     /** Updates the window's title and headerbar titles. */
     public void update_title() {
         if (this.all_inboxes) {
@@ -595,7 +614,7 @@ public class Application.MainWindow :
             ? account.get_folder(this.selected_folder)
             : null
         );
-        string title = _("Convey");
+        string title = _("Griaß di Mail");
         string? account_name = null;
         string? folder_name = null;
         if (account != null && folder != null) {
@@ -619,10 +638,10 @@ public class Application.MainWindow :
     }
 
     /** Updates the window's account status info bars. */
-    public void update_account_status(Convey.Account.Status status,
+    public void update_account_status(GriabuntuMail.Account.Status status,
                                       bool has_auth_error,
                                       bool has_cert_error,
-                                      Convey.Account? problem_source) {
+                                      GriabuntuMail.Account? problem_source) {
         // Only ever show one info bar at a time. Offline is primary
         // since nothing else can happen when offline. Service
         // problems are secondary since auth and cert problems can't
@@ -632,13 +651,13 @@ public class Application.MainWindow :
         if (!status.is_online()) {
             this.info_bars.add(this.offline_infobar);
         } else if (status.has_service_problem()) {
-            Convey.ClientService? service = (
+            GriabuntuMail.ClientService? service = (
                 problem_source.incoming.last_error != null
                 ? problem_source.incoming
                 : problem_source.outgoing
             );
             this.service_problem_infobar = new Components.ProblemReportInfoBar(
-                new Convey.ServiceProblemReport(
+                new GriabuntuMail.ServiceProblemReport(
                     problem_source.information,
                     service.configuration,
                     service.last_error.thrown
@@ -662,7 +681,7 @@ public class Application.MainWindow :
      * caused directly by human request (e.g. clicking on a folder in
      * the folder list), as opposed to some side effect.
      */
-    public async void select_folder(Convey.Folder? to_select,
+    public async void select_folder(GriabuntuMail.Folder? to_select,
                                     bool is_interactive,
                                     bool inhibit_autoselect = false) {
         if (this.selected_folder == to_select && !this.all_inboxes) {
@@ -756,7 +775,7 @@ public class Application.MainWindow :
                 this.progress_monitor.add(to_select.opening_monitor);
                 to_select.properties.notify.connect(update_headerbar);
 
-                this.conversations = new Convey.App.ConversationMonitor(
+                this.conversations = new GriabuntuMail.App.ConversationMonitor(
                     to_select,
                     // Include fields for the conversation viewer as well so
                     // conversations can be displayed without having to go
@@ -772,7 +791,7 @@ public class Application.MainWindow :
                     this.conversation_list_view.inhibit_next_autoselect();
                 }
                 this.conversation_list_view.set_monitors(
-                    Convey.Collection.single(this.conversations)
+                    GriabuntuMail.Collection.single(this.conversations)
                 );
 
                 yield open_conversation_monitor(this.conversations, cancellable);
@@ -816,7 +835,7 @@ public class Application.MainWindow :
         yield show_folders(inboxes, is_interactive);
     }
 
-    private async void show_folders(Gee.Collection<Convey.Folder> folders,
+    private async void show_folders(Gee.Collection<GriabuntuMail.Folder> folders,
                                     bool is_interactive) {
         this.folder_open.cancel();
         var cancellable = this.folder_open = new GLib.Cancellable();
@@ -849,7 +868,7 @@ public class Application.MainWindow :
         this.previous_selection_was_interactive = is_interactive;
 
         foreach (var folder in folders) {
-            var monitor = new Convey.App.ConversationMonitor(
+            var monitor = new GriabuntuMail.App.ConversationMonitor(
                 folder,
                 ConversationList.View.REQUIRED_FIELDS |
                 ConversationListBox.REQUIRED_FIELDS |
@@ -863,7 +882,7 @@ public class Application.MainWindow :
 
         // Iterated over a copy, since closing the window clears the
         // monitors while this is still opening them
-        var opening = new Gee.ArrayList<Convey.App.ConversationMonitor>();
+        var opening = new Gee.ArrayList<GriabuntuMail.App.ConversationMonitor>();
         opening.add_all(this.inbox_monitors);
         foreach (var monitor in opening) {
             if (cancellable.is_cancelled()) {
@@ -892,12 +911,12 @@ public class Application.MainWindow :
      * Conversations in the combined inbox view come from several
      * accounts, so an action runs once per source folder.
      */
-    private Gee.MultiMap<Convey.Folder,Convey.App.Conversation>
-        group_by_folder(Gee.Collection<Convey.App.Conversation> conversations) {
+    private Gee.MultiMap<GriabuntuMail.Folder,GriabuntuMail.App.Conversation>
+        group_by_folder(Gee.Collection<GriabuntuMail.App.Conversation> conversations) {
         var groups =
-            new Gee.HashMultiMap<Convey.Folder,Convey.App.Conversation>();
+            new Gee.HashMultiMap<GriabuntuMail.Folder,GriabuntuMail.App.Conversation>();
         foreach (var conversation in conversations) {
-            Convey.Folder? location = (
+            GriabuntuMail.Folder? location = (
                 this.selected_folder ?? conversation.base_folder
             );
             if (location != null) {
@@ -908,14 +927,14 @@ public class Application.MainWindow :
     }
 
     // The selected conversations, grouped by the folder actions apply to
-    private Gee.MultiMap<Convey.Folder,Convey.App.Conversation>
+    private Gee.MultiMap<GriabuntuMail.Folder,GriabuntuMail.App.Conversation>
         selected_groups() {
         return group_by_folder(this.conversation_list_view.selected);
     }
 
     /** Selects the given account, folder and conversations. */
-    public async void show_conversations(Convey.Folder location,
-                                         Gee.Collection<Convey.App.Conversation> to_show,
+    public async void show_conversations(GriabuntuMail.Folder location,
+                                         Gee.Collection<GriabuntuMail.App.Conversation> to_show,
                                          bool is_interactive) {
         bool inhibit_autoselect = (location != this.selected_folder);
         yield select_folder(location, is_interactive, inhibit_autoselect);
@@ -927,9 +946,9 @@ public class Application.MainWindow :
             // Since conversation ids don't persist between
             // conversation monitor instances, need to load
             // conversations based on their messages.
-            var latest_email = new Gee.HashSet<Convey.EmailIdentifier>();
+            var latest_email = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
             foreach (var stale in to_show) {
-                Convey.Email? first = stale.get_latest_recv_email(IN_FOLDER);
+                GriabuntuMail.Email? first = stale.get_latest_recv_email(IN_FOLDER);
                 if (first != null) {
                     latest_email.add(first.id);
                 }
@@ -940,7 +959,7 @@ public class Application.MainWindow :
             if (!loaded.is_empty) {
                 yield select_conversations(
                     loaded,
-                    Gee.Collection.empty<Convey.EmailIdentifier>(),
+                    Gee.Collection.empty<GriabuntuMail.EmailIdentifier>(),
                     is_interactive
                 );
             }
@@ -948,8 +967,8 @@ public class Application.MainWindow :
     }
 
     /** Selects the given account, folder and email. */
-    public async void show_email(Convey.Folder location,
-                                 Gee.Collection<Convey.EmailIdentifier> to_show,
+    public async void show_email(GriabuntuMail.Folder location,
+                                 Gee.Collection<GriabuntuMail.EmailIdentifier> to_show,
                                  bool is_interactive) {
         bool inhibit_autoselect = (location != this.selected_folder);
         yield select_folder(location, is_interactive, inhibit_autoselect);
@@ -962,7 +981,7 @@ public class Application.MainWindow :
             if (loaded.size == 1) {
                 // A single conversation was loaded, so ensure we
                 // scroll to the email in the conversation.
-                Convey.App.Conversation? target = Convey.Collection.first(loaded);
+                GriabuntuMail.App.Conversation? target = GriabuntuMail.Collection.first(loaded);
                 ConversationListBox? current_list =
                     this.conversation_viewer.current_list;
                 if (current_list != null &&
@@ -984,7 +1003,7 @@ public class Application.MainWindow :
                 // Multiple conversations found, just select those
                 yield select_conversations(
                     loaded,
-                    Gee.Collection.empty<Convey.EmailIdentifier>(),
+                    Gee.Collection.empty<GriabuntuMail.EmailIdentifier>(),
                     is_interactive
                 );
             }
@@ -1028,9 +1047,9 @@ public class Application.MainWindow :
             // any of the composer's referred emails (preferring the
             // latest), and if so add it inline, otherwise add it full
             // paned.
-            Convey.Email? latest_referred = null;
+            GriabuntuMail.Email? latest_referred = null;
             if (this.conversation_viewer.current_list != null) {
-                Convey.App.Conversation selected =
+                GriabuntuMail.App.Conversation selected =
                     this.conversation_viewer.current_list.conversation;
                 // When editing an existing draft, use the draft email
                 // itself as the anchor so the composer appears at the
@@ -1047,7 +1066,7 @@ public class Application.MainWindow :
                     );
                 }
                 if (latest_referred == null) {
-                    Gee.Collection<Convey.EmailIdentifier>? referrants =
+                    Gee.Collection<GriabuntuMail.EmailIdentifier>? referrants =
                         composer.get_referred_ids();
                     latest_referred = selected.get_emails(
                         RECV_DATE_DESCENDING
@@ -1094,7 +1113,7 @@ public class Application.MainWindow :
 
     internal void start_search(string query_text, bool is_interactive) {
         if (this.all_inboxes) {
-            var folders = new Gee.ArrayList<Convey.Folder>();
+            var folders = new Gee.ArrayList<GriabuntuMail.Folder>();
             foreach (var account in this.controller.get_account_contexts()) {
                 try {
                     var expr_factory = new Util.Email.SearchExpressionFactory(
@@ -1232,7 +1251,7 @@ public class Application.MainWindow :
             return true;
         }
 
-        Convey.Folder? inbox = get_inbox_for_account(last);
+        GriabuntuMail.Folder? inbox = get_inbox_for_account(last);
         if (inbox == null) {
             return false;
         }
@@ -1244,7 +1263,7 @@ public class Application.MainWindow :
         return select_inbox(get_first_inbox(), is_interactive);
     }
 
-    private bool select_inbox(Convey.Folder? inbox, bool is_interactive) {
+    private bool select_inbox(GriabuntuMail.Folder? inbox, bool is_interactive) {
         if (inbox == null) {
             return false;
         }
@@ -1252,8 +1271,8 @@ public class Application.MainWindow :
         return true;
     }
 
-    private Convey.Folder? get_inbox_for_account(string id) {
-        Convey.Folder? inbox = null;
+    private GriabuntuMail.Folder? get_inbox_for_account(string id) {
+        GriabuntuMail.Folder? inbox = null;
         try {
             foreach (var account in this.application.engine.get_accounts()) {
                 if (account.information.id == id) {
@@ -1274,8 +1293,8 @@ public class Application.MainWindow :
             );
 
             this.progress_monitor.add(to_add.account.background_progress);
-            Convey.Smtp.ClientService? smtp = (
-                to_add.account.outgoing as Convey.Smtp.ClientService
+            GriabuntuMail.Smtp.ClientService? smtp = (
+                to_add.account.outgoing as GriabuntuMail.Smtp.ClientService
             );
             if (smtp != null) {
                 this.progress_monitor.add(smtp.sending_monitor);
@@ -1308,7 +1327,7 @@ public class Application.MainWindow :
      * otherwise no folder will be.
      */
     private async void remove_account(AccountContext to_remove,
-                                      Convey.Folder? to_select) {
+                                      GriabuntuMail.Folder? to_select) {
         if (this.accounts.contains(to_remove)) {
             // Explicitly unset the selected folder if it belongs to the
             // account so we block until it's gone. This also clears the
@@ -1333,11 +1352,11 @@ public class Application.MainWindow :
             to_remove.commands.undone.disconnect(on_command_undo);
             to_remove.commands.redone.disconnect(on_command_redo);
             to_remove.folders_available.disconnect(on_folders_available);
-            to_remove.folders_available.disconnect(on_folders_unavailable);
+            to_remove.folders_unavailable.disconnect(on_folders_unavailable);
 
             this.progress_monitor.remove(to_remove.account.background_progress);
-            Convey.Smtp.ClientService? smtp = (
-                to_remove.account.outgoing as Convey.Smtp.ClientService
+            GriabuntuMail.Smtp.ClientService? smtp = (
+                to_remove.account.outgoing as GriabuntuMail.Smtp.ClientService
             );
             if (smtp != null) {
                 this.progress_monitor.remove(smtp.sending_monitor);
@@ -1357,7 +1376,7 @@ public class Application.MainWindow :
         var map = new Gee.HashMap<string,string>();
         foreach (var context in to_add) {
             var folder = context.folder;
-            if (folder.used_as == Convey.Folder.SpecialUse.NONE)
+            if (folder.used_as == GriabuntuMail.Folder.SpecialUse.NONE)
                 continue;
             map.set(
                 folder.path.to_string().substring(1),
@@ -1380,7 +1399,7 @@ public class Application.MainWindow :
             }
         }
 
-        if (Convey.traverse(to_add).any((c) => c.folder.used_as == INBOX)) {
+        if (GriabuntuMail.traverse(to_add).any((c) => c.folder.used_as == INBOX)) {
             if (this.all_inboxes) {
                 this.select_all_inboxes.begin(false);
             } else if (this.restoring_last_inbox) {
@@ -1394,7 +1413,7 @@ public class Application.MainWindow :
                                 bool update_selecton) {
         bool reload_all_inboxes = false;
         foreach (var context in to_remove) {
-            Convey.Folder folder = context.folder;
+            GriabuntuMail.Folder folder = context.folder;
             if (this.selected_folder == folder) {
                 var account = get_selected_account_context();
                 if (account != null) {
@@ -1424,10 +1443,10 @@ public class Application.MainWindow :
         return context;
     }
 
-    private Convey.Folder? get_first_inbox() {
-        Convey.Folder? inbox = null;
+    private GriabuntuMail.Folder? get_first_inbox() {
+        GriabuntuMail.Folder? inbox = null;
         try {
-            Convey.Account? first = Convey.Collection.first<Convey.Account>(
+            GriabuntuMail.Account? first = GriabuntuMail.Collection.first<GriabuntuMail.Account>(
                 this.application.engine.get_accounts()
             );
             if (first != null) {
@@ -1507,8 +1526,6 @@ public class Application.MainWindow :
     }
 
     private void setup_layout(Configuration config) {
-        this.notify["has-toplevel-focus"].connect(on_has_toplevel_focus);
-
         this.sidebar_resize_handle.set_cursor_from_name("col-resize");
         var sidebar_drag = new Gtk.GestureDrag();
         sidebar_drag.propagation_phase = CAPTURE;
@@ -1572,6 +1589,7 @@ public class Application.MainWindow :
 
 
         // Folder list
+        this.folder_list.set_all_inboxes(this.application.all_inboxes);
         this.folder_list.set_collapsed(
             this.application.config.get_collapsed_folder_groups()
         );
@@ -1604,7 +1622,10 @@ public class Application.MainWindow :
         this.conversation_list_view.mark_conversations.connect(on_mark_conversations);
         this.conversation_list_view.conversations_selected.connect(on_conversations_selected);
         this.conversation_list_view.conversation_activated.connect(on_conversation_activated);
-        this.conversation_list_view.visible_conversations.notify.connect(on_visible_conversations_changed);
+        this.conversation_list_view.notify["visible-conversations"].connect(on_visible_conversations_changed);
+        this.notify["is-active"].connect(() => {
+            if (this.is_active) this.conversation_list_view.update_visible_conversations();
+        });
         this.conversation_list_view.mail_drag_active.connect(
             on_mail_drag_active
         );
@@ -1803,7 +1824,7 @@ public class Application.MainWindow :
     }
 
     /** The folder the folder list's context menu was invoked on, if any. */
-    private Convey.Folder? get_context_folder() {
+    private GriabuntuMail.Folder? get_context_folder() {
         var entry = (
             this.folder_list.context_entry as FolderList.AbstractFolderEntry
         );
@@ -1811,8 +1832,8 @@ public class Application.MainWindow :
     }
 
     /** The account to create new folders in, if any. */
-    private Convey.Account? get_context_account() {
-        Convey.Folder? folder = get_context_folder();
+    private GriabuntuMail.Account? get_context_account() {
+        GriabuntuMail.Folder? folder = get_context_folder();
         if (folder != null) {
             return folder.account;
         }
@@ -1823,8 +1844,8 @@ public class Application.MainWindow :
     }
 
     private void on_folder_context_menu_requested(Sidebar.Entry? entry) {
-        Convey.Account? account = get_context_account();
-        Convey.Folder? folder = get_context_folder();
+        GriabuntuMail.Account? account = get_context_account();
+        GriabuntuMail.Folder? folder = get_context_folder();
         if (account != null) {
             this.folder_list.default_context_menu.menu_model =
                 new_folder_menu_model(
@@ -1849,14 +1870,14 @@ public class Application.MainWindow :
     }
 
     private void on_folder_new() {
-        Convey.Account? account = get_context_account();
+        GriabuntuMail.Account? account = get_context_account();
         if (account != null) {
             create_folder.begin(account, null);
         }
     }
 
     private void on_folder_new_child() {
-        Convey.Folder? folder = get_context_folder();
+        GriabuntuMail.Folder? folder = get_context_folder();
         if (folder != null) {
             create_folder.begin(folder.account, folder);
         }
@@ -1872,23 +1893,23 @@ public class Application.MainWindow :
     }
 
     private void on_folder_delete() {
-        Convey.Folder? folder = get_context_folder();
+        GriabuntuMail.Folder? folder = get_context_folder();
         if (folder != null) {
             delete_folder.begin(folder);
         }
     }
 
-    private void on_folder_rename_requested(Convey.Folder folder,
+    private void on_folder_rename_requested(GriabuntuMail.Folder folder,
                                             string new_name) {
         rename_folder.begin(folder, new_name);
     }
 
-    private void on_folder_delete_requested(Convey.Folder folder) {
+    private void on_folder_delete_requested(GriabuntuMail.Folder folder) {
         delete_folder.begin(folder);
     }
 
-    private async void create_folder(Convey.Account account,
-                                     Convey.Folder? parent) {
+    private async void create_folder(GriabuntuMail.Account account,
+                                     GriabuntuMail.Folder? parent) {
         bool labels = Util.I18n.uses_labels(account);
         var entry = new Gtk.Entry() { activates_default = true };
         var dialog = new Adw.AlertDialog(
@@ -1935,7 +1956,7 @@ public class Application.MainWindow :
         }
     }
 
-    private async void rename_folder(Convey.Folder folder, string new_name) {
+    private async void rename_folder(GriabuntuMail.Folder folder, string new_name) {
         bool labels = Util.I18n.uses_labels(folder.account);
         string old_name = folder.path.name;
         this.folder_list.set_folder_busy(folder, true);
@@ -1958,7 +1979,7 @@ public class Application.MainWindow :
         }
     }
 
-    private async void delete_folder(Convey.Folder folder) {
+    private async void delete_folder(GriabuntuMail.Folder folder) {
         bool labels = Util.I18n.uses_labels(folder.account);
         var dialog = new Adw.AlertDialog(
             // Translators: Title of the delete folder confirmation and
@@ -1967,8 +1988,8 @@ public class Application.MainWindow :
              ? _("Delete label “%s”?")
              : _("Delete folder “%s”?")).printf(folder.path.name),
             (labels
-             ? _("This removes the label and all email in it from Convey and your email server.")
-             : _("This removes the folder and all email in it from Convey and your email server.")) +
+             ? _("This removes the label and all email in it from Griaß di Mail and your email server.")
+             : _("This removes the folder and all email in it from Griaß di Mail and your email server.")) +
             "  <b>" + _("This cannot be undone.") + "</b>"
         );
         dialog.body_use_markup = true;
@@ -2002,11 +2023,11 @@ public class Application.MainWindow :
         }
     }
 
-    internal async bool prompt_empty_folder(Convey.Folder.SpecialUse type) {
+    internal async bool prompt_empty_folder(GriabuntuMail.Folder.SpecialUse type) {
         var folder_name = Util.I18n.to_folder_type_display_name(type);
         var dialog = new Adw.AlertDialog(
             _("Empty all email from your %s folder?").printf(folder_name),
-            _("This removes the email from Convey and your email server.") +
+            _("This removes the email from Griaß di Mail and your email server.") +
             "  <b>" + _("This cannot be undone.") + "</b>");
         dialog.body_use_markup = true;
         dialog.add_response("cancel", _("_Cancel"));
@@ -2142,10 +2163,10 @@ public class Application.MainWindow :
         return (response == "delete");
     }
 
-    private async Gee.Collection<Convey.App.Conversation>
+    private async Gee.Collection<GriabuntuMail.App.Conversation>
         load_conversations_for_email(
-            Convey.Folder location,
-            Gee.Collection<Convey.EmailIdentifier> to_load) {
+            GriabuntuMail.Folder location,
+            Gee.Collection<GriabuntuMail.EmailIdentifier> to_load) {
         bool was_loaded = false;
         // Can't assume the conversation monitor is valid, so check
         // it first.
@@ -2162,12 +2183,12 @@ public class Application.MainWindow :
 
         // Conversation monitor may have changed since resuming from
         // the last async statement, so check it's still valid again.
-        var loaded = new Gee.HashSet<Convey.App.Conversation>();
+        var loaded = new Gee.HashSet<GriabuntuMail.App.Conversation>();
         if (was_loaded &&
             this.conversations != null &&
             this.conversations.base_folder == location) {
             foreach (var id in to_load) {
-                Convey.App.Conversation? conversation =
+                GriabuntuMail.App.Conversation? conversation =
                     this.conversations.get_by_email_identifier(id);
                 if (conversation != null) {
                     loaded.add(conversation);
@@ -2177,11 +2198,11 @@ public class Application.MainWindow :
         return loaded;
     }
 
-    private inline void handle_error(Convey.AccountInformation? account,
+    private inline void handle_error(GriabuntuMail.AccountInformation? account,
                                      GLib.Error error) {
-        Convey.ProblemReport? report = (account != null)
-            ? new Convey.AccountProblemReport(account, error)
-            : new Convey.ProblemReport(error);
+        GriabuntuMail.ProblemReport? report = (account != null)
+            ? new GriabuntuMail.AccountProblemReport(account, error)
+            : new GriabuntuMail.ProblemReport(error);
         this.controller.report_problem(report);
     }
 
@@ -2199,7 +2220,7 @@ public class Application.MainWindow :
         }
     }
 
-    private void select_account(Convey.Account? account) {
+    private void select_account(GriabuntuMail.Account? account) {
         if (this.selected_account != account) {
             this.selected_account = account;
             this.search_bar.set_account(account);
@@ -2215,8 +2236,8 @@ public class Application.MainWindow :
         }
     }
 
-    private async void select_conversations(Gee.Collection<Convey.App.Conversation> to_select,
-                                            Gee.Collection<Convey.EmailIdentifier> scroll_to,
+    private async void select_conversations(Gee.Collection<GriabuntuMail.App.Conversation> to_select,
+                                            Gee.Collection<GriabuntuMail.EmailIdentifier> scroll_to,
                                             bool is_interactive) {
         bool start_mark_timer = (
             is_interactive || this.previous_selection_was_interactive
@@ -2245,7 +2266,7 @@ public class Application.MainWindow :
 
             case 1:
                 update_conversation_actions(SINGLE);
-                Convey.App.Conversation? convo = Convey.Collection.first(to_select);
+                GriabuntuMail.App.Conversation? convo = GriabuntuMail.Collection.first(to_select);
 
                 // It's possible for a conversation with zero email to
                 // be selected, when it has just evaporated after its
@@ -2271,7 +2292,7 @@ public class Application.MainWindow :
                             context.contacts,
                             start_mark_timer
                         );
-                    } catch (Convey.EngineError.NOT_FOUND err) {
+                    } catch (GriabuntuMail.EngineError.NOT_FOUND err) {
                         // The first interesting email from the
                         // conversation wasn't found.
                         // This happens:
@@ -2296,7 +2317,7 @@ public class Application.MainWindow :
         }
     }
 
-    private async void open_conversation_monitor(Convey.App.ConversationMonitor to_open,
+    private async void open_conversation_monitor(GriabuntuMail.App.ConversationMonitor to_open,
                                                  GLib.Cancellable cancellable) {
         to_open.scan_completed.connect(on_scan_completed);
         to_open.scan_error.connect(on_scan_error);
@@ -2318,7 +2339,7 @@ public class Application.MainWindow :
         );
     }
 
-    private void close_conversation_monitor(Convey.App.ConversationMonitor to_close) {
+    private void close_conversation_monitor(GriabuntuMail.App.ConversationMonitor to_close) {
         to_close.scan_completed.disconnect(on_scan_completed);
         to_close.scan_error.disconnect(on_scan_error);
 
@@ -2342,9 +2363,9 @@ public class Application.MainWindow :
         );
     }
 
-    private async void create_composer(Convey.Account send_context,
+    private async void create_composer(GriabuntuMail.Account send_context,
                                        Composer.Widget.ContextType type,
-                                       Convey.Email context,
+                                       GriabuntuMail.Email context,
                                        string? quote) {
         var composer = yield this.controller.compose_with_context(
             this.controller.get_context_for_account(send_context.information),
@@ -2356,7 +2377,7 @@ public class Application.MainWindow :
     }
 
     private async void create_composer_from_viewer(Composer.Widget.ContextType type) {
-        Convey.Account? account = this.selected_account;
+        GriabuntuMail.Account? account = this.selected_account;
         ConversationEmail? email_view = null;
         ConversationListBox? list_view = this.conversation_viewer.current_list;
         if (list_view != null) {
@@ -2385,7 +2406,7 @@ public class Application.MainWindow :
     private void on_refresh_folder() {
         bool any_offline = false;
         foreach (var folder in this.selected_folders) {
-            Convey.ClientService incoming = folder.account.incoming;
+            GriabuntuMail.ClientService incoming = folder.account.incoming;
             if (incoming.current_status == UNREACHABLE) {
                 any_offline = true;
                 continue;
@@ -2430,7 +2451,7 @@ public class Application.MainWindow :
         add_toast(this.offline_toast);
     }
 
-    private void on_conversations_selected(Gee.Set<Convey.App.Conversation> selected) {
+    private void on_conversations_selected(Gee.Set<GriabuntuMail.App.Conversation> selected) {
         // The conversation viewer is shown next to the list unless the
         // inner split view is collapsed, in which case it is a separate
         // page reached by activating a row. Only defer loading to
@@ -2470,13 +2491,13 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_conversation_activated(Convey.App.Conversation activated, uint button) {
+    private void on_conversation_activated(GriabuntuMail.App.Conversation activated, uint button) {
         if (button == Gdk.BUTTON_PRIMARY) {
             bool collapsed = this.inner_view.collapsed;
             this.outer_view.show_content = true;
             if (collapsed) {
-                Gee.Collection<Convey.App.Conversation> selected =
-                    new Gee.ArrayList<Convey.App.Conversation>();
+                Gee.Collection<GriabuntuMail.App.Conversation> selected =
+                    new Gee.ArrayList<GriabuntuMail.App.Conversation>();
                 selected.add(activated);
                 select_conversations.begin(selected, Gee.Collection.empty(), true);
             } else if (this.conversation_viewer.current_list?.conversation == activated) {
@@ -2492,7 +2513,7 @@ public class Application.MainWindow :
             } else {
                 // TODO: Determine how to map between conversations
                 // and drafts correctly.
-                Convey.Email draft = activated.get_latest_recv_email(IN_FOLDER);
+                GriabuntuMail.Email draft = activated.get_latest_recv_email(IN_FOLDER);
                 this.create_composer.begin(
                     this.selected_folder.account,
                     EDIT,
@@ -2557,7 +2578,7 @@ public class Application.MainWindow :
         get_window_action(ACTION_FIND_IN_CONVERSATION).set_enabled(find_in_enabled);
         this.conversation_viewer.headerbar.set_find_sensitive(find_in_enabled);
 
-        Convey.Folder? actions_on = this.folder_for_actions;
+        GriabuntuMail.Folder? actions_on = this.folder_for_actions;
         bool reply_sensitive = (
             sensitive &&
             !multiple &&
@@ -2573,7 +2594,7 @@ public class Application.MainWindow :
             sensitive &&
             (this.selected_folder != null ||
              selected_groups().get_keys().size == 1) &&
-            (actions_on is Convey.FolderSupport.Copy)
+            (actions_on is GriabuntuMail.FolderSupport.Copy)
         );
         if (this.all_inboxes && actions_on != null) {
             foreach (var actions in this.folder_conversation_actions) {
@@ -2591,14 +2612,14 @@ public class Application.MainWindow :
         }
 
         bool mark_enabled = (
-            sensitive && (actions_on is Convey.FolderSupport.Mark)
+            sensitive && (actions_on is GriabuntuMail.FolderSupport.Mark)
         );
         foreach (var actions in this.folder_conversation_actions) {
             actions.set_mark_sensitive(mark_enabled);
         }
 
         get_window_action(ACTION_ARCHIVE_CONVERSATION).set_enabled(
-            sensitive && (actions_on is Convey.FolderSupport.Archive)
+            sensitive && (actions_on is GriabuntuMail.FolderSupport.Archive)
         );
         get_window_action(ACTION_TRASH_CONVERSATION).set_enabled(
             sensitive && this.selected_folder_supports_trash
@@ -2606,27 +2627,27 @@ public class Application.MainWindow :
         get_window_action(ACTION_TRASH_OR_ARCHIVE_CONVERSATION).set_enabled(
             sensitive && (
                 this.selected_folder_supports_trash ||
-                actions_on is Convey.FolderSupport.Archive
+                actions_on is GriabuntuMail.FolderSupport.Archive
             )
         );
         get_window_action(ACTION_DELETE_CONVERSATION).set_enabled(
-            sensitive && (actions_on is Convey.FolderSupport.Remove)
+            sensitive && (actions_on is GriabuntuMail.FolderSupport.Remove)
         );
 
         this.update_context_dependent_actions.begin(sensitive);
         update_trash_action();
     }
 
-    private static bool archives_instead_of_trash(Convey.Folder folder) {
+    private static bool archives_instead_of_trash(GriabuntuMail.Folder folder) {
         return (
             folder.account.information.archive_instead_of_trash &&
-            folder is Convey.FolderSupport.Archive
+            folder is GriabuntuMail.FolderSupport.Archive
         );
     }
 
     private void update_trash_action() {
         bool trash_supported = this.selected_folder_supports_trash;
-        Gee.Collection<Convey.Folder> folders = selected_groups().get_keys();
+        Gee.Collection<GriabuntuMail.Folder> folders = selected_groups().get_keys();
         if (folders.is_empty) {
             folders = this.selected_folders;
         }
@@ -2658,16 +2679,16 @@ public class Application.MainWindow :
         GLib.Cancellable cancellable = new Cancellable();
         this.action_update_cancellable = cancellable;
 
-        Gee.MultiMap<Convey.EmailIdentifier, Type>? selected_operations = null;
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, Type>? selected_operations = null;
         if (this.selected_folder != null) {
             AccountContext? context =
                 this.controller.get_context_for_account(
                     this.selected_folder.account.information
                 );
             if (context != null) {
-                Gee.Collection<Convey.EmailIdentifier> ids =
-                    new Gee.LinkedList<Convey.EmailIdentifier>();
-                foreach (Convey.App.Conversation convo in
+                Gee.Collection<GriabuntuMail.EmailIdentifier> ids =
+                    new Gee.LinkedList<GriabuntuMail.EmailIdentifier>();
+                foreach (GriabuntuMail.App.Conversation convo in
                          this.conversation_list_view.selected) {
                     ids.add_all(convo.get_email_ids());
                 }
@@ -2690,7 +2711,7 @@ public class Application.MainWindow :
 
             get_window_action(ACTION_SHOW_COPY_MENU).set_enabled(
                 sensitive &&
-                (supported_operations.contains(typeof(Convey.FolderSupport.Copy)))
+                (supported_operations.contains(typeof(GriabuntuMail.FolderSupport.Copy)))
             );
         }
     }
@@ -2800,7 +2821,7 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_scan_completed(Convey.App.ConversationMonitor monitor) {
+    private void on_scan_completed(GriabuntuMail.App.ConversationMonitor monitor) {
         // Done scanning.  Check if we have enough messages to fill
         // the conversation list; if not, trigger a load_more();
         Gtk.Scrollbar? scrollbar = (
@@ -2816,12 +2837,12 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_scan_error(Convey.App.ConversationMonitor monitor,
+    private void on_scan_error(GriabuntuMail.App.ConversationMonitor monitor,
                                GLib.Error err) {
-        Convey.AccountInformation account =
+        GriabuntuMail.AccountInformation account =
             monitor.base_folder.account.information;
         this.controller.report_problem(
-            new Convey.ServiceProblemReport(account, account.incoming, err)
+            new GriabuntuMail.ServiceProblemReport(account, account.incoming, err)
         );
     }
 
@@ -2986,7 +3007,7 @@ public class Application.MainWindow :
             if (selected > 0) {
                 select_conversations.begin(
                     this.conversation_list_view.selected,
-                    Gee.Collection.empty<Convey.EmailIdentifier>(),
+                    Gee.Collection.empty<GriabuntuMail.EmailIdentifier>(),
                     false
                 );
             }
@@ -3000,17 +3021,17 @@ public class Application.MainWindow :
     private void on_service_problem_retry() {
         this.info_bars.remove(this.service_problem_infobar);
         this.service_problem_infobar = null;
-        retry_service_problem(Convey.ClientService.Status.CONNECTION_FAILED);
+        retry_service_problem(GriabuntuMail.ClientService.Status.CONNECTION_FAILED);
     }
 
     private void on_cert_problem_retry() {
         this.info_bars.remove(this.cert_problem_infobar);
-        retry_service_problem(Convey.ClientService.Status.TLS_VALIDATION_FAILED);
+        retry_service_problem(GriabuntuMail.ClientService.Status.TLS_VALIDATION_FAILED);
     }
 
     private void on_auth_problem_retry() {
         this.info_bars.remove(this.auth_problem_infobar);
-        retry_service_problem(Convey.ClientService.Status.AUTHENTICATION_FAILED);
+        retry_service_problem(GriabuntuMail.ClientService.Status.AUTHENTICATION_FAILED);
     }
 
     private void on_update_ui_timeout() {
@@ -3026,7 +3047,7 @@ public class Application.MainWindow :
         // If we're not shutting down, select the inbox of the first
         // account so that we show something other than empty
         // conversation list/viewer.
-        Convey.Folder? to_select = null;
+        GriabuntuMail.Folder? to_select = null;
         if (!is_shutdown) {
             to_select = get_first_inbox();
         }
@@ -3041,9 +3062,9 @@ public class Application.MainWindow :
         remove_folders(unavailable, true);
     }
 
-    private void on_use_changed(Convey.Folder folder,
-                                Convey.Folder.SpecialUse old_type,
-                                Convey.Folder.SpecialUse new_type) {
+    private void on_use_changed(GriabuntuMail.Folder folder,
+                                GriabuntuMail.Folder.SpecialUse old_type,
+                                GriabuntuMail.Folder.SpecialUse new_type) {
         // Update the main window
         AccountContext? context = this.controller.get_context_for_account(
             folder.account.information
@@ -3058,7 +3079,7 @@ public class Application.MainWindow :
                 // from the folder list, we need to check for any and re-add
                 // them. See issue #11.
                 try {
-                    foreach (Convey.Folder child in
+                    foreach (GriabuntuMail.Folder child in
                              folder.account.list_matching_folders(folder.path)) {
                         FolderContext? child_context = context.get_folder(child);
                         if (child_context != null) {
@@ -3148,26 +3169,13 @@ public class Application.MainWindow :
         close();
     }
 
-    // this signal does not necessarily indicate that the application
-    // previously didn't have focus and now it does
-    private void on_has_toplevel_focus() {
-        clear_new_messages();
-    }
-
-    private void clear_new_messages() {
-        var visible = this.conversation_list_view.visible_conversations;
-        foreach (var folder in this.selected_folders) {
-            this.controller.clear_new_messages(folder, visible);
-        }
-    }
-
     private void on_folder_expansion_changed() {
         this.application.config.set_collapsed_folder_groups(
             this.folder_list.get_collapsed()
         );
     }
 
-    private void on_folder_selected(Convey.Folder? folder) {
+    private void on_folder_selected(GriabuntuMail.Folder? folder) {
         this.select_folder.begin(folder, true);
     }
 
@@ -3186,11 +3194,11 @@ public class Application.MainWindow :
         if (parameter != null) {
             int account_number = parameter.get_int32();
             try {
-                Gee.Collection<Convey.Account> accounts =
+                Gee.Collection<GriabuntuMail.Account> accounts =
                     this.application.engine.get_accounts();
                 if (account_number < accounts.size) {
-                    Convey.Account account = accounts.to_array()[account_number];
-                    Convey.Folder inbox = account.get_special_folder(INBOX);
+                    GriabuntuMail.Account account = accounts.to_array()[account_number];
+                    GriabuntuMail.Folder inbox = account.get_special_folder(INBOX);
                     this.select_folder.begin(inbox, true);
                 }
             } catch (GLib.Error error) {
@@ -3200,7 +3208,7 @@ public class Application.MainWindow :
     }
 
     private void on_search(string text) {
-        if (Convey.String.is_empty_or_whitespace(text)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(text)) {
             stop_search(true);
         } else {
             this.start_search(text, true);
@@ -3208,10 +3216,20 @@ public class Application.MainWindow :
     }
 
     private void on_visible_conversations_changed() {
-        clear_new_messages();
+        if (!this.is_active || !this.conversation_list_view.get_mapped()) return;
+        var visible = this.conversation_list_view.visible_conversations;
+        foreach (var folder in this.selected_folders) {
+            // Also keep the controller from clearing another inbox's highlight.
+            var in_folder = GriabuntuMail.traverse(visible).filter(
+                (c) => c.base_folder == folder
+            ).to_hash_set();
+            if (!in_folder.is_empty) {
+                this.controller.clear_new_messages(folder, in_folder);
+            }
+        }
     }
 
-    private void on_folder_activated(Convey.Folder? folder) {
+    private void on_folder_activated(GriabuntuMail.Folder? folder) {
         if (folder != null) {
             close_folder_drawer();
             // Focus on conversation list will autoselect
@@ -3307,7 +3325,7 @@ public class Application.MainWindow :
         bool read_selected = false;
         bool starred_selected = false;
         bool unstarred_selected = false;
-        foreach (Convey.App.Conversation conversation in
+        foreach (GriabuntuMail.App.Conversation conversation in
                  this.conversation_list_view.selected) {
             if (conversation.is_unread())
                 unread_selected = true;
@@ -3316,10 +3334,10 @@ public class Application.MainWindow :
             // don't add the menu option and have it not do anything.
             //
             // Sort by Date: field to correspond with ConversationViewer ordering
-            Convey.Email? latest = conversation.get_latest_sent_email(
-                Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER);
+            GriabuntuMail.Email? latest = conversation.get_latest_sent_email(
+                GriabuntuMail.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER);
             if (latest != null && latest.email_flags != null
-                && !latest.email_flags.contains(Convey.EmailFlags.UNREAD))
+                && !latest.email_flags.contains(GriabuntuMail.EmailFlags.UNREAD))
                 read_selected = true;
 
             if (conversation.is_flagged()) {
@@ -3334,7 +3352,7 @@ public class Application.MainWindow :
         get_window_action(ACTION_MARK_AS_UNSTARRED).set_enabled(starred_selected);
 
         // If we're in Drafts/Outbox, we also shouldn't set a message as junk
-        Convey.Folder? actions_on = this.folder_for_actions;
+        GriabuntuMail.Folder? actions_on = this.folder_for_actions;
         get_window_action(ACTION_TOGGLE_JUNK).set_enabled(
             actions_on != null &&
             actions_on.used_as != JUNK &&
@@ -3343,13 +3361,13 @@ public class Application.MainWindow :
         );
     }
 
-    private void on_mark_conversations(Gee.Collection<Convey.App.Conversation> conversations,
-                                       Convey.NamedFlag flag) {
+    private void on_mark_conversations(Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                                       GriabuntuMail.NamedFlag flag) {
         mark_conversations(conversations, flag, true);
     }
 
-    private void mark_conversations(Gee.Collection<Convey.App.Conversation> conversations,
-                                    Convey.NamedFlag flag,
+    private void mark_conversations(Gee.Collection<GriabuntuMail.App.Conversation> conversations,
+                                    GriabuntuMail.NamedFlag flag,
                                     bool to_add) {
         var groups = group_by_folder(conversations);
         foreach (var location in groups.get_keys()) {
@@ -3371,28 +3389,28 @@ public class Application.MainWindow :
 
     private void on_mark_as_read() {
         mark_conversations(
-            this.conversation_list_view.selected, Convey.EmailFlags.UNREAD, false
+            this.conversation_list_view.selected, GriabuntuMail.EmailFlags.UNREAD, false
         );
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
     private void on_mark_as_unread() {
         mark_conversations(
-            this.conversation_list_view.selected, Convey.EmailFlags.UNREAD, true
+            this.conversation_list_view.selected, GriabuntuMail.EmailFlags.UNREAD, true
         );
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
     private void on_mark_as_starred() {
         mark_conversations(
-            this.conversation_list_view.selected, Convey.EmailFlags.FLAGGED, true
+            this.conversation_list_view.selected, GriabuntuMail.EmailFlags.FLAGGED, true
         );
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
     private void on_mark_as_unstarred() {
         mark_conversations(
-            this.conversation_list_view.selected, Convey.EmailFlags.FLAGGED, false
+            this.conversation_list_view.selected, GriabuntuMail.EmailFlags.FLAGGED, false
         );
         this.conversation_list_view.selection_mode_enabled = false;
     }
@@ -3401,10 +3419,10 @@ public class Application.MainWindow :
         var groups = selected_groups();
         unselect_unless_autoselect();
         foreach (var source in groups.get_keys()) {
-            Convey.Folder.SpecialUse destination =
+            GriabuntuMail.Folder.SpecialUse destination =
                 (source.used_as != JUNK)
-                ? Convey.Folder.SpecialUse.JUNK
-                : Convey.Folder.SpecialUse.INBOX;
+                ? GriabuntuMail.Folder.SpecialUse.JUNK
+                : GriabuntuMail.Folder.SpecialUse.INBOX;
             move_conversations_special(
                 source, destination, groups.get(source)
             );
@@ -3413,9 +3431,9 @@ public class Application.MainWindow :
     }
 
     private void move_conversations_special(
-        Convey.Folder source,
-        Convey.Folder.SpecialUse destination,
-        Gee.Collection<Convey.App.Conversation> conversations) {
+        GriabuntuMail.Folder source,
+        GriabuntuMail.Folder.SpecialUse destination,
+        Gee.Collection<GriabuntuMail.App.Conversation> conversations) {
         this.controller.move_conversations_special.begin(
             source,
             destination,
@@ -3431,7 +3449,7 @@ public class Application.MainWindow :
     }
 
     private void on_mail_drag_active(bool active) {
-        var sources = new Gee.HashSet<Convey.Folder>();
+        var sources = new Gee.HashSet<GriabuntuMail.Folder>();
         if (active) {
             sources.add_all(
                 selected_groups().get_keys()
@@ -3456,11 +3474,11 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_move_conversation(Convey.Folder destination) {
+    private void on_move_conversation(GriabuntuMail.Folder destination) {
         var groups = selected_groups();
         unselect_unless_autoselect();
         foreach (var location in groups.get_keys()) {
-            var source = location as Convey.FolderSupport.Move;
+            var source = location as GriabuntuMail.FolderSupport.Move;
             if (source == null || location.account != destination.account) {
                 continue;
             }
@@ -3480,10 +3498,10 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_copy_conversation(Convey.Folder destination) {
+    private void on_copy_conversation(GriabuntuMail.Folder destination) {
         var groups = selected_groups();
         foreach (var location in groups.get_keys()) {
-            var source = location as Convey.FolderSupport.Copy;
+            var source = location as GriabuntuMail.FolderSupport.Copy;
             if (source == null || location.account != destination.account) {
                 continue;
             }
@@ -3503,7 +3521,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void move_selected_special(Convey.Folder.SpecialUse destination) {
+    private void move_selected_special(GriabuntuMail.Folder.SpecialUse destination) {
         var groups = selected_groups();
         unselect_unless_autoselect();
         foreach (var source in groups.get_keys()) {
@@ -3551,7 +3569,7 @@ public class Application.MainWindow :
 
         unselect_unless_autoselect();
         foreach (var source in groups.get_keys()) {
-            var target = source as Convey.FolderSupport.Remove;
+            var target = source as GriabuntuMail.FolderSupport.Remove;
             if (target == null)
                 continue;
 
@@ -3568,7 +3586,7 @@ public class Application.MainWindow :
     }
 
     private void on_email_loaded(ConversationListBox view,
-                                 Convey.Email loaded) {
+                                 GriabuntuMail.Email loaded) {
         this.controller.email_loaded(
             view.conversation.base_folder.account.information,
             loaded
@@ -3588,33 +3606,33 @@ public class Application.MainWindow :
     }
 
     // The folder an action on a displayed conversation applies to
-    private Convey.Folder? folder_for(ConversationListBox view) {
+    private GriabuntuMail.Folder? folder_for(ConversationListBox view) {
         return this.selected_folder ?? view.conversation.base_folder;
     }
 
     private void on_email_mark(ConversationListBox view,
-                               Gee.Collection<Convey.EmailIdentifier> messages,
-                               Convey.NamedFlag? to_add,
-                               Convey.NamedFlag? to_remove) {
-        Convey.Folder? location = folder_for(view);
+                               Gee.Collection<GriabuntuMail.EmailIdentifier> messages,
+                               GriabuntuMail.NamedFlag? to_add,
+                               GriabuntuMail.NamedFlag? to_remove) {
+        GriabuntuMail.Folder? location = folder_for(view);
         if (location != null) {
-            Convey.EmailFlags add_flags = null;
+            GriabuntuMail.EmailFlags add_flags = null;
             if (to_add != null) {
-                add_flags = new Convey.EmailFlags();
+                add_flags = new GriabuntuMail.EmailFlags();
                 add_flags.add(to_add);
             }
-            Convey.EmailFlags remove_flags = null;
+            GriabuntuMail.EmailFlags remove_flags = null;
             if (to_remove != null) {
-                remove_flags = new Convey.EmailFlags();
+                remove_flags = new GriabuntuMail.EmailFlags();
                 remove_flags.add(to_remove);
             }
-            var ids = new Gee.HashSet<Convey.EmailIdentifier>();
+            var ids = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
             foreach (var id in messages) {
                 ids.add_all(view.conversation.with_copies(id));
             }
             this.controller.mark_messages.begin(
                 location,
-                Convey.Collection.single(view.conversation),
+                GriabuntuMail.Collection.single(view.conversation),
                 ids,
                 add_flags,
                 remove_flags,
@@ -3630,7 +3648,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_reply_to_sender(Convey.Email target, string? quote) {
+    private void on_email_reply_to_sender(GriabuntuMail.Email target, string? quote) {
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, REPLY_SENDER, target, quote
@@ -3639,7 +3657,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_reply_to_all(Convey.Email target, string? quote) {
+    private void on_email_reply_to_all(GriabuntuMail.Email target, string? quote) {
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, REPLY_ALL, target, quote
@@ -3648,7 +3666,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_reply_to_list(Convey.Email target, string? quote) {
+    private void on_email_reply_to_list(GriabuntuMail.Email target, string? quote) {
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, REPLY_LIST, target, quote
@@ -3657,7 +3675,7 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_forward(Convey.Email target, string? quote) {
+    private void on_email_forward(GriabuntuMail.Email target, string? quote) {
         if (this.selected_account != null) {
             this.create_composer.begin(
                 this.selected_account, FORWARD, target, quote
@@ -3666,25 +3684,25 @@ public class Application.MainWindow :
         this.conversation_list_view.selection_mode_enabled = false;
     }
 
-    private void on_email_unsubscribe(Convey.Email target) {
+    private void on_email_unsubscribe(GriabuntuMail.Email target) {
         if (this.selected_account != null) {
             this.unsubscribe.begin(this.selected_account, target);
         }
     }
 
-    private async void unsubscribe(Convey.Account account, Convey.Email email) {
-        string? one_click = Convey.RFC822.Utils.has_one_click_unsubscribe(email)
-            ? Convey.RFC822.Utils.get_list_unsubscribe_uri(email, { "https" })
+    private async void unsubscribe(GriabuntuMail.Account account, GriabuntuMail.Email email) {
+        string? one_click = GriabuntuMail.RFC822.Utils.has_one_click_unsubscribe(email)
+            ? GriabuntuMail.RFC822.Utils.get_list_unsubscribe_uri(email, { "https" })
             : null;
-        string? mailto = Convey.RFC822.Utils.get_list_unsubscribe_uri(
+        string? mailto = GriabuntuMail.RFC822.Utils.get_list_unsubscribe_uri(
             email, { "mailto" }
         );
-        string? website = Convey.RFC822.Utils.get_list_unsubscribe_uri(
+        string? website = GriabuntuMail.RFC822.Utils.get_list_unsubscribe_uri(
             email, { "https", "http" }
         );
         bool automatic = one_click != null || mailto != null;
 
-        Convey.RFC822.MailboxAddress? originator =
+        GriabuntuMail.RFC822.MailboxAddress? originator =
             Util.Email.get_primary_originator(email);
         string sender = originator != null
             ? originator.to_short_display()
@@ -3695,7 +3713,7 @@ public class Application.MainWindow :
             // substitution is the sender's name
             _("Unsubscribe from %s?").printf(sender),
             automatic
-            ? _("Convey will ask the sender to stop sending you emails.")
+            ? _("Griaß di Mail will ask the sender to stop sending you emails.")
             : _("To unsubscribe, go to the sender’s website.")
         );
         dialog.add_response("cancel", _("_Cancel"));
@@ -3753,8 +3771,8 @@ public class Application.MainWindow :
         }
     }
 
-    private async void send_mailto_unsubscribe(Convey.Account account,
-                                               Convey.Email email,
+    private async void send_mailto_unsubscribe(GriabuntuMail.Account account,
+                                               GriabuntuMail.Email email,
                                                string mailto)
         throws GLib.Error {
         GLib.Uri uri = GLib.Uri.parse(mailto, GLib.UriFlags.NONE);
@@ -3769,7 +3787,7 @@ public class Application.MainWindow :
             body = params.get("body");
         }
 
-        Convey.RFC822.MailboxAddress from = account.information.primary_mailbox;
+        GriabuntuMail.RFC822.MailboxAddress from = account.information.primary_mailbox;
         foreach (var mailbox in account.information.sender_mailboxes) {
             if ((email.to != null && email.to.contains_normalized(mailbox.address)) ||
                 (email.cc != null && email.cc.contains_normalized(mailbox.address))) {
@@ -3778,17 +3796,17 @@ public class Application.MainWindow :
             }
         }
 
-        var composed = new Convey.ComposedEmail(
+        var composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_local(),
-            new Convey.RFC822.MailboxAddresses.single(from)
+            new GriabuntuMail.RFC822.MailboxAddresses.single(from)
         );
-        composed.set_to(new Convey.RFC822.MailboxAddresses.single(
-            new Convey.RFC822.MailboxAddress(null, uri.get_path())
+        composed.set_to(new GriabuntuMail.RFC822.MailboxAddresses.single(
+            new GriabuntuMail.RFC822.MailboxAddress(null, uri.get_path())
         ));
         composed.set_subject(subject ?? "Unsubscribe");
         composed.body_text = body ?? "Unsubscribe";
 
-        var smtp = account.outgoing as Convey.Smtp.ClientService;
+        var smtp = account.outgoing as GriabuntuMail.Smtp.ClientService;
         if (smtp != null) {
             yield smtp.send_email(composed, null);
         } else {
@@ -3796,12 +3814,12 @@ public class Application.MainWindow :
         }
     }
 
-    private void on_email_trash(ConversationListBox view, Convey.Email target) {
+    private void on_email_trash(ConversationListBox view, GriabuntuMail.Email target) {
         do_trash_email.begin(view, target);
     }
 
-    private async void do_trash_email(ConversationListBox view, Convey.Email target) {
-        Convey.Folder? source = folder_for(view);
+    private async void do_trash_email(ConversationListBox view, GriabuntuMail.Email target) {
+        GriabuntuMail.Folder? source = folder_for(view);
         if (source == null)
             return;
 
@@ -3809,28 +3827,28 @@ public class Application.MainWindow :
             yield this.controller.move_messages_special(
                 source,
                 TRASH,
-                Convey.Collection.single(view.conversation),
-                Convey.Collection.single(target.id));
+                GriabuntuMail.Collection.single(view.conversation),
+                GriabuntuMail.Collection.single(target.id));
         } catch (GLib.Error err) {
             handle_error(source.account.information, err);
         }
     }
 
-    private void on_email_delete(ConversationListBox view, Convey.Email target) {
+    private void on_email_delete(ConversationListBox view, GriabuntuMail.Email target) {
         do_delete_email.begin(view, target);
     }
 
-    private async void do_delete_email(ConversationListBox view, Convey.Email target) {
-        Convey.FolderSupport.Remove? source =
-            folder_for(view) as Convey.FolderSupport.Remove;
+    private async void do_delete_email(ConversationListBox view, GriabuntuMail.Email target) {
+        GriabuntuMail.FolderSupport.Remove? source =
+            folder_for(view) as GriabuntuMail.FolderSupport.Remove;
         if (source == null || !yield prompt_delete_messages(1))
             return;
 
         try {
             yield this.controller.delete_messages(
                 source,
-                Convey.Collection.single(view.conversation),
-                Convey.Collection.single(target.id));
+                GriabuntuMail.Collection.single(view.conversation),
+                GriabuntuMail.Collection.single(target.id));
         } catch (GLib.Error err) {
             handle_error(source.account.information, err);
         }

@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -10,7 +13,7 @@
  *
  * Instances of these may be obtained from {@link FolderStore}.
  */
-public interface Plugin.Folder : Convey.BaseObject {
+public interface Plugin.Folder : GriabuntuMail.BaseObject {
 
 
     /**
@@ -24,7 +27,7 @@ public interface Plugin.Folder : Convey.BaseObject {
     public abstract string display_name { get; }
 
     /** Returns the type of this folder. */
-    public abstract Convey.Folder.SpecialUse used_as { get; }
+    public abstract GriabuntuMail.Folder.SpecialUse used_as { get; }
 
     /** Returns the account the folder belongs to, if any. */
     public abstract Account? account { get; }

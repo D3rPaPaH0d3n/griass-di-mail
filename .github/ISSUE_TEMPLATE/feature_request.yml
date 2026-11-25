@@ -1,0 +1,11 @@
+name: Feature idea / Verbesserungsidee
+description: Suggest a focused improvement / Eine konkrete Verbesserung vorschlagen
+title: "[Idea] "
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What would help? / Was würde helfen?
+      description: Describe the task and the improvement, using fictional examples. / Aufgabe und Verbesserung mit erfundenen Beispielen beschreiben.
+    validations:
+      required: true

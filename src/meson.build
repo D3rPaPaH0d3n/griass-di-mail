@@ -3,10 +3,10 @@ conf = configuration_data()
 # keep this in sync with config.vapi
 conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 conf.set_quoted('G_LOG_DOMAIN', meson.project_name())
-conf.set_quoted('APP_ID', convey_id)
+conf.set_quoted('APP_ID', griabuntu_mail_id)
 conf.set_quoted('BUILD_ROOT_DIR', meson.project_build_root())
 conf.set_quoted('GSETTINGS_DIR', meson.project_build_root() / 'desktop')
-conf.set_quoted('INSTALL_PREFIX', convey_prefix)
+conf.set_quoted('INSTALL_PREFIX', griabuntu_mail_prefix)
 conf.set_quoted('ISO_CODE_3166_XML', iso_3166_xml)
 conf.set_quoted('ISO_CODE_639_XML', iso_639_xml)
 conf.set_quoted('LANGUAGE_SUPPORT_DIRECTORY', locale_dir)
@@ -15,7 +15,7 @@ conf.set_quoted('PLUGINS_DIR', plugins_dir)
 conf.set_quoted('PROFILE', profile)
 conf.set_quoted('REVNO', revno)
 conf.set_quoted('SOURCE_ROOT_DIR', meson.project_source_root())
-conf.set_quoted('VERSION', convey_version)
+conf.set_quoted('VERSION', griabuntu_mail_version)
 conf.set_quoted('WEB_EXTENSIONS_DIR', web_extensions_dir)
 config_h = configure_file(output: 'config.h', configuration: conf)
 
@@ -28,7 +28,7 @@ config_dep = declare_dependency(
 )
 
 # Common valac options
-convey_vala_args = [
+griabuntu_mail_vala_args = [
   '--abi-stability',
   '--enable-checking',
 ]
@@ -45,10 +45,10 @@ if gmime.version().version_compare('<=3.2.7')
   vala_defines += [ '--define=GMIME_STREAM_WRITE_STRING' ]
 endif
 
-convey_vala_args += vala_defines
+griabuntu_mail_vala_args += vala_defines
 
 # Common cc options
-convey_c_args = [
+griabuntu_mail_c_args = [
   '-include', 'config.h',
   # Enable GLib structured logging
   '-DG_LOG_USE_STRUCTURED',
@@ -66,7 +66,7 @@ convey_c_args = [
 # These aren't actionable in the C — the source of truth is the Vala — so
 # suppress them to keep genuine warnings visible. Filtered so non-gcc
 # compilers don't choke on unknown flags.
-convey_c_args += cc.get_supported_arguments([
+griabuntu_mail_c_args += cc.get_supported_arguments([
   '-Wno-unused-but-set-variable',
   '-Wno-unused-variable',
   '-Wno-unused-function',
@@ -88,7 +88,7 @@ web_process_sources = files(
 )
 
 # Web process extension library
-web_process = library('convey-web-process',
+web_process = library('griabuntu-mail-web-process',
   web_process_sources,
   dependencies: [
     config_dep,
@@ -97,20 +97,20 @@ web_process = library('convey-web-process',
     gmime,
     webkitgtk_web_extension,
   ],
-  vala_args: convey_vala_args,
-  c_args: convey_c_args,
+  vala_args: griabuntu_mail_vala_args,
+  c_args: griabuntu_mail_c_args,
   install: true,
   install_dir: web_extensions_dir
 )
 
-# Now finally, make the convey executable
+# Now finally, make the griabuntu-mail executable
 bin_sources = files(
   'client' / 'application' / 'main.vala',
 )
 
 bin_sources += [
-  convey_compiled_schema,
-  convey_resources # Included here so they show up in the executable.
+  griabuntu_mail_compiled_schema,
+  griabuntu_mail_resources # Included here so they show up in the executable.
 ]
 bin_dependencies = [
   folks,
@@ -127,11 +127,11 @@ bin_dependencies = [
   webkitgtk,
 ]
 
-bin = executable('convey',
+bin = executable('griabuntu-mail',
   bin_sources,
   dependencies: bin_dependencies,
-  vala_args: convey_vala_args,
-  c_args: convey_c_args,
+  vala_args: griabuntu_mail_vala_args,
+  c_args: griabuntu_mail_c_args,
   install: true,
   install_rpath: client_lib_dir,
 )

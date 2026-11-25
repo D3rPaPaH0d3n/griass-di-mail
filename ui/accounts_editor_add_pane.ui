@@ -3,7 +3,7 @@
   <template class="AccountsEditorAddPane" parent="AccountsEditorPane">
     <property name="title" translatable="yes">Add Account</property>
     <style>
-      <class name="convey-accounts-editor-pane"/>
+      <class name="griabuntu-mail-accounts-editor-pane"/>
     </style>
 
     <property name="child">

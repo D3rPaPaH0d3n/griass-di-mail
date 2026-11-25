@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -10,7 +13,7 @@
  * structure, its RFC822 header, IMAP metadata, details from a POP server, etc.
  */
 
-public abstract class Convey.MessageData.AbstractMessageData : BaseObject {
+public abstract class GriabuntuMail.MessageData.AbstractMessageData : BaseObject {
     /**
      * to_string() is intended for debugging and logging purposes, not user-visible text or
      * serialization.
@@ -22,7 +25,7 @@ public abstract class Convey.MessageData.AbstractMessageData : BaseObject {
  * Allows message data fields to define how they'll expose themselves to search
  * queries.
  */
-public interface Convey.MessageData.SearchableMessageData {
+public interface GriabuntuMail.MessageData.SearchableMessageData {
     /**
      * Return a string representing the data as a corpus of text to be searched
      * against.  Return values from this may be stored in the search index.
@@ -30,7 +33,7 @@ public interface Convey.MessageData.SearchableMessageData {
     public abstract string to_searchable_string();
 }
 
-public abstract class Convey.MessageData.StringMessageData : AbstractMessageData,
+public abstract class GriabuntuMail.MessageData.StringMessageData : AbstractMessageData,
     Gee.Hashable<StringMessageData> {
     public string value { get; private set; }
 
@@ -62,7 +65,7 @@ public abstract class Convey.MessageData.StringMessageData : AbstractMessageData
     }
 }
 
-public abstract class Convey.MessageData.IntMessageData : AbstractMessageData,
+public abstract class GriabuntuMail.MessageData.IntMessageData : AbstractMessageData,
     Gee.Hashable<IntMessageData> {
     public int value { get; private set; }
 
@@ -83,7 +86,7 @@ public abstract class Convey.MessageData.IntMessageData : AbstractMessageData,
     }
 }
 
-public abstract class Convey.MessageData.Int64MessageData : AbstractMessageData,
+public abstract class GriabuntuMail.MessageData.Int64MessageData : AbstractMessageData,
     Gee.Hashable<Int64MessageData> {
     public int64 value { get; private set; }
 
@@ -109,11 +112,11 @@ public abstract class Convey.MessageData.Int64MessageData : AbstractMessageData,
     }
 }
 
-public abstract class Convey.MessageData.BlockMessageData : AbstractMessageData {
+public abstract class GriabuntuMail.MessageData.BlockMessageData : AbstractMessageData {
     public string data_name { get; private set; }
-    public Convey.Memory.Buffer buffer { get; private set; }
+    public GriabuntuMail.Memory.Buffer buffer { get; private set; }
 
-    protected BlockMessageData(string data_name, Convey.Memory.Buffer buffer) {
+    protected BlockMessageData(string data_name, GriabuntuMail.Memory.Buffer buffer) {
         this.data_name = data_name;
         this.buffer = buffer;
     }

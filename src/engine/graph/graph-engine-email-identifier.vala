@@ -1,11 +1,14 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.EmailIdentifier : Convey.EmailIdentifier {
+internal class GriabuntuMail.Graph.EmailIdentifier : GriabuntuMail.EmailIdentifier {
 
     private const string VARIANT_TYPE = "(y(sx))";
 
@@ -18,9 +21,9 @@ internal class Convey.Graph.EmailIdentifier : Convey.EmailIdentifier {
     }
 
     public EmailIdentifier.from_variant(GLib.Variant serialised)
-        throws Convey.EngineError.BAD_PARAMETERS {
+        throws GriabuntuMail.EngineError.BAD_PARAMETERS {
         if (serialised.get_type_string() != VARIANT_TYPE) {
-            throw new Convey.EngineError.BAD_PARAMETERS(
+            throw new GriabuntuMail.EngineError.BAD_PARAMETERS(
                 "Invalid serialised id type: %s", serialised.get_type_string()
             );
         }
@@ -32,13 +35,13 @@ internal class Convey.Graph.EmailIdentifier : Convey.EmailIdentifier {
         return this.graph_id.hash();
     }
 
-    public override bool equal_to(Convey.EmailIdentifier other) {
-        Convey.Graph.EmailIdentifier? graph = other as Convey.Graph.EmailIdentifier;
+    public override bool equal_to(GriabuntuMail.EmailIdentifier other) {
+        GriabuntuMail.Graph.EmailIdentifier? graph = other as GriabuntuMail.Graph.EmailIdentifier;
         return graph != null && this.graph_id == graph.graph_id;
     }
 
-    public override int natural_sort_comparator(Convey.EmailIdentifier o) {
-        Convey.Graph.EmailIdentifier? other = o as Convey.Graph.EmailIdentifier;
+    public override int natural_sort_comparator(GriabuntuMail.EmailIdentifier o) {
+        GriabuntuMail.Graph.EmailIdentifier? other = o as GriabuntuMail.Graph.EmailIdentifier;
         if (other == null) {
             return 1;
         }

@@ -1,12 +1,16 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2017,2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
- * Displays a Convey problem report as an info bar.
+ * Displays a Griabuntu Mail problem report as an info bar.
  */
 public class Components.ProblemReportInfoBar : InfoBar {
 
@@ -14,21 +18,21 @@ public class Components.ProblemReportInfoBar : InfoBar {
     private enum ResponseType { DETAILS, RETRY; }
 
     /** If reporting a problem, returns the problem report else null. */
-    public Convey.ProblemReport report { get; private set; }
+    public GriabuntuMail.ProblemReport report { get; private set; }
 
     /** Emitted when the user clicks the Retry button, if any. */
     public signal void retry();
 
 
-    public ProblemReportInfoBar(Convey.ProblemReport report) {
+    public ProblemReportInfoBar(GriabuntuMail.ProblemReport report) {
         Gtk.MessageType type = Gtk.MessageType.WARNING;
         string title = "";
         string descr = "";
         string? retry = null;
 
-        if (report is Convey.AccountProblemReport) {
-            Convey.AccountProblemReport account_report =
-                (Convey.AccountProblemReport) report;
+        if (report is GriabuntuMail.AccountProblemReport) {
+            GriabuntuMail.AccountProblemReport account_report =
+                (GriabuntuMail.AccountProblemReport) report;
             string account_name = account_report.account.display_name;
 
             // Translators: Info bar title for a generic account
@@ -37,12 +41,12 @@ public class Components.ProblemReportInfoBar : InfoBar {
             // Translators: Info bar sub-title for a generic account
             // problem. String substitution is the account name.
             descr = _(
-                "Convey has encountered a problem with %s."
+                "Griaß di Mail has encountered a problem with %s."
             ).printf(account_name);
 
-            if (report is Convey.ServiceProblemReport) {
-                Convey.ServiceProblemReport service_report =
-                    (Convey.ServiceProblemReport) report;
+            if (report is GriabuntuMail.ServiceProblemReport) {
+                GriabuntuMail.ServiceProblemReport service_report =
+                    (GriabuntuMail.ServiceProblemReport) report;
 
                 switch (service_report.service.protocol) {
                 case IMAP:
@@ -50,7 +54,7 @@ public class Components.ProblemReportInfoBar : InfoBar {
                     // account problem. String substitution is the
                     // account name.
                     descr = _(
-                        "Convey encountered a problem checking mail for %s."
+                        "Griaß di Mail encountered a problem checking mail for %s."
                     ).printf(account_name);
 
                     // Translators: Tooltip label for Retry button
@@ -62,7 +66,7 @@ public class Components.ProblemReportInfoBar : InfoBar {
                     // account problem. String substitution is the
                     // account name
                     descr = _(
-                        "Convey encountered a problem sending email for %s."
+                        "Griaß di Mail encountered a problem sending email for %s."
                     ).printf(account_name);
 
                     // Translators: Tooltip label for Retry button
@@ -73,7 +77,7 @@ public class Components.ProblemReportInfoBar : InfoBar {
         } else {
             // Translators: Info bar title for a generic application
             // problem.
-            title = _("Convey has encountered a problem");
+            title = _("Griaß di Mail has encountered a problem");
             // Translators: Info bar sub-title for a generic
             // application problem.
             descr = _(

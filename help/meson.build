@@ -1,4 +1,4 @@
-convey_help_pages = [
+griabuntu_mail_help_pages = [
   'accounts.page',
   'archive.page',
   'bugs.page',
@@ -14,11 +14,11 @@ convey_help_pages = [
   'write.page',
 ]
 
-convey_help_media = [
-  'figures/net.donnybeelo.Convey.svg'
+griabuntu_mail_help_media = [
+  'figures/io.github.d3rpapah0d3n.GriabuntuMail.svg'
 ]
 
 gnome.yelp(meson.project_name(),
-  sources: convey_help_pages,
-  media: convey_help_media
+  sources: griabuntu_mail_help_pages,
+  media: griabuntu_mail_help_media
 )

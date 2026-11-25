@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 public class Composer.WidgetTest : TestCase {
@@ -15,13 +18,15 @@ public class Composer.WidgetTest : TestCase {
         ValaUnit.TestAssertions,
         ValaUnit.MockObject {
 
+        internal Gee.Collection<Application.AccountContext>? available = null;
+
 
         protected Gee.Queue<ValaUnit.ExpectedCall> expected {
             get; set; default = new Gee.LinkedList<ValaUnit.ExpectedCall>();
         }
 
 
-        internal Application.AccountContext? get_context_for_account(Convey.AccountInformation account)  {
+        internal Application.AccountContext? get_context_for_account(GriabuntuMail.AccountInformation account)  {
             try {
                 return object_call<Application.AccountContext?>(
                     "get_account_contexts",
@@ -35,6 +40,9 @@ public class Composer.WidgetTest : TestCase {
         }
 
         internal Gee.Collection<Application.AccountContext> get_account_contexts() {
+            if (this.available != null) {
+                return this.available;
+            }
             try {
                 return object_call<Gee.Collection<Application.AccountContext>>(
                     "get_account_contexts",
@@ -47,7 +55,7 @@ public class Composer.WidgetTest : TestCase {
             }
         }
 
-        public void report_problem(Convey.ProblemReport report) {
+        public void report_problem(GriabuntuMail.ProblemReport report) {
             try {
                 void_call("report_problem", {report});
             } catch (GLib.Error err) {
@@ -81,7 +89,7 @@ public class Composer.WidgetTest : TestCase {
 
         internal GLib.File get_web_cache_dir() {
             try {
-                return File.new_for_path(DirUtils.make_tmp("convey-widget-test-XXXXXX"));
+                return File.new_for_path(DirUtils.make_tmp("griabuntu-mail-widget-test-XXXXXX"));
             } catch (GLib.Error err) {
                 // We'll assert later
             }
@@ -110,6 +118,7 @@ public class Composer.WidgetTest : TestCase {
         add_test("load_context_reply_all_to_other_with_reply_to", load_context_reply_all_to_other_with_reply_to);
         add_test("load_context_forward", load_context_forward);
         add_test("to_composed_email", to_composed_email);
+        add_test("alias_sender_refresh", alias_sender_refresh);
     }
 
     public override void set_up() {
@@ -117,20 +126,20 @@ public class Composer.WidgetTest : TestCase {
 
         this.config = new Application.Configuration(Application.Client.SCHEMA_ID);
 
-        var info = new Convey.AccountInformation(
+        var info = new GriabuntuMail.AccountInformation(
             "account_01",
-            Convey.ServiceProvider.OTHER,
+            GriabuntuMail.ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Convey.RFC822.MailboxAddress(null, "test1@example.com")
+            new GriabuntuMail.RFC822.MailboxAddress(null, "test1@example.com")
         );
         var mock_account = new Mock.Account(info);
         this.account = new Application.AccountContext(
             mock_account,
-            new Convey.App.SearchFolder(
+            new GriabuntuMail.App.SearchFolder(
                 mock_account,
-                new Convey.FolderRoot("", false)
+                new GriabuntuMail.FolderRoot("", false)
             ),
-            new Convey.App.EmailStore(mock_account),
+            new GriabuntuMail.App.EmailStore(mock_account),
             new Application.ContactStore(
                 mock_account,
                 Folks.IndividualAggregator.dup()
@@ -151,10 +160,61 @@ public class Composer.WidgetTest : TestCase {
         assert_equal(widget.to, "");
     }
 
+    private Adw.ComboRow? find_sender_row(Gtk.Widget widget) {
+        if (widget is Adw.ComboRow) {
+            return (Adw.ComboRow) widget;
+        }
+        for (var child = widget.get_first_child(); child != null; child = child.get_next_sibling()) {
+            var found = find_sender_row(child);
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
+
+    public void alias_sender_refresh() throws GLib.Error {
+        Adw.init();
+        Components.WebView.init_web_context(this.config,
+            GLib.File.new_for_path(Config.BUILD_ROOT_DIR).get_child("src"));
+        Components.WebView.load_resources(GLib.File.new_for_path("/tmp"));
+        Composer.WebView.load_resources();
+        var contexts = new Gee.ArrayList<Application.AccountContext>();
+        contexts.add(this.account);
+        ((MockApplicationInterface) this.application).available = contexts;
+        var widget = new Widget(this.application, this.config, this.account);
+        widget.set_mode(PANED);
+        var row = find_sender_row(widget);
+        assert_non_null(row);
+        assert_equal<uint?>(row.model.get_n_items(), 1);
+        assert_false(row.visible);
+        var info = this.account.account.information;
+        var alias = new GriabuntuMail.RFC822.MailboxAddress("Alias", "alias@example.test");
+        info.append_sender(alias);
+        info.changed();
+        assert_equal<uint?>(row.model.get_n_items(), 2);
+        assert_true(row.visible);
+        row.selected = 1;
+        assert_true(widget.from.get(0).equal_to(alias), "Selected alias must be the composed sender");
+        widget.set_mode(INLINE);
+        widget.set_mode(PANED);
+        assert_equal<uint?>(row.model.get_n_items(), 2, "Rebuilding must not duplicate sender identities");
+        assert_true(widget.from.get(0).equal_to(alias));
+        info.color = "#215d58";
+        info.changed();
+        assert_equal<uint?>(row.model.get_n_items(), 2);
+        assert_true(widget.from.get(0).equal_to(alias), "Color change must preserve sender choice");
+        info.remove_sender(alias);
+        info.changed();
+        assert_equal<uint?>(row.model.get_n_items(), 1);
+        assert_true(widget.from.get(0).equal_to(info.primary_mailbox));
+        assert_false(row.visible);
+    }
+
     public void load_empty_body_to() throws GLib.Error {
         var widget = new Widget(this.application, this.config, this.account);
         widget.load_empty_body.begin(
-            new Convey.RFC822.MailboxAddress(null, "empty_to@example.com"),
+            new GriabuntuMail.RFC822.MailboxAddress(null, "empty_to@example.com"),
             this.async_completion
         );
         widget.load_empty_body.end(async_result());
@@ -192,7 +252,7 @@ public class Composer.WidgetTest : TestCase {
         widget.load_context.end(async_result());
 
         mock_account.assert_expectations();
-        var search_arg = search_call.called_arg<Convey.RFC822.MessageID>(0);
+        var search_arg = search_call.called_arg<GriabuntuMail.RFC822.MessageID>(0);
         assert_equal(
             search_arg.to_rfc822_string(),
             "<1234@local.machine.example>"
@@ -261,7 +321,7 @@ public class Composer.WidgetTest : TestCase {
         // If the message's To includes the account's primary mailbox,
         // then that should not be included in the CC
         this.account.account.information.replace_sender(
-            0, new Convey.RFC822.MailboxAddress("Charlie", "charlie@example.net")
+            0, new GriabuntuMail.RFC822.MailboxAddress("Charlie", "charlie@example.net")
         );
 
         var widget = new Widget(this.application, this.config, this.account);
@@ -289,7 +349,7 @@ public class Composer.WidgetTest : TestCase {
         // If the message's CC includes the account's primary mailbox,
         // then that should not be included in the CC either
         this.account.account.information.replace_sender(
-            0, new Convey.RFC822.MailboxAddress("Dave", "dave@example.net")
+            0, new GriabuntuMail.RFC822.MailboxAddress("Dave", "dave@example.net")
         );
 
         var widget = new Widget(this.application, this.config, this.account);
@@ -393,7 +453,7 @@ public class Composer.WidgetTest : TestCase {
         mock_account.assert_expectations();
 
         widget.to_composed_email.begin(null, false, this.async_completion);
-        Convey.ComposedEmail composed = widget.to_composed_email.end(async_result());
+        GriabuntuMail.ComposedEmail composed = widget.to_composed_email.end(async_result());
 
         assert_equal(
             composed.to.to_rfc822_string(),
@@ -430,12 +490,12 @@ public class Composer.WidgetTest : TestCase {
         );
     }
 
-    private Convey.Email load_email(string text)
+    private GriabuntuMail.Email load_email(string text)
         throws GLib.Error {
-        var message = new Convey.RFC822.Message.from_buffer(
-            new Convey.Memory.StringBuffer(text.replace("\n","\r\n"))
+        var message = new GriabuntuMail.RFC822.Message.from_buffer(
+            new GriabuntuMail.Memory.StringBuffer(text.replace("\n","\r\n"))
         );
-        return new Convey.Email.from_message(
+        return new GriabuntuMail.Email.from_message(
             new Mock.EmailIdentifer(0), message
         );
     }
@@ -450,7 +510,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example> <5678@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griabuntu Mail Test Suite 1.0
 
 This is the first line.
 
@@ -469,7 +529,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example> <5678@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griabuntu Mail Test Suite 1.0
 
 This is the first line.
 

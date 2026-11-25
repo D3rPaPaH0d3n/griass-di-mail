@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016-2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.RFC822.MailboxAddressTest : TestCase {
+class GriabuntuMail.RFC822.MailboxAddressTest : TestCase {
 
     public MailboxAddressTest() {
-        base("Convey.RFC822.MailboxAddressTest");
+        base("GriabuntuMail.RFC822.MailboxAddressTest");
         add_test("imap_address", imap_address);
         add_test("is_valid_address", is_valid_address);
         add_test("unescaped_constructor", unescaped_constructor);
@@ -45,23 +48,23 @@ class Convey.RFC822.MailboxAddressTest : TestCase {
     }
 
     public void is_valid_address() throws GLib.Error {
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("john@dep.aol.museum") == true);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("test@example.com") == true);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("test.other@example.com") == true);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("test@localhost") == true);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("test2@localhost") == true);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("some context test@example.com text") == true);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("john@dep.aol.museum") == true);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("test@example.com") == true);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("test.other@example.com") == true);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("test@localhost") == true);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("test2@localhost") == true);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("some context test@example.com text") == true);
 
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("test@example") == false);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("john@aol...com") == false);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("@example.com") == false);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("@example") == false);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("test") == false);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("test@") == false);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("@") == false);
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("test@example") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("john@aol...com") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("@example.com") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("@example") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("test") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("test@") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("@") == false);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("") == false);
 
-        assert(Convey.RFC822.MailboxAddress.is_valid_address("\"Surname, Name\" <mail@example.com>") == true);
+        assert(GriabuntuMail.RFC822.MailboxAddress.is_valid_address("\"Surname, Name\" <mail@example.com>") == true);
     }
 
     public void unescaped_constructor() throws GLib.Error {
@@ -305,7 +308,7 @@ class Convey.RFC822.MailboxAddressTest : TestCase {
 
         // RFC 2047 reserved words in the local-part must be used
         // as-is, and in particular not encoded per that RFC. See RFC
-        // 2047 §5 and GNOME/convey#336
+        // 2047 §5 and GNOME/griabuntu-mail#336
         string RFC_2074 = "libc-alpha-sc.1553427554.ndgdflaalknmibgfkpak-hi-angel=yandex.ru@sourceware.org";
         assert_equal(
             new MailboxAddress(null, RFC_2074).to_rfc822_address(),

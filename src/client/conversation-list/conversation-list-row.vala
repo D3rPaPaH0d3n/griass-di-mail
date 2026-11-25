@@ -1,19 +1,23 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — recipient badges, local contact photos and full identities. */
 /*
  * Copyright © 2022 John Renner <john@jrenner.net>
  * Copyright © 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
 /**
  * A conversation list row displaying an email summary
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-list-row.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-list-row.ui")]
 internal class ConversationList.Row : Gtk.ListBoxRow {
 
-    private Gee.List<Convey.RFC822.MailboxAddress>? user_accounts  {
+    private Gee.List<GriabuntuMail.RFC822.MailboxAddress>? user_accounts  {
         owned get {
             return conversation.base_folder.account.information.sender_mailboxes;
         }
@@ -62,19 +66,21 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     private Adw.TimedAnimation? fade_animation = null;
 
-    internal Convey.App.Conversation conversation;
+    internal GriabuntuMail.App.Conversation conversation;
     private Application.Configuration config;
     private Application.DecryptedSubjects decrypted_subjects;
     private DateTime? recv_time;
-    private Convey.AccountInformation account_information;
+    private Components.IdentityColorSwatch account_color = new Components.IdentityColorSwatch();
+    private GriabuntuMail.AccountInformation account_information;
     private ulong flags_changed_id = 0;
     private ulong account_changed_id = 0;
     private ulong aliases_setting_changed_id = 0;
     private Application.ContactStore? contacts;
-    private Convey.RFC822.MailboxAddress? avatar_mailbox = null;
-    private Convey.Account? avatar_account = null;
+    private GriabuntuMail.RFC822.MailboxAddress? avatar_mailbox = null;
+    private GriabuntuMail.Account? avatar_account = null;
     private Application.Contact? avatar_contact = null;
     private GLib.LoadableIcon? avatar_icon = null;
+    private Application.ContactPicture? sender_picture = null;
     private GLib.Cancellable? contact_cancellable = null;
     private GLib.Cancellable? image_cancellable = null;
     private uint avatar_generation = 0;
@@ -85,19 +91,20 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
     private ulong contact_store_changed_id = 0;
 
     internal signal void toggle_flag(ConversationList.Row row,
-                                     Convey.NamedFlag flag);
+                                     GriabuntuMail.NamedFlag flag);
     internal signal void toggle_selection(ConversationList.Row row,
                                           bool active);
 
     internal Row(Application.Configuration config,
                  Application.DecryptedSubjects decrypted_subjects,
-                 Convey.App.Conversation conversation,
+                 GriabuntuMail.App.Conversation conversation,
                  bool selection_mode_enabled,
                  Application.ContactStore? contacts = null) {
         this.config = config;
         this.decrypted_subjects = decrypted_subjects;
         this.conversation = conversation;
         this.account_information = conversation.base_folder.account.information;
+        this.participants_line.prepend(this.account_color);
         this.contacts = contacts;
         if (contacts != null) {
             this.contact_store_changed_id = contacts.contacts_changed.connect(
@@ -230,8 +237,8 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
     }
 
     internal void update() {
-        Convey.Email? last_email = conversation.get_latest_recv_email(
-            Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
+        GriabuntuMail.Email? last_email = conversation.get_latest_recv_email(
+            GriabuntuMail.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
         );
 
         if (last_email != null) {
@@ -252,7 +259,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                 this.preview.add_css_class("encrypted");
             } else {
                 this.preview.set_text(
-                    Convey.String.reduce_whitespace(last_email.get_preview_as_string())
+                    GriabuntuMail.String.reduce_whitespace(last_email.get_preview_as_string())
                 );
                 this.preview.remove_css_class("encrypted");
             }
@@ -328,14 +335,14 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         this.state_flags_changed.connect(update_button);
     }
 
-    private void on_email_flags_changed(Convey.Email email) {
+    private void on_email_flags_changed(GriabuntuMail.Email email) {
         // Deletion can change the representative message. Refresh its text
         // and picture together; update_flags() is called by update(), so it
         // must not call update() itself.
         update();
     }
 
-    private void update_flags(Convey.Email? email) {
+    private void update_flags(GriabuntuMail.Email? email) {
         if (conversation.is_unread()) {
             add_css_class("unread");
         } else {
@@ -387,6 +394,8 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                 this.contact_changed_id = 0;
             }
         }
+        this.sender_picture?.close();
+        this.sender_picture = null;
         this.avatar_contact = null;
         this.avatar_icon = null;
         this.avatar_mailbox = null;
@@ -401,7 +410,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         bool enabled = this.config.display_contact_pictures;
         this.sender_avatar.visible = enabled;
         var email = enabled ? this.conversation.get_latest_recv_email(
-            Convey.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
+            GriabuntuMail.App.Conversation.Location.IN_FOLDER_OUT_OF_FOLDER
         ) : null;
         bool outgoing = this.conversation.base_folder.used_as.is_outgoing();
         var mailbox = Util.Email.get_summary_contact_mailbox(email, outgoing);
@@ -431,7 +440,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         // Adw.Avatar's text property is plain text; never interpret a header
         // display name as markup. Missing pictures keep these initials.
         this.sender_avatar.text = !mailbox.is_spoofed() &&
-            !Convey.String.is_empty_or_whitespace(mailbox.name)
+            !GriabuntuMail.String.is_empty_or_whitespace(mailbox.name)
             ? mailbox.name : mailbox.mailbox;
         if (!get_mapped()) {
             return;
@@ -445,7 +454,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         }
     }
 
-    private bool is_current_sender(Convey.RFC822.MailboxAddress mailbox,
+    private bool is_current_sender(GriabuntuMail.RFC822.MailboxAddress mailbox,
                                    uint generation,
                                    GLib.Cancellable cancellable) {
         return !this.avatar_disposed && get_mapped() &&
@@ -457,7 +466,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
             this.avatar_mailbox != null && this.avatar_mailbox.equal_to(mailbox);
     }
 
-    private async void load_sender_contact(Convey.RFC822.MailboxAddress mailbox,
+    private async void load_sender_contact(GriabuntuMail.RFC822.MailboxAddress mailbox,
                                            uint generation,
                                            GLib.Cancellable cancellable) {
         try {
@@ -482,74 +491,40 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     private void on_sender_contact_changed() {
         if (this.avatar_contact != null) {
-            if (!Convey.String.is_empty_or_whitespace(this.avatar_contact.display_name)) {
+            if (!GriabuntuMail.String.is_empty_or_whitespace(this.avatar_contact.display_name)) {
                 this.sender_avatar.text = this.avatar_contact.display_name;
             }
-            if (this.avatar_icon != this.avatar_contact.avatar) {
+            if (this.sender_picture == null || this.avatar_icon != this.avatar_contact.avatar) {
                 refresh_sender_image();
             }
         }
     }
 
     private void refresh_sender_image() {
-        this.image_cancellable?.cancel();
-        this.image_cancellable = null;
+        this.sender_picture?.close();
+        this.sender_picture = null;
         this.sender_avatar.custom_image = null;
         this.avatar_icon = this.avatar_contact != null ? this.avatar_contact.avatar : null;
         var mailbox = this.avatar_mailbox;
         var request = this.contact_cancellable;
-        var icon = this.avatar_icon;
-        if (mailbox != null && request != null && icon != null &&
+        if (mailbox != null && request != null &&
             is_current_sender(mailbox, this.avatar_generation, request)) {
-            var cancellable = new GLib.Cancellable();
-            this.image_cancellable = cancellable;
-            load_sender_image.begin(icon, mailbox, this.avatar_generation, request, cancellable);
-        }
-    }
-
-    private async void load_sender_image(GLib.LoadableIcon icon,
-                                         Convey.RFC822.MailboxAddress mailbox,
-                                         uint generation,
-                                         GLib.Cancellable request,
-                                         GLib.Cancellable cancellable) {
-        GLib.InputStream? stream = null;
-        try {
-            stream = yield icon.load_async(this.sender_avatar.size, cancellable);
-            if (cancellable.is_cancelled()) {
-                return;
-            }
-            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(
-                stream, this.sender_avatar.size, this.sender_avatar.size, true, cancellable
+            this.sender_picture = new Application.ContactPicture(
+                this.sender_avatar, this.avatar_contact, mailbox, this.config
             );
-            if (is_current_sender(mailbox, generation, request) &&
-                !cancellable.is_cancelled() && this.image_cancellable == cancellable &&
-                this.avatar_icon == icon) {
-                this.sender_avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
-            }
-        } catch (GLib.IOError.CANCELLED err) {
-            // Keep initials, and never replace a newer sender's picture.
-        } catch (GLib.Error err) {
-            if (is_current_sender(mailbox, generation, request) &&
-                this.image_cancellable == cancellable) {
-                debug("Couldn't load summary contact picture: %s", err.message);
-            }
-        } finally {
-            if (stream != null) {
-                try {
-                    yield stream.close_async(GLib.Priority.DEFAULT, null);
-                } catch (GLib.Error err) {
-                    debug("Couldn't close contact picture stream: %s", err.message);
-                }
-            }
         }
     }
 
     private void update_participants_line_visibility() {
         this.participants_line.visible =
-            this.participants.visible || this.recipient_aliases.visible;
+            this.participants.visible || this.recipient_aliases.visible ||
+            this.account_color.visible;
     }
 
     private void update_recipient_aliases() {
+        this.account_color.color = this.account_information.color;
+        this.account_color.tooltip_text = this.account_information.display_name;
+        update_participants_line_visibility();
         this.recipient_aliases.visible = false;
         var child = this.recipient_aliases.get_first_child();
         while (child != null) {
@@ -567,9 +542,9 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
         // Both APIs below only inspect the existing model. In All Inboxes,
         // use this conversation's account, never the other visible accounts.
         var emails = this.conversation.get_emails(
-            Convey.App.Conversation.Ordering.NONE
+            GriabuntuMail.App.Conversation.Ordering.NONE
         );
-        var excluded_ids = new Gee.HashSet<Convey.EmailIdentifier>();
+        var excluded_ids = new Gee.HashSet<GriabuntuMail.EmailIdentifier>();
         foreach (var folder in this.conversation.base_folder.account.list_folders()) {
             if (folder.used_as.is_outgoing() || folder.used_as == DRAFTS) {
                 foreach (var email in emails) {
@@ -616,6 +591,9 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                     match, this.account_information.sender_mailboxes
                 )
             ));
+            Components.IdentityColorButton.style_badge(
+                badge, this.account_information.get_sender_color(match)
+            );
             badge.update_property(Gtk.AccessibleProperty.LABEL, match.address, -1);
             this.recipient_aliases.append(badge);
             shown++;
@@ -656,12 +634,12 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
 
     private string get_participants() {
         var participants = new Gee.ArrayList<Participant>();
-        var addresses = new Convey.RFC822.MailboxAddresses();
-        Gee.List<Convey.Email> emails = conversation.get_emails(
-                          Convey.App.Conversation.Ordering.RECV_DATE_ASCENDING);
+        var addresses = new GriabuntuMail.RFC822.MailboxAddresses();
+        Gee.List<GriabuntuMail.Email> emails = conversation.get_emails(
+                          GriabuntuMail.App.Conversation.Ordering.RECV_DATE_ASCENDING);
         bool is_outgoing = conversation.base_folder.used_as.is_outgoing();
-        foreach (Convey.Email message in emails) {
-            Convey.RFC822.MailboxAddresses? addrs =
+        foreach (GriabuntuMail.Email message in emails) {
+            GriabuntuMail.RFC822.MailboxAddresses? addrs =
                 is_outgoing
                 ? message.to
                 : message.from;
@@ -669,12 +647,12 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
                 addresses = addresses.merge_list(addrs);
             } else if (!is_outgoing && message.sender != null) {
                 addresses = addresses.merge_list(
-                    new Convey.RFC822.MailboxAddresses.single(message.sender)
+                    new GriabuntuMail.RFC822.MailboxAddresses.single(message.sender)
                 );
             }
         }
 
-        Gee.List<Convey.RFC822.MailboxAddress> list = Convey.traverse(
+        Gee.List<GriabuntuMail.RFC822.MailboxAddress> list = GriabuntuMail.traverse(
             addresses.get_all()
         ).filter((address) => {
             // In sent, we only want to show "Me"
@@ -688,7 +666,7 @@ internal class ConversationList.Row : Gtk.ListBoxRow {
             return true;
         }).to_array_list();
 
-        foreach (Convey.RFC822.MailboxAddress address in list) {
+        foreach (GriabuntuMail.RFC822.MailboxAddress address in list) {
             Participant participant_display = new Participant(address);
             int existing_index = participants.index_of(participant_display);
             if (existing_index < 0) {

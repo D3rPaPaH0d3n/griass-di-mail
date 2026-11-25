@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -11,8 +14,8 @@
 public class MailMerge.Processor : GLib.Object {
 
 
-    public const Convey.Email.Field REQUIRED_FIELDS = (
-        ENVELOPE | Convey.Email.REQUIRED_FOR_MESSAGE
+    public const GriabuntuMail.Email.Field REQUIRED_FIELDS = (
+        ENVELOPE | GriabuntuMail.Email.REQUIRED_FOR_MESSAGE
     );
 
 
@@ -99,7 +102,7 @@ public class MailMerge.Processor : GLib.Object {
         return FIELD_START + name + FIELD_END;
     }
 
-    public static bool is_mail_merge_template(Convey.Email email)
+    public static bool is_mail_merge_template(GriabuntuMail.Email email)
         throws GLib.Error {
         var found = (
             (email.subject != null &&
@@ -146,12 +149,12 @@ public class MailMerge.Processor : GLib.Object {
 
 
     /** The email template being processed. */
-    public Convey.Email template {
+    public GriabuntuMail.Email template {
         get; private set;
     }
 
     /** The email constructed by the processor. */
-    public Convey.ComposedEmail? email {
+    public GriabuntuMail.ComposedEmail? email {
         get; private set; default = null;
     }
 
@@ -161,7 +164,7 @@ public class MailMerge.Processor : GLib.Object {
     }
 
     /** Constructs a new merge processor with the given template. */
-    public Processor(Convey.Email template) {
+    public Processor(GriabuntuMail.Email template) {
         this.template = template;
     }
 
@@ -171,10 +174,10 @@ public class MailMerge.Processor : GLib.Object {
      * Creates a new composed email based on the template and given
      * data, set it as the {@email} property and returns it.
      */
-    public Convey.ComposedEmail merge(Gee.Map<string,string> values)
+    public GriabuntuMail.ComposedEmail merge(Gee.Map<string,string> values)
         throws GLib.Error {
         var from = format_mailbox_addresses(this.template.from, values);
-        var email = this.email = new Convey.ComposedEmail(
+        var email = this.email = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now(), from
         );
         email.set_to(format_mailbox_addresses(this.template.to, values));
@@ -206,13 +209,13 @@ public class MailMerge.Processor : GLib.Object {
         return email;
     }
 
-    private inline Convey.RFC822.MailboxAddresses? format_mailbox_addresses(
-        Convey.RFC822.MailboxAddresses? addresses,
+    private inline GriabuntuMail.RFC822.MailboxAddresses? format_mailbox_addresses(
+        GriabuntuMail.RFC822.MailboxAddresses? addresses,
         Gee.Map<string,string> values
     ) {
-        Convey.RFC822.MailboxAddresses? formatted = null;
+        GriabuntuMail.RFC822.MailboxAddresses? formatted = null;
         if (addresses != null && !addresses.is_empty) {
-            formatted = new Convey.RFC822.MailboxAddresses();
+            formatted = new GriabuntuMail.RFC822.MailboxAddresses();
             foreach (var addr in addresses) {
                 formatted = formatted.merge_mailbox(
                     format_mailbox_address(addr, values)
@@ -222,13 +225,13 @@ public class MailMerge.Processor : GLib.Object {
         return formatted;
     }
 
-    private inline Convey.RFC822.MailboxAddress? format_mailbox_address(
-        Convey.RFC822.MailboxAddress? address,
+    private inline GriabuntuMail.RFC822.MailboxAddress? format_mailbox_address(
+        GriabuntuMail.RFC822.MailboxAddress? address,
         Gee.Map<string,string> values
     ) {
-        Convey.RFC822.MailboxAddress? formatted = null;
+        GriabuntuMail.RFC822.MailboxAddress? formatted = null;
         if (address != null) {
-            formatted = new Convey.RFC822.MailboxAddress(
+            formatted = new GriabuntuMail.RFC822.MailboxAddress(
                 format_string(address.name, values),
                 format_string(address.address, values)
             );

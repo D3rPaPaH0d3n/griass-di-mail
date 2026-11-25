@@ -1,12 +1,32 @@
-Contribute to Convey
--------------------
+<!-- Downstream modification: 2026-10-26 — direct contributions to the independent downstream. -->
+# Contributing
 
-Want to help improve Convey? There are a number of ways you can contribute!
+This repository is an independent Convey downstream, not official Convey or
+Geary. File downstream reports here.
+Do not send fork-specific bugs to upstream unless reproduced there. Historical
+[Geary development documentation](https://gitlab.gnome.org/GNOME/geary/-/wikis/Development)
+can be useful background, but is not this project's support channel or a way to
+fund this downstream.
 
- * [Bug Reporting](https://gitlab.gnome.org/GNOME/geary/-/wikis/Reporting-Bugs-and-Requesting-Features): report new bugs or request new features
- * [Translating](https://gitlab.gnome.org/GNOME/geary/-/wikis/Translating): translate Convey’s user interface and user manual into new languages
- * [Development](https://gitlab.gnome.org/GNOME/geary/-/wikis/Development): fix bugs and add new features
+## Useful reports
 
-See [the wiki](https://gitlab.gnome.org/GNOME/geary/-/wikis) for more
-information and options for contributing financially to Convey's
-development.
+Include the source commit/build profile, desktop/session, reproduction steps,
+expected/actual behaviour and whether a synthetic example reproduces it.
+Never upload a live mail database, account settings, contact cache, credentials,
+private message content or unredacted logs. See [SECURITY.md](SECURITY.md) for
+sensitive reports.
+
+## Changes
+
+- Keep fixes focused. Describe user-visible behaviour and add synthetic tests.
+- Preserve inherited copyright/licence headers and add real dated downstream
+  change notices in modified inherited files. Do not invent authorship.
+- State source/licence/provenance for new dependencies and assets; no borrowed
+  brand marks or external avatar service additions without explicit review.
+- This separate application release copy is GPL-3.0-only under the recorded
+  LGPL §3 election; propose GPLv3-compatible contributions and identify exceptions.
+  Independent LGPL originals and third-party component grants remain intact; no
+  blanket asset relicensing or unreviewed CLA is introduced.
+- Run relevant tests from [BUILDING.md](BUILDING.md) and [test/README.md](test/README.md).
+  Identity changes must also pass `build-aux/check-identity.py`; keep provenance
+  and legacy lookup exceptions documented in `docs/IDENTITY.md`.

@@ -1,6 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
 /*
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /** Summary-contact policy only: no GTK, contacts backend, bus or mail store. */
@@ -20,7 +24,7 @@ public class Util.Email.SummaryContactTest : TestCase {
     public void missing_headers() throws GLib.Error {
         assert_null(get_summary_contact_mailbox(null, false));
         assert_null(get_summary_contact_mailbox(null, true));
-        var email = new Convey.Email(new Mock.EmailIdentifer(1));
+        var email = new GriabuntuMail.Email(new Mock.EmailIdentifer(1));
         assert_null(get_summary_contact_mailbox(email, false));
         assert_null(get_summary_contact_mailbox(email, true));
         email.set_originators(null, null, addresses("reply@example.com"));
@@ -30,10 +34,10 @@ public class Util.Email.SummaryContactTest : TestCase {
     }
 
     public void first_from_not_sender_or_reply_to() throws GLib.Error {
-        var email = new Convey.Email(new Mock.EmailIdentifer(1));
+        var email = new GriabuntuMail.Email(new Mock.EmailIdentifer(1));
         email.set_originators(
             addresses("First <first@example.com>, Second <second@example.com>"),
-            new Convey.RFC822.MailboxAddress(null, "sender@example.com"),
+            new GriabuntuMail.RFC822.MailboxAddress(null, "sender@example.com"),
             addresses("reply@example.com")
         );
         var selected = get_summary_contact_mailbox(email, false);
@@ -42,16 +46,16 @@ public class Util.Email.SummaryContactTest : TestCase {
     }
 
     public void sender_fallback() throws GLib.Error {
-        var email = new Convey.Email(new Mock.EmailIdentifer(1));
-        var sender = new Convey.RFC822.MailboxAddress("Sender", "sender@example.com");
+        var email = new GriabuntuMail.Email(new Mock.EmailIdentifer(1));
+        var sender = new GriabuntuMail.RFC822.MailboxAddress("Sender", "sender@example.com");
         email.set_originators(null, sender, null);
         assert_true(get_summary_contact_mailbox(email, false) == sender);
-        email.set_originators(new Convey.RFC822.MailboxAddresses(), sender, null);
+        email.set_originators(new GriabuntuMail.RFC822.MailboxAddresses(), sender, null);
         assert_true(get_summary_contact_mailbox(email, false) == sender);
     }
 
     public void outgoing_first_to_then_cc() throws GLib.Error {
-        var email = new Convey.Email(new Mock.EmailIdentifer(1));
+        var email = new GriabuntuMail.Email(new Mock.EmailIdentifer(1));
         email.set_originators(addresses("own@example.com"), null, null);
         email.set_receivers(
             addresses("first@example.com, second@example.com"),
@@ -61,7 +65,7 @@ public class Util.Email.SummaryContactTest : TestCase {
         assert_non_null(selected);
         assert_equal(selected.address, "first@example.com");
         email.set_receivers(
-            new Convey.RFC822.MailboxAddresses(),
+            new GriabuntuMail.RFC822.MailboxAddresses(),
             addresses("copy@example.com, another@example.com"), null
         );
         selected = get_summary_contact_mailbox(email, true);
@@ -72,10 +76,10 @@ public class Util.Email.SummaryContactTest : TestCase {
     }
 
     public void summary_switch_and_literal_name() throws GLib.Error {
-        var first = new Convey.Email(new Mock.EmailIdentifer(1));
-        var second = new Convey.Email(new Mock.EmailIdentifer(2));
-        var literal = new Convey.RFC822.MailboxAddress("<b>Sender</b>", "first@example.com");
-        first.set_originators(new Convey.RFC822.MailboxAddresses.single(literal), null, null);
+        var first = new GriabuntuMail.Email(new Mock.EmailIdentifer(1));
+        var second = new GriabuntuMail.Email(new Mock.EmailIdentifer(2));
+        var literal = new GriabuntuMail.RFC822.MailboxAddress("<b>Sender</b>", "first@example.com");
+        first.set_originators(new GriabuntuMail.RFC822.MailboxAddresses.single(literal), null, null);
         second.set_originators(addresses("second@example.com"), null, null);
         var selected = get_summary_contact_mailbox(first, false);
         assert_true(selected == literal);
@@ -107,8 +111,8 @@ public class Util.Email.SummaryContactTest : TestCase {
         assert_null(cache.get_entry("unchanged@example.com"));
     }
 
-    private Convey.RFC822.MailboxAddresses addresses(string value)
+    private GriabuntuMail.RFC822.MailboxAddresses addresses(string value)
         throws GLib.Error {
-        return new Convey.RFC822.MailboxAddresses.from_rfc822_string(value);
+        return new GriabuntuMail.RFC822.MailboxAddresses.from_rfc822_string(value);
     }
 }

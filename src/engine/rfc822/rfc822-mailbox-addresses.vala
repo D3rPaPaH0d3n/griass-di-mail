@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -14,9 +17,9 @@
  *
  * See [[https://tools.ietf.org/html/rfc5322#section-3.4]]
  */
-public class Convey.RFC822.MailboxAddresses :
-    Convey.MessageData.AbstractMessageData,
-    Convey.MessageData.SearchableMessageData,
+public class GriabuntuMail.RFC822.MailboxAddresses :
+    GriabuntuMail.MessageData.AbstractMessageData,
+    GriabuntuMail.MessageData.SearchableMessageData,
     Gee.Hashable<MailboxAddresses>,
     DecodedMessageData {
 
@@ -93,7 +96,7 @@ public class Convey.RFC822.MailboxAddresses :
     public MailboxAddresses.from_rfc822_string(string rfc822)
         throws Error {
         var list = GMime.InternetAddressList.parse(
-            Convey.RFC822.get_parser_options(),
+            GriabuntuMail.RFC822.get_parser_options(),
             rfc822
         );
         if (list == null) {
@@ -292,7 +295,7 @@ public class Convey.RFC822.MailboxAddresses :
     }
 
     /**
-     * See Convey.MessageData.SearchableMessageData.
+     * See GriabuntuMail.MessageData.SearchableMessageData.
      */
     public string to_searchable_string() {
         return list_to_string(addrs, (a) => a.to_searchable_string());

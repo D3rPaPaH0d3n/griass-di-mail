@@ -1,19 +1,23 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * An account editor pane for editing a specific account's preferences.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor_edit_pane.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts_editor_edit_pane.ui")]
 internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
 
 
     /** {@inheritDoc} */
-    internal Convey.AccountInformation account { get ; protected set; }
+    internal GriabuntuMail.AccountInformation account { get ; protected set; }
 
     /** {@inheritDoc} */
     internal Application.CommandStack commands {
@@ -33,8 +37,15 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
 
 
     [GtkChild] private unowned Adw.EntryRow display_name_row;
+    [GtkChild] private unowned Adw.ActionRow account_color_row;
+    private Components.IdentityColorButton account_color_button;
 
     [GtkChild] private unowned Gtk.ListBox senders_list;
+    [GtkChild] private unowned Adw.ActionRow sender_discovery_row;
+    [GtkChild] private unowned Gtk.Button sender_discovery_button;
+    [GtkChild] private unowned Gtk.Spinner sender_discovery_spinner;
+    private Accounts.Manager account_manager;
+    private GLib.Cancellable sender_discovery_cancellable = new GLib.Cancellable();
 
     [GtkChild] private unowned Adw.PreferencesGroup signature_bin;
 
@@ -49,16 +60,33 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     [GtkChild] private unowned Gtk.Button remove_button;
 
 
-    public EditorEditPane(Editor editor, Convey.AccountInformation account) {
+    public EditorEditPane(Editor editor, GriabuntuMail.AccountInformation account) {
         this.editor = editor;
         this.account = account;
+        this.account_manager = editor.accounts;
 
         update_display_name();
+        this.account_color_button = new Components.IdentityColorButton(
+            account.color, _("Account Color")
+        ) { automatic_default = false };
+        this.account_color_row.add_suffix(this.account_color_button);
+        this.account_color_button.notify["color"].connect(() => {
+            if (this.account_color_button.color != this.account.color) {
+                this.commands.execute.begin(new Application.PropertyCommand<string>(
+                    this.account, "color", this.account_color_button.color,
+                    _("Undo account color change")
+                ), this.op_cancellable);
+            }
+        });
 
-        foreach (Convey.RFC822.MailboxAddress sender in
+        foreach (GriabuntuMail.RFC822.MailboxAddress sender in
                  account.sender_mailboxes) {
             this.senders_list.append(new_mailbox_row(sender));
         }
+        this.account_manager.sender_discovery_changed.connect(
+            on_sender_discovery_changed
+        );
+        update_sender_discovery();
 
         this.signature_editor = new_signature_editor(account.signature);
         this.signature_editor.body.document_modified.connect(() => {
@@ -111,12 +139,37 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     }
 
     ~EditorEditPane() {
+        this.sender_discovery_cancellable.cancel();
+        this.account_manager.sender_discovery_changed.disconnect(
+            on_sender_discovery_changed
+        );
         disconnect_account_signals();
         disconnect_command_signals();
     }
 
     /** {@inheritDoc} */
     protected override void account_changed() {
+        // Provider imports can add identities while this pane is open. Keep
+        // existing row objects because undo commands retain references to them.
+        int position = 0;
+        foreach (var sender in this.account.sender_mailboxes) {
+            bool found = false;
+            for (var child = this.senders_list.get_first_child();
+                 child != null; child = child.get_next_sibling()) {
+                var row = child as MailboxRow;
+                if (row != null && row.mailbox.equal_to(sender)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                this.senders_list.insert(new_mailbox_row(sender), position);
+            }
+            position++;
+        }
+        if (this.account_color_button.color != this.account.color) {
+            this.account_color_button.color = this.account.color;
+        }
         update_prefetch_period();
         if (this.archive_instead_of_trash_row.active !=
             this.account.archive_instead_of_trash) {
@@ -127,6 +180,46 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         if (!this.display_name_row.has_focus) {
             update_display_name();
         }
+    }
+
+    private void on_sender_discovery_changed(GriabuntuMail.AccountInformation changed) {
+        if (changed == this.account) {
+            update_sender_discovery();
+        }
+    }
+
+    private void update_sender_discovery() {
+        var status = this.account_manager.get_sender_discovery_status(this.account);
+        this.sender_discovery_row.visible = status != SenderDiscoveryStatus.UNSUPPORTED;
+        this.senders_list.margin_top = this.sender_discovery_row.visible ? 12 : 0;
+        bool loading = status == SenderDiscoveryStatus.LOADING;
+        this.sender_discovery_button.sensitive = !loading;
+        this.sender_discovery_spinner.visible = loading;
+        this.sender_discovery_spinner.spinning = loading;
+        switch (status) {
+        case SenderDiscoveryStatus.LOADING:
+            this.sender_discovery_row.subtitle = _("Checking sender addresses with Google…");
+            break;
+        case SenderDiscoveryStatus.READY:
+            this.sender_discovery_row.subtitle = _("Sender addresses checked with Google.");
+            break;
+        case SenderDiscoveryStatus.API_DISABLED:
+            this.sender_discovery_row.subtitle = _("Google does not currently allow alias lookup through this sign-in. Existing addresses remain available; you can add missing aliases manually.");
+            break;
+        case SenderDiscoveryStatus.UNAVAILABLE:
+            this.sender_discovery_row.subtitle = _("Could not check sender addresses. Existing addresses remain available. Try again later or add missing aliases manually.");
+            break;
+        default:
+            this.sender_discovery_row.subtitle = _("Check for additional sender addresses configured in Gmail.");
+            break;
+        }
+    }
+
+    [GtkCallback]
+    private void on_sender_discovery_clicked() {
+        this.account_manager.refresh_sender_mailboxes.begin(
+            this.account, this.sender_discovery_cancellable
+        );
     }
 
     private void update_display_name() {
@@ -216,7 +309,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
     internal string? get_default_name() {
         string? name = this.account.primary_mailbox.name;
 
-        if (Convey.String.is_empty_or_whitespace(name)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(name)) {
             name = this.editor.accounts.get_account_name();
         }
 
@@ -232,7 +325,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         return signature_editor;
     }
 
-    internal MailboxRow new_mailbox_row(Convey.RFC822.MailboxAddress sender) {
+    internal MailboxRow new_mailbox_row(GriabuntuMail.RFC822.MailboxAddress sender) {
         MailboxRow row = new MailboxRow(this.account, sender, this);
         row.move_to.connect(on_sender_row_moved);
         row.dropped.connect(on_sender_row_dropped);
@@ -288,7 +381,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         if (!this.editor.accounts.is_goa_account(account)) {
             var dialog = new Adw.AlertDialog(
                 _("Remove Account: %s").printf(account.primary_mailbox.address),
-                _("This will remove it from Convey and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
+                _("This will remove it from Griaß di Mail and delete locally cached email data from your computer. Nothing will be deleted from your service provider.")
             );
             dialog.add_css_class("warning");
 
@@ -310,6 +403,7 @@ internal class Accounts.EditorEditPane : EditorPane, AccountPane, CommandPane {
         var dialog = new MailboxEditorDialog.for_new(
             get_default_name(), new_signature_editor("")
         );
+        dialog.set_account(this.account);
         dialog.apply.connect((dialog, mailbox, signature) => {
             this.commands.execute.begin(
                 new AppendMailboxCommand(
@@ -373,13 +467,14 @@ public enum Accounts.PrefetchPeriod {
 
 private class Accounts.MailboxRow : Adw.ActionRow {
 
-    public Convey.AccountInformation account { get; construct set; }
+    public GriabuntuMail.AccountInformation account { get; construct set; }
 
-    public Convey.RFC822.MailboxAddress mailbox { get; construct set; }
+    public GriabuntuMail.RFC822.MailboxAddress mailbox { get; construct set; }
 
     public unowned Accounts.EditorEditPane pane { get; construct set; }
 
     private Gtk.Image drag_handle;
+    private Components.IdentityColorButton color_button;
     private bool drag_picked_up = false;
 
 
@@ -387,21 +482,78 @@ private class Accounts.MailboxRow : Adw.ActionRow {
     public signal void dropped(MailboxRow target);
 
 
-    public MailboxRow(Convey.AccountInformation account,
-                      Convey.RFC822.MailboxAddress mailbox,
+    public MailboxRow(GriabuntuMail.AccountInformation account,
+                      GriabuntuMail.RFC822.MailboxAddress mailbox,
                       Accounts.EditorEditPane pane) {
         Object(
             account: account,
             mailbox: mailbox,
             pane: pane,
-            activatable: true
+            activatable: true,
+            use_markup: false,
+            title_lines: 1,
+            subtitle_lines: 1
         );
 
+        this.color_button = new Components.IdentityColorButton(
+            account.get_sender_color(mailbox), _("Address Color")
+        );
+        add_suffix(this.color_button);
+        this.color_button.notify["color"].connect(() => {
+            if (this.color_button.color != this.account.get_sender_color(this.mailbox)) {
+                this.pane.commands.execute.begin(
+                    new SenderColorChangedCommand(this.account, this.mailbox,
+                        this.color_button.color), this.pane.op_cancellable
+                );
+            }
+        });
+        this.account.changed.connect(on_account_color_changed);
         enable_drag();
         update();
 
         // The edit dialog and undo both swap the mailbox out from under us
         this.notify["mailbox"].connect(() => update());
+    }
+
+    ~MailboxRow() {
+        this.account.changed.disconnect(on_account_color_changed);
+    }
+
+    private void on_account_color_changed() {
+        string color = this.account.get_sender_color(this.mailbox);
+        if (this.color_button.color != color) {
+            this.color_button.color = color;
+        }
+    }
+
+    /** Restore an undo-owned row even if a provider lookup re-added its address. */
+    public void restore_sender(Gtk.ListBox list, int requested_index) {
+        GriabuntuMail.RFC822.MailboxAddress? existing = null;
+        foreach (var sender in this.account.sender_mailboxes) {
+            if (sender.equal_to(this.mailbox)) {
+                existing = sender;
+                break;
+            }
+        }
+        int position;
+        if (existing != null && this.account.sender_mailboxes.size == 1) {
+            // AccountInformation deliberately prevents removing its last sender.
+            this.account.replace_sender(0, this.mailbox);
+            position = 0;
+        } else {
+            if (existing != null) this.account.remove_sender(existing);
+            position = int.min(requested_index, this.account.sender_mailboxes.size);
+            this.account.insert_sender(position, this.mailbox);
+        }
+        for (var child = list.get_first_child(); child != null;) {
+            var next = child.get_next_sibling();
+            var row = child as MailboxRow;
+            if (row != null && row.mailbox.equal_to(this.mailbox)) {
+                list.remove(row);
+            }
+            child = next;
+        }
+        list.insert(this, position);
     }
 
     /** Adds a drag handle to the row and enables drag signals. */
@@ -412,7 +564,7 @@ private class Accounts.MailboxRow : Adw.ActionRow {
         this.drag_handle.valign = Gtk.Align.CENTER;
         // Translators: Tooltip for dragging list items
         this.drag_handle.set_tooltip_text(_("Drag to move this item"));
-        this.drag_handle.add_css_class("convey-drag-handle");
+        this.drag_handle.add_css_class("griabuntu-mail-drag-handle");
         add_suffix(this.drag_handle);
 
         var drag_source = new Gtk.DragSource();
@@ -432,7 +584,7 @@ private class Accounts.MailboxRow : Adw.ActionRow {
         drop_target.drop.connect(on_drop);
         add_controller(drop_target);
 
-        add_css_class("convey-draggable");
+        add_css_class("griabuntu-mail-draggable");
 
         var key_controller = new Gtk.EventControllerKey();
         key_controller.key_pressed.connect(on_key_pressed);
@@ -450,14 +602,14 @@ private class Accounts.MailboxRow : Adw.ActionRow {
     private void on_drag_begin(Gtk.DragSource source, Gdk.Drag drag) {
         var paintable = new Gtk.WidgetPaintable(this);
         source.set_icon(paintable, 0, 0);
-        add_css_class("convey-drag-source");
+        add_css_class("griabuntu-mail-drag-source");
         this.drag_picked_up = true;
     }
 
     private void on_drag_end(Gtk.DragSource source,
                              Gdk.Drag drag,
                              bool delete_data) {
-        remove_css_class("convey-drag-source");
+        remove_css_class("griabuntu-mail-drag-source");
         this.drag_picked_up = false;
     }
 
@@ -542,6 +694,8 @@ private class Accounts.MailboxRow : Adw.ActionRow {
             )
         );
 
+        dialog.set_account(this.account, this.mailbox);
+
         dialog.apply.connect((dialog, mailbox, signature) => {
             this.pane.commands.execute.begin(
                 new UpdateMailboxCommand(this, mailbox, signature),
@@ -565,13 +719,15 @@ private class Accounts.MailboxRow : Adw.ActionRow {
         this.title = mailbox.address.strip();
 
         string? name = this.mailbox.name;
-        if (Convey.String.is_empty_or_whitespace(name)) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(name)) {
             // Translators: Label used to indicate the user has
             // provided no display name for one of their sender
             // email addresses in their account settings.
             name = _("Name not set");
         }
         this.subtitle = name;
+        this.tooltip_text = "%s\n%s".printf(this.title, name);
+        on_account_color_changed();
     }
 
 }
@@ -603,8 +759,7 @@ internal class Accounts.AppendMailboxCommand : Application.Command {
     }
 
     public async override void execute(GLib.Cancellable? cancellable) {
-        this.senders_list.insert(this.new_row, this.mailbox_index);
-        this.new_row.account.append_sender(this.new_row.mailbox);
+        this.new_row.restore_sender(this.senders_list, this.mailbox_index);
         this.new_row.account.set_sender_signature(
             this.new_row.mailbox, this.signature
         );
@@ -625,16 +780,17 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
 
 
     private MailboxRow row;
-    private Convey.RFC822.MailboxAddress new_mailbox;
+    private GriabuntuMail.RFC822.MailboxAddress new_mailbox;
     private string new_signature;
 
-    private Convey.RFC822.MailboxAddress old_mailbox;
+    private GriabuntuMail.RFC822.MailboxAddress old_mailbox;
     private string old_signature;
+    private string old_color;
     private int mailbox_index;
 
 
     public UpdateMailboxCommand(MailboxRow row,
-                                Convey.RFC822.MailboxAddress new_mailbox,
+                                GriabuntuMail.RFC822.MailboxAddress new_mailbox,
                                 string new_signature) {
         this.row = row;
         this.new_mailbox = new_mailbox;
@@ -642,6 +798,7 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
 
         this.old_mailbox = row.mailbox;
         this.old_signature = row.account.get_sender_signature(row.mailbox);
+        this.old_color = row.account.get_sender_color(row.mailbox);
         this.mailbox_index =
             row.account.sender_mailboxes.index_of(this.old_mailbox);
 
@@ -657,6 +814,8 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
         this.row.mailbox = this.new_mailbox;
         this.row.account.replace_sender(this.mailbox_index, this.new_mailbox);
         this.row.account.set_sender_signature(this.old_mailbox, "");
+        this.row.account.set_sender_color(this.old_mailbox, "");
+        this.row.account.set_sender_color(this.new_mailbox, this.old_color);
         this.row.account.set_sender_signature(
             this.new_mailbox, this.new_signature
         );
@@ -667,6 +826,8 @@ internal class Accounts.UpdateMailboxCommand : Application.Command {
         this.row.mailbox = this.old_mailbox;
         this.row.account.replace_sender(this.mailbox_index, this.old_mailbox);
         this.row.account.set_sender_signature(this.new_mailbox, "");
+        this.row.account.set_sender_color(this.new_mailbox, "");
+        this.row.account.set_sender_color(this.old_mailbox, this.old_color);
         this.row.account.set_sender_signature(
             this.old_mailbox, this.old_signature
         );
@@ -683,13 +844,13 @@ internal class Accounts.ReorderMailboxCommand : Application.Command {
     private int source_index;
     private int target_index;
 
-    private Convey.AccountInformation account;
+    private GriabuntuMail.AccountInformation account;
     private Gtk.ListBox list;
 
 
     public ReorderMailboxCommand(MailboxRow source,
                                  int target_index,
-                                 Convey.AccountInformation account,
+                                 GriabuntuMail.AccountInformation account,
                                  Gtk.ListBox list) {
         this.source = source;
         this.source_index = source.get_index();
@@ -727,15 +888,17 @@ internal class Accounts.RemoveMailboxCommand : Application.Command {
 
     private MailboxRow row;
 
-    private Convey.RFC822.MailboxAddress mailbox;
+    private GriabuntuMail.RFC822.MailboxAddress mailbox;
     private int mailbox_index;
     private Gtk.ListBox list;
+    private string color;
 
 
     public RemoveMailboxCommand(MailboxRow row) {
         this.row = row;
 
         this.mailbox = row.mailbox;
+        this.color = row.account.get_sender_color(row.mailbox);
         this.mailbox_index =
             row.account.sender_mailboxes.index_of(mailbox);
         this.list = (Gtk.ListBox) row.get_parent();
@@ -749,12 +912,13 @@ internal class Accounts.RemoveMailboxCommand : Application.Command {
     public async override void execute(GLib.Cancellable? cancellable) {
         this.list.remove(this.row);
         this.row.account.remove_sender(this.mailbox);
+        this.row.account.set_sender_color(this.mailbox, "");
         this.row.account.changed();
     }
 
     public async override void undo(GLib.Cancellable? cancellable) {
-        this.list.insert(this.row, this.mailbox_index);
-        this.row.account.insert_sender(this.mailbox_index, this.mailbox);
+        this.row.restore_sender(this.list, this.mailbox_index);
+        this.row.account.set_sender_color(this.mailbox, this.color);
         this.row.account.changed();
     }
 
@@ -765,7 +929,7 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
     private Composer.WebView signature_view;
-    private Convey.AccountInformation account;
+    private GriabuntuMail.AccountInformation account;
 
     private string old_value;
     private bool old_enabled;
@@ -775,11 +939,11 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
 
 
     public SignatureChangedCommand(Composer.WebView signature_view,
-                                   Convey.AccountInformation account) {
+                                   GriabuntuMail.AccountInformation account) {
         this.signature_view = signature_view;
         this.account = account;
 
-        this.old_value = Convey.HTML.smart_escape(account.signature);
+        this.old_value = GriabuntuMail.HTML.smart_escape(account.signature);
         this.old_enabled = account.use_signature;
 
         // Translators: Label used as the undo tooltip after removing
@@ -791,7 +955,7 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
     public async override void execute(GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.new_value = yield this.signature_view.get_body_html();
-        this.new_enabled = !Convey.String.is_empty(this.new_value);
+        this.new_enabled = !GriabuntuMail.String.is_empty(this.new_value);
         update_account_signature(this.new_value, this.new_enabled);
     }
 
@@ -812,4 +976,32 @@ internal class Accounts.SignatureChangedCommand : Application.Command {
     }
 
 
+}
+
+/** Undoable local colour change for one sender identity. */
+internal class Accounts.SenderColorChangedCommand : Application.Command {
+    private GriabuntuMail.AccountInformation account;
+    private GriabuntuMail.RFC822.MailboxAddress mailbox;
+    private string previous;
+    private string color;
+
+    public SenderColorChangedCommand(GriabuntuMail.AccountInformation account,
+                                      GriabuntuMail.RFC822.MailboxAddress mailbox,
+                                      string color) {
+        this.account = account;
+        this.mailbox = mailbox;
+        this.previous = account.get_sender_color(mailbox);
+        this.color = color;
+        this.undo_label = _("Undo alias color change");
+    }
+
+    public async override void execute(GLib.Cancellable? cancellable) {
+        this.account.set_sender_color(this.mailbox, this.color);
+        this.account.changed();
+    }
+
+    public async override void undo(GLib.Cancellable? cancellable) {
+        this.account.set_sender_color(this.mailbox, this.previous);
+        this.account.changed();
+    }
 }

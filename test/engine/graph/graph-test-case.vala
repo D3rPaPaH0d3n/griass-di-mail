@@ -1,12 +1,15 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /** Base class for Graph engine unit tests. */
-class Convey.GraphTestCase : TestCase {
+class GriabuntuMail.GraphTestCase : TestCase {
 
 
     private const string TEST_TOKEN = "test-graph-token";
@@ -14,7 +17,7 @@ class Convey.GraphTestCase : TestCase {
 
     public Soup.Server server { get; private set; }
     public string base_uri { get; private set; }
-    public Convey.CredentialsMediator mediator { get; private set; }
+    public GriabuntuMail.CredentialsMediator mediator { get; private set; }
     public AccountInformation account { get; private set; }
     public File? tmp_dir { get; private set; }
 
@@ -50,15 +53,15 @@ class Convey.GraphTestCase : TestCase {
             new RFC822.MailboxAddress(null, "user@example.com")
         );
         this.account.account_backend = AccountBackend.MICROSOFT_GRAPH;
-        this.account.incoming.credentials = new Convey.Credentials(
-            Convey.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
+        this.account.incoming.credentials = new GriabuntuMail.Credentials(
+            GriabuntuMail.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
         );
-        this.account.outgoing.credentials = new Convey.Credentials(
-            Convey.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
+        this.account.outgoing.credentials = new GriabuntuMail.Credentials(
+            GriabuntuMail.Credentials.Method.OAUTH2, "user@example.com", TEST_TOKEN
         );
 
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("convey-graph-test-XXXXXX")
+            GLib.DirUtils.make_tmp("griabuntu-mail-graph-test-XXXXXX")
         );
         this.account.set_account_directories(this.tmp_dir, this.tmp_dir);
     }
@@ -133,15 +136,15 @@ class Convey.GraphTestCase : TestCase {
     }
 
     /** Returns a Client configured to talk to the test Soup.Server. */
-    public Convey.Graph.Client new_client() {
-        return new Convey.Graph.Client(this.account, this.base_uri);
+    public GriabuntuMail.Graph.Client new_client() {
+        return new GriabuntuMail.Graph.Client(this.account, this.base_uri);
     }
 
 }
 
 
 /** Simple request capture for a Soup.Server handler. */
-public class Convey.SoupServerCapture : GLib.Object {
+public class GriabuntuMail.SoupServerCapture : GLib.Object {
 
     public string path { get; private set; }
     public string method { get; private set; default = ""; }
@@ -181,30 +184,30 @@ public class Convey.SoupServerCapture : GLib.Object {
  * client makes. Tests that need to simulate token failures can
  * subclass or replace this.
  */
-public class Convey.GraphStubCredentialsMediator :
+public class GriabuntuMail.GraphStubCredentialsMediator :
     GLib.Object,
-    Convey.CredentialsMediator {
+    GriabuntuMail.CredentialsMediator {
 
 
     public bool fail_load { get; set; default = false; }
     public int load_count { get; private set; default = 0; }
 
 
-    public async bool load_token(Convey.AccountInformation account,
-                                 Convey.ServiceInformation service,
+    public async bool load_token(GriabuntuMail.AccountInformation account,
+                                 GriabuntuMail.ServiceInformation service,
                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         this.load_count++;
         if (this.fail_load) {
-            throw new Convey.EngineError.SERVER_UNAVAILABLE(
+            throw new GriabuntuMail.EngineError.SERVER_UNAVAILABLE(
                 "Test-induced load failure"
             );
         }
         return true;
     }
 
-    public async bool prompt_token(Convey.AccountInformation account,
-                                   Convey.ServiceInformation service,
+    public async bool prompt_token(GriabuntuMail.AccountInformation account,
+                                   GriabuntuMail.ServiceInformation service,
                                    GLib.Cancellable? cancellable)
         throws GLib.Error {
         return false;

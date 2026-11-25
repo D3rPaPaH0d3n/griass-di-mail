@@ -7,7 +7,7 @@
       <placeholder/>
     </child>
     <style>
-      <class name="convey_email"/>
+      <class name="griabuntu_mail_email"/>
     </style>
   </template>
   <object class="GtkBox" id="actions">
@@ -70,7 +70,7 @@
     <property name="hexpand">True</property>
     <property name="orientation">vertical</property>
     <style>
-      <class name="convey-submessages"/>
+      <class name="griabuntu-mail-submessages"/>
     </style>
   </object>
 </interface>

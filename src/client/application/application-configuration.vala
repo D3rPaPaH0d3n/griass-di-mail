@@ -1,9 +1,13 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — downstream conversation-list and tray preferences. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 namespace portal {
@@ -18,7 +22,7 @@ namespace portal {
 /**
  * Provides properties to access application GSettings values.
  */
-public class Application.Configuration : Convey.BaseObject {
+public class Application.Configuration : GriabuntuMail.BaseObject {
 
 
     public const string ASK_OPEN_ATTACHMENT_KEY = "ask-open-attachment";
@@ -32,6 +36,11 @@ public class Application.Configuration : Convey.BaseObject {
     public const string DISPLAY_PARTICIPANTS_KEY = "display-participants";
     public const string DISPLAY_SUBJECT_KEY = "display-subject";
     public const string DISPLAY_RECIPIENT_ALIASES_KEY = "display-recipient-aliases";
+    public const string REMOTE_CONTACT_PICTURES_KEY = "remote-contact-pictures";
+    public const string COMPANY_PICTURES_KEY = "company-pictures";
+    public bool remote_contact_pictures { get { return settings.get_boolean(REMOTE_CONTACT_PICTURES_KEY); } }
+    public bool company_pictures { get { return settings.get_boolean(COMPANY_PICTURES_KEY); } }
+
     public const string DISPLAY_CONTACT_PICTURES_KEY = "display-contact-pictures";
     public const string CONVERSATION_LIST_ORDER_KEY = "conversation-list-order";
     public const string UNSET_HTML_COLORS = "unset-html-colors";
@@ -422,38 +431,38 @@ public class Application.Configuration : Convey.BaseObject {
         this.settings.set_strv(SPELL_CHECK_VISIBLE_LANGUAGES, value);
     }
 
-    public Convey.SearchQuery.Strategy get_search_strategy() {
+    public GriabuntuMail.SearchQuery.Strategy get_search_strategy() {
         switch (settings.get_string(SEARCH_STRATEGY_KEY).down()) {
             case "exact":
-                return Convey.SearchQuery.Strategy.EXACT;
+                return GriabuntuMail.SearchQuery.Strategy.EXACT;
 
             case "aggressive":
-                return Convey.SearchQuery.Strategy.AGGRESSIVE;
+                return GriabuntuMail.SearchQuery.Strategy.AGGRESSIVE;
 
             case "horizon":
-                return Convey.SearchQuery.Strategy.HORIZON;
+                return GriabuntuMail.SearchQuery.Strategy.HORIZON;
 
             case "conservative":
             default:
-                return Convey.SearchQuery.Strategy.CONSERVATIVE;
+                return GriabuntuMail.SearchQuery.Strategy.CONSERVATIVE;
         }
     }
 
-    public void set_search_strategy(Convey.SearchQuery.Strategy strategy) {
+    public void set_search_strategy(GriabuntuMail.SearchQuery.Strategy strategy) {
         switch (strategy) {
-            case Convey.SearchQuery.Strategy.EXACT:
+            case GriabuntuMail.SearchQuery.Strategy.EXACT:
                 settings.set_string(SEARCH_STRATEGY_KEY, "exact");
             break;
 
-            case Convey.SearchQuery.Strategy.AGGRESSIVE:
+            case GriabuntuMail.SearchQuery.Strategy.AGGRESSIVE:
                 settings.set_string(SEARCH_STRATEGY_KEY, "aggressive");
             break;
 
-            case Convey.SearchQuery.Strategy.HORIZON:
+            case GriabuntuMail.SearchQuery.Strategy.HORIZON:
                 settings.set_string(SEARCH_STRATEGY_KEY, "horizon");
             break;
 
-            case Convey.SearchQuery.Strategy.CONSERVATIVE:
+            case GriabuntuMail.SearchQuery.Strategy.CONSERVATIVE:
             default:
                 settings.set_string(SEARCH_STRATEGY_KEY, "conservative");
             break;

@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017-2018 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -18,7 +21,7 @@
  * Note this class is not thread safe and should only be invoked from
  * the main loop.
  */
-public class Convey.ConnectivityManager : BaseObject {
+public class GriabuntuMail.ConnectivityManager : BaseObject {
 
     private const uint CHECK_QUIESCENCE = 60 * 1000;
     private const uint CHECK_SOON = 1000;
@@ -29,7 +32,7 @@ public class Convey.ConnectivityManager : BaseObject {
 
     /** Determines if the managed endpoint is currently reachable. */
     public Trillian is_reachable {
-        get; private set; default = Convey.Trillian.UNKNOWN;
+        get; private set; default = GriabuntuMail.Trillian.UNKNOWN;
     }
 
     /**
@@ -39,7 +42,7 @@ public class Convey.ConnectivityManager : BaseObject {
      * will become impossible if a fatal error is reported.
      */
     public Trillian is_valid {
-        get; private set; default = Convey.Trillian.UNKNOWN;
+        get; private set; default = GriabuntuMail.Trillian.UNKNOWN;
     }
 
     private NetworkMonitor monitor;
@@ -122,7 +125,7 @@ public class Convey.ConnectivityManager : BaseObject {
             }
         } catch (GLib.DBusError err) {
             // Running under Flatpak can cause a DBus error if the
-            // portal is malfunctioning (e.g. Convey #97 & #82 and
+            // portal is malfunctioning (e.g. Griabuntu Mail #97 & #82 and
             // xdg-desktop-portal #208). We must treat this as
             // reachable so we make a connection attempt, otherwise it
             // will never happen.

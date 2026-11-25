@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -19,7 +22,7 @@ public class Composer.Embed : Adw.Bin, Container {
 
 
     static construct {
-        set_css_name("convey-composer-embed");
+        set_css_name("griabuntu-mail-composer-embed");
     }
 
 
@@ -29,7 +32,7 @@ public class Composer.Embed : Adw.Bin, Container {
     }
 
     /** The email this composer was originally a reply to. */
-    public Convey.Email referred { get; private set; }
+    public GriabuntuMail.Email referred { get; private set; }
 
     /** {@inheritDoc} */
     internal Widget composer { get; set; }
@@ -48,7 +51,7 @@ public class Composer.Embed : Adw.Bin, Container {
     public signal void vanished();
 
 
-    public Embed(Convey.Email referred,
+    public Embed(GriabuntuMail.Email referred,
                  Widget composer) {
         this.referred = referred;
         this.composer = composer;
@@ -61,7 +64,7 @@ public class Composer.Embed : Adw.Bin, Container {
         }
         composer.set_mode(mode);
 
-        add_css_class("convey-composer-embed");
+        add_css_class("griabuntu-mail-composer-embed");
         this.halign = Gtk.Align.FILL;
         this.vexpand = true;
         this.vexpand_set = true;

@@ -1,19 +1,22 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /** A network connection to a SMTP service. */
-internal class Convey.Smtp.ClientConnection : BaseObject, Logging.Source {
+internal class GriabuntuMail.Smtp.ClientConnection : BaseObject, Logging.Source {
 
 
     public const uint DEFAULT_TIMEOUT_SEC = 20;
 
 
-    public Convey.Smtp.Capabilities? capabilities { get; private set; default = null; }
+    public GriabuntuMail.Smtp.Capabilities? capabilities { get; private set; default = null; }
 
     /** {@inheritDoc} */
     public override string logging_domain {
@@ -24,13 +27,13 @@ internal class Convey.Smtp.ClientConnection : BaseObject, Logging.Source {
     public Logging.Source? logging_parent { get { return _logging_parent; } }
     private weak Logging.Source? _logging_parent = null;
 
-    private Convey.Endpoint endpoint;
+    private GriabuntuMail.Endpoint endpoint;
     private IOStream? cx = null;
     private SocketConnection? socket_cx = null;
     private DataInputStream? dins = null;
     private DataOutputStream douts = null;
 
-    public ClientConnection(Convey.Endpoint endpoint) {
+    public ClientConnection(GriabuntuMail.Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
@@ -210,7 +213,7 @@ internal class Convey.Smtp.ClientConnection : BaseObject, Logging.Source {
         Response response = yield transaction_async(ehlo, cancellable);
         if (response.code.is_success_completed()) {
             // save list of caps returned in EHLO command
-            capabilities = new Convey.Smtp.Capabilities();
+            capabilities = new GriabuntuMail.Smtp.Capabilities();
             capabilities.add_ehlo_response(response);
         } else {
             string first_response = response.to_string().strip();

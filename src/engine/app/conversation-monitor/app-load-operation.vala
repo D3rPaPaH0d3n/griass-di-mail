@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Loads a specific email all the way to the end of the vector.
  */
-private class Convey.App.LoadOperation : ConversationOperation {
+private class GriabuntuMail.App.LoadOperation : ConversationOperation {
 
 
     private EmailIdentifier to_load;
@@ -25,7 +28,7 @@ private class Convey.App.LoadOperation : ConversationOperation {
 
     public override async void execute_async()
         throws GLib.Error {
-        Convey.EmailIdentifier? lowest_known = this.monitor.window_lowest;
+        GriabuntuMail.EmailIdentifier? lowest_known = this.monitor.window_lowest;
         if (lowest_known == null ||
             this.to_load.natural_sort_comparator(lowest_known) < 0) {
             // Note the further back to_load is, the more expensive

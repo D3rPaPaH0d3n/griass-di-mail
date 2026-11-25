@@ -1,22 +1,25 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
-class Convey.ImapDB.FolderTest : TestCase {
+class GriabuntuMail.ImapDB.FolderTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
-    private Convey.AccountInformation? config = null;
+    private GriabuntuMail.AccountInformation? config = null;
     private Account? account = null;
     private Folder? folder = null;
 
 
     public FolderTest() {
-        base("Convey.ImapDB.FolderTest");
+        base("GriabuntuMail.ImapDB.FolderTest");
         add_test("create_read_email", create_read_email);
         add_test("create_unread_email", create_unread_email);
         add_test("create_no_unread_update", create_no_unread_update);
@@ -31,14 +34,14 @@ class Convey.ImapDB.FolderTest : TestCase {
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("convey-imap-db-account-test-XXXXXX")
+            GLib.DirUtils.make_tmp("griabuntu-mail-imap-db-account-test-XXXXXX")
         );
 
-        this.config = new Convey.AccountInformation(
+        this.config = new GriabuntuMail.AccountInformation(
             "test",
             ServiceProvider.OTHER,
             new Mock.CredentialsMediator(),
-            new Convey.RFC822.MailboxAddress(null, "test@example.com")
+            new GriabuntuMail.RFC822.MailboxAddress(null, "test@example.com")
         );
 
         this.account = new Account(
@@ -224,7 +227,7 @@ class Convey.ImapDB.FolderTest : TestCase {
         // Flags in the DB are expected to be Imap.MessageFlags
         Email.Field fixture_fields = Email.Field.FLAGS;
         Imap.MessageFlags fixture_flags =
-            new Imap.MessageFlags(Gee.Collection.empty<Convey.Imap.MessageFlag>());
+            new Imap.MessageFlags(Gee.Collection.empty<GriabuntuMail.Imap.MessageFlag>());
         this.account.db.exec(
             "INSERT INTO MessageTable (id, fields, flags) " +
             "VALUES (1, %d, '%s');".printf(
@@ -413,7 +416,7 @@ class Convey.ImapDB.FolderTest : TestCase {
 
     private Email new_mock_remote_email(int64 uid,
                                         string? subject = null,
-                                        Convey.EmailFlags? flags = null) {
+                                        GriabuntuMail.EmailFlags? flags = null) {
         Email mock = new Email(
             new EmailIdentifier.no_message_id(new Imap.UID(uid))
         );

@@ -1,11 +1,14 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.App.ConversationSetTest : TestCase {
+class GriabuntuMail.App.ConversationSetTest : TestCase {
 
 
     ConversationSet? test = null;
@@ -13,7 +16,7 @@ class Convey.App.ConversationSetTest : TestCase {
     Folder? base_folder = null;
 
     public ConversationSetTest() {
-        base("Convey.App.ConversationSetTest");
+        base("GriabuntuMail.App.ConversationSetTest");
         add_test("add_all_basic", add_all_basic);
         add_test("add_all_duplicate", add_all_duplicate);
         add_test("add_all_append_descendants", add_all_append_descendants);
@@ -55,8 +58,8 @@ class Convey.App.ConversationSetTest : TestCase {
         emails.add(e1);
         emails.add(e2);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(e1.id, this.base_folder.path);
         email_paths.set(e2.id, this.base_folder.path);
 
@@ -101,8 +104,8 @@ class Convey.App.ConversationSetTest : TestCase {
         emails.add(e1);
         emails.add(e1);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(e1.id, this.base_folder.path);
 
         // Pass 1: Duplicate in same input collection
@@ -150,8 +153,8 @@ class Convey.App.ConversationSetTest : TestCase {
         emails.add(e1);
         emails.add(e2);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(e1.id, this.base_folder.path);
         email_paths.set(e2.id, this.folder_root.get_child("other"));
 
@@ -219,8 +222,8 @@ class Convey.App.ConversationSetTest : TestCase {
         Gee.LinkedList<Email> emails = new Gee.LinkedList<Email>();
         emails.add(e1);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(e1.id, this.base_folder.path);
 
         Gee.Collection<Conversation>? added = null;
@@ -268,8 +271,8 @@ class Convey.App.ConversationSetTest : TestCase {
         Gee.LinkedList<Email> emails = new Gee.LinkedList<Email>();
         emails.add(e2);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(e2.id, this.base_folder.path);
 
         Gee.Collection<Conversation>? added = null;
@@ -320,8 +323,8 @@ class Convey.App.ConversationSetTest : TestCase {
         Gee.LinkedList<Email> emails = new Gee.LinkedList<Email>();
         emails.add(e1);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(e1.id, this.base_folder.path);
         email_paths.set(e1.id, other_path);
 
@@ -349,8 +352,8 @@ class Convey.App.ConversationSetTest : TestCase {
         Gee.LinkedList<Email> emails = new Gee.LinkedList<Email>();
         emails.add(e1);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(e1.id, other_path);
 
         Gee.Collection<Conversation>? added = null;
@@ -384,7 +387,7 @@ class Convey.App.ConversationSetTest : TestCase {
 
         Gee.Set<Conversation> removed = new Gee.HashSet<Conversation>();
         Gee.MultiMap<Conversation,Email> trimmed =
-            new Gee.HashMultiMap<Conversation, Convey.Email>();
+            new Gee.HashMultiMap<Conversation, GriabuntuMail.Email>();
         this.test.remove_all_emails_by_identifier(
             this.base_folder.path, ids, removed, trimmed
         );
@@ -414,7 +417,7 @@ class Convey.App.ConversationSetTest : TestCase {
 
         Gee.Set<Conversation> removed = new Gee.HashSet<Conversation>();
         Gee.MultiMap<Conversation,Email> trimmed =
-            new Gee.HashMultiMap<Conversation, Convey.Email>();
+            new Gee.HashMultiMap<Conversation, GriabuntuMail.Email>();
         this.test.remove_all_emails_by_identifier(
             this.base_folder.path, ids, removed, trimmed
         );
@@ -441,7 +444,7 @@ class Convey.App.ConversationSetTest : TestCase {
 
         Gee.Set<Conversation> removed = new Gee.HashSet<Conversation>();
         Gee.MultiMap<Conversation,Email> trimmed =
-            new Gee.HashMultiMap<Conversation, Convey.Email>();
+            new Gee.HashMultiMap<Conversation, GriabuntuMail.Email>();
         this.test.remove_all_emails_by_identifier(
             other_path, ids, removed, trimmed
         );
@@ -466,7 +469,7 @@ class Convey.App.ConversationSetTest : TestCase {
 
         Gee.List<Conversation> removed = new Gee.LinkedList<Conversation>();
         Gee.MultiMap<Conversation,Email> trimmed =
-            new Gee.HashMultiMap<Conversation, Convey.Email>();
+            new Gee.HashMultiMap<Conversation, GriabuntuMail.Email>();
         this.test.remove_all_emails_by_identifier(
             this.base_folder.path, ids, removed, trimmed
         );
@@ -514,7 +517,7 @@ class Convey.App.ConversationSetTest : TestCase {
 
         Gee.List<Conversation> removed = new Gee.LinkedList<Conversation>();
         Gee.MultiMap<Conversation,Email> trimmed =
-            new Gee.HashMultiMap<Conversation, Convey.Email>();
+            new Gee.HashMultiMap<Conversation, GriabuntuMail.Email>();
         this.test.remove_all_emails_by_identifier(
             this.base_folder.path, ids, removed, trimmed
         );
@@ -528,8 +531,8 @@ class Convey.App.ConversationSetTest : TestCase {
         Gee.LinkedList<Email> emails = new Gee.LinkedList<Email>();
         emails.add(to_add);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(to_add.id, path);
 
         Gee.Collection<Conversation>? added = null;
@@ -543,13 +546,13 @@ class Convey.App.ConversationSetTest : TestCase {
     private Email setup_email(int id, Email? references = null) {
         Email email = new Email(new Mock.EmailIdentifer(id));
         DateTime now = new DateTime.now_local();
-        Convey.RFC822.MessageID mid = new Convey.RFC822.MessageID(
+        GriabuntuMail.RFC822.MessageID mid = new GriabuntuMail.RFC822.MessageID(
             "test%d@localhost".printf(id)
         );
 
-        Convey.RFC822.MessageIDList refs_list = null;
+        GriabuntuMail.RFC822.MessageIDList refs_list = null;
         if (references != null) {
-            refs_list = new Convey.RFC822.MessageIDList.single(
+            refs_list = new GriabuntuMail.RFC822.MessageIDList.single(
                 references.message_id
             );
         }
@@ -564,8 +567,8 @@ class Convey.App.ConversationSetTest : TestCase {
         Gee.LinkedList<Email> emails = new Gee.LinkedList<Email>();
         emails.add(to_add);
 
-        Gee.MultiMap<Convey.EmailIdentifier, Convey.FolderPath> email_paths =
-            new Gee.HashMultiMap<Convey.EmailIdentifier, Convey.FolderPath>();
+        Gee.MultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath> email_paths =
+            new Gee.HashMultiMap<GriabuntuMail.EmailIdentifier, GriabuntuMail.FolderPath>();
         email_paths.set(to_add.id, this.base_folder.path);
         if (other_path != null) {
             email_paths.set(to_add.id, other_path);

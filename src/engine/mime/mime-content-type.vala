@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -11,7 +14,7 @@
  *
  * This class is immutable.
  */
-public class Convey.Mime.ContentType : Convey.BaseObject {
+public class GriabuntuMail.Mime.ContentType : GriabuntuMail.BaseObject {
 
     /**
      * MIME wildcard for comparing {@link media_type} and {@link media_subtype}.
@@ -69,7 +72,7 @@ public class Convey.Mime.ContentType : Convey.BaseObject {
             throw new MimeError.PARSE("Invalid MIME Content-Type: %s", str);
 
         return new ContentType.from_gmime(GMime.ContentType.parse(
-          Convey.RFC822.get_parser_options(),
+          GriabuntuMail.RFC822.get_parser_options(),
           str
         ));
     }
@@ -79,14 +82,14 @@ public class Convey.Mime.ContentType : Convey.BaseObject {
      *
      * Returns null if it could not be guessed.
      */
-    public static ContentType? guess_type(string? file_name, Convey.Memory.Buffer? buf)
+    public static ContentType? guess_type(string? file_name, GriabuntuMail.Memory.Buffer? buf)
         throws Error {
         string? mime_type = null;
 
         if (file_name != null) {
             string glib_type = GLib.ContentType.guess(file_name, null, null);
             mime_type = GLib.ContentType.get_mime_type(glib_type);
-            if (Convey.String.is_empty(mime_type)) {
+            if (GriabuntuMail.String.is_empty(mime_type)) {
                 mime_type = null;
             }
         }
@@ -102,7 +105,7 @@ public class Convey.Mime.ContentType : Convey.BaseObject {
         }
 
         return (
-            !Convey.String.is_empty_or_whitespace(mime_type)
+            !GriabuntuMail.String.is_empty_or_whitespace(mime_type)
             ? ContentType.parse(mime_type)
             : null
         );

@@ -1,17 +1,20 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.ReplayRemoval : Convey.ImapEngine.ReplayOperation {
+private class GriabuntuMail.ImapEngine.ReplayRemoval : GriabuntuMail.ImapEngine.ReplayOperation {
 
     private MinimalFolder owner;
     private int remote_count;
     private Imap.SequenceNumber position;
 
-    public signal void email_removed(Gee.Collection<Convey.EmailIdentifier> ids);
-    public signal void marked_email_removed(Gee.Collection<Convey.EmailIdentifier> ids);
+    public signal void email_removed(Gee.Collection<GriabuntuMail.EmailIdentifier> ids);
+    public signal void marked_email_removed(Gee.Collection<GriabuntuMail.EmailIdentifier> ids);
     public signal void email_count_changed(int count, Folder.CountChangeReason reason);
 
 
@@ -102,7 +105,7 @@ private class Convey.ImapEngine.ReplayRemoval : Convey.ImapEngine.ReplayOperatio
 
             // Notify queued replay operations that the email has been removed (by EmailIdentifier)
             this.owner.replay_queue.notify_remote_removed_ids(
-                Convey.iterate<ImapDB.EmailIdentifier>(owned_id).to_array_list());
+                GriabuntuMail.iterate<ImapDB.EmailIdentifier>(owned_id).to_array_list());
         } else {
             debug("%s do_replay_removed_message: this.position=%lld unknown in local store "
                 + "(this.remote_count=%d local_position=%lld local_count=%d)",
@@ -131,7 +134,7 @@ private class Convey.ImapEngine.ReplayRemoval : Convey.ImapEngine.ReplayOperatio
         // notify of change ... use "marked-email-removed" for marked email to allow internal code
         // to be notified when a removed email is "really" removed
         if (owned_id != null) {
-            Gee.List<EmailIdentifier> removed = Convey.iterate<Convey.EmailIdentifier>(owned_id).to_array_list();
+            Gee.List<EmailIdentifier> removed = GriabuntuMail.iterate<GriabuntuMail.EmailIdentifier>(owned_id).to_array_list();
             if (!marked)
                 email_removed(removed);
             else

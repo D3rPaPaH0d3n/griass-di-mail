@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title"><title id="title">Griabuntu Mail — dark envelope app icon</title><metadata>Original Griabuntu Mail envelope artwork, 2026-10-27. Locally authored geometric SVG paths; CC0-1.0. No third-party logo or font artwork. Private package candidate.</metadata><rect x="4" y="8" width="120" height="116" rx="28" fill="#102f35"/>
+<rect x="4" y="4" width="120" height="116" rx="28" fill="#24535a"/>
+<rect x="18" y="36" width="92" height="64" rx="10" fill="#72a399"/>
+<rect x="18" y="32" width="92" height="64" rx="10" fill="#c5e9df" stroke="#173a40" stroke-width="3.5"/>
+<path d="M21 90 47 66M107 90 81 66" fill="none" stroke="#72a399" stroke-width="3" stroke-linecap="round"/>
+<path d="M23 36H105L70 66Q64 72 58 66Z" fill="#a9d7cb"/>
+<path d="m22 37 36 30q6 5 12 0l36-30" fill="none" stroke="#173a40" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="64" cy="77" r="11.5" fill="#efbda3"/>
+<path d="M68 73h-6q-4 0-4 4v1q0 4 4 4h5v-4h-3" fill="none" stroke="#173a40" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>

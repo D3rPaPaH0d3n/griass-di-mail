@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-26 — notification reply/archive/trash action identifiers. */
 /*
  * Copyright 2019-2021 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /** Common client GAction and action group names */
@@ -16,6 +19,7 @@ namespace Action {
         public const string GROUP_NAME = "app";
 
         public const string ABOUT = "about";
+        public const string PRIVACY = "privacy";
         public const string ACCOUNTS = "accounts";
         public const string COMPOSE = "compose";
         public const string IMPORT_PGP_KEY = "import-pgp-key";
@@ -23,6 +27,9 @@ namespace Action {
         public const string HELP = "help";
         public const string MAILTO = "mailto";
         public const string NEW_WINDOW = "new-window";
+        public const string NOTIFICATION_REPLY = "notification-reply";
+        public const string NOTIFICATION_ARCHIVE = "notification-archive";
+        public const string NOTIFICATION_TRASH = "notification-trash";
         public const string PREFERENCES = "preferences";
         public const string SHOW_EMAIL = "show-email";
         public const string SHOW_FOLDER = "show-folder";

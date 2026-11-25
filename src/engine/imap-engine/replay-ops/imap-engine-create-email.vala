@@ -1,18 +1,21 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.CreateEmail : SendReplayOperation {
+private class GriabuntuMail.ImapEngine.CreateEmail : SendReplayOperation {
 
-    public Convey.EmailIdentifier? created_id { get; private set; default = null; }
+    public GriabuntuMail.EmailIdentifier? created_id { get; private set; default = null; }
 
     private MinimalFolder engine;
     private RFC822.Message? rfc822;
-    private Convey.EmailFlags? flags;
+    private GriabuntuMail.EmailFlags? flags;
     private DateTime? date_received;
     private Cancellable? cancellable;
 
@@ -63,10 +66,10 @@ private class Convey.ImapEngine.CreateEmail : SendReplayOperation {
             // TODO: need to prevent gaps between UIDS that may occur
             // here if this is created before we know of an earlier
             // message that has arrived.
-            Convey.Email created = new Convey.Email(this.created_id);
-            Gee.Map<Convey.Email, bool> results =
+            GriabuntuMail.Email created = new GriabuntuMail.Email(this.created_id);
+            Gee.Map<GriabuntuMail.Email, bool> results =
                 yield this.engine.local_folder.create_or_merge_email_async(
-                    Convey.iterate<Convey.Email>(created).to_array_list(),
+                    GriabuntuMail.iterate<GriabuntuMail.Email>(created).to_array_list(),
                     true,
                     this.engine.harvester,
                     this.cancellable

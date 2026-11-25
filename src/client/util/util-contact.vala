@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 namespace Util.Contact {
@@ -24,7 +27,7 @@ namespace Util.Contact {
         // Contact domain trusted
         } else {
             for (uint i = 0; i < email_addresses.get_n_items(); i++) {
-                var email = (Convey.RFC822.MailboxAddress) email_addresses.get_item(i);
+                var email = (GriabuntuMail.RFC822.MailboxAddress) email_addresses.get_item(i);
                 if (email.domain in domains) {
                     return true;
                 }

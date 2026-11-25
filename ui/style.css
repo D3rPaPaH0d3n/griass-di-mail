@@ -1,27 +1,30 @@
+/* Downstream modification: 2026-10-26 — muted alias badges and downstream conversation-list layout. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016, 2017 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /* MainWindow */
 
-convey-conversation-list revealer {
+griabuntu-mail-conversation-list revealer {
   margin: 6px;
 }
 
-.convey-overlay {
+.griabuntu-mail-overlay {
   background-color: @theme_base_color;
   padding: 2px 6px;
   border: 1px solid @borders;
   border-bottom: 0;
 }
-.convey-overlay:dir(ltr) {
+.griabuntu-mail-overlay:dir(ltr) {
   border-left: 0;
 }
-.convey-overlay:dir(rtl) {
+.griabuntu-mail-overlay:dir(rtl) {
   border-right: 0;
 }
 
@@ -30,13 +33,13 @@ convey-conversation-list revealer {
   padding-left: 18px;
 }
 
-.convey-info-bar-stack {
+.griabuntu-mail-info-bar-stack {
   border: none;
   border-radius: 0;
   background: none;
 }
 
-.convey-main-layout > .convey-info-bar-stack infobar > revealer > box {
+.griabuntu-mail-main-layout > .griabuntu-mail-info-bar-stack infobar > revealer > box {
   margin: 0;
   border-radius: 0;
 }
@@ -60,15 +63,15 @@ convey-conversation-list revealer {
   margin-right: 0;
 }
 
-convey-conversation-viewer headerbar {
+griabuntu-mail-conversation-viewer headerbar {
   margin-left: 0;
 }
 
-convey-conversation-viewer headerbar > windowhandle > box {
+griabuntu-mail-conversation-viewer headerbar > windowhandle > box {
   padding-left: 12px;
 }
 
-#outer-split.scrolled-under convey-conversation-viewer headerbar,
+#outer-split.scrolled-under griabuntu-mail-conversation-viewer headerbar,
 #outer-split.viewer-scrolled-under .conversation-subject {
   box-shadow: inset 1px 0 var(--sidebar-border-color);
 }
@@ -214,12 +217,12 @@ row.conversation-list .recipient-alias-badge.alias-overflow {
   color: color-mix(in srgb, @window_fg_color 75%, @view_bg_color);
 }
 
-row.conversation-list .details > :nth-child(2) {
+row.conversation-list .details .subject {
   font-size: 0.9em;
   padding-left: 0.5em;
 }
 
-row.conversation-list .details > :nth-child(3) {
+row.conversation-list .details .preview {
   opacity: 0.7;
   font-size: 0.8em;
   padding-left: 0.6em;
@@ -240,8 +243,8 @@ row.conversation-list .date {
 }
 
 /* Unread styling */
-row.conversation-list.unread .details > :nth-child(1),
-row.conversation-list.unread .details > :nth-child(2) {
+row.conversation-list.unread .details .participants,
+row.conversation-list.unread .details .subject {
   font-weight: bold;
 }
 
@@ -255,30 +258,206 @@ row.conversation-list .count-badge {
   font-weight: bold;
 }
 
-row.conversation-list check {
-  border-radius: 50%;
-  padding: 2px;
+row.conversation-list checkbutton {
   margin: 6px;
+}
+
+/* Griabuntu Mail shell — native widgets, scoped to the main window.
+ * These variables are inherited, including in native popovers, but only the
+ * explicitly listed shell widgets receive tonal surfaces. Semantic and system
+ * accent colours remain libadwaita's. No styling enters the mail WebView.
+ * Appearance classes come from Adw.StyleManager (also on GTK 4.16).
+ */
+.griabuntu-mail-main-window {
+  --griabuntu-petrol: #215d58;
+  --griabuntu-copper: #a45b3f;
+  --griabuntu-sidebar: color-mix(in srgb, #8bc9bd 12%, var(--window-bg-color));
+  --griabuntu-list: color-mix(in srgb, #8bc9bd 5%, var(--view-bg-color));
+  --griabuntu-reader: color-mix(in srgb, #e6b99d 6%, var(--window-bg-color));
+  --griabuntu-unread: color-mix(in srgb, #8bc9bd 14%, var(--view-bg-color));
+}
+
+.griabuntu-mail-main-window.griabuntu-dark {
+  --griabuntu-petrol: #9bd4cc;
+  --griabuntu-copper: #e5ae92;
+  --griabuntu-sidebar: color-mix(in srgb, #8bc9bd 7%, var(--window-bg-color));
+  --griabuntu-list: color-mix(in srgb, #8bc9bd 3%, var(--view-bg-color));
+  --griabuntu-reader: color-mix(in srgb, #e6b99d 3%, var(--window-bg-color));
+  --griabuntu-unread: color-mix(in srgb, #8bc9bd 10%, var(--view-bg-color));
+}
+
+.griabuntu-mail-main-window #outer-split .conversation-list-page {
+  background-color: var(--griabuntu-list);
+}
+
+.griabuntu-mail-main-window #outer-split overlay-split-view > .sidebar-pane,
+.griabuntu-mail-main-window #outer-split overlay-split-view > .sidebar-pane:backdrop {
+  background-color: var(--griabuntu-sidebar);
+}
+
+.griabuntu-mail-main-window griabuntu-mail-conversation-viewer {
+  background-color: var(--griabuntu-reader);
+  color: var(--view-fg-color);
+}
+
+.griabuntu-mail-main-window conversation-list list {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.griabuntu-mail-main-window row.conversation-list {
+  margin: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background-color: var(--view-bg-color);
+  color: var(--view-fg-color);
+}
+
+.griabuntu-mail-main-window row.conversation-list > revealer > box {
+  padding: 10px 8px;
+}
+
+.griabuntu-mail-main-window row.conversation-list > revealer > box > avatar {
+  margin: 2px 0;
+}
+
+.griabuntu-mail-main-window row.conversation-list .details {
+  padding-left: 10px;
+  padding-right: 4px;
+}
+
+.griabuntu-mail-main-window row.conversation-list .details:dir(rtl) {
+  padding-right: 10px;
+  padding-left: 4px;
+}
+
+.griabuntu-mail-main-window row.conversation-list .details .subject {
+  font-size: 1em;
+  padding-left: 0;
+}
+
+.griabuntu-mail-main-window row.conversation-list .details .preview {
+  font-size: 0.9em;
+  padding-left: 0;
+  opacity: 0.8;
+}
+
+.griabuntu-mail-main-window row.conversation-list .details label.date {
+  margin: 2px 0 0;
+  font-size: 0.8em;
+  font-feature-settings: "tnum" 1;
+}
+
+.griabuntu-mail-main-window row.conversation-list.unread {
+  background-color: var(--griabuntu-unread);
+  box-shadow: inset 3px 0 var(--griabuntu-petrol);
+}
+
+.griabuntu-mail-main-window row.conversation-list.unread:dir(rtl) {
+  box-shadow: inset -3px 0 var(--griabuntu-petrol);
+}
+
+.griabuntu-mail-main-window row.conversation-list:hover {
+  border-color: var(--border-color);
+}
+
+.griabuntu-mail-main-window row.conversation-list:selected {
+  background-color: var(--accent-bg-color);
+  color: var(--accent-fg-color);
+  box-shadow: none;
+}
+
+.griabuntu-mail-main-window row.conversation-list:selected .details label.recipient-alias-badge,
+.griabuntu-mail-main-window row.conversation-list:selected .count-badge {
+  background-color: color-mix(in srgb, currentColor 16%, transparent);
+  color: inherit;
+}
+
+.griabuntu-mail-main-window row.conversation-list .count-badge {
+  background-color: color-mix(in srgb, var(--griabuntu-copper) 14%, var(--view-bg-color));
+  color: var(--view-fg-color);
+  padding: 1px 4px;
+}
+
+.griabuntu-mail-main-window row.conversation-list:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: -3px;
+}
+
+.griabuntu-mail-main-window row.conversation-list:selected:focus-visible {
+  outline-color: var(--accent-fg-color);
+}
+
+/* Cards provide separation; retain the separator widgets/animation hooks. */
+.griabuntu-mail-main-window separator.conversation-list-separator {
+  min-height: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+.griabuntu-mail-main-window listview.navigation-sidebar > row {
+  margin: 2px 4px;
+  border-radius: 10px;
+}
+
+.griabuntu-mail-main-window .conversation-subject {
+  padding: 16px 20px 10px;
+}
+
+.griabuntu-mail-main-window .conversation-listbox {
+  margin: 6px 12px 16px;
+}
+
+.griabuntu-mail-main-window .conversation-listbox > row {
+  margin-bottom: 10px;
+}
+
+/* High contrast uses system surfaces, explicit edges and full-strength text.
+ * Unread bold weight, keyboard outlines and selected colours remain distinct.
+ */
+.griabuntu-mail-main-window.griabuntu-high-contrast {
+  --griabuntu-petrol: var(--view-fg-color);
+  --griabuntu-copper: var(--view-fg-color);
+  --griabuntu-sidebar: var(--window-bg-color);
+  --griabuntu-list: var(--view-bg-color);
+  --griabuntu-reader: var(--window-bg-color);
+  --griabuntu-unread: var(--view-bg-color);
+}
+
+.griabuntu-mail-main-window.griabuntu-high-contrast row.conversation-list {
+  border-color: var(--view-fg-color);
+}
+
+.griabuntu-mail-main-window.griabuntu-high-contrast row.conversation-list .details label,
+.griabuntu-mail-main-window.griabuntu-high-contrast row.conversation-list .details .preview {
+  opacity: 1;
+}
+
+.griabuntu-mail-main-window.griabuntu-high-contrast row.conversation-list .details label.recipient-alias-badge,
+.griabuntu-mail-main-window.griabuntu-high-contrast row.conversation-list .count-badge {
+  background-color: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
 }
 
 /* FolderPopover */
 
-.convey-folder-popover-list {
+.griabuntu-mail-folder-popover-list {
   border: 1px solid @borders;
   border-radius: 3px;
   padding: 0px;
 }
 
-row.convey-folder-popover-list-row {
+row.griabuntu-mail-folder-popover-list-row {
   padding: 6px;
   border-bottom: 1px solid @borders;
 }
 
-row.convey-folder-popover-list-row:last-child {
+row.griabuntu-mail-folder-popover-list-row:last-child {
   border-bottom: none;
 }
 
-row.convey-folder-popover-list-row > label {
+row.griabuntu-mail-folder-popover-list-row > label {
   color: @theme_text_color;
 }
 
@@ -301,135 +480,135 @@ row.convey-folder-popover-list-row > label {
   margin-bottom: 6px;
 }
 
-.conversation-listbox *.convey-matched *.convey-match {
+.conversation-listbox *.griabuntu-mail-matched *.griabuntu-mail-match {
   color: @theme_selected_fg_color;
   background: @theme_selected_bg_color;
 }
 
-.conversation-listbox > row.convey-loading {
+.conversation-listbox > row.griabuntu-mail-loading {
   padding: 6px;
 }
 
 /* Update this to match the card radius */
-.convey-message-body {
+.griabuntu-mail-message-body {
   margin: 2px;
 }
 
 /* ConversationEmail */
 
-.convey-unread .convey-message-summary {
+.griabuntu-mail-unread .griabuntu-mail-message-summary {
   border-color: @theme_selected_bg_color;
   transition: border 0.25s;
 }
 
 /* Round the summary's top corners so it doesn't poke out of the
  * row's card rounding */
-.conversation-listbox > row .convey-message-summary {
+.conversation-listbox > row .griabuntu-mail-message-summary {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
 
 /* ConversationMessage */
 
-.convey-message infobar > revealer > box {
+.griabuntu-mail-message infobar > revealer > box {
   border-width: 0;
   margin: 4px 6px;
 }
 
-.convey-message infobar box button {
+.griabuntu-mail-message infobar box button {
   background: alpha(black, 0.1);
   color: alpha(@theme_text_color, 0.7);
   border: none;
   box-shadow: none;
 }
 
-.convey-message infobar box menubutton > button.image-button {
+.griabuntu-mail-message infobar box menubutton > button.image-button {
   min-width: 24px;
   padding: 4px;
 }
 
-.convey-message infobar box button:hover,
-.convey-message infobar box button:checked {
+.griabuntu-mail-message infobar box button:hover,
+.griabuntu-mail-message infobar box button:checked {
   background: alpha(black, 0.2);
   color: @theme_text_color;
 }
 
-.convey-message-summary {
+.griabuntu-mail-message-summary {
   border-top: 4px solid transparent;
   padding: 12px;
   transition: border 4s;
 }
 
-.convey-headers label {
+.griabuntu-mail-headers label {
   margin: 0;
   padding: 1px;
 }
 
-.convey-unsubscribe {
+.griabuntu-mail-unsubscribe {
   min-height: 0;
   padding: 4px 8px;
 }
-.convey-headers label.convey-header:dir(ltr) {
+.griabuntu-mail-headers label.griabuntu-mail-header:dir(ltr) {
   padding-right: 6px;
 }
-.convey-headers label.convey-header:dir(rtl) {
+.griabuntu-mail-headers label.griabuntu-mail-header:dir(rtl) {
   padding-left: 6px;
 }
-.convey-headers flowboxchild {
+.griabuntu-mail-headers flowboxchild {
   margin: 0;
   padding: 1px;
 }
-.convey-headers flowboxchild label {
+.griabuntu-mail-headers flowboxchild label {
   margin: 0;
   padding: 0;
 }
 
-.convey-headers flowboxchild.convey-spoofed image:dir(ltr) {
+.griabuntu-mail-headers flowboxchild.griabuntu-mail-spoofed image:dir(ltr) {
   margin-right: 2px;
 }
-.convey-headers flowboxchild.convey-spoofed image:dir(rtl) {
+.griabuntu-mail-headers flowboxchild.griabuntu-mail-spoofed image:dir(rtl) {
   margin-left: 2px;
 }
 
-.convey-headers label.convey-from {
+.griabuntu-mail-headers label.griabuntu-mail-from {
   font-weight: bold;
 }
 
-.convey-header-value flowboxchild {
+.griabuntu-mail-header-value flowboxchild {
   border-radius: 6px;
   margin: 0 -2px;
 }
 
 /* Align sender names with the subject and recipient headings. */
-.convey-from-addresses flowboxchild {
+.griabuntu-mail-from-addresses flowboxchild {
   margin: 0;
 }
 
 /* Theme-agnostic tint, so it reads on both light and dark. */
-.convey-header-value flowboxchild:hover {
+.griabuntu-mail-header-value flowboxchild:hover {
   background: alpha(currentColor, 0.08);
 }
 
-.convey-header-value flowboxchild:active {
+.griabuntu-mail-header-value flowboxchild:active {
   background: alpha(currentColor, 0.15);
 }
 
-.convey-header-value flowboxchild label.dim-label:dir(ltr) {
+.griabuntu-mail-header-value flowboxchild label.dim-label:dir(ltr) {
   margin-left: 6px;
 }
-.convey-header-value flowboxchild label.dim-label:dir(rtl) {
+.griabuntu-mail-header-value flowboxchild label.dim-label:dir(rtl) {
   margin-right: 6px;
 }
 
-.convey-submessages .convey-message {
+.griabuntu-mail-submessages .griabuntu-mail-message {
   background-image: linear-gradient(rgba(0, 0, 0, 0.2), @bg_color 6px);
 }
 
-.convey-message .convey-placeholder-pane {
+.griabuntu-mail-message .griabuntu-mail-placeholder-pane {
   margin: 36px 16px;
 }
 
-.convey-message .convey-body-progress {
+.griabuntu-mail-message .griabuntu-mail-body-progress {
   border: none;
   background-color: transparent;
   background-image: none;
@@ -439,14 +618,14 @@ row.convey-folder-popover-list-row > label {
   margin-bottom: 0px;
 }
 
-.convey-message .convey-body-progress progress {
+.griabuntu-mail-message .griabuntu-mail-body-progress progress {
   background-color: @theme_selected_bg_color;
   background-image: none;
   border: none;
   min-height: 1px;
 }
 
-.convey-message .convey-body-progress trough {
+.griabuntu-mail-message .griabuntu-mail-body-progress trough {
   border: none;
   background-color: transparent;
   background-image: none;
@@ -455,27 +634,27 @@ row.convey-folder-popover-list-row > label {
 
 /* ContactPopover */
 
-.convey-contact-popover .dim-label {
+.griabuntu-mail-contact-popover .dim-label {
   font-size: 80%;
 }
 
-.convey-contact-popover .convey-deceptive {
+.griabuntu-mail-contact-popover .griabuntu-mail-deceptive {
   font-weight: bold;
 }
 
 /* Composer */
 
-convey-composer-box > border {
+griabuntu-mail-composer-box > border {
   border-width: 0px;
 }
 
-convey-composer-editor > frame > border {
+griabuntu-mail-composer-editor > frame > border {
   border-left-width: 0;
   border-right-width: 0;
   border-bottom-width: 0;
 }
 
-convey-composer-editor frame {
+griabuntu-mail-composer-editor frame {
   border-radius: 0;
 }
 
@@ -484,19 +663,19 @@ convey-composer-editor frame {
  * caption with .subtitle typography (font-size: smaller), so match
  * that exactly. Scope to the label: the box around both labels also
  * carries a "title" class, and shrinking that shrinks everything. */
-row.convey-composer-from.property box.title > label.title {
+row.griabuntu-mail-composer-from.property box.title > label.title {
   font-size: smaller;
 }
 
-row.convey-composer-from box.title > label.title {
+row.griabuntu-mail-composer-from box.title > label.title {
   transition: font-size 250ms ease-out, opacity 250ms ease-out, color 250ms ease-out;
 }
 
-row.convey-composer-from box.title > label.subtitle {
+row.griabuntu-mail-composer-from box.title > label.subtitle {
   transition: font-size 250ms ease-out, opacity 250ms ease-out;
 }
 
-row.convey-composer-from:not(.property) box.title > label.subtitle {
+row.griabuntu-mail-composer-from:not(.property) box.title > label.subtitle {
   font-size: 1px;
   opacity: 0;
 }
@@ -505,7 +684,7 @@ windowtitle label.subtitle {
   font-size: round(nearest, calc(100% - 3px), 1px);
 }
 
-convey-composer-embed headerbar {
+griabuntu-mail-composer-embed headerbar {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   /* Adwaita headerbars carry 1px inset side-border lines and -1px
@@ -516,11 +695,11 @@ convey-composer-embed headerbar {
   margin-right: 0;
 }
 
-convey-composer-widget .convey-attachments-box > box > box {
+griabuntu-mail-composer-widget .griabuntu-mail-attachments-box > box > box {
   margin: 6px;
 }
 
-convey-composer-widget .convey-attachments-box > box > box > label {
+griabuntu-mail-composer-widget .griabuntu-mail-attachments-box > box > box > label {
   margin: 0px 4px;
 }
 
@@ -532,30 +711,30 @@ infobar > revealer > box {
 
 /* AttachmentPane  */
 
-.convey-attachment-pane flowbox {
+.griabuntu-mail-attachment-pane flowbox {
   margin: 6px;
 }
 
-.convey-attachment-pane flowboxchild {
+.griabuntu-mail-attachment-pane flowboxchild {
   border-radius: 3px;
 }
 
 /* PlaceholderPane  */
 
-.convey-placeholder-pane.convey-has-text > image {
+.griabuntu-mail-placeholder-pane.griabuntu-mail-has-text > image {
   margin-bottom: 12px;
 }
-.convey-placeholder-pane > .title {
+.griabuntu-mail-placeholder-pane > .title {
   font-weight: bold;
 }
 
 /* GtkListboxRows with padded labels */
 
-row.convey-labelled-row {
+row.griabuntu-mail-labelled-row {
   padding: 0px;
 }
 
-row.convey-labelled-row > box > box {
+row.griabuntu-mail-labelled-row > box > box {
   margin: 18px 6px;
 }
 
@@ -563,15 +742,15 @@ row.convey-labelled-row > box > box {
 widgets, but care ust be taken since images are also used as children
 of other widgets like entries, comboboxes and switches, and these
 shouldn't be be touched. */
-row.convey-labelled-row widget > image,
-row.convey-labelled-row box > box > image {
+row.griabuntu-mail-labelled-row widget > image,
+row.griabuntu-mail-labelled-row box > box > image {
   padding: 0px 6px;
 }
 
-row.convey-labelled-row > box > box > combobox,
-row.convey-labelled-row > box > box > entry,
-row.convey-labelled-row:not(.convey-add-row) > box > image,
-row.convey-labelled-row > box > box > switch {
+row.griabuntu-mail-labelled-row > box > box > combobox,
+row.griabuntu-mail-labelled-row > box > box > entry,
+row.griabuntu-mail-labelled-row:not(.griabuntu-mail-add-row) > box > image,
+row.griabuntu-mail-labelled-row > box > box > switch {
   /* These use more space than labels, so set their valign to center
   when adding them and free up some space around them here to keep a
   consistent row height. */
@@ -580,67 +759,67 @@ row.convey-labelled-row > box > box > switch {
 
 /* Accounts.Editor */
 
-grid.convey-account-view image:dir(ltr) {
+grid.griabuntu-mail-account-view image:dir(ltr) {
   margin-right: 6px;
 }
-grid.convey-account-view image:dir(rtl) {
+grid.griabuntu-mail-account-view image:dir(rtl) {
   margin-left: 6px;
 }
 
-label.convey-settings-heading {
+label.griabuntu-mail-settings-heading {
   font-weight: bold;
   margin-top: 24px;
   margin-bottom: 12px;
 }
 
-row.convey-settings entry {
+row.griabuntu-mail-settings entry {
   border-width: 0px;
   background-color: transparent;
 }
 
-row.convey-settings.convey-drag-source {
+row.griabuntu-mail-settings.griabuntu-mail-drag-source {
   color: @insensitive_fg_color;
   background-color: @insensitive_bg_color;
 }
 
-row.convey-settings.convey-drag-icon {
+row.griabuntu-mail-settings.griabuntu-mail-drag-icon {
   background-color: @theme_base_color;
   border: 1px solid @borders;
 }
 
 /* dir pseudo-class used here for required additional specificity */
-row.convey-settings > grid > grid.convey-drag-handle:dir(ltr),
-row.convey-settings > grid > grid.convey-drag-handle:dir(rtl) {
+row.griabuntu-mail-settings > grid > grid.griabuntu-mail-drag-handle:dir(ltr),
+row.griabuntu-mail-settings > grid > grid.griabuntu-mail-drag-handle:dir(rtl) {
   margin: 0;
 }
 
-row.convey-settings > grid > grid.convey-drag-handle image:dir(ltr) {
+row.griabuntu-mail-settings > grid > grid.griabuntu-mail-drag-handle image:dir(ltr) {
   padding: 12px;
   padding-right: 6px;
 }
 
-row.convey-settings > grid > grid.convey-drag-handle image:dir(rtl) {
+row.griabuntu-mail-settings > grid > grid.griabuntu-mail-drag-handle image:dir(rtl) {
   padding: 12px;
   padding-left: 6px;
 }
 
-buttonbox.convey-settings {
+buttonbox.griabuntu-mail-settings {
   margin-top: 36px;
 }
 
-popover.convey-editor > grid {
+popover.griabuntu-mail-editor > grid {
   margin: 12px;
 }
 
-popover.convey-editor > grid > button.convey-setting-remove {
+popover.griabuntu-mail-editor > grid > button.griabuntu-mail-setting-remove {
   margin-top: 12px;
 }
 
-dialog.convey-remove-confirm .dialog-vbox {
+dialog.griabuntu-mail-remove-confirm .dialog-vbox {
   margin: 12px;
 }
 
-dialog.convey-remove-confirm .dialog-action-box {
+dialog.griabuntu-mail-remove-confirm .dialog-action-box {
   margin: 6px;
 }
 
@@ -721,21 +900,21 @@ listview.navigation-sidebar:drop(active) > row:drop(active) {
 
 /* Inspector */
 
-.convey-inspector-log-viewer .sidebar row > grid {
+.griabuntu-mail-inspector-log-viewer .sidebar row > grid {
   padding: 0 6px;
 }
 
-.convey-inspector-log-viewer .sidebar row > grid * {
+.griabuntu-mail-inspector-log-viewer .sidebar row > grid * {
   margin: 4px;
 }
 
 /* Upgrade dialog */
 
-dialog.convey-upgrade grid {
+dialog.griabuntu-mail-upgrade grid {
   margin: 12px;
 }
 
-dialog.convey-upgrade label {
+dialog.griabuntu-mail-upgrade label {
   margin-top: 12px;
 }
 

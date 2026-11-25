@@ -1,14 +1,18 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 public class MailMerge.TestProcessor : ValaUnit.TestCase {
 
 
-    private class MockEmailIdentifier : Convey.EmailIdentifier {
+    private class MockEmailIdentifier : GriabuntuMail.EmailIdentifier {
 
 
         private int id;
@@ -22,7 +26,7 @@ public class MailMerge.TestProcessor : ValaUnit.TestCase {
             return GLib.int_hash(this.id);
         }
 
-        public override bool equal_to(Convey.EmailIdentifier other) {
+        public override bool equal_to(GriabuntuMail.EmailIdentifier other) {
             return (
                 this.get_type() == other.get_type() &&
                 this.id == ((MockEmailIdentifier) other).id
@@ -41,7 +45,7 @@ public class MailMerge.TestProcessor : ValaUnit.TestCase {
             return new GLib.Variant.int32(id);
         }
 
-        public override int natural_sort_comparator(Convey.EmailIdentifier other) {
+        public override int natural_sort_comparator(GriabuntuMail.EmailIdentifier other) {
             MockEmailIdentifier? other_mock = other as MockEmailIdentifier;
             return (other_mock == null) ? 1 : this.id - other_mock.id;
         }
@@ -106,18 +110,18 @@ public class MailMerge.TestProcessor : ValaUnit.TestCase {
         var original = string_to_email(TEMPLATE_SUBJECT);
         var processor = new Processor(original);
         var merged = processor.merge(
-            Convey.Collection.single_map("subject", "test")
+            GriabuntuMail.Collection.single_map("subject", "test")
         );
 
         assert_equal(merged.subject.value, "test");
     }
 
-    private Convey.Email string_to_email(string message_text)
+    private GriabuntuMail.Email string_to_email(string message_text)
         throws GLib.Error {
-        var message = new Convey.RFC822.Message.from_buffer(
-            new Convey.Memory.StringBuffer(message_text.replace("\n","\r\n"))
+        var message = new GriabuntuMail.RFC822.Message.from_buffer(
+            new GriabuntuMail.Memory.StringBuffer(message_text.replace("\n","\r\n"))
         );
-        return new Convey.Email.from_message(
+        return new GriabuntuMail.Email.from_message(
             new MockEmailIdentifier(0), message
         );
     }
@@ -133,7 +137,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griaß di Mail Test Suite 1.0
 
 This is the first line.
 
@@ -152,7 +156,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griaß di Mail Test Suite 1.0
 
 This is the first line.
 
@@ -171,7 +175,7 @@ Date: Fri, 21 Nov 1997 10:01:10 -0600
 Message-ID: <3456@example.net>
 In-Reply-To: <1234@local.machine.example>
 References: <1234@local.machine.example>
-X-Mailer: Convey Test Suite 1.0
+X-Mailer: Griaß di Mail Test Suite 1.0
 
 Hello {{name}}!
 

@@ -1,10 +1,13 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.State.Machine : BaseObject {
+public class GriabuntuMail.State.Machine : BaseObject {
 
     /** The state machine's current state. */
     public uint state { get; private set; }
@@ -15,7 +18,7 @@ public class Convey.State.Machine : BaseObject {
     /** Determines if transition logging is enabled. */
     public bool logging { get; private set; default = false; }
 
-    private Convey.State.MachineDescriptor descriptor;
+    private GriabuntuMail.State.MachineDescriptor descriptor;
     private Mapping[,] transitions;
     private unowned Transition? default_transition;
     private bool locked = false;

@@ -1,19 +1,22 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.CopyEmail : Convey.ImapEngine.SendReplayOperation {
+private class GriabuntuMail.ImapEngine.CopyEmail : GriabuntuMail.ImapEngine.SendReplayOperation {
     public Gee.Set<Imap.UID> destination_uids = new Gee.HashSet<Imap.UID>();
 
     private MinimalFolder engine;
     private Gee.HashSet<ImapDB.EmailIdentifier> to_copy = new Gee.HashSet<ImapDB.EmailIdentifier>();
-    private Convey.FolderPath destination;
+    private GriabuntuMail.FolderPath destination;
     private Cancellable? cancellable;
 
     public CopyEmail(MinimalFolder engine, Gee.List<ImapDB.EmailIdentifier> to_copy,
-        Convey.FolderPath destination, Cancellable? cancellable = null) {
+        GriabuntuMail.FolderPath destination, Cancellable? cancellable = null) {
         base("CopyEmail", OnError.RETRY);
 
         this.engine = engine;

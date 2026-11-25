@@ -1,15 +1,18 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Updates an existing message locally after an unsolicited FETCH.
  */
-private class Convey.ImapEngine.ReplayUpdate : Convey.ImapEngine.ReplayOperation {
+private class GriabuntuMail.ImapEngine.ReplayUpdate : GriabuntuMail.ImapEngine.ReplayOperation {
 
 
     private MinimalFolder owner;
@@ -55,8 +58,8 @@ private class Convey.ImapEngine.ReplayUpdate : Convey.ImapEngine.ReplayOperation
             }
 
             if (id != null) {
-                Gee.Map<Convey.ImapDB.EmailIdentifier, Convey.EmailFlags> changed_map =
-                new Gee.HashMap<Convey.ImapDB.EmailIdentifier, Convey.EmailFlags>();
+                Gee.Map<GriabuntuMail.ImapDB.EmailIdentifier, GriabuntuMail.EmailFlags> changed_map =
+                new Gee.HashMap<GriabuntuMail.ImapDB.EmailIdentifier, GriabuntuMail.EmailFlags>();
                 changed_map.set(id, new Imap.EmailFlags(message_flags));
 
                 yield this.owner.local_folder.set_email_flags_async(changed_map, null);

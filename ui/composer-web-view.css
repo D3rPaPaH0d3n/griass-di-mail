@@ -24,24 +24,24 @@ body.plain a {
   cursor: text;
 }
 
-body > *.convey-no-display {
+body > *.griabuntu-mail-no-display {
   display: none !important;
 }
 
-body > div#convey-body {
+body > div#griabuntu-mail-body {
   margin: 0 !important;
   border: 0 !important;
   padding: 12px !important;
   outline: 0px !important;
 }
 
-body > div#convey-body:only-child {
+body > div#griabuntu-mail-body:only-child {
   box-sizing: border-box;
   min-height: 100vh;
 }
 
-body > div#convey-signature,
-body > div#convey-quote {
+body > div#griabuntu-mail-signature,
+body > div#griabuntu-mail-quote {
   margin: 0 6px !important;
   border: 0 !important;
   padding: 6px !important;
@@ -53,8 +53,8 @@ body > div:focus-within {
   caret-color: var(--fg-color);
 }
 
-body > div#convey-signature:focus-within,
-body > div#convey-quote:focus-within {
+body > div#griabuntu-mail-signature:focus-within,
+body > div#griabuntu-mail-quote:focus-within {
   outline: 1px dashed #ccc !important;
 }
 
@@ -70,7 +70,7 @@ pre {
   margin: 0;
 }
 
-#convey-image-resizer {
+#griabuntu-mail-image-resizer {
   position: absolute;
   box-sizing: border-box;
   border: 2px solid #3584e4;
@@ -78,11 +78,11 @@ pre {
   z-index: 1000;
 }
 
-#convey-image-resizer[hidden] {
+#griabuntu-mail-image-resizer[hidden] {
   display: none;
 }
 
-#convey-image-resizer-handle {
+#griabuntu-mail-image-resizer-handle {
   position: absolute;
   right: 0;
   bottom: 0;

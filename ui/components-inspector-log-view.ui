@@ -3,7 +3,7 @@
   <template class="ComponentsInspectorLogView" parent="GtkBox">
     <property name="orientation">vertical</property>
     <style>
-      <class name="convey-inspector-log-viewer"/>
+      <class name="griabuntu-mail-inspector-log-viewer"/>
     </style>
 
     <child>

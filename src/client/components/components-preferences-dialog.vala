@@ -1,12 +1,16 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — downstream preference controls. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-preferences-dialog.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-preferences-dialog.ui")]
 public class Components.PreferencesDialog : Adw.PreferencesDialog {
 
     [GtkChild] private unowned Adw.SwitchRow autoselect_row;
@@ -15,6 +19,8 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     [GtkChild] private unowned Adw.SwitchRow display_subject_row;
     [GtkChild] private unowned Adw.SwitchRow display_recipient_aliases_row;
     [GtkChild] private unowned Adw.SwitchRow display_contact_pictures_row;
+    [GtkChild] private unowned Adw.SwitchRow remote_contact_pictures_row;
+    [GtkChild] private unowned Adw.SwitchRow company_pictures_row;
     [GtkChild] private unowned Adw.PreferencesGroup conversation_list_group;
     [GtkChild] private unowned Adw.NavigationPage conversation_list_subpage;
     [GtkChild] private unowned Gtk.Button conversation_list_reset_button;
@@ -227,6 +233,12 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
             this.display_subject_row,
             "active"
         );
+        config.bind(Application.Configuration.REMOTE_CONTACT_PICTURES_KEY,
+                    this.remote_contact_pictures_row, "active");
+        config.bind(Application.Configuration.COMPANY_PICTURES_KEY,
+                    this.company_pictures_row, "active");
+        this.remote_contact_pictures_row.bind_property("active", this.company_pictures_row,
+                                                       "sensitive", SYNC_CREATE);
         setup_conversation_list_order();
         config.bind(
             Application.Configuration.DISPLAY_RECIPIENT_ALIASES_KEY,
@@ -309,7 +321,7 @@ public class Components.PreferencesDialog : Adw.PreferencesDialog {
     }
 
     private void setup_startup_inbox_row() {
-        var accounts = new Gee.ArrayList<Convey.AccountInformation>();
+        var accounts = new Gee.ArrayList<GriabuntuMail.AccountInformation>();
         try {
             foreach (var account in this.application.engine.get_accounts()) {
                 accounts.add(account.information);

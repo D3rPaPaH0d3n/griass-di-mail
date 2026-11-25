@@ -1,13 +1,16 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /** A client connection to a SMTP service. */
-public class Convey.Smtp.ClientSession : BaseObject, Logging.Source {
+public class GriabuntuMail.Smtp.ClientSession : BaseObject, Logging.Source {
 
     /** {@inheritDoc} */
     public override string logging_domain {
@@ -30,7 +33,7 @@ public class Convey.Smtp.ClientSession : BaseObject, Logging.Source {
     public virtual signal void disconnected() {
     }
 
-    public ClientSession(Convey.Endpoint endpoint) {
+    public ClientSession(GriabuntuMail.Endpoint endpoint) {
         this.cx = new ClientConnection(endpoint);
         this.cx.set_logging_parent(this);
     }
@@ -180,8 +183,8 @@ public class Convey.Smtp.ClientSession : BaseObject, Logging.Source {
         return response;
     }
 
-    public async void send_email_async(Convey.RFC822.MailboxAddress reverse_path,
-                                       Convey.RFC822.Message email,
+    public async void send_email_async(GriabuntuMail.RFC822.MailboxAddress reverse_path,
+                                       GriabuntuMail.RFC822.Message email,
                                        Cancellable? cancellable = null)
         throws GLib.Error {
         if (!cx.is_connected())

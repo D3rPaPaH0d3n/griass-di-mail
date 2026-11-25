@@ -1,12 +1,15 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
-class Convey.ContactStoreImplTest : TestCase {
+class GriabuntuMail.ContactStoreImplTest : TestCase {
 
 
     private GLib.File? tmp_dir = null;
@@ -15,7 +18,7 @@ class Convey.ContactStoreImplTest : TestCase {
 
 
     public ContactStoreImplTest() {
-        base("Convey.ContactStoreImplTest");
+        base("GriabuntuMail.ContactStoreImplTest");
         add_test("get_by_rfc822", get_by_rfc822);
         add_test("search_no_match", search_no_match);
         add_test("search_email_match", search_email_match);
@@ -28,20 +31,20 @@ class Convey.ContactStoreImplTest : TestCase {
 
     public override void set_up() throws GLib.Error {
         this.tmp_dir = GLib.File.new_for_path(
-            GLib.DirUtils.make_tmp("convey-contact-harvester-test-XXXXXX")
+            GLib.DirUtils.make_tmp("griabuntu-mail-contact-harvester-test-XXXXXX")
         );
-        GLib.File db_file = this.tmp_dir.get_child("convey.db");
+        GLib.File db_file = this.tmp_dir.get_child("griabuntu-mail.db");
         GLib.File attachments_dir = this.tmp_dir.get_child("attachments");
 
         this.db = new ImapDB.Database(
             db_file,
             GLib.File.new_for_path(Config.SOURCE_ROOT_DIR).get_child("sql"),
             attachments_dir,
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_UPGRADE),
-            new Convey.SimpleProgressMonitor(Convey.ProgressType.DB_VACUUM)
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_UPGRADE),
+            new GriabuntuMail.SimpleProgressMonitor(GriabuntuMail.ProgressType.DB_VACUUM)
         );
         this.db.open.begin(
-            Convey.Db.DatabaseFlags.CREATE_FILE, null,
+            GriabuntuMail.Db.DatabaseFlags.CREATE_FILE, null,
             this.async_completion
         );
         this.db.open.end(async_result());

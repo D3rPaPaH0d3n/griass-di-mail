@@ -1,12 +1,16 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /** LibSecret password adapter. */
-public class SecretMediator : Convey.CredentialsMediator, Object {
+public class SecretMediator : GriabuntuMail.CredentialsMediator, Object {
 
     private const string ATTR_LOGIN = "login";
     private const string ATTR_HOST = "host";
@@ -59,8 +63,8 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
         }
     }
 
-    public virtual async bool load_token(Convey.AccountInformation account,
-                                         Convey.ServiceInformation service,
+    public virtual async bool load_token(GriabuntuMail.AccountInformation account,
+                                         GriabuntuMail.ServiceInformation service,
                                          Cancellable? cancellable)
         throws GLib.Error {
         bool loaded = false;
@@ -89,8 +93,8 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
         return loaded;
     }
 
-    public async void update_token(Convey.AccountInformation account,
-                                   Convey.ServiceInformation service,
+    public async void update_token(GriabuntuMail.AccountInformation account,
+                                   GriabuntuMail.ServiceInformation service,
                                    Cancellable? cancellable)
         throws GLib.Error {
         if (service.credentials != null) {
@@ -98,8 +102,8 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
         }
     }
 
-    public async void clear_token(Convey.AccountInformation account,
-                                  Convey.ServiceInformation service,
+    public async void clear_token(GriabuntuMail.AccountInformation account,
+                                  GriabuntuMail.ServiceInformation service,
                                   Cancellable? cancellable)
         throws Error {
         if (service.credentials != null) {
@@ -152,7 +156,7 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
         }
     }
 
-    private async void do_store(Convey.ServiceInformation service,
+    private async void do_store(GriabuntuMail.ServiceInformation service,
                                 string password,
                                 Cancellable? cancellable)
         throws Error {
@@ -160,13 +164,13 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
             SecretMediator.schema,
             new_attrs(service),
             Secret.COLLECTION_DEFAULT,
-            "Convey %s password".printf(to_proto_value(service.protocol)),
+            "Griaß di Mail %s password".printf(to_proto_value(service.protocol)),
             password,
             cancellable
         );
     }
 
-    private HashTable<string,string> new_attrs(Convey.ServiceInformation service) {
+    private HashTable<string,string> new_attrs(GriabuntuMail.ServiceInformation service) {
         HashTable<string,string> table = new HashTable<string,string>(
             str_hash, str_equal
         );
@@ -176,11 +180,11 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
         return table;
     }
 
-    private inline string to_proto_value(Convey.Protocol protocol) {
+    private inline string to_proto_value(GriabuntuMail.Protocol protocol) {
         return protocol.to_value().ascii_up();
     }
 
-    private async string? migrate_old_password(Convey.ServiceInformation service,
+    private async string? migrate_old_password(GriabuntuMail.ServiceInformation service,
                                                GLib.Cancellable? cancellable)
         throws GLib.Error {
         // <= 0.11
@@ -206,11 +210,11 @@ public class SecretMediator : Convey.CredentialsMediator, Object {
         return password;
     }
 
-    private string get_legacy_user(Convey.ServiceInformation service, string user) {
+    private string get_legacy_user(GriabuntuMail.ServiceInformation service, string user) {
         switch (service.protocol) {
-        case Convey.Protocol.IMAP:
+        case GriabuntuMail.Protocol.IMAP:
             return "org.yorba.convey imap_username:" + user;
-        case Convey.Protocol.SMTP:
+        case GriabuntuMail.Protocol.SMTP:
             return "org.yorba.convey smtp_username:" + user;
         default:
             warning("Unknown service type");

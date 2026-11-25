@@ -21,7 +21,7 @@
                     <property name="valign">end</property>
                     <property name="ellipsize">middle</property>
                     <style>
-                      <class name="convey-overlay"/>
+                      <class name="griabuntu-mail-overlay"/>
                     </style>
                   </object>
                 </child>

@@ -1,11 +1,14 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017-2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Imap.DeserializerTest : TestCase {
+class GriabuntuMail.Imap.DeserializerTest : TestCase {
 
 
     protected enum Expect { MESSAGE, EOS, DESER_FAIL; }
@@ -19,7 +22,7 @@ class Convey.Imap.DeserializerTest : TestCase {
 
 
     public DeserializerTest() {
-        base("Convey.Imap.DeserializerTest");
+        base("GriabuntuMail.Imap.DeserializerTest");
         add_test("parse_unquoted", parse_unquoted);
         add_test("parse_quoted", parse_quoted);
         add_test("parse_number", parse_number);

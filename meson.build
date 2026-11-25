@@ -1,6 +1,8 @@
-project('convey', [ 'vala', 'c' ],
+# GPLv3 release-copy metadata/notice installation: 2026-10-26.
+# Downstream modification: 2026-10-26 — synthetic notification-flag test target and explicit licence installation.
+project('griabuntu-mail', [ 'vala', 'c' ],
   version: '51.0',
-  license: 'LGPL-2.1-or-later',
+  license: 'GPL-3.0-only',
   meson_version: '>= 1.7',
 )
 
@@ -26,11 +28,11 @@ elif profile != 'release'
 endif
 
 # Configurable install dirs
-convey_prefix = get_option('prefix')
-bin_dir = convey_prefix / get_option('bindir')
-data_dir = convey_prefix / get_option('datadir')
-lib_dir = convey_prefix / get_option('libdir')
-locale_dir = convey_prefix / get_option('localedir')
+griabuntu_mail_prefix = get_option('prefix')
+bin_dir = griabuntu_mail_prefix / get_option('bindir')
+data_dir = griabuntu_mail_prefix / get_option('datadir')
+lib_dir = griabuntu_mail_prefix / get_option('libdir')
+locale_dir = griabuntu_mail_prefix / get_option('localedir')
 
 # Source dirs
 metadata_dir = meson.project_source_root() / 'bindings'/ 'metadata'
@@ -142,8 +144,8 @@ libmessagingmenu_dep = dependency('messaging-menu', version: '>= 12.10', require
 #
 
 # Build variables
-convey_id = 'net.donnybeelo.Convey@0@'.format(appid_suffix)
-convey_version = meson.project_version()
+griabuntu_mail_id = 'io.github.d3rpapah0d3n.GriabuntuMail@0@'.format(appid_suffix)
+griabuntu_mail_version = meson.project_version()
 revno = get_option('revno')
 if revno == ''
   revno = run_command('build-aux/git_version.py', check: false).stdout().strip()
@@ -154,9 +156,23 @@ i18n = import('i18n')
 
 # Static install dirs
 dbus_services_dir = data_dir / 'dbus-1' / 'services'
-client_lib_dir = lib_dir / 'convey'
+client_lib_dir = lib_dir / 'griabuntu-mail'
 plugins_dir = client_lib_dir / 'plugins'
 web_extensions_dir = client_lib_dir / 'web-extensions'
+
+# Downstream licence packaging, prepared 2026-10-26.
+license_dir = data_dir / 'licenses' / griabuntu_mail_id
+install_data(
+  'COPYING', 'COPYING.LGPL-2.1-original', 'COPYING.icons', 'COPYING.sounds', 'AUTHORS', 'THANKS',
+  'THIRD-PARTY-NOTICES.md', 'docs/release/GPLV3-COPY.md',
+  install_dir: license_dir,
+)
+install_subdir('docs/licenses', install_dir: license_dir)
+install_data('docs/ARTWORK-PROVENANCE.md',
+  'docs/ARTWORK-INVENTORY.md', 'docs/PRIVACY.md', 'docs/UPGRADING.md',
+  install_dir: license_dir,
+)
+
 
 # Ensure SQLite was built correctly
 if not cc.has_header_symbol('sqlite3.h', 'SQLITE_DBCONFIG_ENABLE_FTS3_TOKENIZER', dependencies: sqlite)
@@ -222,3 +238,39 @@ subdir('sql')
 subdir('ui')
 subdir('src')
 subdir('test')
+
+# This target spans src/ and test/; Vala requires their common source root.
+notification_mock_sources = []
+foreach source : libmock_sources
+  notification_mock_sources += files('test' / source)
+endforeach
+
+# Compile the real notification handler against in-memory application boundaries.
+# Do not link client_lib: that would duplicate those types and start pulling in
+# GTK/application setup. Folder signals, flags and the tray model remain real.
+test_notification_flags_bin = executable('test-notification-flags',
+  [
+    'test/test-case.vala',
+    'test/test-notification-flags.vala',
+    'test/client/application/application-notification-plugin-context-test.vala',
+    'test/mock/notification-context.vala',
+    'src/client/application/application-notification-plugin-context.vala',
+    'src/client/application/application-tray-mail-model.vala',
+    'src/client/plugin/plugin-account.vala',
+    'src/client/plugin/plugin-folder.vala',
+    'src/client/plugin/plugin-email.vala',
+    'src/client/plugin/plugin-error.vala',
+    'src/client/plugin/plugin-contact-store.vala',
+    'src/client/plugin/plugin-notification-extension.vala',
+  ] + notification_mock_sources,
+  dependencies: test_engine_dependencies,
+  vala_args: test_engine_vala_args,
+  c_args: griabuntu_mail_c_args,
+)
+
+test(
+  'notification-flag-tests',
+  test_notification_flags_bin,
+  args: [ '--keep-going' ],
+  depends: [ engine_lib ]
+)

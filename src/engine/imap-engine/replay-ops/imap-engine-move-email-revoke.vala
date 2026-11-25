@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Revoked {@link RevokableMove}: Unmark emails as removed and update counts.
  */
 
-private class Convey.ImapEngine.MoveEmailRevoke : Convey.ImapEngine.SendReplayOperation {
+private class GriabuntuMail.ImapEngine.MoveEmailRevoke : GriabuntuMail.ImapEngine.SendReplayOperation {
     private MinimalFolder engine;
     private Gee.List<ImapDB.EmailIdentifier> to_revoke = new Gee.ArrayList<ImapDB.EmailIdentifier>();
     private Cancellable? cancellable;
@@ -43,7 +46,7 @@ private class Convey.ImapEngine.MoveEmailRevoke : Convey.ImapEngine.SendReplayOp
 
         engine.replay_notify_email_inserted(revoked);
         engine.replay_notify_email_count_changed(count + revoked.size,
-            Convey.Folder.CountChangeReason.INSERTED);
+            GriabuntuMail.Folder.CountChangeReason.INSERTED);
 
         return ReplayOperation.Status.COMPLETED;
     }

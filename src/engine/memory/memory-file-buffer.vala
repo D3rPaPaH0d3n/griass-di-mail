@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 //extern Bytes *g_bytes_new_with_free_func(void *data, size_t size, DestroyNotify destroy, void *user);
@@ -10,7 +13,7 @@
  * Makes a file available as a {@link Memory.Buffer}.
  */
 
-public class Convey.Memory.FileBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
+public class GriabuntuMail.Memory.FileBuffer : Memory.Buffer, Memory.UnownedBytesBuffer {
     private File file;
     private MappedFile mmap;
 
@@ -31,7 +34,7 @@ public class Convey.Memory.FileBuffer : Memory.Buffer, Memory.UnownedBytesBuffer
      */
     public FileBuffer(File file, bool readonly) throws Error {
         if (file.get_path() == null)
-            throw new IOError.NOT_FOUND("File for Convey.Memory.FileBuffer not found");
+            throw new IOError.NOT_FOUND("File for GriabuntuMail.Memory.FileBuffer not found");
 
         this.file = file;
         mmap = new MappedFile(file.get_path(), !readonly);

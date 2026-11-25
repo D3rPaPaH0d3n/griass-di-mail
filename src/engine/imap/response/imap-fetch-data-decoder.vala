@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -16,7 +19,7 @@
  * as in a database.
  */
 
-public abstract class Convey.Imap.FetchDataDecoder : BaseObject {
+public abstract class GriabuntuMail.Imap.FetchDataDecoder : BaseObject {
     public FetchDataSpecifier data_item { get; private set; }
 
     protected FetchDataDecoder(FetchDataSpecifier data_item) {
@@ -79,7 +82,7 @@ public abstract class Convey.Imap.FetchDataDecoder : BaseObject {
     }
 }
 
-public class Convey.Imap.UIDDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.UIDDecoder : GriabuntuMail.Imap.FetchDataDecoder {
     public UIDDecoder() {
         base (FetchDataSpecifier.UID);
     }
@@ -89,7 +92,7 @@ public class Convey.Imap.UIDDecoder : Convey.Imap.FetchDataDecoder {
     }
 }
 
-public class Convey.Imap.MessageFlagsDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.MessageFlagsDecoder : GriabuntuMail.Imap.FetchDataDecoder {
     public MessageFlagsDecoder() {
         base (FetchDataSpecifier.FLAGS);
     }
@@ -103,7 +106,7 @@ public class Convey.Imap.MessageFlagsDecoder : Convey.Imap.FetchDataDecoder {
     }
 }
 
-public class Convey.Imap.InternalDateDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.InternalDateDecoder : GriabuntuMail.Imap.FetchDataDecoder {
     public InternalDateDecoder() {
         base (FetchDataSpecifier.INTERNALDATE);
     }
@@ -113,7 +116,7 @@ public class Convey.Imap.InternalDateDecoder : Convey.Imap.FetchDataDecoder {
     }
 }
 
-public class Convey.Imap.RFC822SizeDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.RFC822SizeDecoder : GriabuntuMail.Imap.FetchDataDecoder {
     public RFC822SizeDecoder() {
         base (FetchDataSpecifier.RFC822_SIZE);
     }
@@ -123,7 +126,7 @@ public class Convey.Imap.RFC822SizeDecoder : Convey.Imap.FetchDataDecoder {
     }
 }
 
-public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.EnvelopeDecoder : GriabuntuMail.Imap.FetchDataDecoder {
 
 
     private Quirks quirks;
@@ -151,7 +154,7 @@ public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
         if (message_id != null && message_id.is_empty())
             message_id = null;
 
-        Convey.RFC822.Date? sent_date = null;
+        GriabuntuMail.RFC822.Date? sent_date = null;
         if (sent != null) {
             try {
                 sent_date = new RFC822.Date.from_rfc822_string(sent.ascii);
@@ -165,7 +168,7 @@ public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
 
         return new Envelope(
             sent_date,
-            new Convey.RFC822.Subject.from_rfc822_string(subject.ascii),
+            new GriabuntuMail.RFC822.Subject.from_rfc822_string(subject.ascii),
             parse_addresses(from),
             parse_addresses(sender),
             parse_addresses(reply_to),
@@ -179,8 +182,8 @@ public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
 
     // TODO: This doesn't handle group lists (see Johnson, p.268) -- this will throw an
     // ImapError.TYPE_ERROR if this occurs.
-    private Convey.RFC822.MailboxAddresses? parse_addresses(ListParameter listp) throws ImapError {
-        Gee.List<Convey.RFC822.MailboxAddress> list = new Gee.ArrayList<Convey.RFC822.MailboxAddress>();
+    private GriabuntuMail.RFC822.MailboxAddresses? parse_addresses(ListParameter listp) throws ImapError {
+        Gee.List<GriabuntuMail.RFC822.MailboxAddress> list = new Gee.ArrayList<GriabuntuMail.RFC822.MailboxAddress>();
         for (int ctr = 0; ctr < listp.size; ctr++) {
             ListParameter fields = listp.get_as_empty_list(ctr);
             StringParameter? name = fields.get_as_nullable_string(0);
@@ -195,7 +198,7 @@ public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
                 domain = null;
             }
 
-            Convey.RFC822.MailboxAddress addr = new Convey.RFC822.MailboxAddress.imap(
+            GriabuntuMail.RFC822.MailboxAddress addr = new GriabuntuMail.RFC822.MailboxAddress.imap(
                 (name != null) ? name.nullable_ascii : null,
                 (source_route != null) ? source_route.nullable_ascii : null,
                 mailbox != null ? mailbox.ascii : "",
@@ -204,7 +207,7 @@ public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
             list.add(addr);
         }
 
-        return new Convey.RFC822.MailboxAddresses(list);
+        return new GriabuntuMail.RFC822.MailboxAddresses(list);
     }
 
     private RFC822.MessageID? new_message_id(string? rfc822) {
@@ -232,36 +235,36 @@ public class Convey.Imap.EnvelopeDecoder : Convey.Imap.FetchDataDecoder {
     }
 }
 
-public class Convey.Imap.RFC822HeaderDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.RFC822HeaderDecoder : GriabuntuMail.Imap.FetchDataDecoder {
     public RFC822HeaderDecoder() {
         base (FetchDataSpecifier.RFC822_HEADER);
     }
 
     protected override MessageData decode_literal(LiteralParameter literalp) throws ImapError {
-        return new Convey.Imap.RFC822Header(literalp.value);
+        return new GriabuntuMail.Imap.RFC822Header(literalp.value);
     }
 }
 
-public class Convey.Imap.RFC822TextDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.RFC822TextDecoder : GriabuntuMail.Imap.FetchDataDecoder {
     public RFC822TextDecoder() {
         base (FetchDataSpecifier.RFC822_TEXT);
     }
 
     protected override MessageData decode_literal(LiteralParameter literalp) throws ImapError {
-        return new Convey.Imap.RFC822Text(literalp.value);
+        return new GriabuntuMail.Imap.RFC822Text(literalp.value);
     }
 
     protected override MessageData decode_nil(NilParameter nilp) throws ImapError {
-        return new Convey.Imap.RFC822Text(Memory.EmptyBuffer.instance);
+        return new GriabuntuMail.Imap.RFC822Text(Memory.EmptyBuffer.instance);
     }
 }
 
-public class Convey.Imap.RFC822FullDecoder : Convey.Imap.FetchDataDecoder {
+public class GriabuntuMail.Imap.RFC822FullDecoder : GriabuntuMail.Imap.FetchDataDecoder {
     public RFC822FullDecoder() {
         base (FetchDataSpecifier.RFC822);
     }
 
     protected override MessageData decode_literal(LiteralParameter literalp) throws ImapError {
-        return new Convey.Imap.RFC822Full(literalp.value);
+        return new GriabuntuMail.Imap.RFC822Full(literalp.value);
     }
 }
