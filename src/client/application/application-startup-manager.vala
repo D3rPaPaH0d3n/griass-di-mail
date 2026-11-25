@@ -1,9 +1,13 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2022 Cédric Bellegarde <cedric.bellegarde@adishatz.org>
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 // Background portal
@@ -32,7 +36,7 @@ namespace portal {
 public class Application.StartupManager : GLib.Object {
 
     private const string AUTOSTART_FOLDER = "autostart";
-    private const string AUTOSTART_DESKTOP_FILE = "convey-autostart.desktop";
+    private const string AUTOSTART_DESKTOP_FILE = "griabuntu-mail-autostart.desktop";
     private const string BUS_NAME = "org.freedesktop.portal.Desktop";
     private const string OBJECT_PATH = "/org/freedesktop/portal/desktop";
 
@@ -69,13 +73,13 @@ public class Application.StartupManager : GLib.Object {
     private async void request_background(bool autostart) {
         try {
             GLib.DBusConnection bus = yield Bus.get(BusType.SESSION);
-            string[] cmdline = {"convey", "--gapplication-service"};
+            string[] cmdline = {"griabuntu-mail", "--gapplication-service"};
             var background = yield bus.get_proxy<portal.Background>(
                 BUS_NAME, OBJECT_PATH);
             var options = new GLib.HashTable<string, GLib.Variant>(
                 str_hash, str_equal);
             options.insert("reason", new GLib.Variant(
-                "s", _("Convey wants to run in background")));
+                "s", _("Griaß di Mail wants to run in background")));
             options.insert("autostart", new GLib.Variant(
                 "b", autostart));
             options.insert("commandline", new GLib.Variant.strv(cmdline));

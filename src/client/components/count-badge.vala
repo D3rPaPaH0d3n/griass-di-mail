@@ -1,13 +1,16 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Draws the count badge and calculates its dimensions.
  */
-public class CountBadge : Convey.BaseObject {
+public class CountBadge : GriabuntuMail.BaseObject {
     public const string UNREAD_BG_COLOR = "#888888";
 	public const int SPACING = 6;
 

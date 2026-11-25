@@ -1,3 +1,4 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Parts of the code below have been taken from
  * `ext/fts3/fts3_tokenizer.h` SQLite source code repository with the
@@ -24,7 +25,7 @@
 
 /*
  * Defines SQLite FTS3/4 tokeniser with the same name as the one used
- * in Convey prior to version 3.40, so that database upgrades that
+ * in Griabuntu Mail prior to version 3.40, so that database upgrades that
  * still reference this tokeniser can complete successfully.
  */
 

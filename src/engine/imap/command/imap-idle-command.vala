@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -11,7 +14,7 @@
  *
  * See [[http://tools.ietf.org/html/rfc2177]]
  */
-public class Convey.Imap.IdleCommand : Command {
+public class GriabuntuMail.Imap.IdleCommand : Command {
 
     public const string NAME = "IDLE";
 
@@ -21,13 +24,13 @@ public class Convey.Imap.IdleCommand : Command {
     public bool idle_started { get; private set; default = false; }
 
     private bool serialised = false;
-    private Convey.Nonblocking.Semaphore? exit_lock;
+    private GriabuntuMail.Nonblocking.Semaphore? exit_lock;
     private GLib.Cancellable? exit_cancellable = new GLib.Cancellable();
 
 
     public IdleCommand(GLib.Cancellable? should_send) {
         base(NAME, null, should_send);
-        this.exit_lock = new Convey.Nonblocking.Semaphore(this.exit_cancellable);
+        this.exit_lock = new GriabuntuMail.Nonblocking.Semaphore(this.exit_cancellable);
     }
 
     /** Causes the idle command to exit, if currently executing. **/

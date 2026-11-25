@@ -26,7 +26,7 @@
       </object>
     </child>
     <style>
-      <class name="convey-folder-popover-list-row"/>
+      <class name="griabuntu-mail-folder-popover-list-row"/>
     </style>
   </template>
 </interface>

@@ -1,10 +1,14 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/certificate-warning-dialog.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/certificate-warning-dialog.ui")]
 public class CertificateWarningDialog : Adw.AlertDialog {
 
     public enum Result {
@@ -21,9 +25,9 @@ public class CertificateWarningDialog : Adw.AlertDialog {
     [GtkChild] private unowned Gtk.Label dont_trust_label;
     [GtkChild] private unowned Gtk.Label contact_label;
 
-    public CertificateWarningDialog(Convey.AccountInformation account,
-                                    Convey.ServiceInformation service,
-                                    Convey.Endpoint endpoint,
+    public CertificateWarningDialog(GriabuntuMail.AccountInformation account,
+                                    GriabuntuMail.ServiceInformation service,
+                                    GriabuntuMail.Endpoint endpoint,
                                     bool is_validation) {
         this.title = _("Untrusted Connection: %s").printf(account.display_name);
 
@@ -45,14 +49,14 @@ public class CertificateWarningDialog : Adw.AlertDialog {
             // could be a new or existing account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Convey not to access this server.")
+                + _("Selecting “Don’t Trust This Server” will cause Griaß di Mail not to access this server.")
                 + "</b> "
-                + _("Convey will not add or update this email account.");
+                + _("Griaß di Mail will not add or update this email account.");
         } else {
             // a registered account
             this.dont_trust_label.label =
                 "<b>"
-                + _("Selecting “Don’t Trust This Server” will cause Convey to stop accessing this account.")
+                + _("Selecting “Don’t Trust This Server” will cause Griaß di Mail to stop accessing this account.")
                 + "</b> ";
         }
         this.dont_trust_label.use_markup = true;

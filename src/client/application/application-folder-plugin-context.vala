@@ -1,15 +1,18 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Implementation of the folder plugin extension context.
  */
 internal class Application.FolderPluginContext :
-    Convey.BaseObject, Plugin.FolderContext {
+    GriabuntuMail.BaseObject, Plugin.FolderContext {
 
 
     private unowned Client application;
@@ -37,7 +40,7 @@ internal class Application.FolderPluginContext :
     public void add_folder_info_bar(Plugin.Folder selected,
                                     Plugin.InfoBar info_bar,
                                     uint priority) {
-        Convey.Folder? folder = this.globals.folders.to_engine_folder(selected);
+        GriabuntuMail.Folder? folder = this.globals.folders.to_engine_folder(selected);
         if (folder != null) {
             foreach (MainWindow main in this.application.get_main_windows()) {
                 if (main.selected_folder == folder) {
@@ -72,7 +75,7 @@ internal class Application.FolderPluginContext :
         if (context != null) {
             try {
                 context.folder.set_used_as_custom(true);
-            } catch (Convey.EngineError err) {
+            } catch (GriabuntuMail.EngineError err) {
                 throw new Plugin.Error.NOT_SUPPORTED(
                     "Failed to register folder use: %s", err.message
                 );
@@ -88,7 +91,7 @@ internal class Application.FolderPluginContext :
         if (context != null) {
             try {
                 context.folder.set_used_as_custom(false);
-            } catch (Convey.EngineError err) {
+            } catch (GriabuntuMail.EngineError err) {
                 throw new Plugin.Error.NOT_SUPPORTED(
                     "Failed to unregister folder use: %s", err.message
                 );

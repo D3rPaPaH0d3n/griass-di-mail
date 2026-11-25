@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -15,7 +18,7 @@
  * thread pool, as well as allowing multiple connections to be opened
  * for fully concurrent access.
  */
-public class Convey.Db.Database : Context {
+public class GriabuntuMail.Db.Database : Context {
 
 
     /** The path passed to SQLite to open a transient database. */
@@ -110,7 +113,7 @@ public class Convey.Db.Database : Context {
         this.flags = flags;
 
         if (this.file != null && (flags & DatabaseFlags.CREATE_DIRECTORY) != 0) {
-            yield Convey.Files.make_directory_with_parents(this.file.get_parent());
+            yield GriabuntuMail.Files.make_directory_with_parents(this.file.get_parent());
         }
 
         if (threadsafe()) {
@@ -124,7 +127,7 @@ public class Convey.Db.Database : Context {
 
         if ((flags & DatabaseFlags.CHECK_CORRUPTION) != 0 &&
             this.file != null &&
-            yield Convey.Files.query_exists_async(this.file, cancellable)) {
+            yield GriabuntuMail.Files.query_exists_async(this.file, cancellable)) {
             yield Nonblocking.Concurrent.global.schedule_async(() => {
                     check_for_corruption(flags, cancellable);
                 }, cancellable);

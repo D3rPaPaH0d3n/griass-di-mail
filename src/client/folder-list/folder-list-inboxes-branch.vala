@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 // A special branch that sits before the accounts branches, containing only
 // the inboxes for all accounts.
 public class FolderList.InboxesBranch : Sidebar.Branch {
-    public Gee.HashMap<Convey.Account, InboxFolderEntry> folder_entries {
-        get; private set; default = new Gee.HashMap<Convey.Account, InboxFolderEntry>(); }
+    public Gee.HashMap<GriabuntuMail.Account, InboxFolderEntry> folder_entries {
+        get; private set; default = new Gee.HashMap<GriabuntuMail.Account, InboxFolderEntry>(); }
 
     public InboxesBranch() {
         base(
@@ -24,11 +27,11 @@ public class FolderList.InboxesBranch : Sidebar.Branch {
 
         InboxFolderEntry entry_a = (InboxFolderEntry) a;
         InboxFolderEntry entry_b = (InboxFolderEntry) b;
-        return Convey.AccountInformation.compare_ascending(entry_a.get_account_information(),
+        return GriabuntuMail.AccountInformation.compare_ascending(entry_a.get_account_information(),
             entry_b.get_account_information());
     }
 
-    public InboxFolderEntry? get_entry_for_account(Convey.Account account) {
+    public InboxFolderEntry? get_entry_for_account(GriabuntuMail.Account account) {
         return folder_entries.get(account);
     }
 
@@ -40,7 +43,7 @@ public class FolderList.InboxesBranch : Sidebar.Branch {
         inbox.folder.account.information.notify["ordinal"].connect(on_ordinal_changed);
     }
 
-    public void remove_inbox(Convey.Account account) {
+    public void remove_inbox(GriabuntuMail.Account account) {
         Sidebar.Entry? entry = folder_entries.get(account);
         if(entry == null) {
             debug("Could not remove inbox for %s", account.to_string());

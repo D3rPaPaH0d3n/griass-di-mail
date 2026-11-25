@@ -1,10 +1,13 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.Smtp.Request {
+public class GriabuntuMail.Smtp.Request {
     public Command cmd { get; private set; }
     public string[]? args { get; private set; }
 
@@ -35,7 +38,7 @@ public class Convey.Smtp.Request {
     }
 }
 
-public class Convey.Smtp.HeloRequest : Convey.Smtp.Request {
+public class GriabuntuMail.Smtp.HeloRequest : GriabuntuMail.Smtp.Request {
     public HeloRequest(string domain) {
         base (Command.HELO, { domain });
     }
@@ -45,7 +48,7 @@ public class Convey.Smtp.HeloRequest : Convey.Smtp.Request {
     }
 }
 
-public class Convey.Smtp.EhloRequest : Convey.Smtp.Request {
+public class GriabuntuMail.Smtp.EhloRequest : GriabuntuMail.Smtp.Request {
     public EhloRequest(string domain) {
         base (Command.EHLO, { domain });
     }
@@ -56,14 +59,14 @@ public class Convey.Smtp.EhloRequest : Convey.Smtp.Request {
     }
 }
 
-public class Convey.Smtp.MailRequest : Convey.Smtp.Request {
-    public MailRequest(Convey.RFC822.MailboxAddress reverse_path) {
+public class GriabuntuMail.Smtp.MailRequest : GriabuntuMail.Smtp.Request {
+    public MailRequest(GriabuntuMail.RFC822.MailboxAddress reverse_path) {
         base (Command.MAIL, { "from:<%s>".printf(reverse_path.to_rfc822_address()) });
     }
 }
 
-public class Convey.Smtp.RcptRequest : Convey.Smtp.Request {
-    public RcptRequest(Convey.RFC822.MailboxAddress to) {
+public class GriabuntuMail.Smtp.RcptRequest : GriabuntuMail.Smtp.Request {
+    public RcptRequest(GriabuntuMail.RFC822.MailboxAddress to) {
         base (Command.RCPT, { "to:<%s>".printf(to.to_rfc822_address()) });
     }
 }

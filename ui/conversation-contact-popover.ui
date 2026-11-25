@@ -186,7 +186,7 @@
             <child>
               <object class="GtkLabel" id="actual_email_label">
                 <style>
-                  <class name="convey-deceptive"/>
+                  <class name="griabuntu-mail-deceptive"/>
                 </style>
               </object>
             </child>
@@ -199,7 +199,7 @@
             <child>
               <object class="GtkLabel" id="forged_email_label">
                 <style>
-                  <class name="convey-deceptive"/>
+                  <class name="griabuntu-mail-deceptive"/>
                 </style>
               </object>
             </child>
@@ -215,7 +215,7 @@
     </child>
     <style>
       <class name="menu"/>
-      <class name="convey-contact-popover"/>
+      <class name="griabuntu-mail-contact-popover"/>
     </style>
   </template>
 </interface>

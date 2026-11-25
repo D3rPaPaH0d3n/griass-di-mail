@@ -1,18 +1,21 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * A search query implementation that provides full-text search.
  */
-internal class Convey.FtsSearchQuery : Convey.SearchQuery {
+internal class GriabuntuMail.FtsSearchQuery : GriabuntuMail.SearchQuery {
 
 
-    private const string EMAIL_TEXT_STEMMED_TERMS = "convey-stemmed-terms";
+    private const string EMAIL_TEXT_STEMMED_TERMS = "griabuntu-mail-stemmed-terms";
 
 
     internal bool has_stemmed_terms { get; private set; default = false; }
@@ -148,7 +151,7 @@ internal class Convey.FtsSearchQuery : Convey.SearchQuery {
     ) throws GLib.Error {
         var sql = new GLib.StringBuilder();
         sql.append("""
-            SELECT mst.rowid, convey_matches(MessageSearchTable)
+            SELECT mst.rowid, griabuntu_mail_matches(MessageSearchTable)
             FROM MessageSearchTable as mst
             WHERE rowid IN (
         """);
@@ -350,7 +353,7 @@ internal class Convey.FtsSearchQuery : Convey.SearchQuery {
 
     private int sql_bind_term_conditions(Db.Statement sql,
                                          int index)
-        throws Convey.DatabaseError {
+        throws GriabuntuMail.DatabaseError {
         int next_index = index;
         // Per sql_add_term_conditions, add all non-negated terms
         // first before adding any negated terms.
@@ -370,7 +373,7 @@ internal class Convey.FtsSearchQuery : Convey.SearchQuery {
     private inline int sql_bind_term_condition(Db.Statement sql,
                                                SearchQuery.Term term,
                                                int index)
-        throws Convey.DatabaseError {
+        throws GriabuntuMail.DatabaseError {
         int next_index = index;
         var type = term.get_type();
         if (type == typeof(SearchQuery.EmailTextTerm)) {

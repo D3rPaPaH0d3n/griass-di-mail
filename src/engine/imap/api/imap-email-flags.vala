@@ -1,10 +1,13 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-public class Convey.Imap.EmailFlags : Convey.EmailFlags {
+public class GriabuntuMail.Imap.EmailFlags : GriabuntuMail.EmailFlags {
     public MessageFlags message_flags { get; private set; }
 
     public EmailFlags(MessageFlags flags) {
@@ -27,18 +30,18 @@ public class Convey.Imap.EmailFlags : Convey.EmailFlags {
     }
 
     /**
-     * Converts a generic {@link Convey.EmailFlags} to IMAP's internal representation of them.
+     * Converts a generic {@link GriabuntuMail.EmailFlags} to IMAP's internal representation of them.
      *
-     * If the Convey.EmailFlags cannot be cast to IMAP's version, they're created.
+     * If the GriabuntuMail.EmailFlags cannot be cast to IMAP's version, they're created.
      */
-    public static Imap.EmailFlags from_api_email_flags(Convey.EmailFlags api_flags) {
+    public static Imap.EmailFlags from_api_email_flags(GriabuntuMail.EmailFlags api_flags) {
         Imap.EmailFlags? imap_flags = api_flags as Imap.EmailFlags;
         if (imap_flags != null)
             return imap_flags;
 
         Gee.List<MessageFlag> msg_flags_add;
         Gee.List<MessageFlag> msg_flags_remove;
-        Convey.Imap.MessageFlag.from_email_flags(api_flags, null, out msg_flags_add,
+        GriabuntuMail.Imap.MessageFlag.from_email_flags(api_flags, null, out msg_flags_add,
             out msg_flags_remove);
 
         Gee.ArrayList<MessageFlag> msg_flags = new Gee.ArrayList<MessageFlag>();

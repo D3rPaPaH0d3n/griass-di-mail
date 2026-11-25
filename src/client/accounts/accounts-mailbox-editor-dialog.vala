@@ -1,15 +1,18 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * A simple dialog that allows adding/editing Mailboxes (e.g. when configuring
  * sender addresses).
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-mailbox-editor-dialog.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts-mailbox-editor-dialog.ui")]
 internal class Accounts.MailboxEditorDialog : Adw.Dialog {
 
 
@@ -22,6 +25,16 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
     private Composer.Editor signature_editor;
 
     private bool changed = false;
+    private bool applying = false;
+    private GriabuntuMail.AccountInformation? account = null;
+    private GriabuntuMail.RFC822.MailboxAddress? original = null;
+
+    public void set_account(GriabuntuMail.AccountInformation account,
+                            GriabuntuMail.RFC822.MailboxAddress? original = null) {
+        this.account = account;
+        this.original = original;
+        update_apply();
+    }
 
 
     /** The display name for the address */
@@ -32,7 +45,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
 
 
     /** Fired if the user pressed "Add"/"Apply" with the new details */
-    public signal void apply(Convey.RFC822.MailboxAddress mailbox,
+    public signal void apply(GriabuntuMail.RFC822.MailboxAddress mailbox,
                              string signature);
 
     /** Fired if the user requested to remove the address */
@@ -53,8 +66,9 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
         this.address_validator =
             new Components.EmailValidator(this.address_row);
         this.address_validator.changed.connect((validator) => {
-            action_set_enabled("add", this.changed && input_is_valid());
+            update_apply();
         });
+        update_apply();
     }
 
 
@@ -77,7 +91,7 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
         action_set_enabled("remove", false);
     }
 
-    public MailboxEditorDialog.for_existing(Convey.RFC822.MailboxAddress mailbox,
+    public MailboxEditorDialog.for_existing(GriabuntuMail.RFC822.MailboxAddress mailbox,
                                             bool can_remove,
                                             Composer.Editor signature_editor) {
         Object(
@@ -92,6 +106,10 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
     private void add_signature_editor(Composer.Editor signature_editor) {
         this.signature_editor = signature_editor;
         this.signature_group.add(this.signature_editor);
+        this.signature_editor.body.document_modified.connect(() => {
+            this.changed = true;
+            update_apply();
+        });
     }
 
     [GtkCallback]
@@ -101,35 +119,48 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
             this.display_name = new_name;
             this.changed = true;
         }
+        update_apply();
     }
 
     [GtkCallback]
     private void on_address_changed(Gtk.Editable editable) {
-        this.address = this.address_row.text.strip();
         var new_address = this.address_row.text.strip();
         if (new_address != this.address) {
             this.address = new_address;
             this.changed = true;
         }
+        update_apply();
     }
 
     [GtkCallback]
     private void on_entry_activate() {
-        activate_action("add", null);
+        activate_action("apply", null);
     }
 
     private bool input_is_valid() {
-        return this.address_validator.state == Components.Validator.Validity.INDETERMINATE
-            || this.address_validator.is_valid;
+        if (!GriabuntuMail.RFC822.MailboxAddress.is_valid_address(this.address)) {
+            return false;
+        }
+        var mailbox = new GriabuntuMail.RFC822.MailboxAddress(null, this.address);
+        return this.account == null || !this.account.has_sender_mailbox(mailbox) ||
+            (this.original != null && this.original.equal_to(mailbox));
+    }
+
+    private void update_apply() {
+        bool enabled = this.changed && !this.applying && input_is_valid();
+        action_set_enabled("apply", enabled);
+        this.apply_button.sensitive = enabled;
     }
 
     private void action_apply(string action_name, Variant? param) {
-        if (!input_is_valid()) {
+        if (this.applying || !input_is_valid()) {
             debug("Tried to add mailbox, but email was invalid");
             return;
         }
 
-        var mailbox = new Convey.RFC822.MailboxAddress(
+        this.applying = true;
+        update_apply();
+        var mailbox = new GriabuntuMail.RFC822.MailboxAddress(
             this.display_name, this.address
         );
         this.signature_editor.body.get_body_html.begin((obj, res) => {
@@ -139,6 +170,8 @@ internal class Accounts.MailboxEditorDialog : Adw.Dialog {
             } catch (GLib.Error err) {
                 debug("Error getting signature: %s", err.message);
             }
+            this.applying = false;
+            update_apply();
             apply(mailbox, signature);
         });
     }

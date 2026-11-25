@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 public class SearchBar : Adw.Bin {
@@ -26,8 +29,8 @@ public class SearchBar : Adw.Bin {
     }
 
     private Components.EntryUndo search_undo;
-    private Convey.Account? current_account = null;
-    private Convey.Engine engine;
+    private GriabuntuMail.Account? current_account = null;
+    private GriabuntuMail.Engine engine;
 
     public bool all_accounts {
         get { return this._all_accounts; }
@@ -41,7 +44,7 @@ public class SearchBar : Adw.Bin {
     public signal void search_text_changed(string search_text);
 
 
-    public SearchBar(Convey.Engine engine) {
+    public SearchBar(GriabuntuMail.Engine engine) {
         var bar = new Gtk.SearchBar();
         this.search_bar = bar;
         this.child = bar;
@@ -83,7 +86,7 @@ public class SearchBar : Adw.Bin {
         return this.entry.grab_focus();
     }
 
-    public void set_account(Convey.Account? account) {
+    public void set_account(GriabuntuMail.Account? account) {
         if (current_account != null) {
             current_account.information.changed.disconnect(
                 on_information_changed

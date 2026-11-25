@@ -1,4 +1,9 @@
-/* Licensed under LGPL-2.1-or-later. See COPYING. */
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
+/* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
+/* Licensed under GPL-3.0-only. See COPYING. */
 
 /** Native SNI/DBusMenu integration; no GTK3 dependency or helper process. */
 internal class Application.StatusIcon : GLib.Object {
@@ -12,12 +17,16 @@ internal class Application.StatusIcon : GLib.Object {
     private uint watch_id = 0;
     private ulong menu_selected_id = 0;
     private ulong mail_selected_id = 0;
+    private FolderList.AllInboxesEntry? inboxes;
+    private ulong inbox_changed_id = 0;
     private ulong model_changed_id = 0;
     private Gee.Map<string,GLib.Cancellable> requests = new Gee.HashMap<string,GLib.Cancellable>();
     private GLib.Cancellable cancellable = new GLib.Cancellable();
 
-    internal StatusIcon(GLib.DBusConnection connection, string bus_name)
+    internal StatusIcon(GLib.DBusConnection connection, string bus_name,
+                        TrayMailModel? shared_model = null, FolderList.AllInboxesEntry? inboxes = null)
         throws GLib.Error {
+        if (shared_model != null) this.new_mail = shared_model;
         this.connection = connection;
         this.bus_name = bus_name;
         try {
@@ -34,6 +43,12 @@ internal class Application.StatusIcon : GLib.Object {
                 (target) => this.item.email_requested(target)
             );
             this.model_changed_id = this.new_mail.changed.connect(refresh_new_mail);
+            this.inboxes = inboxes;
+            if (inboxes != null) {
+                this.inbox_changed_id = inboxes.entry_changed.connect(refresh_badge);
+                refresh_badge();
+            }
+            refresh_new_mail();
             this.watch_id = GLib.Bus.watch_name_on_connection(
                 connection, "org.kde.StatusNotifierWatcher", NONE,
                 on_watcher_appeared, null
@@ -45,6 +60,10 @@ internal class Application.StatusIcon : GLib.Object {
     }
 
     internal void close() {
+        if (this.inbox_changed_id != 0) {
+            SignalHandler.disconnect(this.inboxes, this.inbox_changed_id);
+            this.inbox_changed_id = 0;
+        }
         this.cancellable.cancel();
         foreach (var request in this.requests.values) request.cancel();
         this.requests.clear();
@@ -74,48 +93,75 @@ internal class Application.StatusIcon : GLib.Object {
         }
     }
 
+    private void refresh_badge() {
+        this.item.set_inbox_count(this.inboxes.get_count());
+    }
+
     private void refresh_new_mail() {
         this.item.set_new_mail_count(this.new_mail.total);
         this.menu.set_new_mail(this.new_mail.total, this.new_mail.latest());
     }
 
-    internal async void update_new_mail(string key, Convey.Folder folder,
-        Gee.Map<Convey.EmailIdentifier,GLib.Variant> targets) {
+    internal async void update_new_mail(string key, GriabuntuMail.Folder folder,
+        Gee.Map<GriabuntuMail.EmailIdentifier,GLib.Variant> targets) {
         var old = this.requests.get(key);
         if (old != null) old.cancel();
         this.requests.unset(key);
         if (this.cancellable.is_cancelled()) return;
         uint64 generation = this.new_mail.set_folder(key, targets.values.to_array());
         if (targets.is_empty) return;
-        var ids = new Gee.ArrayList<Convey.EmailIdentifier>();
+        var ids = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
         ids.add_all(targets.keys);
         ids.sort((a, b) => b.natural_sort_comparator(a));
         while (ids.size > 5) ids.remove_at(ids.size - 1);
         var request = new GLib.Cancellable();
         this.requests.set(key, request);
+        const GriabuntuMail.Email.Field fields = GriabuntuMail.Email.Field.ORIGINATORS |
+            GriabuntuMail.Email.Field.SUBJECT | GriabuntuMail.Email.Field.PROPERTIES;
+        var timeout = new GLib.TimeoutSource.seconds(15);
+        timeout.set_callback(() => { request.cancel(); return GLib.Source.REMOVE; });
+        timeout.attach(GLib.MainContext.get_thread_default());
         try {
-            // Metadata only, at most five locally cached messages/folder.
-            var emails = yield folder.list_email_by_sparse_id_async(
-                ids, Convey.Email.Field.ORIGINATORS | Convey.Email.Field.SUBJECT |
-                Convey.Email.Field.PROPERTIES, LOCAL_ONLY, request
-            );
-            if (!request.is_cancelled() && emails != null) {
+            // IMAP LOCAL_ONLY omits rows missing even one requested field.
+            // Publish cache hits immediately, then hydrate only the misses once.
+            var missing = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
+            missing.add_all(ids);
+            for (int pass = 0; pass < 2 && !missing.is_empty && !request.is_cancelled(); pass++) {
+                var batch = new Gee.ArrayList<GriabuntuMail.EmailIdentifier>();
+                batch.add_all(missing);
+                var emails = yield folder.list_email_by_sparse_id_async(
+                    batch, fields, pass == 0 ? GriabuntuMail.Folder.ListFlags.LOCAL_ONLY :
+                    GriabuntuMail.Folder.ListFlags.NONE, request
+                );
+                if (emails == null || request.is_cancelled()) continue;
                 foreach (var email in emails) {
-                    var target = targets.get(email.id);
-                    if (target == null) continue;
-                    var sender = Util.Email.get_summary_contact_mailbox(email, false);
-                    this.new_mail.set_details(key, generation, target,
-                        sender != null ? sender.to_full_display() : "",
-                        Util.Email.strip_subject_prefixes(email),
-                        email.properties != null
-                            ? email.properties.date_received.to_unix() * 1000000 : 0
-                    );
+                    if (missing.remove(email.id))
+                        apply_metadata(key, generation, targets.get(email.id), email);
                 }
             }
-        } catch (GLib.Error error) {
-            if (!request.is_cancelled()) debug("Tray metadata not cached: %s", error.message);
-        }
+        } catch (GriabuntuMail.EngineError.OPEN_REQUIRED closed) {
+            // Monitoring a folder does not hold it open. Never open one just
+            // for the tray; IMAP can still read the account's local database.
+            foreach (var id in ids) {
+                if (request.is_cancelled()) break;
+                try {
+                    var email = yield folder.account.local_fetch_email_async(id, fields, request);
+                    if (!request.is_cancelled()) apply_metadata(key, generation, targets.get(id), email);
+                } catch (GLib.Error unavailable) { /* Leave this entry unchanged. */ }
+            }
+        } catch (GLib.Error unavailable) { /* Offline: retain cached labels and count. */ }
+        timeout.destroy();
         if (this.requests.get(key) == request) this.requests.unset(key);
+    }
+
+    private void apply_metadata(string key, uint64 generation, GLib.Variant? target,
+                                GriabuntuMail.Email email) {
+        if (target == null) return;
+        var sender = Util.Email.get_summary_contact_mailbox(email, false);
+        this.new_mail.set_details(key, generation, target,
+            sender != null ? sender.to_full_display() : "",
+            Util.Email.strip_subject_prefixes(email), email.properties != null
+                ? email.properties.date_received.to_unix() * 1000000 : 0);
     }
 
     private void on_watcher_appeared(GLib.DBusConnection connection,
@@ -152,11 +198,13 @@ internal class Application.TrayItem : GLib.Object {
     public string category { owned get { return "Communications"; } }
     public string id { owned get { return Config.APP_ID; } }
     public string title { owned get {
-        return this.new_mail_count > 0 ? "Convey — " + count_description() : "Convey";
+        return "Griaß di Mail";
     } }
     public string status { owned get { return "Active"; } }
     public int window_id { get { return 0; } }
-    public string icon_name { owned get { return Config.APP_ID + "-tray"; } }
+    public string icon_name { owned get {
+        return Config.APP_ID + (this.new_mail_count > 0 ? "-open" : "-tray");
+    } }
     public string icon_theme_path { owned get { return ""; } }
     public TrayPixmap[] icon_pixmap { owned get { return {}; } }
     public string overlay_icon_name { owned get { return ""; } }
@@ -167,33 +215,38 @@ internal class Application.TrayItem : GLib.Object {
     public bool item_is_menu { get { return false; } }
     public GLib.ObjectPath menu { owned get { return new GLib.ObjectPath("/StatusNotifierItem/Menu"); } }
     public TrayTooltip tool_tip { owned get {
-        return { this.icon_name, {}, "Convey", count_description() };
+        return { this.icon_name, {}, "Griaß di Mail", _("All Inboxes") + ": " + this.inbox_count.to_string() };
     } }
     public string x_ayatana_label { owned get {
-        return this.new_mail_count > 999 ? "999+"
-            : this.new_mail_count > 0 ? this.new_mail_count.to_string() : "";
+        return this.inbox_count > 0 ? this.inbox_count.to_string() : "";
     } }
-    public string x_ayatana_label_guide { owned get { return "999+"; } }
+    public string x_ayatana_label_guide { owned get { return ""; } }
     public signal void x_ayatana_new_label(string label, string guide);
+    private int inbox_count = 0;
+
+    internal void set_inbox_count(int count) {
+        count = int.max(0, count);
+        if (count == this.inbox_count) return;
+        this.inbox_count = count;
+        notify_property("x-ayatana-label");
+        notify_property("tool-tip");
+        new_tool_tip();
+        x_ayatana_new_label(this.x_ayatana_label, this.x_ayatana_label_guide);
+    }
     public signal void new_title();
     public signal void new_tool_tip();
+    public signal void new_icon();
     private int new_mail_count = 0;
 
     internal void set_new_mail_count(int count) {
         count = int.max(0, count);
-        if (count == this.new_mail_count) return;
+        bool icon_changed = (count > 0) != (this.new_mail_count > 0);
         this.new_mail_count = count;
-        notify_property("title");
-        notify_property("tool-tip");
-        notify_property("x-ayatana-label");
-        new_title();
-        new_tool_tip();
-        x_ayatana_new_label(this.x_ayatana_label, this.x_ayatana_label_guide);
-    }
-    private string count_description() {
-        return this.new_mail_count > 0
-            ? ngettext("%u new message", "%u new messages", this.new_mail_count).printf(this.new_mail_count)
-            : _("No new mail");
+        if (icon_changed) {
+            notify_property("icon-name");
+            notify_property("attention-icon-name");
+            new_icon();
+        }
     }
 
     private string activation_token = "";
@@ -238,6 +291,10 @@ internal struct Application.TrayMenuProperties {
     public int id;
     public GLib.HashTable<string,GLib.Variant> properties;
 }
+internal struct Application.TrayRemovedProperties {
+    public int id;
+    public string[] names;
+}
 internal struct Application.TrayMenuEvent {
     public int id;
     public string event_id;
@@ -255,6 +312,9 @@ internal class Application.TrayMenu : GLib.Object {
     internal signal void selected(int id);
     internal signal void mail_selected(GLib.Variant target);
     public signal void layout_updated(uint revision, int parent);
+    public signal void items_properties_updated(TrayMenuProperties[] updated,
+                                                TrayRemovedProperties[] removed);
+    private Gee.Map<int,string> published_labels = new Gee.HashMap<int,string>();
     private uint current_revision = 1;
     private int new_mail_count = 0;
     private string fingerprint = "";
@@ -268,7 +328,19 @@ internal class Application.TrayMenu : GLib.Object {
         this.new_mail_count = count;
         this.messages = messages;
         this.current_revision++;
+        TrayMenuProperties[] updated = {};
+        var labels = new Gee.HashMap<int,string>();
+        foreach (var entry in messages) {
+            labels.set(entry.menu_id, entry.label);
+            if (this.published_labels.has_key(entry.menu_id) &&
+                this.published_labels.get(entry.menu_id) != entry.label) {
+                TrayMenuProperties item = {entry.menu_id, properties_for(entry.menu_id, {"label"})};
+                updated += item;
+            }
+        }
+        this.published_labels = labels;
         layout_updated(this.current_revision, 0);
+        if (updated.length > 0) items_properties_updated(updated, {});
     }
 
     private TrayMailEntry? find_message(int id) {
@@ -313,7 +385,7 @@ internal class Application.TrayMenu : GLib.Object {
             all.insert("label", new GLib.Variant.string(label.replace("_", "__")));
             all.insert("icon-name", new GLib.Variant.string("mail-unread-symbolic"));
         } else {
-            string label = id == 1 ? _("Open Convey")
+            string label = id == 1 ? _("Open Griaß di Mail")
                 : id == 2 ? _("New Message") : _("_Quit");
             all.insert("label", new GLib.Variant.string(label));
             all.insert("icon-name", new GLib.Variant.string(id == 1

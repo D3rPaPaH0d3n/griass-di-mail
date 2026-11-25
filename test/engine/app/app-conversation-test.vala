@@ -1,11 +1,15 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — synthetic conversation-summary deletion/undo regression case. */
 /*
  * Copyright 2017-2018 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.App.ConversationTest : TestCase {
+class GriabuntuMail.App.ConversationTest : TestCase {
 
 
     Conversation? test = null;
@@ -14,7 +18,7 @@ class Convey.App.ConversationTest : TestCase {
 
 
     public ConversationTest() {
-        base("Convey.App.ConversationTest");
+        base("GriabuntuMail.App.ConversationTest");
         add_test("add_basic", add_basic);
         add_test("add_duplicate", add_duplicate);
         add_test("add_multipath", add_multipath);
@@ -47,8 +51,8 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void add_basic() throws Error {
-        Convey.Email e1 = setup_email(1);
-        Convey.Email e2 = setup_email(2);
+        GriabuntuMail.Email e1 = setup_email(1);
+        GriabuntuMail.Email e2 = setup_email(2);
         uint appended = 0;
         this.test.appended.connect(() => {
                 appended++;
@@ -68,7 +72,7 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void add_duplicate() throws Error {
-        Convey.Email e1 = setup_email(1);
+        GriabuntuMail.Email e1 = setup_email(1);
         uint appended = 0;
         this.test.appended.connect(() => {
                 appended++;
@@ -84,10 +88,10 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void add_multipath() throws Error {
-        Convey.Email e1 = setup_email(1);
+        GriabuntuMail.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
-        Convey.Email e2 = setup_email(2);
+        GriabuntuMail.Email e2 = setup_email(2);
         this.test.add(e2, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
@@ -107,10 +111,10 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void remove_basic() throws Error {
-        Convey.Email e1 = setup_email(1);
+        GriabuntuMail.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
-        Convey.Email e2 = setup_email(2);
+        GriabuntuMail.Email e2 = setup_email(2);
         this.test.add(e2, singleton(this.base_folder.path));
 
         uint trimmed = 0;
@@ -134,8 +138,8 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void remove_nonexistent() throws Error {
-        Convey.Email e1 = setup_email(1);
-        Convey.Email e2 = setup_email(2);
+        GriabuntuMail.Email e1 = setup_email(1);
+        GriabuntuMail.Email e2 = setup_email(2);
 
         uint trimmed = 0;
         this.test.trimmed.connect(() => {
@@ -154,11 +158,11 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void get_emails() throws GLib.Error {
-        Convey.Email e1 = setup_email(1);
+        GriabuntuMail.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
-        Convey.Email e2 = setup_email(2);
+        GriabuntuMail.Email e2 = setup_email(2);
         this.test.add(e2, singleton(other_path));
 
         assert_collection(
@@ -167,11 +171,11 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void get_emails_by_location() throws GLib.Error {
-        Convey.Email e1 = setup_email(1);
+        GriabuntuMail.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
-        Convey.Email e2 = setup_email(2);
+        GriabuntuMail.Email e2 = setup_email(2);
         this.test.add(e2, singleton(other_path));
 
         assert_collection(
@@ -186,11 +190,11 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void get_emails_blacklist() throws GLib.Error {
-        Convey.Email e1 = setup_email(1);
+        GriabuntuMail.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         FolderPath other_path = this.folder_root.get_child("other");
-        Convey.Email e2 = setup_email(2);
+        GriabuntuMail.Email e2 = setup_email(2);
         this.test.add(e2, singleton(other_path));
 
         Gee.Collection<FolderPath> blacklist = new Gee.ArrayList<FolderPath>();
@@ -210,8 +214,8 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void get_emails_marked_for_deletion() throws GLib.Error {
-        Convey.Email e1 = setup_email(1);
-        e1.set_flags(new Convey.EmailFlags.with(Convey.EmailFlags.DELETED));
+        GriabuntuMail.Email e1 = setup_email(1);
+        e1.set_flags(new GriabuntuMail.EmailFlags.with(GriabuntuMail.EmailFlags.DELETED));
         this.test.add(e1, singleton(this.base_folder.path));
 
         assert_collection(
@@ -259,7 +263,7 @@ class Convey.App.ConversationTest : TestCase {
     }
 
     public void count_email_in_folder() throws GLib.Error {
-        Convey.Email e1 = setup_email(1);
+        GriabuntuMail.Email e1 = setup_email(1);
         this.test.add(e1, singleton(this.base_folder.path));
 
         assert_equal<uint?>(
@@ -284,7 +288,7 @@ class Convey.App.ConversationTest : TestCase {
     private Email setup_email(int id) {
         Email email = new Email(new Mock.EmailIdentifer(id));
         DateTime now = new DateTime.now_local();
-        Convey.RFC822.MessageID mid = new Convey.RFC822.MessageID(
+        GriabuntuMail.RFC822.MessageID mid = new GriabuntuMail.RFC822.MessageID(
             "test%d@localhost".printf(id)
         );
         email.set_full_references(mid, null, null);

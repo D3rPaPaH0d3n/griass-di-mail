@@ -1,11 +1,17 @@
-/* Licensed under LGPL-2.1-or-later. See COPYING. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
+/* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
+/* Licensed under GPL-3.0-only. See COPYING. */
 
 /** Account-qualified, in-memory new-mail state. No account or network IO. */
 internal class Application.TrayMailEntry : GLib.Object {
     internal int menu_id;
     internal GLib.Variant target;
     internal string label = _("New message");
-    internal int64 received = GLib.get_real_time();
+    // Unknown until cached metadata arrives. A placeholder must not outrank
+    // dated messages merely because its menu entry was constructed later.
+    internal int64 received = 0;
     internal uint64 sequence;
 
     internal TrayMailEntry(int menu_id, GLib.Variant target, uint64 sequence) {
@@ -59,8 +65,8 @@ internal class Application.TrayMailModel : GLib.Object {
         var entry = this.entries.get(key);
         if (state == null || state.generation != expected_generation ||
             !state.ids.contains(key) || entry == null) return false;
-        string clean_sender = Convey.String.reduce_whitespace(sender);
-        string clean_subject = Convey.String.reduce_whitespace(subject);
+        string clean_sender = GriabuntuMail.String.reduce_whitespace(sender);
+        string clean_subject = GriabuntuMail.String.reduce_whitespace(subject);
         string label = clean_sender != ""
             ? "%s — %s".printf(clean_sender, clean_subject) : clean_subject;
         if (entry.label != label || (received > 0 && entry.received != received)) {

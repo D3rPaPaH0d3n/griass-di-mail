@@ -1,15 +1,18 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
- * A {@link Convey.Revokable} for moving email back to its source after committed with
+ * A {@link GriabuntuMail.Revokable} for moving email back to its source after committed with
  * {@link RevokableMove}.
  */
 
-private class Convey.ImapEngine.RevokableCommittedMove : Revokable {
+private class GriabuntuMail.ImapEngine.RevokableCommittedMove : Revokable {
     private GenericAccount account;
     private FolderPath source;
     private FolderPath destination;
@@ -40,7 +43,7 @@ private class Convey.ImapEngine.RevokableCommittedMove : Revokable {
 
             notify_revoked();
 
-            Convey.Folder target = this.account.get_folder(this.destination);
+            GriabuntuMail.Folder target = this.account.get_folder(this.destination);
             this.account.update_folder(target);
         } finally {
             if (session != null) {

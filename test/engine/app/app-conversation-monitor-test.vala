@@ -1,12 +1,15 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
-class Convey.App.ConversationMonitorTest : TestCase {
+class GriabuntuMail.App.ConversationMonitorTest : TestCase {
 
 
     AccountInformation? account_info = null;
@@ -17,7 +20,7 @@ class Convey.App.ConversationMonitorTest : TestCase {
 
 
     public ConversationMonitorTest() {
-        base("Convey.App.ConversationMonitorTest");
+        base("GriabuntuMail.App.ConversationMonitorTest");
         add_test("start_stop_monitoring", start_stop_monitoring);
         add_test("open_error", open_error);
         add_test("close_during_open_error", close_during_open_error);
@@ -427,13 +430,13 @@ class Convey.App.ConversationMonitorTest : TestCase {
     private Email setup_email(int id, Email? references = null) {
         Email email = new Email(new Mock.EmailIdentifer(id));
         DateTime now = new DateTime.now_local();
-        Convey.RFC822.MessageID mid = new Convey.RFC822.MessageID(
+        GriabuntuMail.RFC822.MessageID mid = new GriabuntuMail.RFC822.MessageID(
             "test%d@localhost".printf(id)
         );
 
-        Convey.RFC822.MessageIDList refs_list = null;
+        GriabuntuMail.RFC822.MessageIDList refs_list = null;
         if (references != null) {
-            refs_list = new Convey.RFC822.MessageIDList.single(
+            refs_list = new GriabuntuMail.RFC822.MessageIDList.single(
                 references.message_id
             );
         }

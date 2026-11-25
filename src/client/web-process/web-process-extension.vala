@@ -1,52 +1,55 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016-2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
- * Initialises ConveyWebExtension for WebKit web processes.
+ * Initialises GriabuntuMailWebExtension for WebKit web processes.
  */
 public void webkit_web_process_extension_initialize_with_user_data(WebKit.WebProcessExtension extension,
                                                                    Variant data) {
     bool logging_enabled = data.get_boolean();
 
-    Convey.Logging.init();
+    GriabuntuMail.Logging.init();
     if (logging_enabled) {
-        GLib.Log.set_writer_func(Convey.Logging.default_log_writer);
-        Convey.Logging.log_to(GLib.stdout);
+        GLib.Log.set_writer_func(GriabuntuMail.Logging.default_log_writer);
+        GriabuntuMail.Logging.log_to(GLib.stdout);
     }
 
     debug("Initialising...");
 
     // Ref it so it doesn't get free'ed right away
-    ConveyWebExtension instance = new ConveyWebExtension(extension);
+    GriabuntuMailWebExtension instance = new GriabuntuMailWebExtension(extension);
     instance.ref();
 }
 
 /**
- * A WebProcessExtension that manages Convey-specific behaviours in web processes.
+ * A WebProcessExtension that manages Griabuntu Mail-specific behaviours in web processes.
  */
-public class ConveyWebExtension : Object {
+public class GriabuntuMailWebExtension : Object {
 
-    private const string PAGE_STATE_OBJECT_NAME = "convey";
+    private const string PAGE_STATE_OBJECT_NAME = "griabuntu_mail";
 
     // Keep these in sync with Components.WebView
     private const string MESSAGE_EXCEPTION = "__exception__";
     private const string MESSAGE_ENABLE_REMOTE_LOAD = "__enable_remote_load__";
     private const string MESSAGE_RETURN_VALUE = "__return__";
 
-    private const string[] ALLOWED_SCHEMES = { "cid", "convey", "data", "blob" };
+    private const string[] ALLOWED_SCHEMES = { "cid", "griabuntu-mail", "data", "blob" };
 
-    private const string EXTENSION_CLASS_VAR = "_ConveyWebExtension";
+    private const string EXTENSION_CLASS_VAR = "_GriabuntuMailWebExtension";
     private const string EXTENSION_CLASS_SEND = "send";
     private const string EXTENSION_CLASS_ALLOW_REMOTE_LOAD = "allowRemoteResourceLoad";
 
     private WebKit.WebProcessExtension extension;
 
 
-    public ConveyWebExtension(WebKit.WebProcessExtension extension) {
+    public GriabuntuMailWebExtension(WebKit.WebProcessExtension extension) {
         this.extension = extension;
         extension.page_created.connect(on_page_created);
         WebKit.ScriptWorld.get_default().window_object_cleared.connect(on_window_object_cleared);

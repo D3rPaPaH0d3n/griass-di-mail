@@ -1,17 +1,20 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.ListEmailByID : Convey.ImapEngine.AbstractListEmail {
+private class GriabuntuMail.ImapEngine.ListEmailByID : GriabuntuMail.ImapEngine.AbstractListEmail {
     private ImapDB.EmailIdentifier? initial_id;
     private int count;
     private int fulfilled_count = 0;
     private Imap.UID? initial_uid = null;
 
     public ListEmailByID(MinimalFolder owner, ImapDB.EmailIdentifier? initial_id, int count,
-        Convey.Email.Field required_fields, Folder.ListFlags flags, Cancellable? cancellable) {
+        GriabuntuMail.Email.Field required_fields, Folder.ListFlags flags, Cancellable? cancellable) {
         base ("ListEmailByID", owner, required_fields, flags, cancellable);
 
         this.initial_id = initial_id;
@@ -42,7 +45,7 @@ private class Convey.ImapEngine.ListEmailByID : Convey.ImapEngine.AbstractListEm
             ImapDB.Folder.ListFlags.from_folder_flags(flags) |
             ImapDB.Folder.ListFlags.PARTIAL_OK
         );
-        Gee.List<Convey.Email>? list =
+        Gee.List<GriabuntuMail.Email>? list =
             yield owner.local_folder.list_email_by_id_async(
                 initial_id,
                 count,
@@ -52,9 +55,9 @@ private class Convey.ImapEngine.ListEmailByID : Convey.ImapEngine.AbstractListEm
             );
 
         // Break out unfulfilled email from fulfilled ones
-        Gee.ArrayList<Convey.Email> fulfilled = new Gee.ArrayList<Convey.Email>();
+        Gee.ArrayList<GriabuntuMail.Email> fulfilled = new Gee.ArrayList<GriabuntuMail.Email>();
         if (list != null) {
-            foreach (Convey.Email email in list) {
+            foreach (GriabuntuMail.Email email in list) {
                 if (email.fields.fulfills(required_fields)) {
                     fulfilled.add(email);
                 } else {

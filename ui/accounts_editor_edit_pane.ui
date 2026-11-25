@@ -3,7 +3,7 @@
   <template class="AccountsEditorEditPane" parent="AccountsEditorPane">
     <property name="title" translatable="yes">Edit Account</property>
     <style>
-      <class name="convey-accounts-editor-pane"/>
+      <class name="griabuntu-mail-accounts-editor-pane"/>
     </style>
 
     <property name="child">
@@ -33,11 +33,37 @@
                     <property name="title" translatable="yes">Account Name</property>
                   </object>
                 </child>
+                <child>
+                  <object class="AdwActionRow" id="account_color_row">
+                    <property name="title" translatable="yes">Account Color</property>
+                    <property name="subtitle" translatable="yes">Optional marker in folders and the message list</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
               <object class="AdwPreferencesGroup">
                 <property name="title" translatable="yes">Email Addresses</property>
+                <property name="description" translatable="yes">These addresses appear in recipient badges and the sender selection. You can add missing aliases and choose a color for each address.</property>
+                <child>
+                  <object class="AdwActionRow" id="sender_discovery_row">
+                    <property name="visible">False</property>
+                    <property name="title" translatable="yes">Automatic Alias Import</property>
+                    <child type="suffix">
+                      <object class="GtkSpinner" id="sender_discovery_spinner">
+                        <property name="visible">False</property>
+                        <property name="valign">center</property>
+                      </object>
+                    </child>
+                    <child type="suffix">
+                      <object class="GtkButton" id="sender_discovery_button">
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Check Again</property>
+                        <signal name="clicked" handler="on_sender_discovery_clicked"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
                 <child>
                   <object class="GtkListBox" id="senders_list">
                     <property name="selection_mode">none</property>
@@ -69,7 +95,7 @@
               <object class="AdwPreferencesGroup" id="signature_bin">
                 <property name="title" translatable="yes">Signature</property>
                 <style>
-                  <class name="convey-settings"/>
+                  <class name="griabuntu-mail-settings"/>
                 </style>
               </object>
             </child>
@@ -99,7 +125,7 @@
                   </object>
                 </child>
                 <style>
-                  <class name="convey-settings"/>
+                  <class name="griabuntu-mail-settings"/>
                 </style>
               </object>
             </child>
@@ -107,7 +133,7 @@
               <object class="AdwPreferencesGroup">
                 <child>
                   <object class="GtkButton" id="remove_button">
-                    <property name="tooltip_text" translatable="yes">Remove this account from Convey</property>
+                    <property name="tooltip_text" translatable="yes">Remove this account from Griaß di Mail</property>
                     <property name="icon_name">user-trash-symbolic</property>
                     <signal name="clicked" handler="on_remove_account_clicked"/>
                     <style>
@@ -126,7 +152,7 @@
                   </object>
                 </child>
                 <style>
-                  <class name="convey-settings"/>
+                  <class name="griabuntu-mail-settings"/>
                 </style>
               </object>
             </child>

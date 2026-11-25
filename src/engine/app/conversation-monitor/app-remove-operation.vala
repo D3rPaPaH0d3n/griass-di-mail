@@ -1,12 +1,15 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.App.RemoveOperation : BatchOperation<EmailIdentifier> {
+private class GriabuntuMail.App.RemoveOperation : BatchOperation<EmailIdentifier> {
 
 
     private Folder source_folder;
@@ -27,7 +30,7 @@ private class Convey.App.RemoveOperation : BatchOperation<EmailIdentifier> {
 
         Gee.Set<Conversation> removed = new Gee.HashSet<Conversation>();
         Gee.MultiMap<Conversation,Email> trimmed =
-            new Gee.HashMultiMap<Conversation, Convey.Email>();
+            new Gee.HashMultiMap<Conversation, GriabuntuMail.Email>();
         this.monitor.conversations.remove_all_emails_by_identifier(
             source_folder.path,
             batch,

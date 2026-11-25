@@ -1,0 +1,151 @@
+/* Downstream modification: 2026-11-25 — session-new notification correctness. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md. */
+/* New downstream file: 2026-10-26. GPL-3.0-only; see COPYING. */
+/* Licensed under GPL-3.0-only. See COPYING. */
+
+/* In-memory application boundaries for test-notification-flags only.
+ * The real notification context, plugin interfaces, engine flags/folder signals
+ * and tray model are compiled into that executable, NOT the client library.
+ * No GTK application, plugin loader, contacts backend or mail store is started.
+ */
+namespace Plugin {
+    public abstract class PluginBase : GriabuntuMail.BaseObject {}
+}
+
+namespace Application {
+    public class Contact : GriabuntuMail.BaseObject {}
+
+    public class ContactStore : GriabuntuMail.BaseObject {
+        public async Gee.Collection<Contact> search(
+            string query, uint min_importance, uint limit,
+            GLib.Cancellable? cancellable
+        ) throws GLib.Error {
+            throw new GLib.IOError.NOT_SUPPORTED("No contacts in this fixture");
+        }
+
+        public async Contact load(GriabuntuMail.RFC822.MailboxAddress mailbox,
+                                  GLib.Cancellable? cancellable) throws GLib.Error {
+            throw new GLib.IOError.NOT_SUPPORTED("No contacts in this fixture");
+        }
+    }
+
+    public class AccountContext : GriabuntuMail.BaseObject {
+        public string account_id;
+        public GLib.Cancellable cancellable = new GLib.Cancellable();
+        public ContactStore contacts = new ContactStore();
+    }
+
+    public class MainWindow : GLib.Object {
+        public bool is_active = false;
+        public GriabuntuMail.Folder? selected_folder = null;
+        public ConversationListView conversation_list_view = new ConversationListView();
+    }
+
+    public class ConversationListView : GLib.Object {
+        public ScrolledWindow scrolled_window = new ScrolledWindow();
+    }
+
+    public class ScrolledWindow : GLib.Object {
+        public Adjustment vadjustment = new Adjustment();
+    }
+
+    public class Adjustment : GLib.Object {
+        public double value = 0.0;
+    }
+
+    public class Client : GLib.Object {
+        public MainWindow? last_active_main_window = null;
+        internal TrayMailModel tray = new TrayMailModel();
+
+        internal void update_tray_new_mail(
+            string key, GriabuntuMail.Folder folder,
+            Gee.Map<GriabuntuMail.EmailIdentifier,GLib.Variant> targets
+        ) {
+            this.tray.set_folder(key, targets.values.to_array());
+        }
+    }
+
+    public class PluginManager : GLib.Object {
+        public class AccountImpl : GriabuntuMail.BaseObject, Plugin.Account {
+            public string display_name { get { return "Synthetic account"; } }
+            public AccountContext backing = new AccountContext();
+        }
+
+        public class PluginGlobals : GLib.Object {
+            public FolderStoreFactory folders = new FolderStoreFactory();
+            public EmailStoreFactory email = new EmailStoreFactory();
+        }
+
+        public class PluginContext : GLib.Object {
+            public ModuleInfo info = new ModuleInfo();
+        }
+
+        public class ModuleInfo : GLib.Object {
+            public string get_module_name() { return "desktop-notifications"; }
+        }
+    }
+
+    public class FolderStoreFactory : GLib.Object {
+        public class FolderImpl : GriabuntuMail.BaseObject, Plugin.Folder {
+            public string persistent_id { get { return "synthetic:inbox"; } }
+            public string display_name { get { return "Synthetic Inbox"; } }
+            public GriabuntuMail.Folder.SpecialUse used_as { get { return INBOX; } }
+            public Plugin.Account? account { get { return this.owner; } }
+            public GriabuntuMail.Folder backing;
+            private PluginManager.AccountImpl owner = new PluginManager.AccountImpl();
+
+            public FolderImpl(GriabuntuMail.Folder backing) {
+                this.backing = backing;
+                this.owner.backing.account_id = backing.account.information.id;
+            }
+            public GLib.Variant to_variant() { return this.backing.path.to_variant(); }
+        }
+
+        private Gee.Map<GriabuntuMail.Folder,FolderImpl> folders =
+            new Gee.HashMap<GriabuntuMail.Folder,FolderImpl>();
+        public FolderImpl register_folder(GriabuntuMail.Folder folder) {
+            var plugin_folder = new FolderImpl(folder);
+            this.folders.set(folder, plugin_folder);
+            return plugin_folder;
+        }
+        public GriabuntuMail.Folder? to_engine_folder(Plugin.Folder folder) {
+            return ((FolderImpl) folder).backing;
+        }
+        public Plugin.Folder? to_plugin_folder(GriabuntuMail.Folder folder) {
+            return this.folders.get(folder);
+        }
+    }
+
+    public class EmailStoreFactory : GLib.Object {
+        public class IdImpl : GriabuntuMail.BaseObject,
+            Gee.Hashable<Plugin.EmailIdentifier>, Plugin.EmailIdentifier {
+            public GriabuntuMail.EmailIdentifier backing;
+            public Plugin.Account account { get { return this.owner; } }
+            private PluginManager.AccountImpl owner = new PluginManager.AccountImpl();
+
+            public IdImpl(GriabuntuMail.EmailIdentifier backing, string account_id) {
+                this.backing = backing;
+                this.owner.backing.account_id = account_id;
+            }
+            public uint hash() { return this.backing.hash(); }
+            public bool equal_to(Plugin.EmailIdentifier other) {
+                var id = other as IdImpl;
+                return id != null && this.owner.backing.account_id == id.owner.backing.account_id &&
+                    this.backing.equal_to(id.backing);
+            }
+            public GLib.Variant to_variant() {
+                return new GLib.Variant("(sv)", this.owner.backing.account_id, this.backing.to_variant());
+            }
+        }
+
+        public Gee.Collection<Plugin.EmailIdentifier> to_plugin_ids(
+            Gee.Collection<GriabuntuMail.EmailIdentifier> ids, AccountContext context
+        ) {
+            var result = new Gee.ArrayList<Plugin.EmailIdentifier>();
+            foreach (var id in ids) result.add(new IdImpl(id, context.account_id));
+            return result;
+        }
+    }
+}

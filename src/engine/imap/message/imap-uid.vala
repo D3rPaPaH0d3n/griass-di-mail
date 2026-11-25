@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -12,8 +15,8 @@
  * @see SequenceNumber
  */
 
-public class Convey.Imap.UID : Convey.MessageData.Int64MessageData, Convey.Imap.MessageData,
-    Gee.Comparable<Convey.Imap.UID> {
+public class GriabuntuMail.Imap.UID : GriabuntuMail.MessageData.Int64MessageData, GriabuntuMail.Imap.MessageData,
+    Gee.Comparable<GriabuntuMail.Imap.UID> {
     /**
      * Minimum valid value for a {@link UID}.
      */
@@ -96,7 +99,7 @@ public class Convey.Imap.UID : Convey.MessageData.Int64MessageData, Convey.Imap.
         return clamped ? new UID((value - 1).clamp(MIN, MAX)) : new UID(value - 1);
     }
 
-    public virtual int compare_to(Convey.Imap.UID other) {
+    public virtual int compare_to(GriabuntuMail.Imap.UID other) {
         return (int) (value - other.value).clamp(-1, 1);
     }
 

@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -11,7 +14,7 @@
  * Plugins may obtain instances of this object from the {@link
  * PluginBase.plugin_application} property.
  */
-public interface Plugin.Application : Convey.BaseObject {
+public interface Plugin.Application : GriabuntuMail.BaseObject {
 
 
     /**
@@ -122,8 +125,8 @@ public interface Plugin.Application : Convey.BaseObject {
      * Since displaying an error report causes visual and workflow
      * disruptions, and as such this method called with care and only
      * when necessary. For logging, use {@link GLib.debug} and related
-     * methods and these will appear in Convey's Inspector.
+     * methods and these will appear in Griabuntu Mail's Inspector.
      */
-    public abstract void report_problem(Convey.ProblemReport problem);
+    public abstract void report_problem(GriabuntuMail.ProblemReport problem);
 
 }

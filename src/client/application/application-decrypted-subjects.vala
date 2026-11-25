@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Remembers the real subjects of encrypted email, keyed by Message-ID.
  */
-public class Application.DecryptedSubjects : Convey.BaseObject {
+public class Application.DecryptedSubjects : GriabuntuMail.BaseObject {
 
 
     private GLib.File file;
@@ -32,18 +35,18 @@ public class Application.DecryptedSubjects : Convey.BaseObject {
         }
     }
 
-    public string? get(Convey.RFC822.MessageID? id) {
+    public string? get(GriabuntuMail.RFC822.MessageID? id) {
         return id != null ? this.subjects.get(id.value) : null;
     }
 
-    public string get_display_subject(Convey.Email email) {
+    public string get_display_subject(GriabuntuMail.Email email) {
         string? decrypted = get(email.message_id);
         return decrypted != null
-            ? new Convey.RFC822.Subject(decrypted).strip_prefixes()
+            ? new GriabuntuMail.RFC822.Subject(decrypted).strip_prefixes()
             : Util.Email.strip_subject_prefixes(email);
     }
 
-    public void set(Convey.RFC822.MessageID id, string subject) {
+    public void set(GriabuntuMail.RFC822.MessageID id, string subject) {
         if (this.subjects.get(id.value) == subject) {
             return;
         }

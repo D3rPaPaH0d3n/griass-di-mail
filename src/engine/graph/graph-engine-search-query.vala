@@ -1,13 +1,16 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-internal class Convey.Graph.SearchQuery : Convey.SearchQuery {
+internal class GriabuntuMail.Graph.SearchQuery : GriabuntuMail.SearchQuery {
 
-    public SearchQuery(Gee.List<Convey.SearchQuery.Term> expression, string text) {
+    public SearchQuery(Gee.List<GriabuntuMail.SearchQuery.Term> expression, string text) {
         base(expression, text);
     }
 

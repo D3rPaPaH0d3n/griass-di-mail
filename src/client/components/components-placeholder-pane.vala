@@ -1,18 +1,21 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * A placeholder image and message for empty views.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-placeholder-pane.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-placeholder-pane.ui")]
 public class Components.PlaceholderPane : Gtk.Box {
 
 
-    public const string CLASS_HAS_TEXT = "convey-has-text";
+    public const string CLASS_HAS_TEXT = "griabuntu-mail-has-text";
 
 
     /** The icon name of the pane's image. */
@@ -47,10 +50,10 @@ public class Components.PlaceholderPane : Gtk.Box {
 
 
     private void update() {
-        if (Convey.String.is_empty_or_whitespace(this.title_label.get_text())) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(this.title_label.get_text())) {
             this.title_label.hide();
         }
-        if (Convey.String.is_empty_or_whitespace(this.subtitle_label.get_text())) {
+        if (GriabuntuMail.String.is_empty_or_whitespace(this.subtitle_label.get_text())) {
             this.subtitle_label.hide();
         }
         if (this.title_label.visible || this.subtitle_label.visible) {

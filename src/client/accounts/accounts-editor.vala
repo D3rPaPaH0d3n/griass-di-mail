@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018-2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -14,7 +17,7 @@
  * editor displaying panes as needed, and provides some common command
  * management, account management and other common code for the panes.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts_editor.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts_editor.ui")]
 public class Accounts.Editor : Adw.Dialog {
 
 
@@ -121,9 +124,9 @@ public class Accounts.Editor : Adw.Dialog {
      * Application.CertificateManager.prompt_pin_certificate} that
      * uses the account editor as the dialog parent.
      */
-    internal async void prompt_pin_certificate(Convey.AccountInformation account,
-                                               Convey.ServiceInformation service,
-                                               Convey.Endpoint endpoint,
+    internal async void prompt_pin_certificate(GriabuntuMail.AccountInformation account,
+                                               GriabuntuMail.ServiceInformation service,
+                                               GriabuntuMail.Endpoint endpoint,
                                                GLib.Cancellable? cancellable)
         throws Application.CertificateManagerError {
         try {
@@ -149,7 +152,7 @@ public class Accounts.Editor : Adw.Dialog {
     }
 
     /** Removes an account from the editor. */
-    internal void remove_account(Convey.AccountInformation account) {
+    internal void remove_account(GriabuntuMail.AccountInformation account) {
         this.view.pop_to_page(this.editor_list_pane);
         this.editor_list_pane.remove_account(account);
     }
@@ -243,7 +246,7 @@ internal interface Accounts.AccountPane : EditorPane {
 
 
     /** Account being displayed by this pane. */
-    internal abstract Convey.AccountInformation account { get; protected set; }
+    internal abstract GriabuntuMail.AccountInformation account { get; protected set; }
 
 
     /**

@@ -1,27 +1,31 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2018 Michael Gratton <mike@vee.net>.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Downstream modification: 2026-11-25, preserve partial listing completeness.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * An interface between the high-level engine API and the IMAP stack.
  *
  * Because of the complexities of the IMAP protocol, class takes
- * common operations that a Convey.Account implementation would need
- * (in particular, {@link Convey.ImapEngine.GenericAccount}) and makes
+ * common operations that a GriabuntuMail.Account implementation would need
+ * (in particular, {@link GriabuntuMail.ImapEngine.GenericAccount}) and makes
  * them into simple async calls.
  *
- * Convey.Imap.Account manages the {@link Imap.Folder} objects it
+ * GriabuntuMail.Imap.Account manages the {@link Imap.Folder} objects it
  * returns, but only in the sense that it will not create new
  * instances repeatedly.  Otherwise, it does not refresh or update the
  * Imap.Folders themselves (such as update their {@link
  * Imap.StatusData} periodically). That's the responsibility of the
  * higher layers of the stack.
  */
-internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
+internal class GriabuntuMail.Imap.AccountSession : GriabuntuMail.Imap.SessionObject {
 
     private FolderRoot root;
     private Gee.HashMap<FolderPath,Imap.Folder> folders =
@@ -58,7 +62,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
             prefix = prefix.substring(0, prefix.length - delim.length);
         }
 
-        return Convey.String.is_empty(prefix)
+        return GriabuntuMail.String.is_empty(prefix)
             ? this.root
             : this.root.get_child(prefix);
     }
@@ -91,7 +95,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
      * used to specify the type of the new folder.
      */
     public async void create_folder_async(FolderPath path,
-                                          Convey.Folder.SpecialUse? use,
+                                          GriabuntuMail.Folder.SpecialUse? use,
                                           Cancellable? cancellable)
     throws Error {
         ClientSession session = get_session();
@@ -210,18 +214,20 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
     /**
      * Returns a list of children of the given folder.
      *
-     * This method will perform a pipe-lined IMAP SELECT for all
-     * folders found, and hence should be used with care.
+     * Pipelines STATUS for selectable children. If any listed mailbox could
+     * not be materialised, returns the others with complete set to false.
      */
     public async Gee.List<Folder>
         fetch_child_folders_async(FolderPath parent,
-                                  GLib.Cancellable? cancellable)
+                                  GLib.Cancellable? cancellable,
+                                  out bool complete)
         throws GLib.Error {
         ClientSession session = get_session();
         Gee.List<Imap.Folder> children = new Gee.ArrayList<Imap.Folder>();
         Gee.List<MailboxInformation> mailboxes = yield send_list_async(
             session, parent, true, cancellable
         );
+        complete = true;
         if (mailboxes.size == 0) {
             return children;
         }
@@ -234,7 +240,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
             StatusCommand, MailboxSpecifier>();
         foreach (MailboxInformation mailbox_info in mailboxes) {
             if (!mailbox_info.attrs.is_no_select) {
-                // Mailbox needs a SELECT
+                // Mailbox needs a STATUS
                 info_map.set(mailbox_info.mailbox, mailbox_info);
                 cmd_map.set(
                     new StatusCommand(
@@ -279,8 +285,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
                 MailboxInformation mailbox_info = info_map.get(mailbox);
 
                 if (response.status != Status.OK) {
-                    warning("Unable to get STATUS of %s: %s", mailbox.to_string(), response.to_string());
-                    warning("STATUS command: %s", cmd.to_string());
+                    message("Unable to get STATUS of %s: %s", mailbox.to_string(), response.to_string());
                     continue;
                 }
 
@@ -294,7 +299,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
                     }
                 }
                 if (status == null) {
-                    warning("Unable to get STATUS of %s: not returned from server", mailbox.to_string());
+                    message("Unable to get STATUS of %s: not returned from server", mailbox.to_string());
                     continue;
                 }
                 status_results.remove(status);
@@ -325,6 +330,9 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
                 debug("%d STATUS results leftover", status_results.size);
         }
 
+        // LIST was deduplicated and each requested mailbox contributes at
+        // most one child. Extra unsolicited STATUS data is not a child.
+        complete = children.size == mailboxes.size;
         return children;
     }
 
@@ -406,8 +414,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
         }
 
         // We use a hash to filter duplicated mailboxes
-        Gee.HashMap<string, MailboxInformation> filtered =
-            new Gee.HashMap<string, MailboxInformation>();
+        var filtered = new Gee.HashMap<MailboxSpecifier, MailboxInformation>();
         foreach (MailboxInformation information in list_results) {
             // See note at ListCommand about some servers returning the
             // parent's name alongside their children ... this filters
@@ -421,10 +428,10 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
                     continue;
                 }
             }
-            filtered.set(information.mailbox.name, information);
+            filtered.set(information.mailbox, information);
         }
 
-        return Convey.traverse(filtered.values).to_array_list();
+        return GriabuntuMail.traverse(filtered.values).to_array_list();
     }
 
     private async StatusData send_status_async(ClientSession session,
@@ -464,7 +471,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
         Cancellable? cancellable) throws Error {
         Gee.Map<Command, StatusResponse> responses = yield send_multiple_async(
             session,
-            Convey.iterate<Command>(cmd).to_array_list(),
+            GriabuntuMail.iterate<Command>(cmd).to_array_list(),
             list_results,
             status_results,
             cancellable
@@ -516,7 +523,7 @@ internal class Convey.Imap.AccountSession : Convey.Imap.SessionObject {
     }
 
     [NoReturn]
-    private void throw_not_found(Convey.FolderPath? path) throws EngineError {
+    private void throw_not_found(GriabuntuMail.FolderPath? path) throws EngineError {
         throw new EngineError.NOT_FOUND(
             "Folder not found: %s",
             (path != null) ? path.to_string() : "[root]"

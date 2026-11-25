@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  * Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -15,19 +18,19 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-6.3.3]] and
  * [[https://tools.ietf.org/html/rfc6154#section-3]]
  */
-public class Convey.Imap.CreateCommand : Command {
+public class GriabuntuMail.Imap.CreateCommand : Command {
 
     public const string NAME_ATOM = "create";
     public const string USE_ATOM = "use";
 
     public MailboxSpecifier mailbox { get; private set; }
 
-    public Convey.Folder.SpecialUse use {
+    public GriabuntuMail.Folder.SpecialUse use {
         get; private set; default = NONE;
     }
 
 
-    private static MailboxAttribute? get_special_folder_type(Convey.Folder.SpecialUse use) {
+    private static MailboxAttribute? get_special_folder_type(GriabuntuMail.Folder.SpecialUse use) {
         switch (use) {
         case ALL_MAIL:
             return MailboxAttribute.SPECIAL_FOLDER_ALL;
@@ -62,7 +65,7 @@ public class Convey.Imap.CreateCommand : Command {
     }
 
     public CreateCommand.special_use(MailboxSpecifier mailbox,
-                                     Convey.Folder.SpecialUse use,
+                                     GriabuntuMail.Folder.SpecialUse use,
                                      GLib.Cancellable? should_send) {
         this(mailbox, should_send);
         this.use = use;

@@ -1,16 +1,19 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2026 Daniel Elia <d.elia@outlook.com>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
-class Convey.Graph.ClientTest : GraphTestCase {
+class GriabuntuMail.Graph.ClientTest : GraphTestCase {
 
 
     public ClientTest() {
-        base("Convey.Graph.ClientTest");
+        base("GriabuntuMail.Graph.ClientTest");
         add_test("ping_sends_get_me", ping_sends_get_me);
         add_test("list_mail_folders_parses_response", list_mail_folders_parses_response);
         add_test("list_messages_parses_response", list_messages_parses_response);
@@ -33,7 +36,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
             """{"id": "user-123"}"""
         );
 
-        Convey.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client client = new_client();
 
         client.ping.begin(null, this.async_completion);
         client.ping.end(async_result());
@@ -66,8 +69,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             }"""
         );
 
-        Convey.Graph.Client client = new_client();
-        Gee.List<Convey.Graph.Client.MailFolder>? folders = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        Gee.List<GriabuntuMail.Graph.Client.MailFolder>? folders = null;
         client.list_mail_folders.begin(null, null, (obj, res) => {
             try {
                 folders = client.list_mail_folders.end(res);
@@ -83,13 +86,13 @@ class Convey.Graph.ClientTest : GraphTestCase {
         assert_non_null(folders);
         assert_true(folders.size == 2, "expected 2");
 
-        Convey.Graph.Client.MailFolder inbox = folders[0];
+        GriabuntuMail.Graph.Client.MailFolder inbox = folders[0];
         assert_equal(inbox.id, "AAMkAGI1");
         assert_equal(inbox.display_name, "Inbox");
         assert_equal(inbox.well_known_name, "inbox");
         assert_false(inbox.is_hidden);
 
-        Convey.Graph.Client.MailFolder custom = folders[1];
+        GriabuntuMail.Graph.Client.MailFolder custom = folders[1];
         assert_equal(custom.id, "AAMkAGI2");
         assert_equal(custom.display_name, "Custom");
         assert_true(
@@ -128,8 +131,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             }""".printf(recent)
         );
 
-        Convey.Graph.Client client = new_client();
-        Gee.List<Convey.Graph.Client.Message>? messages = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        Gee.List<GriabuntuMail.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
             "inbox", 10, 14, 0, null, null, (obj, res) => {
                 try {
@@ -146,7 +149,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
         assert_non_null(messages);
         assert_true(messages.size == 1, "expected 1");
 
-        Convey.Graph.Client.Message msg = messages[0];
+        GriabuntuMail.Graph.Client.Message msg = messages[0];
         assert_equal(msg.id, "msg-1");
         assert_equal(msg.conversation_id, "conv-1");
         assert_equal(msg.subject, "Hello");
@@ -200,8 +203,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Convey.Graph.Client client = new_client();
-        Gee.List<Convey.Graph.Client.Message>? messages = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        Gee.List<GriabuntuMail.Graph.Client.Message>? messages = null;
         client.list_messages.begin(
             "inbox", 10, 14, 0, null, null, (obj, res) => {
                 try {
@@ -254,8 +257,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             }"""
         );
 
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Client.Message? msg = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client.Message? msg = null;
         client.fetch_message.begin(
             "msg-1", null, (obj, res) => {
                 try {
@@ -303,8 +306,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             }""".printf(this.base_uri)
         );
 
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Client.DeltaResult? result = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client.DeltaResult? result = null;
         client.delta_messages.begin(
             "inbox", this.base_uri + "/delta-cursor", null, (obj, res) => {
                 try {
@@ -337,8 +340,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             }""".printf(this.base_uri)
         );
 
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Client.DeltaResult? result = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client.DeltaResult? result = null;
         client.delta_messages.begin(
             "inbox", null, null, (obj, res) => {
                 try {
@@ -363,8 +366,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             """{"error": {"code": "resyncRequired"}}"""
         );
 
-        Convey.Graph.Client client = new_client();
-        Convey.Graph.Client.DeltaResult? result = null;
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client.DeltaResult? result = null;
         client.delta_messages.begin(
             "inbox", this.base_uri + "/expired-cursor", null, (obj, res) => {
                 try {
@@ -406,8 +409,8 @@ class Convey.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Convey.Graph.Client client = new_client();
-        Convey.ComposedEmail composed = new Convey.ComposedEmail(
+        GriabuntuMail.Graph.Client client = new_client();
+        GriabuntuMail.ComposedEmail composed = new GriabuntuMail.ComposedEmail(
             new GLib.DateTime.now_utc(),
             new RFC822.MailboxAddresses.single(
                 new RFC822.MailboxAddress(null, "user@example.com")
@@ -460,7 +463,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
             ""
         );
 
-        Convey.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client client = new_client();
         client.send_message.begin("msg-1", null, this.async_completion);
         client.send_message.end(async_result());
 
@@ -474,12 +477,12 @@ class Convey.Graph.ClientTest : GraphTestCase {
             """{"error": {"code": "serviceUnavailable"}}"""
         );
 
-        Convey.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client client = new_client();
         bool failed = false;
         client.ping.begin(null, (obj, res) => {
             try {
                 client.ping.end(res);
-            } catch (Convey.Graph.HttpError.SERVER err) {
+            } catch (GriabuntuMail.Graph.HttpError.SERVER err) {
                 failed = true;
             } catch (GLib.Error err) {
                 fail("Expected HttpError.SERVER, got: %s".printf(err.message));
@@ -506,7 +509,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Convey.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client client = new_client();
         client.ping.begin(null, this.async_completion);
         client.ping.end(async_result());
 
@@ -517,7 +520,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
     }
 
     public void unauthorized_request_refreshes_credentials_and_retries() throws GLib.Error {
-        var mediator = (Convey.GraphStubCredentialsMediator) this.mediator;
+        var mediator = (GriabuntuMail.GraphStubCredentialsMediator) this.mediator;
         int load_count_before = mediator.load_count;
 
         int hit_count = 0;
@@ -533,7 +536,7 @@ class Convey.Graph.ClientTest : GraphTestCase {
             msg.set_status(200, null);
         });
 
-        Convey.Graph.Client client = new_client();
+        GriabuntuMail.Graph.Client client = new_client();
         client.ping.begin(null, this.async_completion);
         client.ping.end(async_result());
 

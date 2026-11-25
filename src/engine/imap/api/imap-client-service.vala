@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2017-2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -19,7 +22,7 @@
  *
  * This class is not thread-safe.
  */
-public class Convey.Imap.ClientService : Convey.ClientService {
+public class GriabuntuMail.Imap.ClientService : GriabuntuMail.ClientService {
 
 
     /** The GLib logging domain used for IMAP sub-system logging. */
@@ -340,7 +343,7 @@ public class Convey.Imap.ClientService : Convey.ClientService {
         } catch (GLib.IOError.CANCELLED err) {
             // Nothing to do here
         } catch (GLib.Error err) {
-            Convey.ErrorContext context = new Convey.ErrorContext(err);
+            GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(err);
             debug("Error creating new session for the pool: %s",
                   context.format_full_error());
             notify_connection_failed(context);
@@ -358,7 +361,7 @@ public class Convey.Imap.ClientService : Convey.ClientService {
                 this.free_queue.send(new_session);
                 notify_connected();
             } catch (GLib.Error err) {
-                Convey.ErrorContext context = new Convey.ErrorContext(err);
+                GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(err);
                 debug("Error adding new session to the pool: %s",
                       context.format_full_error());
                 notify_connection_failed(context);
@@ -547,7 +550,7 @@ public class Convey.Imap.ClientService : Convey.ClientService {
                 (obj, res) => { this.remove_session_async.end(res); }
             );
             if (session.disconnected == ClientSession.DisconnectReason.REMOTE_ERROR) {
-                Convey.ErrorContext context = new Convey.ErrorContext(
+                GriabuntuMail.ErrorContext context = new GriabuntuMail.ErrorContext(
                     new GLib.IOError.NOT_CONNECTED("Session disconnected, remote error")
                 );
                 notify_connection_failed(context);

@@ -1,11 +1,14 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.ConfigFileTest : TestCase {
+class GriabuntuMail.ConfigFileTest : TestCase {
 
 
     private const string TEST_KEY = "test-key";
@@ -16,7 +19,7 @@ class Convey.ConfigFileTest : TestCase {
 
 
     public ConfigFileTest() {
-        base("Convey.ConfigFileTest");
+        base("GriabuntuMail.ConfigFileTest");
         add_test("test_string", test_string);
         add_test("test_string_fallback", test_string_fallback);
         add_test("test_string_list", test_string_list);

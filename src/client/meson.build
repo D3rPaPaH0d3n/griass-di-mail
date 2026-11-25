@@ -1,9 +1,10 @@
-# Convey client
+# Downstream modification: 2026-10-26 — downstream tray, model and notification-action sources.
+# Griabuntu Mail client
 
-client_package_name = 'convey-client'
+client_package_name = 'griabuntu-mail-client'
 client_api_version = '.'.join([
-  convey_version.split('.')[0],
-  convey_version.split('.')[1]
+  griabuntu_mail_version.split('.')[0],
+  griabuntu_mail_version.split('.')[1]
 ])
 client_package = '@0@-@1@'.format(
   client_package_name,
@@ -19,6 +20,7 @@ client_vala_sources = files(
   'application/application-command.vala',
   'application/application-configuration.vala',
   'application/application-contact-store.vala',
+  'application/application-contact-picture.vala',
   'application/application-contact.vala',
   'application/application-controller.vala',
   'application/application-database-manager.vala',
@@ -30,14 +32,19 @@ client_vala_sources = files(
   'application/application-folder-store-factory.vala',
   'application/application-main-window.vala',
   'application/application-notification-plugin-context.vala',
+  'application/application-notification-actions.vala',
+  'application/application-notification-journal.vala',
   'application/application-plugin-manager.vala',
   'application/application-startup-manager.vala',
   'application/application-status-icon.vala',
+  'application/application-dock-icon.vala',
+  'application/application-unity-launcher-entry.vala',
   'application/application-tray-mail-model.vala',
   'application/goa-mediator.vala',
   'application/secret-mediator.vala',
 
   'accounts/accounts-autoconfig.vala',
+  'accounts/accounts-sender-discovery.vala',
   'accounts/accounts-editor.vala',
   'accounts/accounts-editor-add-pane.vala',
   'accounts/accounts-editor-edit-pane.vala',
@@ -65,6 +72,7 @@ client_vala_sources = files(
   'components/components-problem-report-info-bar.vala',
   'components/components-search-bar.vala',
   'components/components-validator.vala',
+  'components/components-identity-color.vala',
   'components/components-validator-group.vala',
   'components/components-web-view.vala',
   'components/count-badge.vala',
@@ -178,7 +186,7 @@ client_build_dir = meson.current_build_dir()
 # Generate internal VAPI for unit testing. See Meson issue
 # https://github.com/mesonbuild/meson/issues/1781 for official
 # internal VAPI support.
-client_vala_args = convey_vala_args
+client_vala_args = griabuntu_mail_vala_args
 client_vala_args += [
   '--internal-header=@0@/@1@-internal.h'.format(
     client_build_dir, client_package_name
@@ -195,10 +203,10 @@ endif
 # Main client application library
 client_lib = shared_library(
   client_package,
-  client_vala_sources + convey_resources,
+  client_vala_sources + griabuntu_mail_resources,
   dependencies: client_dependencies,
   vala_args: client_vala_args,
-  c_args: convey_c_args,
+  c_args: griabuntu_mail_c_args,
   install: true,
   install_dir: client_lib_dir,
 )
@@ -209,14 +217,14 @@ client_lib = shared_library(
 client_internal_header_fixup = custom_target(
   'client_internal_header_fixup',
   output: [
-    'convey-client-internal.h',
-    'convey-client-internal.vapi',
+    'griabuntu-mail-client-internal.h',
+    'griabuntu-mail-client-internal.vapi',
   ],
   command: [
     find_program('sed'),
     '-ibak',
-    's/@0@.h/convey-client-internal.h/g'.format(client_package),
-    '@OUTDIR@/convey-client-internal.vapi',
+    's/@0@.h/griabuntu-mail-client-internal.h/g'.format(client_package),
+    '@OUTDIR@/griabuntu-mail-client-internal.vapi',
   ],
   depends: client_lib
 )

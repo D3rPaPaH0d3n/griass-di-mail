@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 #include <sqlite3ext.h>
@@ -257,10 +260,16 @@ gboolean sqlite3_register_fts5_tokeniser(sqlite3 *db) {
     }
 
     rc = api->xCreateTokenizer(api,
-                               "convey_tokeniser",
+                               "griabuntu_mail_tokeniser",
                                NULL,
                                tokeniser,
                                NULL);
+
+    /* Stored FTS5 table definitions may still refer to this historical name.
+     * Registering an alias does not open or migrate any existing profile. */
+    if (rc == SQLITE_OK) {
+        rc = api->xCreateTokenizer(api, "convey_tokeniser", NULL, tokeniser, NULL);
+    }
 
     return (rc == SQLITE_OK) ? TRUE : FALSE;
 }
@@ -268,10 +277,10 @@ gboolean sqlite3_register_fts5_tokeniser(sqlite3 *db) {
 // Entry point for external loadable library, required when using
 // command line SQLite tool. The name of this function must match the
 // name of the shared module.
-int sqlite3_conveytokeniser_init(sqlite3 *db,
+int sqlite3_griabuntumailtokeniser_init(sqlite3 *db,
                                 unused char **error_message,
                                 const sqlite3_api_routines *api) {
-    g_info("Loading convey_tokeniser\n");
+    g_info("Loading griabuntu_mail_tokeniser\n");
     SQLITE_EXTENSION_INIT2(api);
     return sqlite3_register_fts5_tokeniser(db) ? SQLITE_OK : SQLITE_ABORT;
 }

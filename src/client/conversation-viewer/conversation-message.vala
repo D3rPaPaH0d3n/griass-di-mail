@@ -1,34 +1,37 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2016-2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
- * A widget for displaying an {@link Convey.RFC822.Message}.
+ * A widget for displaying an {@link GriabuntuMail.RFC822.Message}.
  *
- * This view corresponds to {@link Convey.RFC822.Message}, displaying
+ * This view corresponds to {@link GriabuntuMail.RFC822.Message}, displaying
  * both the message's headers and body. Any attachments and sub
  * messages are handled by {@link ConversationEmail}, which typically
  * embeds at least one instance of this class.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-message.ui")]
-public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-message.ui")]
+public class ConversationMessage : Gtk.Box, GriabuntuMail.BaseInterface {
 
 
-    private const string FROM_CLASS = "convey-from";
-    private const string MATCH_CLASS = "convey-match";
-    private const string SPOOF_CLASS = "convey-spoofed";
-    private const string INTERNAL_ANCHOR_PREFIX = "convey:body#";
-    private const string REPLACED_CID_TEMPLATE = "replaced_%02u@convey";
-    private const string REPLACED_IMAGE_CLASS = "convey_replaced_inline_image";
+    private const string FROM_CLASS = "griabuntu-mail-from";
+    private const string MATCH_CLASS = "griabuntu-mail-match";
+    private const string SPOOF_CLASS = "griabuntu-mail-spoofed";
+    private const string INTERNAL_ANCHOR_PREFIX = "griabuntu-mail:body#";
+    private const string REPLACED_CID_TEMPLATE = "replaced_%02u@griabuntu-mail";
+    private const string REPLACED_IMAGE_CLASS = "griabuntu_mail_replaced_inline_image";
 
     private const string MAILTO_URI_PREFIX = "mailto:";
 
 
-    private const int MAX_PREVIEW_BYTES = Convey.Email.MAX_PREVIEW_BYTES;
+    private const int MAX_PREVIEW_BYTES = GriabuntuMail.Email.MAX_PREVIEW_BYTES;
 
     private const int MAX_INLINE_IMAGE_MAJOR_DIM = 1024;
 
@@ -50,7 +53,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     private class ContactFlowBoxChild : Gtk.FlowBoxChild {
 
 
-        private const string PRIMARY_CLASS = "convey-primary";
+        private const string PRIMARY_CLASS = "griabuntu-mail-primary";
 
 
         public enum Type { FROM, OTHER; }
@@ -60,13 +63,13 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         public Application.Contact contact { get; private set; }
 
-        public Convey.RFC822.MailboxAddress displayed { get; private set; }
-        public Convey.RFC822.MailboxAddress source { get; private set; }
+        public GriabuntuMail.RFC822.MailboxAddress displayed { get; private set; }
+        public GriabuntuMail.RFC822.MailboxAddress source { get; private set; }
 
         private string search_value;
 
         public ContactFlowBoxChild(Application.Contact contact,
-                                   Convey.RFC822.MailboxAddress source,
+                                   GriabuntuMail.RFC822.MailboxAddress source,
                                    Type address_type = Type.OTHER) {
             this.contact = contact;
             this.source = source;
@@ -147,7 +150,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
                 // The contact's name can be trusted, so no need to
                 // display the email address
                 primary.set_text(this.contact.display_name);
-                this.displayed = new Convey.RFC822.MailboxAddress(
+                this.displayed = new GriabuntuMail.RFC822.MailboxAddress(
                     this.contact.display_name, this.source.address
                 );
                 this.tooltip_text = this.source.address;
@@ -155,7 +158,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
                 // Display both the display name and the email address
                 // so that the user has the full information at hand
                 primary.set_text(this.contact.display_name);
-                this.displayed = new Convey.RFC822.MailboxAddress(
+                this.displayed = new GriabuntuMail.RFC822.MailboxAddress(
                     this.contact.display_name, this.source.address
                 );
 
@@ -188,7 +191,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
      * A wrap box that limits its contents to 12 items until a link is
      * clicked to expand it. Used for to, cc, and bcc fields.
      */
-    public class ContactList : Adw.Bin, Convey.BaseInterface {
+    public class ContactList : Adw.Bin, GriabuntuMail.BaseInterface {
         /**
          * The number of results that will be displayed when not expanded.
          * Note this is actually one less than the cutoff, which is 12; we
@@ -305,7 +308,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     }
 
     /** Mailbox assumed to be the primary sender. */
-    internal Convey.RFC822.MailboxAddress? primary_originator {
+    internal GriabuntuMail.RFC822.MailboxAddress? primary_originator {
         get; private set;
     }
 
@@ -333,7 +336,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     private ConversationWebView? web_view { get; private set; }
 
     // The message headers represented by this view
-    private Convey.EmailHeaderSet headers;
+    private GriabuntuMail.EmailHeaderSet headers;
 
     private Application.Configuration config;
 
@@ -343,6 +346,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     private GLib.DateTime? local_date = null;
 
     [GtkChild] private unowned Adw.Avatar avatar;
+    private Application.ContactPicture? sender_picture;
 
     [GtkChild] private unowned Gtk.Box compact_header;
     [GtkChild] private unowned Gtk.Box compact_from_header;
@@ -426,11 +430,11 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     // Timeouts for showing the progress bar and hiding it when
     // complete. The former is so that when loading cached images it
     // doesn't pop up and then go away immediately afterwards.
-    private Convey.TimeoutManager show_progress_timeout = null;
-    private Convey.TimeoutManager hide_progress_timeout = null;
+    private GriabuntuMail.TimeoutManager show_progress_timeout = null;
+    private GriabuntuMail.TimeoutManager hide_progress_timeout = null;
 
     // Timer for pulsing progress bar
-    private Convey.TimeoutManager progress_pulse;
+    private GriabuntuMail.TimeoutManager progress_pulse;
 
 
     /** Fired when the user clicks a internal link in the email. */
@@ -441,7 +445,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
     /** Fired when the user saves an inline displayed image. */
     public signal void save_image(
-        string uri, string? alt_text, Convey.Memory.Buffer? buffer
+        string uri, string? alt_text, GriabuntuMail.Memory.Buffer? buffer
     );
 
     /** Emitted when web_view has loaded a resource added to it. */
@@ -465,7 +469,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
      * the message, but does not attempt any possibly long-running
      * loading processes.
      */
-    public ConversationMessage.from_email(Convey.Email email,
+    public ConversationMessage.from_email(GriabuntuMail.Email email,
                                           bool load_remote_resources,
                                           Application.ContactStore contacts,
                                           Application.Configuration config) {
@@ -485,7 +489,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
      * the message, but does not attempt any possibly long-running
      * loading processes.
      */
-    public ConversationMessage.from_message(Convey.RFC822.Message message,
+    public ConversationMessage.from_message(GriabuntuMail.RFC822.Message message,
                                             bool load_remote_resources,
                                             Application.ContactStore contacts,
                                             Application.Configuration config) {
@@ -506,7 +510,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         content_loaded();
     }
 
-    private ConversationMessage(Convey.EmailHeaderSet headers,
+    private ConversationMessage(GriabuntuMail.EmailHeaderSet headers,
                                 string? preview,
                                 bool load_remote_resources,
                                 Application.ContactStore contacts,
@@ -541,7 +545,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         // Context menu
 
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/net/donnybeelo/Convey/conversation-message-menus.ui"
+            "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-message-menus.ui"
         );
         context_menu_link = (MenuModel) builder.get_object("context_menu_link");
         context_menu_email = (MenuModel) builder.get_object("context_menu_email");
@@ -569,17 +573,17 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
         this.compact_from.add_css_class(FROM_CLASS);
 
-        if (preview == Convey.RFC822.PreviewText.ENCRYPTED ||
-            preview == Convey.RFC822.PreviewText.ENCRYPTED_INLINE) {
+        if (preview == GriabuntuMail.RFC822.PreviewText.ENCRYPTED ||
+            preview == GriabuntuMail.RFC822.PreviewText.ENCRYPTED_INLINE) {
             this.compact_body.set_text(_("Encrypted message"));
-        } else if (Convey.String.is_empty_or_whitespace(preview)) {
+        } else if (GriabuntuMail.String.is_empty_or_whitespace(preview)) {
             if (headers.subject != null) {
                 this.compact_body.set_text(headers.subject.value);
             }
         } else {
-            string clean_preview = Convey.String.reduce_whitespace(preview);
+            string clean_preview = GriabuntuMail.String.reduce_whitespace(preview);
             if (clean_preview.length > MAX_PREVIEW_BYTES) {
-                clean_preview = Convey.String.safe_byte_substring(
+                clean_preview = GriabuntuMail.String.safe_byte_substring(
                     clean_preview, MAX_PREVIEW_BYTES
                 );
                 // Add an ellipsis in case the view is wider is wider than
@@ -599,14 +603,14 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         }
 
         this.body_container.set_has_tooltip(true); // Used to show link URLs
-        this.show_progress_timeout = new Convey.TimeoutManager.milliseconds(
+        this.show_progress_timeout = new GriabuntuMail.TimeoutManager.milliseconds(
             Util.Gtk.SHOW_PROGRESS_TIMEOUT_MSEC, this.on_show_progress_timeout
         );
-        this.hide_progress_timeout = new Convey.TimeoutManager.milliseconds(
+        this.hide_progress_timeout = new GriabuntuMail.TimeoutManager.milliseconds(
             Util.Gtk.HIDE_PROGRESS_TIMEOUT_MSEC, this.on_hide_progress_timeout
         );
 
-        this.progress_pulse = new Convey.TimeoutManager.milliseconds(
+        this.progress_pulse = new GriabuntuMail.TimeoutManager.milliseconds(
             Util.Gtk.PROGRESS_PULSE_TIMEOUT_MSEC, this.body_progress.pulse
         );
         this.progress_pulse.repetition = FOREVER;
@@ -675,6 +679,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         this.show_progress_timeout.reset();
         this.hide_progress_timeout.reset();
         this.progress_pulse.reset();
+        this.sender_picture?.close();
+        this.sender_picture = null;
         this.resources.clear();
         this.searchable_addresses.clear();
         base.dispose();
@@ -697,7 +703,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
      *
      * @see Components.WebView.add_internal_resources
      */
-    public void add_internal_resources(Gee.Map<string,Convey.Memory.Buffer> res) {
+    public void add_internal_resources(Gee.Map<string,GriabuntuMail.Memory.Buffer> res) {
         if (this.web_view == null)
             initialize_web_view();
         web_view.add_internal_resources(res);
@@ -748,7 +754,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             this.unsubscribe_button.tooltip_text = _(
                 "Stop receiving emails from this mailing list"
             );
-            this.unsubscribe_button.add_css_class("convey-unsubscribe");
+            this.unsubscribe_button.add_css_class("griabuntu-mail-unsubscribe");
             this.expanded_header.bind_property(
                 "visible", this.unsubscribe_button, "visible",
                 GLib.BindingFlags.SYNC_CREATE
@@ -976,18 +982,10 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
                                                        "text",
                                                        BindingFlags.SYNC_CREATE);
 
-                    this.avatar.custom_image = null;
-                    if (this.primary_contact.avatar != null) {
-                        try {
-                            var icon_stream = yield this.primary_contact.avatar.load_async(48, cancellable);
-                            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(icon_stream, 48, 48, true, cancellable);
-                            this.avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
-                        } catch (GLib.IOError.CANCELLED err) {
-                            throw err;
-                        } catch (GLib.Error err) {
-                            debug("Couldn't load avatar for contact: %s", err.message);
-                        }
-                    }
+                    this.sender_picture?.close();
+                    this.sender_picture = new Application.ContactPicture(
+                        this.avatar, this.primary_contact, this.primary_originator, this.config
+                    );
                 }
             }
 
@@ -997,7 +995,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             );
 
             // Full headers
-            Convey.EmailHeaderSet headers = this.headers;
+            GriabuntuMail.EmailHeaderSet headers = this.headers;
             yield fill_originator_addresses(
                 headers.from,
                 headers.reply_to,
@@ -1042,12 +1040,12 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     private void update_subject_visible() {
         this.subject.visible =
             this.subject_searchable != "" &&
-            new Convey.RFC822.Subject(this.subject.label).strip_prefixes() !=
+            new GriabuntuMail.RFC822.Subject(this.subject.label).strip_prefixes() !=
             this.conversation_subject;
         reserve_unsubscribe_space();
     }
 
-    public async void load_message_body(Convey.RFC822.Message message,
+    public async void load_message_body(GriabuntuMail.RFC822.Message message,
                                         GLib.Cancellable load_cancelled)
         throws GLib.Error {
         if (load_cancelled.is_cancelled()) {
@@ -1091,7 +1089,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         yield update_autocrypt_info_bar(message, load_cancelled);
     }
 
-    private async void update_autocrypt_info_bar(Convey.RFC822.Message message,
+    private async void update_autocrypt_info_bar(GriabuntuMail.RFC822.Message message,
                                                  GLib.Cancellable cancellable)
         throws GLib.Error {
         uint8[]? keydata = message.get_autocrypt_key();
@@ -1100,8 +1098,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         }
         string address = message.from.get(0).address;
         bool has_key = false;
-        yield Convey.Nonblocking.Concurrent.global.schedule_async(
-            () => { has_key = Convey.RFC822.Utils.has_pgp_key(address); },
+        yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
+            () => { has_key = GriabuntuMail.RFC822.Utils.has_pgp_key(address); },
             cancellable
         );
         if (has_key) {
@@ -1133,8 +1131,8 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         int count = 0;
         string message;
         try {
-            yield Convey.Nonblocking.Concurrent.global.schedule_async(
-                () => { count = Convey.RFC822.Utils.import_pgp_keys(keydata); },
+            yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
+                () => { count = GriabuntuMail.RFC822.Utils.import_pgp_keys(keydata); },
                 null
             );
             message = (count > 0)
@@ -1248,12 +1246,12 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
 
     private async string format_originator_compact(GLib.Cancellable cancellable)
         throws GLib.Error {
-        Convey.RFC822.MailboxAddresses? from = this.headers.from;
+        GriabuntuMail.RFC822.MailboxAddresses? from = this.headers.from;
         string text = "";
         if (from != null && from.size > 0) {
             int i = 0;
-            Gee.List<Convey.RFC822.MailboxAddress> list = from.get_all();
-            foreach (Convey.RFC822.MailboxAddress addr in list) {
+            Gee.List<GriabuntuMail.RFC822.MailboxAddress> list = from.get_all();
+            foreach (GriabuntuMail.RFC822.MailboxAddress addr in list) {
                 Application.Contact originator = yield this.contacts.load(
                     addr, cancellable
                 );
@@ -1271,14 +1269,14 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         return text;
     }
 
-    private async void fill_originator_addresses(Convey.RFC822.MailboxAddresses? from,
-                                                 Convey.RFC822.MailboxAddresses? reply_to,
-                                                 Convey.RFC822.MailboxAddress? sender,
+    private async void fill_originator_addresses(GriabuntuMail.RFC822.MailboxAddresses? from,
+                                                 GriabuntuMail.RFC822.MailboxAddresses? reply_to,
+                                                 GriabuntuMail.RFC822.MailboxAddress? sender,
                                                  GLib.Cancellable? cancellable)
         throws GLib.Error {
         // Show any From header addresses
         if (from != null && from.size > 0) {
-            foreach (Convey.RFC822.MailboxAddress address in from) {
+            foreach (GriabuntuMail.RFC822.MailboxAddress address in from) {
                 ContactFlowBoxChild child = new ContactFlowBoxChild(
                     yield this.contacts.load(address, cancellable),
                     address,
@@ -1313,7 +1311,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         // Show any Reply-To header addresses if present, but only if
         // each is not already in the From header.
         if (reply_to != null) {
-            foreach (Convey.RFC822.MailboxAddress address in reply_to) {
+            foreach (GriabuntuMail.RFC822.MailboxAddress address in reply_to) {
                 if (from == null || !from.contains_normalized(address.address)) {
                     ContactFlowBoxChild child = new ContactFlowBoxChild(
                         yield this.contacts.load(address, cancellable),
@@ -1328,7 +1326,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     }
 
     private async void fill_header_addresses(ContactList contact_list,
-                                             Convey.RFC822.MailboxAddresses? addresses,
+                                             GriabuntuMail.RFC822.MailboxAddresses? addresses,
                                              GLib.Cancellable? cancellable)
         throws GLib.Error {
 
@@ -1341,7 +1339,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             return;
         }
 
-        foreach (Convey.RFC822.MailboxAddress address in addresses) {
+        foreach (GriabuntuMail.RFC822.MailboxAddress address in addresses) {
             ContactFlowBoxChild child = new ContactFlowBoxChild(
                 yield this.contacts.load(address, cancellable),
                 address
@@ -1353,16 +1351,16 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
     }
 
     // This delegate is called from within
-    // Convey.RFC822.Message.get_body while assembling the plain or
+    // GriabuntuMail.RFC822.Message.get_body while assembling the plain or
     // HTML document when a non-text MIME part is encountered within a
     // multipart/mixed container.  If this returns null, the MIME part
     // is dropped from the final returned document; otherwise, this
     // returns HTML that is placed into the document in the position
     // where the MIME part was found
-    private string? inline_image_replacer(Convey.RFC822.Part part) {
+    private string? inline_image_replacer(GriabuntuMail.RFC822.Part part) {
         if (this.web_view == null)
             initialize_web_view();
-        Convey.Mime.ContentType content_type = part.content_type;
+        GriabuntuMail.Mime.ContentType content_type = part.content_type;
         if (content_type.media_type != "image" ||
             !this.web_view.can_show_mime_type(content_type.to_string())) {
             debug("Not displaying %s inline: unsupported Content-Type",
@@ -1378,9 +1376,9 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         try {
             this.web_view.add_internal_resource(
                 id,
-                part.write_to_buffer(Convey.RFC822.Part.EncodingConversion.UTF8)
+                part.write_to_buffer(GriabuntuMail.RFC822.Part.EncodingConversion.UTF8)
             );
-        } catch (Convey.RFC822.Error err) {
+        } catch (GriabuntuMail.RFC822.Error err) {
             debug("Failed to get inline buffer: %s", err.message);
             return null;
         }
@@ -1389,7 +1387,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         // attribute value when displaying an inline image in an email
         // that did not specify a file name. E.g. <IMG ALT="Image" ...
         string UNKNOWN_FILENAME_ALT_TEXT = _("Image");
-        string clean_filename = Convey.HTML.escape_markup(
+        string clean_filename = GriabuntuMail.HTML.escape_markup(
             part.get_clean_filename() ?? UNKNOWN_FILENAME_ALT_TEXT
         );
 
@@ -1397,7 +1395,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
             clean_filename,
             REPLACED_IMAGE_CLASS,
             Components.WebView.CID_URL_PREFIX,
-            Convey.HTML.escape_markup(id)
+            GriabuntuMail.HTML.escape_markup(id)
         );
     }
 
@@ -1493,7 +1491,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         if (address_child != null) {
             address_child.set_state_flags(Gtk.StateFlags.ACTIVE, false);
 
-            Convey.RFC822.MailboxAddress address = address_child.displayed;
+            GriabuntuMail.RFC822.MailboxAddress address = address_child.displayed;
 
             Gee.Map<string,GLib.Variant> values =
                 new Gee.HashMap<string,GLib.Variant>();
@@ -1613,7 +1611,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         string anchor_label = GLib.Uri.unescape_string(anchor_href) ?? _("(unknown)");
 
         Gtk.Builder builder = new Gtk.Builder.from_resource(
-            "/net/donnybeelo/Convey/conversation-message-link-popover.ui"
+            "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-message-link-popover.ui"
         );
         var link_popover = builder.get_object("link_popover") as Gtk.Popover;
         var good_link = builder.get_object("good_link_label") as Gtk.Label;
@@ -1800,7 +1798,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
                         save_image(
                             uri,
                             alt_text,
-                            new Convey.Memory.ByteBuffer(data, data.length)
+                            new GriabuntuMail.Memory.ByteBuffer(data, data.length)
                         );
                     } catch (GLib.Error err) {
                         debug(
@@ -1830,7 +1828,7 @@ public class ConversationMessage : Gtk.Box, Convey.BaseInterface {
         if (this.primary_contact != null) {
             var email_addresses = this.primary_contact.email_addresses;
             for (uint i = 0; i < email_addresses.get_n_items(); i++) {
-                var email = (Convey.RFC822.MailboxAddress) email_addresses.get_item(i);
+                var email = (GriabuntuMail.RFC822.MailboxAddress) email_addresses.get_item(i);
                 this.config.add_images_trusted_domain(email.domain);
                 break;
             }

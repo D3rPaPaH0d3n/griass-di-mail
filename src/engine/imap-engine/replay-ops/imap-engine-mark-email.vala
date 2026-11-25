@@ -1,16 +1,19 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-private class Convey.ImapEngine.MarkEmail : Convey.ImapEngine.SendReplayOperation {
+private class GriabuntuMail.ImapEngine.MarkEmail : GriabuntuMail.ImapEngine.SendReplayOperation {
     private MinimalFolder engine;
     private Gee.List<ImapDB.EmailIdentifier> to_mark = new Gee.ArrayList<ImapDB.EmailIdentifier>();
     private Gee.List<Imap.UID> to_mark_uids = new Gee.ArrayList<Imap.UID>();
-    private Convey.EmailFlags? flags_to_add;
-    private Convey.EmailFlags? flags_to_remove;
-    private Gee.Map<ImapDB.EmailIdentifier, Convey.EmailFlags>? original_flags = null;
+    private GriabuntuMail.EmailFlags? flags_to_add;
+    private GriabuntuMail.EmailFlags? flags_to_remove;
+    private Gee.Map<ImapDB.EmailIdentifier, GriabuntuMail.EmailFlags>? original_flags = null;
     private Cancellable? cancellable;
 
     internal int unread_change { get; private set; default=0; }
@@ -33,7 +36,7 @@ private class Convey.ImapEngine.MarkEmail : Convey.ImapEngine.SendReplayOperatio
     public override void notify_remote_removed_ids(Gee.Collection<ImapDB.EmailIdentifier> ids) {
         // don't bother updating on server or backing out locally
         if (original_flags != null)
-            Collection.map_unset_all_keys<EmailIdentifier, Convey.EmailFlags>(original_flags, ids);
+            Collection.map_unset_all_keys<EmailIdentifier, GriabuntuMail.EmailFlags>(original_flags, ids);
     }
 
     public override async ReplayOperation.Status replay_local_async() throws Error {
@@ -60,7 +63,7 @@ private class Convey.ImapEngine.MarkEmail : Convey.ImapEngine.SendReplayOperatio
         to_mark_uids = yield engine.local_folder.get_email_uids_async(to_mark, cancellable);
 
         // Notify using flags from DB.
-        Gee.Map<EmailIdentifier, Convey.EmailFlags>? map = yield engine.local_folder.get_email_flags_async(
+        Gee.Map<EmailIdentifier, GriabuntuMail.EmailFlags>? map = yield engine.local_folder.get_email_flags_async(
             original_flags.keys, cancellable);
         if (map != null && map.size > 0)
             engine.replay_notify_email_flags_changed(map);

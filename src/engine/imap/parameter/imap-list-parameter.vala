@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -10,7 +13,7 @@
  * See [[http://tools.ietf.org/html/rfc3501#section-4.4]]
  */
 
-public class Convey.Imap.ListParameter : Convey.Imap.Parameter {
+public class GriabuntuMail.Imap.ListParameter : GriabuntuMail.Imap.Parameter {
     /**
      * The maximum length a literal parameter may be to be auto-converted to a StringParameter
      * in the StringParameter getters.
@@ -389,7 +392,7 @@ public class Convey.Imap.ListParameter : Convey.Imap.Parameter {
     public LiteralParameter get_as_empty_literal(int index) throws ImapError {
         LiteralParameter? param = get_as_nullable_literal(index);
 
-        return param ?? new LiteralParameter(Convey.Memory.EmptyBuffer.instance);
+        return param ?? new LiteralParameter(GriabuntuMail.Memory.EmptyBuffer.instance);
     }
 
     /**

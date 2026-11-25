@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -10,8 +13,8 @@
  */
 public class FolderList.AllInboxesBranch : Sidebar.RootOnlyBranch {
 
-    public AllInboxesBranch() {
-        base(new AllInboxesEntry());
+    public AllInboxesBranch(AllInboxesEntry entry) {
+        base(entry);
     }
 
     public AllInboxesEntry get_inboxes_entry() {
@@ -27,26 +30,26 @@ public class FolderList.AllInboxesBranch : Sidebar.RootOnlyBranch {
  * no folder of its own: it stands for the set of inboxes, which the
  * main window loads with one conversation monitor per account.
  */
-public class FolderList.AllInboxesEntry : Convey.BaseObject,
+public class FolderList.AllInboxesEntry : GriabuntuMail.BaseObject,
     Sidebar.Entry, Sidebar.SelectableEntry {
 
 
-    private Gee.Map<Convey.Account, Application.FolderContext> inboxes =
-        new Gee.HashMap<Convey.Account, Application.FolderContext>();
+    private Gee.Map<GriabuntuMail.Account, Application.FolderContext> inboxes =
+        new Gee.HashMap<GriabuntuMail.Account, Application.FolderContext>();
 
 
     public void add_inbox(Application.FolderContext context) {
-        if (this.inboxes.has_key(context.folder.account)) {
-            remove_inbox(context.folder.account);
-        }
+        var old = this.inboxes.get(context.folder.account);
+        if (old == context) return;
+        if (old != null) connect_counts(old, false);
         this.inboxes.set(context.folder.account, context);
         connect_counts(context, true);
         entry_changed();
     }
 
-    public void remove_inbox(Convey.Account account) {
+    public void remove_inbox(GriabuntuMail.Account account, Application.FolderContext? expected = null) {
         Application.FolderContext? context = this.inboxes.get(account);
-        if (context == null) {
+        if (context == null || (expected != null && context != expected)) {
             return;
         }
         connect_counts(context, false);
@@ -55,8 +58,8 @@ public class FolderList.AllInboxesEntry : Convey.BaseObject,
     }
 
     /** The inboxes this entry stands for. */
-    public Gee.Collection<Convey.Folder> get_inboxes() {
-        var folders = new Gee.ArrayList<Convey.Folder>();
+    public Gee.Collection<GriabuntuMail.Folder> get_inboxes() {
+        var folders = new Gee.ArrayList<GriabuntuMail.Folder>();
         foreach (var context in this.inboxes.values) {
             folders.add(context.folder);
         }
@@ -105,18 +108,20 @@ public class FolderList.AllInboxesEntry : Convey.BaseObject,
     private void connect_counts(Application.FolderContext context, bool connect) {
         var properties = context.folder.properties;
         if (connect) {
+            context.notify["displayed-count"].connect(on_counts_changed);
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL
             ].connect(on_counts_changed);
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_UNREAD
             ].connect(on_counts_changed);
         } else {
+            context.notify["displayed-count"].disconnect(on_counts_changed);
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_TOTAL
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_TOTAL
             ].disconnect(on_counts_changed);
             properties.notify[
-                Convey.FolderProperties.PROP_NAME_EMAIL_UNREAD
+                GriabuntuMail.FolderProperties.PROP_NAME_EMAIL_UNREAD
             ].disconnect(on_counts_changed);
         }
     }

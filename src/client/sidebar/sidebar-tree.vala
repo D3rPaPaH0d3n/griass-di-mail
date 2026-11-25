@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -36,6 +39,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         public weak Gtk.Spinner? spinner_widget = null;
         public weak Gtk.Label? name_widget = null;
         public weak Gtk.Label? count_widget = null;
+        public weak Components.IdentityColorSwatch? color_widget = null;
         public ulong children_handler = 0;
         public ulong expanded_handler = 0;
         public bool expansion_restored = false;
@@ -391,6 +395,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         box.add_css_class("sidebar-row-content");
         box.append(icon);
         box.append(spinner);
+        box.append(new Components.IdentityColorSwatch());
         box.append(name);
         box.append(count);
         var expander = new Gtk.TreeExpander() {
@@ -411,13 +416,15 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
         var box = (Gtk.Box) expander.child;
         var icon = (Gtk.Image) box.get_first_child();
         var spinner = (Gtk.Spinner) icon.get_next_sibling();
-        var name = (Gtk.Label) spinner.get_next_sibling();
+        var color = (Components.IdentityColorSwatch) spinner.get_next_sibling();
+        var name = (Gtk.Label) color.get_next_sibling();
         var count = (Gtk.Label) name.get_next_sibling();
 
         box.set_data("sidebar-node", node);
         node.expander_widget = expander;
         node.icon_widget = icon;
         node.spinner_widget = spinner;
+        node.color_widget = color;
         node.name_widget = name;
         node.count_widget = count;
         node.children_handler = node.children.items_changed.connect(() => {
@@ -503,6 +510,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             node.expander_widget = null;
             node.icon_widget = null;
             node.spinner_widget = null;
+            node.color_widget = null;
             node.name_widget = null;
             node.count_widget = null;
         }
@@ -536,6 +544,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
             !busy && !(entry is Sidebar.Header) && icon != null
         );
         node.icon_widget.icon_name = icon;
+        node.color_widget.color = entry.get_sidebar_color();
 
         node.name_widget.label = get_name_for_entry(entry);
 
@@ -545,11 +554,11 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
 
         string? tooltip = entry.get_sidebar_tooltip();
         node.expander_widget.tooltip_markup =
-            tooltip != null ? Convey.HTML.escape_markup(tooltip) : null;
+            tooltip != null ? GriabuntuMail.HTML.escape_markup(tooltip) : null;
     }
 
     private string get_name_for_entry(Sidebar.Entry entry) {
-        string name = Convey.HTML.escape_markup(entry.get_sidebar_name());
+        string name = GriabuntuMail.HTML.escape_markup(entry.get_sidebar_name());
 
         Sidebar.EmphasizableEntry? emphasizable_entry = entry as Sidebar.EmphasizableEntry;
         if (emphasizable_entry != null && emphasizable_entry.is_emphasized())
@@ -1479,7 +1488,7 @@ public class Sidebar.Tree : Gtk.Widget, Gtk.Scrollable {
                                      GLib.Value value,
                                      double x, double y) {
         if (!value.holds(typeof(string)) ||
-            value.get_string() != "application/x-convey-mail") {
+            value.get_string() != "application/x-griabuntu-mail-mail") {
             return false;
         }
 

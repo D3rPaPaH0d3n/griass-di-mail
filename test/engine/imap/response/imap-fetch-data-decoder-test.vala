@@ -1,15 +1,18 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.Imap.FetchDataDecoderTest : TestCase {
+class GriabuntuMail.Imap.FetchDataDecoderTest : TestCase {
 
 
     public FetchDataDecoderTest() {
-        base("Convey.Imap.FetchDataDecoderTest");
+        base("GriabuntuMail.Imap.FetchDataDecoderTest");
         add_test("envelope_basic", envelope_basic);
         add_test(
             "envelope_mailbox_missing_mailbox_name_quirk",

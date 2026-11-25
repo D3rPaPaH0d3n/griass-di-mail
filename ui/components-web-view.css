@@ -42,12 +42,12 @@ html, body {
 
 /* Only paint over the message's own colours when the "override the original
  * colors" preference is on; the attribute is set by setUnsetHtmlColors(). */
-body[data-convey-theme] {
+body[data-griabuntu-mail-theme] {
   color: var(--fg-color);
   background-color: var(--bg-color);
 }
 
-body[data-convey-theme=dark] {
+body[data-griabuntu-mail-theme=dark] {
   color-scheme: dark;
   --bg-color: #2a2d30;
   --fg-color: #eaeaea;

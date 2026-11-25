@@ -1,11 +1,17 @@
+/* Downstream notice addition: 2026-10-27 — the original Dovecot MIT text
+ * is included in docs/licenses/Dovecot-2.1.15-MIT.txt and installed.
+ * Historical upstream comments below are retained for provenance. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright (c) 2008-2012 Dovecot authors
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-namespace Convey.ImapUtf7 {
+namespace GriabuntuMail.ImapUtf7 {
 
 /* This file was modified from Dovecot's LGPLv2.1-licensed implementation in
  * dovecot-2.1.15/src/lib-imap/imap-utf7.c.

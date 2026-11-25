@@ -1,46 +1,46 @@
-# Convey engine
+# Griabuntu Mail engine
 engine_vala_sources = files(
-  'api/convey.vala',
-  'api/convey-abstract-local-folder.vala',
-  'api/convey-account.vala',
-  'api/convey-account-backend.vala',
-  'api/convey-account-information.vala',
-  'api/convey-aggregated-folder-properties.vala',
-  'api/convey-attachment.vala',
-  'api/convey-base-object.vala',
-  'api/convey-client-service.vala',
-  'api/convey-composed-email.vala',
-  'api/convey-contact.vala',
-  'api/convey-contact-store.vala',
-  'api/convey-credentials.vala',
-  'api/convey-credentials-mediator.vala',
-  'api/convey-email-flags.vala',
-  'api/convey-email-header-set.vala',
-  'api/convey-email-identifier.vala',
-  'api/convey-email-properties.vala',
-  'api/convey-email.vala',
-  'api/convey-endpoint.vala',
-  'api/convey-engine-error.vala',
-  'api/convey-engine.vala',
-  'api/convey-folder.vala',
-  'api/convey-folder-path.vala',
-  'api/convey-folder-properties.vala',
-  'api/convey-account-support-queue-send.vala',
-  'api/convey-folder-supports-archive.vala',
-  'api/convey-folder-supports-copy.vala',
-  'api/convey-folder-supports-create.vala',
-  'api/convey-folder-supports-empty.vala',
-  'api/convey-folder-supports-mark.vala',
-  'api/convey-folder-supports-move.vala',
-  'api/convey-folder-supports-remove.vala',
-  'api/convey-named-flag.vala',
-  'api/convey-named-flags.vala',
-  'api/convey-problem-report.vala',
-  'api/convey-progress-monitor.vala',
-  'api/convey-revokable.vala',
-  'api/convey-search-query.vala',
-  'api/convey-service-information.vala',
-  'api/convey-service-provider.vala',
+  'api/griabuntu-mail.vala',
+  'api/griabuntu-mail-abstract-local-folder.vala',
+  'api/griabuntu-mail-account.vala',
+  'api/griabuntu-mail-account-backend.vala',
+  'api/griabuntu-mail-account-information.vala',
+  'api/griabuntu-mail-aggregated-folder-properties.vala',
+  'api/griabuntu-mail-attachment.vala',
+  'api/griabuntu-mail-base-object.vala',
+  'api/griabuntu-mail-client-service.vala',
+  'api/griabuntu-mail-composed-email.vala',
+  'api/griabuntu-mail-contact.vala',
+  'api/griabuntu-mail-contact-store.vala',
+  'api/griabuntu-mail-credentials.vala',
+  'api/griabuntu-mail-credentials-mediator.vala',
+  'api/griabuntu-mail-email-flags.vala',
+  'api/griabuntu-mail-email-header-set.vala',
+  'api/griabuntu-mail-email-identifier.vala',
+  'api/griabuntu-mail-email-properties.vala',
+  'api/griabuntu-mail-email.vala',
+  'api/griabuntu-mail-endpoint.vala',
+  'api/griabuntu-mail-engine-error.vala',
+  'api/griabuntu-mail-engine.vala',
+  'api/griabuntu-mail-folder.vala',
+  'api/griabuntu-mail-folder-path.vala',
+  'api/griabuntu-mail-folder-properties.vala',
+  'api/griabuntu-mail-account-support-queue-send.vala',
+  'api/griabuntu-mail-folder-supports-archive.vala',
+  'api/griabuntu-mail-folder-supports-copy.vala',
+  'api/griabuntu-mail-folder-supports-create.vala',
+  'api/griabuntu-mail-folder-supports-empty.vala',
+  'api/griabuntu-mail-folder-supports-mark.vala',
+  'api/griabuntu-mail-folder-supports-move.vala',
+  'api/griabuntu-mail-folder-supports-remove.vala',
+  'api/griabuntu-mail-named-flag.vala',
+  'api/griabuntu-mail-named-flags.vala',
+  'api/griabuntu-mail-problem-report.vala',
+  'api/griabuntu-mail-progress-monitor.vala',
+  'api/griabuntu-mail-revokable.vala',
+  'api/griabuntu-mail-search-query.vala',
+  'api/griabuntu-mail-service-information.vala',
+  'api/griabuntu-mail-service-provider.vala',
 
   'app/app-conversation.vala',
   'app/app-conversation-monitor.vala',
@@ -353,8 +353,8 @@ endif
 
 engine_build_dir = meson.current_build_dir()
 
-engine_c_args = convey_c_args
-engine_vala_args = convey_vala_args
+engine_c_args = griabuntu_mail_c_args
+engine_vala_args = griabuntu_mail_vala_args
 
 # Suppress SQLite loadable module init code
 engine_c_args += [
@@ -365,8 +365,8 @@ engine_c_args += [
 # https://github.com/mesonbuild/meson/issues/1781 for official
 # internal VAPI support.
 engine_vala_args += [
-  '--internal-header=@0@/convey-engine-internal.h'.format(engine_build_dir),
-  '--internal-vapi=@0@/convey-engine-internal.vapi'.format(engine_build_dir)
+  '--internal-header=@0@/griabuntu-mail-engine-internal.h'.format(engine_build_dir),
+  '--internal-vapi=@0@/griabuntu-mail-engine-internal.vapi'.format(engine_build_dir)
 ]
 
 if libunwind_dep.found()
@@ -388,7 +388,7 @@ if get_option('delayed_replay_queue')
   ]
 endif
 
-engine_lib = static_library('convey-engine',
+engine_lib = static_library('griabuntu-mail-engine',
   engine_sources,
   dependencies: engine_dependencies,
   vala_args: engine_vala_args,
@@ -401,14 +401,14 @@ engine_lib = static_library('convey-engine',
 engine_internal_header_fixup = custom_target(
   'engine_internal_header_fixup',
   output: [
-    'convey-engine-internal.h',
-    'convey-engine-internal.vapi',
+    'griabuntu-mail-engine-internal.h',
+    'griabuntu-mail-engine-internal.vapi',
   ],
   command: [
     find_program('sed'),
     '-ibak',
-    's/convey-engine.h/convey-engine-internal.h/g',
-    '@OUTDIR@/convey-engine-internal.vapi',
+    's/griabuntu-mail-engine.h/griabuntu-mail-engine-internal.h/g',
+    '@OUTDIR@/griabuntu-mail-engine-internal.vapi',
   ],
   depends: engine_lib
 )
@@ -425,7 +425,7 @@ engine_internal_dep = declare_dependency(
   # pull in the public header and we get duplicate symbol errors.
   link_args: [
     '-L' + engine_build_dir,
-    '-lconvey-engine'
+    '-lgriabuntu-mail-engine'
   ],
   include_directories: include_directories('.'),
   sources: engine_internal_header_fixup
@@ -433,7 +433,7 @@ engine_internal_dep = declare_dependency(
 
 # Compile a loadable library containing the custom tokeniser so SQLite
 # command line app can still be used.
-tokeniser_lib = shared_library('convey-tokeniser',
+tokeniser_lib = shared_library('griabuntu-mail-tokeniser',
   files('imap-db/imap-db-fts5-tokeniser.c'),
   dependencies: [ glib, icu_uc, sqlite ],
   c_args: [

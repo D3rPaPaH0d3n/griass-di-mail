@@ -1,9 +1,12 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2018-2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
@@ -25,11 +28,11 @@
  * should implement the {@link Source} interface so they can provide
  * logging context and a custom logging sub-domain (if needed).
  */
-namespace Convey.Logging {
+namespace GriabuntuMail.Logging {
 
 
     /** The logging domain for the engine. */
-    public const string DOMAIN = "Convey";
+    public const string DOMAIN = "Griabuntu Mail";
 
     /** Specifies the default number of log records retained. */
     public const uint DEFAULT_MAX_LOG_BUFFER_LENGTH = 4096;
@@ -129,7 +132,7 @@ namespace Convey.Logging {
     /**
      * Clears all log records.
      *
-     * Since log records hold references to Convey engine objects, it may
+     * Since log records hold references to Griabuntu Mail engine objects, it may
      * be desirable to clear the records prior to shutdown so that the
      * objects can be destroyed.
      */
@@ -371,7 +374,7 @@ namespace Convey.Logging {
  * is the logging source parent of a Bar object, log calls made by Bar
  * will automatically be decorated with Foo.
  */
-public interface Convey.Logging.Source : GLib.Object {
+public interface GriabuntuMail.Logging.Source : GLib.Object {
 
 
     /**
@@ -458,7 +461,7 @@ public interface Convey.Logging.Source : GLib.Object {
         }
 
         public inline void append_source(Source value) {
-            this.append("CONVEY_LOGGING_SOURCE", value);
+            this.append("GRIABUNTU_MAIL_LOGGING_SOURCE", value);
         }
 
         public GLib.LogField[] to_array() {
@@ -578,7 +581,7 @@ public interface Convey.Logging.Source : GLib.Object {
  */
 // This a class rather than a struct so we get pass-by-reference
 // semantics for it, and make its members private
-public class Convey.Logging.State {
+public class GriabuntuMail.Logging.State {
 
 
     public Source source { get; private set; }
@@ -621,7 +624,7 @@ public class Convey.Logging.State {
  * this by calling {@link get_earliest_record} and then {get_next},
  * and can be notified of new records via {@link set_log_listener}.
  */
-public class Convey.Logging.Record : GLib.Object {
+public class GriabuntuMail.Logging.Record : GLib.Object {
 
 
     /** The GLib domain of the log message, if any. */
@@ -681,7 +684,7 @@ public class Convey.Logging.Record : GLib.Object {
         int state_count = 0;
         foreach (GLib.LogField field in fields) {
             switch (field.key) {
-            case "CONVEY_LOGGING_SOURCE":
+            case "GRIABUNTU_MAIL_LOGGING_SOURCE":
                 var state = ((Source) field.value).to_logging_state();
                 GLib.Type type = state.source.get_type();
                 if (state_count == 0) {

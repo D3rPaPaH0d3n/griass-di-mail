@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2018 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 class Accounts.ManagerTest : TestCase {
@@ -11,9 +14,9 @@ class Accounts.ManagerTest : TestCase {
     private const string TEST_ID = "test";
 
     private Manager? test = null;
-    private Convey.CredentialsMediator? mediator = null;
-    private Convey.AccountInformation? account = null;
-    private Convey.RFC822.MailboxAddress primary_mailbox;
+    private GriabuntuMail.CredentialsMediator? mediator = null;
+    private GriabuntuMail.AccountInformation? account = null;
+    private GriabuntuMail.RFC822.MailboxAddress primary_mailbox;
     private File? tmp = null;
 
 
@@ -31,6 +34,8 @@ class Accounts.ManagerTest : TestCase {
         );
         add_test("account_config_v1", account_config_v1);
         add_test("account_config_legacy", account_config_legacy);
+        add_test("alias_remove_undo_after_provider_import", alias_remove_undo_after_provider_import);
+        add_test("alias_append_redo_after_provider_import", alias_append_redo_after_provider_import);
         add_test("service_config_v1", service_config_v1);
         add_test("service_config_legacy", service_config_legacy);
     }
@@ -43,14 +48,14 @@ class Accounts.ManagerTest : TestCase {
             GLib.DirUtils.make_tmp("accounts-manager-test-XXXXXX")
         );
 
-        this.primary_mailbox = new Convey.RFC822.MailboxAddress(
+        this.primary_mailbox = new GriabuntuMail.RFC822.MailboxAddress(
             null, "test1@example.com"
         );
 
         this.mediator = new Mock.CredentialsMediator();
-        this.account = new Convey.AccountInformation(
+        this.account = new GriabuntuMail.AccountInformation(
             TEST_ID,
-            Convey.ServiceProvider.OTHER,
+            GriabuntuMail.ServiceProvider.OTHER,
             this.mediator,
             this.primary_mailbox
         );
@@ -62,7 +67,11 @@ class Accounts.ManagerTest : TestCase {
         this.mediator = null;
         this.test = null;
         this.primary_mailbox = null;
-        @delete(this.tmp);
+        // Filtered client runs may destroy this suite without ever setting it up.
+        if (this.tmp != null) {
+            @delete(this.tmp);
+            this.tmp = null;
+        }
     }
 
     public void create_account() throws GLib.Error {
@@ -88,10 +97,10 @@ class Accounts.ManagerTest : TestCase {
 
     public void create_orphan_account() throws GLib.Error {
         this.test.new_orphan_account.begin(
-            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
+            GriabuntuMail.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Convey.AccountInformation account1 =
+        GriabuntuMail.AccountInformation account1 =
             this.test.new_orphan_account.end(async_result());
         assert(account1.id == "account_01");
 
@@ -102,10 +111,10 @@ class Accounts.ManagerTest : TestCase {
         this.test.create_account.end(async_result());
 
         this.test.new_orphan_account.begin(
-            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
+            GriabuntuMail.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Convey.AccountInformation account2 =
+        GriabuntuMail.AccountInformation account2 =
             this.test.new_orphan_account.end(async_result());
         assert(account2.id == "account_02");
     }
@@ -118,10 +127,10 @@ class Accounts.ManagerTest : TestCase {
         this.test.create_account.end(async_result());
 
         this.test.new_orphan_account.begin(
-            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
+            GriabuntuMail.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Convey.AccountInformation account1 =
+        GriabuntuMail.AccountInformation account1 =
             this.test.new_orphan_account.end(async_result());
         assert(account1.id == "account_01");
 
@@ -132,10 +141,10 @@ class Accounts.ManagerTest : TestCase {
         this.test.create_account.end(async_result());
 
         this.test.new_orphan_account.begin(
-            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
+            GriabuntuMail.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Convey.AccountInformation account2 =
+        GriabuntuMail.AccountInformation account2 =
             this.test.new_orphan_account.end(async_result());
         assert(account2.id == "account_02");
     }
@@ -147,10 +156,10 @@ class Accounts.ManagerTest : TestCase {
         existing.make_directory();
 
         this.test.new_orphan_account.begin(
-            Convey.ServiceProvider.OTHER, this.primary_mailbox, null,
+            GriabuntuMail.ServiceProvider.OTHER, this.primary_mailbox, null,
             this.async_completion
         );
-        Convey.AccountInformation account =
+        GriabuntuMail.AccountInformation account =
             this.test.new_orphan_account.end(async_result());
         assert(account.id == "account_03");
     }
@@ -164,13 +173,13 @@ class Accounts.ManagerTest : TestCase {
         this.account.signature = "blarg";
         this.account.use_signature = false;
 
-        Convey.ConfigFile file =
-            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
+        GriabuntuMail.ConfigFile file =
+            new GriabuntuMail.ConfigFile(this.tmp.get_child("config.ini"));
 
         Accounts.AccountConfigV1 config = new Accounts.AccountConfigV1(false);
         config.save(this.account, file);
 
-        Convey.AccountInformation copy = config.load(
+        GriabuntuMail.AccountInformation copy = config.load(
             file, TEST_ID, this.mediator, null, null
         );
 
@@ -188,35 +197,107 @@ class Accounts.ManagerTest : TestCase {
         Accounts.AccountConfigLegacy config =
             new Accounts.AccountConfigLegacy();
 
-        Convey.ConfigFile file =
-            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
+        GriabuntuMail.ConfigFile file =
+            new GriabuntuMail.ConfigFile(this.tmp.get_child("config.ini"));
 
         config.save(this.account, file);
-        Convey.AccountInformation copy = config.load(
+        GriabuntuMail.AccountInformation copy = config.load(
             file, TEST_ID, this.mediator, null, null
         );
 
         assert_true(this.account.equal_to(copy));
     }
 
+    private MailboxRow command_row(GriabuntuMail.RFC822.MailboxAddress mailbox) {
+        // These command tests need real list rows, but no account pane, web view
+        // or colour editor. Set the command's two model properties directly.
+        return (MailboxRow) GLib.Object.new(
+            typeof(MailboxRow), "account", this.account, "mailbox", mailbox
+        );
+    }
+
+    private int row_count(Gtk.ListBox list) {
+        int count = 0;
+        for (var child = list.get_first_child(); child != null;
+             child = child.get_next_sibling()) count++;
+        return count;
+    }
+
+    public void alias_remove_undo_after_provider_import() throws GLib.Error {
+        var alias = new GriabuntuMail.RFC822.MailboxAddress("Local alias", "alias@example.test");
+        this.account.append_sender(alias);
+        this.account.set_sender_color(alias, "#123456");
+        var list = new Gtk.ListBox();
+        list.append(command_row(this.primary_mailbox));
+        var original_row = command_row(alias);
+        list.append(original_row);
+        var command = new RemoveMailboxCommand(original_row);
+        command.execute.begin(null, this.async_completion);
+        command.execute.end(async_result());
+
+        var imported = new GriabuntuMail.RFC822.MailboxAddress("Provider", "ALIAS@EXAMPLE.TEST");
+        this.account.append_sender(imported);
+        list.append(command_row(imported));
+        command.undo.begin(null, this.async_completion);
+        command.undo.end(async_result());
+        assert_equal<int?>(this.account.sender_mailboxes.size, 2);
+        assert_equal<int?>(row_count(list), 2);
+        assert_true(list.get_last_child() == original_row);
+        assert_true(this.account.sender_mailboxes[1] == alias);
+        assert_equal(this.account.get_sender_color(alias), "#123456");
+
+        // The restored command must still remove that exact model and row.
+        command.redo.begin(null, this.async_completion);
+        command.redo.end(async_result());
+        assert_equal<int?>(this.account.sender_mailboxes.size, 1);
+        assert_equal<int?>(row_count(list), 1);
+    }
+
+    public void alias_append_redo_after_provider_import() throws GLib.Error {
+        var alias = new GriabuntuMail.RFC822.MailboxAddress("Local alias", "alias@example.test");
+        var list = new Gtk.ListBox();
+        list.append(command_row(this.primary_mailbox));
+        var original_row = command_row(alias);
+        var command = new AppendMailboxCommand(list, original_row, "Local signature");
+        command.execute.begin(null, this.async_completion);
+        command.execute.end(async_result());
+        command.undo.begin(null, this.async_completion);
+        command.undo.end(async_result());
+
+        var other = new GriabuntuMail.RFC822.MailboxAddress("Other", "other@example.test");
+        var imported = new GriabuntuMail.RFC822.MailboxAddress("Provider", "ALIAS@EXAMPLE.TEST");
+        this.account.append_sender(other);
+        this.account.append_sender(imported);
+        list.append(command_row(other));
+        list.append(command_row(imported));
+        command.redo.begin(null, this.async_completion);
+        command.redo.end(async_result());
+        assert_equal<int?>(this.account.sender_mailboxes.size, 3);
+        assert_equal<int?>(row_count(list), 3);
+        assert_true(this.account.sender_mailboxes[1] == alias);
+        assert_true(this.account.sender_mailboxes[2] == other);
+        assert_true(list.get_first_child().get_next_sibling() == original_row);
+        assert_equal(this.account.get_sender_signature(alias), "Local signature");
+    }
+
     public void service_config_v1() throws GLib.Error {
         // take a copy before updating the service info so we don't
         // also copy the test data
-        Convey.AccountInformation copy = new Convey.AccountInformation.copy(
+        GriabuntuMail.AccountInformation copy = new GriabuntuMail.AccountInformation.copy(
             this.account
         );
 
         this.account.outgoing.host = "blarg";
         this.account.outgoing.port = 1234;
-        this.account.outgoing.transport_security = Convey.TlsNegotiationMethod.NONE;
-        this.account.outgoing.credentials = new Convey.Credentials(
-            Convey.Credentials.Method.PASSWORD, "testerson"
+        this.account.outgoing.transport_security = GriabuntuMail.TlsNegotiationMethod.NONE;
+        this.account.outgoing.credentials = new GriabuntuMail.Credentials(
+            GriabuntuMail.Credentials.Method.PASSWORD, "testerson"
         );
         this.account.outgoing.credentials_requirement =
-            Convey.Credentials.Requirement.NONE;
+            GriabuntuMail.Credentials.Requirement.NONE;
         Accounts.ServiceConfigV1 config = new Accounts.ServiceConfigV1();
-        Convey.ConfigFile file =
-            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
+        GriabuntuMail.ConfigFile file =
+            new GriabuntuMail.ConfigFile(this.tmp.get_child("config.ini"));
 
         config.save(this.account, this.account.outgoing, file);
         config.load(file, copy, copy.outgoing);
@@ -227,21 +308,21 @@ class Accounts.ManagerTest : TestCase {
     public void service_config_legacy() throws GLib.Error {
         // take a copy before updating the service info so we don't
         // also copy the test data
-        Convey.AccountInformation copy = new Convey.AccountInformation.copy(
+        GriabuntuMail.AccountInformation copy = new GriabuntuMail.AccountInformation.copy(
             this.account
         );
 
         this.account.outgoing.host = "blarg";
         this.account.outgoing.port = 1234;
-        this.account.outgoing.transport_security = Convey.TlsNegotiationMethod.NONE;
-        this.account.outgoing.credentials = new Convey.Credentials(
-            Convey.Credentials.Method.PASSWORD, "testerson"
+        this.account.outgoing.transport_security = GriabuntuMail.TlsNegotiationMethod.NONE;
+        this.account.outgoing.credentials = new GriabuntuMail.Credentials(
+            GriabuntuMail.Credentials.Method.PASSWORD, "testerson"
         );
         this.account.outgoing.credentials_requirement =
-            Convey.Credentials.Requirement.NONE;
+            GriabuntuMail.Credentials.Requirement.NONE;
         Accounts.ServiceConfigLegacy config = new Accounts.ServiceConfigLegacy();
-        Convey.ConfigFile file =
-            new Convey.ConfigFile(this.tmp.get_child("config.ini"));
+        GriabuntuMail.ConfigFile file =
+            new GriabuntuMail.ConfigFile(this.tmp.get_child("config.ini"));
 
         config.save(this.account, this.account.outgoing, file);
         config.load(file, copy, copy.outgoing);

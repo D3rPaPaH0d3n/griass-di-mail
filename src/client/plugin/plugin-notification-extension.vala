@@ -1,8 +1,11 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2019-2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
@@ -30,7 +33,7 @@ public interface Plugin.NotificationExtension : PluginBase {
  * Provides a context for notification plugins.
  *
  * The context provides an interface for notification plugins to
- * interface with the Convey client application. Plugins that implement
+ * interface with the Griabuntu Mail client application. Plugins that implement
  * the {@link NotificationExtension} interface will be given an
  * instance of this class.
  *
@@ -43,7 +46,7 @@ public interface Plugin.NotificationExtension : PluginBase {
  *
  * @see Plugin.NotificationExtension.notifications
  */
-public interface Plugin.NotificationContext : Convey.BaseObject {
+public interface Plugin.NotificationContext : GriabuntuMail.BaseObject {
 
 
     /**

@@ -1,18 +1,21 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2025 Niels De Graef <nielsdegraef@gmail.com>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-[GtkTemplate (ui = "/net/donnybeelo/Convey/accounts-tls-combo-row.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/accounts-tls-combo-row.ui")]
 internal class Accounts.TlsComboRow : Adw.ComboRow {
 
     private const string INSECURE_ICON = "channel-insecure-symbolic";
     private const string SECURE_ICON = "channel-secure-symbolic";
 
 
-    public Convey.TlsNegotiationMethod method {
+    public GriabuntuMail.TlsNegotiationMethod method {
         get { return ((Adw.EnumListItem) this.selected_item).value; }
         set { this.selected = value; }
     }
@@ -39,12 +42,12 @@ internal class Accounts.TlsComboRow : Adw.ComboRow {
                                  GLib.Object object) {
         unowned var item = (Gtk.ListItem) object;
         unowned var enum_item = (Adw.EnumListItem) item.item;
-        var method = (Convey.TlsNegotiationMethod) enum_item.get_value();
+        var method = (GriabuntuMail.TlsNegotiationMethod) enum_item.get_value();
 
         unowned var box = (Gtk.Box) item.child;
 
         unowned var image = (Gtk.Image) box.get_first_child();
-        if (method == Convey.TlsNegotiationMethod.NONE)
+        if (method == GriabuntuMail.TlsNegotiationMethod.NONE)
             image.icon_name = "channel-insecure-symbolic";
         else
             image.icon_name = "channel-secure-symbolic";

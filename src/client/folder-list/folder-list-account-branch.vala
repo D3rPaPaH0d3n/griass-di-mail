@@ -1,7 +1,10 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /* Copyright 2016 Software Freedom Conservancy Inc.
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 // A branch that holds all the folders for a particular account.
@@ -9,7 +12,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
 
     // Defines the ordering that special-use folders appear in the
     // folder list
-    private const Convey.Folder.SpecialUse[] SPECIAL_USE_ORDERING = {
+    private const GriabuntuMail.Folder.SpecialUse[] SPECIAL_USE_ORDERING = {
         INBOX,
         SEARCH,
         FLAGGED,
@@ -26,9 +29,9 @@ public class FolderList.AccountBranch : Sidebar.Branch {
     };
 
 
-    public Convey.Account account { get; private set; }
+    public GriabuntuMail.Account account { get; private set; }
     public SpecialGrouping user_folder_group { get; private set; }
-    public Gee.HashMap<Convey.FolderPath, FolderEntry> folder_entries { get; private set; }
+    public Gee.HashMap<GriabuntuMail.FolderPath, FolderEntry> folder_entries { get; private set; }
 
     private string display_name = "";
 
@@ -36,7 +39,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
     // the real entry; the group must survive being momentarily empty.
     private bool pruning_placeholder = false;
 
-    public AccountBranch(Convey.Account account) {
+    public AccountBranch(GriabuntuMail.Account account) {
         base(new Sidebar.Header(account.information.display_name),
              STARTUP_OPEN_GROUPING | STARTUP_EXPAND_TO_FIRST_CHILD,
              normal_folder_comparator,
@@ -44,6 +47,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         );
 
         this.account = account;
+        ((Sidebar.Grouping) get_root()).color = account.information.color;
         // Translators: The name of the folder group containing
         // folders created by people (as opposed to special-use
         // folders)
@@ -56,7 +60,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
             icon_name = "folder-symbolic";
         }
         user_folder_group = new SpecialGrouping(2, name, icon_name);
-        folder_entries = new Gee.HashMap<Convey.FolderPath, FolderEntry>();
+        folder_entries = new Gee.HashMap<GriabuntuMail.FolderPath, FolderEntry>();
 
         this.display_name = account.information.display_name;
         account.information.changed.connect(on_information_changed);
@@ -72,6 +76,9 @@ public class FolderList.AccountBranch : Sidebar.Branch {
     }
 
     private void on_information_changed() {
+        var header = (Sidebar.Grouping) get_root();
+        header.color = this.account.information.color;
+        header.entry_changed();
         if (this.display_name != this.account.information.display_name) {
             this.display_name = account.information.display_name;
             ((Sidebar.Grouping) get_root()).rename(this.display_name);
@@ -96,8 +103,8 @@ public class FolderList.AccountBranch : Sidebar.Branch {
 
         FolderEntry entry_a = (FolderEntry) a;
         FolderEntry entry_b = (FolderEntry) b;
-        Convey.Folder.SpecialUse type_a = entry_a.folder.used_as;
-        Convey.Folder.SpecialUse type_b = entry_b.folder.used_as;
+        GriabuntuMail.Folder.SpecialUse type_a = entry_a.folder.used_as;
+        GriabuntuMail.Folder.SpecialUse type_b = entry_b.folder.used_as;
 
         if (type_a == type_b) return 0;
         if (type_a == INBOX) return -1;
@@ -125,13 +132,13 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         return a.get_sidebar_name().collate(b.get_sidebar_name());
     }
 
-    public FolderEntry? get_entry_for_path(Convey.FolderPath folder_path) {
+    public FolderEntry? get_entry_for_path(GriabuntuMail.FolderPath folder_path) {
         return folder_entries.get(folder_path);
     }
 
     /** Shows a placeholder row in the user folder group. */
     public void add_pending_folder(PendingFolderEntry entry,
-                                   Convey.FolderPath? parent = null) {
+                                   GriabuntuMail.FolderPath? parent = null) {
         Sidebar.Entry? parent_entry =
             (parent != null) ? this.folder_entries.get(parent) : null;
         if (parent_entry != null) {
@@ -153,7 +160,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
     public void add_folder(Application.FolderContext context) {
         Sidebar.Entry? graft_point = null;
         FolderEntry folder_entry = new FolderEntry(context);
-        Convey.Folder.SpecialUse used_as = context.folder.used_as;
+        GriabuntuMail.Folder.SpecialUse used_as = context.folder.used_as;
         if (used_as != NONE) {
             if (used_as == SEARCH)
                 return; // Don't show search folder under the account.
@@ -211,7 +218,7 @@ public class FolderList.AccountBranch : Sidebar.Branch {
         this.suppress_animation = false;
     }
 
-    public void remove_folder(Convey.FolderPath path) {
+    public void remove_folder(GriabuntuMail.FolderPath path) {
         Sidebar.Entry? entry = this.folder_entries.get(path);
         if (entry == null) {
             debug("Could not remove folder %s", path.to_string());

@@ -1,13 +1,16 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2017 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 public class Mock.CredentialsMediator :
     GLib.Object,
-    Convey.CredentialsMediator,
+    GriabuntuMail.CredentialsMediator,
     ValaUnit.TestAssertions,
     ValaUnit.MockObject {
 
@@ -16,8 +19,8 @@ public class Mock.CredentialsMediator :
         get; set; default = new Gee.LinkedList<ValaUnit.ExpectedCall>();
     }
 
-    public virtual async bool load_token(Convey.AccountInformation account,
-                                         Convey.ServiceInformation service,
+    public virtual async bool load_token(GriabuntuMail.AccountInformation account,
+                                         GriabuntuMail.ServiceInformation service,
                                          GLib.Cancellable? cancellable)
         throws GLib.Error {
         return object_call<bool>("load_token", { service, cancellable }, false);
@@ -31,8 +34,8 @@ public class Mock.CredentialsMediator :
      * are ignored).  Return false if the user tried to cancel the
      * interaction, or true if they tried to proceed.
      */
-    public virtual async bool prompt_token(Convey.AccountInformation account,
-                                           Convey.ServiceInformation service,
+    public virtual async bool prompt_token(GriabuntuMail.AccountInformation account,
+                                           GriabuntuMail.ServiceInformation service,
                                            GLib.Cancellable? cancellable)
         throws GLib.Error {
         return boolean_call(

@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * Display contact information and supported actions for a contact.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/conversation-contact-popover.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/conversation-contact-popover.ui")]
 public class Conversation.ContactPopover : Gtk.Popover {
 
 
@@ -37,11 +40,12 @@ public class Conversation.ContactPopover : Gtk.Popover {
 
     public Application.Contact contact { get; private set; }
 
-    public Convey.RFC822.MailboxAddress mailbox { get; private set; }
+    public GriabuntuMail.RFC822.MailboxAddress mailbox { get; private set; }
 
     private GLib.Cancellable load_cancellable = new GLib.Cancellable();
 
     private Application.Configuration config;
+    private Application.ContactPicture? contact_picture;
 
     [GtkChild] private unowned Gtk.Box contact_pane;
 
@@ -76,7 +80,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
 
     public ContactPopover(Gtk.Widget relative_to,
                           Application.Contact contact,
-                          Convey.RFC822.MailboxAddress mailbox,
+                          GriabuntuMail.RFC822.MailboxAddress mailbox,
                           Application.Configuration config) {
 
         set_parent(relative_to);
@@ -106,6 +110,8 @@ public class Conversation.ContactPopover : Gtk.Popover {
      */
     public override void dispose() {
         this.contact.changed.disconnect(this.on_contact_changed);
+        this.contact_picture?.close();
+        this.contact_picture = null;
         this.load_cancellable.cancel();
         base.dispose();
     }
@@ -155,7 +161,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
             this.deceptive_pane.show();
             this.contact_pane.hide();
 
-            this.forged_email_label.label = Convey.String.reduce_whitespace(
+            this.forged_email_label.label = GriabuntuMail.String.reduce_whitespace(
                 this.mailbox.name
             );
             this.actual_email_label.label = this.mailbox.address;
@@ -181,23 +187,10 @@ public class Conversation.ContactPopover : Gtk.Popover {
     }
 
     private async void load_avatar() {
-        if (this.contact.avatar == null) {
-            this.avatar.custom_image = null;
-            return;
-        }
-
-        try {
-            GLib.InputStream stream = yield this.contact.avatar.load_async(
-                avatar.size, this.load_cancellable
-            );
-            var pixbuf = yield new Gdk.Pixbuf.from_stream_at_scale_async(
-                stream, avatar.size, avatar.size, true, load_cancellable
-            );
-            this.avatar.custom_image = Gdk.Texture.for_pixbuf(pixbuf);
-        } catch (GLib.Error err) {
-            debug("Couldn't load avatar for contact: %s", err.message);
-            this.avatar.custom_image = null;
-        }
+        this.contact_picture?.close();
+        this.contact_picture = new Application.ContactPicture(
+            this.avatar, this.contact, this.mailbox, this.config
+        );
     }
 
     private async void set_load_remote_resources(bool enabled) {
@@ -207,7 +200,7 @@ public class Conversation.ContactPopover : Gtk.Popover {
             if (!enabled) {
                 var email_addresses = this.contact.email_addresses;
                 for (uint i = 0; i < email_addresses.get_n_items(); i++) {
-                    var email = (Convey.RFC822.MailboxAddress) email_addresses.get_item(i);
+                    var email = (GriabuntuMail.RFC822.MailboxAddress) email_addresses.get_item(i);
                     this.config.remove_images_trusted_domain(email.domain);
                 }
             }

@@ -1,14 +1,17 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
-class Convey.RFC822.Utils.Test : TestCase {
+class GriabuntuMail.RFC822.Utils.Test : TestCase {
 
     public Test() {
-        base("Convey.RFC822.Utils.Test");
+        base("GriabuntuMail.RFC822.Utils.Test");
         add_test("to_preview_text", to_preview_text);
         add_test("best_encoding_default", best_encoding_default);
         add_test("best_encoding_long_line", best_encoding_long_line);
@@ -18,11 +21,11 @@ class Convey.RFC822.Utils.Test : TestCase {
     }
 
     public void to_preview_text() throws GLib.Error {
-        assert(Convey.RFC822.Utils.to_preview_text(PLAIN_BODY_ENCODED, Convey.RFC822.TextFormat.PLAIN) ==
+        assert(GriabuntuMail.RFC822.Utils.to_preview_text(PLAIN_BODY_ENCODED, GriabuntuMail.RFC822.TextFormat.PLAIN) ==
                PLAIN_BODY_EXPECTED);
-        assert(Convey.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, Convey.RFC822.TextFormat.HTML) ==
+        assert(GriabuntuMail.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, GriabuntuMail.RFC822.TextFormat.HTML) ==
                HTML_BODY_EXPECTED);
-        assert(Convey.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, Convey.RFC822.TextFormat.HTML) ==
+        assert(GriabuntuMail.RFC822.Utils.to_preview_text(HTML_BODY_ENCODED, GriabuntuMail.RFC822.TextFormat.HTML) ==
                HTML_BODY_EXPECTED);
     }
 

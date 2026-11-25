@@ -1,25 +1,28 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2016 Software Freedom Conservancy Inc.
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later).  See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only).  See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
- * An database-backed implementation of Convey.Contacts
+ * An database-backed implementation of GriabuntuMail.Contacts
  */
-internal class Convey.ContactStoreImpl : ContactStore, BaseObject {
+internal class GriabuntuMail.ContactStoreImpl : ContactStore, BaseObject {
 
 
-    private Convey.Db.Database backing;
+    private GriabuntuMail.Db.Database backing;
 
 
-    internal ContactStoreImpl(Convey.Db.Database backing) {
+    internal ContactStoreImpl(GriabuntuMail.Db.Database backing) {
         this.backing = backing;
     }
 
-    public async Contact? get_by_rfc822(Convey.RFC822.MailboxAddress mailbox,
+    public async Contact? get_by_rfc822(GriabuntuMail.RFC822.MailboxAddress mailbox,
                                         GLib.Cancellable? cancellable)
         throws GLib.Error {
         Contact? contact = null;
@@ -98,7 +101,7 @@ internal class Convey.ContactStoreImpl : ContactStore, BaseObject {
                            GLib.Cancellable? cancellable)
         throws GLib.Error {
         Gee.Collection<Contact> contacts = new Gee.LinkedList<Contact>();
-        string normalised_query = Convey.Db.normalise_case_insensitive_query(query);
+        string normalised_query = GriabuntuMail.Db.normalise_case_insensitive_query(query);
         if (!String.is_empty(normalised_query)) {
             normalised_query = normalised_query + "%";
             Db.Statement stmt = cx.prepare("""

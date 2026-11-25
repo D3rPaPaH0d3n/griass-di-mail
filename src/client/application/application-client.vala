@@ -1,9 +1,14 @@
+/* Downstream modification: 2026-10-28 — Griaß di Mail display name; compatibility IDs retained. */
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
+/* Downstream modification: 2026-10-26 — native tray lifecycle and exact-message notification actions. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2019-2021 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 
@@ -12,9 +17,9 @@
  */
 public class Application.Client : Adw.Application {
 
-    public const string NAME = "Convey" + Config.NAME_SUFFIX;
-    public const string RESOURCE_BASE_PATH = "/net/donnybeelo/Convey";
-    public const string SCHEMA_ID = "net.donnybeelo.Convey";
+    public const string NAME = "Griaß di Mail" + Config.NAME_SUFFIX;
+    public const string RESOURCE_BASE_PATH = "/io/github/d3rpapah0d3n/GriabuntuMail";
+    public const string SCHEMA_ID = "io.github.d3rpapah0d3n.GriabuntuMail";
     public const string DESCRIPTION = _("Send and receive email");
     public const string COPYRIGHT_1 = _("Copyright © 2016 Software Freedom Conservancy Inc.");
     public const string COPYRIGHT_2 = _("Copyright © 2016-2021 Geary Development Team.");
@@ -58,6 +63,7 @@ public class Application.Client : Adw.Application {
 
     private const ActionEntry[] ACTION_ENTRIES = {
         { Action.Application.ABOUT, on_activate_about},
+        { Action.Application.PRIVACY, on_activate_privacy},
         { Action.Application.ACCOUNTS, on_activate_accounts},
         { Action.Application.COMPOSE, on_activate_compose},
         { Action.Application.HELP, on_activate_help},
@@ -65,6 +71,9 @@ public class Application.Client : Adw.Application {
         { Action.Application.INSPECT, on_activate_inspect},
         { Action.Application.MAILTO, on_activate_mailto, "s"},
         { Action.Application.NEW_WINDOW, on_activate_new_window },
+        { Action.Application.NOTIFICATION_REPLY, on_notification_reply, NotificationActions.TARGET_TYPE },
+        { Action.Application.NOTIFICATION_ARCHIVE, on_notification_archive, NotificationActions.TARGET_TYPE },
+        { Action.Application.NOTIFICATION_TRASH, on_notification_trash, NotificationActions.TARGET_TYPE },
         { Action.Application.PREFERENCES, on_activate_preferences},
         { Action.Application.QUIT, on_activate_quit},
         { Action.Application.SHOW_EMAIL, on_activate_show_email, "(sv)"},
@@ -137,7 +146,7 @@ public class Application.Client : Adw.Application {
     /**
      * The global email subsystem controller for this app instance.
      */
-    public Convey.Engine? engine {
+    public GriabuntuMail.Engine? engine {
         get; private set; default = null;
     }
 
@@ -178,7 +187,7 @@ public class Application.Client : Adw.Application {
     }
 
     /**
-     * Determines if Convey configured to run as as a background service.
+     * Determines if Griabuntu Mail configured to run as as a background service.
      *
      * If this returns `true`, then the primary application instance
      * will continue to run in the background after the last window is
@@ -191,7 +200,7 @@ public class Application.Client : Adw.Application {
     }
 
     /**
-     * Determines if Convey appears to be running under Flatpak.
+     * Determines if Griabuntu Mail appears to be running under Flatpak.
      *
      * If this returns `true`, then the application instance
      * appears to be running inside a Flatpak sandbox.
@@ -228,14 +237,16 @@ public class Application.Client : Adw.Application {
     private string binary;
     private GLib.Cancellable controller_cancellable = new GLib.Cancellable();
     private Components.Inspector? inspector = null;
-    private Convey.Nonblocking.Mutex controller_mutex = new Convey.Nonblocking.Mutex();
+    private weak Gtk.AboutDialog? about_dialog = null;
+    private GriabuntuMail.Nonblocking.Mutex controller_mutex = new GriabuntuMail.Nonblocking.Mutex();
     private GLib.Notification? error_notification = null;
+    private Gee.Set<string> pending_notification_actions = new Gee.HashSet<string>();
 
 
     /**
      * Returns name/value pairs of application information.
      *
-     * This includes Convey library version information, the current
+     * This includes Griabuntu Mail library version information, the current
      * desktop, and so on.
      */
     public Gee.Collection<RuntimeDetail?> get_runtime_information() {
@@ -243,9 +254,9 @@ public class Application.Client : Adw.Application {
             new Gee.LinkedList<RuntimeDetail?>();
 
         /// Application runtime information label
-        info.add({ _("Convey version"), Config.VERSION });
+        info.add({ _("Griaß di Mail version"), Config.VERSION });
         /// Application runtime information label
-        info.add({ _("Convey revision"), Config.REVNO });
+        info.add({ _("Griaß di Mail revision"), Config.REVNO });
         /// Application runtime information label
         info.add({ _("GTK version"),
                     "%u.%u.%u".printf(
@@ -325,7 +336,7 @@ public class Application.Client : Adw.Application {
     public override int handle_local_options(GLib.VariantDict options) {
         int ret = -1;
         if (options.contains(OPTION_DEBUG)) {
-            Convey.Logging.log_to(GLib.stdout);
+            GriabuntuMail.Logging.log_to(GLib.stdout);
         }
         if (options.contains(OPTION_VERSION)) {
             GLib.stdout.printf(
@@ -352,16 +363,16 @@ public class Application.Client : Adw.Application {
         // Calls Gtk.init(), amongst other things
         base.startup();
 
-        Convey.RFC822.Utils.init_pgp(get_home_data_directory().get_child("gnupg"));
+        GriabuntuMail.RFC822.Utils.init_pgp(get_home_data_directory().get_child("gnupg"));
 
-        this.engine = new Convey.Engine(get_resource_directory());
+        this.engine = new GriabuntuMail.Engine(get_resource_directory());
         this.config = new Configuration(SCHEMA_ID);
         this.decrypted_subjects = new DecryptedSubjects(
             get_home_data_directory().get_child("decrypted-subjects.json")
         );
         this.autostart = new StartupManager(this);
 
-        // Ensure all convey windows have an icon
+        // Ensure all griabuntu-mail windows have an icon
         Gtk.Window.set_default_icon_name(Config.APP_ID);
 
         // Application accels
@@ -386,9 +397,9 @@ public class Application.Client : Adw.Application {
         // Disabled since GTK4 key shortcut themes aren't supported yet:
         // https://gitlab.gnome.org/GNOME/gtk/-/issues/1669#note_1735942
 #if 0
-        // Load Convey CSS for single key shortcuts
+        // Load Griabuntu Mail CSS for single key shortcuts
         load_css(this.single_key_shortcuts,
-                 "resource:///net/donnybeelo/Convey/single-key-shortcuts.css");
+                 "resource:///io/github/d3rpapah0d3n/GriabuntuMail/single-key-shortcuts.css");
         update_single_key_shortcuts();
         this.config.notify[Configuration.SINGLE_KEY_SHORTCUTS].connect(
             on_single_key_shortcuts_toggled
@@ -411,7 +422,7 @@ public class Application.Client : Adw.Application {
         var connection = get_dbus_connection();
         if (connection != null) {
             try {
-                this.status_icon = new StatusIcon(connection, Config.APP_ID);
+                this.status_icon = new StatusIcon(connection, Config.APP_ID, this.new_mail, this.all_inboxes);
                 this.status_icon.item.open_requested.connect((token) => this.present.begin(token));
                 this.status_icon.item.compose_requested.connect(() => this.new_composer.begin());
                 this.status_icon.item.quit_requested.connect(() => this.quit.begin());
@@ -420,6 +431,13 @@ public class Application.Client : Adw.Application {
                 debug("Tray integration unavailable: %s", error.message);
             }
         }
+        this.new_mail.changed.connect(() => {
+            if (this.new_mail_count != this.new_mail.total) {
+                this.new_mail_count = this.new_mail.total;
+                if (this.dock_icon != null) this.dock_icon.set_new_mail(this.new_mail_count > 0);
+            }
+        });
+        this.dock_icon = new DockIcon();
         // Tray exists before plugins can report their first new-mail events.
         this.create_controller.begin();
     }
@@ -433,6 +451,7 @@ public class Application.Client : Adw.Application {
     }
 
     public override void shutdown() {
+        if (this.dock_icon != null) this.dock_icon.close();
         if (this.status_icon != null) {
             this.status_icon.close();
             this.status_icon = null;
@@ -445,7 +464,7 @@ public class Application.Client : Adw.Application {
 
         // GApplication will stop the main loop, so we need to keep
         // pumping here to allow destroy_controller() to exit. To
-        // avoid bug(s) where Convey hangs at exit, shut the whole
+        // avoid bug(s) where Griabuntu Mail hangs at exit, shut the whole
         // thing down if it takes too long to complete
         int64 start_usec = get_monotonic_time();
         while (!controller_closed) {
@@ -457,7 +476,7 @@ public class Application.Client : Adw.Application {
                 // and b) we can run under gdb with
                 // G_DEBUG=fatal-warnings and have it break when
                 // this happens, and maybe debug it.
-                warning("Forcing shutdown of Convey, %ss passed...",
+                warning("Forcing shutdown of Griaß di Mail, %ss passed...",
                         (delta_usec / USEC_PER_SEC).to_string());
                 Posix.exit(2);
             }
@@ -468,7 +487,7 @@ public class Application.Client : Adw.Application {
         this.autostart = null;
 
         Util.Date.terminate();
-        Convey.Logging.clear();
+        GriabuntuMail.Logging.clear();
 
         base.shutdown();
     }
@@ -548,23 +567,84 @@ public class Application.Client : Adw.Application {
 
     public async void show_about() {
         yield this.present();
+        if (this.about_dialog != null) {
+            this.about_dialog.present();
+            return;
+        }
 
-        Gtk.show_about_dialog(get_active_window(),
-            "program-name", NAME,
-            "comments", DESCRIPTION,
-            "authors", AUTHORS,
-            "copyright", string.join("\n", COPYRIGHT_1, COPYRIGHT_2, COPYRIGHT_3),
-            "license-type", Gtk.License.LGPL_2_1,
-            "logo-icon-name", Config.APP_ID,
-            "version", Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
-            "website", "https://gitlab.gnome.org/donnybeelo/convey",
-            "website-label", _("Visit the Convey repository"),
-            "title", _("About %s").printf(NAME),
+        Gdk.Paintable? banner = null;
+        try {
+            banner = Gdk.Texture.from_bytes(GLib.resources_lookup_data(
+                RESOURCE_BASE_PATH + "/brand/banner.png", NONE
+            ));
+        } catch (GLib.Error error) {
+            warning("Could not load About banner: %s", error.message);
+        }
+
+        var about = new Gtk.AboutDialog() {
+            transient_for = get_active_window(),
+            destroy_with_parent = true,
+            program_name = NAME,
+            comments = _("Native Linux email maintained by Markus Kainer (D3rPaPaH0d3n), based on Convey and Geary."),
+            authors = { "Markus Kainer (D3rPaPaH0d3n) <projekt@kainer.co.at>", null },
+            copyright = "Copyright © 2026 Markus Kainer",
+            license_type = Gtk.License.GPL_3_0_ONLY,
+            logo = banner,
+            version = Config.REVNO == "" ? Config.VERSION : "%s (%s)".printf(Config.VERSION, Config.REVNO),
+            website = "https://github.com/D3rPaPaH0d3n/griass-di-mail",
+            website_label = _("Visit the Griaß di Mail repository"),
+            title = _("About %s").printf(NAME),
             // Translators: add your name and email address to receive
             // credit in the About dialog For example: Yamada Taro
             // <yamada.taro@example.com>
-            "translator-credits", _("translator-credits")
-        );
+            translator_credits = _("translator-credits")
+        };
+        about.add_credit_section(_("Original Convey and Geary authors"), AUTHORS);
+        about.add_credit_section(_("Original copyright notices"), {
+            COPYRIGHT_1, COPYRIGHT_2, COPYRIGHT_3, null
+        });
+        about.add_credit_section(_("Artwork provenance"), {
+            _("Closed-envelope icon and banner: generated with ChatGPT from text prompts by Markus Kainer. Technical exports retain the supplied originals."), null
+        });
+        if (banner == null) {
+            about.logo_icon_name = Config.APP_ID;
+        } else {
+            // GtkAboutDialog's GtkImage constrains arbitrary logos to an icon
+            // square. Replace only the image holding this exact paintable,
+            // preserving the native pages and avoiding private template IDs.
+            expand_about_banner(about.get_child(), banner);
+        }
+        this.about_dialog = about;
+        about.present();
+    }
+
+    private bool expand_about_banner(Gtk.Widget? widget, Gdk.Paintable banner) {
+        if (widget == null) return false;
+        var image = widget as Gtk.Image;
+        var parent = widget.get_parent() as Gtk.Box;
+        if (image != null && image.get_paintable() == banner && parent != null) {
+            // A bounded paintable retains the full source texture for HiDPI;
+            // no pre-downscaled bitmap or new artwork is generated.
+            var snapshot = new Gtk.Snapshot();
+            banner.snapshot(snapshot, 480, 160);
+            var size = Graphene.Size() { width = 480, height = 160 };
+            var picture = new Gtk.Picture.for_paintable(snapshot.to_paintable(size)) {
+                alternative_text = NAME,
+                content_fit = Gtk.ContentFit.CONTAIN,
+                can_shrink = true,
+                width_request = 480,
+                height_request = 160,
+                halign = Gtk.Align.CENTER
+            };
+            parent.insert_child_after(picture, image);
+            image.visible = false;
+            return true;
+        }
+        for (var child = widget.get_first_child(); child != null;
+             child = child.get_next_sibling()) {
+            if (expand_about_banner(child, banner)) return true;
+        }
+        return false;
     }
 
     public async void show_accounts() {
@@ -594,14 +674,14 @@ public class Application.Client : Adw.Application {
         if (id != null) {
             EmailStoreFactory email = this.controller.plugins.globals.email;
             AccountContext? context = email.get_account_for_variant(id);
-            Convey.EmailIdentifier? email_id =
+            GriabuntuMail.EmailIdentifier? email_id =
                 email.get_email_identifier_for_variant(id);
             if (context != null && email_id != null) {
                 // Determine what folders the email is in
-                Gee.MultiMap<Convey.EmailIdentifier,Convey.FolderPath>? folders = null;
+                Gee.MultiMap<GriabuntuMail.EmailIdentifier,GriabuntuMail.FolderPath>? folders = null;
                 try {
                     folders = yield context.account.get_containing_folders_async(
-                        Convey.Collection.single(email_id),
+                        GriabuntuMail.Collection.single(email_id),
                         context.cancellable
                     );
                 } catch (GLib.Error err) {
@@ -614,14 +694,14 @@ public class Application.Client : Adw.Application {
                     // inbox if that contains it, else use the first
                     // path found
                     var paths = folders.get(email_id);
-                    Convey.Folder? selected = main.selected_folder;
+                    GriabuntuMail.Folder? selected = main.selected_folder;
                     if (selected == null ||
                         selected.account != context.account ||
                         !(selected.path in paths)) {
                         selected = null;
                         foreach (var path in paths) {
                             try {
-                                Convey.Folder folder =
+                                GriabuntuMail.Folder folder =
                                     context.account.get_folder(path);
                                 if (folder.used_as == INBOX) {
                                     selected = folder;
@@ -638,7 +718,7 @@ public class Application.Client : Adw.Application {
                         if (selected == null && !paths.is_empty) {
                             try {
                                 selected = context.account.get_folder(
-                                    Convey.Collection.first(paths)
+                                    GriabuntuMail.Collection.first(paths)
                                 );
                             } catch (GLib.Error err) {
                                 warning(
@@ -652,7 +732,7 @@ public class Application.Client : Adw.Application {
                     if (selected != null) {
                         yield main.show_email(
                             selected,
-                            Convey.Collection.single(email_id),
+                            GriabuntuMail.Collection.single(email_id),
                             true
                         );
                     }
@@ -672,7 +752,7 @@ public class Application.Client : Adw.Application {
     public async void show_folder(GLib.Variant? id) {
         MainWindow main = yield this.present();
         if (id != null) {
-            Convey.Folder? folder =
+            GriabuntuMail.Folder? folder =
                 this.controller.plugins.globals.folders.get_folder_for_variant(id);
             if (folder != null) {
                 yield main.select_folder(folder, true);
@@ -711,7 +791,7 @@ public class Application.Client : Adw.Application {
         prefs.present(get_active_main_window());
     }
 
-    public async void new_composer(Convey.RFC822.MailboxAddress? to = null) {
+    public async void new_composer(GriabuntuMail.RFC822.MailboxAddress? to = null) {
         MainWindow main = yield this.present();
         AccountContext? account = null;
         if (main.selected_account != null) {
@@ -722,7 +802,7 @@ public class Application.Client : Adw.Application {
         bool ambiguous = main.all_inboxes &&
             this.controller.get_account_contexts().size > 1;
         if (account == null) {
-            account = Convey.Collection.first(
+            account = GriabuntuMail.Collection.first(
                 this.controller.get_account_contexts()
             );
             ambiguous = this.controller.get_account_contexts().size > 1;
@@ -744,8 +824,8 @@ public class Application.Client : Adw.Application {
         yield this.controller.compose_mailto(mailto);
     }
 
-    public async void new_window(Convey.Folder? select_folder,
-                                 Gee.Collection<Convey.App.Conversation>? select_conversations) {
+    public async void new_window(GriabuntuMail.Folder? select_folder,
+                                 Gee.Collection<GriabuntuMail.App.Conversation>? select_conversations) {
         yield create_controller();
 
         bool do_select = (
@@ -774,27 +854,27 @@ public class Application.Client : Adw.Application {
     public GLib.File get_home_config_directory() {
         return GLib.File.new_for_path(
             Environment.get_user_config_dir()
-        ).get_child(get_convey_home_dir_name());
+        ).get_child(get_griabuntu_mail_home_dir_name());
     }
 
     /** Returns the application's base home cache directory. */
     public GLib.File get_home_cache_directory() {
         return GLib.File.new_for_path(
             GLib.Environment.get_user_cache_dir()
-        ).get_child(get_convey_home_dir_name());
+        ).get_child(get_griabuntu_mail_home_dir_name());
     }
 
     /** Returns the application's base home data directory. */
     public GLib.File get_home_data_directory() {
         return GLib.File.new_for_path(
             GLib.Environment.get_user_data_dir()
-        ).get_child(get_convey_home_dir_name());
+        ).get_child(get_griabuntu_mail_home_dir_name());
     }
 
     /** Returns the application's base static resources directory. */
     public GLib.File get_resource_directory() {
         return (is_installed)
-            ? this.install_prefix.get_child("share").get_child("convey")
+            ? this.install_prefix.get_child("share").get_child("griabuntu-mail")
             : GLib.File.new_for_path(Config.SOURCE_ROOT_DIR);
     }
 
@@ -849,7 +929,7 @@ public class Application.Client : Adw.Application {
             try {
                 yield launcher.launch(get_active_window(), null);
             } catch (GLib.Error err) {
-                this.controller.report_problem(new Convey.ProblemReport(err));
+                this.controller.report_problem(new GriabuntuMail.ProblemReport(err));
             }
         }
     }
@@ -880,18 +960,18 @@ public class Application.Client : Adw.Application {
         paths += home.get_child(
             ".config"
         ).get_child(
-            "convey"
+            "griabuntu-mail"
         );
         paths += home.get_child(
             ".var"
         ).get_child(
             "app"
         ).get_child(
-            "net.donnybeelo.Convey"
+            "io.github.d3rpapah0d3n.GriabuntuMail"
         ).get_child(
             "config"
         ).get_child(
-            "convey"
+            "griabuntu-mail"
         );
         return paths;
     }
@@ -923,11 +1003,17 @@ public class Application.Client : Adw.Application {
     // Presents a main window, opening the controller and window if
     // needed.
     private StatusIcon? status_icon = null;
+    private DockIcon? dock_icon = null;
+    internal FolderList.AllInboxesEntry all_inboxes = new FolderList.AllInboxesEntry();
+    private TrayMailModel new_mail = new TrayMailModel();
+    public int new_mail_count { get; private set; default = 0; }
 
-    internal void update_tray_new_mail(string folder_key, Convey.Folder engine_folder,
-        Gee.Map<Convey.EmailIdentifier,GLib.Variant> targets) {
+    internal void update_tray_new_mail(string folder_key, GriabuntuMail.Folder engine_folder,
+        Gee.Map<GriabuntuMail.EmailIdentifier,GLib.Variant> targets) {
         if (this.status_icon != null)
             this.status_icon.update_new_mail.begin(folder_key, engine_folder, targets);
+        else
+            this.new_mail.set_folder(folder_key, targets.values.to_array());
     }
 
     private async MainWindow present(string activation_token = "") {
@@ -950,7 +1036,7 @@ public class Application.Client : Adw.Application {
                 // likely still loading folders after being
                 // opened. Add a listener to try again later.
                 try {
-                    Convey.Account? first = Convey.Collection.first<Convey.Account>(
+                    GriabuntuMail.Account? first = GriabuntuMail.Collection.first<GriabuntuMail.Account>(
                         this.engine.get_accounts()
                     );
                     if (first != null) {
@@ -970,7 +1056,7 @@ public class Application.Client : Adw.Application {
     private async void create_controller() {
         bool first_run = false;
         bool open_failed = false;
-        int mutex_token = Convey.Nonblocking.Mutex.INVALID_TOKEN;
+        int mutex_token = GriabuntuMail.Nonblocking.Mutex.INVALID_TOKEN;
         try {
             mutex_token = yield this.controller_mutex.claim_async();
             if (this.controller == null) {
@@ -994,12 +1080,12 @@ public class Application.Client : Adw.Application {
             warning("Error creating controller: %s", err.message);
             var dialog = new Dialogs.ProblemDetailsDialog(
                 this,
-                new Convey.ProblemReport(err)
+                new GriabuntuMail.ProblemReport(err)
             );
             dialog.present(null);
         }
 
-        if (mutex_token != Convey.Nonblocking.Mutex.INVALID_TOKEN) {
+        if (mutex_token != GriabuntuMail.Nonblocking.Mutex.INVALID_TOKEN) {
             try {
                 this.controller_mutex.release(ref mutex_token);
             } catch (GLib.Error error) {
@@ -1052,38 +1138,38 @@ public class Application.Client : Adw.Application {
         bool activated = false;
 
         // Suppress some noisy domains from third-party libraries
-        Convey.Logging.suppress_domain("GdkPixbuf");
-        Convey.Logging.suppress_domain("GLib-Net");
+        GriabuntuMail.Logging.suppress_domain("GdkPixbuf");
+        GriabuntuMail.Logging.suppress_domain("GLib-Net");
 
         // Suppress the engine's sub-domains that are extremely
         // verbose by default unless requested not to do so
         if (!options.contains(OPTION_LOG_CONVERSATIONS)) {
-            Convey.Logging.suppress_domain(
-                Convey.App.ConversationMonitor.LOGGING_DOMAIN
+            GriabuntuMail.Logging.suppress_domain(
+                GriabuntuMail.App.ConversationMonitor.LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_DESERIALIZER)) {
-            Convey.Logging.suppress_domain(
-                Convey.Imap.ClientService.DESERIALISATION_LOGGING_DOMAIN
+            GriabuntuMail.Logging.suppress_domain(
+                GriabuntuMail.Imap.ClientService.DESERIALISATION_LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_IMAP)) {
-            Convey.Logging.suppress_domain(
-                Convey.Imap.ClientService.PROTOCOL_LOGGING_DOMAIN
+            GriabuntuMail.Logging.suppress_domain(
+                GriabuntuMail.Imap.ClientService.PROTOCOL_LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_REPLAY_QUEUE)) {
-            Convey.Logging.suppress_domain(
-                Convey.Imap.ClientService.REPLAY_QUEUE_LOGGING_DOMAIN
+            GriabuntuMail.Logging.suppress_domain(
+                GriabuntuMail.Imap.ClientService.REPLAY_QUEUE_LOGGING_DOMAIN
             );
         }
         if (!options.contains(OPTION_LOG_SMTP)) {
-            Convey.Logging.suppress_domain(
-                Convey.Smtp.ClientService.PROTOCOL_LOGGING_DOMAIN
+            GriabuntuMail.Logging.suppress_domain(
+                GriabuntuMail.Smtp.ClientService.PROTOCOL_LOGGING_DOMAIN
             );
         }
         if (options.contains(OPTION_LOG_SQL)) {
-            Convey.Db.Context.enable_sql_logging = true;
+            GriabuntuMail.Db.Context.enable_sql_logging = true;
         }
 
         if (options.contains(OPTION_NEW_WINDOW)) {
@@ -1162,7 +1248,7 @@ public class Application.Client : Adw.Application {
         }
     }
 
-    private string get_convey_home_dir_name() {
+    private string get_griabuntu_mail_home_dir_name() {
         // Return the standard name if running a release build or
         // running under Flatpak, otherwise append the build profile
         // as a suffix so (e.g.) devel builds don't mess with release
@@ -1173,9 +1259,21 @@ public class Application.Client : Adw.Application {
         // hence don't need the suffix.
         return (
             Config.PROFILE == PROFILE_RELEASE || this.is_flatpak_sandboxed
-            ? "convey"
-            : "convey-" + Config.PROFILE
+            ? "griabuntu-mail"
+            : "griabuntu-mail-" + Config.PROFILE
         );
+    }
+
+    private void on_activate_privacy() {
+        var dialog = new Adw.AlertDialog(_("Contact pictures and privacy"), null);
+        dialog.body_use_markup = true;
+        dialog.body = GLib.Markup.escape_text(_("Local contact photos take priority. External pictures are off by default. Gravatar receives an email-address SHA-256 hash and your connection IP address; with separate company-icon consent, DuckDuckGo receives the email domain and connection IP address. Hashes are not anonymous and pictures do not verify identity. No message content is sent. The app uses your proxy settings, keeps only a bounded memory cache, and cancels lookups and clears external pictures when you withdraw consent. Images inside emails keep their existing permissions.")) +
+            "\n\n<a href=\"https://github.com/D3rPaPaH0d3n/griass-di-mail/blob/work/griabuntu-ubuntu-deb/docs/PRIVACY.md\">" +
+            GLib.Markup.escape_text(_("Full privacy policy and provider links")) + "</a>";
+        dialog.add_response("close", _("Close"));
+        dialog.default_response = "close";
+        dialog.close_response = "close";
+        dialog.present(get_active_window());
     }
 
     private void on_activate_about() {
@@ -1208,8 +1306,8 @@ public class Application.Client : Adw.Application {
             GLib.File file = yield chooser.open(this.active_window, null);
             GLib.Bytes data = yield file.load_bytes_async(null, null);
             int count = 0;
-            yield Convey.Nonblocking.Concurrent.global.schedule_async(
-                () => { count = Convey.RFC822.Utils.import_pgp_keys(data.get_data()); },
+            yield GriabuntuMail.Nonblocking.Concurrent.global.schedule_async(
+                () => { count = GriabuntuMail.RFC822.Utils.import_pgp_keys(data.get_data()); },
                 null
             );
             message = (count > 0)
@@ -1242,8 +1340,8 @@ public class Application.Client : Adw.Application {
     private void on_activate_new_window() {
         // If there was an existing active main, select the same
         // account/folder/conversation.
-        Convey.Folder? folder = null;
-        Gee.Collection<Convey.App.Conversation>? conversations = null;
+        GriabuntuMail.Folder? folder = null;
+        Gee.Collection<GriabuntuMail.App.Conversation>? conversations = null;
         MainWindow? current = this.last_active_main_window;
         if (current != null) {
             folder = current.selected_folder;
@@ -1265,6 +1363,78 @@ public class Application.Client : Adw.Application {
         this.show_email.begin(target);
     }
 
+    // Private downstream, 2026-10-26: exact single-message actions. No send or
+    // permanent-delete API is reachable from these notification callbacks.
+    private async void act_on_notification(NotificationActions.Kind kind,
+                                            GLib.Variant? target) {
+        GLib.Variant? email_target, folder_target;
+        if (!NotificationActions.parse(target, out email_target, out folder_target)) return;
+        string key = target.print(false);
+        if (!this.pending_notification_actions.add(key)) return;
+        hold();
+        try {
+            yield create_controller();
+            if (this.controller == null)
+                throw new GriabuntuMail.EngineError.NOT_FOUND("Notification controller is unavailable");
+            var globals = this.controller.plugins.globals;
+            var context = globals.email.get_account_for_variant(email_target);
+            var id = globals.email.get_email_identifier_for_variant(email_target);
+            var source = globals.folders.get_folder_for_variant(folder_target);
+            if (context == null || id == null || source == null ||
+                source.account != context.account || context.cancellable.is_cancelled())
+                throw new GriabuntuMail.EngineError.NOT_FOUND("Notification account, folder or mail is unavailable");
+            if (kind == REPLY) {
+                yield NotificationActions.check_source(source, id, context.cancellable);
+                var message = yield context.emails.fetch_email_async(
+                    id, Composer.Widget.REQUIRED_FIELDS, NONE, context.cancellable
+                );
+                yield this.present();
+                if (context.cancellable.is_cancelled()) return;
+                var composer = yield this.controller.compose_with_context(
+                    context, Composer.Widget.ContextType.REPLY_SENDER, message, null
+                );
+                if (composer == null) return;
+                this.controller.present_composer(composer);
+            } else {
+                var destination = kind == ARCHIVE
+                    ? (context.account.get_special_folder(GriabuntuMail.Folder.SpecialUse.ALL_MAIL) ??
+                       context.account.get_special_folder(GriabuntuMail.Folder.SpecialUse.ARCHIVE))
+                    : context.account.get_special_folder(GriabuntuMail.Folder.SpecialUse.TRASH);
+                if (destination == null)
+                    throw new GriabuntuMail.EngineError.NOT_FOUND("Notification destination is unavailable");
+                yield NotificationActions.move_message(
+                    source, destination, id, context.commands, context.cancellable
+                );
+            }
+            withdraw_notification("email-arrived-%s".printf(email_target.print(false)));
+        } catch (GLib.IOError.CANCELLED error) {
+            // Account/application closed; leave mail and notification untouched.
+        } catch (GLib.Error error) {
+            warning("Notification action was not completed: %s", error.message);
+            var notice = new GLib.Notification(_("Notification action failed"));
+            notice.set_body(_("Open Griaß di Mail to check the message. No message was permanently deleted."));
+            notice.set_default_action_and_target_value(
+                Action.Application.prefix(Action.Application.SHOW_EMAIL), email_target
+            );
+            send_notification("notification-action-error", notice);
+        } finally {
+            this.pending_notification_actions.remove(key);
+            release();
+        }
+    }
+
+    private void on_notification_reply(GLib.SimpleAction action, GLib.Variant? target) {
+        act_on_notification.begin(NotificationActions.Kind.REPLY, target);
+    }
+
+    private void on_notification_archive(GLib.SimpleAction action, GLib.Variant? target) {
+        act_on_notification.begin(NotificationActions.Kind.ARCHIVE, target);
+    }
+
+    private void on_notification_trash(GLib.SimpleAction action, GLib.Variant? target) {
+        act_on_notification.begin(NotificationActions.Kind.TRASH, target);
+    }
+
     private void on_activate_show_folder(GLib.SimpleAction action,
                                          GLib.Variant? target) {
         this.show_folder.begin(target);
@@ -1273,7 +1443,7 @@ public class Application.Client : Adw.Application {
     private void on_activate_help() {
         try {
             if (this.is_installed) {
-                var launcher = new Gtk.UriLauncher("help:convey");
+                var launcher = new Gtk.UriLauncher("help:griabuntu-mail");
                 launcher.launch.begin(get_active_window(), null);
             } else {
                 Pid pid;
@@ -1301,9 +1471,9 @@ public class Application.Client : Adw.Application {
         }
     }
 
-    private void on_folders_first_available(Convey.Account account,
-        Gee.BidirSortedSet<Convey.Folder>? available,
-        Gee.BidirSortedSet<Convey.Folder>? unavailable
+    private void on_folders_first_available(GriabuntuMail.Account account,
+        Gee.BidirSortedSet<GriabuntuMail.Folder>? available,
+        Gee.BidirSortedSet<GriabuntuMail.Folder>? unavailable
     ) {
         if (get_active_main_window().select_startup_inbox(true)) {
             // The handler has done its job, so disconnect it
@@ -1325,7 +1495,7 @@ public class Application.Client : Adw.Application {
         if (main != null) {
             this.controller.unregister_window(main);
             if (this.last_active_main_window == main) {
-                this.last_active_main_window = Convey.Collection.first(
+                this.last_active_main_window = GriabuntuMail.Collection.first(
                     get_main_windows()
                 );
             }

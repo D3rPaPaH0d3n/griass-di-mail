@@ -1,27 +1,30 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright 2019 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
  * A view that displays information about an application error.
  */
-[GtkTemplate (ui = "/net/donnybeelo/Convey/components-inspector-error-view.ui")]
+[GtkTemplate (ui = "/io/github/d3rpapah0d3n/GriabuntuMail/components-inspector-error-view.ui")]
 public class Components.InspectorErrorView : Adw.Bin {
 
 
     [GtkChild] private unowned Gtk.TextView problem_text;
 
-    private Convey.ErrorContext error;
-    private Convey.AccountInformation? account;
-    private Convey.ServiceInformation? service;
+    private GriabuntuMail.ErrorContext error;
+    private GriabuntuMail.AccountInformation? account;
+    private GriabuntuMail.ServiceInformation? service;
 
 
-    public InspectorErrorView(Convey.ErrorContext error,
-                              Convey.AccountInformation? account,
-                              Convey.ServiceInformation? service) {
+    public InspectorErrorView(GriabuntuMail.ErrorContext error,
+                              GriabuntuMail.AccountInformation? account,
+                              GriabuntuMail.ServiceInformation? service) {
         this.error = error;
         this.account = account;
         this.service = service;
@@ -77,7 +80,7 @@ public class Components.InspectorErrorView : Adw.Bin {
             details.append_c('\n');
             details.append("Back trace:");
             details.append(line_sep);
-            foreach (Convey.ErrorContext.StackFrame frame in
+            foreach (GriabuntuMail.ErrorContext.StackFrame frame in
                      this.error.backtrace) {
                 details.append_printf(" * %s", frame.to_string());
                 details.append(line_sep);

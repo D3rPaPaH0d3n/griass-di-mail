@@ -1,19 +1,22 @@
+/* Downstream modification: 2026-10-27 — Griabuntu Mail identity and namespace. */
 /*
  * Copyright © 2016 Software Freedom Conservancy Inc.
  * Copyright © 2020 Michael Gratton <mike@vee.net>
  *
- * This software is licensed under the GNU Lesser General Public License
- * (version 2.1 or later). See the COPYING file in this distribution.
+ * This release copy is licensed under the GNU General Public License
+ * (version 3 only). See the COPYING file in this distribution.
+ * Release-copy modification: 2026-10-26, LGPL-2.1 section 3 election.
+ * Historical LGPL origin: docs/release/GPLV3-COPY.md.
  */
 
 /**
- * Context allows for an inspector or utility function to determine at runtime what Convey.Db
+ * Context allows for an inspector or utility function to determine at runtime what GriabuntuMail.Db
  * objects are available to it.  Primarily designed for logging, but could be used in other
  * circumstances.
  *
- * Convey.Db's major classes (Database, Connection, Statement, and Result) inherit from Context.
+ * GriabuntuMail.Db's major classes (Database, Connection, Statement, and Result) inherit from Context.
  */
-public abstract class Convey.Db.Context : BaseObject, Logging.Source {
+public abstract class GriabuntuMail.Db.Context : BaseObject, Logging.Source {
 
 
     /** The GLib logging domain used by this class. */

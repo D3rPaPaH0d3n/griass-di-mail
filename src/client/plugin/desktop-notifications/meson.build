@@ -9,7 +9,7 @@ shared_module(
   plugin_name,
   sources: plugin_src,
   dependencies: plugin_dependencies,
-  vala_args: convey_vala_args,
+  vala_args: griabuntu_mail_vala_args,
   c_args: plugin_c_args,
   install: true,
   install_dir: plugin_dest,
